@@ -1,0 +1,90 @@
+package com.wegame.capi.infrastructure.aspect;
+
+import com.wegame.base.context.Operator;
+import com.wegame.base.context.OperatorContext;
+import com.wegame.base.domain.OptRequest;
+import com.wegame.base.utils.FastJsonUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Aspect
+@Component
+public class ControllerAspect {
+
+    @Around("execution(* com.wegame.capi..Inner*Controller.*(..))")
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+        try {
+            Object[] args = joinPoint.getArgs();
+            OptRequest optRequest = (OptRequest) Arrays.stream(args)
+                    .filter(arg -> arg instanceof OptRequest)
+                    .findFirst()
+                    .orElse(null);
+            OperatorContext.setOperator(Operator.builder()
+                    .adminId(Long.valueOf(optRequest.getOptId()))
+                    .name(optRequest.getOptName())
+                    .build());
+        } catch (Exception e) {
+            log.error("ControllerAspect.around error: {}", e.getMessage(), e);
+        }
+        try {
+            return joinPoint.proceed();
+        } finally {
+            OperatorContext.clear();
+        }
+    }
+
+    @Around("execution(* com.wegame.capi..*Controller.*(..))")
+    public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
+        Object result = null;
+        try {
+            result = proceedingJoinPoint.proceed();
+        } finally {
+            statistic(proceedingJoinPoint, result, startTime);
+        }
+        return result;
+    }
+
+    private void statistic(ProceedingJoinPoint proceedingJoinPoint, Object result, long startTime) {
+        try {
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = attributes.getRequest();
+
+            MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
+            Object req = null;
+            if (AnnotationUtils.findAnnotation(signature.getMethod(), GetMapping.class) != null) {
+                req = request.getParameterMap();
+            } else if (AnnotationUtils.findAnnotation(signature.getMethod(), PostMapping.class) != null) {
+                Object[] args = proceedingJoinPoint.getArgs();
+                req = Arrays.stream(args)
+                        .filter(arg -> (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)))
+                        .collect(Collectors.toList());
+            }
+
+            log.info("{}#{}, req={}, res={}, cost times: {} ms",
+                    signature.getDeclaringTypeName(),
+                    signature.getName(),
+                    FastJsonUtils.toJSONString(req),
+                    FastJsonUtils.toJSONString(result),
+                    System.currentTimeMillis() - startTime);
+        } catch (Throwable e) {
+            log.error("ControllerAspect.statistic error: {}", e.getMessage(), e);
+        }
+    }
+}
+

@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+echo "selected current branch $branch"
+
+echo "开始执行服务器部署脚本"
+ssh -i ${centos} centos@ec2-16-163-214-1.ap-east-1.compute.amazonaws.com "sh /home/centos/java/deploy_wegame-capi $branch"
+
+# Final message
+echo "部署成功"
+############################# notify lark #####################################
+URL=${BUILD_URL}
+new_url="${URL/38.54.88.143:8089/spherelinkgrid.click:8089}"
+
+commit_message=$(git log -1 --pretty=%B)
+# 构建用户：$BUILD_USER
+MESSAGE=$(cat <<EOF
+${JOB_NAME} 构建成功：
+commit 信息:
+《$commit_message》
+${GIT_COMMIT}
+构建分支：$branch
+构建地址：$new_url
+EOF
+)
+
+MESSAGE="{
+  \"msg_type\": \"text\",
+  \"content\": {
+    \"text\": \"🎉 🎉 🎉 ${JOB_NAME} 构建成功！\n commit 信息:《$commit_message》\n 构建分支：$branch\n 构建地址：$new_url \"
+  }
+}"
+
+curl -X POST -H "Content-Type: application/json" -d "$MESSAGE" https://open.larksuite.com/open-apis/bot/v2/hook/3b1c670b-f676-4951-b2da-348e9771a7b9
+

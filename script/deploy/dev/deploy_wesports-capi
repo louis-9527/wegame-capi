@@ -1,0 +1,111 @@
+#!/bin/sh
+# 变量定义
+system_user_name=centos
+maven_dependency_path=/opt/maven/repo/com/wegame
+app_name=wegame-capi
+app_application_name=wegame-capi-application
+app_branch=$1
+app_code_remote_url=https://github.com/InnovaTech-Game/wegame-capi.git
+# 部署路径
+app_deploy_path=/home/$system_user_name/java/$app_name
+# 源码路径
+app_code_path=$app_deploy_path/code
+# 日志路径
+app_log_path=$app_deploy_path/log
+# 日志名称
+app_log_file=info.log
+
+echo "================ 环境变量 ================"
+echo "app_name: $app_name"
+echo "app_branch: $app_branch"
+echo "app_code_remote_url: $app_code_remote_url"
+echo "app_code_path: $app_code_path"
+echo "app_deploy_path: $app_deploy_path"
+echo "app_log_path: $app_log_path"
+echo "app_log_file: $app_log_file"
+echo "================ 环境变量 ================"
+
+if [ ! -d ${app_deploy_path} ]; then
+  mkdir -p $app_deploy_path
+fi
+
+if [ ! -d ${app_code_path} ]; then
+  mkdir -p $app_code_path
+fi
+
+## 删除依赖
+echo "开始删除maven依赖..."
+rm -rf $maven_dependency_path
+echo "删除maven依赖完成。"
+
+cd $app_code_path
+
+if [ ! -d ${app_name} ]; then
+  echo "开始从远程仓库获取代码..."
+  git clone $app_code_remote_url
+  echo "从远程仓库获取代码完成。"
+fi
+
+cd $app_name
+
+if [ "git branch | grep $app_branch" ]
+then
+    echo "Branch named $app_branch already exists"
+    git checkout $app_branch
+    git pull
+else
+    echo "Branch named $app_branch does not exist"
+    git checkout -b $app_branch $app_branch
+    git pull
+fi
+
+# 打包
+echo "开始打包..."
+mvn clean package -Pdev -Dmaven.test.skip=true
+echo "打包完成。"
+
+# 关闭服务进程
+ps -ef | grep $app_name
+
+oldPid=`ps -ef | grep $app_name | grep -v "grep" | grep -v "sh" | awk '{print $2}'`
+echo $oldPid
+for id in $oldPid
+do
+    kill -9 $id
+    echo "killed $id"
+done
+
+# 部署
+echo "开始部署..."
+rm -rf $app_deploy_path/$app_name*
+
+cd $app_code_path/$app_name/$app_application_name/target
+app_jar=`ls | grep $app_application_name*.jar | grep "jar$" | awk '{print $1}'`
+echo "即将部署的jar包：$app_jar"
+
+rm -rf $app_log_path/$app_log_file
+
+cp $app_code_path/$app_name/$app_application_name/target/$app_jar $app_deploy_path
+cd $app_deploy_path
+echo "部署中..."
+#nohup java -jar -server -XX:+UseG1GC -Xmx8G -Xms8G -XX:+PrintFlagsFinal -XX:+DisableExplicitGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -verbose:gc -Xloggc:$app_log_path/gcc.log $app_deploy_path/$app_jar 2>&1 &
+#nohup java -jar -server -XX:+UseG1GC -Xmx4G -Xms4G -XX:+PrintFlagsFinal -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -verbose:gc -Xloggc:$app_log_path/gcc.log $app_deploy_path/$app_jar > /dev/null 2>&1 &
+
+nohup java -jar -server -Xms4G -XX:+PrintFlagsFinal -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -verbose:gc -Xloggc:$app_log_path/gcc.log $app_deploy_path/$app_jar > /dev/null 2>&1 &
+
+sleep 10
+echo "打印启动日志（日志路径：$app_log_path/$app_log_file）..."
+cat $app_log_path/$app_log_file
+
+echo "部署结果："
+ps -ef | grep $app_name | grep -v "grep" | grep -v "sh"
+
+pid=`ps -ef | grep $app_name | grep -v "grep" | grep -v "sh" | awk '{print $2}'`
+if ! [ -z "$pid" ]; then
+  echo "部署成功，进程id: $pid。 "
+  exit 0
+else
+  echo "部署失败。"
+  exit 1
+fi
+

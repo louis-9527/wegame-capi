@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.wegame</groupId>
+        <artifactId>wegame-capi</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <groupId>com.wegame</groupId>
+    <artifactId>wegame-capi-application</artifactId>
+    <version>1.0.0</version>
+    <name>wegame-capi-application</name>
+    <packaging>jar</packaging>
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.wegame</groupId>
+            <artifactId>wegame-capi-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.wegame</groupId>
+            <artifactId>wegame-capi-biz</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wegame</groupId>
+            <artifactId>wegame-capi-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wegame</groupId>
+            <artifactId>wegame-capi-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wegame</groupId>
+            <artifactId>wegame-capi-dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wegame</groupId>
+            <artifactId>wegame-capi-scheduler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.wegame</groupId>
+            <artifactId>wegame-capi-scheduler</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources/config/${config-dir}</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources/public</directory>
+                <targetPath>public/</targetPath>
+            </resource>
+        </resources>
+        <directory>../target</directory>
+        <finalName>${parent.artifactId}-${parent.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-archetype-plugin</artifactId>
+                <version>3.0.0</version>
+            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.codec</groupId>-->
+<!--                <artifactId>skeleton-maven-plugin</artifactId>-->
+<!--                <version>1.0.0.20241111</version>-->
+<!--                &lt;!&ndash; <systemPath>${basedir}srclibldapjdk.jar</systemPath>&ndash;&gt;-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash;项目目录&ndash;&gt;-->
+<!--                    <projectPathDir>/Users/apple/sports/code/wegame-capi</projectPathDir>-->
+<!--                    &lt;!&ndash;项目名&ndash;&gt;-->
+<!--                    <projectName>wegame-capi</projectName>-->
+<!--                    &lt;!&ndash;基础包名&ndash;&gt;-->
+<!--                    <basePackageName>com.wegame.base</basePackageName>-->
+<!--                    &lt;!&ndash;业务包名&ndash;&gt;-->
+<!--                    <businessPackageName>com.wegame.capi</businessPackageName>-->
+<!--                    &lt;!&ndash;业务包名 backend/business/*&ndash;&gt;-->
+<!--                    <subBusinessPackageName>backend</subBusinessPackageName>-->
+<!--                    &lt;!&ndash;是否覆盖已有文件&ndash;&gt;-->
+<!--                    <fileOverWrite>true</fileOverWrite>-->
+<!--                    &lt;!&ndash;db jdbc url&ndash;&gt;-->
+<!--                    <jdbcUrl>jdbc:mysql://localhost:3306/wegame_backend_db</jdbcUrl>-->
+<!--                    &lt;!&ndash;db name&ndash;&gt;-->
+<!--                    <dbName>wegame_backend_db</dbName>-->
+<!--                    &lt;!&ndash;db username&ndash;&gt;-->
+<!--                    <username>root</username>-->
+<!--                    &lt;!&ndash;db password&ndash;&gt;-->
+<!--                    <password>rootroot</password>-->
+<!--                    <multiDataSource>true</multiDataSource>-->
+<!--                    <generateDelete>true</generateDelete>-->
+<!--                    &lt;!&ndash;指定表&ndash;&gt;-->
+<!--                    <indexTableNameList>boxing_match</indexTableNameList>-->
+<!--                    <indexModuleList>po,poQuery,mapper,domain,converter,pageQueryRequest,vo</indexModuleList>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+        </plugins>
+    </build>
+
+</project>

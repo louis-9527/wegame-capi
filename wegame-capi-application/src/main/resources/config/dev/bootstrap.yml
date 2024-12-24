@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: wegame-capi
+    env: dev
+  profiles:
+    active: dev
+  config:
+    import:
+      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+#      discovery:
+#        server-addr: 43.198.184.127:8847,43.198.184.127:8849,43.198.184.127:8851
+#        group: ${spring.profiles.active}
+#        namespace: cd274f91-247f-4b5d-8bd1-0a8c7fd386ec
+#        metadata:
+#          application: ${spring.application.name}-${spring.profiles.active}
+      config:
+        import-check:
+          enabled: true
+        server-addr: 43.198.184.127:8847,43.198.184.127:8849,43.198.184.127:8851
+        group: ${spring.profiles.active}
+        namespace: cd274f91-247f-4b5d-8bd1-0a8c7fd386ec
+        file-extension: yaml

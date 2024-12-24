@@ -1,0 +1,160 @@
+appid: com.wegame.capi
+## log
+logging:
+  level:
+    org.springframework.web: trace
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    com.wegame: trace
+    org.apache.ibatis: trace
+    com.alibaba.nacos: info
+    com.alibaba.cloud.nacos: DEBUG
+## server
+server:
+  port: 9500
+  shutdown: graceful
+  tomcat:
+    uri-encoding: UTF-8
+    connection-timeout: 3000
+    max-connections: 100000
+    keep-alive-timeout: 3000
+    accept-count: 100
+    threads:
+      max: 20000
+      min-spare: 20
+  servlet:
+    context-path: /capi/game
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+## mybatis
+mybatis:
+  configuration:
+    mapUnderscoreToCamelCase: true
+    cacheEnabled: true
+## spring
+spring:
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  lifecycle:
+    timeout-per-shutdown-phase: 30
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  freemarker:
+    checkTemplateLocation: false
+  redis:
+    connectTimeout: 500
+    timeout: 500
+    cluster:
+      nodes:
+        - dev-nba-backend-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
+      max-redirects: 5
+    lettuce:
+      pool:
+        #连接池中的最大空闲连接
+        max-idle: 10
+        #连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: 500
+        #连接池最大连接数（使用负值表示没有限制）
+        max-active: 8
+        #连接池中的最小空闲连接
+        min-idle: 0
+    password:
+  datasource:
+    dynamic:
+      primary: wegame_user_db
+      strict: true
+      datasource:
+        wegame_user_db:
+          url: jdbc:mysql://dev-nba-backend-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: root
+          password: ENC(DHb76s+Gg5rikLGRiZVPz0E+iAwmb+SfJw0Vy2DJI5lMd9rLRK8GWiB/8z78PJ7HEaFZ5mF2LSlXR3gxerZskA==)
+          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
+          type: com.alibaba.druid.pool.DruidDataSource
+          druid:
+            initial-size: 10
+            min-idle: 10
+            max-active: 2000
+            max-wait: 1000
+            time-between-eviction-runs-millis: 6000
+            min-evictable-idle-time-millis: 3000
+            validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            pool-prepared-statements: false
+        wegame_backend_db:
+          url: jdbc:mysql://dev-nba-backend-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: root
+          password: ENC(DHb76s+Gg5rikLGRiZVPz0E+iAwmb+SfJw0Vy2DJI5lMd9rLRK8GWiB/8z78PJ7HEaFZ5mF2LSlXR3gxerZskA==)
+          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
+          type: com.alibaba.druid.pool.DruidDataSource
+          druid:
+            initial-size: 10
+            min-idle: 10
+            max-active: 500
+            max-wait: 1000
+            time-between-eviction-runs-millis: 6000
+            min-evictable-idle-time-millis: 3000
+            validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            pool-prepared-statements: false
+        wegame_business_db:
+          url: jdbc:mysql://dev-nba-backend-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_business_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: root
+          password: ENC(DHb76s+Gg5rikLGRiZVPz0E+iAwmb+SfJw0Vy2DJI5lMd9rLRK8GWiB/8z78PJ7HEaFZ5mF2LSlXR3gxerZskA==)
+          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
+          type: com.alibaba.druid.pool.DruidDataSource
+  data:
+    mongodb:
+      uri: mongodb+srv://DEVnbaBACKENDuser:5rs4P71xD2zHbjpx@nba-backend-dev.yuens.mongodb.net/nba-backend?retryWrites=true&w=majority&readPreference=secondaryPreferred
+## fastjson
+fastjson:
+  parser:
+    safeMode: true
+## knife4j
+knife4j:
+  enable: true
+  production: false
+  openapi:
+    title: 接口文档
+    description: "接口文档"
+    version: v1.0.0
+## aws s3
+amazon:
+  aws:
+    access-key-id: AKIAW3MEDX6WK5QMNG5N
+    access-key-secret: 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
+  s3:
+    endpoint: https://qatlivsports.s3.ap-east-1.amazonaws.com
+    region: ap-east-1
+    bucket: qatlivsports
+    upload-path: ChengDuDevImage/dev/
+## api
+api:
+  sport:
+    platformDomain: https://test-restful.sportslive.com.ph
+    singleDomain: https://sw-http-main-apisix.igo8.me/
+    cp:
+      platformId: 50
+      channelId: 1002
+      privateKey: fb2ec7910649acefa3da8b01872dc0bbe2d30ef767d9e4db4a3c206ea158e643
+      privateIv: c8cc3bac311ef9ca5a50e1054815fdf6
+      agentKey: MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEFey5q0WeGxUSQ5M7K0D+6jZ5C+a4KcB5iA125+a8JFyeYYNPwXP7tPr6JwfodX0cgoK76Ecv54d5A/SOcBBuY5QIDAQABAkECfJ7Uq+lShhHTw1vnPJCNbU9Oh8VkyvWd9nUBubymXS7Po43R0F8epjAFut795e/JFZxlYUTPj7WbyKhKV0DxwQIhAxK8M6QE5EXHAuFTKYUW0k/nP2DV24dDPn7VbhfH3tDNAiEByJa3tGqOIrH/XXgooXhc/f/MdDcmj5zOUup1jihWiHkCIDU6SnwkYJVf+4/nIn4Ap0YErUMN9QZXxFisdABj421ZAiEBOgZ+3nUSwMYPTifgOf3gZ0lRQvTTbp54QQrEQzt3GHECIBZfUhEt2JB+sd7T/s43p5Z+eUk8KxAcw5L/HsrsqNjQ
+    igo:
+      platformId: 55
+      channelId: 1035
+      privateKey: 2ee2cd2db8c02bab79991dfa6ffacd57204ca98ffe0d588e284b45436bc03fe7
+      privateIv: 9ff843c66fa938b9d5b5bdb3d957db04
+      agentKey: MIIBCgKCAQEAjpeqhcFzzqIkpOOSHpFkCXGVCdLau09V3opTAard1fbbRBodFRF8AFtEFsA4Uw590IC8Ey4n+uNR0SfevlmWyKvmC+5HVYoHEURRrENMleCFBfiMjYY5WTZoNeRl1LA2kZsFIzA6h5uY7oBKNDOkmVnlCKDCUJMj3h8cc3nPFOtPR6kJh60GSi6cRB4GHQZVixfvFqIuPWTO54RVjZm7U9D6G/BmRsbMMq2xD5kDaZYUOYjclOzY274bLaE8eUeY/nl5S26nZX++rVQ2a0IMu/hM94mCmCO7pPMllswuOdJX5XQCh3BNQzFd8sqC4tdc9OXKzzDDUzS5DiiSVSsauwIDAQAB
+#lark
+lark:
+  robot: 1abf2d83-03ca-4073-84a2-6d79d804ca3a

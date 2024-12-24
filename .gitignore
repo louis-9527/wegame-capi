@@ -1,0 +1,13 @@
+/target/
+/.idea/
+/log/
+.DS_Store
+/wegame-capi-application/target/
+/wegame-capi-client/target/
+/wegame-capi-common/target/
+/wegame-capi-dao/target/
+/wegame-capi-infrastructure/target/
+/wegame-capi-api/target/
+/wegame-capi-scheduler/target/
+/wegame-capi-biz/target/
+/wegame-capi-api/wegame-capi-api.iml

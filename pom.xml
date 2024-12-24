@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.wegame</groupId>
+        <artifactId>wegame-parent</artifactId>
+        <version>1.0.1</version>
+    </parent>
+<!--    <groupId>com.wegame</groupId>-->
+    <artifactId>wegame-capi</artifactId>
+    <version>1.0.0</version>
+    <name>wegame-capi</name>
+    <modules>
+        <module>wegame-capi-client</module>
+        <module>wegame-capi-common</module>
+        <module>wegame-capi-infrastructure</module>
+        <module>wegame-capi-dao</module>
+        <module>wegame-capi-api</module>
+        <module>wegame-capi-biz</module>
+        <module>wegame-capi-scheduler</module>
+        <module>wegame-capi-application</module>
+    </modules>
+    <packaging>pom</packaging>
+    <description>wegame-capi project for Spring Boot</description>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <wegame-base.version>1.0.1</wegame-base.version>
+        <wegame-capi-client.version>1.0.3-SNAPSHOT</wegame-capi-client.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.wegame</groupId>
+                <artifactId>wegame-capi-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wegame</groupId>
+                <artifactId>wegame-capi-application</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wegame</groupId>
+                <artifactId>wegame-capi-biz</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wegame</groupId>
+                <artifactId>wegame-capi-client</artifactId>
+                <version>${wegame-capi-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wegame</groupId>
+                <artifactId>wegame-capi-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wegame</groupId>
+                <artifactId>wegame-capi-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wegame</groupId>
+                <artifactId>wegame-capi-infrastructure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wegame</groupId>
+                <artifactId>wegame-capi-scheduler</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.wegame</groupId>
+            <artifactId>wegame-base</artifactId>
+            <version>${wegame-base.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.rocketmq</groupId>-->
+        <!--            <artifactId>rocketmq-spring-boot-starter</artifactId>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+        </dependency>
+        <!--        cloud start -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.alibaba.cloud</groupId>-->
+        <!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
+        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+        <!--        cloud end -->
+        <!--aws s3-->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>1.11.490</version>
+        </dependency>
+        <!--aws s3-->
+    </dependencies>
+
+    <build>
+<!--        <resources>-->
+<!--            <resource>-->
+<!--                <directory>src/main/resources/config/${config-dir}</directory>-->
+<!--            </resource>-->
+<!--        </resources>-->
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-archetype-plugin</artifactId>
+                <version>3.0.0</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>ali-nexus</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>ali-nexus-public-snapshots</id>
+            <url>http://maven.aliyun.com/nexus/content/repositories/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>ali-nexus</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>mvnrepository</id>
+            <url>https://mvnrepository.com/</url>
+        </repository>
+        <repository>
+            <id>ali-nexus-public-snapshots</id>
+            <url>http://maven.aliyun.com/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>com.e-iceblue</id>
+            <url>http://repo.e-iceblue.cn/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>maven-public</id>
+            <url>http://spherelinkgrid.click:8083/repository/maven-public/</url>
+            <!-- 允许从中拉取稳定版的依赖 -->
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <!-- 也允许从中拉取快照版的依赖 -->
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <!--			<activation>-->
+            <!--				<activeByDefault>true</activeByDefault>-->
+            <!--			</activation>-->
+            <properties>
+                <config-dir>local</config-dir>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>dev</id>
+            <properties>
+                <config-dir>dev</config-dir>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>qa</id>
+            <properties>
+                <config-dir>qa</config-dir>
+            </properties>
+        </profile>
+        <profile>
+            <id>sts</id>
+            <properties>
+                <config-dir>sts</config-dir>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>pre</id>
+            <properties>
+                <config-dir>pre</config-dir>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>prod</id>
+            <properties>
+                <config-dir>prod</config-dir>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>
