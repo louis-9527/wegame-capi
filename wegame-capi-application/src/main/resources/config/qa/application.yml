@@ -157,29 +157,6 @@ api:
       privateKey: 2ee2cd2db8c02bab79991dfa6ffacd57204ca98ffe0d588e284b45436bc03fe7
       privateIv: 9ff843c66fa938b9d5b5bdb3d957db04
       agentKey: MIIBCgKCAQEAjpeqhcFzzqIkpOOSHpFkCXGVCdLau09V3opTAard1fbbRBodFRF8AFtEFsA4Uw590IC8Ey4n+uNR0SfevlmWyKvmC+5HVYoHEURRrENMleCFBfiMjYY5WTZoNeRl1LA2kZsFIzA6h5uY7oBKNDOkmVnlCKDCUJMj3h8cc3nPFOtPR6kJh60GSi6cRB4GHQZVixfvFqIuPWTO54RVjZm7U9D6G/BmRsbMMq2xD5kDaZYUOYjclOzY274bLaE8eUeY/nl5S26nZX++rVQ2a0IMu/hM94mCmCO7pPMllswuOdJX5XQCh3BNQzFd8sqC4tdc9OXKzzDDUzS5DiiSVSsauwIDAQAB
-## rocketmq
-rocketmq:
-  #  consumer:
-  #    group: boxing_pay_out_group
-  #    # 一次拉取消息最大值，注意是拉取消息的最大值而非消费最大值
-  #    pull-batch-size: 10
-  name-server: rmq-qat-livsports-rocketmq-system-nameserver.rocketmq-system.svc:9876
-  producer:
-    # 发送同一类消息的设置为同一个group，保证唯一
-    group: test_group
-    # 发送消息超时时间，默认3000
-    sendMessageTimeout: 10000
-    # 发送消息失败重试次数，默认2
-    retryTimesWhenSendFailed: 2
-    # 异步消息重试此处，默认2
-    retryTimesWhenSendAsyncFailed: 2
-    # 消息最大长度，默认1024 * 1024 * 4(默认4M)
-    maxMessageSize: 4096
-    # 压缩消息阈值，默认4k(1024 * 4)
-    compressMessageBodyThreshold: 4096
-    # 是否在内部发送失败时重试另一个broker，默认false
-    retryNextServer: false
-
 #lark
 lark:
   robot: 1abf2d83-03ca-4073-84a2-6d79d804ca3a
