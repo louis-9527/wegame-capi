@@ -39,7 +39,7 @@ public class UserController {
         return CommonResponse.build(userLoginService.login(response, request));
     }
 
-//    @LoginRequired
+    @LoginRequired
     @ApiOperation(value = "登出", httpMethod = "GET")
     @GetMapping("/logout")
     public CommonResponse<Boolean> logout(HttpServletRequest request) {
