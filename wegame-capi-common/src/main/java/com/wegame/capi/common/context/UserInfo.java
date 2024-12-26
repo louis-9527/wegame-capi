@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 
 /**
- * 玩家
+ * 用户
  * @author apple
  */
 @Data
@@ -25,20 +25,18 @@ public class UserInfo implements Serializable {
     private String id;
     @ApiModelProperty(value = "平台id")
     private String platformId;
-    @ApiModelProperty(value = "渠道id")
-    private String channelId;
-    @ApiModelProperty(value = "游戏id")
-    private String gameId;
-    @ApiModelProperty(value = "玩家id")
+    @ApiModelProperty(value = "用户id")
     private String playerId;
-    @ApiModelProperty(value = "玩家姓名")
+    @ApiModelProperty(value = "用户姓名")
     private String playerName;
-    @ApiModelProperty(value = "玩家昵称")
+    @ApiModelProperty(value = "用户昵称")
     private String nickName;
-    @ApiModelProperty(value = "玩家级别")
+    @ApiModelProperty(value = "用户级别")
     private String userLevel;
-    @ApiModelProperty(value = "玩家姓名")
+    @ApiModelProperty(value = "用户姓名")
     private String userName;
+    @ApiModelProperty(value = "用户生日")
+    private String birthday;
     @ApiModelProperty(value = "中台token")
     private String token;
 }

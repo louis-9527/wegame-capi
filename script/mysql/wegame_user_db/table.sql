@@ -8,13 +8,12 @@ CREATE TABLE `user`
 (
     `id`          bigint       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `platform_id` varchar(64)  NOT NULL COMMENT '平台id',
-    `channel_id`  varchar(64)  NOT NULL COMMENT '渠道id',
-    `game_id`     varchar(128) NOT NULL COMMENT '游戏id',
-    `player_id`   varchar(128) NOT NULL COMMENT '玩家姓名',
-    `player_name` varchar(128) NOT NULL COMMENT '玩家姓名',
-    `nick_name`   varchar(50)  NOT NULL DEFAULT '' COMMENT '玩家昵称',
-    `user_level`  varchar(50)  NOT NULL DEFAULT '' COMMENT '玩家级别',
-    `user_name`   varchar(50)  NOT NULL DEFAULT '' COMMENT '玩家姓名',
+    `player_id`   varchar(128) NOT NULL COMMENT '用户姓名',
+    `player_name` varchar(128) NOT NULL COMMENT '用户姓名',
+    `nick_name`   varchar(50)  NOT NULL DEFAULT '' COMMENT '用户昵称',
+    `user_level`  varchar(50)  NOT NULL DEFAULT '' COMMENT '用户级别',
+    `user_name`   varchar(50)  NOT NULL DEFAULT '' COMMENT '用户姓名',
+    `birthday`    varchar(20)  NOT NULL DEFAULT '' COMMENT '用户生日',
     `extend`      text COMMENT '扩展信息',
     `creator`     varchar(100) NOT NULL DEFAULT '' COMMENT '创建人',
     `create_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -24,5 +23,5 @@ CREATE TABLE `user`
     UNIQUE KEY (`player_id`, `platform_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
-  COLLATE utf8mb4_unicode_ci COMMENT ='玩家用户';
+  COLLATE utf8mb4_unicode_ci COMMENT ='用户';
 DROP TABLE IF EXISTS `user`;

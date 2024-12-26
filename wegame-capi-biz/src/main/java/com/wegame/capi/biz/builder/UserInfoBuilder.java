@@ -17,13 +17,12 @@ public class UserInfoBuilder {
         return UserInfo.builder()
                 .id(String.valueOf(userId))
                 .platformId(request.getPlatformId())
-                .channelId(request.getChannelId())
-                .gameId(request.getGameId())
                 .playerId(request.getPlayerId())
                 .playerName(request.getPlayerName())
                 .nickName(request.getNickName())
                 .userLevel(request.getUserLevel())
                 .userName(request.getUserName())
+                .birthday(request.getBirthday())
                 .token(token)
                 .build();
     }

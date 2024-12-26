@@ -22,28 +22,24 @@ import java.io.Serializable;
 public class UserLoginRequest implements Validate, Serializable {
     @ApiModelProperty(value = "平台id", required = true)
     private String platformId;
-    @ApiModelProperty(value = "渠道id", required = true)
-    private String channelId;
-    @ApiModelProperty(value = "游戏id", required = true)
-    private String gameId;
-    @ApiModelProperty(value = "玩家id", required = true)
+    @ApiModelProperty(value = "用户id", required = true)
     private String playerId;
-    @ApiModelProperty(value = "玩家姓名", required = true)
+    @ApiModelProperty(value = "用户姓名", required = true)
     private String playerName;
-    @ApiModelProperty(value = "玩家昵称", required = false)
+    @ApiModelProperty(value = "用户昵称", required = false)
     private String nickName;
-    @ApiModelProperty(value = "玩家级别", required = false)
+    @ApiModelProperty(value = "用户级别", required = false)
     private String userLevel;
-    @ApiModelProperty(value = "玩家姓名", required = false)
+    @ApiModelProperty(value = "用户姓名", required = false)
     private String userName;
+    @ApiModelProperty(value = "用户生日", required = false)
+    private String birthday;
     @ApiModelProperty(value = "中台token", required = true)
     private String token;
 
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(platformId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(channelId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(playerName.length() <= 50, ErrorCode.ERR_PARAM);
         if (StringUtils.isNotBlank(nickName)) {
@@ -54,6 +50,9 @@ public class UserLoginRequest implements Validate, Serializable {
         }
         if (StringUtils.isNotBlank(userName)) {
             AssertUtil.assertTrue(userName.length() <= 50, ErrorCode.ERR_PARAM);
+        }
+        if (StringUtils.isNotBlank(birthday)) {
+            AssertUtil.assertTrue(birthday.length() <= 20, ErrorCode.ERR_PARAM);
         }
         AssertUtil.assertStrNotEmpty(token, ErrorCode.ERR_PARAM);
     }
