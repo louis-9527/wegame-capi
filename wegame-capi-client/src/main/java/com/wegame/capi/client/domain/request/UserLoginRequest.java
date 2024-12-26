@@ -22,6 +22,8 @@ import java.io.Serializable;
 public class UserLoginRequest implements Validate, Serializable {
     @ApiModelProperty(value = "平台id", required = true)
     private String platformId;
+    @ApiModelProperty(value = "渠道id", required = true)
+    private String chanelId;
     @ApiModelProperty(value = "用户id", required = true)
     private String playerId;
     @ApiModelProperty(value = "用户姓名", required = true)

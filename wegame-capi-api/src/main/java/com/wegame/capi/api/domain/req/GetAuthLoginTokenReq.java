@@ -3,7 +3,7 @@ package com.wegame.capi.api.domain.req;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
-import com.wegame.capi.client.domain.request.query.AuthLoginTokenRequest;
+import com.wegame.capi.client.domain.request.UserLoginRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -54,14 +54,14 @@ public class GetAuthLoginTokenReq implements Serializable {
      */
     private String token;
 
-    public static GetAuthLoginTokenReq buildClientReq(AuthLoginTokenRequest req) {
+    public static GetAuthLoginTokenReq buildClientReq(UserLoginRequest request) {
         return GetAuthLoginTokenReq.builder()
-                .channelId(req.getChannelId())
-                .pId(req.getPid())
-                .playerName(req.getPlayerName())
+                .channelId(request.getChanelId())
+                .pId(request.getPlatformId())
+                .playerName(request.getPlayerName())
                 .createTime(DateUtil.toUTC(new Date()))
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
-                .token(req.getToken())
+                .token(request.getToken())
                 .build();
     }
 }

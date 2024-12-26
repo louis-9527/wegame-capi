@@ -14,6 +14,7 @@ CREATE TABLE `user`
     `user_level`  varchar(50)  NOT NULL DEFAULT '' COMMENT '用户级别',
     `user_name`   varchar(50)  NOT NULL DEFAULT '' COMMENT '用户姓名',
     `birthday`    varchar(20)  NOT NULL DEFAULT '' COMMENT '用户生日',
+    `gift_amount` bigint                DEFAULT null COMMENT '赠送金额',
     `extend`      text COMMENT '扩展信息',
     `creator`     varchar(100) NOT NULL DEFAULT '' COMMENT '创建人',
     `create_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
