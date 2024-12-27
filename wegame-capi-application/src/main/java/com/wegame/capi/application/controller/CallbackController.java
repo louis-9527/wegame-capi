@@ -2,6 +2,7 @@ package com.wegame.capi.application.controller;
 
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.service.UserService;
+import com.wegame.capi.client.domain.request.BetSummaryRequest;
 import com.wegame.capi.client.domain.request.NotifyCreditChangeRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,5 +25,12 @@ public class CallbackController {
     public CommonResponse<Void> notifyCreditChange(@RequestBody NotifyCreditChangeRequest request) {
         request.validateParam();
         return CommonResponse.build(userService.notifyCreditChange(request));
+    }
+
+    @ApiOperation(value = "对账", httpMethod = "POST")
+    @PostMapping("/betSummary")
+    public CommonResponse<Void> betSummary(@RequestBody BetSummaryRequest request) {
+        request.validateParam();
+        return CommonResponse.build(null);
     }
 }
