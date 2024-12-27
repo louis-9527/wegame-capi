@@ -21,8 +21,6 @@ CREATE TABLE `gift_amount_record`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE utf8mb4_unicode_ci COMMENT ='赠送记录';
-DROP TABLE IF EXISTS `gift_amount_record`;
-
 
 -- ----------------------------
 -- Table structure for game_record
