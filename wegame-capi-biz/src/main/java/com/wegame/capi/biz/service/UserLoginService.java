@@ -1,8 +1,12 @@
 package com.wegame.capi.biz.service;
 
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.wegame.capi.api.CommonApi;
+import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.GetAuthLoginTokenReq;
+import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
+import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
@@ -14,6 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -25,6 +30,8 @@ public class UserLoginService {
     RedisTemplate redisTemplate;
     @Autowired
     CommonApi commonApi;
+    @Autowired
+    SingleWalletApi singleWalletApi;
 
     public UserInfo login(HttpServletResponse response, UserLoginRequest request) {
         commonApi.authLoginToken(GetAuthLoginTokenReq.buildClientReq(request));
@@ -50,4 +57,8 @@ public class UserLoginService {
         return true;
     }
 
+    public Long getCredit() {
+        GetCreditRes res = singleWalletApi.getCredit(GetCreditReq.build());
+        return Objects.isNull(res.getCredit()) ? 0L : NumberUtil.mul(res.getCredit(), 100).longValue();
+    }
 }

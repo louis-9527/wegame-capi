@@ -53,4 +53,11 @@ public class UserController {
     public CommonResponse<UserInfo> me() {
         return CommonResponse.build(UserInfoContext.getUserInfo());
     }
+
+    @LoginRequired
+    @ApiOperation(value = "余额", httpMethod = "GET")
+    @GetMapping("/getCredit")
+    public CommonResponse<Long> getCredit() {
+        return CommonResponse.build(userLoginService.getCredit());
+    }
 }

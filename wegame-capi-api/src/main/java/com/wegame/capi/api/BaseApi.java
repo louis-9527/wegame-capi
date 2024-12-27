@@ -79,17 +79,6 @@ public class BaseApi {
         req.setHash(encrypt);
     }
 
-    public String getChannelId(String platformId) {
-        AssertUtil.assertNotNull(platformId, ErrorCode.ERR_PARAM);
-        if (StringUtils.equals(platformId, cpPlatformId)) {
-            return cpChannelId;
-        } else if (StringUtils.equals(platformId, igoPlatformId)) {
-            return igoChannelId;
-        } else {
-            throw new BusinessException(ErrorCode.ERR_PARAM);
-        }
-    }
-
 }
 
 
