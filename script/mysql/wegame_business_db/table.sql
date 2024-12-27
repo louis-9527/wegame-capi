@@ -1,4 +1,30 @@
 -- ----------------------------
+-- Table structure for gift_amount_record
+-- ----------------------------
+DROP TABLE IF EXISTS `gift_amount_record`;
+CREATE TABLE `gift_amount_record`
+(
+    `id`              bigint       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `user_id`         bigint       NOT NULL COMMENT '用户ID',
+    `player_id`       varchar(128) NOT NULL COMMENT '玩家ID',
+    `gift_id`         varchar(128) NOT NULL COMMENT '赠送Id(对应营销请求ID)',
+    `serial_no`       varchar(128) NOT NULL COMMENT '流水号',
+    `change_amount`   bigint       NOT NULL COMMENT '变更金额',
+    `change_type`     tinyint      NOT NULL COMMENT '0,增加,1:减少',
+    `game_recored_id` varchar(128) NOT NULL COMMENT '游戏记录ID',
+    `creator`         varchar(100) NOT NULL DEFAULT '' COMMENT '创建人',
+    `create_time`     timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updater`         varchar(100) NOT NULL DEFAULT '' COMMENT '更新人',
+    `update_time`     timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY (`player_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE utf8mb4_unicode_ci COMMENT ='赠送记录';
+DROP TABLE IF EXISTS `gift_amount_record`;
+
+
+-- ----------------------------
 -- Table structure for game_record
 -- ----------------------------
 DROP TABLE IF EXISTS `game_record`;
