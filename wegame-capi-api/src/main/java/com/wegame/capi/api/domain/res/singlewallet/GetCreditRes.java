@@ -4,11 +4,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 
 @Data
-@Builder
+@SuperBuilder
 @ApiModel("获取用户余额响应模型")
 public class GetCreditRes extends SingleWalletBaseRes {
     @ApiModelProperty("玩家姓名")

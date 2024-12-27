@@ -1,6 +1,7 @@
 -- ----------------------------
 -- Table structure for game_record
 -- ----------------------------
+DROP TABLE IF EXISTS `game_record`;
 CREATE TABLE `game_record`
 (
     `id`               bigint       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -33,17 +34,17 @@ CREATE TABLE `game_record`
 -- ----------------------------
 -- Table structure for game_record_detail（不用游戏明细模型不同）
 -- ----------------------------
+DROP TABLE IF EXISTS `game_record_detail`;
 CREATE TABLE `game_record_detail`
 (
     `id`             bigint         NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `bet_amount`     bigint         NOT NULL COMMENT '投注金额 单位：分',
     `pay_out_amount` bigint         NOT NULL DEFAULT 0 COMMENT '派彩金额 单位：分',
-    `game_result`    text           NOT NULL DEFAULT '' COMMENT '游戏结果json',
-    `win_result`     text           NOT NULL DEFAULT '' COMMENT '中奖集合json',
-    `odds`           decimal(10, 2) NOT NULL DEFAULT '' COMMENT '赔率',
-    `multiple`       int                     default null COMMENT '倍数',
+    `game_result`    text           NOT NULL COMMENT '游戏结果json',
+    `win_result`     text           NOT NULL COMMENT '中奖集合json',
+    `odds`           decimal(10, 2) NOT NULL COMMENT '赔率',
+    `multiple`       int                     DEFAULT null COMMENT '倍数',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE utf8mb4_unicode_ci COMMENT ='游戏记录明细';
-DROP TABLE IF EXISTS `user`;

@@ -4,6 +4,7 @@ use
 -- ----------------------------
 -- Table structure for user
 -- ----------------------------
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`
 (
     `id`          bigint       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
