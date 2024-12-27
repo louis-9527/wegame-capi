@@ -2,7 +2,7 @@ package com.wegame.capi.common;
 
 public class Constants {
     public static final String CUSER_LOGIN_TOKEN = "wegame:cuser:login:token:%s";
-    public static final String CUSER_LOGIN_IDENTITY = "wegame:cuser:login:identity:%s";
+    public static final String CUSER_CREDIT_CHANGE = "wegame:cuser:credit:change";
     public static final String SYSTEM = "system";
     public static final Integer TOKEN_EXPIRED = 60;
 

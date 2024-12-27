@@ -1,26 +1,36 @@
 package com.wegame.capi.biz.service;
 
+import cn.hutool.core.util.NumberUtil;
 import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.api.SingleWalletApi;
+import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
+import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.user.UserConverter;
+import com.wegame.capi.client.domain.request.NotifyCreditChangeRequest;
+import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.domain.user.UserPo;
 import com.wegame.capi.dao.mapper.domain.user.UserQuery;
 import com.wegame.capi.dao.mapper.user.UserManualMapper;
 import com.wegame.capi.dao.mapper.user.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
+import static com.wegame.capi.common.Constants.CUSER_CREDIT_CHANGE;
 
 /**
  * UserDo服务
@@ -35,6 +45,10 @@ public class UserService {
     UserMapper userMapper;
     @Autowired
     UserManualMapper userManualMapper;
+    @Autowired
+    SingleWalletApi singleWalletApi;
+    @Autowired
+    RedisTemplate redisTemplate;
 
     /**
      * 新增
@@ -192,6 +206,19 @@ public class UserService {
             log.error("insertOrUpdate err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");
         }
-
     }
+
+    public Long getCredit() {
+        redisTemplate.opsForSet().remove(CUSER_CREDIT_CHANGE, UserInfoContext.getUserInfo().getPlayerName());
+        GetCreditRes res = singleWalletApi.getCredit(GetCreditReq.build());
+        return Objects.isNull(res.getCredit()) ? 0L : NumberUtil.mul(res.getCredit(), 100).longValue();
+    }
+
+    public Void notifyCreditChange(NotifyCreditChangeRequest request) {
+        String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));
+        AssertUtil.assertTrue(StringUtils.equals(hash, request.getHash()), ErrorCode.ERR_PARAM);
+        redisTemplate.opsForSet().add(CUSER_CREDIT_CHANGE, request.getPlayerName());
+        return null;
+    }
+
 }

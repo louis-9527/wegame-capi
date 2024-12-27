@@ -3,6 +3,7 @@ package com.wegame.capi.application.controller;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.service.UserLoginService;
+import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
@@ -28,6 +29,8 @@ public class UserController {
 
     @Autowired
     UserLoginService userLoginService;
+    @Autowired
+    UserService userService;
     @Autowired
     RedisTemplate redisTemplate;
 
@@ -58,6 +61,6 @@ public class UserController {
     @ApiOperation(value = "余额", httpMethod = "GET")
     @GetMapping("/getCredit")
     public CommonResponse<Long> getCredit() {
-        return CommonResponse.build(userLoginService.getCredit());
+        return CommonResponse.build(userService.getCredit());
     }
 }
