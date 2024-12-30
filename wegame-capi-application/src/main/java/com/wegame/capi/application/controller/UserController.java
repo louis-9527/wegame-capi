@@ -63,4 +63,5 @@ public class UserController {
     public CommonResponse<Long> getCredit() {
         return CommonResponse.build(userService.getCredit());
     }
+
 }
