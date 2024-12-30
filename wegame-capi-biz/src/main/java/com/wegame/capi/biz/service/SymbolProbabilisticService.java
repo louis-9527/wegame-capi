@@ -17,10 +17,10 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * 概率服务
+ * 元素概率服务
  */
 @Component
-public class ProbabilisticService {
+public class SymbolProbabilisticService {
 
     private static final String KEY_NAME_SPLITTER = "_";
     @Autowired
