@@ -3,15 +3,18 @@ package com.wegame.capi.biz.service;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.common.enums.GameTypeEnum;
 import com.wegame.capi.infrastructure.config.nacos.NacosMysteriousProbabilisticConfig;
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import springfox.documentation.schema.Collections;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * 概率服务
@@ -19,23 +22,25 @@ import java.util.*;
 @Component
 public class ProbabilisticService {
 
+    private static final String KEY_NAME_SPLITTER = "_";
     @Autowired
     NacosMysteriousProbabilisticConfig nacosMysteriousProbabilisticConfig;
 
     /**
      * 随机一个游戏元素
      *
-     * @param gameId
-     * @param cellNo
+     * @param gameId 游戏id
+     * @param cellNo 列序号，1则表示第一列
      * @return
      */
-    public int randomOneSymbol(long gameId, int cellNo) {
-        // todo 扩展性
+    public SymbolDo randomOneSymbol(long gameId, int cellNo) {
+        // todo 扩展性设计与实现
+        // todo 配置数据正确性校验
         GameTypeEnum gameType = GameTypeEnum.valueOfCode(gameId);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "Not Support Game");
         AssertUtil.assertNotNull(cellNo < 0, ErrorCode.ERR_PARAM, "Not Support Game");
         Map<String, List<Double>> configMap = nacosMysteriousProbabilisticConfig.getConfigMap();
-        // todo 校验
+        // todo 数据校验
         Map<String, Integer> map = new HashMap<>();
         configMap.entrySet().forEach(item -> {
             int val = new BigDecimal(item.getValue().get(cellNo - 1) * 100).intValue();
@@ -51,9 +56,14 @@ public class ProbabilisticService {
         // 生成一个1到10000之间的随机整数
         int randomNumber = 1 + random.nextInt(10000);
         int startVal = 0;
-        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+        for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (randomNumber >= startVal && randomNumber <= entry.getValue()) {
-                return NumberUtils.toInt(entry.getKey().split("_")[0]);
+                String[] strArr = entry.getKey().split(KEY_NAME_SPLITTER);
+                return SymbolDo.builder()
+                        .gameId(gameId)
+                        .id(Integer.valueOf(strArr[0]))
+                        .name(strArr[1])
+                        .build();
             } else {
                 startVal += entry.getValue();
             }
