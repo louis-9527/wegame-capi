@@ -15,16 +15,17 @@ import java.util.Objects;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum SymbolTypeEnum {
 
-    SYMBOL_1001(1001, "SYMBOL_1001"),
-    SYMBOL_1002(1002, "SYMBOL_1002"),
-    SYMBOL_1003(1003, "SYMBOL_1003"),
-    SYMBOL_1004(1004, "SYMBOL_1004"),
-    SYMBOL_1005(1005, "SYMBOL_1005"),
-    SYMBOL_2001(2001, "SYMBOL_2001"),
-    SYMBOL_2002(2002, "SYMBOL_2002"),
-    SYMBOL_2003(2002, "SYMBOL_2003"),
-    SYMBOL_2004(2004, "SYMBOL_2004"),
-    SYMBOL_2005(2005, "SYMBOL_2005"),
+    Symbol1001(1001, "Symbol1001"),
+    Symbol1002(1002, "Symbol1001"),
+    Symbol1003(1003, "Symbol1001"),
+    Symbol1004(1004, "Symbol1001"),
+    Symbol1005(1005, "Symbol1001"),
+
+    Symbol2001(2001, "Symbol2001"),
+    Symbol2002(2002, "Symbol2002"),
+    Symbol2003(2002, "Symbol2003"),
+    Symbol2004(2004, "Symbol2004"),
+    Symbol2005(2005, "Symbol2005"),
 
     Scatter(3001, "Scatter"),
 
