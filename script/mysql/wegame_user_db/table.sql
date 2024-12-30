@@ -1,3 +1,5 @@
+use `wegame_user_db`;
+
 -- ----------------------------
 -- Table structure for user
 -- ----------------------------
