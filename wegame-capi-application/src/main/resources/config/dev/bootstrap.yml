@@ -8,6 +8,7 @@ spring:
     import:
       - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
       - "optional:nacos:${spring.application.name}-mysterious-probabilistic-config-${spring.profiles.active}.json"
+      - "optional:nacos:${spring.application.name}-mysterious-odds-config-${spring.profiles.active}.json"
   cloud:
     nacos:
       username: nacos
