@@ -40,11 +40,11 @@ public class ProbabilisticService {
         GameTypeEnum gameType = GameTypeEnum.valueOfCode(gameId);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "Not Support Game");
         AssertUtil.assertNotNull(cellNo < 0, ErrorCode.ERR_PARAM, "Not Support Game");
-        Map<String, List<Double>> configMap = nacosMysteriousProbabilisticConfig.getProbabilisticConfigMap();
+        Map<String, List<BigDecimal>> configMap = nacosMysteriousProbabilisticConfig.getProbabilisticConfigMap();
         // todo 数据校验
         Map<String, Integer> map = new HashMap<>();
         configMap.entrySet().forEach(item -> {
-            int val = new BigDecimal(item.getValue().get(cellNo - 1) * 100).intValue();
+            int val = (item.getValue().get(cellNo - 1).multiply(new BigDecimal(100))).intValue();
             if (val > 0) {
                 map.put(item.getKey(), val);
             }
@@ -58,7 +58,7 @@ public class ProbabilisticService {
         int randomNumber = 1 + random.nextInt(10000);
         int startVal = 0;
         for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
-            if (randomNumber > startVal && randomNumber <= entry.getValue()) {
+            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
                 String[] strArr = entry.getKey().split(KEY_NAME_SPLITTER);
                 return SymbolDo.builder()
                         .gameId(gameId)

@@ -3,6 +3,7 @@ package com.wegame.capi.infrastructure.config.nacos;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -18,9 +19,9 @@ public class NacosMysteriousProbabilisticConfig {
      * key：元素id + "_" + 元素名称<br/>
      * value：List<Double> 概率列表<br/>
      */
-    private Map<String, List<Double>> probabilisticConfigMap = new HashMap<>();
+    private Map<String, List<BigDecimal>> probabilisticConfigMap = new HashMap<>();
 
-    public Map<String, List<Double>> getProbabilisticConfigMap() {
+    public Map<String, List<BigDecimal>> getProbabilisticConfigMap() {
         return probabilisticConfigMap;
     }
 }
