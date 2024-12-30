@@ -2,6 +2,7 @@
 //
 //import com.google.common.util.concurrent.RateLimiter;
 //import com.wegame.base.annotation.ServerRateLimit;
+//import com.wegame.capi.infrastructure.config.nacos.NacosServerRateLimitConfig;
 //import lombok.extern.slf4j.Slf4j;
 //import org.aspectj.lang.ProceedingJoinPoint;
 //import org.aspectj.lang.annotation.Around;
@@ -38,8 +39,6 @@
 //    private void serverRateLimitHandle(ProceedingJoinPoint joinPoint) {
 //        try {
 //            //全局开关是否打开
-//
-//
 //            Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 //            ServerRateLimit rateLimit = AnnotationUtils.findAnnotation(method, ServerRateLimit.class);
 //            if (Objects.isNull(rateLimit)) {
