@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class MysteriousBuyFreeSpinsBetStrategy extends AbstractMysteriousBetStrategy {
 
     @Override
-    BetResultDo bet(BetDo betDo) {
+   public BetResultDo bet(BetDo betDo) {
         // todo
         return null;
     }
