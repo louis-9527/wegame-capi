@@ -12,15 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("serverRateLimit")
-@Api(value = "限流测试模块", tags = {"限流测试模块"})
-public class ServerRateLimitTestController {
+@RequestMapping("test")
+@Api(value = "测试模块", tags = {"测试模块"})
+public class TestController {
+
     @Autowired
     ServerRateLimitTestService serverRateLimitTestService;
 
-    @ApiOperation(value = "test", httpMethod = "GET")
-    @GetMapping("/test")
-    public CommonResponse<String> test() {
+    @ApiOperation(value = "serverRateLimit", httpMethod = "GET")
+    @GetMapping("/serverRateLimit")
+    public CommonResponse<String> serverRateLimit() {
         return CommonResponse.build(serverRateLimitTestService.rateLimit());
     }
 }
