@@ -188,7 +188,7 @@ public class GameRecordService {
     public BetSummaryVo betSummary(BetSummaryRequest request) {
         String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));
         AssertUtil.assertTrue(StringUtils.equals(hash, request.getHash()), ErrorCode.ERR_PARAM);
-        // todo maidong 统计结果
+        // todo 麦冬 统计结果
         return BetSummaryVo.builder().build();
     }
 

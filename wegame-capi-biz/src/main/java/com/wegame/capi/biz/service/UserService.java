@@ -218,7 +218,7 @@ public class UserService {
         String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));
         AssertUtil.assertTrue(StringUtils.equals(hash, request.getHash()), ErrorCode.ERR_PARAM);
         redisTemplate.opsForSet().add(CUSER_CREDIT_CHANGE, request.getPlayerName());
-        // todo maidong 返回void结果
+        // todo 麦冬 返回void结果
         return null;
     }
 
