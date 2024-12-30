@@ -34,6 +34,7 @@ public class ProbabilisticService {
      * @return
      */
     public SymbolDo randomOneSymbol(long gameId, int cellNo) {
+        // todo 自测
         // todo 扩展性设计与实现
         // todo 配置数据正确性校验
         GameTypeEnum gameType = GameTypeEnum.valueOfCode(gameId);
