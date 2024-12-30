@@ -20,7 +20,7 @@ public class XxxBetContext extends AbstractBetContext {
     }
 
     @Override
-    public <T> BetResultDo<T> bet(BetDo betDo) {
+    public BetResultDo bet(BetDo betDo) {
         return null;
     }
 }
