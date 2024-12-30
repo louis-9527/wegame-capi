@@ -2,7 +2,9 @@ package com.wegame.capi.application.controller;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.biz.builder.BetBuilder;
 import com.wegame.capi.biz.service.BetService;
+import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,10 +33,9 @@ public class BetController {
     @ApiOperation(value = "投注", httpMethod = "POST")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
     @PostMapping("/bet")
-    public CommonResponse<Object> bet(@Valid @RequestBody UserLoginRequest request) {
-        // todo
-        request.validateParam();
-        return CommonResponse.build(betService.bet(request));
+    public CommonResponse<Object> bet(@Valid @RequestBody BetRequest request) {
+        request.validate();
+        return CommonResponse.build(betService.bet(BetBuilder.buildBetDo(request)));
     }
 
 }
