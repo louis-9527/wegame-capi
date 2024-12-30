@@ -21,8 +21,8 @@ import java.io.Serializable;
 public class BetRequest implements Validate, Serializable {
     @ApiModelProperty(value = "游戏Id", required = true)
     private Long gameId;
-    @ApiModelProperty(value = "投注类型：下注类型:0正常投注,1非购买免费轮投注,2:购买免费轮投注", required = true)
-    private Integer betType;
+    @ApiModelProperty(value = "投注类型：NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注,", required = true)
+    private String betType;
     @ApiModelProperty(value = "投注明细", required = false)
     private Object betDetail;
 
@@ -53,20 +53,6 @@ public class BetRequest implements Validate, Serializable {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel(description = "Mysterious非购买免费轮投注请求参数")
-    public class MysteriousNonBuyFreeSpinsBetRequest implements Validate, Serializable {
-        @ApiModelProperty(value = "游戏记录Id", required = true)
-        private String gameRecordId;
-
-        @Override
-        public void validateParam() {
-            AssertUtil.assertStrNotEmpty(gameRecordId, ErrorCode.ERR_PARAM);
-        }
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
     @ApiModel(description = "Mysterious购买免费轮投注请求参数")
     public class MysteriousBuyFreeSpinsBetRequest implements Validate, Serializable {
         @ApiModelProperty(value = "投注金额/购买金额", required = true)
@@ -75,6 +61,20 @@ public class BetRequest implements Validate, Serializable {
         @Override
         public void validateParam() {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+        }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel(description = "Mysterious非购买免费轮投注请求参数")
+    public class MysteriousNonBuyFreeSpinsBetRequest implements Validate, Serializable {
+        @ApiModelProperty(value = "游戏记录Id", required = true)
+        private String gameRecordId;
+
+        @Override
+        public void validateParam() {
+            AssertUtil.assertStrNotEmpty(gameRecordId, ErrorCode.ERR_PARAM);
         }
     }
 }

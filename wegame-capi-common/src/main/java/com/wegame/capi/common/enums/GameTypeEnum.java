@@ -7,13 +7,13 @@ import lombok.ToString;
 import java.util.Objects;
 
 /**
- * 游戏枚举
+ * 游戏类型枚举
  *
  * @author apple
  */
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum GameEnum {
+public enum GameTypeEnum {
 
     MYSTERIOUS(10000L, "mysterious");;
 
@@ -33,13 +33,13 @@ public enum GameEnum {
      * @param id id
      * @param name 名称
      */
-    private GameEnum(Long id, String name) {
+    private GameTypeEnum(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public static GameEnum valueOfCode(Long id) {
-        for (GameEnum item : GameEnum.values()) {
+    public static GameTypeEnum valueOfCode(Long id) {
+        for (GameTypeEnum item : GameTypeEnum.values()) {
             if (Objects.equals(item.getId(), id)) {
                 return item;
             }

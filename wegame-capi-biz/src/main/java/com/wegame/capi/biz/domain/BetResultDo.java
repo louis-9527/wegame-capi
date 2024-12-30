@@ -22,7 +22,7 @@ public class BetResultDo<T> implements Serializable {
     /**
      * 投注类型
      */
-    private Integer betType;
+    private String betType;
     /**
      * 投注结果
      */

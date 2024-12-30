@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.context.strategy.bet;
+package com.wegame.capi.biz.context;
 
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
@@ -11,21 +11,24 @@ import org.springframework.stereotype.Component;
 public abstract class AbstractBetContext {
     /**
      * 游戏id
+     *
      * @return
      */
     public abstract Long getGameId();
 
     /**
      * 游戏名称
+     *
      * @return
      */
     public abstract String gameName();
 
     /**
      * 投注
+     *
      * @param betDo 投注
      * @return 投注结果
      */
-    public abstract BetResultDo bet(BetDo betDo);
+    public abstract <T> BetResultDo<T> bet(BetDo betDo);
 
 }

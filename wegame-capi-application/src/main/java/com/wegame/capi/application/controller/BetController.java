@@ -3,9 +3,12 @@ package com.wegame.capi.application.controller;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.builder.BetBuilder;
+import com.wegame.capi.biz.converter.BetResultConverter;
+import com.wegame.capi.biz.domain.BetResultDo;
 import com.wegame.capi.biz.service.BetService;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
+import com.wegame.capi.client.domain.vo.BetResultVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -33,9 +36,10 @@ public class BetController {
     @ApiOperation(value = "投注", httpMethod = "POST")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
     @PostMapping("/bet")
-    public CommonResponse<Object> bet(@Valid @RequestBody BetRequest request) {
+    public CommonResponse<BetResultVo> bet(@Valid @RequestBody BetRequest request) {
         request.validate();
-        return CommonResponse.build(betService.bet(BetBuilder.buildBetDo(request)));
+        BetResultDo betResultDo = betService.bet(BetBuilder.buildBetDo(request));
+        return CommonResponse.build(BetResultConverter.doToVo(betResultDo));
     }
 
 }
