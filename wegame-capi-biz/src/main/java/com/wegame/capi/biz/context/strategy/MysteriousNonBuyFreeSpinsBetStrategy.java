@@ -2,7 +2,6 @@ package com.wegame.capi.biz.context.strategy;
 
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
-import io.lettuce.core.dynamic.annotation.CommandNaming;
 import org.springframework.stereotype.Component;
 
 @Component("mysteriousNonBuyFreeSpinsBetStrategy")

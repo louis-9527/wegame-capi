@@ -13,6 +13,6 @@ public abstract class AbstractMysteriousBetStrategy {
      * @param betDo
      * @return
      */
-    abstract BetResultDo bet(BetDo betDo);
+    public abstract BetResultDo bet(BetDo betDo);
 
 }

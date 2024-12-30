@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain;
 
+import com.wegame.capi.common.enums.BetTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 @SuperBuilder
@@ -23,7 +23,7 @@ public class BetDo implements Serializable {
     /**
      * 投注类型: @see GameBetTypeEnum
      */
-    private String betType;
+    private BetTypeEnum betType;
     /**
      * 投注详情
      */

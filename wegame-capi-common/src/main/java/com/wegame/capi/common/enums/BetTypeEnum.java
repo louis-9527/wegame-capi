@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.ToString;
 
 /**
- * 游戏投注类型
+ * 投注类型
  *
  * @author apple
  */
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum GameBetTypeEnum {
+public enum BetTypeEnum {
 
     NORMAL_BET("NORMAL_BET", "正常投注"),
     NON_BUY_FREE_SPINS_BET("NON_BUY_FREE_SPINS_BET", "非购买免费轮投注"),
@@ -35,13 +35,13 @@ public enum GameBetTypeEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private GameBetTypeEnum(String code, String desc) {
+    private BetTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public static GameBetTypeEnum valueOfCode(String code) {
-        for (GameBetTypeEnum item : GameBetTypeEnum.values()) {
+    public static BetTypeEnum valueOfCode(String code) {
+        for (BetTypeEnum item : BetTypeEnum.values()) {
             if (item.getCode().equals(code)) {
                 return item;
             }

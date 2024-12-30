@@ -2,6 +2,7 @@ package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.client.domain.request.BetRequest;
+import com.wegame.capi.common.enums.BetTypeEnum;
 
 public class BetBuilder {
 
@@ -11,7 +12,7 @@ public class BetBuilder {
     public static BetDo buildBetDo(BetRequest request) {
         return BetDo.builder()
                 .gameId(request.getGameId())
-                .betType(request.getBetType())
+                .betType(BetTypeEnum.valueOfCode(request.getBetType()))
                 .betDetail(request.getBetDetail())
                 .build();
     }
