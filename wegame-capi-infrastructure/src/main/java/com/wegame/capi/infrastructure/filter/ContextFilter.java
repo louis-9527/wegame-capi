@@ -101,7 +101,7 @@ public class ContextFilter extends OncePerRequestFilter {
                 OperatorContext.setOperator(Operator.builder()
                         .userId(Long.valueOf(userInfo.getId()))
                         .playerId(userInfo.getPlayerId())
-                        .name(userInfo.getName())
+                        .name(userInfo.getPlayerName())
                         .build());
             }
         } catch (Exception e) {

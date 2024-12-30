@@ -1,31 +1,25 @@
 package com.wegame.capi.application.controller;
 
-import com.wegame.base.Validate;
+import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.base.domain.PageInfoVo;
-
+import com.wegame.capi.biz.service.UserLoginService;
 import com.wegame.capi.biz.service.UserService;
-import com.wegame.capi.biz.converter.user.UserConverter;
-import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.client.domain.request.query.PageQueryUserRequest;
-import com.wegame.capi.client.domain.vo.UserVo;
-import com.wegame.capi.dao.mapper.domain.user.UserQuery;
+import com.wegame.capi.client.domain.request.UserLoginRequest;
+import com.wegame.capi.common.Constants;
+import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.common.context.UserInfoContext;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 /**
  * 用户模块
@@ -38,82 +32,39 @@ import java.util.stream.Collectors;
 public class UserController {
 
     @Autowired
+    UserLoginService userLoginService;
+    @Autowired
     UserService userService;
+    @Autowired
+    RedisTemplate redisTemplate;
 
-    @ApiOperation(value = "新增（单条）", httpMethod = "POST")
-    @PostMapping("/add")
-    public CommonResponse<Boolean> add(@RequestBody UserVo vo) {
-        vo.validate();
-        Long id = userService.add(UserConverter.voToDo(vo));
-        return CommonResponse.build(Objects.nonNull(id));
+    @ApiOperation(value = "登录", httpMethod = "POST")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
+    @PostMapping("/login")
+    public CommonResponse<UserInfo> login(HttpServletResponse response, @Valid @RequestBody UserLoginRequest request) {
+        request.validateParam();
+        return CommonResponse.build(userLoginService.login(response, request));
     }
 
-    @ApiOperation(value = "新增（批量）", httpMethod = "POST")
-    @PostMapping("/batchAdd")
-    public CommonResponse<Boolean> batchAdd(@RequestBody List<UserVo> voList) {
-        Optional.ofNullable(voList)
-            .orElse(Collections.emptyList())
-            .forEach(Validate::validate);
-        return CommonResponse.build(userService.batchAdd(UserConverter.voToDoList(voList)));
+    @LoginRequired
+    @ApiOperation(value = "登出", httpMethod = "GET")
+    @GetMapping("/logout")
+    public CommonResponse<Boolean> logout(HttpServletRequest request) {
+        String token = request.getHeader(Constants._TOKEN_);
+        return CommonResponse.build(userLoginService.logout(token));
     }
 
-    @ApiOperation(value = "删除（单条：根据唯一id）", httpMethod = "GET")
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "主键id", required = true, dataTypeClass = String.class, paramType = "path")})
-    @GetMapping("/delete/{id}")
-    public CommonResponse<Boolean> delete(@PathVariable String id) {
-        return CommonResponse.build(userService.delete(Long.valueOf(id)));
+    @LoginRequired
+    @ApiOperation(value = "个人信息", httpMethod = "GET")
+    @GetMapping("/me")
+    public CommonResponse<UserInfo> me() {
+        return CommonResponse.build(UserInfoContext.getUserInfo());
     }
 
-    @ApiOperation(value = "删除（批量：根据唯一id列表）", httpMethod = "POST")
-    @GetMapping("/batchDelete")
-    public CommonResponse<Boolean> batchDelete(@RequestBody List<String> ids) {
-        List<Long> idList = Optional.ofNullable(ids)
-            .orElse(Collections.emptyList())
-            .stream()
-            .filter(StringUtils::isNotEmpty)
-            .map(Long::parseLong)
-            .collect(Collectors.toList());
-        return CommonResponse.build(userService.batchDelete(idList));
+    @LoginRequired
+    @ApiOperation(value = "余额", httpMethod = "GET")
+    @GetMapping("/getCredit")
+    public CommonResponse<Long> getCredit() {
+        return CommonResponse.build(userService.getCredit());
     }
-
-    @ApiOperation(value = "更新（单条：根据唯一id）", httpMethod = "POST")
-    @PostMapping("/update")
-    public CommonResponse<Boolean> update(@RequestBody UserVo vo) {
-        vo.validate();
-        return CommonResponse.build(userService.update(UserConverter.voToDo(vo)));
-    }
-
-    @ApiOperation(value = "查询（单条：根据唯一id）", httpMethod = "GET")
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "主键id", required = true, dataTypeClass = String.class, paramType = "path")})
-    @GetMapping("/get/{id}")
-    public CommonResponse<UserVo> get(@PathVariable String id) {
-        return CommonResponse.build(UserConverter.doToVo(userService.get(Long.valueOf(id))));
-    }
-
-    @ApiOperation(value = "查询（批量：根据唯一id列表）", httpMethod = "POST")
-    @GetMapping("/listByIds")
-    public CommonResponse<List<UserVo>> listByIds(@RequestBody List<String> ids) {
-        List<Long> idList = Optional.ofNullable(ids)
-            .orElse(Collections.emptyList())
-            .stream()
-            .filter(StringUtils::isNotEmpty)
-            .map(Long::parseLong)
-            .collect(Collectors.toList());
-        return CommonResponse.build(UserConverter.doToVoList(userService.listByIds(idList)));
-    }
-
-    @ApiOperation(value = "分页查询（批量：根据查询条件）", httpMethod = "POST")
-    @PostMapping("/pageQuery")
-    public CommonResponse<PageInfoVo<UserVo>> pageQuery(@RequestBody PageQueryUserRequest request) {
-        request.validate();
-        UserQuery query = UserConverter.requestToQuery(request, "order by `create_time` desc");
-        long cnt = userService.count(query);
-        List<UserDo> list = userService.list(query);
-        return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
-                            request.getPageSize(),
-                            UserConverter.doToVoList(list),
-                            cnt));
-    }
-
-    ///////////////  above auto generated ///////////////
 }

@@ -70,24 +70,17 @@ public class BaseApi {
     }
 
     public void assembleSingleSignature(SingleWalletBaseReq req) {
-        String preSignature = String.format("%s%s%s%s", req.getChannelId(), req.getPlayerName(),req.getCreateTime(), req.getRefId());
-        String key = StringUtils.equals(String.valueOf(req.getPId()), cpPlatformId) ? cpPrivateKey : igoPrivateKey;
-        String iv = StringUtils.equals(String.valueOf(req.getPId()), cpPlatformId) ? cpPrivateIv : igoPrivateIv;
-        log.info("platformId: {}; preSignature: {}; key: {}; iv: {}", req.getPId(), preSignature, key, iv);
-        String encrypt = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
-        AssertUtil.assertNotNull(encrypt, ErrorCode.ERR_PARAM);
-        req.setHash(encrypt);
+        String hash = hash(req.getChannelId(), req.getPlayerName(), req.getCreateTime(), req.getRefId());
+        req.setHash(hash);
     }
 
-    public String getChannelId(String platformId) {
-        AssertUtil.assertNotNull(platformId, ErrorCode.ERR_PARAM);
-        if (StringUtils.equals(platformId, cpPlatformId)) {
-            return cpChannelId;
-        } else if (StringUtils.equals(platformId, igoPlatformId)) {
-            return igoChannelId;
-        } else {
-            throw new BusinessException(ErrorCode.ERR_PARAM);
-        }
+    public String hash(String channelId, String playerName, String createTime, String refId) {
+        String preSignature = String.format("%s%s%s%s", channelId, playerName, createTime, refId);
+        String key = StringUtils.equals(channelId, cpChannelId) ? cpPrivateKey : igoPrivateKey;
+        String iv = StringUtils.equals(channelId, cpChannelId) ? cpPrivateIv : igoPrivateIv;
+        String hash = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
+        AssertUtil.assertNotNull(hash, ErrorCode.ERR_PARAM);
+        return hash;
     }
 
 }
