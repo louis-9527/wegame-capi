@@ -34,7 +34,7 @@ public class BetResultVo implements Validate, Serializable {
 
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
+//    @AllArgsConstructor
     @ApiModel(description = "Mysterious正常投注结果")
     public class MysteriousNormalBetResultVo implements Validate, Serializable {
         // todo
@@ -42,7 +42,7 @@ public class BetResultVo implements Validate, Serializable {
 
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
+//    @AllArgsConstructor
     @ApiModel(description = "Mysterious非购买免费轮投注结果")
     public class MysteriousNonBuyFreeSpinsBetVo implements Validate, Serializable {
         // todo
@@ -50,7 +50,7 @@ public class BetResultVo implements Validate, Serializable {
 
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
+//    @AllArgsConstructor
     @ApiModel(description = "Mysterious购买免费轮投注请求参数")
     public class MysteriousBuyFreeSpinsBetResultVo implements Validate, Serializable {
         // todo
