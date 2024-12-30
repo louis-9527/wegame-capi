@@ -20,7 +20,7 @@ import java.util.Random;
  * 元素概率服务
  */
 @Component
-public class SymbolProbabilisticService {
+public class ProbabilisticService {
 
     private static final String KEY_NAME_SPLITTER = "_";
     @Autowired
@@ -57,7 +57,7 @@ public class SymbolProbabilisticService {
         int randomNumber = 1 + random.nextInt(10000);
         int startVal = 0;
         for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
-            if (randomNumber >= startVal && randomNumber <= entry.getValue()) {
+            if (randomNumber > startVal && randomNumber <= entry.getValue()) {
                 String[] strArr = entry.getKey().split(KEY_NAME_SPLITTER);
                 return SymbolDo.builder()
                         .gameId(gameId)
