@@ -142,7 +142,6 @@ amazon:
 api:
   sport:
     platformDomain: http://uat-restful-private-service
-    ## todo maidong 对应的singleDomain配置
     singleDomain: https://sw-http-main-apisix.igo8.me/
     cp:
       platformId: 50
@@ -150,7 +149,6 @@ api:
       privateKey: 466e6be5e05318a020e58568831df75b8cf5e107ec77c8445cd32080d7e3a3fc
       privateIv: f0c4d2086d1f893fd560f34baecd9481
       agentKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxckZfZgqTqkxZW+hVKsx5qclITEtrVXYDVPz3nRRH1wYllP9KSxupjx4987Ad9f05a3Mn9yjf2iyqMYihiZ0JglYMSkOeh19OIOwiJfpG7pUSS7bXQP/mpaoip2IdL1ulkwe5o84kjLptudSowcLOVzWZKYJu8aCi9fe+6Xg/WC99WMjEXP42XL1uXldhWeKdVAFuIu4+YyOecQkB01BWzwKP2UUvJPOiGNVub1jrtQqsWqRTIy5LHBdRxPNTvXQ4lmjjNjPKzuwqJv/jtKwVO2fwCqRhIzMZUBpJr8LVfYCdjtaBPP21zVK5Q2zLZvrd74xE6ay5OQd/82zXv4P9QIDAQAB
-    ## todo maidong 对应的igo配置
     igo:
       platformId: 55
       channelId: 1035
