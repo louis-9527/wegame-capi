@@ -3,6 +3,7 @@ use `wegame_user_db`;
 -- ----------------------------
 -- Table structure for user
 -- ----------------------------
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`
 (
     `id`             bigint       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -25,9 +26,10 @@ CREATE TABLE `user`
   COLLATE utf8mb4_unicode_ci COMMENT ='用户';
 
 -- ----------------------------
--- Table structure for user_present_amount_record
+-- Table structure for user_present_record
 -- ----------------------------
-CREATE TABLE `user_present_amount_record`
+DROP TABLE IF EXISTS `user_present_record`;
+CREATE TABLE `user_present_record`
 (
     `id`          bigint       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `user_id`     bigint       NOT NULL COMMENT '用户ID',
@@ -35,7 +37,7 @@ CREATE TABLE `user_present_amount_record`
     `type`        tinyint      NOT NULL COMMENT '类型：1增加,2扣减',
     `sub_type`    tinyint      NOT NULL COMMENT '子类型：11营销赠送, 12游戏赠送失败回滚, 21游戏赠送后扣减',
     `biz_Id`      varchar(128) NOT NULL COMMENT '业务Id(增加：赠送流水号Id/,减少为投注记录Id)',
-    `amount`      bigint       NOT NULL COMMENT '变更金额',
+    `amount`      bigint       NOT NULL COMMENT '金额',
     `status`      tinyint      NOT NULL COMMENT '状态：0进行中,1已完成',
     `creator`     varchar(100) NOT NULL DEFAULT '' COMMENT '创建人',
     `create_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -46,4 +48,4 @@ CREATE TABLE `user_present_amount_record`
     KEY (`player_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
-  COLLATE utf8mb4_unicode_ci COMMENT ='用户赠送金额记录';
+  COLLATE utf8mb4_unicode_ci COMMENT ='用户赠送记录';

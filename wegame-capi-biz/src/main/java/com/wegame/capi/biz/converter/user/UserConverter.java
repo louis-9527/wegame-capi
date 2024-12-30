@@ -1,13 +1,17 @@
 package com.wegame.capi.biz.converter.user;
 
-import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.base.context.Operator;
+import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.OperatorUtil;
+import com.wegame.capi.client.domain.request.query.PageQueryUserRequest;
 import com.wegame.capi.client.domain.vo.UserVo;
+import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.dao.mapper.domain.user.UserPo;
+import com.wegame.capi.dao.mapper.domain.user.UserQuery;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,22 +26,13 @@ public class UserConverter {
             return null;
         }
         UserDo userDo = new UserDo();
-        userDo.setPlayerId(vo.getPlayerId());
-        userDo.setName(vo.getName());
-        userDo.setNickName(vo.getNickName());
-        userDo.setRealName(vo.getRealName());
-        userDo.setPhoneNumber(vo.getPhoneNumber());
-        userDo.setGender(vo.getGender());
-        userDo.setPlayerAvatar(vo.getPlayerAvatar());
-        userDo.setPassword(vo.getPassword());
-        userDo.setEmail(vo.getEmail());
-        userDo.setNationality(vo.getNationality());
-        userDo.setProvince(vo.getProvince());
-        userDo.setCity(vo.getCity());
-        userDo.setAddress(vo.getAddress());
         userDo.setPlatformId(vo.getPlatformId());
-        userDo.setRegistrationTime(Objects.nonNull(vo.getRegistrationTime()) ? new Date(vo.getRegistrationTime()) : null);
-        userDo.setStatus(vo.getStatus());
+        userDo.setPlayerId(vo.getPlayerId());
+        userDo.setPlayerName(vo.getPlayerName());
+        userDo.setNickName(vo.getNickName());
+        userDo.setUserLevel(vo.getUserLevel());
+        userDo.setUserName(vo.getUserName());
+        userDo.setPresentAmount(StringUtils.isNotEmpty(vo.getPresentAmount()) ? Long.valueOf(vo.getPresentAmount()) : null);
         userDo.setExtend(vo.getExtend());
         userDo.setCreator(vo.getCreator());
         userDo.setCreateTime(Objects.nonNull(vo.getCreateTime()) ? new Date(vo.getCreateTime()) : null);
@@ -52,22 +47,13 @@ public class UserConverter {
         }
         UserDo userDo = new UserDo();
         userDo.setId(po.getId());
-        userDo.setPlayerId(po.getPlayerId());
-        userDo.setName(po.getName());
-        userDo.setNickName(po.getNickName());
-        userDo.setRealName(po.getRealName());
-        userDo.setPhoneNumber(po.getPhoneNumber());
-        userDo.setGender(po.getGender());
-        userDo.setPlayerAvatar(po.getPlayerAvatar());
-        userDo.setPassword(po.getPassword());
-        userDo.setEmail(po.getEmail());
-        userDo.setNationality(po.getNationality());
-        userDo.setProvince(po.getProvince());
-        userDo.setCity(po.getCity());
-        userDo.setAddress(po.getAddress());
         userDo.setPlatformId(po.getPlatformId());
-        userDo.setRegistrationTime(po.getRegistrationTime());
-        userDo.setStatus(po.getStatus());
+        userDo.setPlayerId(po.getPlayerId());
+        userDo.setPlayerName(po.getPlayerName());
+        userDo.setNickName(po.getNickName());
+        userDo.setUserLevel(po.getUserLevel());
+        userDo.setUserName(po.getUserName());
+        userDo.setPresentAmount(po.getPresentAmount());
         userDo.setExtend(po.getExtend());
         userDo.setCreator(po.getCreator());
         userDo.setCreateTime(po.getCreateTime());
@@ -80,25 +66,16 @@ public class UserConverter {
         if (Objects.isNull(userDo)) {
             return null;
         }
-        Operator operator = OperatorUtil.getOperator();
+        Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserPo po = new UserPo();
-        po.setPlayerId(userDo.getPlayerId());
-        po.setName(userDo.getName());
-        po.setNickName(userDo.getNickName());
-        po.setRealName(userDo.getRealName());
-        po.setPhoneNumber(userDo.getPhoneNumber());
-        po.setGender(userDo.getGender());
-        po.setPlayerAvatar(userDo.getPlayerAvatar());
-        po.setPassword(userDo.getPassword());
-        po.setEmail(userDo.getEmail());
-        po.setNationality(userDo.getNationality());
-        po.setProvince(userDo.getProvince());
-        po.setCity(userDo.getCity());
-        po.setAddress(userDo.getAddress());
         po.setPlatformId(userDo.getPlatformId());
-        po.setRegistrationTime(userDo.getRegistrationTime());
-        po.setStatus(userDo.getStatus());
+        po.setPlayerId(userDo.getPlayerId());
+        po.setPlayerName(userDo.getPlayerName());
+        po.setNickName(userDo.getNickName());
+        po.setUserLevel(userDo.getUserLevel());
+        po.setUserName(userDo.getUserName());
+        po.setPresentAmount(userDo.getPresentAmount());
         po.setExtend(userDo.getExtend());
         if (OptEnum.ADD.equals(optEnum)) {
             po.setCreator(operator.getName());
@@ -119,22 +96,13 @@ public class UserConverter {
         }
         UserVo vo = new UserVo();
         vo.setId(Objects.nonNull(userDo.getId()) ? String.valueOf(userDo.getId()) : null);
-        vo.setPlayerId(userDo.getPlayerId());
-        vo.setName(userDo.getName());
-        vo.setNickName(userDo.getNickName());
-        vo.setRealName(userDo.getRealName());
-        vo.setPhoneNumber(userDo.getPhoneNumber());
-        vo.setGender(userDo.getGender());
-        vo.setPlayerAvatar(userDo.getPlayerAvatar());
-        vo.setPassword(userDo.getPassword());
-        vo.setEmail(userDo.getEmail());
-        vo.setNationality(userDo.getNationality());
-        vo.setProvince(userDo.getProvince());
-        vo.setCity(userDo.getCity());
-        vo.setAddress(userDo.getAddress());
         vo.setPlatformId(userDo.getPlatformId());
-        vo.setRegistrationTime(Objects.nonNull(userDo.getRegistrationTime()) ? userDo.getRegistrationTime().getTime() : null);
-        vo.setStatus(userDo.getStatus());
+        vo.setPlayerId(userDo.getPlayerId());
+        vo.setPlayerName(userDo.getPlayerName());
+        vo.setNickName(userDo.getNickName());
+        vo.setUserLevel(userDo.getUserLevel());
+        vo.setUserName(userDo.getUserName());
+        vo.setPresentAmount(Objects.nonNull(userDo.getPresentAmount()) ? String.valueOf(userDo.getPresentAmount()) : null);
         vo.setExtend(userDo.getExtend());
         vo.setCreator(userDo.getCreator());
         vo.setCreateTime(Objects.nonNull(userDo.getCreateTime()) ? userDo.getCreateTime().getTime() : null);
@@ -177,6 +145,31 @@ public class UserConverter {
                 .map(UserConverter::doToVo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    public static UserQuery requestToQuery(PageQueryUserRequest request, String orderClause) {
+        UserQuery query = new UserQuery();
+        query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
+        query.setPlatformId(request.getPlatformId());
+        query.setPlayerId(request.getPlayerId());
+        query.setPlayerName(request.getPlayerName());
+        query.setNickName(request.getNickName());
+        query.setUserLevel(request.getUserLevel());
+        query.setUserName(request.getUserName());
+        query.setPresentAmount(StringUtils.isNotEmpty(request.getPresentAmount()) ? Long.valueOf(request.getPresentAmount()) : null);
+        query.setExtend(request.getExtend());
+        query.setCreator(request.getCreator());
+        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? new Date(request.getCreateTime()) : null);
+        query.setUpdater(request.getUpdater());
+        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? new Date(request.getUpdateTime()) : null);
+        query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) ? new Date(request.getStartCreateTime()) : null);
+        query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);
+        query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? new Date(request.getStartUpdateTime()) : null);
+        query.setEndUpdateTime(Objects.nonNull(request.getEndUpdateTime()) ? new Date(request.getEndUpdateTime()) : null);
+        query.setLimit(request.getPageSize());
+        query.setOffset(request.getOffset());
+        query.setOrderByClause(orderClause);
+        return query;
     }
 
     ///////////////  above auto generated ///////////////
