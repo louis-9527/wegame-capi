@@ -29,6 +29,6 @@ public abstract class AbstractBetContext {
      * @param betDo 投注
      * @return 投注结果
      */
-    public abstract <T> BetResultDo<T> bet(BetDo betDo);
+    public abstract BetResultDo bet(BetDo betDo);
 
 }

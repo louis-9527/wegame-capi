@@ -20,8 +20,8 @@ public class MysteriousBetContext extends AbstractBetContext {
 
     private static final Map<BetTypeEnum, String> betStrategyNameMap = new ImmutableMap.Builder<BetTypeEnum, String>()
             .put(BetTypeEnum.NORMAL_BET, "mysteriousNormalBetStrategy")
-            .put(BetTypeEnum.NON_BUY_FREE_SPINS_BET, "mysteriousNonBuyFreeSpinsBetStrategy")
             .put(BetTypeEnum.BUY_FREE_SPINS_BET, "mysteriousBuyFreeSpinsBetStrategy")
+            .put(BetTypeEnum.NON_BUY_FREE_SPINS_BET, "mysteriousNonBuyFreeSpinsBetStrategy")
             .build();
 
     @Autowired
@@ -38,7 +38,7 @@ public class MysteriousBetContext extends AbstractBetContext {
     }
 
     @Override
-    public <T> BetResultDo<T> bet(BetDo betDo) {
+    public BetResultDo bet(BetDo betDo) {
         String betStrategyName = betStrategyNameMap.get(betDo.getBetType());
         AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");
         AbstractMysteriousBetStrategy betStrategy = betStrategyMap.get(betStrategyName);
