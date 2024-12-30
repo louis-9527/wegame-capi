@@ -227,9 +227,7 @@ public class UserService {
             log.error("insertOrUpdate err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");
         }
-
     }
-
 
     public Long getCredit() {
         redisTemplate.opsForSet().remove(CUSER_CREDIT_CHANGE, UserInfoContext.getUserInfo().getPlayerName());
