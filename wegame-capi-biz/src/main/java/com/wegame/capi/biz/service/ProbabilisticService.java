@@ -40,7 +40,7 @@ public class ProbabilisticService {
         GameTypeEnum gameType = GameTypeEnum.valueOfCode(gameId);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "Not Support Game");
         AssertUtil.assertNotNull(cellNo < 0, ErrorCode.ERR_PARAM, "Not Support Game");
-        Map<String, List<Double>> configMap = nacosMysteriousProbabilisticConfig.getConfigMap();
+        Map<String, List<Double>> configMap = nacosMysteriousProbabilisticConfig.getProbabilisticConfigMap();
         // todo 数据校验
         Map<String, Integer> map = new HashMap<>();
         configMap.entrySet().forEach(item -> {
