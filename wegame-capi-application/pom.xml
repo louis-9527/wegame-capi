@@ -91,9 +91,9 @@
                     <!--是否覆盖已有文件-->
                     <fileOverWrite>true</fileOverWrite>
                     <!--db jdbc url-->
-                    <jdbcUrl>jdbc:mysql://localhost:3306/wegame_user_db</jdbcUrl>
+                    <jdbcUrl>jdbc:mysql://localhost:3306/wegame_business_db</jdbcUrl>
                     <!--db name-->
-                    <dbName>wegame_user_db</dbName>
+                    <dbName>wegame_business_db</dbName>
                     <!--db username-->
                     <username>root</username>
                     <!--db password-->
