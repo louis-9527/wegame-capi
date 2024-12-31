@@ -18,12 +18,12 @@ public class UserInfoBuilder {
                 .id(String.valueOf(userId))
                 .platformId(request.getPlatformId())
                 .channelId(request.getChanelId())
+                .gameId(request.getGameId())
                 .playerId(request.getPlayerId())
                 .playerName(request.getPlayerName())
                 .nickName(request.getNickName())
                 .userLevel(request.getUserLevel())
                 .userName(request.getUserName())
-                .birthday(request.getBirthday())
                 .token(token)
                 .build();
     }
@@ -31,9 +31,12 @@ public class UserInfoBuilder {
     public static UserDo buildUserDo(UserLoginRequest request) {
         return UserDo.builder()
                 .id(null)
-                .playerId(request.getPlayerId())
-                .nickName(Optional.ofNullable(request.getNickName()).orElse(""))
                 .platformId(request.getPlatformId())
+                .playerId(request.getPlayerId())
+                .playerName(request.getPlayerName())
+                .nickName(Optional.ofNullable(request.getNickName()).orElse(""))
+                .userLevel(request.getUserLevel())
+                .userName(request.getUserName())
                 .extend("")
                 .creator(Constants.SYSTEM)
                 .updater(Constants.SYSTEM)
