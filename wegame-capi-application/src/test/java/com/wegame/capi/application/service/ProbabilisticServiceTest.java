@@ -2,7 +2,7 @@ package com.wegame.capi.application.service;//package com.wegame.capi.applicatio
 
 import com.wegame.capi.application.BaseTest;
 import com.wegame.capi.biz.domain.SymbolDo;
-import com.wegame.capi.biz.service.ProbabilisticService;
+import com.wegame.capi.biz.service.probabilistic.ProbabilisticService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.service;
+package com.wegame.capi.biz.service.probabilistic;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
