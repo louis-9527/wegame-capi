@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.context.strategy.AbstractMysteriousBetStrategy;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
+import com.wegame.capi.common.enums.BetSubTypeEnum;
 import com.wegame.capi.common.enums.BetTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,10 +19,10 @@ import java.util.Map;
 @Component("mysteriousBetContext")
 public class MysteriousBetContext extends AbstractBetContext {
 
-    private static final Map<BetTypeEnum, String> betStrategyNameMap = new ImmutableMap.Builder<BetTypeEnum, String>()
-            .put(BetTypeEnum.NORMAL_BET, "mysteriousNormalBetStrategy")
-            .put(BetTypeEnum.BUY_FREE_SPINS_BET, "mysteriousBuyFreeSpinsBetStrategy")
-            .put(BetTypeEnum.NON_BUY_FREE_SPINS_BET, "mysteriousNonBuyFreeSpinsBetStrategy")
+    private static final Map<BetSubTypeEnum, String> betStrategyNameMap = new ImmutableMap.Builder<BetSubTypeEnum, String>()
+            .put(BetSubTypeEnum.NORMAL_BET, "mysteriousNormalBetStrategy")
+            .put(BetSubTypeEnum.BUY_FREE_SPINS_BET, "mysteriousBuyFreeSpinsBetStrategy")
+            .put(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET, "mysteriousNonBuyFreeSpinsBetStrategy")
             .build();
 
     @Autowired
