@@ -23,7 +23,7 @@ public class RewardRuleDo implements Serializable {
     /**
      * 游戏id
      */
-    private Long gameId;
+    private String gameId;
     /**
      * 投注类型
      */
@@ -32,7 +32,7 @@ public class RewardRuleDo implements Serializable {
     /**
      * 滚轮方格分布
      */
-    private Long[][] rollerGrid;
+    private Integer[][] rollerGrid;
 
 
 }

@@ -25,13 +25,13 @@ public class RewardRuleResultDo implements Serializable {
     /**
      * 游戏id
      */
-    private Long gameId;
+    private String gameId;
     /**
      * 中奖线中奖列表
      */
-    private List<RewardLineDo> rewardLineList;
+    private List<RewardRuleLineDo> rewardRuleLineList;
     /**
      * wild元素id列表
      */
-    private List<Long> wildSymbolIdList;
+    private List<Integer> wildSymbolIdList;
 }

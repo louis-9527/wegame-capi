@@ -20,7 +20,7 @@ public class MariaMultipleHandler implements MultipleHandler {
     }
 
     @Override
-    public BigDecimal getMultiple(List<Long> wildSymbolIdList) {
+    public BigDecimal getMultiple(List<Integer> wildSymbolIdList) {
         return null;
     }
 }

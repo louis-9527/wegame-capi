@@ -58,7 +58,7 @@ public enum SymbolTypeEnum {
         this.name = name;
     }
 
-    public static SymbolTypeEnum valueOfId(Long id) {
+    public static SymbolTypeEnum valueOfId(Integer id) {
         for (SymbolTypeEnum item : SymbolTypeEnum.values()) {
             if (Objects.equals(item.getId(), id)) {
                 return item;

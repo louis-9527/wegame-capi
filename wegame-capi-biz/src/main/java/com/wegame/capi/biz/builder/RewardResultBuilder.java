@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.builder;
 
 import com.google.common.collect.Lists;
-import com.wegame.capi.biz.domain.game.CoordinateDo;
 import com.wegame.capi.biz.domain.game.RewardLineDo;
 import com.wegame.capi.biz.domain.game.RewardResultDo;
 
@@ -22,7 +21,7 @@ public class RewardResultBuilder {
                 .rewardLineList(rewardLineList)
                 .wildTotalTimes(wildTotalTimes)
                 .rewardType(rewardLineList.size() <= 1 ? 1 : 2)
-                .rewardCoordinateList(Lists.newArrayList(rewardCoordinateList))
+                .rewardIndex(null)
                 .isFreeSpin(isFreeSpin)
                 .build();
     }

@@ -29,7 +29,7 @@ public class OddsDo implements Serializable {
     /**
      * 元素id
      */
-    private Long symbolId;
+    private Integer symbolId;
 
     /**
      * 元素连数

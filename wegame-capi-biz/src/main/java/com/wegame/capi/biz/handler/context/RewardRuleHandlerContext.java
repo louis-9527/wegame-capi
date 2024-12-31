@@ -26,7 +26,7 @@ public class RewardRuleHandlerContext {
     @Autowired
     Map<String, RewardRuleHandler> handlerMap;
 
-    public RewardRuleResultDo handler(Long gameId, Integer betType, Long[][] rollerGrid) {
+    public RewardRuleResultDo handler(String gameId, Integer betType, Integer[][] rollerGrid) {
         RewardRuleHandlertypeEnum handlerType = RewardRuleHandlertypeEnum.valueOfGameId(gameId);
         RewardRuleHandler rewardRuleHandler = handlerMap.get(handlerNameMap.get(handlerType));
         return rewardRuleHandler.handle(RewardRuleDo.builder()
