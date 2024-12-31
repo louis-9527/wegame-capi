@@ -1,10 +1,11 @@
-use `wegame_business_db`;
+use
+`wegame_business_db`;
 
 -- ----------------------------
--- Table structure for game_record
+-- Table structure for bet_record
 -- 存储 mongodb
 -- ----------------------------
-CREATE TABLE `game_bet_record`
+CREATE TABLE `bet_record`
 (
     `id`               bigint       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `p_id`             varchar(64)  NOT NULL COMMENT '平台id',
@@ -39,12 +40,12 @@ CREATE TABLE `game_bet_record`
 -- ----------------------------
 CREATE TABLE `game_record_detail`
 (
-    `id`             bigint         NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-    `bet_amount`     bigint         NOT NULL COMMENT '投注金额 单位：分',
-    `reward_amount` bigint         NOT NULL DEFAULT 0 COMMENT '派彩金额 单位：分',
-    `game_result`    text           NOT NULL COMMENT '游戏结果json',
-    `reward_result`  text           NOT NULL COMMENT '中奖结果JSON',
-    `multiple`       int            DEFAULT null COMMENT '倍数',
+    `id`            bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `bet_amount`    bigint NOT NULL COMMENT '投注金额 单位：分',
+    `reward_amount` bigint NOT NULL DEFAULT 0 COMMENT '派彩金额 单位：分',
+    `game_result`   text   NOT NULL COMMENT '游戏结果json',
+    `reward_result` text   NOT NULL COMMENT '中奖结果json',
+    `multiple`      int             DEFAULT null COMMENT '倍数',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
