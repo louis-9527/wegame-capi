@@ -41,7 +41,7 @@ CREATE TABLE `game_record_detail`
 (
     `id`             bigint         NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `bet_amount`     bigint         NOT NULL COMMENT '投注金额 单位：分',
-    `pay_out_amount` bigint         NOT NULL DEFAULT 0 COMMENT '派彩金额 单位：分',
+    `reward_amount` bigint         NOT NULL DEFAULT 0 COMMENT '派彩金额 单位：分',
     `game_result`    text           NOT NULL COMMENT '游戏结果json',
     `reward_result`  text           NOT NULL COMMENT '中奖结果JSON',
     `multiple`       int            DEFAULT null COMMENT '倍数',
