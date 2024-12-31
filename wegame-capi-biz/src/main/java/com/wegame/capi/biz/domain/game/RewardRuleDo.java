@@ -1,5 +1,9 @@
 package com.wegame.capi.biz.domain.game;
 
+import com.wegame.capi.biz.domain.SymbolDo;
+import com.wegame.capi.common.enums.BetSubTypeEnum;
+import com.wegame.capi.common.enums.BetTypeEnum;
+import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,18 +25,19 @@ import java.io.Serializable;
 public class RewardRuleDo implements Serializable {
     private static final long serialVersionUID = -2266308273445L;
     /**
-     * 游戏id
+     * 游戏类型
      */
-    private String gameId;
+    private GameTypeEnum gameType;
     /**
      * 投注类型
      */
-    private Integer betType;
-
+    private BetTypeEnum betType;
     /**
-     * 滚轮方格分布
+     * 投注子类型
      */
-    private Integer[][] rollerGrid;
-
-
+    private BetSubTypeEnum betSubType;
+    /**
+     * 元素数组
+     */
+    private SymbolDo[][] symbolArr;
 }

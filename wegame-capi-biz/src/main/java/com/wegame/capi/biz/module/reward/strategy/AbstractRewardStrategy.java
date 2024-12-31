@@ -4,10 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Sets;
 import com.wegame.capi.biz.builder.RewardResultBuilder;
 import com.wegame.capi.biz.domain.SymbolDo;
-import com.wegame.capi.biz.domain.game.OddsCalculateDo;
-import com.wegame.capi.biz.domain.game.RewardResultDo;
-import com.wegame.capi.biz.domain.game.RewardRuleLineDo;
-import com.wegame.capi.biz.domain.game.RewardRuleResultDo;
+import com.wegame.capi.biz.domain.game.*;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateContext;
 import com.wegame.capi.biz.module.odds.OddsCalculateContext;
 import com.wegame.capi.biz.service.RewardRuleService;
@@ -37,15 +34,7 @@ public abstract class AbstractRewardStrategy {
     @Autowired
     MultipleCalculateContext multipleCalculateContext;
 
-    /**
-     * 计算中奖线
-     *
-     * @param gameType 游戏类型
-     * @param betType 投注类型
-     * @param symbolArr 游戏元素数组
-     * @return
-     */
-    public abstract RewardRuleResultDo calcRewardLines(GameTypeEnum gameType, BetTypeEnum betType, SymbolDo[][] symbolArr);
+    public abstract RewardRuleResultDo calcRewardLines(RewardRuleDo rewardRuleDo);
 
     // todo 参数封装  DO
     public RewardResultDo handle(GameTypeEnum gameType,
@@ -54,7 +43,7 @@ public abstract class AbstractRewardStrategy {
                                  Long betAmount,
                                  SymbolDo[][] symbolArr) {
         // 中奖规则处理 todo
-        RewardRuleResultDo rewardRuleResultDo = rewardRuleService.calcRewardLines(null, null, null);
+        RewardRuleResultDo rewardRuleResultDo = calcRewardLines(null); // todo
         if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardRuleLineList())) {
             // 未中奖
             return null;
