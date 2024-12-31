@@ -14,6 +14,6 @@ public interface ProbabilisticStrategy {
      * @param cellNo 列序号，1则表示第一列
      * @return SymbolDo
      */
-    public SymbolDo randomOneSymbol(GameTypeEnum gameType, int cellNo);
+    SymbolDo randomOneSymbol(GameTypeEnum gameType, int cellNo);
 
 }
