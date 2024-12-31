@@ -19,10 +19,6 @@ import java.io.Serializable;
 public class SymbolDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
-     * 游戏Id
-     */
-    private String gameId;
-    /**
      * 元素id
      */
     private Integer id;
