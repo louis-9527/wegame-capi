@@ -5,6 +5,6 @@ public class GameConstants {
     /**
      * MARIA_MAKILING
      */
-    public static final Long MARIA_MAKILING_GAME_ID = 1234L;
+    public static final String MARIA_MAKILING_GAME_ID = "1234";
 
 }

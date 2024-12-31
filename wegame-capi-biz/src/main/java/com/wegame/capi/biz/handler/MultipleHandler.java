@@ -24,7 +24,7 @@ public interface MultipleHandler {
      * @param wildSymbolIdList wildSymbolIdList
      * @return result
      */
-    BigDecimal getMultiple(List<Long> wildSymbolIdList);
+    BigDecimal getMultiple(List<Integer> wildSymbolIdList);
 }
 
 

@@ -17,7 +17,7 @@ public class MultipleService {
 
     @Autowired
     MultipleHandlerContext multipleHandlerContext;
-    public BigDecimal getMultiple(Long gameId, List<Long> wildSymbolIdList) {
+    public BigDecimal getMultiple(Long gameId, List<Integer> wildSymbolIdList) {
         return multipleHandlerContext.getMultiple(gameId, wildSymbolIdList);
     }
 }

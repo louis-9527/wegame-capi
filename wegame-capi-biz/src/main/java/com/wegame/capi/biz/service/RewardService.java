@@ -36,10 +36,10 @@ public class RewardService {
      * @param rollerGrid 滚轮方格
      * @return 中奖结果
      */
-    public RewardResultDo handleRewardRule(Long gameId, Integer betType, Long betAmount, Long[][] rollerGrid) {
+    public RewardResultDo handleRewardRule(Long gameId, Integer betType, Long betAmount, Integer[][] rollerGrid) {
         // 中奖规则处理
         RewardRuleResultDo rewardRuleResultDo = rewardRuleService.calcRewardLines(gameId, betType, rollerGrid);
-        if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardLineList())) {
+        if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardRuleLineList())) {
             // 未中奖
             return null;
         }
@@ -50,21 +50,21 @@ public class RewardService {
         long rewardTotalAmount = 0L;
         Set<int[]> rewardCoordinateSets = Sets.newHashSet();
         boolean isFreeSpin = false;
-        for (RewardLineDo rewardLine : rewardRuleResultDo.getRewardLineList()) {
+        for (RewardRuleLineDo rewardRuleLine : rewardRuleResultDo.getRewardRuleLineList()) {
             // 获取赔率
             BigDecimal odds = oddsService.getOdds(OddsDo.builder()
                     .gameId(gameId)
-                    .symbolId(rewardLine.getSymbolId())
-                    .linkCount(rewardLine.getLinkCount())
+                    .symbolId(rewardRuleLine.getSymbolId())
+                    .linkCount(rewardRuleLine.getLinkCount())
                     .betType(betType).build());
             // 计算中奖金额.投注金额*(1+wild倍数)
             BigDecimal oddsRewardAmount = BigDecimal.valueOf(betAmount).multiply(odds);
             long lineRewardAmount = oddsRewardAmount.multiply(BigDecimal.ONE.add(wildMultiple)).longValue();
             // 中奖结果处理
             rewardTotalAmount = rewardTotalAmount + lineRewardAmount;
-            rewardCoordinateSets.add(rewardLine.getRewardCoordinate());
+            rewardCoordinateSets.add(rewardRuleLine.getRewardCoordinate());
         }
         // 返回中奖信息
-        return RewardResultBuilder.build(rewardTotalAmount, rewardRuleResultDo.getRewardLineList(), wildMultiple, isFreeSpin, rewardCoordinateSets);
+        return RewardResultBuilder.build(rewardTotalAmount, null, wildMultiple, isFreeSpin, rewardCoordinateSets);
     }
 }
