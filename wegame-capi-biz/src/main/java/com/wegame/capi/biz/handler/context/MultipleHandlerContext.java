@@ -32,7 +32,7 @@ public class MultipleHandlerContext {
         return multipleHandler.handle(multipleDo);
     }
 
-    public BigDecimal getMultiple(Long gameId, List<Integer> wildSymbolIdList) {
+    public BigDecimal getMultiple(String gameId, List<Integer> wildSymbolIdList) {
         MultipleHandlertypeEnum handlerType = MultipleHandlertypeEnum.valueOfGameId(gameId);
         MultipleHandler multipleHandler = handlerMap.get(handlerNameMap.get(handlerType));
         return multipleHandler.getMultiple(wildSymbolIdList);

@@ -24,6 +24,6 @@ public class MultipleDo implements Serializable {
     /**
      * 游戏id
      */
-    private Long gameId;
+    private String gameId;
 
 }

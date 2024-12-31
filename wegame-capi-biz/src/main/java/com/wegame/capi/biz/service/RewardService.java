@@ -37,7 +37,7 @@ public class RewardService {
      * @param rollerGrid 滚轮方格
      * @return 中奖结果
      */
-    public RewardResultDo handleRewardRule(Long gameId, Integer betType, Long betAmount, Integer[][] rollerGrid) {
+    public RewardResultDo handleRewardRule(String gameId, Integer betType, Long betAmount, Integer[][] rollerGrid) {
         // 中奖规则处理
         RewardRuleResultDo rewardRuleResultDo = rewardRuleService.calcRewardLines(gameId, betType, rollerGrid);
         if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardRuleLineList())) {

@@ -107,8 +107,6 @@ public class MariaRewardRuleHandler implements RewardRuleHandler {
 //        currentLineDo.getRewardSymbolIdList().add(firstColumSymbolDo.getId());
         List<RewardRuleSymbolDo> firstColumSymbolDoList = columTreeMap.get(0);
         for (RewardRuleSymbolDo firstColumSymbolDo : firstColumSymbolDoList) {
-
-
             for (int colum = 1; colum < columTreeMap.keySet().size() - 1; colum++) {
                 List<RewardRuleSymbolDo> otherColumSymbolDoList = columTreeMap.get(colum);
                 for (RewardRuleSymbolDo otherColumSymbolDo : otherColumSymbolDoList) {

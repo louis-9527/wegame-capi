@@ -28,14 +28,14 @@ public enum MultipleHandlertypeEnum {
     /**
      * 游戏id
      */
-    private final Long gameId;
+    private final String gameId;
 
     /**
      * 处理器名称
      */
     private final String handlerName;
 
-    public static MultipleHandlertypeEnum valueOfGameId(Long gameId) {
+    public static MultipleHandlertypeEnum valueOfGameId(String gameId) {
         if (Objects.isNull(gameId)) {
             throw new BusinessException(ErrorCode.ERR_PARAM, "game id is null");
         }
