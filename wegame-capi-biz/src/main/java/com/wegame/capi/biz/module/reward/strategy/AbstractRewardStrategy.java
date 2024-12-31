@@ -7,7 +7,6 @@ import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.game.*;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateContext;
 import com.wegame.capi.biz.module.odds.OddsCalculateContext;
-import com.wegame.capi.biz.service.RewardRuleService;
 import com.wegame.capi.common.enums.BetSubTypeEnum;
 import com.wegame.capi.common.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.GameTypeEnum;
@@ -26,9 +25,6 @@ import java.util.Set;
 @Service
 public abstract class AbstractRewardStrategy {
 
-    // todo
-    @Autowired
-    RewardRuleService rewardRuleService;
     @Autowired
     OddsCalculateContext oddsCalculateContext;
     @Autowired

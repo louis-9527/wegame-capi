@@ -1,5 +1,6 @@
 package com.wegame.capi.application.service;//package com.wegame.capi.application.controller;
 
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.application.BaseTest;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.module.probabilistic.strategy.MariaMakilingProbabilisticStrategy;
@@ -21,6 +22,11 @@ public class ProbabilisticServiceTest extends BaseTest {
 
     @Test
     public void test_randomOneSymbol() {
+        int[][] arr = {{1,2,2},{3,4,4},{5,6,6}};
+
+        System.out.println(FastJsonUtils.toJSONString(arr));
+
+
         for (int index = 1; index <= 5; index++) {
             Map<SymbolDo, AtomicInteger> map = new HashMap<>();
             for (int i = 0; i < 100000000; i++) {
