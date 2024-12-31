@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * game_record_detail：游戏记录明细
@@ -16,7 +15,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class GameRecordDetailPo implements Serializable {
-    private static final long serialVersionUID = -5966117424605382656L;
+    private static final long serialVersionUID = -8545790273466368L;
     /**
      * 主键ID
      */
@@ -28,19 +27,15 @@ public class GameRecordDetailPo implements Serializable {
     /**
      * 派彩金额 单位：分
      */
-    private Long payOutAmount;
+    private Long rewardAmount;
     /**
      * 游戏结果json
      */
     private String gameResult;
     /**
-     * 中奖集合json
+     * 中奖结果json
      */
-    private String winResult;
-    /**
-     * 赔率
-     */
-    private BigDecimal odds;
+    private String rewardResult;
     /**
      * 倍数
      */

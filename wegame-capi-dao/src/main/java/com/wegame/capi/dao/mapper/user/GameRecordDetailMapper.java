@@ -18,19 +18,17 @@ public interface GameRecordDetailMapper {
     /** 增 */
     @Insert({"insert into `game_record_detail`(" +
             " `bet_amount`, " +
-            " `pay_out_amount`, " +
+            " `reward_amount`, " +
             " `game_result`, " +
-            " `win_result`, " +
-            " `odds`, " +
+            " `reward_result`, " +
             " `multiple`, " +
             " `create_time`, " +
             " `update_time` " +
             ") values (" +
             " #{betAmount}, " +
-            " #{payOutAmount}, " +
+            " #{rewardAmount}, " +
             " #{gameResult}, " +
-            " #{winResult}, " +
-            " #{odds}, " +
+            " #{rewardResult}, " +
             " #{multiple}, " +
             " current_timestamp(), " +
             " current_timestamp()" +
@@ -41,10 +39,9 @@ public interface GameRecordDetailMapper {
     @Insert({"<script>",
         " insert into `game_record_detail` (",
         "   `bet_amount`, ",
-        "   `pay_out_amount`, ",
+        "   `reward_amount`, ",
         "   `game_result`, ",
-        "   `win_result`, ",
-        "   `odds`, ",
+        "   `reward_result`, ",
         "   `multiple`, ",
         "   `create_time`, ",
         "   `update_time` ",
@@ -52,10 +49,9 @@ public interface GameRecordDetailMapper {
         " <foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\" nullable=\"true\"> ",
         " (",
         "   #{item.betAmount}, ",
-        "   #{item.payOutAmount}, ",
+        "   #{item.rewardAmount}, ",
         "   #{item.gameResult}, ",
-        "   #{item.winResult}, ",
-        "   #{item.odds}, ",
+        "   #{item.rewardResult}, ",
         "   #{item.multiple}, ",
         "   current_timestamp(), ",
         "   current_timestamp()",
@@ -82,10 +78,9 @@ public interface GameRecordDetailMapper {
         " update `game_record_detail` ",
         " <trim prefix=\"set\" suffixOverrides=\",\"> ",
         "     <if test=\"betAmount != null\">`bet_amount` = #{betAmount},</if> ",
-        "     <if test=\"payOutAmount != null\">`pay_out_amount` = #{payOutAmount},</if> ",
+        "     <if test=\"rewardAmount != null\">`reward_amount` = #{rewardAmount},</if> ",
         "     <if test=\"gameResult != null\">`game_result` = #{gameResult},</if> ",
-        "     <if test=\"winResult != null\">`win_result` = #{winResult},</if> ",
-        "     <if test=\"odds != null\">`odds` = #{odds},</if> ",
+        "     <if test=\"rewardResult != null\">`reward_result` = #{rewardResult},</if> ",
         "     <if test=\"multiple != null\">`multiple` = #{multiple},</if> ",
         "     `update_time` = current_timestamp() ",
         " </trim> ",
@@ -102,10 +97,9 @@ public interface GameRecordDetailMapper {
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
             "     <if test=\"query.betAmount != null\">and `bet_amount` = #{query.betAmount}</if> ",
-            "     <if test=\"query.payOutAmount != null\">and `pay_out_amount` = #{query.payOutAmount}</if> ",
+            "     <if test=\"query.rewardAmount != null\">and `reward_amount` = #{query.rewardAmount}</if> ",
             "     <if test=\"query.gameResult != null and query.gameResult != ''\">and game_result like CONCAT('%', #{query.gameResult}, '%')</if> ",
-            "     <if test=\"query.winResult != null and query.winResult != ''\">and win_result like CONCAT('%', #{query.winResult}, '%')</if> ",
-            "     <if test=\"query.odds != null\">and `odds` = #{query.odds}</if> ",
+            "     <if test=\"query.rewardResult != null and query.rewardResult != ''\">and reward_result like CONCAT('%', #{query.rewardResult}, '%')</if> ",
             "     <if test=\"query.multiple != null\">and `multiple` = #{query.multiple}</if> ",
             "     <if test=\"query.startCreateTime != null\">and `create_time` <![CDATA[>=]]> #{query.startCreateTime}</if> ",
             "     <if test=\"query.endCreateTime != null\">and `create_time` <![CDATA[<=]]> #{query.endCreateTime}</if> ",
@@ -122,10 +116,9 @@ public interface GameRecordDetailMapper {
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
             "     <if test=\"query.betAmount != null\">and `bet_amount` = #{query.betAmount}</if> ",
-            "     <if test=\"query.payOutAmount != null\">and `pay_out_amount` = #{query.payOutAmount}</if> ",
+            "     <if test=\"query.rewardAmount != null\">and `reward_amount` = #{query.rewardAmount}</if> ",
             "     <if test=\"query.gameResult != null and query.gameResult != ''\">and game_result like CONCAT('%', #{query.gameResult}, '%')</if> ",
-            "     <if test=\"query.winResult != null and query.winResult != ''\">and win_result like CONCAT('%', #{query.winResult}, '%')</if> ",
-            "     <if test=\"query.odds != null\">and `odds` = #{query.odds}</if> ",
+            "     <if test=\"query.rewardResult != null and query.rewardResult != ''\">and reward_result like CONCAT('%', #{query.rewardResult}, '%')</if> ",
             "     <if test=\"query.multiple != null\">and `multiple` = #{query.multiple}</if> ",
             "     <if test=\"query.startCreateTime != null\">and `create_time` <![CDATA[>=]]> #{query.startCreateTime}</if> ",
             "     <if test=\"query.endCreateTime != null\">and `create_time` <![CDATA[<=]]> #{query.endCreateTime}</if> ",
@@ -153,10 +146,9 @@ public interface GameRecordDetailMapper {
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
             "     <if test=\"query.betAmount != null\">and `bet_amount` = #{query.betAmount}</if> ",
-            "     <if test=\"query.payOutAmount != null\">and `pay_out_amount` = #{query.payOutAmount}</if> ",
+            "     <if test=\"query.rewardAmount != null\">and `reward_amount` = #{query.rewardAmount}</if> ",
             "     <if test=\"query.gameResult != null and query.gameResult != ''\">and game_result like CONCAT('%', #{query.gameResult}, '%')</if> ",
-            "     <if test=\"query.winResult != null and query.winResult != ''\">and win_result like CONCAT('%', #{query.winResult}, '%')</if> ",
-            "     <if test=\"query.odds != null\">and `odds` = #{query.odds}</if> ",
+            "     <if test=\"query.rewardResult != null and query.rewardResult != ''\">and reward_result like CONCAT('%', #{query.rewardResult}, '%')</if> ",
             "     <if test=\"query.multiple != null\">and `multiple` = #{query.multiple}</if> ",
             "     <if test=\"query.startCreateTime != null\">and `create_time` <![CDATA[>=]]> #{query.startCreateTime}</if> ",
             "     <if test=\"query.endCreateTime != null\">and `create_time` <![CDATA[<=]]> #{query.endCreateTime}</if> ",
@@ -171,10 +163,9 @@ public interface GameRecordDetailMapper {
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
             "     <if test=\"query.betAmount != null\">and `bet_amount` = #{query.betAmount}</if> ",
-            "     <if test=\"query.payOutAmount != null\">and `pay_out_amount` = #{query.payOutAmount}</if> ",
+            "     <if test=\"query.rewardAmount != null\">and `reward_amount` = #{query.rewardAmount}</if> ",
             "     <if test=\"query.gameResult != null and query.gameResult != ''\">and game_result like CONCAT('%', #{query.gameResult}, '%')</if> ",
-            "     <if test=\"query.winResult != null and query.winResult != ''\">and win_result like CONCAT('%', #{query.winResult}, '%')</if> ",
-            "     <if test=\"query.odds != null\">and `odds` = #{query.odds}</if> ",
+            "     <if test=\"query.rewardResult != null and query.rewardResult != ''\">and reward_result like CONCAT('%', #{query.rewardResult}, '%')</if> ",
             "     <if test=\"query.multiple != null\">and `multiple` = #{query.multiple}</if> ",
             "     <if test=\"query.startCreateTime != null\">and `create_time` <![CDATA[>=]]> #{query.startCreateTime}</if> ",
             "     <if test=\"query.endCreateTime != null\">and `create_time` <![CDATA[<=]]> #{query.endCreateTime}</if> ",
@@ -193,10 +184,9 @@ public interface GameRecordDetailMapper {
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
             "     <if test=\"query.betAmount != null\">and `bet_amount` = #{query.betAmount}</if> ",
-            "     <if test=\"query.payOutAmount != null\">and `pay_out_amount` = #{query.payOutAmount}</if> ",
+            "     <if test=\"query.rewardAmount != null\">and `reward_amount` = #{query.rewardAmount}</if> ",
             "     <if test=\"query.gameResult != null and query.gameResult != ''\">and game_result like CONCAT('%', #{query.gameResult}, '%')</if> ",
-            "     <if test=\"query.winResult != null and query.winResult != ''\">and win_result like CONCAT('%', #{query.winResult}, '%')</if> ",
-            "     <if test=\"query.odds != null\">and `odds` = #{query.odds}</if> ",
+            "     <if test=\"query.rewardResult != null and query.rewardResult != ''\">and reward_result like CONCAT('%', #{query.rewardResult}, '%')</if> ",
             "     <if test=\"query.multiple != null\">and `multiple` = #{query.multiple}</if> ",
             "     <if test=\"query.startCreateTime != null\">and `create_time` <![CDATA[>=]]> #{query.startCreateTime}</if> ",
             "     <if test=\"query.endCreateTime != null\">and `create_time` <![CDATA[<=]]> #{query.endCreateTime}</if> ",

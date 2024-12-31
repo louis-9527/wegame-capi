@@ -27,10 +27,9 @@ public class GameRecordDetailConverter {
         }
         GameRecordDetailDo gameRecordDetailDo = new GameRecordDetailDo();
         gameRecordDetailDo.setBetAmount(StringUtils.isNotEmpty(vo.getBetAmount()) ? Long.valueOf(vo.getBetAmount()) : null);
-        gameRecordDetailDo.setPayOutAmount(StringUtils.isNotEmpty(vo.getPayOutAmount()) ? Long.valueOf(vo.getPayOutAmount()) : null);
+        gameRecordDetailDo.setRewardAmount(StringUtils.isNotEmpty(vo.getRewardAmount()) ? Long.valueOf(vo.getRewardAmount()) : null);
         gameRecordDetailDo.setGameResult(vo.getGameResult());
-        gameRecordDetailDo.setWinResult(vo.getWinResult());
-        gameRecordDetailDo.setOdds(vo.getOdds());
+        gameRecordDetailDo.setRewardResult(vo.getRewardResult());
         gameRecordDetailDo.setMultiple(vo.getMultiple());
         return gameRecordDetailDo;
     }
@@ -42,10 +41,9 @@ public class GameRecordDetailConverter {
         GameRecordDetailDo gameRecordDetailDo = new GameRecordDetailDo();
         gameRecordDetailDo.setId(po.getId());
         gameRecordDetailDo.setBetAmount(po.getBetAmount());
-        gameRecordDetailDo.setPayOutAmount(po.getPayOutAmount());
+        gameRecordDetailDo.setRewardAmount(po.getRewardAmount());
         gameRecordDetailDo.setGameResult(po.getGameResult());
-        gameRecordDetailDo.setWinResult(po.getWinResult());
-        gameRecordDetailDo.setOdds(po.getOdds());
+        gameRecordDetailDo.setRewardResult(po.getRewardResult());
         gameRecordDetailDo.setMultiple(po.getMultiple());
         return gameRecordDetailDo;
     }
@@ -58,10 +56,9 @@ public class GameRecordDetailConverter {
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         GameRecordDetailPo po = new GameRecordDetailPo();
         po.setBetAmount(gameRecordDetailDo.getBetAmount());
-        po.setPayOutAmount(gameRecordDetailDo.getPayOutAmount());
+        po.setRewardAmount(gameRecordDetailDo.getRewardAmount());
         po.setGameResult(gameRecordDetailDo.getGameResult());
-        po.setWinResult(gameRecordDetailDo.getWinResult());
-        po.setOdds(gameRecordDetailDo.getOdds());
+        po.setRewardResult(gameRecordDetailDo.getRewardResult());
         po.setMultiple(gameRecordDetailDo.getMultiple());
         if (OptEnum.ADD.equals(optEnum)) {
         } else {
@@ -77,10 +74,9 @@ public class GameRecordDetailConverter {
         GameRecordDetailVo vo = new GameRecordDetailVo();
         vo.setId(Objects.nonNull(gameRecordDetailDo.getId()) ? String.valueOf(gameRecordDetailDo.getId()) : null);
         vo.setBetAmount(Objects.nonNull(gameRecordDetailDo.getBetAmount()) ? String.valueOf(gameRecordDetailDo.getBetAmount()) : null);
-        vo.setPayOutAmount(Objects.nonNull(gameRecordDetailDo.getPayOutAmount()) ? String.valueOf(gameRecordDetailDo.getPayOutAmount()) : null);
+        vo.setRewardAmount(Objects.nonNull(gameRecordDetailDo.getRewardAmount()) ? String.valueOf(gameRecordDetailDo.getRewardAmount()) : null);
         vo.setGameResult(gameRecordDetailDo.getGameResult());
-        vo.setWinResult(gameRecordDetailDo.getWinResult());
-        vo.setOdds(gameRecordDetailDo.getOdds());
+        vo.setRewardResult(gameRecordDetailDo.getRewardResult());
         vo.setMultiple(gameRecordDetailDo.getMultiple());
         return vo;
     }
@@ -125,10 +121,9 @@ public class GameRecordDetailConverter {
         GameRecordDetailQuery query = new GameRecordDetailQuery();
         query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
         query.setBetAmount(StringUtils.isNotEmpty(request.getBetAmount()) ? Long.valueOf(request.getBetAmount()) : null);
-        query.setPayOutAmount(StringUtils.isNotEmpty(request.getPayOutAmount()) ? Long.valueOf(request.getPayOutAmount()) : null);
+        query.setRewardAmount(StringUtils.isNotEmpty(request.getRewardAmount()) ? Long.valueOf(request.getRewardAmount()) : null);
         query.setGameResult(request.getGameResult());
-        query.setWinResult(request.getWinResult());
-        query.setOdds(request.getOdds());
+        query.setRewardResult(request.getRewardResult());
         query.setMultiple(request.getMultiple());
         query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) ? new Date(request.getStartCreateTime()) : null);
         query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);

@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class GameRecordDetailQuery extends GameRecordDetailPo implements Serializable {
-    private static final long serialVersionUID = -8159439208839140352L;
+    private static final long serialVersionUID = -3215908455373338624L;
     /**
      * limit
      */

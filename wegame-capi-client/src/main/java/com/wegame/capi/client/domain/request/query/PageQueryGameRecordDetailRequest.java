@@ -9,7 +9,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
 
 /**
  * 分页查询游戏记录明细请求参数
@@ -22,19 +21,17 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "分页查询游戏记录明细请求参数", parent = PageQueryRequest.class)
 public class PageQueryGameRecordDetailRequest extends PageQueryRequest implements Validate {
-    private static final long serialVersionUID = -1088867133973528576L;
+    private static final long serialVersionUID = -895462701255178240L;
     @ApiModelProperty(value = "主键ID", required = false)
     private String id;
     @ApiModelProperty(value = "投注金额 单位：分", required = false)
     private String betAmount;
     @ApiModelProperty(value = "派彩金额 单位：分", required = false)
-    private String payOutAmount;
+    private String rewardAmount;
     @ApiModelProperty(value = "游戏结果json", required = false)
     private String gameResult;
-    @ApiModelProperty(value = "中奖集合json", required = false)
-    private String winResult;
-    @ApiModelProperty(value = "赔率", required = false)
-    private BigDecimal odds;
+    @ApiModelProperty(value = "中奖结果json", required = false)
+    private String rewardResult;
     @ApiModelProperty(value = "倍数", required = false)
     private Integer multiple;
     @ApiModelProperty(value = "开始创建时间", required = false)
@@ -50,10 +47,9 @@ public class PageQueryGameRecordDetailRequest extends PageQueryRequest implement
     public void validateParam() {
         // AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         // AssertUtil.assertStrNotEmpty(betAmount, ErrorCode.ERR_PARAM);
-        // AssertUtil.assertStrNotEmpty(payOutAmount, ErrorCode.ERR_PARAM);
+        // AssertUtil.assertStrNotEmpty(rewardAmount, ErrorCode.ERR_PARAM);
         // AssertUtil.assertStrNotEmpty(gameResult, ErrorCode.ERR_PARAM);
-        // AssertUtil.assertStrNotEmpty(winResult, ErrorCode.ERR_PARAM);
-        // AssertUtil.assertNotNull(odds, ErrorCode.ERR_PARAM);
+        // AssertUtil.assertStrNotEmpty(rewardResult, ErrorCode.ERR_PARAM);
         // AssertUtil.assertNotNull(multiple, ErrorCode.ERR_PARAM);
     }
 
