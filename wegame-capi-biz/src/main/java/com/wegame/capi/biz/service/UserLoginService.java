@@ -1,6 +1,8 @@
 package com.wegame.capi.biz.service;
 
 import cn.hutool.crypto.SecureUtil;
+import com.wegame.capi.api.CommonApi;
+import com.wegame.capi.api.domain.req.GetAuthLoginTokenReq;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
@@ -23,8 +25,12 @@ public class UserLoginService {
     UserService userService;
     @Autowired
     RedisTemplate redisTemplate;
+    @Autowired
+    CommonApi commonApi;
 
     public UserInfo login(HttpServletResponse response, UserLoginRequest request) {
+        commonApi.authLoginToken(GetAuthLoginTokenReq.buildClientReq(request));
+
         String token = SecureUtil.md5(request.getToken());
         response.addHeader(Constants._TOKEN_, token);
         UserDo userDo = UserInfoBuilder.buildUserDo(request);

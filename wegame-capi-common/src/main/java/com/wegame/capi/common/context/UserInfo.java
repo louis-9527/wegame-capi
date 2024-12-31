@@ -27,6 +27,8 @@ public class UserInfo implements Serializable {
     private String platformId;
     @ApiModelProperty(value = "渠道id")
     private String channelId;
+    @ApiModelProperty(value = "游戏id")
+    private String gameId;
     @ApiModelProperty(value = "用户id")
     private String playerId;
     @ApiModelProperty(value = "用户姓名")

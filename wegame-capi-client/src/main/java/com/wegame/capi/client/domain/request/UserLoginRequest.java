@@ -24,6 +24,8 @@ public class UserLoginRequest implements Validate, Serializable {
     private String platformId;
     @ApiModelProperty(value = "渠道id", required = true)
     private String chanelId;
+    @ApiModelProperty(value = "游戏id", required = true)
+    private String gameId;
     @ApiModelProperty(value = "用户id", required = true)
     private String playerId;
     @ApiModelProperty(value = "用户姓名", required = true)
@@ -34,14 +36,14 @@ public class UserLoginRequest implements Validate, Serializable {
     private String userLevel;
     @ApiModelProperty(value = "用户姓名", required = false)
     private String userName;
-    @ApiModelProperty(value = "用户生日", required = false)
-    private String birthday;
     @ApiModelProperty(value = "中台token", required = true)
     private String token;
 
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(platformId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(chanelId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(playerName.length() <= 50, ErrorCode.ERR_PARAM);
         if (StringUtils.isNotBlank(nickName)) {
@@ -52,9 +54,6 @@ public class UserLoginRequest implements Validate, Serializable {
         }
         if (StringUtils.isNotBlank(userName)) {
             AssertUtil.assertTrue(userName.length() <= 50, ErrorCode.ERR_PARAM);
-        }
-        if (StringUtils.isNotBlank(birthday)) {
-            AssertUtil.assertTrue(birthday.length() <= 20, ErrorCode.ERR_PARAM);
         }
         AssertUtil.assertStrNotEmpty(token, ErrorCode.ERR_PARAM);
     }
