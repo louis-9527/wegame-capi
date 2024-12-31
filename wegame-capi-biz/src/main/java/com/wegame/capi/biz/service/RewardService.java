@@ -29,7 +29,7 @@ public class RewardService {
     @Autowired
     OddsCalculateContext oddsCalculateContext;
     @Autowired
-    MultipleCalculateContext multipleService;
+    MultipleCalculateContext multipleCalculateContext;
 
     /**
      * @param gameId     游戏id
@@ -47,7 +47,8 @@ public class RewardService {
         }
         // 获取 wild 倍数
         BigDecimal wildMultiple = Optional.ofNullable(rewardRuleResultDo.getWildSymbolIdList())
-                .map(symbolIdList -> multipleService.getMultiple(gameId, symbolIdList)).orElse(BigDecimal.ZERO);
+                // todo
+                .map(symbolIdList -> multipleCalculateContext.calculateMultiple(null, null)).orElse(BigDecimal.ZERO);
         // 遍历中奖线单个处理
         long rewardTotalAmount = 0L;
         Set<int[]> rewardCoordinateSets = Sets.newHashSet();
