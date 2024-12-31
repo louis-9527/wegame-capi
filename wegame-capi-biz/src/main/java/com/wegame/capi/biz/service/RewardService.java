@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Sets;
 import com.wegame.capi.biz.builder.RewardResultBuilder;
 import com.wegame.capi.biz.domain.game.*;
+import com.wegame.capi.biz.service.odds.OddsCalculateContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class RewardService {
     @Autowired
     RewardRuleService rewardRuleService;
     @Autowired
-    OddsService oddsService;
+    OddsCalculateContext oddsCalculateContext;
     @Autowired
     MultipleService multipleService;
 
@@ -52,11 +53,12 @@ public class RewardService {
         boolean isFreeSpin = false;
         for (RewardRuleLineDo rewardRuleLine : rewardRuleResultDo.getRewardRuleLineList()) {
             // 获取赔率
-            BigDecimal odds = oddsService.getOdds(OddsDo.builder()
-                    .gameId(gameId)
-                    .symbolId(rewardRuleLine.getSymbolId())
-                    .linkCount(rewardRuleLine.getLinkCount())
-                    .betType(betType).build());
+            BigDecimal odds = oddsCalculateContext.calculateOdds(OddsCalculateDo.builder()
+//                    .gameId(gameId) // todo
+//                    .symbolId(rewardRuleLine.getSymbolId())
+//                    .linkCount(rewardRuleLine.getLinkCount())
+//                    .betType(betType)
+                    .build());
             // 计算中奖金额.投注金额*(1+wild倍数)
             BigDecimal oddsRewardAmount = BigDecimal.valueOf(betAmount).multiply(odds);
             long lineRewardAmount = oddsRewardAmount.multiply(BigDecimal.ONE.add(wildMultiple)).longValue();
