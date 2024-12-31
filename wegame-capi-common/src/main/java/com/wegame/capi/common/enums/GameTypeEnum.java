@@ -3,6 +3,7 @@ package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -15,12 +16,12 @@ import java.util.Objects;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum GameTypeEnum {
 
-    MYSTERIOUS(10000L, "mysterious");;
+    MARIA_MAKILING("10000", "MariaMakiling");;
 
     /**
      * 枚举码.
      */
-    private final Long id;
+    private final String id;
 
     /**
      * 描述信息.
@@ -33,21 +34,21 @@ public enum GameTypeEnum {
      * @param id id
      * @param name 名称
      */
-    private GameTypeEnum(Long id, String name) {
+    private GameTypeEnum(String id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public static GameTypeEnum valueOfCode(Long id) {
+    public static GameTypeEnum valueOfCode(String id) {
         for (GameTypeEnum item : GameTypeEnum.values()) {
-            if (Objects.equals(item.getId(), id)) {
+            if (StringUtils.equals(item.getId(), id)) {
                 return item;
             }
         }
         return null;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

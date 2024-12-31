@@ -30,7 +30,7 @@ public class ProbabilisticServiceTest extends BaseTest {
         for (int index = 1; index <= 5; index++) {
             Map<SymbolDo, AtomicInteger> map = new HashMap<>();
             for (int i = 0; i < 100000000; i++) {
-                SymbolDo symbolDo = probabilisticService.randomOneSymbol(10000L, index);
+                SymbolDo symbolDo = probabilisticService.randomOneSymbol("10000", index);
                 if (Objects.nonNull(symbolDo)) {
                     if (map.containsKey(symbolDo)) {
                         AtomicInteger atomicInteger = map.get(symbolDo);

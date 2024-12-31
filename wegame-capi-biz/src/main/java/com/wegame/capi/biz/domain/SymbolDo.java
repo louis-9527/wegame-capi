@@ -21,13 +21,13 @@ public class SymbolDo implements Serializable {
     /**
      * 游戏Id
      */
-    private Long gameId;
+    private String gameId;
     /**
-     * 投注类型: @see GameBetTypeEnum
+     * 元素id
      */
     private Integer id;
     /**
-     * 投注详情
+     * 元素名称
      */
     private String name;
 }

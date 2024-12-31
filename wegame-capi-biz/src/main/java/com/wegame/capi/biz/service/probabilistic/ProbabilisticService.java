@@ -20,7 +20,7 @@ import java.util.Random;
  * 元素概率服务
  */
 @Component
-public class ProbabilisticService {
+public class ProbabilisticService extends AbstractProbabilisticService {
 
     private static final String KEY_NAME_SPLITTER = "_";
     @Autowired
@@ -33,7 +33,7 @@ public class ProbabilisticService {
      * @param cellNo 列序号，1则表示第一列
      * @return
      */
-    public SymbolDo randomOneSymbol(long gameId, int cellNo) {
+    public SymbolDo randomOneSymbol(String gameId, int cellNo) {
         // todo 自测
         // todo 扩展性设计与实现
         // todo 配置数据正确性校验
