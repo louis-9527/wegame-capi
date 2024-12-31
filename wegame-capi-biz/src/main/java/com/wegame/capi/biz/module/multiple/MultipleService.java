@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.service;
+package com.wegame.capi.biz.module.multiple;
 
 import com.wegame.capi.biz.handler.context.MultipleHandlerContext;
 import lombok.extern.slf4j.Slf4j;

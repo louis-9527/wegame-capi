@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.service.probabilistic.strategy;
+package com.wegame.capi.biz.module.probabilistic.strategy;
 
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.common.enums.GameTypeEnum;

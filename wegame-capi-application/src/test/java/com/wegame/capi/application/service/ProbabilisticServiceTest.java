@@ -2,7 +2,7 @@ package com.wegame.capi.application.service;//package com.wegame.capi.applicatio
 
 import com.wegame.capi.application.BaseTest;
 import com.wegame.capi.biz.domain.SymbolDo;
-import com.wegame.capi.biz.service.probabilistic.strategy.MariaMakilingProbabilisticStrategy;
+import com.wegame.capi.biz.module.probabilistic.strategy.MariaMakilingProbabilisticStrategy;
 import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

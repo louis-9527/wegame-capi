@@ -1,10 +1,10 @@
-package com.wegame.capi.biz.service.odds;
+package com.wegame.capi.biz.module.odds;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.game.OddsCalculateDo;
-import com.wegame.capi.biz.service.odds.strategy.OddsCalculateStrategy;
+import com.wegame.capi.biz.module.odds.strategy.OddsCalculateStrategy;
 import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

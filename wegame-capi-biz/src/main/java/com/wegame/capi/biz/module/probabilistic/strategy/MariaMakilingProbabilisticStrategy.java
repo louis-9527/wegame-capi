@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.service.probabilistic.strategy;
+package com.wegame.capi.biz.module.probabilistic.strategy;
 
 import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingProbabilisticConfig;
 import org.springframework.beans.factory.annotation.Autowired;

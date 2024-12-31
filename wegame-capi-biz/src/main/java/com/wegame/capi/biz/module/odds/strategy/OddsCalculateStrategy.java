@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.service.odds.strategy;
+package com.wegame.capi.biz.module.odds.strategy;
 
 import com.wegame.capi.biz.domain.game.OddsCalculateDo;
 
