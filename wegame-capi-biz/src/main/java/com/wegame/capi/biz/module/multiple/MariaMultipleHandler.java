@@ -1,8 +1,7 @@
-package com.wegame.capi.biz.handler.maria;
+package com.wegame.capi.biz.module.multiple;
 
 import com.wegame.capi.biz.domain.game.MultipleDo;
 import com.wegame.capi.biz.domain.game.MultipleResultDo;
-import com.wegame.capi.biz.handler.MultipleHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
