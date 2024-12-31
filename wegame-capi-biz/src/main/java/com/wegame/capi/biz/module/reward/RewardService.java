@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.service;
+package com.wegame.capi.biz.module.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Sets;
@@ -6,6 +6,7 @@ import com.wegame.capi.biz.builder.RewardResultBuilder;
 import com.wegame.capi.biz.domain.game.*;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateContext;
 import com.wegame.capi.biz.module.odds.OddsCalculateContext;
+import com.wegame.capi.biz.service.RewardRuleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,6 @@ import java.util.Set;
 @Slf4j
 @Service
 public class RewardService {
-    //
-//    @Autowired
-//    RewardHandlerContext rewardHandlerContext;
     @Autowired
     RewardRuleService rewardRuleService;
     @Autowired
@@ -45,10 +43,8 @@ public class RewardService {
             // 未中奖
             return null;
         }
-        // 获取 wild 倍数
-        BigDecimal wildMultiple = Optional.ofNullable(rewardRuleResultDo.getWildSymbolIdList())
-                // todo
-                .map(symbolIdList -> multipleCalculateContext.calculateMultiple(null, null)).orElse(BigDecimal.ZERO);
+        // 获取 wild 倍数 todo
+        BigDecimal wildMultiple = multipleCalculateContext.calculateMultiple(null, null);
         // 遍历中奖线单个处理
         long rewardTotalAmount = 0L;
         Set<int[]> rewardCoordinateSets = Sets.newHashSet();

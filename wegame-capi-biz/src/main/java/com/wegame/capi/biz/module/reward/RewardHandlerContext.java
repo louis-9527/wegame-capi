@@ -1,14 +1,9 @@
-package com.wegame.capi.biz.handler.context;
+package com.wegame.capi.biz.module.reward;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.game.RewardDo;
 import com.wegame.capi.biz.domain.game.RewardResultDo;
-import com.wegame.capi.biz.domain.game.RewardRuleDo;
-import com.wegame.capi.biz.domain.game.RewardRuleResultDo;
-import com.wegame.capi.biz.handler.RewardHandler;
-import com.wegame.capi.biz.handler.RewardRuleHandler;
 import com.wegame.capi.common.enums.RewardHandlertypeEnum;
-import com.wegame.capi.common.enums.RewardRuleHandlertypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
