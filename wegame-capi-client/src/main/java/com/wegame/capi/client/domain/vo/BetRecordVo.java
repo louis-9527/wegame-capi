@@ -1,24 +1,26 @@
 package com.wegame.capi.client.domain.vo;
 
 import com.wegame.base.Validate;
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.utils.AssertUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
 /**
- * bet_record：游戏记录
+ * bet_record：投注记录
+ *
  * @author genereate
  */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("游戏记录")
+@ApiModel("投注记录")
 @EqualsAndHashCode(callSuper = false)
 public class BetRecordVo implements Validate, Serializable {
     private static final long serialVersionUID = -5835716727611741184L;
@@ -66,37 +68,5 @@ public class BetRecordVo implements Validate, Serializable {
     private String updater;
     @ApiModelProperty("更新时间")
     private Long updateTime;
-
-    @Override
-    public void validateParam() {
-        AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(pId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(channelId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(userId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(playerName, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(betType, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(betSubType, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(betId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(betSerialNo, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(betAmount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(payOutAmount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(marketFlag, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(status, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(freeSpinsFlag, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(freeSpinsTimes, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(detail, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(creator, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(createTime, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(updater, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(updateTime, ErrorCode.ERR_PARAM);
-    }
-
-    @Override
-    public void validateBiz() {
-
-    }
-
 }
 

@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * bet_record：游戏记录
+ * bet_record：投注记录
  * 方法顺序：增删改查
  * @author generate
  */

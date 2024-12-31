@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * bet_record：游戏记录
+ * bet_record：投注记录
  * @author generate
  */
 @Data

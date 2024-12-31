@@ -11,14 +11,14 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 
 /**
- * game_record：游戏记录
+ * game_record：投注记录
  * @author genereate
  */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("游戏记录")
+@ApiModel("投注记录")
 @EqualsAndHashCode(callSuper = false)
 public class GameRecordVo implements Validate, Serializable {
     private static final long serialVersionUID = -1313824269031647232L;

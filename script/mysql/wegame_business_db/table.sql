@@ -32,7 +32,7 @@ CREATE TABLE `bet_record`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
-  COLLATE utf8mb4_unicode_ci COMMENT ='游戏记录';
+  COLLATE utf8mb4_unicode_ci COMMENT ='投注记录';
 
 -- ----------------------------
 -- Table structure for game_record_detail（不同游戏明细模型不同）

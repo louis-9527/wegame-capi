@@ -35,7 +35,7 @@
 //    /**
 //     * 新增
 //     *
-//     * @param gameRecordDo 游戏记录
+//     * @param gameRecordDo 投注记录
 //     * @return 主键id
 //     */
 //    public Long add(GameRecordDo gameRecordDo) {
@@ -85,7 +85,7 @@
 //    /**
 //     * 修改
 //     *
-//     * @param gameRecordDo 游戏记录
+//     * @param gameRecordDo 投注记录
 //     * @return true/false
 //     */
 //    public boolean update(GameRecordDo gameRecordDo) {
@@ -99,7 +99,7 @@
 //     * 查询：根据主键id查询
 //     *
 //     * @param id 主键id
-//     * @return GameRecordDo 游戏记录
+//     * @return GameRecordDo 投注记录
 //     */
 //    public GameRecordDo get(Long id) {
 //        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
@@ -110,7 +110,7 @@
 //     * 查询：根据条件查询
 //     *
 //     * @param query 查询条件
-//     * @return GameRecordDo 游戏记录
+//     * @return GameRecordDo 投注记录
 //     */
 //    public GameRecordDo selectOne(GameRecordQuery query) {
 //        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
