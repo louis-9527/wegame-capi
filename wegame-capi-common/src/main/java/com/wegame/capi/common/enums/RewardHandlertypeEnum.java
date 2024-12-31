@@ -28,7 +28,7 @@ public enum RewardHandlertypeEnum {
     /**
      * 游戏id
      */
-    private final Long gameId;
+    private final String gameId;
 
     /**
      * 处理器名称

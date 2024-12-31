@@ -24,7 +24,7 @@ public class OddsDo implements Serializable {
     /**
      * 游戏id
      */
-    private Long gameId;
+    private String gameId;
 
     /**
      * 元素id

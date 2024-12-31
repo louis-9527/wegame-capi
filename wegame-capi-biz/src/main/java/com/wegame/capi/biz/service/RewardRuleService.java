@@ -22,7 +22,7 @@ public class RewardRuleService {
      * @param rollerGrid
      * @return
      */
-    public RewardRuleResultDo calcRewardLines(Long gameId, Integer betType, Integer[][] rollerGrid) {
+    public RewardRuleResultDo calcRewardLines(String gameId, Integer betType, Integer[][] rollerGrid) {
         // 中奖规则处理
         return rewardRuleHandlerContext.handler(gameId, betType, rollerGrid);
     }
