@@ -11,8 +11,8 @@ import java.util.*;
  *  * todo: 配置正确性校验
  */
 @Component
-@ConfigurationProperties(prefix = "mysterious-probabilistic-config")
-public class NacosMysteriousProbabilisticConfig {
+@ConfigurationProperties(prefix = "maria-makiling-probabilistic-config")
+public class NacosMariaMakilingProbabilisticConfig {
     /**
      * nacos json配置，字段命名不可更改/字段命名不可更改/字段命名不可更改<br/><br/>
      *

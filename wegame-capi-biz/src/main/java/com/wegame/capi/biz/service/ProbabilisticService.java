@@ -5,7 +5,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.common.enums.GameTypeEnum;
-import com.wegame.capi.infrastructure.config.nacos.NacosMysteriousProbabilisticConfig;
+import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingProbabilisticConfig;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ public class ProbabilisticService {
 
     private static final String KEY_NAME_SPLITTER = "_";
     @Autowired
-    NacosMysteriousProbabilisticConfig nacosMysteriousProbabilisticConfig;
+    NacosMariaMakilingProbabilisticConfig nacosMysteriousProbabilisticConfig;
 
     /**
      * 随机一个游戏元素

@@ -27,21 +27,31 @@ public class ProbabilisticServiceTest extends BaseTest {
 
     @Test
     public void test_randomOneSymbol() {
-        Map<SymbolDo, AtomicInteger> map = new HashMap<>();
-        for (int i = 0; i < 100000000; i++) {
-            SymbolDo symbolDo = probabilisticService.randomOneSymbol(10000L, 1);
-            if (Objects.nonNull(symbolDo)) {
-                AtomicInteger cnt = map.getOrDefault(symbolDo, new AtomicInteger(0));
-                cnt.incrementAndGet();
-                map.putIfAbsent(symbolDo, cnt);
-            } else {
-                log.error("symbolDo is null");
+        for (int index = 1; index <= 5; index++) {
+            Map<SymbolDo, AtomicInteger> map = new HashMap<>();
+            for (int i = 0; i < 100000000; i++) {
+                SymbolDo symbolDo = probabilisticService.randomOneSymbol(10000L, index);
+                if (Objects.nonNull(symbolDo)) {
+                    if (map.containsKey(symbolDo)) {
+                        AtomicInteger atomicInteger = map.get(symbolDo);
+                        atomicInteger.incrementAndGet();
+                        map.put(symbolDo, atomicInteger);
+                    } else {
+                        AtomicInteger atomicInteger = new AtomicInteger(0);
+                        atomicInteger.incrementAndGet();
+                        map.put(symbolDo, atomicInteger);
+                    }
+                } else {
+                    log.error("symbolDo is null");
+                }
             }
+            map.entrySet().forEach(item -> {
+                log.info("symbol: {}, count: {}", item.getKey().getName(), item.getValue());
+            });
+            int sum = map.values().stream().map(item -> item.get()).reduce(0, Integer::sum);
+            log.info("index: {}, sum: {}", index, sum);
+            System.out.println();
+            System.out.println();
         }
-        map.entrySet().forEach(item -> {
-            log.info("symbol: {}, count: {}", item.getKey().getName(), item.getValue());
-        });
     }
-
-
 }

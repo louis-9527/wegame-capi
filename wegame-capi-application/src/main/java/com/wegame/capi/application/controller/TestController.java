@@ -1,8 +1,8 @@
 package com.wegame.capi.application.controller;
 
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.infrastructure.config.nacos.NacosMysteriousOddsConfig;
-import com.wegame.capi.infrastructure.config.nacos.NacosMysteriousProbabilisticConfig;
+import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingOddsConfig;
+import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingProbabilisticConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -26,9 +26,9 @@ public class TestController {
 
 
     @Autowired
-    NacosMysteriousProbabilisticConfig nacosMysteriousProbabilisticConfig;
+    NacosMariaMakilingProbabilisticConfig nacosMysteriousProbabilisticConfig;
     @Autowired
-    NacosMysteriousOddsConfig nacosMysteriousOddsConfig;
+    NacosMariaMakilingOddsConfig nacosMysteriousOddsConfig;
 
     @ApiOperation(value = "ProbabilisticConfig", httpMethod = "GET")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})

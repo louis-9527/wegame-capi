@@ -12,8 +12,8 @@ import java.util.Map;
  * todo: 配置正确性校验
  */
 @Component
-@ConfigurationProperties(prefix = "mysterious-odds-config")
-public class NacosMysteriousOddsConfig {
+@ConfigurationProperties(prefix = "maria-makiling-odds-config")
+public class NacosMariaMakilingOddsConfig {
     /**
      * nacos json配置，字段命名不可更改/字段命名不可更改/字段命名不可更改<br/><br/>
      * <p>
