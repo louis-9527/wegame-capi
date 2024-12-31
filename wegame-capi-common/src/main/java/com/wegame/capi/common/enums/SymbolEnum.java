@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum SymbolTypeEnum {
+public enum SymbolEnum {
 
     Symbol1001(1001, "Symbol1001"),
     Symbol1002(1002, "Symbol1001"),
@@ -53,13 +53,13 @@ public enum SymbolTypeEnum {
      * @param id   id
      * @param name 名称
      */
-    private SymbolTypeEnum(Integer id, String name) {
+    private SymbolEnum(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public static SymbolTypeEnum valueOfId(Integer id) {
-        for (SymbolTypeEnum item : SymbolTypeEnum.values()) {
+    public static SymbolEnum valueOfId(Integer id) {
+        for (SymbolEnum item : SymbolEnum.values()) {
             if (Objects.equals(item.getId(), id)) {
                 return item;
             }

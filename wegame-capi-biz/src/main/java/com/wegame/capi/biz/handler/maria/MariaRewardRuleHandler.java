@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
 import com.wegame.capi.biz.domain.game.*;
 import com.wegame.capi.biz.handler.RewardRuleHandler;
-import com.wegame.capi.common.enums.SymbolTypeEnum;
+import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 @Component("mariaMakilingRewardRuleHandler")
 public class MariaRewardRuleHandler implements RewardRuleHandler {
 
-    private static final List<SymbolTypeEnum> WILD_LIST = Lists.newArrayList(SymbolTypeEnum.Wild, SymbolTypeEnum.WildX2, SymbolTypeEnum.WildX3, SymbolTypeEnum.WildX5, SymbolTypeEnum.WildX10);
+    private static final List<SymbolEnum> WILD_LIST = Lists.newArrayList(SymbolEnum.Wild, SymbolEnum.WildX2, SymbolEnum.WildX3, SymbolEnum.WildX5, SymbolEnum.WildX10);
 
 
     @Override
@@ -169,12 +169,12 @@ public class MariaRewardRuleHandler implements RewardRuleHandler {
     }
 
     private boolean isWild(Integer symbolId) {
-        return WILD_LIST.contains(SymbolTypeEnum.valueOfId(symbolId));
+        return WILD_LIST.contains(SymbolEnum.valueOfId(symbolId));
     }
 
     private boolean isScatter(Integer symbolId) {
-        SymbolTypeEnum symbolType = SymbolTypeEnum.valueOfId(symbolId);
-        return Objects.equals(symbolType, SymbolTypeEnum.Scatter);
+        SymbolEnum symbolType = SymbolEnum.valueOfId(symbolId);
+        return Objects.equals(symbolType, SymbolEnum.Scatter);
     }
 
     private boolean isFirstColumSymbolId(Map<Integer, RewardRuleSymbolDo> firstColumSymbolMapping, Integer symbolId) {
