@@ -43,6 +43,9 @@ public class RewardResultDo implements Serializable {
      */
     private Integer[][] rewardIndex;
     /**
+     * [[]]
+     */
+    /**
      * 是否中了免费轮
      */
     private boolean isFreeSpin;

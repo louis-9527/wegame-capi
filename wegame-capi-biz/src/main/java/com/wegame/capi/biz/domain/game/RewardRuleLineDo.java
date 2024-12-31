@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.domain.game;
 
+import com.wegame.capi.biz.domain.SymbolDo;
+import com.wegame.capi.common.enums.RewardLineTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,11 +28,11 @@ public class RewardRuleLineDo implements Serializable {
     /**
      * 元素id
      */
-    private Integer symbolId;
+    private SymbolDo symbol;
     /**
      * 元素连数
      */
-    private Integer linkCount;
+    private RewardLineTypeEnum rewardLineType;
     /**
      * 中奖元素的坐标
      */
