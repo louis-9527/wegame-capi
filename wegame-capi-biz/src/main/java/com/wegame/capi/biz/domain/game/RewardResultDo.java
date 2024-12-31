@@ -41,7 +41,7 @@ public class RewardResultDo implements Serializable {
     /**
      * 中奖的所有元素的坐标集合
      */
-    private List<int[]> rewardCoordinateList;
+    private Integer[][] rewardIndex;
     /**
      * 是否中了免费轮
      */

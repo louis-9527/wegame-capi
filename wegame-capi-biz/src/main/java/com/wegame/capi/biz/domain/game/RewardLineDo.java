@@ -39,7 +39,7 @@ public class RewardLineDo implements Serializable {
     /**
      * 中奖倍数
      */
-    private Long rewardTimes;
+    private Integer rewardTimes;
     /**
      * 赔率
      */
@@ -48,4 +48,9 @@ public class RewardLineDo implements Serializable {
      * 中奖元素的坐标
      */
     private int[] rewardCoordinate;
+
+    /**
+     * 当前中奖线的中奖id列表
+     */
+    private List<Integer> rewardSymbolIdList;
 }
