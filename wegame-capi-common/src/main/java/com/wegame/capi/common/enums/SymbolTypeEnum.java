@@ -14,9 +14,8 @@ import lombok.ToString;
 public enum SymbolTypeEnum {
 
     COMMON("COMMON", "普通元素"),
-    SPECIAL("SPECIAL", "特殊元素"),
-
-    ;
+    WILD("WILD", "WILD元素"),
+    SCATTER("SCATTER", "SCATTER元素");
 
     /**
      * 枚举码.

@@ -28,8 +28,9 @@ public class ProbabilisticContext {
         GameTypeEnum gameType = GameTypeEnum.valueOfCode(gameId);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "Not Support Game");
         String strategyName = strategyNameMap.get(gameType);
-        AbstractProbabilisticStrategy probabilisticStrategy = probabilisticStrategyMap.get(strategyName);
-        return probabilisticStrategy.randomOneSymbol(gameType, cellNo);
+        AbstractProbabilisticStrategy strategy = probabilisticStrategyMap.get(strategyName);
+        AssertUtil.assertNotNull(strategy, ErrorCode.ERR_INTER, "NOT SUPPORT");
+        return strategy.randomOneSymbol(gameType, cellNo);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.reward;
+package com.wegame.capi.biz.module.reward.strategy;
 
 import com.wegame.capi.biz.domain.game.RewardDo;
 import com.wegame.capi.biz.domain.game.RewardResultDo;
@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component("mariaMakilingRewardHandler")
-public class MariaRewardHandler implements RewardHandler {
+public class MariaMakilingRewardStrategy implements RewardStrategy {
+
     @Override
     public RewardResultDo handle(RewardDo rewardDo) {
 

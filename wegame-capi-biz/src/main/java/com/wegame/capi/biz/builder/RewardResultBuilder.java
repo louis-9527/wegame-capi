@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.builder;
 
-import com.google.common.collect.Lists;
 import com.wegame.capi.biz.domain.game.RewardLineDo;
 import com.wegame.capi.biz.domain.game.RewardResultDo;
 

@@ -27,6 +27,10 @@ import java.io.Serializable;
 public class OddsCalculateDo implements Serializable {
     private static final long serialVersionUID = -2098745454848L;
     /**
+     * 游戏类型
+     */
+    private GameTypeEnum gameType;
+    /**
      * 投注类型
      */
     private BetTypeEnum betType;
@@ -34,10 +38,6 @@ public class OddsCalculateDo implements Serializable {
      * 投注子类型
      */
     private BetSubTypeEnum betSubType;
-    /**
-     * 游戏类型
-     */
-    private GameTypeEnum gameType;
     /**
      * 赔率类型
      */
