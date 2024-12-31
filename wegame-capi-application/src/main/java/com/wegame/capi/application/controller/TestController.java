@@ -40,7 +40,7 @@ public class TestController {
     @ApiOperation(value = "nacosMysteriousOddsConfig", httpMethod = "GET")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
     @GetMapping("/nacosMysteriousOddsConfig")
-    public CommonResponse<Map<String, Map<String, Double>>> getOddsMap() {
+    public CommonResponse<Map<String, Map<String, BigDecimal>>> getOddsMap() {
         return CommonResponse.build(nacosMysteriousOddsConfig.getOddsConfigMap());
     }
 
