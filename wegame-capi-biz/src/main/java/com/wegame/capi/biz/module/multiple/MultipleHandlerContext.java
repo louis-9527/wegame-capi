@@ -1,9 +1,8 @@
-package com.wegame.capi.biz.handler.context;
+package com.wegame.capi.biz.module.multiple;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.game.MultipleDo;
 import com.wegame.capi.biz.domain.game.MultipleResultDo;
-import com.wegame.capi.biz.handler.MultipleHandler;
 import com.wegame.capi.common.enums.MultipleHandlertypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
