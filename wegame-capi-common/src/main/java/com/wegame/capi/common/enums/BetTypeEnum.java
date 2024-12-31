@@ -14,8 +14,7 @@ import lombok.ToString;
 public enum BetTypeEnum {
 
     NORMAL_BET("NORMAL_BET", "正常投注"),
-    NON_BUY_FREE_SPINS_BET("NON_BUY_FREE_SPINS_BET", "非购买免费轮投注"),
-    BUY_FREE_SPINS_BET("BUY_FREE_SPINS_BET", "购买免费轮投注"),
+    FREE_SPINS_BET("FREE_SPINS_BET", "免费轮投注"),
 
     ;
 
