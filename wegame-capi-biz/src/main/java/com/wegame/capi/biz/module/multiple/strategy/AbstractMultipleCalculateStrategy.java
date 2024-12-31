@@ -19,8 +19,7 @@ public abstract class AbstractMultipleCalculateStrategy implements MultipleCalcu
         for(SymbolDo[] row : symbolArr) {
             for(SymbolDo element : row) {
                 AssertUtil.assertNotNull(element, ErrorCode.ERR_INTER);
-                // todo
-                if (!Objects.equals(element.getSymbolType(), SymbolTypeEnum.COMMON)) {
+                if (!Objects.equals(element.getSymbolType(), SymbolTypeEnum.WILD)) {
                     continue;
                 }
                 if (Objects.isNull(element.getSymbolRule())) {
