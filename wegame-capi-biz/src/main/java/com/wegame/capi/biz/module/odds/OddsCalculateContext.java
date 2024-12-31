@@ -40,7 +40,8 @@ public class OddsCalculateContext {
         AssertUtil.assertNotNull(oddsDo.getOddsType(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(oddsDo.getSymbol(), ErrorCode.ERR_INTER);
         String strategyName = strategyNameMap.get(oddsDo.getGameType());
-        OddsCalculateStrategy oddsStrategy = oddsCalculateStrategyMap.get(strategyName);
-        return oddsStrategy.calculateOdds(oddsDo);
+        OddsCalculateStrategy strategy = oddsCalculateStrategyMap.get(strategyName);
+        AssertUtil.assertNotNull(strategy, ErrorCode.ERR_INTER, "NOT SUPPORT");
+        return strategy.calculateOdds(oddsDo);
     }
 }

@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Sets;
 import com.wegame.capi.biz.builder.RewardResultBuilder;
 import com.wegame.capi.biz.domain.game.*;
-import com.wegame.capi.biz.module.multiple.MultipleService;
+import com.wegame.capi.biz.module.multiple.MultipleCalculateContext;
 import com.wegame.capi.biz.module.odds.OddsCalculateContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class RewardService {
     @Autowired
     OddsCalculateContext oddsCalculateContext;
     @Autowired
-    MultipleService multipleService;
+    MultipleCalculateContext multipleService;
 
     /**
      * @param gameId     游戏id
