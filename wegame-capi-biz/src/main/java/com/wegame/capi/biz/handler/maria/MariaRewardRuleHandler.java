@@ -20,18 +20,14 @@ public class MariaRewardRuleHandler implements RewardRuleHandler {
 
     @Override
     public RewardRuleResultDo handle(RewardRuleDo rewardRuleDo) {
-        // 第一列中奖元素映射<元素id,元素>
-        Map<Integer, RewardRuleSymbolDo> firstColumSymbolMapping = new HashMap<>();
+        // 第一列中奖元素映射<元素id,元素>  // 初始化第一列数据
+        Map<Integer, RewardRuleSymbolDo> firstColumSymbolMapping = this.initFirstColumSymbol(rewardRuleDo);
         // 本轮必要元素每一列出现的统计.<元素id,<列号，本列元素列表>>
         Map<Integer, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping = new HashMap<>();
         // symbolId是否有wild参与<symbolId,boolean>
         Map<Integer, Boolean> symbolIdHasWildMap = new HashMap<>();
 
-        // 初始化第一列数据
         Integer[][] rollerGrid = rewardRuleDo.getRollerGrid();
-        firstColumSymbolMapping.put(rollerGrid[0][0], RewardRuleSymbolDo.builder().gameId(rewardRuleDo.getGameId()).id(rollerGrid[0][0]).coordinate(new int[]{0, 0}).build());
-        firstColumSymbolMapping.put(rollerGrid[1][0], RewardRuleSymbolDo.builder().gameId(rewardRuleDo.getGameId()).id(rollerGrid[1][0]).coordinate(new int[]{1, 0}).build());
-        firstColumSymbolMapping.put(rollerGrid[2][0], RewardRuleSymbolDo.builder().gameId(rewardRuleDo.getGameId()).id(rollerGrid[2][0]).coordinate(new int[]{2, 0}).build());
         // 第一列初始化到统计的数据中去
         firstColumSymbolMapping.values().forEach(firstSymbol -> this.addSymbolMapping(secondColumSymbolMapping, firstSymbol.getId(), firstSymbol));
 
@@ -55,6 +51,15 @@ public class MariaRewardRuleHandler implements RewardRuleHandler {
 
         // 中奖线统计
         return generatorRewardLines(rewardRuleDo.getGameId(), firstColumSymbolMapping, symbolIdHasWildMap, secondColumSymbolMapping);
+    }
+
+    private Map<Integer, RewardRuleSymbolDo> initFirstColumSymbol(RewardRuleDo rewardRuleDo) {
+        Map<Integer, RewardRuleSymbolDo> firstColumSymbolMapping = new HashMap<>();
+        Integer[][] rollerGrid = rewardRuleDo.getRollerGrid();
+        firstColumSymbolMapping.put(rollerGrid[0][0], RewardRuleSymbolDo.builder().gameId(rewardRuleDo.getGameId()).id(rollerGrid[0][0]).coordinate(new int[]{0, 0}).build());
+        firstColumSymbolMapping.put(rollerGrid[1][0], RewardRuleSymbolDo.builder().gameId(rewardRuleDo.getGameId()).id(rollerGrid[1][0]).coordinate(new int[]{1, 0}).build());
+        firstColumSymbolMapping.put(rollerGrid[2][0], RewardRuleSymbolDo.builder().gameId(rewardRuleDo.getGameId()).id(rollerGrid[2][0]).coordinate(new int[]{2, 0}).build());
+        return firstColumSymbolMapping;
     }
 
     private RewardRuleResultDo generatorRewardLines(String gameId, Map<Integer, RewardRuleSymbolDo> firstColumSymbolMapping, Map<Integer, Boolean> symbolIdHasWildMap, Map<Integer, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping) {
@@ -94,34 +99,34 @@ public class MariaRewardRuleHandler implements RewardRuleHandler {
     }
 
     private List<RewardRuleLineDo> generatorRewardLinesForComplex(Integer symbolId, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap) {
-        // 排除非wild列数小于3的数据
-
-        // 第一列所有元素和其他列所有元素做笛卡尔积
         List<RewardRuleLineDo> complexRewardLineList = Lists.newArrayList();
-        RewardRuleLineDo currentLineDo = RewardRuleLineDo.builder()
-                .symbolId(symbolId)
-                .linkCount(columTreeMap.keySet().size())
-                .rewardSymbolIdList(Lists.newArrayList())
-                .build();
-        complexRewardLineList.add(currentLineDo);
-//        currentLineDo.getRewardSymbolIdList().add(firstColumSymbolDo.getId());
         List<RewardRuleSymbolDo> firstColumSymbolDoList = columTreeMap.get(0);
         for (RewardRuleSymbolDo firstColumSymbolDo : firstColumSymbolDoList) {
-            for (int colum = 1; colum < columTreeMap.keySet().size() - 1; colum++) {
-                List<RewardRuleSymbolDo> otherColumSymbolDoList = columTreeMap.get(colum);
-                for (RewardRuleSymbolDo otherColumSymbolDo : otherColumSymbolDoList) {
-                    //
-
-
-                }
-
-
-            }
-
-
+            loopFindRewardLine(symbolId, 1, columTreeMap.keySet().size() - 1, columTreeMap, Lists.newArrayList(firstColumSymbolDo.getId()), complexRewardLineList);
         }
-
         return null;
+    }
+
+    private void loopFindRewardLine(Integer symbolId, Integer currentColum, Integer maxColum, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap, List<Integer> symbolIdList, List<RewardRuleLineDo> complexRewardLineList) {
+        if (Objects.equals(currentColum, maxColum)) {
+            for (RewardRuleSymbolDo rewardRuleSymbolDo : columTreeMap.get(currentColum)) {
+                // 计算线
+                List<Integer> currentLineSymbolIdList = Lists.newArrayList(symbolIdList);
+                currentLineSymbolIdList.add(rewardRuleSymbolDo.getId());
+                RewardRuleLineDo lineDo = RewardRuleLineDo.builder()
+                        .symbolId(symbolId)
+                        .linkCount(columTreeMap.keySet().size())
+                        .rewardSymbolIdList(currentLineSymbolIdList)
+                        .build();
+                complexRewardLineList.add(lineDo);
+            }
+        } else {
+            // 记录并继续循环
+            for (RewardRuleSymbolDo rewardRuleSymbolDo : columTreeMap.get(currentColum)) {
+                symbolIdList.add(rewardRuleSymbolDo.getId());
+                loopFindRewardLine(symbolId, currentColum++, maxColum, columTreeMap, Lists.newArrayList(symbolIdList), complexRewardLineList);
+            }
+        }
     }
 
     private List<RewardRuleLineDo> generatorRewardLinesForSimple(Integer symbolId, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap) {

@@ -30,15 +30,6 @@ public class RewardRuleSymbolDo implements Serializable {
      * 坐标
      */
     private int[] coordinate;
-    /**
-     * 上一个
-     */
-    private RewardRuleSymbolDo last;
-
-    /**
-     * 下一个
-     */
-    private RewardRuleSymbolDo next;
 
 }
 
