@@ -19,7 +19,7 @@ public class BetDo implements Serializable {
     /**
      * 游戏Id
      */
-    private Long gameId;
+    private String gameId;
     /**
      * 投注类型: @see GameBetTypeEnum
      */

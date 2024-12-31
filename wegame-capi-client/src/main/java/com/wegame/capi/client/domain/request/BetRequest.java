@@ -20,7 +20,7 @@ import java.io.Serializable;
 @ApiModel(description = "投注请求参数")
 public class BetRequest implements Validate, Serializable {
     @ApiModelProperty(value = "游戏Id", required = true)
-    private Long gameId;
+    private String gameId;
     @ApiModelProperty(value = "投注类型：NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
     private String betType;
     @ApiModelProperty(value = "投注明细", required = false)
