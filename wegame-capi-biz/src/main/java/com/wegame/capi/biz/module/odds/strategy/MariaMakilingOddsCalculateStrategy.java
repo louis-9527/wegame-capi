@@ -20,14 +20,6 @@ public class MariaMakilingOddsCalculateStrategy extends AbstractOddsCalculateStr
 
     @Override
     public Map<String, Map<String, BigDecimal>> getOddsMap(OddsCalculateDo oddsCalculateDo) {
-        switch (oddsCalculateDo.getBetSubType()) {
-            case NORMAL_BET:
-            case NON_BUY_FREE_SPINS_BET:
-                return nacosMariaMakilingOddsConfig.getOddsConfigMap();
-            case BUY_FREE_SPINS_BET:
-                return nacosMariaMakilingOddsConfig.getBuyOddsConfigMap();
-            default:
-                throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
-        }
+        return nacosMariaMakilingOddsConfig.getOddsConfigMap();
     }
 }
