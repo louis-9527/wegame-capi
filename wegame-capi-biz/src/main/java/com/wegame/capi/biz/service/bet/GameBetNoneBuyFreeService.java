@@ -30,7 +30,7 @@ public class GameBetNoneBuyFreeService extends AbsGameBetService<GameBetNoneBuyR
             freeSpinIds.add(resultDetail.getId());
         }
         //获取投注结果
-        GameBetRecordDo betRecord = super.getBetRecord(req.getGameId(), 0L, rewardAmount, resultDetails);
+        GameBetRecordDo betRecord = super.getBetRecord(req, 0L, rewardAmount, resultDetails);
         //保存投注记录并派奖
         super.saveBetRecordAndPayOut(betRecord);
         return GameBetResultDo.<GameBetNoneBuyResultDo>builder()
@@ -39,11 +39,6 @@ public class GameBetNoneBuyFreeService extends AbsGameBetService<GameBetNoneBuyR
                 .betSubType(req.getBetSubType())
                 .resultDetail(GameBetNoneBuyResultDo.builder().freeSpinIds(freeSpinIds).build())
                 .build();
-    }
-
-    @Override
-    public Class<GameBetNoneBuyReqDo> tClass() {
-        return GameBetNoneBuyReqDo.class;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.wegame.capi.client.domain.vo;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,16 +20,16 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class GameBetPayOutDetailVo implements Serializable {
     private static final long serialVersionUID = 6487808344235380369L;
+    @ApiModelProperty("倍数")
     private BigDecimal multiple;
-    /**
-     * 赔率
-     */
+
+    @ApiModelProperty("赔率")
     private BigDecimal odds;
+    @ApiModelProperty("中奖坐标")
     private List<SymbolIndexVo> rewardIndex;
-    /**
-     * 当前中奖线的中奖id列表
-     */
+    @ApiModelProperty("当前中奖线Id列表")
     private List<String> rewardSymbolIdList;
+    @ApiModelProperty("派奖金额")
     private Long payOutAmount;
 }
 

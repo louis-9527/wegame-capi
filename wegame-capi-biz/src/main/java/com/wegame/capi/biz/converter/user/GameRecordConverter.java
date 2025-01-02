@@ -275,8 +275,7 @@ public class GameRecordConverter {
         detailPo.setMultiple(detailDo.getMultiple());
         detailPo.setBetAmount(detailDo.getBetAmount());
         detailPo.setRewardAmount(detailDo.getRewardAmount());
-        detailPo.setFreeSpinsFlag(detailDo.getFreeSpinsFlag().getCode());
-        detailPo.setFreeSpinsTimes(detailDo.getFreeSpinsTimes());
+        detailPo.setFreeSpinsFlag(detailDo.getFreeSpinsFlag() == null ? null : detailDo.getFreeSpinsFlag().getCode());
         detailPo.setRewardResult(detailDo.getRewardResults() == null ? null : JSON.toJSONString(detailDo.getRewardResults()));
 
         return detailPo;
@@ -292,15 +291,14 @@ public class GameRecordConverter {
         detaildo.setBetAmount(detaildo.getBetAmount());
         detaildo.setRewardAmount(detaildo.getRewardAmount());
         detaildo.setFreeSpinsFlag(BooleanEnum.valueOfCode(detailPo.getFreeSpinsFlag()));
-        detaildo.setFreeSpinsTimes(detaildo.getFreeSpinsTimes());
         detaildo.setGameResult(convertJsonToSymbolDoArray(detailPo.getGameResult()));
 
-        detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult())?null:JSON.parseArray(detailPo.getRewardResult(),GameBetResultDetailDo.RewardResult.class));
+        detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult()) ? null : JSON.parseArray(detailPo.getRewardResult(), GameBetResultDetailDo.RewardResult.class));
 
         return detaildo;
     }
 
-    private  static SymbolDo[][] convertJsonToSymbolDoArray(String jsonString){
+    private static SymbolDo[][] convertJsonToSymbolDoArray(String jsonString) {
         JSONArray jsonArray = JSON.parseArray(jsonString);
         int rows = jsonArray.size();
         int cols = jsonArray.getJSONArray(0).size();

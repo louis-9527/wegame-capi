@@ -62,12 +62,13 @@ public class MariaMakilingGame extends AbstractGame {
         GameInfoDo gameInfo = getGameInfo();
         Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
         if (gamePlay.isFreeSpinsFlag()) {
-            List<WheelDo> wheels = Arrays.asList();
+            List<WheelDo> wheels = new ArrayList<>();
             int wheelNumber = 10 + random.nextInt(15 - 10 + 1);
             for (int i = 0; i < wheelNumber; i++) {
                 // todo 控制wild @bruce
                 wheels.add(nonScatterGenerate(gameInfo, i + 1, probabilisticConfig));
             }
+            return wheels;
         } else {
             // 根据投注类型：生成游戏滚轮
             switch (gamePlay.getBetSubType()) {
@@ -80,7 +81,6 @@ public class MariaMakilingGame extends AbstractGame {
                     throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
             }
         }
-        return null;
     }
 
 
@@ -154,6 +154,7 @@ public class MariaMakilingGame extends AbstractGame {
                     symbolId = randomOneSymbol(i, probabilisticConfig);
                     symbolDo = gameInfo.getSymbolById(symbolId);
                 }
+                symbolArr[i][j] = symbolDo;
             }
         }
         return WheelDo.builder()
