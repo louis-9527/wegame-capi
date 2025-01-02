@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.multiple.strategy;
+package com.wegame.capi.biz.module.multiple;
 
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.WheelDo;
