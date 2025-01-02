@@ -1,7 +1,6 @@
 package com.wegame.capi.application.controller;
 
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingOddsConfig;
 import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
