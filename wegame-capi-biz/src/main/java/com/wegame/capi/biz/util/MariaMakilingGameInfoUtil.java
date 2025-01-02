@@ -119,6 +119,6 @@ public class MariaMakilingGameInfoUtil {
     public static final GameInfoDo MARIA_MAKILING_GAME_INFO = GameInfoDo.builder()
             .gameType(GameTypeEnum.MARIA_MAKILING)
             .row(3)
-            .cell(3)
+            .cell(5)
             .symbolMap(SYMBOL_MAP).build();
 }

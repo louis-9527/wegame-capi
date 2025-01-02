@@ -5,12 +5,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+
 
 /**
  * 滚轮
  */
+@Slf4j
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -37,6 +40,17 @@ public class WheelDo implements Serializable {
             }
         }
         return new WheelDo(index, newSymbolArr);
+    }
+
+    public void print() {
+        log.info("index:{}", index, symbolArr);
+        log.info("symbolArr: ");
+        for (int i = 0; i < symbolArr.length; i++) {
+            for (int j = 0; j < symbolArr[i].length; j++) {
+                System.out.print(symbolArr[i][j].getName() + " ");
+            }
+            System.out.println();
+        }
     }
 
 }
