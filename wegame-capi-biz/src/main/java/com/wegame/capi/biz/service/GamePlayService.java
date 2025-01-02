@@ -13,6 +13,7 @@ import java.util.*;
 /**
  * 游戏玩法服务
  */
+@Deprecated
 @Service
 public class GamePlayService {
     @Autowired

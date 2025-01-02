@@ -3,7 +3,6 @@ package com.wegame.capi.biz.module.probabilistic.strategy;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.common.enums.GameTypeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -21,11 +20,12 @@ public abstract class AbstractProbabilisticStrategy implements ProbabilisticStra
     /**
      * 获取概率配置表<br/>
      * key: 元素id， val：概率列表
+     *
      * @return 概率配置表
      */
     public abstract Map<String, List<BigDecimal>> getProbabilisticConfigMap();
 
-    public SymbolDo randomOneSymbol(GameTypeEnum gameType, int cellNo) {
+    public String randomOneSymbol(GameTypeEnum gameType, int cellNo) {
         // todo 自测
         // todo 扩展性设计与实现
         // todo 配置数据正确性校验
@@ -35,7 +35,7 @@ public abstract class AbstractProbabilisticStrategy implements ProbabilisticStra
         // todo 数据校验
         Map<String, Integer> map = new HashMap<>();
         probabilisticConfigMap.entrySet().forEach(item -> {
-            int val = (item.getValue().get(cellNo - 1).multiply(new BigDecimal(100))).intValue();
+            int val = (item.getValue().get(cellNo).multiply(new BigDecimal(100))).intValue();
             if (val > 0) {
                 map.put(item.getKey(), val);
             }
@@ -50,10 +50,7 @@ public abstract class AbstractProbabilisticStrategy implements ProbabilisticStra
         int startVal = 0;
         for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-                return SymbolDo.builder()
-                        .id(Integer.valueOf(entry.getKey()))
-                        .name("") // todo
-                        .build();
+                return entry.getKey();
             } else {
                 startVal += entry.getValue();
             }

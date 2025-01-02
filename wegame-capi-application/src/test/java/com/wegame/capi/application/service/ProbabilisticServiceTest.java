@@ -7,6 +7,7 @@ import com.wegame.capi.biz.module.probabilistic.strategy.MariaMakilingProbabilis
 import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -28,25 +29,25 @@ public class ProbabilisticServiceTest extends BaseTest {
 
 
         for (int index = 1; index <= 5; index++) {
-            Map<SymbolDo, AtomicInteger> map = new HashMap<>();
+            Map<String, AtomicInteger> map = new HashMap<>();
             for (int i = 0; i < 100000000; i++) {
-                SymbolDo symbolDo = mariaMakilingProbabilisticStrategy.randomOneSymbol(GameTypeEnum.MARIA_MAKILING, index);
-                if (Objects.nonNull(symbolDo)) {
-                    if (map.containsKey(symbolDo)) {
-                        AtomicInteger atomicInteger = map.get(symbolDo);
+                String symbolId = mariaMakilingProbabilisticStrategy.randomOneSymbol(GameTypeEnum.MARIA_MAKILING, index);
+                if (StringUtils.isNotBlank(symbolId)) {
+                    if (map.containsKey(symbolId)) {
+                        AtomicInteger atomicInteger = map.get(symbolId);
                         atomicInteger.incrementAndGet();
-                        map.put(symbolDo, atomicInteger);
+                        map.put(symbolId, atomicInteger);
                     } else {
                         AtomicInteger atomicInteger = new AtomicInteger(0);
                         atomicInteger.incrementAndGet();
-                        map.put(symbolDo, atomicInteger);
+                        map.put(symbolId, atomicInteger);
                     }
                 } else {
                     log.error("symbolDo is null");
                 }
             }
             map.entrySet().forEach(item -> {
-                log.info("symbol: {}, count: {}", item.getKey().getName(), item.getValue());
+                log.info("symbolId: {}, count: {}", item.getKey(), item.getValue());
             });
             int sum = map.values().stream().map(item -> item.get()).reduce(0, Integer::sum);
             log.info("index: {}, sum: {}", index, sum);

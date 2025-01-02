@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,6 +26,14 @@ public class GameInfoDo implements Serializable {
      */
     private GameTypeEnum gameType;
     /**
+     * 游戏id
+     */
+    private String id;
+    /**
+     * 游戏名称
+     */
+    private String name;
+    /**
      * 行
      */
     private Integer row;
@@ -33,8 +42,12 @@ public class GameInfoDo implements Serializable {
      */
     private Integer cell;
     /**
-     * 元素集合
+     * 元素Map<元素id，元素>
      */
-    private Set<SymbolDo> symbolSet;
+    private Map<String, SymbolDo> symbolMap;
+
+    public SymbolDo getSymbolById(String symbolId) {
+        return symbolMap.get(symbolId);
+    }
 }
 

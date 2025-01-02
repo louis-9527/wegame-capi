@@ -24,7 +24,7 @@ public class SymbolDo implements Serializable {
     /**
      * 元素id
      */
-    private Integer id;
+    private String id;
     /**
      * 元素名称
      */
