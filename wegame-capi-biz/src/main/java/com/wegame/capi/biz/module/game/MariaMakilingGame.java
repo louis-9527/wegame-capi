@@ -1,11 +1,10 @@
 package com.wegame.capi.biz.module.game;
 
-import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
 import com.wegame.capi.biz.domain.GameInfoDo;
 import com.wegame.capi.biz.domain.GamePlayDo;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.module.probabilistic.strategy.AbstractProbabilisticStrategy;
-import com.wegame.capi.common.enums.GameTypeEnum;
+import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,8 @@ public class MariaMakilingGame extends AbstractGame {
     }
 
     @Override
-    public SymbolDo[][] generate(GameInfoDo gameInfo, GamePlayDo gamePlay) {
+    public List<SymbolDo[][]> generate(GamePlayDo gamePlay) {
+        GameInfoDo gameInfo = getGameInfo();
         // 根据投注类型：生产游戏记录结果
         return null;
     }
@@ -66,7 +66,7 @@ public class MariaMakilingGame extends AbstractGame {
         SymbolDo[][] symbolArr = commonGenerate(gameInfo);
         // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
         List<Integer> scatterCellList = Arrays.asList(0, 2, 4);
-        for(Integer cell : scatterCellList) {
+        for (Integer cell : scatterCellList) {
             boolean hasScatter = false;
             for (int i = 0; i < gameInfo.getRow(); i++) {
                 SymbolDo symbol = symbolArr[i][cell];
@@ -83,8 +83,6 @@ public class MariaMakilingGame extends AbstractGame {
         }
         return symbolArr;
     }
-
-
 
 
 }

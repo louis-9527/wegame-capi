@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain;
 
+import com.wegame.capi.biz.domain.game.RewardResultDo;
 import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 玩游戏结果模型
@@ -29,7 +31,10 @@ public class GamePlayResultDo implements Serializable {
      */
     private GameInfoDo gameInfoDo;
 
+    private List<SymbolDo[][]> symbolArrList;
 
+
+    private RewardResultDo rewardResult;
     // todo 其他
 }
 

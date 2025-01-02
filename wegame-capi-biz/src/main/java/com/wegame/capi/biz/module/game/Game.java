@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.game;
 
+import com.wegame.capi.biz.domain.GameInfoDo;
 import com.wegame.capi.biz.domain.GamePlayDo;
 import com.wegame.capi.biz.domain.GamePlayResultDo;
 
@@ -8,6 +9,7 @@ import com.wegame.capi.biz.domain.GamePlayResultDo;
  */
 public interface Game {
 
+    GameInfoDo getGameInfo();
     GamePlayResultDo play(GamePlayDo play);
 
 }
