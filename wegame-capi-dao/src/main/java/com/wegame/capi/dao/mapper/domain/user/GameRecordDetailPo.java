@@ -1,9 +1,11 @@
 package com.wegame.capi.dao.mapper.domain.user;
 
+import com.wegame.base.enums.BooleanEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * game_record_detail：游戏记录明细
@@ -19,7 +21,7 @@ public class GameRecordDetailPo implements Serializable {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
     /**
      * 投注金额 单位：分
      */
@@ -39,7 +41,18 @@ public class GameRecordDetailPo implements Serializable {
     /**
      * 倍数
      */
-    private Integer multiple;
+    private BigDecimal multiple;
+
+
+    private Integer rewardAmountType;
+    /**
+     * 是否中了免费轮
+     */
+    private Integer freeSpinsFlag;
+    /**
+     * 免费轮次数
+     */
+    private Integer freeSpinsTimes;
 
    ///////////////  above auto generated ///////////////
 }

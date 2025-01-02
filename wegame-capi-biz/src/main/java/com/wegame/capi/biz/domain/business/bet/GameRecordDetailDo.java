@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * game_record_detail：游戏记录明细
@@ -19,7 +20,7 @@ public class GameRecordDetailDo implements Serializable {
     /**
      * 主键ID
      */
-    private Long id;
+    private Integer id;
     /**
      * 投注金额 单位：分
      */
@@ -39,7 +40,7 @@ public class GameRecordDetailDo implements Serializable {
     /**
      * 倍数
      */
-    private Integer multiple;
+    private BigDecimal multiple;
 
     ///////////////  above auto generated ///////////////
 }

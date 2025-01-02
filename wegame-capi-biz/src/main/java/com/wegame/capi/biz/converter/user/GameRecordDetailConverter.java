@@ -119,7 +119,7 @@ public class GameRecordDetailConverter {
 
     public static GameRecordDetailQuery requestToQuery(PageQueryGameRecordDetailRequest request, String orderClause) {
         GameRecordDetailQuery query = new GameRecordDetailQuery();
-        query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
+       // query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
         query.setBetAmount(StringUtils.isNotEmpty(request.getBetAmount()) ? Long.valueOf(request.getBetAmount()) : null);
         query.setRewardAmount(StringUtils.isNotEmpty(request.getRewardAmount()) ? Long.valueOf(request.getRewardAmount()) : null);
         query.setGameResult(request.getGameResult());

@@ -1,19 +1,25 @@
 package com.wegame.capi.biz.converter.user;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetRecordDo;
+import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
 import com.wegame.capi.client.domain.request.query.PageQueryGameRecordRequest;
 import com.wegame.capi.client.domain.vo.GameRecordVo;
 import com.wegame.capi.biz.domain.business.bet.GameRecordDo;
 import com.wegame.capi.common.enums.GameStatusEnum;
+import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordPo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordQuery;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -239,12 +245,78 @@ public class GameRecordConverter {
         po.setPayOutAmount(gameRecordDo.getPayOutAmount());
         po.setMarketFlag(BooleanEnum.FALSE.getCode());
         po.setStatus(GameStatusEnum.ING.getCode());
-        po.setDetail(JSON.toJSONString(gameRecordDo.getResultDetails()));
+        List<GameBetResultDetailDo> resultDetails = gameRecordDo.getResultDetails();
+        List<GameRecordDetailPo> gameRecordDetailPos = doToDetailPoList(resultDetails);
+        po.setDetail(CollectionUtils.isEmpty(gameRecordDetailPos) ? null : JSON.toJSONString(gameRecordDetailPos));
         po.setCreator(operator.getName());
         po.setCreateTime(new Date());
         po.setUpdater(operator.getName());
         po.setUpdateTime(new Date());
         return po;
+    }
+
+
+    public static List<GameRecordDetailPo> doToDetailPoList(List<GameBetResultDetailDo> doList) {
+        return Optional.ofNullable(doList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(GameRecordConverter::doToDetailPo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    public static GameRecordDetailPo doToDetailPo(GameBetResultDetailDo detailDo) {
+        if (detailDo == null) {
+            return null;
+        }
+        GameRecordDetailPo detailPo = new GameRecordDetailPo();
+        detailPo.setId(detailDo.getId());
+        detailPo.setGameResult(detailDo.getGameResult() == null ? null : JSON.toJSONString(detailDo.getGameResult()));
+        detailPo.setMultiple(detailDo.getMultiple());
+        detailPo.setBetAmount(detailDo.getBetAmount());
+        detailPo.setRewardAmount(detailDo.getRewardAmount());
+        detailPo.setFreeSpinsFlag(detailDo.getFreeSpinsFlag().getCode());
+        detailPo.setFreeSpinsTimes(detailDo.getFreeSpinsTimes());
+        detailPo.setRewardResult(detailDo.getRewardResults() == null ? null : JSON.toJSONString(detailDo.getRewardResults()));
+
+        return detailPo;
+    }
+
+    public static GameBetResultDetailDo poToDetailDo(GameRecordDetailPo detailPo) {
+        if (detailPo == null) {
+            return null;
+        }
+        GameBetResultDetailDo detaildo = new GameBetResultDetailDo();
+        detaildo.setId(detaildo.getId());
+        detaildo.setMultiple(detaildo.getMultiple());
+        detaildo.setBetAmount(detaildo.getBetAmount());
+        detaildo.setRewardAmount(detaildo.getRewardAmount());
+        detaildo.setFreeSpinsFlag(BooleanEnum.valueOfCode(detailPo.getFreeSpinsFlag()));
+        detaildo.setFreeSpinsTimes(detaildo.getFreeSpinsTimes());
+        detaildo.setGameResult(convertJsonToSymbolDoArray(detailPo.getGameResult()));
+
+        detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult())?null:JSON.parseArray(detailPo.getRewardResult(),GameBetResultDetailDo.RewardResult.class));
+
+        return detaildo;
+    }
+
+    private  static SymbolDo[][] convertJsonToSymbolDoArray(String jsonString){
+        JSONArray jsonArray = JSON.parseArray(jsonString);
+        int rows = jsonArray.size();
+        int cols = jsonArray.getJSONArray(0).size();
+
+        SymbolDo[][] symbolDoArray = new SymbolDo[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            JSONArray rowArray = jsonArray.getJSONArray(i);
+            for (int j = 0; j < cols; j++) {
+                JSONObject jsonObject = rowArray.getJSONObject(j);
+                SymbolDo symbolDo = jsonObject.toJavaObject(SymbolDo.class);
+                symbolDoArray[i][j] = symbolDo;
+            }
+        }
+
+        return symbolDoArray;
     }
 
 }

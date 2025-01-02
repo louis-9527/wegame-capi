@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.domain.business.bet;
 
-import com.wegame.capi.common.enums.GameBetSubTypeEnum;
-import com.wegame.capi.common.enums.GameBetTypeEnum;
+import com.wegame.capi.common.enums.BetSubTypeEnum;
+import com.wegame.capi.common.enums.BetTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,8 +18,8 @@ public class GameBetResultDo<R> {
      * 游戏Id
      */
     private String gameId;
-    private GameBetTypeEnum betType;
-    private GameBetSubTypeEnum betSubType;
+    private BetTypeEnum betType;
+    private BetSubTypeEnum betSubType;
     private Long gameRecordId;
     public R resultDetail;
 }

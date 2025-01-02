@@ -52,13 +52,13 @@ public class GameRecordPo implements Serializable {
      */
     private String playerName;
     /**
-     * 投注类型 1正常投注 2免费轮投注
+     * 投注类型
      */
-    private Integer betType;
+    private String betType;
     /**
-     * 投注子类型 11正常投注 21购买免费轮投注 22非购买免费轮投注
+     * 投注子类型
      */
-    private Integer betSubType;
+    private String betSubType;
     /**
      * 投注id（单钱包）
      */
@@ -87,14 +87,6 @@ public class GameRecordPo implements Serializable {
      * 免费轮获得标识 0否 1是
      */
     private Integer freeSpinsFlag;
-    /**
-     * 免费轮次数
-     */
-    private Integer freeSpinsTimes;
-    /**
-     * 游戏结果
-     */
-    private Integer[][] gameResult;
     /**
      * 游戏记录明细json
      */

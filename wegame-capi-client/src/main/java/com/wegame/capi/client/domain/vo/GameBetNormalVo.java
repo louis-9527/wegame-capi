@@ -21,7 +21,7 @@ public class GameBetNormalVo implements Serializable {
     private Integer payOutAmountType;
     private Long payOutTotalAmount;
     private Integer hitFreeSpinFlag;
-    private Integer[][] spinsResult;
+    private String[][] spinsResult;
     private List<GameBetPayOutDetailVo> payOutDetail;
 
 }
