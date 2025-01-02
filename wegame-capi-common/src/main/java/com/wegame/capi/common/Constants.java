@@ -8,7 +8,7 @@ public class Constants {
     public static final Integer TOKEN_EXPIRED = 60;
 
     // token&签名相关
-    public static final String _TOKEN_ = "token-live-sports";
+    public static final String _TOKEN_ = "token-game";
     public static final String APP_ID = "com.wegame.capi";
     public static final String APP_SECRET = "MIIEowIBAAKCAQEAmP8M8b1C12VA9hB3iIHjvQYnda1QovLp+zKTbY2WRRAIGPfT";
     public static final Long REQUEST_TIME_OUT = 5 * 60 * 1000L;
