@@ -36,7 +36,7 @@ public class WheelDo implements Serializable {
                 newSymbolArr[i][j] = symbolArr[i][j];
             }
         }
-        return new WheelDo(newSymbolArr);
+        return new WheelDo(index, newSymbolArr);
     }
 
 }

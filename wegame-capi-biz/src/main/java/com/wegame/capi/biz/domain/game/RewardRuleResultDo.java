@@ -8,7 +8,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 中奖规则结果do
@@ -26,11 +25,4 @@ public class RewardRuleResultDo implements Serializable {
      * 中奖线中奖列表
      */
     private List<RewardRuleLineDo> rewardRuleLineList;
-
-    /**
-     * 所有命中规则的元素坐标集合（不重复）
-     */
-    private Set<SymbolIndexDo> rewardIndexList;
-
-
 }

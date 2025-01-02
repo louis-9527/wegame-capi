@@ -42,10 +42,6 @@ public class RewardResultDo implements Serializable {
      */
     private Integer rewardType;
     /**
-     * 中奖的所有元素的坐标集合 todo 定义 Index(row,cell)
-     */
-    private List<SymbolIndexDo> rewardIndexList;
-    /**
      * 是否中了免费轮
      */
     private boolean isFreeSpin;

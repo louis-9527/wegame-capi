@@ -15,7 +15,7 @@ public class RewardRuleBuilder {
                 .gameType(rewardDo.getGameType())
                 .betType(rewardDo.getBetType())
                 .betSubType(rewardDo.getBetSubType())
-                .symbolArr(rewardDo.getSymbolArr())
+                .symbolArr(rewardDo.getWheel().getSymbolArr())
                 .build();
     }
 
