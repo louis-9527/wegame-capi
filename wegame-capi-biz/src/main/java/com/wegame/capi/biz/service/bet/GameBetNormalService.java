@@ -15,8 +15,8 @@ public class GameBetNormalService extends AbsGameBetService<GameBetNormalReqDo, 
     public GameBetResultDo<GameBetNormalResultDo> bet(GameBetReqDo<GameBetNormalReqDo> betReqDo) {
         //获取游戏结果
         GameBetResultDetailDo resultDetail = super.getResultDetail(betReqDo.getGameId(), betReqDo.getBetType(), betReqDo.getBetSubType(), betReqDo.getBetDetail().getBetAmount());
-        //获取投注结果
-        GameBetRecordDo betRecord = super.getBetRecord(betReqDo.getGameId(), resultDetail.getBetAmount(), resultDetail.getRewardAmount(), Lists.newArrayList(resultDetail));
+        //生成投注结果
+        GameBetRecordDo betRecord = super.getBetRecord(betReqDo, resultDetail.getBetAmount(), resultDetail.getRewardAmount(), Lists.newArrayList(resultDetail));
         //保存投注记录并派奖
         super.saveBetRecordAndPayOut(betRecord);
         //组装返回结果
@@ -25,14 +25,10 @@ public class GameBetNormalService extends AbsGameBetService<GameBetNormalReqDo, 
                 .gameId(betReqDo.getGameId())
                 .betType(betReqDo.getBetType())
                 .betSubType(betReqDo.getBetSubType())
-                .resultDetail(GameBetNormalResultDo.builder().resultDetailDo(resultDetail).build())
+                .resultDetail(GameBetNormalResultDo.builder()
+                        .resultDetailDo(resultDetail).build())
                 .build();
 
-    }
-
-    @Override
-    public Class<GameBetNormalReqDo> tClass() {
-        return GameBetNormalReqDo.class;
     }
 
 }

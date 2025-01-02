@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_SCATTER;
+import static com.wegame.capi.biz.util.RandomSymbolUtil.randomOneSymbol;
 
 @Slf4j
 @Component
@@ -40,33 +41,18 @@ public class MariaMakilingGame extends AbstractGame {
         return mariaMakilingRewardHandler;
     }
 
-    public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
-        switch (gamePlay.getBetSubType()) {
-            case NORMAL_BET:
-                return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
-            case NON_BUY_FREE_SPINS_BET:
-            case BUY_FREE_SPINS_BET:
-                return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
-            default:
-                throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
-        }
-    }
-
-    protected Map<String, Map<String, BigDecimal>> getOddsConfig(GamePlayDo gamePlay) {
-        return nacosMariaMakilingConfig.getOddsConfig();
-    }
-
     @Override
     public List<WheelDo> generate(GamePlayDo gamePlay) {
         GameInfoDo gameInfo = getGameInfo();
         Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
         if (gamePlay.isFreeSpinsFlag()) {
-            List<WheelDo> wheels = Arrays.asList();
+            List<WheelDo> wheels = new ArrayList<>();
             int wheelNumber = 10 + random.nextInt(15 - 10 + 1);
             for (int i = 0; i < wheelNumber; i++) {
                 // todo 控制wild @bruce
                 wheels.add(nonScatterGenerate(gameInfo, i + 1, probabilisticConfig));
             }
+            return wheels;
         } else {
             // 根据投注类型：生成游戏滚轮
             switch (gamePlay.getBetSubType()) {
@@ -79,9 +65,7 @@ public class MariaMakilingGame extends AbstractGame {
                     throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
             }
         }
-        return null;
     }
-
 
     /**
      * 生成游戏滚轮：生成逻辑无任何限制
@@ -153,6 +137,7 @@ public class MariaMakilingGame extends AbstractGame {
                     symbolId = randomOneSymbol(i, probabilisticConfig);
                     symbolDo = gameInfo.getSymbolById(symbolId);
                 }
+                symbolArr[i][j] = symbolDo;
             }
         }
         return WheelDo.builder()
@@ -160,4 +145,17 @@ public class MariaMakilingGame extends AbstractGame {
                 .symbolArr(symbolArr)
                 .build();
     }
+
+    private Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
+        switch (gamePlay.getBetSubType()) {
+            case NORMAL_BET:
+                return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
+            case NON_BUY_FREE_SPINS_BET:
+            case BUY_FREE_SPINS_BET:
+                return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
+            default:
+                throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
+        }
+    }
+
 }

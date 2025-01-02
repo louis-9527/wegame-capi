@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.business.bet;
 
+import com.wegame.base.enums.BooleanEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,9 +13,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class GameBetNormalResultDo {
-    /**
-     * 免费轮获得标识 0否 1是
-     */
+
     private GameBetResultDetailDo resultDetailDo;
 
 }

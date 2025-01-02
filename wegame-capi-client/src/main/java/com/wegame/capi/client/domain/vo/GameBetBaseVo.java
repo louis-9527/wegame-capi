@@ -1,6 +1,7 @@
 package com.wegame.capi.client.domain.vo;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,10 +18,16 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class GameBetBaseVo<T> implements Serializable {
     private static final long serialVersionUID = -3682602438304369095L;
+    @ApiModelProperty("游戏投注Id")
     private String gameRecordId;
+    @ApiModelProperty("游戏ID")
     private String gameId;
+    @ApiModelProperty(value = "投注类型:NORMAL_BET,免费轮投注:FREE_SPINS_BET", required = true)
     private String betType;
+    @ApiModelProperty(value = "投注子类型:NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
     private String betSubType;
+    @ApiModelProperty("玩家余额")
     private Long credit;
+    @ApiModelProperty("返回明细")
     private T resultDetail;
 }

@@ -7,8 +7,11 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.game.*;
+import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
+import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -16,6 +19,22 @@ import java.util.*;
 @Slf4j
 @Component
 public class MariaMakilingRewardHandler extends AbstractRewardHandler {
+
+    @Autowired
+    OddsCalculateStrategy mariaMakilingOddsCalculateStrategy;
+
+    @Autowired
+    MultipleCalculateStrategy mariaMakilingMultipleCalculateStrategy;
+
+    @Override
+    public OddsCalculateStrategy oddsCalculateStrategy() {
+        return mariaMakilingOddsCalculateStrategy;
+    }
+
+    @Override
+    public MultipleCalculateStrategy multipleCalculateStrategy() {
+        return mariaMakilingMultipleCalculateStrategy;
+    }
 
     public RewardRuleResultDo calcRewardLines(RewardRuleDo rewardRuleDo) {
         // 第一列中奖元素映射<元素,中奖规则元素列表>  // 初始化第一列数据

@@ -24,15 +24,12 @@ public class GameBetResultDetailDo {
     private Long rewardAmount;
     private BigDecimal multiple;
     private GameRewardAmountTypeEnum rewardAmountType;
-    private SymbolDo[][] gameResult;
     /**
      * 是否中了免费轮
      */
     private BooleanEnum freeSpinsFlag;
-    /**
-     * 免费轮次数
-     */
-    private Integer freeSpinsTimes;
+
+    private SymbolDo[][] gameResult;
     //中奖结果(多条线)
     private List<RewardResult> rewardResults;
 

@@ -43,7 +43,7 @@ import java.util.Objects;
  * 投注Service
  */
 @Service
-public abstract class AbsGameBetService<T, R> implements GameBetService<T,R>{
+public abstract class AbsGameBetService<T, R> implements GameBetService<T, R> {
     @Autowired
     private IdGeneratorHelper idGeneratorHelper;
     @Autowired
@@ -53,29 +53,6 @@ public abstract class AbsGameBetService<T, R> implements GameBetService<T,R>{
     @Autowired
     private Game game;
 
-    public abstract Class<T> tClass();
-
-
-    private BetWithPayoutRes betWithPayout(GameRecordPo gameRecordPo) {
-        //调用单钱包
-        BetWithPayoutReq payoutReq = BetWithPayoutReq.builder()
-                .pId(gameRecordPo.getPId())
-                .channelId(gameRecordPo.getChannelId())
-                .playerName(gameRecordPo.getPlayerName())
-                .refId(gameRecordPo.getBetSerialNo())
-                .createTime(DateUtil.toUTC(new Date()))
-                .betAmount(GameAmountUtil.toBigDecimal(gameRecordPo.getBetAmount()))
-                .payoutAmount(GameAmountUtil.toBigDecimal(gameRecordPo.getPayOutAmount()))
-                .betDetails(BetWithPayoutReq.BetDetails.builder()
-                        .gameId(gameRecordPo.getGameId())
-                        .roundNo(gameRecordPo.getBetSerialNo())
-                        .wagersDate(DateUtil.getCurrentTimestamp())
-                        .settlementDate(DateUtil.getCurrentTimestamp()).build())
-                .build();
-        BetWithPayoutRes betWithPayoutRes = new BetWithPayoutRes();//singleWalletApi.betWithPayout(payoutReq);
-        betWithPayoutRes.setBetId("121");
-        return betWithPayoutRes;
-    }
 
     public GameBetResultDetailDo getResultDetail(String gameId, BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
         List<GameBetResultDetailDo> resultDetail = this.getResultDetail(gameId, betType, betSubType, betAmount, false);
@@ -100,12 +77,14 @@ public abstract class AbsGameBetService<T, R> implements GameBetService<T,R>{
             GameBetResultDetailDo build = GameBetResultDetailDo.builder()
                     .gameResult(rewardResultDo.getWheel().getSymbolArr())
                     .betAmount(betAmount)
-                    .rewardAmount(rewardResult.getRewardTotalAmount())
-                    .multiple(rewardResult.getWildTotalTimes())
-                    .rewardAmountType(this.getRewardAmountType())
-                    .freeSpinsFlag(rewardResult.isFreeSpin() ? BooleanEnum.TRUE : BooleanEnum.FALSE)
-                    .rewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()))
                     .build();
+            if (rewardResult != null) {
+                build.setRewardAmount(rewardResult.getRewardTotalAmount());
+                build.setMultiple(rewardResult.getWildTotalTimes());
+                build.setRewardAmountType(this.getRewardAmountType());
+                build.setFreeSpinsFlag(rewardResult.isFreeSpin() ? BooleanEnum.TRUE : BooleanEnum.FALSE);
+                build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
+            }
             resultDetails.add(build);
         });
 
@@ -114,15 +93,15 @@ public abstract class AbsGameBetService<T, R> implements GameBetService<T,R>{
     }
 
 
-    public GameBetRecordDo getBetRecord(String gameId, Long betAmount, Long payAmount, List<GameBetResultDetailDo> resultDetails) {
+    public GameBetRecordDo getBetRecord(GameBetReqDo<T> betReqDo, Long betAmount, Long payAmount, List<GameBetResultDetailDo> resultDetails) {
         //组装投注记录
         long id = idGeneratorHelper.nextId();
         return GameBetRecordDo.builder()
                 .id(id)
-                .gameId(gameId)
+                .gameId(betReqDo.getGameId())
                 .betSerialNo(String.valueOf(id))
-                .betType(BetTypeEnum.NORMAL_BET)
-                .betSubType(BetSubTypeEnum.NORMAL_BET)
+                .betType(betReqDo.getBetType())
+                .betSubType(betReqDo.getBetSubType())
                 .betAmount(betAmount)
                 .channelId("channelId")
                 .pId("Pid")
@@ -200,6 +179,35 @@ public abstract class AbsGameBetService<T, R> implements GameBetService<T,R>{
         //更新记录
         mongoTemplate.updateFirst(query, update, GameRecordPo.class);
     }
+
+    /**
+     * 调用单钱包
+     *
+     * @param gameRecordPo
+     * @return
+     */
+
+    private BetWithPayoutRes betWithPayout(GameRecordPo gameRecordPo) {
+        //调用单钱包
+        BetWithPayoutReq payoutReq = BetWithPayoutReq.builder()
+                .pId(gameRecordPo.getPId())
+                .channelId(gameRecordPo.getChannelId())
+                .playerName(gameRecordPo.getPlayerName())
+                .refId(gameRecordPo.getBetSerialNo())
+                .createTime(DateUtil.toUTC(new Date()))
+                .betAmount(GameAmountUtil.toBigDecimal(gameRecordPo.getBetAmount()))
+                .payoutAmount(GameAmountUtil.toBigDecimal(gameRecordPo.getPayOutAmount()))
+                .betDetails(BetWithPayoutReq.BetDetails.builder()
+                        .gameId(gameRecordPo.getGameId())
+                        .roundNo(gameRecordPo.getBetSerialNo())
+                        .wagersDate(DateUtil.getCurrentTimestamp())
+                        .settlementDate(DateUtil.getCurrentTimestamp()).build())
+                .build();
+        BetWithPayoutRes betWithPayoutRes = new BetWithPayoutRes();//singleWalletApi.betWithPayout(payoutReq);
+        betWithPayoutRes.setBetId("121");
+        return betWithPayoutRes;
+    }
+
 
     private GameRewardAmountTypeEnum getRewardAmountType() {
         return GameRewardAmountTypeEnum.NONE_PRIZE;

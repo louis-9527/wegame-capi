@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.multiple.strategy;
+package com.wegame.capi.biz.module.multiple;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

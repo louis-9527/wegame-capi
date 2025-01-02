@@ -21,12 +21,14 @@ public class GameBetBuyFreeService extends AbsGameBetService<GameBetBuyReqDo, Ga
         long rewardAmount = 0L;
         List<Integer> freeSpinIds = new ArrayList<>(resultDetails.size());
         for (GameBetResultDetailDo resultDetail : resultDetails) {
-            rewardAmount = rewardAmount + resultDetail.getRewardAmount();
+            if (resultDetail.getRewardAmount() != null) {
+                rewardAmount = rewardAmount + resultDetail.getRewardAmount();
+            }
             freeSpinIds.add(resultDetail.getId());
         }
 
         //保存投注记录并派奖
-        GameBetRecordDo betRecord = super.getBetRecord(req.getGameId(), req.getBetDetail().getBuyAmount(), rewardAmount, resultDetails);
+        GameBetRecordDo betRecord = super.getBetRecord(req, req.getBetDetail().getBuyAmount(), rewardAmount, resultDetails);
         super.saveBetRecordAndPayOut(betRecord);
         return GameBetResultDo.<GameBetBuyResultDo>builder()
                 .gameId(req.getGameId())
@@ -37,25 +39,5 @@ public class GameBetBuyFreeService extends AbsGameBetService<GameBetBuyReqDo, Ga
                         .resultDetailDo(betResult)
                         .build())
                 .build();
-    }
-
-    @Override
-    public Class<GameBetBuyReqDo> tClass() {
-        return GameBetBuyReqDo.class;
-    }
-
-    private int getRandomFreeSpins() {
-        Random random = new Random();
-        int rand = random.nextInt(100) + 1; // 生成1到100之间的随机数
-
-        if (rand <= 50) {
-            return 10; // 50%的概率
-        } else if (rand <= 85) {
-            return 11; // 35%的概率
-        } else if (rand <= 95) {
-            return 12; // 10%的概率
-        } else {
-            return 13; // 5%的概率
-        }
     }
 }

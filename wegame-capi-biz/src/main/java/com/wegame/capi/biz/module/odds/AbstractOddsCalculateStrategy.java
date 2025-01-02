@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.odds.strategy;
+package com.wegame.capi.biz.module.odds;
 
 import com.wegame.capi.biz.domain.game.OddsCalculateDo;
 import org.apache.commons.collections4.MapUtils;
