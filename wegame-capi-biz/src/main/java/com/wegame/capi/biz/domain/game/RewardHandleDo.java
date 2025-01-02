@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.domain.game;
 
 import com.wegame.capi.biz.domain.SymbolDo;
+import com.wegame.capi.biz.domain.WheelDo;
 import com.wegame.capi.common.enums.BetSubTypeEnum;
 import com.wegame.capi.common.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.GameTypeEnum;
@@ -38,13 +39,19 @@ public class RewardHandleDo implements Serializable {
      */
     private BetSubTypeEnum betSubType;
     /**
-     * 元素数组
-     */
-    private SymbolDo[][] symbolArr;
-
-    /**
      * 投注金额
      */
     private Long betAmount;
+    /**
+     * 滚轮
+     */
+    private WheelDo wheel;
+
+    /**
+     * 元素数组  todo delete
+     */
+    private SymbolDo[][] symbolArr;
+
+
 
 }

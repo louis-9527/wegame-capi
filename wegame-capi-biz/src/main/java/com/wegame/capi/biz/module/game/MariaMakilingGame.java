@@ -7,9 +7,11 @@ import com.wegame.capi.biz.domain.GamePlayDo;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.WheelDo;
 import com.wegame.capi.biz.module.probabilistic.strategy.AbstractProbabilisticStrategy;
+import com.wegame.capi.biz.module.reward.strategy.RewardHandler;
 import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +26,9 @@ import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_
 @Component("mariaMakilingGameStrategy")
 public class MariaMakilingGame extends AbstractGame {
 
-    private Random random = new Random();
+    private static final Random random = new Random();
+    @Autowired
+    RewardHandler mariaMakilingRewardHandler;
 
     @Autowired
     AbstractProbabilisticStrategy mariaMakilingProbabilisticStrategy;
@@ -32,6 +36,11 @@ public class MariaMakilingGame extends AbstractGame {
     @Override
     public GameInfoDo getGameInfo() {
         return MariaMakilingGameInfoUtil.MARIA_MAKILING_GAME_INFO;
+    }
+
+    @Override
+    protected RewardHandler getRewardHandler() {
+        return mariaMakilingRewardHandler;
     }
 
     @Override
