@@ -34,7 +34,7 @@ public class GamePlayResultDo implements Serializable {
     private List<SymbolDo[][]> symbolArrList;
 
 
-    private RewardResultDo rewardResult;
+    private RewardResultDo rewardResult;  // todo
     // todo 其他
 }
 

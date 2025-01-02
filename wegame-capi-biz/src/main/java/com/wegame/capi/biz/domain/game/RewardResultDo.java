@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.game;
 
+import com.wegame.capi.biz.domain.SymbolDo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,6 +23,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class RewardResultDo implements Serializable {
     private static final long serialVersionUID = -2262432373454848L;
+    /**
+     * 滚轮
+     */
+    private SymbolDo[][] symbolArr;
     /**
      * 中奖总金额.单位：分
      */
@@ -48,4 +53,6 @@ public class RewardResultDo implements Serializable {
      * 是否中了免费轮
      */
     private boolean isFreeSpin;
+
+
 }

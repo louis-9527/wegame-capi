@@ -22,7 +22,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RewardDo implements Serializable {
+public class RewardHandleDo implements Serializable {
     private static final long serialVersionUID = -226232434848L;
 
     /**

@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.reward.strategy;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
@@ -27,7 +26,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Service
-public abstract class AbstractRewardStrategy {
+public abstract class AbstractRewardHandler implements RewardHandler {
 
     @Autowired
     OddsCalculateContext oddsCalculateContext;
@@ -38,7 +37,7 @@ public abstract class AbstractRewardStrategy {
 
     public abstract boolean hasFreeSpin(GameTypeEnum gameType, SymbolDo[][] symbolArr);
 
-    public RewardResultDo calcRewardResult(RewardDo rewardDo) {
+    public RewardResultDo handle(RewardHandleDo rewardDo) {
         // 中奖规则处理
         RewardRuleDo rewardRuleDo = RewardRuleBuilder.build(rewardDo);
         AssertUtil.assertNotNull(rewardRuleDo, ErrorCode.ERR_INTER, "rewardRuleDo is null");

@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 
 @Slf4j
 @Component("mariaMakilingRewardStrategy")
-public class MariaMakilingRewardStrategy extends AbstractRewardStrategy {
+public class MariaMakilingRewardHandler extends AbstractRewardHandler {
 
     private static final List<SymbolEnum> WILD_LIST = Lists.newArrayList(SymbolEnum.Wild, SymbolEnum.WildX2, SymbolEnum.WildX3, SymbolEnum.WildX5, SymbolEnum.WildX10);
 

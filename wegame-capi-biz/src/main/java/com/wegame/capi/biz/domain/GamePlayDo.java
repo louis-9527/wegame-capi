@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.domain;
 
-import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.common.enums.BetSubTypeEnum;
 import com.wegame.capi.common.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.GameTypeEnum;
@@ -38,6 +37,6 @@ public class GamePlayDo implements Serializable {
     /**
      * 投注金额
      */
-    private BigDecimal amount;
+    private Long betAmount;
 }
 
