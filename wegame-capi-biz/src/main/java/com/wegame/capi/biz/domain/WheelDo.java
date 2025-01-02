@@ -47,7 +47,7 @@ public class WheelDo implements Serializable {
         log.info("symbolArr: ");
         for (int i = 0; i < symbolArr.length; i++) {
             for (int j = 0; j < symbolArr[i].length; j++) {
-                System.out.print(symbolArr[i][j].getName() + " ");
+                System.out.print(symbolArr[i][j].getId() + " ");
             }
             System.out.println();
         }

@@ -24,12 +24,9 @@ public class GameTest extends BaseTest {
 
     @Autowired
     MariaMakilingGame mariaMakilingGame;
-    @Autowired
-    NacosMariaMakilingConfig nacosMariaMakilingConfig;
-
     @Test
     public void test_randomOneSymbol_commonProbabilistic() {
-        GamePlayDo playDo  = GamePlayDo.builder()
+        GamePlayDo playDo = GamePlayDo.builder()
                 .gameType(GameTypeEnum.MARIA_MAKILING)
                 .betType(BetTypeEnum.NORMAL_BET)
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
@@ -66,7 +63,7 @@ public class GameTest extends BaseTest {
 
     @Test
     public void test_randomOneSymbol_freeProbabilistic() {
-        GamePlayDo playDo  = GamePlayDo.builder()
+        GamePlayDo playDo = GamePlayDo.builder()
                 .gameType(GameTypeEnum.MARIA_MAKILING)
                 .betType(BetTypeEnum.NORMAL_BET)
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
@@ -101,18 +98,39 @@ public class GameTest extends BaseTest {
         }
     }
 
-
-
     @Test
     public void test_generate() {
-        GamePlayDo playDo  = GamePlayDo.builder()
-                .gameType(GameTypeEnum.MARIA_MAKILING)
-                .betType(BetTypeEnum.NORMAL_BET)
-                .betSubType(BetSubTypeEnum.NORMAL_BET)
-                .betAmount(100L)
-                .build();
-        List<WheelDo> wheelDos = mariaMakilingGame.generate(playDo);
-        wheelDos.forEach(WheelDo::print);
+        int times = 100;
+        for (int i = 0; i < times; i++) {
+            GamePlayDo playDo = GamePlayDo.builder()
+                    .gameType(GameTypeEnum.MARIA_MAKILING)
+                    .betType(BetTypeEnum.NORMAL_BET)
+                    .betSubType(BetSubTypeEnum.NORMAL_BET)
+                    .betAmount(100L)
+                    .build();
+            List<WheelDo> wheelDos = mariaMakilingGame.generate(playDo);
+            wheelDos.forEach(WheelDo::print);
+        }
+        for (int i = 0; i < times; i++) {
+            GamePlayDo playDo = GamePlayDo.builder()
+                    .gameType(GameTypeEnum.MARIA_MAKILING)
+                    .betType(BetTypeEnum.FREE_SPINS_BET)
+                    .betSubType(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET)
+                    .betAmount(100L)
+                    .build();
+            List<WheelDo> wheelDos = mariaMakilingGame.generate(playDo);
+            wheelDos.forEach(WheelDo::print);
+        }
+        for (int i = 0; i < times; i++) {
+            GamePlayDo playDo = GamePlayDo.builder()
+                    .gameType(GameTypeEnum.MARIA_MAKILING)
+                    .betType(BetTypeEnum.FREE_SPINS_BET)
+                    .betSubType(BetSubTypeEnum.BUY_FREE_SPINS_BET)
+                    .betAmount(100L)
+                    .build();
+            List<WheelDo> wheelDos = mariaMakilingGame.generate(playDo);
+            wheelDos.forEach(WheelDo::print);
+        }
     }
 
 }
