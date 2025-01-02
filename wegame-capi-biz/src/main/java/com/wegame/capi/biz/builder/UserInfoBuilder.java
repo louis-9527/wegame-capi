@@ -37,6 +37,7 @@ public class UserInfoBuilder {
                 .nickName(Optional.ofNullable(request.getNickName()).orElse(""))
                 .userLevel(request.getUserLevel())
                 .userName(request.getUserName())
+                .presentAmount(0L)
                 .extend("")
                 .creator(Constants.SYSTEM)
                 .updater(Constants.SYSTEM)

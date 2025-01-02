@@ -1,92 +1,69 @@
 package com.wegame.capi.biz.context;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.business.bet.GameBetNormalReqDo;
+import com.wegame.capi.biz.converter.BetConverter;
 import com.wegame.capi.biz.domain.business.bet.GameBetReqDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDo;
 import com.wegame.capi.biz.service.bet.AbsGameBetService;
+import com.wegame.capi.biz.service.bet.GameBetNormalService;
+import com.wegame.capi.biz.service.bet.GameBetService;
+import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
 import com.wegame.capi.client.domain.request.update.BetBaseRequest;
 import com.wegame.capi.client.domain.vo.GameBetBaseVo;
 import com.wegame.capi.client.domain.vo.GameBetNormalVo;
-import com.wegame.capi.client.domain.vo.GameBetPayOutDetailVo;
-import com.wegame.capi.common.enums.GameBetSubTypeEnum;
-import com.wegame.capi.common.enums.GameBetTypeEnum;
+import com.wegame.capi.common.enums.BetSubTypeEnum;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 
+/**
+ * 下注上下文
+ */
 @Component
 public class GameBetContext {
 
 
-    private static final Map<GameBetSubTypeEnum, String> betStrategyNameMap = new ImmutableMap.Builder<GameBetSubTypeEnum, String>()
-            .put(GameBetSubTypeEnum.NORMAL, "gameBetNormalService")
-            .put(GameBetSubTypeEnum.NON_BUY_FREE, "gameBetNoneBuyFreeService")
-            .put(GameBetSubTypeEnum.BUY_FREE, "gameBetBuyFreeService")
+    private static final Map<BetSubTypeEnum, String> betStrategyNameMap = new ImmutableMap.Builder<BetSubTypeEnum, String>()
+            .put(BetSubTypeEnum.NORMAL_BET, "gameBetNormalService")
+            .put(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET, "gameBetNoneBuyFreeService")
+            .put(BetSubTypeEnum.BUY_FREE_SPINS_BET, "gameBetBuyFreeService")
             .build();
 
     @Autowired
-    Map<String, AbsGameBetService<?, ?>> betStrategyMap;
+    Map<String, GameBetService<?, ?>> betStrategyMap;
+
 
     /**
      * 投注
-     *
-     * @param betDo
-     * @return
+     * * @return
      */
     public <T, R> GameBetBaseVo<Object> bet(BetBaseRequest<Object> betRequest) {
-        GameBetSubTypeEnum betSubType = GameBetSubTypeEnum.valueOfCode(betRequest.getBetSubType());
+        BetSubTypeEnum betSubType = BetSubTypeEnum.valueOfCode(betRequest.getBetSubType());
         String betStrategyName = betStrategyNameMap.get(betSubType);
         AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");
         AbsGameBetService<T, R> betStrategy = (AbsGameBetService<T, R>) betStrategyMap.get(betStrategyName);
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
         //对象转换
-        GameBetReqDo<T> betReqDo = new GameBetReqDo<T>();
-        betReqDo.setGameId(betRequest.getGameId());
-        betReqDo.setBetType(GameBetTypeEnum.valueOfCode(betRequest.getBetType()));
-        betReqDo.setBetSubType(GameBetSubTypeEnum.valueOfCode(betRequest.getBetSubType()));
-        ObjectMapper objectMapper = new ObjectMapper();
-        T serviceRequestData = objectMapper.convertValue(betRequest.getBetDetail(), betStrategy.tClass());
-        betReqDo.setBetDetail(serviceRequestData);
+        GameBetReqDo<T> betReqDo = BetConverter.reqToDo(betRequest, betStrategy.tClass());
 
+        //执行下注请求
         GameBetResultDo<R> betResult = betStrategy.bet(betReqDo);
-        GameBetBaseVo<Object> betBaseVo = new GameBetBaseVo<Object>();
-        betBaseVo.setGameRecordId(String.valueOf(betResult.getGameRecordId()));
-        betBaseVo.setGameId(betResult.getGameId());
-        betBaseVo.setBetType(betResult.getBetType().getCode());
-        betBaseVo.setBetSubType(betResult.getBetSubType().getCode());
-        if (betResult.resultDetail instanceof GameBetResultDetailDo) {
-            GameBetResultDetailDo detailDo = (GameBetResultDetailDo) betResult.resultDetail;
-            GameBetNormalVo normalVo = new GameBetNormalVo();
-            normalVo.setPayOutAmountType(detailDo.getRewardAmountType().getCode());
-            normalVo.setPayOutTotalAmount(detailDo.getRewardAmount());
-            normalVo.setSpinsResult(detailDo.getGameResult());
-            List<GameBetPayOutDetailVo> detailVos = new ArrayList<>();
-            List<GameBetResultDetailDo.RewardResult> rewardResults = detailDo.getRewardResults();
-            for (GameBetResultDetailDo.RewardResult rewardResult : rewardResults) {
-                GameBetPayOutDetailVo detailVo = new GameBetPayOutDetailVo();
-                detailVo.setIndex(rewardResult.getRewardIndex());
-                detailVo.setRewardSymbolIdList(rewardResult.getRewardSymbolIdList());
-                detailVo.setMultiple(rewardResult.getMultiple());
-                detailVo.setOdds(rewardResult.getOdds());
-                detailVo.setPayOutAmount(rewardResult.getRewardAmount());
-                detailVos.add(detailVo);
-            }
+        return BetConverter.doToVo(betResult);
+    }
 
-            normalVo.setPayOutDetail(detailVos);
-            betBaseVo.setResultDetail(normalVo);
-
-        }
-
-
-        return betBaseVo;
+    public  <T, R>  GameBetNormalVo queryFreeSpinDetail(QueryFreeSpinRequest request) {
+        BetSubTypeEnum betSubType = BetSubTypeEnum.valueOfCode(request.getBetSubType());
+        String betStrategyName = betStrategyNameMap.get(betSubType);
+        AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");
+        AbsGameBetService<T, R> betStrategy = (AbsGameBetService<T, R>) betStrategyMap.get(betStrategyName);
+        GameBetResultDetailDo resultDetailDo = betStrategy.queryBetFreeSpin(request.getGameId(), Long.valueOf(request.getGameRecordId()), Integer.valueOf(request.getFreeSpinId()));
+        return BetConverter.detailToNormalVo(resultDetailDo);
     }
 }

@@ -3,9 +3,7 @@ package com.wegame.capi.biz.service.bet;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.business.bet.*;
-import com.wegame.capi.biz.service.GamePlayService;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordPo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,8 +13,6 @@ import java.util.*;
  */
 @Service
 public class GameBetNoneBuyFreeService extends AbsGameBetService<GameBetNoneBuyReqDo, GameBetNoneBuyResultDo> {
-    @Autowired
-    private GamePlayService gamePlayService;
 
 
     @Override
@@ -24,24 +20,18 @@ public class GameBetNoneBuyFreeService extends AbsGameBetService<GameBetNoneBuyR
         Long recordId = req.getBetDetail().getRecordId();
         GameRecordPo gameRecord = super.mongoTemplate.findById(recordId, GameRecordPo.class);
         AssertUtil.assertNotNull(gameRecord, ErrorCode.ERR_PARAM);
-        //获取轮盘
-        List<Integer[][]> symBols = gamePlayService.getSysBolExcludeScatter(req.getGameId(), this.getRandomFreeSpins());
+
         //获取游戏结果
-        List<GameBetResultDetailDo> resultDetails = new ArrayList<>();
+        List<GameBetResultDetailDo> resultDetails = super.getResultDetail(req.getGameId(), req.getBetType(), req.getBetSubType(), 0L, Boolean.TRUE);
         long rewardAmount = 0L;
-        List<Integer> freeSpinIds = new ArrayList<>(symBols.size());
-        for (int i = 0; i < symBols.size(); i++) {
-            freeSpinIds.add(i);
-            Integer[][] symBol = symBols.get(i);
-            //获取游戏结果
-            GameBetResultDetailDo resultDetail = super.getResultDetail(i, gameRecord.getBetAmount(), symBol);
+        List<Integer> freeSpinIds = new ArrayList<>(resultDetails.size());
+        for (GameBetResultDetailDo resultDetail : resultDetails) {
             rewardAmount = rewardAmount + resultDetail.getRewardAmount();
-            resultDetails.add(resultDetail);
+            freeSpinIds.add(resultDetail.getId());
         }
         //获取投注结果
         GameBetRecordDo betRecord = super.getBetRecord(req.getGameId(), 0L, rewardAmount, resultDetails);
         //保存投注记录并派奖
-
         super.saveBetRecordAndPayOut(betRecord);
         return GameBetResultDo.<GameBetNoneBuyResultDo>builder()
                 .gameId(req.getGameId())
@@ -56,19 +46,4 @@ public class GameBetNoneBuyFreeService extends AbsGameBetService<GameBetNoneBuyR
         return GameBetNoneBuyReqDo.class;
     }
 
-
-    private int getRandomFreeSpins() {
-        Random random = new Random();
-        int rand = random.nextInt(100) + 1; // 生成1到100之间的随机数
-
-        if (rand <= 50) {
-            return 10; // 50%的概率
-        } else if (rand <= 85) {
-            return 11; // 35%的概率
-        } else if (rand <= 95) {
-            return 12; // 10%的概率
-        } else {
-            return 13; // 5%的概率
-        }
-    }
 }

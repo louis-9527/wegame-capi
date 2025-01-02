@@ -1,9 +1,8 @@
 package com.wegame.capi.biz.domain.business.bet;
 
 import com.wegame.base.enums.BooleanEnum;
-import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
-import com.wegame.capi.common.enums.GameBetSubTypeEnum;
-import com.wegame.capi.common.enums.GameBetTypeEnum;
+import com.wegame.capi.common.enums.BetSubTypeEnum;
+import com.wegame.capi.common.enums.BetTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,9 +37,9 @@ public class GameBetRecordDo {
      */
     private Long payOutAmount;
 
-    private GameBetTypeEnum betType;
+    private BetTypeEnum betType;
 
-    private GameBetSubTypeEnum betSubType;
+    private BetSubTypeEnum betSubType;
     /**
      * 营销标识 0否 1是
      */
