@@ -1,45 +1,39 @@
 package com.wegame.capi.application.controller;
 
-import com.wegame.base.annotation.LoginRequired;
+import com.wegame.base.context.Operator;
+import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.biz.builder.BetBuilder;
-import com.wegame.capi.biz.converter.BetResultConverter;
-import com.wegame.capi.biz.domain.BetResultDo;
-import com.wegame.capi.biz.service.BetService;
-import com.wegame.capi.client.domain.request.BetRequest;
-import com.wegame.capi.client.domain.request.UserLoginRequest;
-import com.wegame.capi.client.domain.vo.BetResultVo;
+
+import com.wegame.capi.biz.context.GameBetContext;
+import com.wegame.capi.client.domain.request.update.BetBaseRequest;
+import com.wegame.capi.client.domain.vo.GameBetBaseVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("投注")
-@Api(value = "投注模块", tags = {"投注模块"})
+@RequestMapping("bet")
+@Api(value = "投注", tags = {"bet模块"})
 public class BetController {
 
     @Autowired
-    BetService betService;
+    GameBetContext gameBetContext;
 
-    @LoginRequired
-    @ApiOperation(value = "投注", httpMethod = "POST")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
+    @ApiOperation(value = "bet", httpMethod = "POST")
     @PostMapping("/bet")
-    public CommonResponse<BetResultVo> bet(@Valid @RequestBody BetRequest request) {
-        request.validate();
-        BetResultDo betResultDo = betService.bet(BetBuilder.buildBetDo(request));
-        return CommonResponse.build(BetResultConverter.doToVo(betResultDo));
+    public CommonResponse<GameBetBaseVo<Object>> bet(@RequestBody BetBaseRequest<Object> betRequest) {
+        Operator operator = new Operator();
+        operator.setPlayerId("1000");
+        operator.setName("张三");
+        operator.setUserId(1000L);
+        OperatorContext.setOperator(operator);
+        GameBetBaseVo<Object> betResult = gameBetContext.bet(betRequest);
+
+        return CommonResponse.build(betResult);
     }
+
 
 }

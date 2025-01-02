@@ -2,6 +2,9 @@ package com.wegame.capi.dao.mapper.domain.user;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,11 +18,14 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@Document("bet_record")
 public class GameRecordPo implements Serializable {
     private static final long serialVersionUID = -633389003068449792L;
     /**
      * 主键ID
      */
+    @Id
+    @Field("id")
     private Long id;
     /**
      * 平台id
@@ -85,6 +91,10 @@ public class GameRecordPo implements Serializable {
      * 免费轮次数
      */
     private Integer freeSpinsTimes;
+    /**
+     * 游戏结果
+     */
+    private Integer[][] gameResult;
     /**
      * 游戏记录明细json
      */

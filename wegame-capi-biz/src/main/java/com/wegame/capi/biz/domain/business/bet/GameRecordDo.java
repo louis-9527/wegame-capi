@@ -1,10 +1,15 @@
-package com.wegame.capi.biz.domain.user;
+package com.wegame.capi.biz.domain.business.bet;
 
+import com.wegame.base.enums.BooleanEnum;
+import com.wegame.capi.common.enums.GameBetSubTypeEnum;
+import com.wegame.capi.common.enums.GameBetTypeEnum;
+import com.wegame.capi.common.enums.GameStatusEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * game_record：投注记录
@@ -15,7 +20,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameRecordDo implements Serializable {
+public class GameRecordDo<T> implements Serializable {
     private static final long serialVersionUID = -2093670798700975104L;
     /**
      * 主键ID
@@ -48,11 +53,11 @@ public class GameRecordDo implements Serializable {
     /**
      * 投注类型 1正常投注 2免费轮投注
      */
-    private Integer betType;
+    private GameBetTypeEnum betType;
     /**
      * 投注子类型 11正常投注 21购买免费轮投注 22非购买免费轮投注
      */
-    private Integer betSubType;
+    private GameBetSubTypeEnum betSubType;
     /**
      * 投注id（单钱包）
      */
@@ -72,23 +77,23 @@ public class GameRecordDo implements Serializable {
     /**
      * 营销标识 0否 1是
      */
-    private Integer marketFlag;
+    private BooleanEnum marketFlag;
     /**
      * 状态 0进行中 1已完结 2无效
      */
-    private Integer status;
+    private GameStatusEnum status;
     /**
      * 免费轮获得标识 0否 1是
      */
-    private Integer freeSpinsFlag;
+    private BooleanEnum freeSpinsFlag;
     /**
      * 免费轮次数
      */
     private Integer freeSpinsTimes;
     /**
-     * 游戏记录明细json
+     * 游戏记录明细
      */
-    private String detail;
+    private List<T> detail;
     /**
      * 创建人
      */
@@ -105,6 +110,11 @@ public class GameRecordDo implements Serializable {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 游戏结果json
+     */
+    private Integer[][] gameResult;
 
     ///////////////  above auto generated ///////////////
 }
