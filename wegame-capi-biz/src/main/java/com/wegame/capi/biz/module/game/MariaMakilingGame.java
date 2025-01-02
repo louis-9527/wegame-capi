@@ -40,7 +40,6 @@ public class MariaMakilingGame extends AbstractGame {
         return mariaMakilingRewardHandler;
     }
 
-    @Override
     public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
         switch (gamePlay.getBetSubType()) {
             case NORMAL_BET:
@@ -53,7 +52,6 @@ public class MariaMakilingGame extends AbstractGame {
         }
     }
 
-    @Override
     protected Map<String, Map<String, BigDecimal>> getOddsConfig(GamePlayDo gamePlay) {
         return nacosMariaMakilingConfig.getOddsConfig();
     }
