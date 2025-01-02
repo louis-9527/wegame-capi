@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 游戏信息模型
@@ -40,7 +39,7 @@ public class GameInfoDo implements Serializable {
     /**
      * 列
      */
-    private Integer cell;
+    private Integer column;
     /**
      * 元素Map<元素id，元素>
      */

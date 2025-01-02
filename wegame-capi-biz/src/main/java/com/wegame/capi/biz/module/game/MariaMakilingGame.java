@@ -46,12 +46,7 @@ public class MariaMakilingGame extends AbstractGame {
         GameInfoDo gameInfo = getGameInfo();
         Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
         if (gamePlay.isFreeSpinsFlag()) {
-            List<WheelDo> wheels = Arrays.asList();
-            int wheelNumber = 10 + random.nextInt(15 - 10 + 1);
-            for (int i = 0; i < wheelNumber; i++) {
-                // todo 控制wild @bruce
-                wheels.add(nonScatterGenerate(gameInfo, i + 1, probabilisticConfig));
-            }
+            return multiGenerate(gameInfo, probabilisticConfig);
         } else {
             // 根据投注类型：生成游戏滚轮
             switch (gamePlay.getBetSubType()) {
@@ -74,9 +69,9 @@ public class MariaMakilingGame extends AbstractGame {
      * @return 游戏结果
      */
     private WheelDo commonGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
-        SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getCell()];
+        SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         for (int i = 0; i < gameInfo.getRow(); i++) {
-            for (int j = 0; j < gameInfo.getCell(); j++) {
+            for (int j = 0; j < gameInfo.getColumn(); j++) {
                 String symbolId = randomOneSymbol(i, probabilisticConfig);
                 symbolArr[i][j] = gameInfo.getSymbolById(symbolId);
             }
@@ -120,41 +115,54 @@ public class MariaMakilingGame extends AbstractGame {
     }
 
     /**
-     * 生成游戏滚轮：非Scatter
+     * 生成游戏滚轮：多个
      *
      * @param gameInfo
      * @return
      */
-    private WheelDo nonScatterGenerate(GameInfoDo gameInfo, Integer index, Map<String, List<BigDecimal>> probabilisticConfig) {
-        // 检查0，2，4列是否有Scatter，如果有，则重新生成
-        List<Integer> scatterCellList = Arrays.asList(0, 2, 4);
-        SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getCell()];
-        for (int i = 0; i < gameInfo.getRow(); i++) {
-            for (int j = 0; j < gameInfo.getCell(); j++) {
-                String symbolId = randomOneSymbol(i, probabilisticConfig);
-                SymbolDo symbolDo = gameInfo.getSymbolById(symbolId);
-                while (scatterCellList.contains(j) && Objects.equals(symbolDo, MARIA_MAKILING_SCATTER)) {
-                    symbolId = randomOneSymbol(i, probabilisticConfig);
-                    symbolDo = gameInfo.getSymbolById(symbolId);
+    private List<WheelDo> multiGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+        int wheelNumber = 10 + random.nextInt(15 - 10 + 1);
+        List<WheelDo> wheels = new ArrayList<>();
+        WheelDo pre = null;
+        for (int times = 0; times < wheelNumber; times++) {
+            SymbolDo[][] symbolArr;
+            if (Objects.isNull(pre)) {
+                symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+            } else {
+                symbolArr = pre.copy().getSymbolArr();
+            }
+            for (int i = 0; i < gameInfo.getRow(); i++) {
+                for (int j = 0; j < gameInfo.getColumn(); j++) {
+                    if (Objects.isNull(symbolArr[i][j]) || !Objects.equals(SymbolTypeEnum.WILD, symbolArr[i][j].getSymbolType())) {
+                        String symbolId = randomOneSymbol(i, probabilisticConfig);
+                        SymbolDo symbolDo = gameInfo.getSymbolById(symbolId);
+                        symbolArr[i][j] = symbolDo;
+                    }
                 }
             }
+            WheelDo wheelDo = WheelDo.builder()
+                    .index(times + 1)
+                    .symbolArr(symbolArr)
+                    .build();
+            wheels.add(wheelDo);
+            pre = wheelDo;
         }
-        return WheelDo.builder()
-                .index(index)
-                .symbolArr(symbolArr)
-                .build();
+        return wheels;
     }
 
     private Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
-        switch (gamePlay.getBetSubType()) {
-            case NORMAL_BET:
-                return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
-            case NON_BUY_FREE_SPINS_BET:
-            case BUY_FREE_SPINS_BET:
-                return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
-            default:
-                throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
+        if (gamePlay.isFreeSpinsFlag()) {
+            return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
+        } else {
+            switch (gamePlay.getBetSubType()) {
+                case NORMAL_BET:
+                    return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
+                case NON_BUY_FREE_SPINS_BET:
+                case BUY_FREE_SPINS_BET:
+                    return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
+                default:
+                    throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
+            }
         }
     }
-
 }
