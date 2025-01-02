@@ -24,13 +24,11 @@ public class GameBetPayOutDetailVo implements Serializable {
      * 赔率
      */
     private BigDecimal odds;
-    private Integer[][] rewardIndex;
-
+    private List<SymbolIndexVo> rewardIndex;
     /**
      * 当前中奖线的中奖id列表
      */
-    private List<Integer> rewardSymbolIdList;
+    private List<String> rewardSymbolIdList;
     private Long payOutAmount;
-    private Integer[][] index;
 }
 

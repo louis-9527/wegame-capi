@@ -1,8 +1,8 @@
 package com.wegame.capi.biz.domain.business.bet;
 
 import com.wegame.base.enums.BooleanEnum;
-import com.wegame.capi.common.enums.GameBetSubTypeEnum;
-import com.wegame.capi.common.enums.GameBetTypeEnum;
+import com.wegame.capi.common.enums.BetSubTypeEnum;
+import com.wegame.capi.common.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.GameStatusEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -51,13 +51,13 @@ public class GameRecordDo<T> implements Serializable {
      */
     private String playerName;
     /**
-     * 投注类型 1正常投注 2免费轮投注
+     * 投注类型
      */
-    private GameBetTypeEnum betType;
+    private BetTypeEnum betType;
     /**
-     * 投注子类型 11正常投注 21购买免费轮投注 22非购买免费轮投注
+     * 投注子类型
      */
-    private GameBetSubTypeEnum betSubType;
+    private BetSubTypeEnum betSubType;
     /**
      * 投注id（单钱包）
      */

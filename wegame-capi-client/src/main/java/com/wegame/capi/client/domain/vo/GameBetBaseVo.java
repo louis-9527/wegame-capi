@@ -19,8 +19,8 @@ public class GameBetBaseVo<T> implements Serializable {
     private static final long serialVersionUID = -3682602438304369095L;
     private String gameRecordId;
     private String gameId;
-    private Integer betType;
-    private Integer betSubType;
+    private String betType;
+    private String betSubType;
     private Long credit;
     private T resultDetail;
 }

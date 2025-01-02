@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * game_record_detail：游戏记录明细
@@ -33,7 +34,7 @@ public class GameRecordDetailVo implements Validate, Serializable {
     @ApiModelProperty("中奖结果json")
     private String rewardResult;
     @ApiModelProperty("倍数")
-    private Integer multiple;
+    private BigDecimal multiple;
 
     @Override
     public void validateParam() {

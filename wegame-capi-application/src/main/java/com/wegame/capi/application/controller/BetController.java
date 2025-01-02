@@ -5,8 +5,10 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
 
 import com.wegame.capi.biz.context.GameBetContext;
+import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
 import com.wegame.capi.client.domain.request.update.BetBaseRequest;
 import com.wegame.capi.client.domain.vo.GameBetBaseVo;
+import com.wegame.capi.client.domain.vo.GameBetNormalVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,8 @@ public class BetController {
     @Autowired
     GameBetContext gameBetContext;
 
-    @ApiOperation(value = "bet", httpMethod = "POST")
+
+    @ApiOperation(value = "投注", httpMethod = "POST")
     @PostMapping("/bet")
     public CommonResponse<GameBetBaseVo<Object>> bet(@RequestBody BetBaseRequest<Object> betRequest) {
         Operator operator = new Operator();
@@ -33,6 +36,13 @@ public class BetController {
         GameBetBaseVo<Object> betResult = gameBetContext.bet(betRequest);
 
         return CommonResponse.build(betResult);
+    }
+
+    @ApiOperation(value = "获取免费轮投注结果", httpMethod = "POST")
+    @PostMapping("/bet/queryFreeSpinDetail")
+    public CommonResponse<GameBetNormalVo> queryFreeSpinDetail(@RequestBody QueryFreeSpinRequest request) {
+        GameBetNormalVo normalVo = gameBetContext.queryFreeSpinDetail(request);
+        return CommonResponse.build(normalVo);
     }
 
 

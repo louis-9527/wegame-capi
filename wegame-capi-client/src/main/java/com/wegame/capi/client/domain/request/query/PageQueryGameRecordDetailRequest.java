@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
+
 
 /**
  * 分页查询游戏记录明细请求参数
@@ -33,7 +35,7 @@ public class PageQueryGameRecordDetailRequest extends PageQueryRequest implement
     @ApiModelProperty(value = "中奖结果json", required = false)
     private String rewardResult;
     @ApiModelProperty(value = "倍数", required = false)
-    private Integer multiple;
+    private BigDecimal multiple;
     @ApiModelProperty(value = "开始创建时间", required = false)
     private Long startCreateTime;
     @ApiModelProperty(value = "结束创建时间", required = false)

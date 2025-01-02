@@ -1,6 +1,8 @@
 package com.wegame.capi.biz.domain.business.bet;
 
 import com.wegame.base.enums.BooleanEnum;
+import com.wegame.capi.biz.domain.SymbolDo;
+import com.wegame.capi.biz.domain.game.SymbolIndexDo;
 import com.wegame.capi.common.enums.GameRewardAmountTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,8 +23,8 @@ public class GameBetResultDetailDo {
     private Long betAmount;
     private Long rewardAmount;
     private BigDecimal multiple;
-    private Integer[][] gameResult;
     private GameRewardAmountTypeEnum rewardAmountType;
+    private SymbolDo[][] gameResult;
     /**
      * 是否中了免费轮
      */
@@ -31,6 +33,7 @@ public class GameBetResultDetailDo {
      * 免费轮次数
      */
     private Integer freeSpinsTimes;
+    //中奖结果(多条线)
     private List<RewardResult> rewardResults;
 
 
@@ -43,18 +46,19 @@ public class GameBetResultDetailDo {
         /**
          * 元素id
          */
-        private Integer symbolId;
+        private SymbolDo symbol;
         private BigDecimal multiple;
         private Long rewardAmount;
         /**
          * 赔率
          */
         private BigDecimal odds;
-        private Integer[][] rewardIndex;
+        //中奖线
+        private List<SymbolIndexDo> rewardIndex;
 
         /**
          * 当前中奖线的中奖id列表
          */
-        private List<Integer> rewardSymbolIdList;
+        private List<SymbolDo> rewardSymbolList;
     }
 }
