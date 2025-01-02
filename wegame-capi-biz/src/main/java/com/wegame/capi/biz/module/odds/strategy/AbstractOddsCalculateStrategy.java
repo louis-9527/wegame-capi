@@ -13,23 +13,24 @@ import java.util.Objects;
 public abstract class AbstractOddsCalculateStrategy implements OddsCalculateStrategy {
 
     /**
-     * 获取赔率表
-     * @param oddsDo
+     * 获取赔率表 <br/>
+     * key: 元素id，val：{key: 赔率类型，val：赔率}
+     * @param oddsCalculateDo
      * @return
      */
-    public abstract Map<String, Map<String, BigDecimal>> getOddsMap(OddsCalculateDo oddsDo);
+    public abstract Map<String, Map<String, BigDecimal>> getOddsMap(OddsCalculateDo oddsCalculateDo);
 
     @Override
-    public BigDecimal calculateOdds(OddsCalculateDo oddsDo) {
-        Map<String, Map<String, BigDecimal>> oddsMap = getOddsMap(oddsDo);
+    public BigDecimal calculateOdds(OddsCalculateDo oddsCalculateDo) {
+        Map<String, Map<String, BigDecimal>> oddsMap = getOddsMap(oddsCalculateDo);
         if (MapUtils.isEmpty(oddsMap)) {
             return BigDecimal.ZERO;
         }
-        Map<String, BigDecimal> map = oddsMap.get(String.valueOf(oddsDo.getSymbol().getId()));
+        Map<String, BigDecimal> map = oddsMap.get(String.valueOf(oddsCalculateDo.getSymbol().getId()));
         if (MapUtils.isEmpty(map)) {
             return BigDecimal.ZERO;
         }
-        BigDecimal odds = map.get(oddsDo.getOddsType().getCode());
+        BigDecimal odds = map.get(oddsCalculateDo.getOddsType().getCode());
         return Objects.isNull(odds) ? (BigDecimal.ZERO) : odds;
     }
 }

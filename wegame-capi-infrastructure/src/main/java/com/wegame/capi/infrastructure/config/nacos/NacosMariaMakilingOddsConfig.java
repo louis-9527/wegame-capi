@@ -20,7 +20,7 @@ public class NacosMariaMakilingOddsConfig {
      *
      * nacos json配置，字段命名不可更改/字段命名不可更改/字段命名不可更改<br/><br/>
      * <p>
-     * key：元素id + "_" + 元素名称<br/>
+     * key：元素id<br/>
      * value：<key, val>: <br/>
      * key赔率类型（THREE：三连，FOUR：四连，FIVE：五连）<br/>
      * val赔率<br/>
@@ -33,7 +33,7 @@ public class NacosMariaMakilingOddsConfig {
      *
      * nacos json配置，字段命名不可更改/字段命名不可更改/字段命名不可更改<br/><br/>
      * <p>
-     * key：元素id + "_" + 元素名称<br/>
+     * key：元素id<br/>
      * value：<key, val>: <br/>
      * key赔率类型（THREE：三连，FOUR：四连，FIVE：五连）<br/>
      * val赔率<br/>
