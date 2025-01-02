@@ -7,7 +7,7 @@ import com.wegame.capi.biz.domain.GamePlayDo;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.WheelDo;
 import com.wegame.capi.biz.module.probabilistic.ProbabilisticStrategy;
-import com.wegame.capi.biz.module.reward.strategy.RewardHandler;
+import com.wegame.capi.biz.module.reward.RewardHandler;
 import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
