@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.game;
 
+import com.wegame.capi.biz.domain.SymbolDo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,31 +27,25 @@ public class RewardLineDo implements Serializable {
     /**
      * 元素id
      */
-    private Long symbolId;
+    private SymbolDo symbolDo;
     /**
      * 中奖金额
      */
     private Long rewardAmount;
-
-    /**
-     * 元素连数
-     */
-    private Integer linkCount;
+//    /**
+//     * 元素连数
+//     */
+//    private Integer linkCount;
     /**
      * 中奖倍数
      */
-    private Integer rewardTimes;
+    private BigDecimal rewardMultiple;
     /**
      * 赔率
      */
     private BigDecimal odds;
     /**
-     * 中奖元素的坐标
-     */
-    private int[] rewardCoordinate;
-
-    /**
      * 当前中奖线的中奖id列表
      */
-    private List<Integer> rewardSymbolIdList;
+    private List<SymbolDo> rewardSymbolList;
 }

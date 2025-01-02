@@ -1,5 +1,9 @@
 package com.wegame.capi.biz.domain.game;
 
+import com.wegame.capi.biz.domain.SymbolDo;
+import com.wegame.capi.common.enums.BetSubTypeEnum;
+import com.wegame.capi.common.enums.BetTypeEnum;
+import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,10 +20,31 @@ import java.io.Serializable;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-//@AllArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class RewardDo implements Serializable {
     private static final long serialVersionUID = -226232434848L;
 
+    /**
+     * 游戏类型
+     */
+    private GameTypeEnum gameType;
+    /**
+     * 投注类型
+     */
+    private BetTypeEnum betType;
+    /**
+     * 投注子类型
+     */
+    private BetSubTypeEnum betSubType;
+    /**
+     * 元素数组
+     */
+    private SymbolDo[][] symbolArr;
+
+    /**
+     * 投注金额
+     */
+    private Long betAmount;
 
 }

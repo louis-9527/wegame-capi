@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 public class SymbolDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
@@ -46,7 +46,7 @@ public class SymbolDo implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
-    public static class SymbolRuleDo implements Serializable{
+    public static class SymbolRuleDo implements Serializable {
         private static final long serialVersionUID = 1L;
         /**
          * 规则类型

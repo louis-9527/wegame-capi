@@ -36,15 +36,14 @@ public class RewardResultDo implements Serializable {
     private BigDecimal wildTotalTimes;
     /**
      * 中奖类型  单奖励/多奖励
+     *
+     * @see com.wegame.capi.common.enums.RewardTypeEnum
      */
     private Integer rewardType;
     /**
      * 中奖的所有元素的坐标集合 todo 定义 Index(row,cell)
      */
-    private Integer[][] rewardIndex;
-    /**
-     * [[]]
-     */
+    private List<SymbolIndexDo> rewardIndexList;
     /**
      * 是否中了免费轮
      */

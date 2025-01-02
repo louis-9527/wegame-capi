@@ -2,6 +2,7 @@ package com.wegame.capi.biz.domain.game;
 
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.common.enums.RewardLineTypeEnum;
+import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 中奖规则线do
@@ -30,15 +32,19 @@ public class RewardRuleLineDo implements Serializable {
      */
     private SymbolDo symbol;
     /**
-     * 元素连数
+     * 中奖线类型
      */
     private RewardLineTypeEnum rewardLineType;
+//    /**
+//     * 中奖元素的坐标
+//     */
+//    private SymbolIndexDo rewardIndex;
     /**
-     * 中奖元素的坐标
+     * 当前中奖线的中奖元素列表
      */
-    private int[] rewardCoordinate;
-    /**
-     * 当前中奖线的中奖id列表
-     */
-    private List<Integer> rewardSymbolIdList;
+    private List<SymbolDo> rewardSymbolIdList;
+
+    public boolean isCommonReward() {
+        return Objects.equals(this.symbol.getSymbolType(), SymbolTypeEnum.COMMON);
+    }
 }

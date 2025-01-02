@@ -25,7 +25,7 @@ public abstract class AbstractOddsCalculateStrategy implements OddsCalculateStra
         if (MapUtils.isEmpty(oddsMap)) {
             return BigDecimal.ZERO;
         }
-        Map<String, BigDecimal> map = oddsMap.get(oddsDo.getSymbol().getId());
+        Map<String, BigDecimal> map = oddsMap.get(String.valueOf(oddsDo.getSymbol().getId()));
         if (MapUtils.isEmpty(map)) {
             return BigDecimal.ZERO;
         }

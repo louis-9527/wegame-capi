@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.domain.game;
 
+import com.wegame.capi.biz.domain.SymbolDo;
+import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,17 +21,17 @@ import java.io.Serializable;
 public class RewardRuleSymbolDo implements Serializable {
     private static final long serialVersionUID = -22667655543710848L;
     /**
-     * 游戏Id
+     * 游戏类型
      */
-    private String gameId;
+    private GameTypeEnum gameType;
     /**
      * 投注类型: @see GameBetTypeEnum
      */
-    private Integer id;
+    private SymbolDo symbol;
     /**
      * 坐标
      */
-    private int[] coordinate;
+    private SymbolIndexDo coordinate;
 
 }
 
