@@ -7,7 +7,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryGameRecordDetailRequest;
 import com.wegame.capi.client.domain.vo.GameRecordDetailVo;
-import com.wegame.capi.biz.domain.user.GameRecordDetailDo;
+import com.wegame.capi.biz.domain.business.bet.GameRecordDetailDo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailQuery;
 import org.apache.commons.lang3.StringUtils;

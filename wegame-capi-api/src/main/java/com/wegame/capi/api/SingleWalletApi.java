@@ -1,7 +1,9 @@
 package com.wegame.capi.api;
 
+import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
 import com.wegame.capi.api.domain.res.CommonRes;
+import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
 import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
@@ -47,5 +49,9 @@ public class SingleWalletApi extends BaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
+    public BetWithPayoutRes betWithPayout(BetWithPayoutReq req){
+        return new BetWithPayoutRes();
+    }
+
 
 }
