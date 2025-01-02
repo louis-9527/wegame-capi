@@ -10,11 +10,10 @@ import com.wegame.capi.biz.builder.RewardResultBuilder;
 import com.wegame.capi.biz.builder.RewardRuleBuilder;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.game.*;
-import com.wegame.capi.biz.module.multiple.MultipleCalculateContext;
-import com.wegame.capi.biz.module.odds.OddsCalculateContext;
+import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
+import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
 import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,10 +27,9 @@ import java.util.Objects;
 @Service
 public abstract class AbstractRewardHandler implements RewardHandler {
 
-    @Autowired
-    OddsCalculateContext oddsCalculateContext;
-    @Autowired
-    MultipleCalculateContext multipleCalculateContext;
+    public abstract OddsCalculateStrategy oddsCalculateStrategy();
+
+    public abstract MultipleCalculateStrategy multipleCalculateStrategy();
 
     public abstract RewardRuleResultDo calcRewardLines(RewardRuleDo rewardRuleDo);
 
@@ -47,7 +45,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
             return null;
         }
         // 计算倍率
-        BigDecimal multiple = multipleCalculateContext.calculateMultiple(rewardHandle.getGameType(), rewardHandle.getWheel().getSymbolArr());
+        BigDecimal multiple = multipleCalculateStrategy().calculateMultiple(rewardHandle.getGameType(), rewardHandle.getWheel());
         // 中奖总金额
         long rewardTotalAmount = 0L;
         // 中奖坐标列表
@@ -56,7 +54,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
             // 获取赔率
             OddsCalculateDo oddsCalculateDo = OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType());
             AssertUtil.assertNotNull(oddsCalculateDo, ErrorCode.ERR_INTER, "oddsCalculateDo is null");
-            BigDecimal odds = oddsCalculateContext.calculateOdds(oddsCalculateDo);
+            BigDecimal odds = oddsCalculateStrategy().calculateOdds(oddsCalculateDo);
 
             // 中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
             // scatter 无需进行倍率计算
