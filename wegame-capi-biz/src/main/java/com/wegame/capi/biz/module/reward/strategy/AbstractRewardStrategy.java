@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * 抽象中奖策略
@@ -43,7 +42,7 @@ public abstract class AbstractRewardStrategy {
         // 中奖规则处理
         RewardRuleDo rewardRuleDo = RewardRuleBuilder.build(rewardDo);
         AssertUtil.assertNotNull(rewardRuleDo, ErrorCode.ERR_INTER, "rewardRuleDo is null");
-        // todo 中奖规则计算中，将所有中奖的左边计算出来并返回
+        // todo 中奖规则计算中，将所有中奖的坐标计算出来并返回
         RewardRuleResultDo rewardRuleResultDo = this.calcRewardLines(rewardRuleDo);
         if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardRuleLineList())) {
             // 未中奖
@@ -55,7 +54,6 @@ public abstract class AbstractRewardStrategy {
         long rewardTotalAmount = 0L;
         // 中奖坐标列表
         List<RewardLineDo> rewardLineList = Lists.newArrayList();
-        Set<SymbolIndexDo> rewardCoordinateSets = Sets.newHashSet();
         for (RewardRuleLineDo rewardRuleLine : rewardRuleResultDo.getRewardRuleLineList()) {
             // 获取赔率
             OddsCalculateDo oddsCalculateDo = OddsCalculateBuilder.build(rewardDo, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType());
@@ -70,8 +68,7 @@ public abstract class AbstractRewardStrategy {
             }
             // 中奖结果处理
             rewardTotalAmount = rewardTotalAmount + lineRewardAmount.longValue();
-            // todo
-//            rewardCoordinateSets.add(rewardRuleLine.getRewardCoordinate());
+            // 计算后的中奖线列表
             rewardLineList.add(RewardLineBuilder.build(rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
         }
         // 返回中奖信息
@@ -81,6 +78,6 @@ public abstract class AbstractRewardStrategy {
                 multiple,
                 this.hasFreeSpin(rewardDo.getGameType(),
                         rewardDo.getSymbolArr()),
-                rewardCoordinateSets);
+                rewardRuleResultDo.getRewardIndexList());
     }
 }

@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.reward.strategy;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
@@ -12,10 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
-@Component("mariaMakilingRewardHandler")
+@Component("mariaMakilingRewardStrategy")
 public class MariaMakilingRewardStrategy extends AbstractRewardStrategy {
 
     private static final List<SymbolEnum> WILD_LIST = Lists.newArrayList(SymbolEnum.Wild, SymbolEnum.WildX2, SymbolEnum.WildX3, SymbolEnum.WildX5, SymbolEnum.WildX10);
@@ -195,6 +197,8 @@ public class MariaMakilingRewardStrategy extends AbstractRewardStrategy {
         Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping = new HashMap<>();
         // symbolId是否有wild参与<元素,boolean>
         Map<SymbolDo, Boolean> symbolIdHasWildMap = new HashMap<>();
+        // 参与中奖线的元素坐标集合
+        Set<SymbolIndexDo> rewardIndexList = Sets.newHashSet();
 
         SymbolDo[][] symbolArr = rewardRuleDo.getSymbolArr();
         // 第一列初始化到统计的数据中去
@@ -207,6 +211,7 @@ public class MariaMakilingRewardStrategy extends AbstractRewardStrategy {
                 SymbolDo symbolDo = symbolArr[row][colum];
                 if (this.isWild(symbolDo)) {
                     // 所有第一列元素的都添加(scatter除外)
+                    rewardIndexList.add(SymbolIndexDo.build(row, colum));
                     for (SymbolDo firstSymbol : firstColumSymbolMapping.keySet()) {
                         if (!isScatter(firstSymbol)) {
                             this.addSymbolMapping(secondColumSymbolMapping, firstSymbol, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).coordinate(SymbolIndexDo.build(row, colum)).build());
@@ -220,7 +225,7 @@ public class MariaMakilingRewardStrategy extends AbstractRewardStrategy {
         }
 
         // 中奖线统计
-        return generatorRewardLines(symbolIdHasWildMap, secondColumSymbolMapping);
+        return generatorRewardLines(symbolIdHasWildMap, secondColumSymbolMapping, rewardIndexList);
     }
 
     @Override
@@ -254,7 +259,7 @@ public class MariaMakilingRewardStrategy extends AbstractRewardStrategy {
         return firstColumSymbolMapping;
     }
 
-    private RewardRuleResultDo generatorRewardLines(Map<SymbolDo, Boolean> symbolIdHasWildMap, Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping) {
+    private RewardRuleResultDo generatorRewardLines(Map<SymbolDo, Boolean> symbolIdHasWildMap, Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping, Set<SymbolIndexDo> rewardIndexList) {
         // 中奖线统计普通元素，scatter
         // 中奖线列表
         List<RewardRuleLineDo> rewardRuleLineList = Lists.newArrayList();
@@ -262,6 +267,10 @@ public class MariaMakilingRewardStrategy extends AbstractRewardStrategy {
             SymbolDo symbolDo = columSymbolEntry.getKey();
             TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap = columSymbolEntry.getValue();
             if (columTreeMap.keySet().size() >= 3) {
+                // 所有中奖元素的坐标统计
+                Set<SymbolIndexDo> currentSymbolRewardIndexList = columTreeMap.values().stream()
+                        .flatMap(Collection::stream).map(RewardRuleSymbolDo::getCoordinate).collect(Collectors.toSet());
+                rewardIndexList.addAll(currentSymbolRewardIndexList);
                 // 区分是否有wild的参与，没有就走简单算法，有走复杂算法
                 if (Objects.isNull(symbolIdHasWildMap.get(symbolDo))) {
                     // 简单算法
@@ -281,7 +290,9 @@ public class MariaMakilingRewardStrategy extends AbstractRewardStrategy {
 
         // 结果组装
         return RewardRuleResultDo.builder()
-                .rewardRuleLineList(rewardRuleLineList).build();
+                .rewardRuleLineList(rewardRuleLineList)
+                .rewardIndexList(rewardIndexList)
+                .build();
     }
 
     private List<RewardRuleLineDo> generatorRewardLinesForComplex(SymbolDo symbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap) {

@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 中奖规则结果do
@@ -21,14 +22,15 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class RewardRuleResultDo implements Serializable {
     private static final long serialVersionUID = -2266308273454848L;
-
-    /**
-     * 游戏id
-     */
     /**
      * 中奖线中奖列表
      */
     private List<RewardRuleLineDo> rewardRuleLineList;
+
+    /**
+     * 所有命中规则的元素坐标集合（不重复）
+     */
+    private Set<SymbolIndexDo> rewardIndexList;
 
 
 }
