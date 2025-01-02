@@ -232,7 +232,7 @@ public class UserService {
     public Long getCredit() {
         redisTemplate.opsForSet().remove(CUSER_CREDIT_CHANGE, UserInfoContext.getUserInfo().getPlayerName());
         GetCreditRes res = singleWalletApi.getCredit(GetCreditReq.build());
-        return Objects.isNull(res.getCredit()) ? 0L : NumberUtil.mul(res.getCredit(), 100).longValue();
+        return Objects.isNull(res.getCredit()) ? 0L : res.getCredit();
     }
 
     public Void notifyCreditChange(NotifyCreditChangeRequest request) {
