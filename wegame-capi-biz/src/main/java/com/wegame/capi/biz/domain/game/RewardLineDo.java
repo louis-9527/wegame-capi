@@ -32,10 +32,6 @@ public class RewardLineDo implements Serializable {
      * 中奖金额
      */
     private Long rewardAmount;
-//    /**
-//     * 元素连数
-//     */
-//    private Integer linkCount;
     /**
      * 中奖倍数
      */
@@ -44,6 +40,10 @@ public class RewardLineDo implements Serializable {
      * 赔率
      */
     private BigDecimal odds;
+    /**
+     * 当前中奖线的中奖元素坐标列表
+     */
+    private List<SymbolIndexDo> rewardSymbolIndexList;
     /**
      * 当前中奖线的中奖id列表
      */

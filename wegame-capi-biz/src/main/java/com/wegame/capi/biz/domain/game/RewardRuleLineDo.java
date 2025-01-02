@@ -35,14 +35,15 @@ public class RewardRuleLineDo implements Serializable {
      * 中奖线类型
      */
     private RewardLineTypeEnum rewardLineType;
-//    /**
-//     * 中奖元素的坐标
-//     */
-//    private SymbolIndexDo rewardIndex;
+    /**
+     * 当前中奖线的中奖元素坐标列表
+     */
+    private List<SymbolIndexDo> rewardSymbolIndexList;
     /**
      * 当前中奖线的中奖元素列表
      */
     private List<SymbolDo> rewardSymbolIdList;
+
 
     public boolean isCommonReward() {
         return Objects.equals(this.symbol.getSymbolType(), SymbolTypeEnum.COMMON);

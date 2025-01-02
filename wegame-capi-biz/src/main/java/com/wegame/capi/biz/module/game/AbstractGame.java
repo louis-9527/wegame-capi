@@ -3,7 +3,7 @@ package com.wegame.capi.biz.module.game;
 import com.wegame.capi.biz.domain.*;
 import com.wegame.capi.biz.domain.game.RewardHandleDo;
 import com.wegame.capi.biz.domain.game.RewardResultDo;
-import com.wegame.capi.biz.module.reward.strategy.RewardHandler;
+import com.wegame.capi.biz.module.reward.RewardHandler;
 
 import java.util.List;
 import java.util.stream.Collectors;

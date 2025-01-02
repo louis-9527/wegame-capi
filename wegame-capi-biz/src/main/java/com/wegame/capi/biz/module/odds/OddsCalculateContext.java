@@ -21,7 +21,7 @@ import java.util.Map;
 public class OddsCalculateContext {
 
     private static final Map<GameTypeEnum, String> strategyNameMap = new ImmutableMap.Builder<GameTypeEnum, String>()
-            .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingOddsCalculateOddsStrategy")
+            .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingOddsCalculateStrategy")
             .build();
 
     @Autowired

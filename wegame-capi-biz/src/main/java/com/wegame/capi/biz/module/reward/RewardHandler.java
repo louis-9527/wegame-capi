@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.reward.strategy;
+package com.wegame.capi.biz.module.reward;
 
 import com.wegame.capi.biz.domain.game.RewardHandleDo;
 import com.wegame.capi.biz.domain.game.RewardResultDo;

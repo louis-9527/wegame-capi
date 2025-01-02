@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.reward.strategy;
+package com.wegame.capi.biz.module.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
@@ -37,31 +37,30 @@ public abstract class AbstractRewardHandler implements RewardHandler {
 
     public abstract boolean hasFreeSpin(GameTypeEnum gameType, SymbolDo[][] symbolArr);
 
-    public RewardResultDo handle(RewardHandleDo rewardDo) {
+    public RewardResultDo handle(RewardHandleDo rewardHandle) {
         // 中奖规则处理
-        RewardRuleDo rewardRuleDo = RewardRuleBuilder.build(rewardDo);
+        RewardRuleDo rewardRuleDo = RewardRuleBuilder.build(rewardHandle);
         AssertUtil.assertNotNull(rewardRuleDo, ErrorCode.ERR_INTER, "rewardRuleDo is null");
-        // todo 中奖规则计算中，将所有中奖的坐标计算出来并返回
         RewardRuleResultDo rewardRuleResultDo = this.calcRewardLines(rewardRuleDo);
         if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardRuleLineList())) {
             // 未中奖
             return null;
         }
         // 计算倍率
-        BigDecimal multiple = multipleCalculateContext.calculateMultiple(rewardDo.getGameType(), rewardDo.getSymbolArr());
+        BigDecimal multiple = multipleCalculateContext.calculateMultiple(rewardHandle.getGameType(), rewardHandle.getWheel().getSymbolArr());
         // 中奖总金额
         long rewardTotalAmount = 0L;
         // 中奖坐标列表
         List<RewardLineDo> rewardLineList = Lists.newArrayList();
         for (RewardRuleLineDo rewardRuleLine : rewardRuleResultDo.getRewardRuleLineList()) {
             // 获取赔率
-            OddsCalculateDo oddsCalculateDo = OddsCalculateBuilder.build(rewardDo, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType());
+            OddsCalculateDo oddsCalculateDo = OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType());
             AssertUtil.assertNotNull(oddsCalculateDo, ErrorCode.ERR_INTER, "oddsCalculateDo is null");
             BigDecimal odds = oddsCalculateContext.calculateOdds(oddsCalculateDo);
 
             // 中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
             // scatter 无需进行倍率计算
-            BigDecimal lineRewardAmount = BigDecimal.valueOf(rewardDo.getBetAmount()).multiply(odds);
+            BigDecimal lineRewardAmount = BigDecimal.valueOf(rewardHandle.getBetAmount()).multiply(odds);
             if (rewardRuleLine.isCommonReward()) {
                 lineRewardAmount = lineRewardAmount.multiply(BigDecimal.ONE.add(multiple));
             }
@@ -72,11 +71,11 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         }
         // 返回中奖信息
         return RewardResultBuilder.build(
+                rewardHandle.getWheel().getSymbolArr(),
                 rewardTotalAmount,
                 rewardLineList,
                 multiple,
-                this.hasFreeSpin(rewardDo.getGameType(),
-                        rewardDo.getSymbolArr()),
-                rewardRuleResultDo.getRewardIndexList());
+                this.hasFreeSpin(rewardHandle.getGameType(),
+                        rewardHandle.getWheel().getSymbolArr()));
     }
 }

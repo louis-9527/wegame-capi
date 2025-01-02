@@ -46,12 +46,4 @@ public class RewardHandleDo implements Serializable {
      * 滚轮
      */
     private WheelDo wheel;
-
-    /**
-     * 元素数组  todo delete
-     */
-    private SymbolDo[][] symbolArr;
-
-
-
 }
