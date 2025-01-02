@@ -18,10 +18,9 @@ import java.util.Random;
  */
 public abstract class AbstractProbabilisticStrategy implements ProbabilisticStrategy {
 
-    private static final String KEY_NAME_SPLITTER = "_";
-
     /**
-     * 获取概率配置表
+     * 获取概率配置表<br/>
+     * key: 元素id， val：概率列表
      * @return 概率配置表
      */
     public abstract Map<String, List<BigDecimal>> getProbabilisticConfigMap();
@@ -51,10 +50,9 @@ public abstract class AbstractProbabilisticStrategy implements ProbabilisticStra
         int startVal = 0;
         for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-                String[] strArr = entry.getKey().split(KEY_NAME_SPLITTER);
                 return SymbolDo.builder()
-                        .id(Integer.valueOf(strArr[0]))
-                        .name(strArr[1])
+                        .id(Integer.valueOf(entry.getKey()))
+                        .name("") // todo
                         .build();
             } else {
                 startVal += entry.getValue();

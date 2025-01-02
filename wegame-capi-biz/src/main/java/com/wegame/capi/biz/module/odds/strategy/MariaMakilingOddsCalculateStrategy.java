@@ -19,8 +19,8 @@ public class MariaMakilingOddsCalculateStrategy extends AbstractOddsCalculateStr
     NacosMariaMakilingOddsConfig nacosMariaMakilingOddsConfig;
 
     @Override
-    public Map<String, Map<String, BigDecimal>> getOddsMap(OddsCalculateDo oddsDo) {
-        switch (oddsDo.getBetSubType()) {
+    public Map<String, Map<String, BigDecimal>> getOddsMap(OddsCalculateDo oddsCalculateDo) {
+        switch (oddsCalculateDo.getBetSubType()) {
             case NORMAL_BET:
             case NON_BUY_FREE_SPINS_BET:
                 return nacosMariaMakilingOddsConfig.getOddsConfigMap();

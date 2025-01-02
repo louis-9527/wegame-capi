@@ -16,7 +16,7 @@ public class NacosMariaMakilingProbabilisticConfig {
     /**
      * nacos json配置，字段命名不可更改/字段命名不可更改/字段命名不可更改<br/><br/>
      *
-     * key：元素id + "_" + 元素名称<br/>
+     * key：元素id<br/>
      * value：List<Double> 概率列表<br/>
      */
     private Map<String, List<BigDecimal>> probabilisticConfigMap = new HashMap<>();

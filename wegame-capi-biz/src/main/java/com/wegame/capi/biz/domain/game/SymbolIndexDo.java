@@ -18,11 +18,11 @@ import java.io.Serializable;
 public class SymbolIndexDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
-     * 行号
+     * 行号 todo final
      */
     private int rowIndex;
     /**
-     * 列号
+     * 列号  todo final
      */
     private int columIndex;
 
