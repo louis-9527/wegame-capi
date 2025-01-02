@@ -35,7 +35,6 @@ public interface UserManualMapper {
             "     <if test=\"updater != null\">`updater` = #{updater},</if> ",
             "     `update_time` = current_timestamp() ",
             " </trim> ",
-            " </trim> ",
             " where `player_id` = #{playerId} limit 1",
             "</script>"})
     int updateByPlayerId(UserPo po);
