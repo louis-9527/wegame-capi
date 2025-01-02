@@ -41,22 +41,6 @@ public class MariaMakilingGame extends AbstractGame {
         return mariaMakilingRewardHandler;
     }
 
-    public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
-        switch (gamePlay.getBetSubType()) {
-            case NORMAL_BET:
-                return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
-            case NON_BUY_FREE_SPINS_BET:
-            case BUY_FREE_SPINS_BET:
-                return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
-            default:
-                throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
-        }
-    }
-
-    protected Map<String, Map<String, BigDecimal>> getOddsConfig(GamePlayDo gamePlay) {
-        return nacosMariaMakilingConfig.getOddsConfig();
-    }
-
     @Override
     public List<WheelDo> generate(GamePlayDo gamePlay) {
         GameInfoDo gameInfo = getGameInfo();
@@ -82,7 +66,6 @@ public class MariaMakilingGame extends AbstractGame {
         }
         return null;
     }
-
 
     /**
      * 生成游戏滚轮：生成逻辑无任何限制
@@ -161,4 +144,17 @@ public class MariaMakilingGame extends AbstractGame {
                 .symbolArr(symbolArr)
                 .build();
     }
+
+    private Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
+        switch (gamePlay.getBetSubType()) {
+            case NORMAL_BET:
+                return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
+            case NON_BUY_FREE_SPINS_BET:
+            case BUY_FREE_SPINS_BET:
+                return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
+            default:
+                throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
+        }
+    }
+
 }

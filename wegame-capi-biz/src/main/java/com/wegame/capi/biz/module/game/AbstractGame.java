@@ -12,22 +12,6 @@ public abstract class AbstractGame implements Game {
 
     protected abstract RewardHandler getRewardHandler();
 
-    //    /**
-    //     * 获取概率配置
-    //     *
-    //     * @param gamePlay
-    //     * @return
-    //     */
-    //    protected abstract Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay);
-    //
-    //    /**
-    //     * 获取赔率配置
-    //     *
-    //     * @param gamePlay
-    //     * @return
-    //     */
-    //    protected abstract Map<String, Map<String, BigDecimal>> getOddsConfig(GamePlayDo gamePlay);
-
     /**
      * 生成滚轮
      *
