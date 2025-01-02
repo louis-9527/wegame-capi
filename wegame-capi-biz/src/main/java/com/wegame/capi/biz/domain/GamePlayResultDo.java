@@ -31,12 +31,8 @@ public class GamePlayResultDo implements Serializable {
      */
     private GameInfoDo gameInfo;
     /**
-     * 滚轮列表
+     * 游戏滚轮中奖列表
      */
-    private List<WheelDo> wheelList;
-    /**
-     * 奖励结果列表
-     */
-    private List<RewardResultDo> rewardResultList;
+    private List<WheelRewardDo> wheelRewardList;
 }
 

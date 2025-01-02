@@ -26,6 +26,7 @@ import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_
 public class MariaMakilingGame extends AbstractGame {
 
     private static final Random random = new Random();
+    private static final Integer WHEEL_DEFAULT_INDEX = 0;
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
     @Autowired
@@ -49,7 +50,7 @@ public class MariaMakilingGame extends AbstractGame {
             int wheelNumber = 10 + random.nextInt(15 - 10 + 1);
             for (int i = 0; i < wheelNumber; i++) {
                 // todo 控制wild @bruce
-                wheels.add(nonScatterGenerate(gameInfo));
+                wheels.add(nonScatterGenerate(gameInfo, i + 1));
             }
         } else {
             // 根据投注类型：生成游戏滚轮
@@ -81,6 +82,7 @@ public class MariaMakilingGame extends AbstractGame {
             }
         }
         return WheelDo.builder()
+                .index(WHEEL_DEFAULT_INDEX)
                 .symbolArr(symbolArr)
                 .build();
     }
@@ -112,6 +114,7 @@ public class MariaMakilingGame extends AbstractGame {
             }
         }
         return WheelDo.builder()
+                .index(WHEEL_DEFAULT_INDEX)
                 .symbolArr(symbolArr)
                 .build();
     }
@@ -122,7 +125,7 @@ public class MariaMakilingGame extends AbstractGame {
      * @param gameInfo
      * @return
      */
-    private WheelDo nonScatterGenerate(GameInfoDo gameInfo) {
+    private WheelDo nonScatterGenerate(GameInfoDo gameInfo, Integer index) {
         // 检查0，2，4列是否有Scatter，如果有，则重新生成
         List<Integer> scatterCellList = Arrays.asList(0, 2, 4);
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getCell()];
@@ -137,6 +140,7 @@ public class MariaMakilingGame extends AbstractGame {
             }
         }
         return WheelDo.builder()
+                .index(index)
                 .symbolArr(symbolArr)
                 .build();
     }

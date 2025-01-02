@@ -24,10 +24,6 @@ import java.util.List;
 public class RewardResultDo implements Serializable {
     private static final long serialVersionUID = -2262432373454848L;
     /**
-     * 滚轮
-     */
-    private SymbolDo[][] symbolArr;
-    /**
      * 中奖总金额.单位：分
      */
     private Long rewardTotalAmount;
