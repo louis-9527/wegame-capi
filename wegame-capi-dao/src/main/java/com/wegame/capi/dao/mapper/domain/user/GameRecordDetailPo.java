@@ -49,10 +49,6 @@ public class GameRecordDetailPo implements Serializable {
      * 是否中了免费轮
      */
     private Integer freeSpinsFlag;
-    /**
-     * 免费轮次数
-     */
-    private Integer freeSpinsTimes;
 
    ///////////////  above auto generated ///////////////
 }

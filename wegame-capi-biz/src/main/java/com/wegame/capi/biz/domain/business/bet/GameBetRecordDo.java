@@ -49,9 +49,7 @@ public class GameBetRecordDo {
      */
     private Integer status;
 
-
     private List<GameBetResultDetailDo> resultDetails;
-
     /**
      * 玩家余额
      */

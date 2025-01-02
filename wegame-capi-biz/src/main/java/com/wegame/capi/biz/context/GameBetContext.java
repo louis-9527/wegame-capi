@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.context;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -12,6 +13,7 @@ import com.wegame.capi.biz.service.bet.GameBetNormalService;
 import com.wegame.capi.biz.service.bet.GameBetService;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
 import com.wegame.capi.client.domain.request.update.BetBaseRequest;
+import com.wegame.capi.client.domain.request.update.BetNormalDetailRequest;
 import com.wegame.capi.client.domain.vo.GameBetBaseVo;
 import com.wegame.capi.client.domain.vo.GameBetNormalVo;
 import com.wegame.capi.common.enums.BetSubTypeEnum;
@@ -51,8 +53,7 @@ public class GameBetContext {
         AbsGameBetService<T, R> betStrategy = (AbsGameBetService<T, R>) betStrategyMap.get(betStrategyName);
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
         //对象转换
-        GameBetReqDo<T> betReqDo = BetConverter.reqToDo(betRequest, betStrategy.tClass());
-
+        GameBetReqDo<T> betReqDo = BetConverter.reqToDo(betRequest);
         //执行下注请求
         GameBetResultDo<R> betResult = betStrategy.bet(betReqDo);
         return BetConverter.doToVo(betResult);

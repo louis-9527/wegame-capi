@@ -59,7 +59,6 @@ public class MariaMakilingGame extends AbstractGame {
                     throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
             }
         }
-        return null;
     }
 
     /**

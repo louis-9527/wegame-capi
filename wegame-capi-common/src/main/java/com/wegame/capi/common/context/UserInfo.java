@@ -39,8 +39,6 @@ public class UserInfo implements Serializable {
     private String userLevel;
     @ApiModelProperty(value = "用户姓名")
     private String userName;
-    @ApiModelProperty(value = "用户生日")
-    private String birthday;
     @ApiModelProperty(value = "中台token")
     private String token;
 }
