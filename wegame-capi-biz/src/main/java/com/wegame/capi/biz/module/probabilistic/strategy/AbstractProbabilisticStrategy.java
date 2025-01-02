@@ -25,6 +25,7 @@ public abstract class AbstractProbabilisticStrategy implements ProbabilisticStra
      */
     public abstract Map<String, List<BigDecimal>> getProbabilisticConfigMap();
 
+    @Override
     public String randomOneSymbol(GameTypeEnum gameType, int cellNo) {
         // todo 自测
         // todo 扩展性设计与实现
