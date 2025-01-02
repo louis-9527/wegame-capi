@@ -20,7 +20,6 @@ public abstract class AbstractGame implements Game {
 
     protected abstract RewardHandler getRewardHandler();
 
-
     //    /**
     //     * 获取概率配置
     //     *
