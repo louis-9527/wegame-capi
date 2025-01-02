@@ -5,6 +5,7 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.OperatorUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryUserRequest;
 import com.wegame.capi.client.domain.vo.UserVo;
 import com.wegame.capi.biz.domain.user.UserDo;
@@ -66,7 +67,7 @@ public class UserConverter {
         if (Objects.isNull(userDo)) {
             return null;
         }
-        Operator operator = OperatorContext.getOperator();
+        Operator operator = OperatorUtil.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserPo po = new UserPo();
         po.setPlatformId(userDo.getPlatformId());
