@@ -238,7 +238,7 @@ public class UserService {
     public Void notifyCreditChange(NotifyCreditChangeRequest request) {
         String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));
         AssertUtil.assertTrue(StringUtils.equals(hash, request.getHash()), ErrorCode.ERR_PARAM);
-        redisTemplate.opsForSet().add(CUSER_CREDIT_CHANGE, request.getPlayerName());
+        redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, request.getPlayerName()), 1);
         // todo 麦冬 返回void结果
         return null;
     }
