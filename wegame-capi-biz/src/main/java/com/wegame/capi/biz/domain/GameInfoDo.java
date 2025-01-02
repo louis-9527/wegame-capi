@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.domain;
 
-import com.wegame.capi.biz.domain.game.SymbolIndexDo;
 import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,14 +11,14 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- * 游戏模型
+ * 游戏信息模型
  */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameDo implements Serializable {
+public class GameInfoDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 游戏类型
@@ -37,10 +36,5 @@ public class GameDo implements Serializable {
      * 元素集合
      */
     private Set<SymbolDo> symbolSet;
-
-    /**
-     * 元素坐标集合
-     */
-    private Set<SymbolIndexDo> symbolIndexSet;
 }
 
