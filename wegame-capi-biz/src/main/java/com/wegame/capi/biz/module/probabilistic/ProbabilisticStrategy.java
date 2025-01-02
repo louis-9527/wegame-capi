@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.probabilistic.strategy;
+package com.wegame.capi.biz.module.probabilistic;
 
 import com.wegame.capi.common.enums.GameTypeEnum;
 

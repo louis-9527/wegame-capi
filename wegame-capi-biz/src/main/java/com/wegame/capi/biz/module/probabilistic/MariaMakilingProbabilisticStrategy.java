@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.probabilistic.strategy;
+package com.wegame.capi.biz.module.probabilistic;
 
 import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingProbabilisticConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * 元素概率服务
+ * MariaMakiling概率策略
  */
-@Component("mariaMakilingProbabilisticService")
+@Component
 public class MariaMakilingProbabilisticStrategy extends AbstractProbabilisticStrategy {
 
     @Autowired

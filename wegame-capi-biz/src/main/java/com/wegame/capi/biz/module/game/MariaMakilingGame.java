@@ -6,12 +6,11 @@ import com.wegame.capi.biz.domain.GameInfoDo;
 import com.wegame.capi.biz.domain.GamePlayDo;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.WheelDo;
-import com.wegame.capi.biz.module.probabilistic.strategy.AbstractProbabilisticStrategy;
+import com.wegame.capi.biz.module.probabilistic.ProbabilisticStrategy;
 import com.wegame.capi.biz.module.reward.strategy.RewardHandler;
 import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +28,8 @@ public class MariaMakilingGame extends AbstractGame {
     private static final Random random = new Random();
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
-
     @Autowired
-    AbstractProbabilisticStrategy mariaMakilingProbabilisticStrategy;
+    ProbabilisticStrategy mariaMakilingProbabilisticStrategy;
 
     @Override
     public GameInfoDo getGameInfo() {
@@ -54,7 +52,7 @@ public class MariaMakilingGame extends AbstractGame {
                 wheels.add(nonScatterGenerate(gameInfo));
             }
         } else {
-            // 根据投注类型：生产游戏滚轮
+            // 根据投注类型：生成游戏滚轮
             switch (gamePlay.getBetSubType()) {
                 case NORMAL_BET:
                     return Arrays.asList(commonGenerate(gameInfo));

@@ -2,8 +2,7 @@ package com.wegame.capi.application.service;//package com.wegame.capi.applicatio
 
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.application.BaseTest;
-import com.wegame.capi.biz.domain.SymbolDo;
-import com.wegame.capi.biz.module.probabilistic.strategy.MariaMakilingProbabilisticStrategy;
+import com.wegame.capi.biz.module.probabilistic.MariaMakilingProbabilisticStrategy;
 import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
