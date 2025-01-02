@@ -8,10 +8,7 @@ import com.wegame.capi.client.domain.request.update.BetBaseRequest;
 import com.wegame.capi.client.domain.request.update.BetBuyDetailRequest;
 import com.wegame.capi.client.domain.request.update.BetNoneBuyDetailRequest;
 import com.wegame.capi.client.domain.request.update.BetNormalDetailRequest;
-import com.wegame.capi.client.domain.vo.GameBetBaseVo;
-import com.wegame.capi.client.domain.vo.GameBetNormalVo;
-import com.wegame.capi.client.domain.vo.GameBetPayOutDetailVo;
-import com.wegame.capi.client.domain.vo.SymbolIndexVo;
+import com.wegame.capi.client.domain.vo.*;
 import com.wegame.capi.common.enums.BetSubTypeEnum;
 import com.wegame.capi.common.enums.BetTypeEnum;
 import org.apache.commons.collections4.CollectionUtils;
@@ -72,6 +69,7 @@ public class BetConverter {
         betBaseVo.setGameId(betResult.getGameId());
         betBaseVo.setBetType(betResult.getBetType().getCode());
         betBaseVo.setBetSubType(betResult.getBetSubType().getCode());
+        betBaseVo.setCredit(10000L);
         if (betResult.resultDetail instanceof GameBetNormalResultDo) {
             GameBetNormalResultDo normalResult = (GameBetNormalResultDo) betResult.resultDetail;
             GameBetResultDetailDo detailDo = normalResult.getResultDetailDo();
@@ -83,14 +81,50 @@ public class BetConverter {
         } else if (betResult.resultDetail instanceof GameBetBuyResultDo) {
             GameBetBuyResultDo buyResult = (GameBetBuyResultDo) betResult.resultDetail;
             List<Integer> freeSpinIds = buyResult.getFreeSpinIds();
-
-            betBaseVo.setResultDetail(freeSpinIds);
+            GameBetBuyVo betBuyVo = detailToBuyVo(buyResult.getResultDetailDo());
+            betBuyVo.setFreeSpinIds(freeSpinIds);
+            betBaseVo.setResultDetail(betBuyVo);
         }
         return betBaseVo;
     }
 
     public static GameBetNormalVo detailToNormalVo(GameBetResultDetailDo detailDo) {
         GameBetNormalVo normalVo = new GameBetNormalVo();
+        normalVo.setPayOutAmountType(detailDo.getRewardAmountType() == null ? null : detailDo.getRewardAmountType().getCode());
+        normalVo.setPayOutTotalAmount(detailDo.getRewardAmount());
+        normalVo.setSpinsResult(convertToIntegerArray(detailDo.getGameResult()));
+        List<GameBetPayOutDetailVo> detailVos = new ArrayList<>();
+        List<GameBetResultDetailDo.RewardResult> rewardResults = detailDo.getRewardResults();
+        if (CollectionUtils.isNotEmpty(rewardResults)) {
+            for (GameBetResultDetailDo.RewardResult rewardResult : rewardResults) {
+                GameBetPayOutDetailVo detailVo = new GameBetPayOutDetailVo();
+                List<String> rewardSymbolIdList = new ArrayList<>();
+                if (CollectionUtils.isNotEmpty(rewardResult.getRewardSymbolList())) {
+                    rewardResult.getRewardSymbolList().forEach(symbol -> rewardSymbolIdList.add(symbol.getId()));
+                }
+                detailVo.setRewardSymbolIdList(rewardSymbolIdList);
+                detailVo.setMultiple(rewardResult.getMultiple());
+                detailVo.setOdds(rewardResult.getOdds());
+                detailVo.setPayOutAmount(rewardResult.getRewardAmount());
+                List<SymbolIndexVo> symbolIndexVo = new ArrayList<>();
+                if (CollectionUtils.isNotEmpty(rewardResult.getRewardIndex())) {
+                    rewardResult.getRewardIndex().forEach(indexDo -> {
+                        symbolIndexVo.add(SymbolIndexVo.build(indexDo.getRowIndex(), indexDo.getColumIndex()));
+                    });
+                }
+
+                detailVo.setRewardIndex(symbolIndexVo);
+                detailVos.add(detailVo);
+            }
+        }
+
+        normalVo.setPayOutResult(detailVos);
+        return normalVo;
+    }
+
+
+    public static GameBetBuyVo detailToBuyVo(GameBetResultDetailDo detailDo) {
+        GameBetBuyVo normalVo = new GameBetBuyVo();
         normalVo.setPayOutAmountType(detailDo.getRewardAmountType() == null ? null : detailDo.getRewardAmountType().getCode());
         normalVo.setPayOutTotalAmount(detailDo.getRewardAmount());
         normalVo.setSpinsResult(convertToIntegerArray(detailDo.getGameResult()));

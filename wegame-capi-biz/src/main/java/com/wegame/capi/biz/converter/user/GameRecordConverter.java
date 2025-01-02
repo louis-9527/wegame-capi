@@ -290,7 +290,7 @@ public class GameRecordConverter {
         detaildo.setMultiple(detaildo.getMultiple());
         detaildo.setBetAmount(detaildo.getBetAmount());
         detaildo.setRewardAmount(detaildo.getRewardAmount());
-        detaildo.setFreeSpinsFlag(BooleanEnum.valueOfCode(detailPo.getFreeSpinsFlag()));
+        detaildo.setFreeSpinsFlag(detailPo.getFreeSpinsFlag() == null ? BooleanEnum.FALSE : BooleanEnum.valueOfCode(detailPo.getFreeSpinsFlag()));
         detaildo.setGameResult(convertJsonToSymbolDoArray(detailPo.getGameResult()));
 
         detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult()) ? null : JSON.parseArray(detailPo.getRewardResult(), GameBetResultDetailDo.RewardResult.class));

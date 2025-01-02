@@ -51,7 +51,7 @@ public class MariaMakilingGame extends AbstractGame {
             // 根据投注类型：生成游戏滚轮
             switch (gamePlay.getBetSubType()) {
                 case NORMAL_BET:
-                    return Arrays.asList(commonGenerate(gameInfo, probabilisticConfig));
+                    return Arrays.asList(scatterGenerate(gameInfo, probabilisticConfig));
                 case BUY_FREE_SPINS_BET:
                 case NON_BUY_FREE_SPINS_BET:
                     return Arrays.asList(scatterGenerate(gameInfo, probabilisticConfig));

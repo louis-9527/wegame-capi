@@ -75,6 +75,7 @@ public abstract class AbsGameBetService<T, R> implements GameBetService<T, R> {
         rewardResultList.forEach(rewardResultDo -> {
             RewardResultDo rewardResult = rewardResultDo.getRewardResult();
             GameBetResultDetailDo build = GameBetResultDetailDo.builder()
+                    .id(rewardResultDo.getWheelIndex())
                     .gameResult(rewardResultDo.getWheel().getSymbolArr())
                     .betAmount(betAmount)
                     .build();
