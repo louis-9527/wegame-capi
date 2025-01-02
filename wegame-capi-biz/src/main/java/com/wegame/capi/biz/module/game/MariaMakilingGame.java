@@ -22,7 +22,7 @@ import java.util.Random;
 import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_SCATTER;
 
 @Slf4j
-@Component("mariaMakilingGameStrategy")
+@Component
 public class MariaMakilingGame extends AbstractGame {
 
     private static final Random random = new Random();
@@ -68,7 +68,7 @@ public class MariaMakilingGame extends AbstractGame {
     }
 
     /**
-     * 生成游戏结果：生成逻辑无任何限制
+     * 生成游戏滚轮：生成逻辑无任何限制
      *
      * @param gameInfo 游戏信息
      * @return 游戏结果
@@ -88,7 +88,7 @@ public class MariaMakilingGame extends AbstractGame {
     }
 
     /**
-     * 生成游戏结果：中奖Scatter
+     * 生成游戏滚轮：中奖Scatter
      *
      * @param gameInfo
      * @return
@@ -120,7 +120,7 @@ public class MariaMakilingGame extends AbstractGame {
     }
 
     /**
-     * 生成游戏结果：非Scatter
+     * 生成游戏滚轮：非Scatter
      *
      * @param gameInfo
      * @return
