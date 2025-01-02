@@ -8,7 +8,6 @@ import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.WheelDo;
 import com.wegame.capi.biz.module.reward.RewardHandler;
 import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
-import com.wegame.capi.common.enums.BetSubTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +41,27 @@ public class MariaMakilingGame extends AbstractGame {
     }
 
     @Override
+    public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
+        switch (gamePlay.getBetSubType()) {
+            case NORMAL_BET:
+                return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
+            case NON_BUY_FREE_SPINS_BET:
+            case BUY_FREE_SPINS_BET:
+                return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
+            default:
+                throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
+        }
+    }
+
+    @Override
+    protected Map<String, Map<String, BigDecimal>> getOddsConfig(GamePlayDo gamePlay) {
+        return nacosMariaMakilingConfig.getOddsConfig();
+    }
+
+    @Override
     public List<WheelDo> generate(GamePlayDo gamePlay) {
         GameInfoDo gameInfo = getGameInfo();
-        Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay.getBetSubType());
+        Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
         if (gamePlay.isFreeSpinsFlag()) {
             List<WheelDo> wheels = Arrays.asList();
             int wheelNumber = 10 + random.nextInt(15 - 10 + 1);
@@ -67,17 +84,6 @@ public class MariaMakilingGame extends AbstractGame {
         return null;
     }
 
-    private Map<String, List<BigDecimal>> getProbabilisticConfig(BetSubTypeEnum betSubType) {
-        switch (betSubType) {
-            case NORMAL_BET:
-                return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
-            case NON_BUY_FREE_SPINS_BET:
-            case BUY_FREE_SPINS_BET:
-                return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
-            default:
-                throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
-        }
-    }
 
     /**
      * 生成游戏滚轮：生成逻辑无任何限制

@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * 中奖do
