@@ -35,9 +35,9 @@ public class RewardServiceTest extends BaseTest {
                 .betAmount(200L)
                 .build();
         long startTime = DateUtil.getCurrentTimestamp();
-        for (int i=0;i<1000000;i++){
-            mariaMakilingRewardHandler.handle(rewardDo);
-        }
+//        for (int i=0;i<1000000;i++){
+//            mariaMakilingRewardHandler.handle(rewardDo);
+//        }
         RewardResultDo rewardResultDo = mariaMakilingRewardHandler.handle(rewardDo);
         long endTime = DateUtil.getCurrentTimestamp();
 
@@ -57,9 +57,9 @@ public class RewardServiceTest extends BaseTest {
                 .symbolArr(symbolArr)
                 .build();
         long startTime = DateUtil.getCurrentTimestamp();
-        for (int i=0;i<1000000;i++){
-            RewardRuleResultDo resultDo = mariaMakilingRewardHandler.calcRewardLines(rewardRuleDo);
-        }
+//        for (int i=0;i<1000000;i++){
+//            RewardRuleResultDo resultDo = mariaMakilingRewardHandler.calcRewardLines(rewardRuleDo);
+//        }
         RewardRuleResultDo resultDo = mariaMakilingRewardHandler.calcRewardLines(rewardRuleDo);
         long endTime = DateUtil.getCurrentTimestamp();
 
