@@ -24,7 +24,7 @@ public class ProbabilisticContext {
     @Autowired
     Map<String, AbstractProbabilisticStrategy> probabilisticStrategyMap;
 
-    public SymbolDo randomOneSymbol(String gameId, int cellNo) {
+    public String randomOneSymbol(String gameId, int cellNo) {
         GameTypeEnum gameType = GameTypeEnum.valueOfCode(gameId);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "Not Support Game");
         String strategyName = strategyNameMap.get(gameType);
