@@ -6,7 +6,6 @@ import com.wegame.capi.biz.domain.GameInfoDo;
 import com.wegame.capi.biz.domain.GamePlayDo;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.WheelDo;
-import com.wegame.capi.biz.module.probabilistic.ProbabilisticStrategy;
 import com.wegame.capi.biz.module.reward.RewardHandler;
 import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
 import com.wegame.capi.common.enums.BetSubTypeEnum;
@@ -29,8 +28,6 @@ public class MariaMakilingGame extends AbstractGame {
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
-    @Autowired
-    ProbabilisticStrategy mariaMakilingProbabilisticStrategy;
     @Autowired
     NacosMariaMakilingConfig nacosMariaMakilingConfig;
 
@@ -92,7 +89,7 @@ public class MariaMakilingGame extends AbstractGame {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getCell()];
         for (int i = 0; i < gameInfo.getRow(); i++) {
             for (int j = 0; j < gameInfo.getCell(); j++) {
-                String symbolId = mariaMakilingProbabilisticStrategy.randomOneSymbol(gameInfo.getGameType(), i);
+                String symbolId = randomOneSymbol(i, probabilisticConfig);
                 symbolArr[i][j] = gameInfo.getSymbolById(symbolId);
             }
         }
@@ -146,10 +143,10 @@ public class MariaMakilingGame extends AbstractGame {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getCell()];
         for (int i = 0; i < gameInfo.getRow(); i++) {
             for (int j = 0; j < gameInfo.getCell(); j++) {
-                String symbolId = mariaMakilingProbabilisticStrategy.randomOneSymbol(i, probabilisticConfig);
+                String symbolId = randomOneSymbol(i, probabilisticConfig);
                 SymbolDo symbolDo = gameInfo.getSymbolById(symbolId);
                 while (scatterCellList.contains(j) && Objects.equals(symbolDo, MARIA_MAKILING_SCATTER)) {
-                    symbolId = mariaMakilingProbabilisticStrategy.randomOneSymbol(i, probabilisticConfig);
+                    symbolId = randomOneSymbol(i, probabilisticConfig);
                     symbolDo = gameInfo.getSymbolById(symbolId);
                 }
             }
