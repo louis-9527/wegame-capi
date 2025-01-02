@@ -7,8 +7,7 @@ spring:
   config:
     import:
       - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
-      - "optional:nacos:${spring.application.name}-maria-makiling-probabilistic-config-${spring.profiles.active}.json"
-      - "optional:nacos:${spring.application.name}-maria-makiling-odds-config-${spring.profiles.active}.json"
+      - "optional:nacos:${spring.application.name}-maria-makiling-config-${spring.profiles.active}.json"
   cloud:
     nacos:
       username: nacos

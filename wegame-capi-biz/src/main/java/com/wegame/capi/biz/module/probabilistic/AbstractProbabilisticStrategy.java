@@ -16,23 +16,23 @@ import java.util.Random;
  * 概率策略
  */
 public abstract class AbstractProbabilisticStrategy implements ProbabilisticStrategy {
-
-    /**
-     * 获取概率配置表<br/>
-     * key: 元素id， val：概率列表
-     *
-     * @return 概率配置表
-     */
-    public abstract Map<String, List<BigDecimal>> getProbabilisticConfigMap();
+    //
+    //    /**
+    //     * 获取概率配置表<br/>
+    //     * key: 元素id， val：概率列表
+    //     *
+    //     * @return 概率配置表
+    //     */
+    //    public abstract Map<String, List<BigDecimal>> getProbabilisticConfigMap();
 
     @Override
-    public String randomOneSymbol(GameTypeEnum gameType, int cellNo) {
+    public String randomOneSymbol(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
         // todo 自测
         // todo 扩展性设计与实现
         // todo 配置数据正确性校验
-        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "Not Support Game");
-        AssertUtil.assertNotNull(cellNo < 0, ErrorCode.ERR_PARAM, "Not Support Game");
-        Map<String, List<BigDecimal>> probabilisticConfigMap = getProbabilisticConfigMap();
+        //        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "Not Support Game");
+        //        AssertUtil.assertNotNull(cellNo < 0, ErrorCode.ERR_PARAM, "Not Support Game");
+        //        Map<String, List<BigDecimal>> probabilisticConfigMap = getProbabilisticConfigMap();
         // todo 数据校验
         Map<String, Integer> map = new HashMap<>();
         probabilisticConfigMap.entrySet().forEach(item -> {

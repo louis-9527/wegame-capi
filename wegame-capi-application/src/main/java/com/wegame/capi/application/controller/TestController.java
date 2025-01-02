@@ -2,7 +2,7 @@ package com.wegame.capi.application.controller;
 
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingOddsConfig;
-import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingProbabilisticConfig;
+import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -26,22 +26,27 @@ public class TestController {
 
 
     @Autowired
-    NacosMariaMakilingProbabilisticConfig nacosMysteriousProbabilisticConfig;
-    @Autowired
-    NacosMariaMakilingOddsConfig nacosMysteriousOddsConfig;
+    NacosMariaMakilingConfig nacosMariaMakilingConfig;
 
-    @ApiOperation(value = "ProbabilisticConfig", httpMethod = "GET")
+    @ApiOperation(value = "commonProbabilisticConfig", httpMethod = "GET")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
-    @GetMapping("/probabilisticConfig")
-    public CommonResponse<Map<String, List<BigDecimal>>> testMysql() {
-        return CommonResponse.build(nacosMysteriousProbabilisticConfig.getProbabilisticConfigMap());
+    @GetMapping("/commonProbabilisticConfig")
+    public CommonResponse<Map<String, List<BigDecimal>>> commonProbabilisticConfig() {
+        return CommonResponse.build(nacosMariaMakilingConfig.getCommonProbabilisticConfig());
+    }
+
+    @ApiOperation(value = "freeProbabilisticConfig", httpMethod = "GET")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
+    @GetMapping("/freeProbabilisticConfig")
+    public CommonResponse<Map<String, List<BigDecimal>>> freeProbabilisticConfig() {
+        return CommonResponse.build(nacosMariaMakilingConfig.getFreeProbabilisticConfig());
     }
 
     @ApiOperation(value = "nacosMysteriousOddsConfig", httpMethod = "GET")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
-    @GetMapping("/nacosMysteriousOddsConfig")
-    public CommonResponse<Map<String, Map<String, BigDecimal>>> getOddsMap() {
-        return CommonResponse.build(nacosMysteriousOddsConfig.getOddsConfigMap());
+    @GetMapping("/oddsConfig")
+    public CommonResponse<Map<String, Map<String, BigDecimal>>> oddsConfig() {
+        return CommonResponse.build(nacosMariaMakilingConfig.getOddsConfig());
     }
 
 }

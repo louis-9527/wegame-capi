@@ -9,15 +9,15 @@ import com.wegame.capi.biz.domain.WheelDo;
 import com.wegame.capi.biz.module.probabilistic.ProbabilisticStrategy;
 import com.wegame.capi.biz.module.reward.RewardHandler;
 import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
+import com.wegame.capi.common.enums.BetSubTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
+import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.math.BigDecimal;
+import java.util.*;
 
 import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_SCATTER;
 
@@ -31,6 +31,8 @@ public class MariaMakilingGame extends AbstractGame {
     RewardHandler mariaMakilingRewardHandler;
     @Autowired
     ProbabilisticStrategy mariaMakilingProbabilisticStrategy;
+    @Autowired
+    NacosMariaMakilingConfig nacosMariaMakilingConfig;
 
     @Override
     public GameInfoDo getGameInfo() {
@@ -45,26 +47,39 @@ public class MariaMakilingGame extends AbstractGame {
     @Override
     public List<WheelDo> generate(GamePlayDo gamePlay) {
         GameInfoDo gameInfo = getGameInfo();
+        Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay.getBetSubType());
         if (gamePlay.isFreeSpinsFlag()) {
             List<WheelDo> wheels = Arrays.asList();
             int wheelNumber = 10 + random.nextInt(15 - 10 + 1);
             for (int i = 0; i < wheelNumber; i++) {
                 // todo 控制wild @bruce
-                wheels.add(nonScatterGenerate(gameInfo, i + 1));
+                wheels.add(nonScatterGenerate(gameInfo, i + 1, probabilisticConfig));
             }
         } else {
             // 根据投注类型：生成游戏滚轮
             switch (gamePlay.getBetSubType()) {
                 case NORMAL_BET:
-                    return Arrays.asList(commonGenerate(gameInfo));
+                    return Arrays.asList(commonGenerate(gameInfo, probabilisticConfig));
                 case BUY_FREE_SPINS_BET:
                 case NON_BUY_FREE_SPINS_BET:
-                    return Arrays.asList(scatterGenerate(gameInfo));
+                    return Arrays.asList(scatterGenerate(gameInfo, probabilisticConfig));
                 default:
                     throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
             }
         }
         return null;
+    }
+
+    private Map<String, List<BigDecimal>> getProbabilisticConfig(BetSubTypeEnum betSubType) {
+        switch (betSubType) {
+            case NORMAL_BET:
+                return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
+            case NON_BUY_FREE_SPINS_BET:
+            case BUY_FREE_SPINS_BET:
+                return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
+            default:
+                throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
+        }
     }
 
     /**
@@ -73,7 +88,7 @@ public class MariaMakilingGame extends AbstractGame {
      * @param gameInfo 游戏信息
      * @return 游戏结果
      */
-    private WheelDo commonGenerate(GameInfoDo gameInfo) {
+    private WheelDo commonGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getCell()];
         for (int i = 0; i < gameInfo.getRow(); i++) {
             for (int j = 0; j < gameInfo.getCell(); j++) {
@@ -93,8 +108,8 @@ public class MariaMakilingGame extends AbstractGame {
      * @param gameInfo
      * @return
      */
-    private WheelDo scatterGenerate(GameInfoDo gameInfo) {
-        WheelDo wheelDo = commonGenerate(gameInfo);
+    private WheelDo scatterGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+        WheelDo wheelDo = commonGenerate(gameInfo, probabilisticConfig);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
         // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
         List<Integer> scatterCellList = Arrays.asList(0, 2, 4);
@@ -125,16 +140,16 @@ public class MariaMakilingGame extends AbstractGame {
      * @param gameInfo
      * @return
      */
-    private WheelDo nonScatterGenerate(GameInfoDo gameInfo, Integer index) {
+    private WheelDo nonScatterGenerate(GameInfoDo gameInfo, Integer index, Map<String, List<BigDecimal>> probabilisticConfig) {
         // 检查0，2，4列是否有Scatter，如果有，则重新生成
         List<Integer> scatterCellList = Arrays.asList(0, 2, 4);
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getCell()];
         for (int i = 0; i < gameInfo.getRow(); i++) {
             for (int j = 0; j < gameInfo.getCell(); j++) {
-                String symbolId = mariaMakilingProbabilisticStrategy.randomOneSymbol(gameInfo.getGameType(), i);
+                String symbolId = mariaMakilingProbabilisticStrategy.randomOneSymbol(i, probabilisticConfig);
                 SymbolDo symbolDo = gameInfo.getSymbolById(symbolId);
                 while (scatterCellList.contains(j) && Objects.equals(symbolDo, MARIA_MAKILING_SCATTER)) {
-                    symbolId = mariaMakilingProbabilisticStrategy.randomOneSymbol(gameInfo.getGameType(), i);
+                    symbolId = mariaMakilingProbabilisticStrategy.randomOneSymbol(i, probabilisticConfig);
                     symbolDo = gameInfo.getSymbolById(symbolId);
                 }
             }

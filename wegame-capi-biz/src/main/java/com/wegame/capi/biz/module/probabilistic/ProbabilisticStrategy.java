@@ -2,6 +2,10 @@ package com.wegame.capi.biz.module.probabilistic;
 
 import com.wegame.capi.common.enums.GameTypeEnum;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 概率策略
  */
@@ -13,6 +17,6 @@ public interface ProbabilisticStrategy {
      * @param cellNo 列序号，0：第一列, 1：第二列
      * @return SymbolDo
      */
-    String randomOneSymbol(GameTypeEnum gameType, int cellNo);
+    String randomOneSymbol(int cellNo, Map<String, List<BigDecimal>> map);
 
 }
