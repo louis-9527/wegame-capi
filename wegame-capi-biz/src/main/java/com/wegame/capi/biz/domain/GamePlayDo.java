@@ -38,5 +38,9 @@ public class GamePlayDo implements Serializable {
      * 投注金额
      */
     private Long betAmount;
+    /**
+     * 免费轮次标识：是则生产10-15次滚轮结果
+     */
+    private boolean freeSpinsFlag = false;
 }
 

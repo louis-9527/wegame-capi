@@ -29,11 +29,14 @@ public class GamePlayResultDo implements Serializable {
     /**
      * 游戏信息
      */
-    private GameInfoDo gameInfoDo;
-
-    private List<SymbolDo[][]> symbolArrList;
-
-
+    private GameInfoDo gameInfo;
+    /**
+     * 滚轮列表
+     */
+    private List<WheelDo> wheelList;
+    /**
+     * 奖励
+     */
     private RewardResultDo rewardResult;  // todo
     // todo 其他
 }
