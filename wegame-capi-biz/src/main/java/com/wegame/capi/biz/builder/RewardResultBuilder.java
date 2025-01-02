@@ -11,13 +11,12 @@ import java.util.Objects;
 
 public class RewardResultBuilder {
 
-    public static RewardResultDo build(SymbolDo[][] symbolArr,Long rewardTotalAmount, List<RewardLineDo> rewardLineList, BigDecimal wildTotalTimes, boolean isFreeSpin) {
+    public static RewardResultDo build(Long rewardTotalAmount, List<RewardLineDo> rewardLineList, BigDecimal wildTotalTimes, boolean isFreeSpin) {
         if (Objects.isNull(rewardTotalAmount) || Objects.isNull(rewardLineList)) {
             return null;
         }
 
         return RewardResultDo.builder()
-                .symbolArr(symbolArr)
                 .rewardTotalAmount(rewardTotalAmount)
                 .rewardLineList(rewardLineList)
                 .wildTotalTimes(wildTotalTimes)

@@ -71,7 +71,6 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         }
         // 返回中奖信息
         return RewardResultBuilder.build(
-                rewardHandle.getWheel().getSymbolArr(),
                 rewardTotalAmount,
                 rewardLineList,
                 multiple,
