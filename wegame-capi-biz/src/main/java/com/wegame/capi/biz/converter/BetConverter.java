@@ -113,7 +113,7 @@ public class BetConverter {
                     });
                 }
 
-                detailVo.setRewardIndex(symbolIndexVo);
+                detailVo.setIndex(symbolIndexVo);
                 detailVos.add(detailVo);
             }
         }
@@ -148,7 +148,7 @@ public class BetConverter {
                     });
                 }
 
-                detailVo.setRewardIndex(symbolIndexVo);
+                detailVo.setIndex(symbolIndexVo);
                 detailVos.add(detailVo);
             }
         }
