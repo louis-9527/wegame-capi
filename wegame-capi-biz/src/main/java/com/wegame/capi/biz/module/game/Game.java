@@ -9,7 +9,16 @@ import com.wegame.capi.biz.domain.GamePlayResultDo;
  */
 public interface Game {
 
+    /**
+     * 获取游戏信息
+     * @return
+     */
     GameInfoDo getGameInfo();
-    GamePlayResultDo play(GamePlayDo play);
 
+    /**
+     * 玩游戏
+     * @param gamePlay
+     * @return
+     */
+    GamePlayResultDo play(GamePlayDo gamePlay);
 }

@@ -14,18 +14,18 @@ public abstract class AbstractGame implements Game {
 
     protected abstract List<WheelDo> generate(GamePlayDo gamePlay);
 
-    public GamePlayResultDo play(GamePlayDo gamePlay) {
+    public GamePlayResultDo play(GamePlayDo gamePlayDo) {
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
         // 生成-游戏滚轮列表
-        List<WheelDo> wheelList = generate(gamePlay);
+        List<WheelDo> wheelList = generate(gamePlayDo);
         // 判断-滚轮中奖结果
         List<WheelRewardDo> wheelRewardList = wheelList.stream().map(wheel -> {
             RewardResultDo rewardResult = getRewardHandler().handle(RewardHandleDo.builder()
                     .gameType(gameInfo.getGameType())
-                    .betType(gamePlay.getBetType())
-                    .betSubType(gamePlay.getBetSubType())
-                    .betAmount(gamePlay.getBetAmount())
+                    .betType(gamePlayDo.getBetType())
+                    .betSubType(gamePlayDo.getBetSubType())
+                    .betAmount(gamePlayDo.getBetAmount())
                     .wheel(wheel).build());
             return WheelRewardDo.builder()
                     .wheelIndex(wheel.getIndex())
