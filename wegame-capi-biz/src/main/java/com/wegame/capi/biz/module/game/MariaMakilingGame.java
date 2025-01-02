@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_SCATTER;
+import static com.wegame.capi.biz.util.RandomSymbolUtil.randomOneSymbol;
 
 @Slf4j
 @Component
