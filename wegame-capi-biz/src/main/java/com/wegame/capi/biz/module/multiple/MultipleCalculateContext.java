@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.SymbolDo;
+import com.wegame.capi.biz.domain.WheelDo;
 import com.wegame.capi.biz.module.multiple.strategy.MultipleCalculateStrategy;
 import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +28,13 @@ public class MultipleCalculateContext {
     @Autowired
     Map<String, MultipleCalculateStrategy> multipleCalculateStrategyMap;
 
-    public BigDecimal calculateMultiple(GameTypeEnum gameType, SymbolDo[][] symbolArr) {
+    public BigDecimal calculateMultiple(GameTypeEnum gameType, WheelDo wheel) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
-        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(wheel.getSymbolArr(), ErrorCode.ERR_INTER);
         String strategyName = strategyNameMap.get(gameType);
         MultipleCalculateStrategy strategy = multipleCalculateStrategyMap.get(strategyName);
         AssertUtil.assertNotNull(strategy, ErrorCode.ERR_INTER, "NOT SUPPORT");
-        return strategy.calculateMultiple(gameType, symbolArr);
+        return strategy.calculateMultiple(gameType, wheel);
     }
 }

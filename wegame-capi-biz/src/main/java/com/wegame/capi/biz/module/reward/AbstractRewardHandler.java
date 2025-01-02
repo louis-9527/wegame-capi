@@ -47,7 +47,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
             return null;
         }
         // 计算倍率
-        BigDecimal multiple = multipleCalculateContext.calculateMultiple(rewardHandle.getGameType(), rewardHandle.getWheel().getSymbolArr());
+        BigDecimal multiple = multipleCalculateContext.calculateMultiple(rewardHandle.getGameType(), rewardHandle.getWheel());
         // 中奖总金额
         long rewardTotalAmount = 0L;
         // 中奖坐标列表
