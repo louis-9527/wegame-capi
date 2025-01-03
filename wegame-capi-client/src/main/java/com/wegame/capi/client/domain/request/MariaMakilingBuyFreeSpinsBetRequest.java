@@ -21,18 +21,19 @@ public class MariaMakilingBuyFreeSpinsBetRequest implements Validate, Serializab
     private Long betAmount;
     @ApiModelProperty(value = "支付金额", required = true)
     private Long payAmount;
-    @ApiModelProperty(value = "投注记录ID, 非必填", required = false)
+    @ApiModelProperty(value = "投注记录ID, 获得免费轮的投注记录的投注id，非必填", required = false)
     private String betRecordId;
     @ApiModelProperty(value = "免费轮ID, 非必填", required = false)
     private Integer freeSpinsId;
 
     @Override
     public void validateParam() {
-        AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
-        if (Objects.nonNull(freeSpinsId)) {
+        if (Objects.isNull(freeSpinsId)) {
+            AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
+        } else {
             AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_PARAM);
         }
     }

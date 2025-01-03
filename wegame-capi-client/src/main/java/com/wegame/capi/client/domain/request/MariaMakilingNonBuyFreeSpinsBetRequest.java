@@ -17,10 +17,10 @@ import java.util.Objects;
 @AllArgsConstructor
 @ApiModel(description = "MariaMakiling非购买免费轮投注请求参数")
 public class MariaMakilingNonBuyFreeSpinsBetRequest implements Validate, Serializable {
-    @ApiModelProperty(value = "游戏记录Id", required = true)
+    @ApiModelProperty(value = "投注记录Id：获得免费轮投注记录的投注记录id", required = true)
     private String betRecordId;
     @ApiModelProperty(value = "免费轮ID,无则传空", required = true)
-    private String freeSpinsId;
+    private Integer freeSpinsId;
 
     @Override
     public void validateParam() {

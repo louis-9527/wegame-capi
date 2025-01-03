@@ -14,9 +14,9 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "Mysterious正常投注请求参数")
+@ApiModel(description = "MariaMakiling正常投注请求参数")
 public class MariaMakilingNormalBetRequest implements Validate, Serializable {
-    @ApiModelProperty(value = "投注金额", required = true)
+    @ApiModelProperty(value = "投注金额：分", required = true)
     private Long betAmount;
 
     @Override

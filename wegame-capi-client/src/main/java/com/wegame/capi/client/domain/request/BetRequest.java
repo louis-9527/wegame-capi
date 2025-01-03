@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "下注请求")
+@ApiModel(description = "投注请求参数")
 public class BetRequest implements Validate, Serializable {
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "游戏Id", required = true)
