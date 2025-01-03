@@ -17,12 +17,11 @@ import java.util.List;
 @AllArgsConstructor
 @ApiModel("正常投注返回")
 @EqualsAndHashCode(callSuper = false)
-public class GameBetNormalVo implements Serializable {
+public class MariaMakilingNormalBetVo implements Serializable {
     private static final long serialVersionUID = -4792907227811616042L;
-
-    @ApiModelProperty("描述:大奖类型,-1:未中大奖:0:niec,1:mege,2:super,3:sensati")
-    private Integer payOutAmountType;
-    @ApiModelProperty("描述:派奖总金额")
+    @ApiModelProperty("大奖类型,-1:未中大奖:0:niec,1:mege,2:super,3:sensati")
+    private Integer prizeType;
+    @ApiModelProperty("派奖总金额")
     private Long payOutTotalAmount;
     @ApiModelProperty("免费轮标识,0:否,1:是")
     private Integer freeSpinFlag;
@@ -30,5 +29,4 @@ public class GameBetNormalVo implements Serializable {
     private String[][] spinsResult;
     @ApiModelProperty("中奖结果")
     private List<GameBetPayOutDetailVo> payOutResult;
-
 }

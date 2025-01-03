@@ -10,7 +10,7 @@ import com.wegame.capi.biz.service.BetService;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
 import com.wegame.capi.client.domain.vo.BetResultVo;
-import com.wegame.capi.client.domain.vo.GameBetNormalVo;
+import com.wegame.capi.client.domain.vo.MariaMakilingNormalBetVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +47,8 @@ public class BetController {
 
     @ApiOperation(value = "获取免费轮投注结果", httpMethod = "POST")
     @PostMapping("/bet/queryFreeSpinDetail")
-    public CommonResponse<GameBetNormalVo> queryFreeSpinDetail(@RequestBody QueryFreeSpinRequest request) {
-        GameBetNormalVo normalVo = betService.queryFreeSpinDetail(request);
+    public CommonResponse<MariaMakilingNormalBetVo> queryFreeSpinDetail(@RequestBody QueryFreeSpinRequest request) {
+        MariaMakilingNormalBetVo normalVo = betService.queryFreeSpinDetail(request);
         return CommonResponse.build(normalVo);
     }
 }

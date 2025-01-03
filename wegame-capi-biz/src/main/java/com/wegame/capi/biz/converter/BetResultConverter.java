@@ -22,7 +22,9 @@ public class BetResultConverter {
                 .betType(betResultDo.getBetType().getCode())
                 .betSubType(betResultDo.getBetSubType().getCode())
                 .credit(betResultDo.getCredit())
-                .resultDetail(betResultDo.getResultDetail())
+                .resultDetail(Objects.nonNull(betResultDo.getResultDetail())
+                        ? betResultDo.getResultDetail().toVo()
+                        : null)
                 .build();
     }
 }

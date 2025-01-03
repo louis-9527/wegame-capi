@@ -57,49 +57,6 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
 
     public abstract Game getGame();
 
-
-    // todo fix
-
-
-    public GameBetResultDetailDo getResultDetail(String gameId, BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
-        List<GameBetResultDetailDo> resultDetail = this.getResultDetail(gameId, betType, betSubType, betAmount, false);
-        return resultDetail.get(0);
-    }
-
-    public List<GameBetResultDetailDo> getResultDetail(String gameId, BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount, Boolean freeSpinsFlag) {
-        GamePlayDo gamePlay = GamePlayDo.builder()
-                .gameType(GameTypeEnum.valueOfCode(gameId))
-                .betType(betType)
-                .betSubType(betSubType)
-                .betAmount(betAmount)
-                .freeSpinsFlag(freeSpinsFlag)
-                .build();
-        GamePlayResultDo gamePlayResult = getGame().play(gamePlay);
-        AssertUtil.assertNotNull(gamePlayResult, ErrorCode.ERR_INTER);
-        // 滚轮中奖列表
-        List<WheelRewardDo> wheelRewardList = gamePlayResult.getWheelRewardList();
-
-        List<GameBetResultDetailDo> resultDetails = new ArrayList<>();
-        wheelRewardList.forEach(rewardResultDo -> {
-            RewardResultDo rewardResult = rewardResultDo.getRewardResult();
-            GameBetResultDetailDo build = GameBetResultDetailDo.builder()
-                    .id(rewardResultDo.getWheelIndex())
-                    .gameResult(rewardResultDo.getWheel().getSymbolArr())
-                    .betAmount(betAmount)
-                    .build();
-            if (rewardResult != null) {
-                build.setRewardAmount(rewardResult.getRewardTotalAmount());
-                build.setMultiple(rewardResult.getWildTotalTimes());
-                build.setPrizeType(this.getRewardAmountType());
-                build.setFreeSpinsFlag(rewardResult.isFreeSpin());
-                build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
-            }
-            resultDetails.add(build);
-        });
-        return resultDetails;
-    }
-
-
     public BetRecordDo getBetRecord(BetDo<T> betReqDo, Long betAmount, Long payAmount, List<GameBetResultDetailDo> resultDetails) {
         //组装投注记录
         long id = idGeneratorHelper.nextId();
@@ -139,28 +96,6 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
     }
 
 
-    /**
-     * 生成中奖线
-     *
-     * @param rewardLineList
-     * @return
-     */
-    private List<GameBetResultDetailDo.RewardResult> getRewardLineResults(List<RewardLineDo> rewardLineList) {
-        if (CollectionUtils.isEmpty(rewardLineList)) {
-            return new ArrayList<>();
-        }
-        List<GameBetResultDetailDo.RewardResult> rewardResults = new ArrayList<>();
-        rewardLineList.forEach(tt ->
-                rewardResults.add(GameBetResultDetailDo.RewardResult.builder()
-                        .symbol(tt.getSymbolDo())
-                        .odds(tt.getOdds())
-                        .multiple(tt.getRewardMultiple())
-                        .rewardAmount(tt.getRewardAmount())
-                        .rewardIndex(tt.getRewardSymbolIndexList())
-                        .rewardSymbolList(tt.getRewardSymbolList())
-                        .build()));
-        return rewardResults;
-    }
 
 
     /**
@@ -217,10 +152,4 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
         betWithPayoutRes.setBetId("121");
         return betWithPayoutRes;
     }
-
-
-    private PrizeTypeEnum getRewardAmountType() {
-        return PrizeTypeEnum.NONE_PRIZE;
-    }
-
 }

@@ -28,7 +28,7 @@ public class MariaMakilingNormalBetStrategy
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
                 .resultDetail(MysteriousNormalBetResultDo.builder()
-                        .resultDetailDo(resultDetail)
+                        .resultDetail(resultDetail)
                         .build())
                 .build();
     }

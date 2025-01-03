@@ -8,7 +8,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.bet.strategy.BetStrategy;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
-import com.wegame.capi.client.domain.vo.GameBetNormalVo;
+import com.wegame.capi.client.domain.vo.MariaMakilingNormalBetVo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +42,7 @@ public abstract class AbstractBetContext {
         return betStrategy.bet(betDo);
     }
 
-    public GameBetNormalVo queryBetFreeSpin(QueryFreeSpinRequest request) {
+    public MariaMakilingNormalBetVo queryBetFreeSpin(QueryFreeSpinRequest request) {
         // todo fix
         String betStrategyName = betStrategyNameMap().get(request.getBetType());
         AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");

@@ -7,7 +7,7 @@ import com.wegame.capi.biz.module.bet.AbstractBetContext;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
-import com.wegame.capi.client.domain.vo.GameBetNormalVo;
+import com.wegame.capi.client.domain.vo.MariaMakilingNormalBetVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class BetService {
         return betContext.bet(betDo);
     }
 
-    public GameBetNormalVo queryFreeSpinDetail(QueryFreeSpinRequest request) {
+    public MariaMakilingNormalBetVo queryFreeSpinDetail(QueryFreeSpinRequest request) {
         // todo fix
         GameTypeEnum gameEnum = GameTypeEnum.valueOfCode(request.getGameId());
         AssertUtil.assertNotNull(gameEnum, ErrorCode.ERR_PARAM);

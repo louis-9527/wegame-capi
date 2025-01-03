@@ -41,7 +41,7 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
                 .betSubType(betDo.getBetSubType())
                 .resultDetail(MysteriousBuyFreeSpinsBetResultDo.builder()
                         .freeSpinIds(freeSpinIds)
-                        .resultDetailDo(betResult)
+                        .resultDetail(betResult)
                         .build())
                 .build();
     }

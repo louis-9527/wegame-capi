@@ -14,10 +14,10 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("购买免费轮")
+@ApiModel("购买免费轮投注结果")
 @EqualsAndHashCode(callSuper = false)
-public class GameBetBuyVo extends GameBetNormalVo{
+public class MariaMakilingBuyFreeSpinsBetResultVo extends MariaMakilingNormalBetVo {
     private static final long serialVersionUID = 5796484386742295897L;
-    @ApiModelProperty("免费轮Id")
+    @ApiModelProperty("免费轮Id列表")
     private List<Integer> freeSpinIds;
 }
