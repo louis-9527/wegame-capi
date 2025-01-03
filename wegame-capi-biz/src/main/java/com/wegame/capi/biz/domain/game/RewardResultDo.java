@@ -1,6 +1,8 @@
 package com.wegame.capi.biz.domain.game;
 
 import com.wegame.capi.biz.domain.SymbolDo;
+import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
+import com.wegame.capi.common.enums.GrandPrizeTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,6 +37,10 @@ public class RewardResultDo implements Serializable {
      * wild总倍数
      */
     private BigDecimal wildTotalTimes;
+    /**
+     * 中大奖类型
+     */
+    private GameGrandPrizeTypeEnum grandPrizeType;
     /**
      * 中奖类型  单奖励/多奖励
      *

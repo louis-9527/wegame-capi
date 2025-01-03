@@ -3,6 +3,7 @@ package com.wegame.capi.biz.builder;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.game.RewardLineDo;
 import com.wegame.capi.biz.domain.game.RewardResultDo;
+import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 
 import java.math.BigDecimal;
@@ -23,6 +24,14 @@ public class RewardResultBuilder {
                 .rewardType(rewardLineList.size() <= 1 ? RewardTypeEnum.SINGLE.getCode() : RewardTypeEnum.MULTIPLE.getCode())
                 .isFreeSpin(isFreeSpin)
                 .build();
+    }
+
+    public static RewardResultDo build(RewardResultDo rewardResultDo, GameGrandPrizeTypeEnum gameGrandPrizeType) {
+        if (Objects.isNull(rewardResultDo) || Objects.isNull(gameGrandPrizeType)) {
+            return null;
+        }
+        rewardResultDo.setGrandPrizeType(gameGrandPrizeType);
+        return rewardResultDo;
     }
 
 }
