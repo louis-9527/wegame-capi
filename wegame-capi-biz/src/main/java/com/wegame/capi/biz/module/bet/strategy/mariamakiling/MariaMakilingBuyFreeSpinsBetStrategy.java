@@ -6,6 +6,7 @@ import com.wegame.capi.biz.domain.biz.bet.MysteriousBuyFreeSpinsBetDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.MysteriousBuyFreeSpinsBetResultDo;
+import com.wegame.capi.common.utils.GameAmountUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -35,12 +36,13 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
         resultDetails.add(betResult);
         //保存投注记录并派奖
         BetRecordDo betRecord = super.getBetRecord(betDo, betDo.getBetDetail().getPayAmount(), rewardAmount, resultDetails);
-        super.saveBetRecordAndPayOut(betRecord);
+        Long credit = super.saveBetRecordAndPayOut(betRecord);
         return BetResultDo.<MysteriousBuyFreeSpinsBetResultDo>builder()
                 .betRecordId(betRecord.getId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
+                .credit(credit)
                 .resultDetail(MysteriousBuyFreeSpinsBetResultDo.builder()
                         .freeSpinIds(freeSpinIds)
                         .resultDetail(betResult)
