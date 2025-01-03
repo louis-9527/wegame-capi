@@ -1,16 +1,8 @@
 package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
-import com.wegame.capi.biz.domain.BetDo;
-import com.wegame.capi.biz.domain.BetResultDo;
-import com.wegame.capi.biz.module.bet.AbstractMysteriousBetStrategy;
-import org.springframework.stereotype.Component;
+import com.wegame.capi.biz.module.bet.strategy.AbstractBetStrategy;
 
-@Component("mariaMakilingBuyFreeSpinsBetStrategy")
-public class AbstractMariaMakilingBetStrategy extends AbstractMysteriousBetStrategy {
+public abstract class AbstractMariaMakilingBetStrategy<T, R> extends AbstractBetStrategy<T, R> {
 
-    @Override
-   public BetResultDo bet(BetDo betDo) {
-        // todo
-        return null;
-    }
+
 }

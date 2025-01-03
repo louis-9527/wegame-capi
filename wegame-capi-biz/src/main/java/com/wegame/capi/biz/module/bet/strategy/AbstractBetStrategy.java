@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
  * 各游戏共性抽象
  */
 @Component
-public abstract class AbstractBetStrategy implements BetStrategy {
+public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
 
 }

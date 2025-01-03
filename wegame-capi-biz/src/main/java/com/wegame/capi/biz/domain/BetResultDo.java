@@ -13,7 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetResultDo<T> implements Serializable {
+public class BetResultDo<R> implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 游戏Id
@@ -26,6 +26,6 @@ public class BetResultDo<T> implements Serializable {
     /**
      * 投注结果
      */
-    private T betReusult;
+    private R betReusult;
 }
 

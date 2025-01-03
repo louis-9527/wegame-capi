@@ -5,10 +5,13 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
+import com.wegame.capi.biz.module.bet.strategy.BetStrategy;
+import com.wegame.capi.biz.module.bet.strategy.mariamakiling.MariaMakilingBetStrategy;
 import com.wegame.capi.common.enums.BetSubTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -24,24 +27,15 @@ public class MysteriousBetContext extends AbstractBetContext {
             .build();
 
     @Autowired
-    Map<String, AbstractMysteriousBetStrategy> betStrategyMap;
+    Map<String, BetStrategy<?, ?>> betStrategyMap;
 
     @Override
-    public Long getGameId() {
-        return 0L;
+    public Map<BetSubTypeEnum, String> betStrategyNameMap() {
+        return betStrategyNameMap;
     }
 
     @Override
-    public String gameName() {
-        return "Mysterious";
-    }
-
-    @Override
-    public BetResultDo bet(BetDo betDo) {
-        String betStrategyName = betStrategyNameMap.get(betDo.getBetType());
-        AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");
-        AbstractMysteriousBetStrategy betStrategy = betStrategyMap.get(betStrategyName);
-        AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
-        return betStrategy.bet(betDo);
+    public Map<String, BetStrategy<?, ?>> betStrategyMap() {
+        return betStrategyMap;
     }
 }
