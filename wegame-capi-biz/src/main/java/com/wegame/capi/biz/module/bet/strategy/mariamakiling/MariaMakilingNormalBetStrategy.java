@@ -4,11 +4,10 @@ import com.google.common.collect.Lists;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MysteriousNormalBetDo;
-import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.MysteriousNormalBetResultDo;
+import com.wegame.capi.biz.domain.user.BetRecordDo;
 import org.springframework.stereotype.Component;
-
 @Component("mariaMakilingNormalBetStrategy")
 public class MariaMakilingNormalBetStrategy
         extends AbstractMariaMakilingBetStrategy<MysteriousNormalBetDo, MysteriousNormalBetResultDo> {

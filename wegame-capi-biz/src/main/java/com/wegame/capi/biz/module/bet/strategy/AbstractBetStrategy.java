@@ -9,7 +9,7 @@ import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
 import com.wegame.capi.biz.converter.user.GameRecordConverter;
-import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.user.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.GamePlayResultDo;
@@ -66,12 +66,12 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
                 .channelId("channelId")
                 .gameId(betReqDo.getGameId())
                 .betSerialNo(String.valueOf(id))
-                .betType(betReqDo.getBetType())
-                .betSubType(betReqDo.getBetSubType())
+                .betType(betReqDo.getBetType().getCode())
+                .betSubType(betReqDo.getBetSubType().getCode())
                 .betAmount(betAmount)
                 .payOutAmount(payAmount)
                 .status(GameStatusEnum.ING.getCode())
-                .resultDetails(resultDetails)
+                .detail(resultDetails)
                 .build();
     }
 

@@ -8,7 +8,7 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.user.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.common.enums.GameStatusEnum;
@@ -218,31 +218,29 @@ public class GameRecordConverter {
     ///////////////  above auto generated ///////////////
 
 
-    public static BetRecordPo doToPo(BetRecordDo gameRecordDo) {
-        if (Objects.isNull(gameRecordDo)) {
+    public static BetRecordPo doToPo(BetRecordDo betRecordDo) {
+        if (Objects.isNull(betRecordDo)) {
             return null;
         }
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         BetRecordPo po = new BetRecordPo();
-        po.setId(gameRecordDo.getId());
-        po.setBetSerialNo(gameRecordDo.getBetSerialNo());
-        po.setPId(gameRecordDo.getPId());
-        po.setChannelId(gameRecordDo.getChannelId());
-        po.setGameId(gameRecordDo.getGameId());
+        po.setId(betRecordDo.getId());
+        po.setBetSerialNo(betRecordDo.getBetSerialNo());
+        po.setPId(betRecordDo.getPId());
+        po.setChannelId(betRecordDo.getChannelId());
+        po.setGameId(betRecordDo.getGameId());
         po.setUserId(operator.getUserId());
         po.setPlayerId(operator.getPlayerId());
         po.setPlayerName(operator.getName());
-        po.setBetType(gameRecordDo.getBetType().getCode());
-        po.setBetSubType(gameRecordDo.getBetSubType().getCode());
-        po.setBetSerialNo(gameRecordDo.getBetSerialNo());
-        po.setBetAmount(gameRecordDo.getBetAmount());
-        po.setPayOutAmount(gameRecordDo.getPayOutAmount());
-        po.setMarketFlag(BooleanEnum.FALSE.getCode());
-        po.setStatus(GameStatusEnum.ING.getCode());
-        List<GameBetResultDetailDo> resultDetails = gameRecordDo.getResultDetails();
-        List<GameRecordDetailPo> gameRecordDetailPos = doToDetailPoList(resultDetails);
-        po.setDetail(CollectionUtils.isEmpty(gameRecordDetailPos) ? null : JSON.toJSONString(gameRecordDetailPos));
+        po.setBetType(betRecordDo.getBetType());
+        po.setBetSubType(betRecordDo.getBetSubType());
+        po.setBetSerialNo(betRecordDo.getBetSerialNo());
+        po.setBetAmount(betRecordDo.getBetAmount());
+        po.setPayOutAmount(betRecordDo.getPayOutAmount());
+        po.setMarketFlag(betRecordDo.getMarketFlag());
+        po.setStatus(betRecordDo.getStatus());
+        po.setDetail(betRecordDo.getDetail());
         po.setCreator(operator.getName());
         po.setCreateTime(new Date());
         po.setUpdater(operator.getName());
