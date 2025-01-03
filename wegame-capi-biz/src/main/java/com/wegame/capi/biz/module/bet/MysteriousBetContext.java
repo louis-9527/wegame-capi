@@ -15,9 +15,9 @@ import java.util.Map;
 public class MysteriousBetContext extends AbstractBetContext {
 
     private static final Map<BetSubTypeEnum, String> betStrategyNameMap = new ImmutableMap.Builder<BetSubTypeEnum, String>()
-            .put(BetSubTypeEnum.NORMAL_BET, "mysteriousNormalBetStrategy")
-            .put(BetSubTypeEnum.BUY_FREE_SPINS_BET, "mysteriousBuyFreeSpinsBetStrategy")
-            .put(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET, "mysteriousNonBuyFreeSpinsBetStrategy")
+            .put(BetSubTypeEnum.NORMAL_BET, "mariaMakilingNormalBetStrategy")
+            .put(BetSubTypeEnum.BUY_FREE_SPINS_BET, "mariaMakilingBuyFreeSpinsBetStrategy")
+            .put(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET, "mariaMakilingNonBuyFreeSpinsBetStrategy")
             .build();
 
     @Autowired

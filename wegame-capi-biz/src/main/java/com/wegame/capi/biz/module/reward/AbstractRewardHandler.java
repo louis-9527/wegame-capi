@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.builder.RewardLineBuilder;
 import com.wegame.capi.biz.builder.RewardResultBuilder;
@@ -16,6 +17,8 @@ import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
 import com.wegame.capi.common.enums.PrizeTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,6 +32,9 @@ import java.util.Objects;
 @Service
 public abstract class AbstractRewardHandler implements RewardHandler {
 
+    @Autowired
+    RedisTemplate<String, String> redisTemplate;
+
     public abstract OddsCalculateStrategy oddsCalculateStrategy();
 
     public abstract MultipleCalculateStrategy multipleCalculateStrategy();
@@ -40,6 +46,8 @@ public abstract class AbstractRewardHandler implements RewardHandler {
     public abstract boolean bizValidate(RewardHandleDo rewardHandle);
 
     public abstract PrizeTypeEnum calcGameGrandPrize(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo);
+
+    public abstract <T> PushGrandPrizeResultDo doPushGrandPrizeHandle(PushGrandPrizeDo<T> pushGrandPrizeDo);
 
     public RewardResultDo handle(RewardHandleDo rewardHandle) {
         this.validate(rewardHandle);
@@ -96,5 +104,14 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         AssertUtil.assertNotNull(rewardHandle.getWheel().getIndex(), ErrorCode.ERR_PARAM, "wheel index is null");
         AssertUtil.assertNotNull(rewardHandle.getWheel().getSymbolArr(), ErrorCode.ERR_PARAM, "wheel symbolArr is null");
         return this.bizValidate(rewardHandle);
+    }
+
+    @Override
+    public <T> PushGrandPrizeResultDo pushGrandPrizeHandle(PushGrandPrizeDo<T> pushGrandPrizeDo) {
+        PushGrandPrizeResultDo pushGrandPrizeResultDo = this.doPushGrandPrizeHandle(pushGrandPrizeDo);
+        if (Objects.nonNull(pushGrandPrizeResultDo)){
+            redisTemplate.opsForList().rightPush("aa", FastJsonUtils.toJSONString(pushGrandPrizeResultDo));
+        }
+        return pushGrandPrizeResultDo;
     }
 }

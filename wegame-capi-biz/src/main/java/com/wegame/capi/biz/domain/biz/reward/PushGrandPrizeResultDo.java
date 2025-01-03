@@ -1,7 +1,5 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.reward;
 
-import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.GrandPrizeTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 
 /**
- * 中大奖do
+ * 中大奖结果do
  *
  * @author generate
  */
@@ -20,12 +18,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GrandPrizeDo implements Serializable {
+public class PushGrandPrizeResultDo implements Serializable {
     private static final long serialVersionUID = -22633876654348L;
     /**
      * 游戏类型
      *
-     * @see GameTypeEnum
+     * @see com.wegame.capi.client.enums.GameTypeEnum
      */
     private String gameTypeId;
     /**
@@ -39,12 +37,16 @@ public class GrandPrizeDo implements Serializable {
     /**
      * 中大奖类型
      *
-     * @see GrandPrizeTypeEnum
+     * @see com.wegame.capi.common.enums.PushGrandPrizeTypeEnum
      */
     private String grandPrizeType;
     /**
      * 中奖时间戳
      */
     private Long grandTime;
+    /**
+     * 推送文案
+     */
+    public String tipsContent;
 
 }

@@ -50,16 +50,12 @@ public class BetRecordVo implements Validate, Serializable {
     private String betAmount;
     @ApiModelProperty("派彩总金额 单位：分")
     private String payOutAmount;
-    @ApiModelProperty("营销标识 0否 1是")
-    private Integer marketFlag;
     @ApiModelProperty("状态 0进行中 1已完结 2无效")
     private Integer status;
     @ApiModelProperty("免费轮获得标识 0否 1是")
     private Integer freeSpinsFlag;
     @ApiModelProperty("免费轮次数")
     private Integer freeSpinsTimes;
-    @ApiModelProperty("游戏记录明细json")
-    private Object detail;
     @ApiModelProperty("创建人")
     private String creator;
     @ApiModelProperty("创建时间")

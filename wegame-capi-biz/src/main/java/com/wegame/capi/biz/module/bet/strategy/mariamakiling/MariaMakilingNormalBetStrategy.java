@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 @Component("mariaMakilingNormalBetStrategy")
 public class MariaMakilingNormalBetStrategy
         extends AbstractMariaMakilingBetStrategy<MysteriousNormalBetDo, MysteriousNormalBetResultDo> {
-
     @Override
     public BetResultDo<MysteriousNormalBetResultDo> bet(BetDo<MysteriousNormalBetDo> betDo) {
         // 获取游戏结果

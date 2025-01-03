@@ -42,7 +42,7 @@ public class BetConverter {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         Map<BetSubTypeEnum, Class<?>> map = gameClassMap.get(gameType);
         AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_PARAM);
-        Class clazz = map.get(betRequest.getBetSubType());
+        Class clazz = map.get(BetSubTypeEnum.valueOfCode(betRequest.getBetSubType()));
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
         return BetDo.builder()
                 .gameId(betRequest.getGameId())

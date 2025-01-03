@@ -26,6 +26,9 @@ public class BetRecordDo {
      * 渠道id
      */
     private String channelId;
+    private Long userId;
+    private String playerId;
+    private String name;
     /**
      * 游戏Id
      */

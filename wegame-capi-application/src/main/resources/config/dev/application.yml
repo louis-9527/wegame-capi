@@ -115,7 +115,7 @@ spring:
           type: com.alibaba.druid.pool.DruidDataSource
   data:
     mongodb:
-      uri: mongodb+srv://DEVnbaBACKENDuser:5rs4P71xD2zHbjpx@nba-backend-dev.yuens.mongodb.net/nba-backend?retryWrites=true&w=majority&readPreference=secondaryPreferred
+      uri: mongodb+srv://DEVnbaBACKENDuser:5rs4P71xD2zHbjpx@nba-backend-dev.yuens.mongodb.net/wegame_mdb?retryWrites=true&w=majority&readPreference=secondaryPreferred
 ## fastjson
 fastjson:
   parser:
