@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 游戏记录模块
@@ -39,12 +41,21 @@ public class BetRecordController {
     @PostMapping("/pageQuery")
     public CommonResponse<PageInfoVo<BetRecordVo>> pageQuery(@RequestBody PageQueryBetRecordRequest request) {
         request.validate();
-        BetRecordQuery query = BetRecordConverter.requestToQuery(request, "order by `create_time` desc");
+        BetRecordQuery query = BetRecordConverter.requestToQuery(request,"createTime");
         long cnt = betRecordService.count(query);
+        if (Objects.equals(cnt, 0L)) {
+            return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
+                    request.getPageSize(),
+                    new ArrayList<>(),
+                    cnt));
+        }
+        query.setLimit(request.getPageSize());
+        query.setOffset(request.getOffset());
         List<BetRecordDo> list = betRecordService.list(query);
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
                 BetRecordConverter.doToVoList(list),
                 cnt));
+
     }
 }

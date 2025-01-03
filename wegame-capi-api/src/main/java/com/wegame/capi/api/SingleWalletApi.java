@@ -1,5 +1,6 @@
 package com.wegame.capi.api;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
 import com.wegame.capi.api.domain.res.CommonRes;
@@ -25,6 +26,8 @@ public class SingleWalletApi extends BaseApi {
 
     public static final String GET_CREDIT_URL_FORMAT = "%s/getCredit";
 
+    public static final String BET_WITH_PAYOUT = "%s/betWithPayout";
+
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public GetCreditRes getCredit(GetCreditReq req) {
         try {
@@ -49,8 +52,30 @@ public class SingleWalletApi extends BaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
-    public BetWithPayoutRes betWithPayout(BetWithPayoutReq req){
-        return new BetWithPayoutRes();
+
+    public BetWithPayoutRes betWithPayout(BetWithPayoutReq req) {
+        try {
+            // 参数签名
+            assembleSingleSignature(req);
+            RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
+                    URI.create(String.format(BET_WITH_PAYOUT, singleDomain)));
+            log.info("getCredit err, req: {}", req);
+            ResponseEntity<CommonRes<BetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
+                    new ParameterizedTypeReference<CommonRes<BetWithPayoutRes>>() {
+                    });
+            log.info("getCredit err, resp: {}", JSON.toJSONString(responseEntity));
+            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
+            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
+            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
+            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
+            return responseEntity.getBody().getData();
+        } catch (BusinessException be) {
+            log.error("betWithPayout err, req: {}, errMsg: {}", req, be.getMessage(), be);
+            throw be;
+        } catch (Exception e) {
+            log.error("betWithPayout err, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
+        }
     }
 
 

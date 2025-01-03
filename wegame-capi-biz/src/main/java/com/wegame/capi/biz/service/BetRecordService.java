@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.SingleWalletApi;
+import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.converter.user.BetRecordConverter;
 import com.wegame.capi.biz.domain.user.BetRecordDo;
 import com.wegame.capi.client.domain.request.BetSummaryRequest;
@@ -27,6 +28,9 @@ public class BetRecordService {
 
     @Autowired
     public MongoTemplate mongoTemplate;
+
+    @Autowired
+    SingleWalletApi singleWalletApi;
 
     /**
      * 新增
@@ -70,29 +74,15 @@ public class BetRecordService {
     }
 
     /**
-     * 查询：根据条件查询
-     *
-     * @param query 查询条件
-     * @return BetRecordDo 投注记录
-     */
-    public BetRecordDo selectOne(BetRecordQuery query) {
-        //        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        //        return BetRecordConverter.poToDo(betRecordMapper.selectOne(query));
-        return null;
-    }
-
-
-    /**
      * 查询列表
      *
      * @param query 查询参数
      * @return List<BetRecordDo> 游戏记录列表
      */
     public List<BetRecordDo> list(BetRecordQuery query) {
-//        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-//        return BetRecordConverter.poToDoList(betRecordMapper.list(query));
-        // todo
-        return null;
+        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        List<BetRecordPo> recordPoList = mongoTemplate.find(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
+        return BetRecordConverter.poToDoList(recordPoList);
     }
 
     /**
@@ -102,17 +92,15 @@ public class BetRecordService {
      * @return 数量
      */
     public long count(BetRecordQuery query) {
-        //        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        //        return betRecordMapper.count(query);
-        // todo
-        return 0;
+        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        return mongoTemplate.count(BetRecordQueryBuilder.buildMongodbQuery(query),BetRecordPo.class);
+
+
     }
 
     ///////////////  above auto generated ///////////////
 
 
-    @Autowired
-    SingleWalletApi singleWalletApi;
 
     // todo 迁移到对账服务 @maidong
     public BetSummaryVo betSummary(BetSummaryRequest request) {

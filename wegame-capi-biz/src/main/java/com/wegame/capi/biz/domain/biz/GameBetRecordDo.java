@@ -20,6 +20,9 @@ public class GameBetRecordDo {
     private Long id;
     private String pId;
     private String channelId;
+    private Long userId;
+    private String playerId;
+    private String name;
     /**
      * 游戏Id
      */
@@ -60,5 +63,5 @@ public class GameBetRecordDo {
 
 
 
-    
+
 }

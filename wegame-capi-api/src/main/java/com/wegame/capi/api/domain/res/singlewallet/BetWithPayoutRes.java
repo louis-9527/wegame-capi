@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -16,6 +18,6 @@ public class BetWithPayoutRes  extends SingleWalletBaseRes implements Serializab
     private static final long serialVersionUID = -1827164647777864099L;
     private String playerName;
     private String betId;
-    private String credit;
+    private BigDecimal credit;
     private String refId;
 }
