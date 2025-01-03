@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.context;
+package com.wegame.capi.biz.module.bet;
 
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;

@@ -1,9 +1,8 @@
-package com.wegame.capi.biz.module.context;
+package com.wegame.capi.biz.module.bet;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.module.context.strategy.AbstractMysteriousBetStrategy;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
 import com.wegame.capi.common.enums.BetSubTypeEnum;

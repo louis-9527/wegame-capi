@@ -4,7 +4,7 @@ import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
 
-import com.wegame.capi.biz.module.context.GameBetContext;
+import com.wegame.capi.biz.module.bet.GameBetContext;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
 import com.wegame.capi.client.domain.request.update.BetRequest;
 import com.wegame.capi.client.domain.vo.GameBetBaseVo;
@@ -38,7 +38,6 @@ public class BetController {
 
         betRequest.validate();
         GameBetBaseVo<Object> betResult = gameBetContext.bet(betRequest);
-
         return CommonResponse.build(betResult);
     }
 
