@@ -16,9 +16,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameBetRecordDo {
+public class BetRecordDo {
     private Long id;
+    /**
+     * 平台id
+     */
     private String pId;
+    /**
+     * 渠道id
+     */
     private String channelId;
     /**
      * 游戏Id
@@ -54,11 +60,4 @@ public class GameBetRecordDo {
      * 玩家余额
      */
     private Long credit;
-
-
-
-
-
-
-    
 }

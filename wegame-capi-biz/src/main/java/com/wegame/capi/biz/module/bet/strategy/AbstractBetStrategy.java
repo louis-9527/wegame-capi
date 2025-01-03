@@ -9,7 +9,7 @@ import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
 import com.wegame.capi.biz.converter.user.GameRecordConverter;
-import com.wegame.capi.biz.domain.biz.GameBetRecordDo;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.GamePlayResultDo;
@@ -17,17 +17,16 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
-import com.wegame.capi.biz.domain.user.BetRecordDo;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.PrizeTypeEnum;
 import com.wegame.capi.common.enums.GameStatusEnum;
+import com.wegame.capi.common.enums.PrizeTypeEnum;
 import com.wegame.capi.common.utils.GameAmountUtil;
-import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
+import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -101,27 +100,28 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
     }
 
 
-    public GameBetRecordDo getBetRecord(BetDo<T> betReqDo, Long betAmount, Long payAmount, List<GameBetResultDetailDo> resultDetails) {
+    public BetRecordDo getBetRecord(BetDo<T> betReqDo, Long betAmount, Long payAmount, List<GameBetResultDetailDo> resultDetails) {
         //组装投注记录
         long id = idGeneratorHelper.nextId();
-        return GameBetRecordDo.builder()
+        return BetRecordDo.builder()
                 .id(id)
+                .pId("Pid")
+                .channelId("channelId")
                 .gameId(betReqDo.getGameId())
                 .betSerialNo(String.valueOf(id))
                 .betType(betReqDo.getBetType())
                 .betSubType(betReqDo.getBetSubType())
                 .betAmount(betAmount)
-                .channelId("channelId")
-                .pId("Pid")
                 .payOutAmount(payAmount)
                 .status(GameStatusEnum.ING.getCode())
-                .resultDetails(resultDetails).build();
+                .resultDetails(resultDetails)
+                .build();
     }
 
 
     public GameBetResultDetailDo queryBetFreeSpin(String gameId, Long recordId, Integer freeSpinId) {
 
-        BetRecordDo betRecordDo = betRecordService.get(recordId);
+        com.wegame.capi.biz.domain.user.BetRecordDo betRecordDo = betRecordService.get(recordId);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         Object detail = betRecordDo.getDetail();
         if (Objects.isNull(detail)) {
@@ -168,7 +168,7 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
      *
      * @return
      */
-    public void saveBetRecordAndPayOut(GameBetRecordDo betRecordDo) {
+    public void saveBetRecordAndPayOut(BetRecordDo betRecordDo) {
         //组装中奖数据
         BetRecordPo gameRecordPo = GameRecordConverter.doToPo(betRecordDo);
         AssertUtil.assertNotNull(gameRecordPo, ErrorCode.ERR_INTER);

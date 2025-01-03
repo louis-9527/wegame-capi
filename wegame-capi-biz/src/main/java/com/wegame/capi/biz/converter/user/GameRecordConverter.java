@@ -8,7 +8,7 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.GameBetRecordDo;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.common.enums.GameStatusEnum;
@@ -218,7 +218,7 @@ public class GameRecordConverter {
     ///////////////  above auto generated ///////////////
 
 
-    public static BetRecordPo doToPo(GameBetRecordDo gameRecordDo) {
+    public static BetRecordPo doToPo(BetRecordDo gameRecordDo) {
         if (Objects.isNull(gameRecordDo)) {
             return null;
         }
