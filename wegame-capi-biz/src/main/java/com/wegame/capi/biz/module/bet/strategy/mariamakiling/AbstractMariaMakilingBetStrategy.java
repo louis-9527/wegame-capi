@@ -5,7 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.converter.Converter;
-import com.wegame.capi.biz.converter.user.GameRecordConverter;
+import com.wegame.capi.biz.converter.GameRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;

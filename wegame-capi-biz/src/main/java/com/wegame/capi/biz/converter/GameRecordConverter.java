@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.converter.user;
+package com.wegame.capi.biz.converter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;

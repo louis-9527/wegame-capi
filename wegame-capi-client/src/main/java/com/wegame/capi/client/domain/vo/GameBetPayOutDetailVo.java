@@ -20,9 +20,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class GameBetPayOutDetailVo implements Serializable {
     private static final long serialVersionUID = 6487808344235380369L;
-    @ApiModelProperty("倍数")
+    @ApiModelProperty("倍率")
     private BigDecimal multiple;
-
     @ApiModelProperty("赔率")
     private BigDecimal odds;
     @ApiModelProperty("中奖坐标")
