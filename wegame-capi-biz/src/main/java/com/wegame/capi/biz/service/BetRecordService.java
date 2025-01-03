@@ -30,10 +30,6 @@ public class BetRecordService {
 
     @Autowired
     public MongoTemplate mongoTemplate;
-    @Autowired
-    BetRecordMapper betRecordMapper;
-    @Autowired
-    SingleWalletApi singleWalletApi;
 
     /**
      * 新增
@@ -42,47 +38,13 @@ public class BetRecordService {
      * @return 主键id
      */
     public Long add(BetRecordDo betRecordDo) {
-        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-        BetRecordPo po = BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD);
-        AssertUtil.assertNotNull(po, ErrorCode.ERR_PARAM);
-        betRecordMapper.insert(po);
-        return po.getId();
-    }
-
-    /**
-     * 批量新增
-     *
-     * @param doList 游戏记录列表
-     * @return true/false
-     */
-    public boolean batchAdd(List<BetRecordDo> doList) {
-        AssertUtil.assertNotEmpty(doList, ErrorCode.ERR_PARAM);
-        betRecordMapper.batchInsert(BetRecordConverter.doToPoList(doList, OptEnum.ADD));
-        return true;
-    }
-
-    /**
-     * 删除：物理删除
-     *
-     * @param id 主键id
-     * @return true/false
-     */
-    public boolean delete(Long id) {
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        betRecordMapper.deleteById(id);
-        return true;
-    }
-
-    /**
-     * 删除：批量物理删除
-     *
-     * @param ids 主键id列表
-     * @return true/false
-     */
-    public boolean batchDelete(List<Long> ids) {
-        AssertUtil.assertNotEmpty(ids, ErrorCode.ERR_PARAM);
-        betRecordMapper.deleteByIds(ids);
-        return true;
+        //        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
+        //        BetRecordPo po = BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD);
+        //        AssertUtil.assertNotNull(po, ErrorCode.ERR_PARAM);
+        //        betRecordMapper.insert(po);
+        //        return po.getId();
+        // todo
+        return null;
     }
 
     /**
@@ -92,9 +54,9 @@ public class BetRecordService {
      * @return true/false
      */
     public boolean update(BetRecordDo betRecordDo) {
-        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM);
-        betRecordMapper.updateById(BetRecordConverter.doToPo(betRecordDo, OptEnum.UPDATE));
+        //        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
+        //        AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM);
+        //        betRecordMapper.updateById(BetRecordConverter.doToPo(betRecordDo, OptEnum.UPDATE));
         return true;
     }
 
@@ -117,53 +79,11 @@ public class BetRecordService {
      * @return BetRecordDo 投注记录
      */
     public BetRecordDo selectOne(BetRecordQuery query) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return BetRecordConverter.poToDo(betRecordMapper.selectOne(query));
+        //        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        //        return BetRecordConverter.poToDo(betRecordMapper.selectOne(query));
+        return null;
     }
 
-    /**
-     * 查询Id：根据条件查询
-     *
-     * @param query 查询条件
-     * @return id
-     */
-     public Long selectId(BetRecordQuery query) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return betRecordMapper.selectId(query);
-     }
-
-    /**
-     * 查询：根据id列表
-     *
-     * @param ids id列表
-     * @return List<BetRecordDo> 游戏记录列表
-     */
-    public List<BetRecordDo> listByIds(List<Long> ids) {
-        if (CollectionUtils.isEmpty(ids)) {
-            return Collections.emptyList();
-        }
-        return BetRecordConverter.poToDoList(betRecordMapper.listByIds(ids));
-    }
-
-    /**
-     * 查询全部
-     *
-     * @return List<BetRecordDo> 游戏记录列表
-     */
-    public List<BetRecordDo> listAll() {
-        return BetRecordConverter.poToDoList(betRecordMapper.listAll());
-    }
-
-    /**
-     * 查询id列表
-     *
-     * @param query 查询参数
-     * @return List<Long> id列表
-     */
-    public List<Long> listId(BetRecordQuery query) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return betRecordMapper.listId(query);
-    }
 
     /**
      * 查询列表
@@ -172,8 +92,10 @@ public class BetRecordService {
      * @return List<BetRecordDo> 游戏记录列表
      */
     public List<BetRecordDo> list(BetRecordQuery query) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return BetRecordConverter.poToDoList(betRecordMapper.list(query));
+//        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+//        return BetRecordConverter.poToDoList(betRecordMapper.list(query));
+        // todo
+        return null;
     }
 
     /**
@@ -183,12 +105,18 @@ public class BetRecordService {
      * @return 数量
      */
     public long count(BetRecordQuery query) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return betRecordMapper.count(query);
+    //        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+    //        return betRecordMapper.count(query);
+        // todo
+        return 0;
     }
 
     ///////////////  above auto generated ///////////////
 
+
+    @Autowired
+    SingleWalletApi singleWalletApi;
+    // todo 迁移到对账服务 @maidong
     public BetSummaryVo betSummary(BetSummaryRequest request) {
         String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));
         AssertUtil.assertTrue(StringUtils.equals(hash, request.getHash()), ErrorCode.ERR_PARAM);
