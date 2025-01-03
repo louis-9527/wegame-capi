@@ -24,9 +24,7 @@ import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> extends AbstractBetStrategy<T, R> {
 
@@ -117,13 +115,14 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
             return null;
         }
         List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(FastJsonUtils.toJSONString(detail), GameRecordDetailPo.class);
-        GameRecordDetailPo recordDetail = new GameRecordDetailPo();
-        for (GameRecordDetailPo detailPo : recordDetailPos) {
-            if (Objects.equals(freeSpinId, detailPo.getId())) {
-                recordDetail = detailPo;
-                break;
-            }
-        }
+
+
+        GameRecordDetailPo recordDetail = Optional.ofNullable(recordDetailPos)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(item -> Objects.equals(item.getId(), freeSpinId))
+                .findFirst()
+                .orElse(null);
         return GameRecordConverter.poToDetailDo(recordDetail);
     }
 

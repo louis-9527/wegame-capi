@@ -282,9 +282,7 @@ public class GameRecordConverter {
         detaildo.setRewardAmount(detaildo.getRewardAmount());
         detaildo.setFreeSpinsFlag(detailPo.isFreeSpinsFlag());
         detaildo.setGameResult(convertJsonToSymbolDoArray(detailPo.getGameResult()));
-
         detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult()) ? null : JSON.parseArray(detailPo.getRewardResult(), GameBetResultDetailDo.RewardResult.class));
-
         return detaildo;
     }
 
