@@ -51,7 +51,7 @@ public class BetController {
     @ApiOperation(value = "获取免费轮投注结果", httpMethod = "POST")
     @PostMapping("/bet/queryFreeSpinDetail")
     public CommonResponse<GameBetNormalVo> queryFreeSpinDetail(@RequestBody QueryFreeSpinRequest request) {
-        GameBetNormalVo normalVo = gameBetContext.queryFreeSpinDetail(request);
+        GameBetNormalVo normalVo = betService.queryFreeSpinDetail(request);
         return CommonResponse.build(normalVo);
     }
 
