@@ -18,17 +18,13 @@ import java.util.List;
 public class MariaMakilingNonBuyFreeSpinsBetStrategy
         extends AbstractMariaMakilingBetStrategy<MysteriousNonBuyFreeSpinsBetDo, MysteriousNonBuyFreeSpinsBetResultDo> {
 
-    private final BetRecordService betRecordService;
-
-    public MariaMakilingNonBuyFreeSpinsBetStrategy(BetRecordService betRecordService) {
-        super();
-        this.betRecordService = betRecordService;
-    }
-
     @Override
     public BetResultDo<MysteriousNonBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousNonBuyFreeSpinsBetDo> betDo) {
+        // todo 判断是否免费轮 标识
+
+
         Long recordId = Long.valueOf(betDo.getBetDetail().getBetRecordId());
-        BetRecordDo betRecordDo = betRecordService.get(recordId);
+        BetRecordDo betRecordDo = super.betRecordService.get(recordId);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         // todo 核销：检查获得免费轮标识是否被核销
         // 获取游戏结果
