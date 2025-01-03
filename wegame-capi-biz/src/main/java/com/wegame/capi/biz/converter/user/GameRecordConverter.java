@@ -13,7 +13,7 @@ import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.common.enums.GameStatusEnum;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
-import com.wegame.capi.dao.mapper.domain.user.GameRecordPo;
+import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -218,13 +218,13 @@ public class GameRecordConverter {
     ///////////////  above auto generated ///////////////
 
 
-    public static GameRecordPo doToPo(GameBetRecordDo gameRecordDo) {
+    public static BetRecordPo doToPo(GameBetRecordDo gameRecordDo) {
         if (Objects.isNull(gameRecordDo)) {
             return null;
         }
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
-        GameRecordPo po = new GameRecordPo();
+        BetRecordPo po = new BetRecordPo();
         po.setId(gameRecordDo.getId());
         po.setBetSerialNo(gameRecordDo.getBetSerialNo());
         po.setPId(gameRecordDo.getPId());

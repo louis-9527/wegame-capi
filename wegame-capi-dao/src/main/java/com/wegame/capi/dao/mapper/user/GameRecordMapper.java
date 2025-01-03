@@ -1,7 +1,7 @@
 package com.wegame.capi.dao.mapper.user;
 
-import com.wegame.capi.dao.mapper.domain.user.GameRecordPo;
-import com.wegame.capi.dao.mapper.domain.user.GameRecordQuery;
+import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
+import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import org.apache.ibatis.annotations.*;
 
@@ -62,7 +62,7 @@ public interface GameRecordMapper {
             " current_timestamp()" +
             ")"})
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
-    int insert(GameRecordPo gameRecord);
+    int insert(BetRecordPo gameRecord);
 
     @Insert({"<script>",
         " insert into `game_record` (",
@@ -115,7 +115,7 @@ public interface GameRecordMapper {
         " </foreach> ",
         "</script>"})
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
-    int batchInsert(@Param("list") List<GameRecordPo> list);
+    int batchInsert(@Param("list") List<BetRecordPo> list);
 
     /** 删 */
     @Delete("delete from `game_record` where `id` = #{id} limit 1")
@@ -156,11 +156,11 @@ public interface GameRecordMapper {
         " </trim> ",
         " where id = #{id} limit 1",
         "</script>"})
-    int updateById(GameRecordPo gameRecord);
+    int updateById(BetRecordPo gameRecord);
 
     /** 查 */
     @Select("select * from `game_record` where `id` = #{id} limit 1")
-    GameRecordPo selectById(@Param("id") Long id);
+    BetRecordPo selectById(@Param("id") Long id);
 
     @Select({"<script>",
             " select * from `game_record` ",
@@ -193,7 +193,7 @@ public interface GameRecordMapper {
             "     <if test=\"query.orderByClause != null and query.orderByClause != ''\"> ${query.orderByClause} </if> ",
             "     limit 1 ",
             "</script>"})
-    GameRecordPo selectOne(@Param("query") GameRecordQuery query);
+    BetRecordPo selectOne(@Param("query") BetRecordQuery query);
 
     @Select({"<script>",
             " select id from `game_record` ",
@@ -226,7 +226,7 @@ public interface GameRecordMapper {
             "     <if test=\"query.orderByClause != null and query.orderByClause != ''\"> ${query.orderByClause} </if> ",
             "     limit 1 ",
             "</script>"})
-    Long selectId(@Param("query") GameRecordQuery query);
+    Long selectId(@Param("query") BetRecordQuery query);
 
     @Select({"<script>",
             " select * from `game_record` where `id` in ",
@@ -234,10 +234,10 @@ public interface GameRecordMapper {
             "     #{item} ",
             "   </foreach> ",
             "</script>"})
-    List<GameRecordPo> listByIds(@Param("ids") List<Long> ids);
+    List<BetRecordPo> listByIds(@Param("ids") List<Long> ids);
 
     @Select("select * from `game_record` order by `create_time` desc")
-    List<GameRecordPo> listAll();
+    List<BetRecordPo> listAll();
 
     @Select({"<script>",
             " select count(1) from `game_record` ",
@@ -268,7 +268,7 @@ public interface GameRecordMapper {
             "     <if test=\"query.endUpdateTime != null\">and `update_time` <![CDATA[<=]]> #{query.endUpdateTime}</if> ",
             " </where> ",
             "</script>"})
-    long count(@Param("query") GameRecordQuery query);
+    long count(@Param("query") BetRecordQuery query);
 
     @Select({"<script>",
             " select * from `game_record` ",
@@ -302,7 +302,7 @@ public interface GameRecordMapper {
             "     <if test=\"query.limit != null\"> limit #{query.limit}  </if> ",
             "     <if test=\"query.offset != null\"> offset #{query.offset}  </if> ",
             "</script>"})
-    List<GameRecordPo> list(@Param("query") GameRecordQuery query);
+    List<BetRecordPo> list(@Param("query") BetRecordQuery query);
 
 
     @Select({"<script>",
@@ -337,6 +337,6 @@ public interface GameRecordMapper {
             "     <if test=\"query.limit != null\"> limit #{query.limit}  </if> ",
             "     <if test=\"query.offset != null\"> offset #{query.offset}  </if> ",
             "</script>"})
-    List<Long> listId(@Param("query") GameRecordQuery query);
+    List<Long> listId(@Param("query") BetRecordQuery query);
 }
 

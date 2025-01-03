@@ -15,6 +15,7 @@ import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -27,6 +28,8 @@ import java.util.List;
 @Service
 public class BetRecordService {
 
+    @Autowired
+    public MongoTemplate mongoTemplate;
     @Autowired
     BetRecordMapper betRecordMapper;
     @Autowired

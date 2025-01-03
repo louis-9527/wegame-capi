@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class BetRecordQuery extends BetRecordPo implements Serializable {
-    private static final long serialVersionUID = -5100834055117674496L;
+    private static final long serialVersionUID = -6976052604957607936L;
     /**
      * limit
      */

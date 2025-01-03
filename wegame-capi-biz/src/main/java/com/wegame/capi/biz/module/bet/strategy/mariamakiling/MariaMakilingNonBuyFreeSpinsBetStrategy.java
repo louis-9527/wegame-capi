@@ -8,7 +8,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MysteriousNonBuyFreeSpinsBetDo;
 import com.wegame.capi.biz.domain.biz.bet.MysteriousNonBuyFreeSpinsBetResultDo;
-import com.wegame.capi.dao.mapper.domain.user.GameRecordPo;
+import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
     @Override
     public BetResultDo<MysteriousNonBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousNonBuyFreeSpinsBetDo> betDo) {
         Long recordId = Long.valueOf(betDo.getBetDetail().getGameRecordId());
-        GameRecordPo gameRecord = super.mongoTemplate.findById(recordId, GameRecordPo.class);
+        BetRecordPo gameRecord = super.mongoTemplate.findById(recordId, BetRecordPo.class);
         AssertUtil.assertNotNull(gameRecord, ErrorCode.ERR_PARAM);
 
         // 获取游戏结果

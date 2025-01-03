@@ -2,12 +2,15 @@ package com.wegame.capi.dao.mapper.domain.user;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * bet_record：投注记录
+ * game_record：投注记录
  * @author genereate
  */
 @Data
@@ -15,11 +18,14 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@Document("bet_record")
 public class BetRecordPo implements Serializable {
-    private static final long serialVersionUID = -731768757669727232L;
+    private static final long serialVersionUID = -633389003068449792L;
     /**
      * 主键ID
      */
+    @Id
+    @Field("id")
     private Long id;
     /**
      * 平台id
@@ -46,13 +52,13 @@ public class BetRecordPo implements Serializable {
      */
     private String playerName;
     /**
-     * 投注类型 1正常投注 2免费轮投注
+     * 投注类型
      */
-    private Integer betType;
+    private String betType;
     /**
-     * 投注子类型 11正常投注 21购买免费轮投注 22非购买免费轮投注
+     * 投注子类型
      */
-    private Integer betSubType;
+    private String betSubType;
     /**
      * 投注id（单钱包）
      */
@@ -62,11 +68,11 @@ public class BetRecordPo implements Serializable {
      */
     private String betSerialNo;
     /**
-     * 投注总金额 单位：分
+     * 投注金额 单位：分
      */
     private Long betAmount;
     /**
-     * 派彩总金额 单位：分
+     * 派彩金额 单位：分
      */
     private Long payOutAmount;
     /**
@@ -81,10 +87,6 @@ public class BetRecordPo implements Serializable {
      * 免费轮获得标识 0否 1是
      */
     private Integer freeSpinsFlag;
-    /**
-     * 免费轮次数
-     */
-    private Integer freeSpinsTimes;
     /**
      * 游戏记录明细json
      */

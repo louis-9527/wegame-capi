@@ -39,7 +39,7 @@ public class GameBetResultDetailDo {
     @NoArgsConstructor
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
-    public static class RewardResult{
+    public static class RewardResult {
         /**
          * 元素id
          */

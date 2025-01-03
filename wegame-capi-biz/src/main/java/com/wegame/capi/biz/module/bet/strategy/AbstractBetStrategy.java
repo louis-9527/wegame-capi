@@ -7,7 +7,6 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
 import com.wegame.capi.biz.converter.user.GameRecordConverter;
@@ -20,6 +19,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
 import com.wegame.capi.biz.module.game.Game;
+import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -27,7 +27,7 @@ import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
 import com.wegame.capi.common.enums.GameStatusEnum;
 import com.wegame.capi.common.utils.GameAmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
-import com.wegame.capi.dao.mapper.domain.user.GameRecordPo;
+import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +50,11 @@ import java.util.Objects;
 public abstract class AbstractBetStrategy<T extends Validate, R> implements BetStrategy<T, R> {
 
     @Autowired
-    private IdGeneratorHelper idGeneratorHelper;
+    IdGeneratorHelper idGeneratorHelper;
     @Autowired
-    public MongoTemplate mongoTemplate;
+    MongoTemplate mongoTemplate;
+    @Autowired
+    BetRecordService betRecordService;
 
     public abstract Game getGame();
     // todo fix
@@ -117,7 +119,7 @@ public abstract class AbstractBetStrategy<T extends Validate, R> implements BetS
 
 
     public GameBetResultDetailDo queryBetFreeSpin(String gameId, Long recordId, Integer freeSpinId) {
-        GameRecordPo gameRecord = mongoTemplate.findById(recordId, GameRecordPo.class);
+        BetRecordPo gameRecord = mongoTemplate.findById(recordId, BetRecordPo.class);
         AssertUtil.assertNotNull(gameRecord, ErrorCode.ERR_PARAM);
         String detail = gameRecord.getDetail();
         if (StringUtils.isEmpty(detail)) {
@@ -166,11 +168,11 @@ public abstract class AbstractBetStrategy<T extends Validate, R> implements BetS
      */
     public void saveBetRecordAndPayOut(GameBetRecordDo betRecordDo) {
         //组装中奖数据
-        GameRecordPo gameRecordPo = GameRecordConverter.doToPo(betRecordDo);
+        BetRecordPo gameRecordPo = GameRecordConverter.doToPo(betRecordDo);
         AssertUtil.assertNotNull(gameRecordPo, ErrorCode.ERR_INTER);
         gameRecordPo.setId(betRecordDo.getId());
         gameRecordPo.setBetSerialNo(String.valueOf(betRecordDo.getId()));
-        GameRecordPo insert = mongoTemplate.insert(gameRecordPo);
+        BetRecordPo insert = mongoTemplate.insert(gameRecordPo);
         //调用单钱包
         BetWithPayoutRes betWithPayoutRes = this.betWithPayout(gameRecordPo);
         //判断返回结果
@@ -182,7 +184,7 @@ public abstract class AbstractBetStrategy<T extends Validate, R> implements BetS
         update.set("status", GameStatusEnum.SUCCESS.getCode());
         update.set("updateTime", new Date());
         //更新记录
-        mongoTemplate.updateFirst(query, update, GameRecordPo.class);
+        mongoTemplate.updateFirst(query, update, BetRecordPo.class);
     }
 
     /**
@@ -192,7 +194,7 @@ public abstract class AbstractBetStrategy<T extends Validate, R> implements BetS
      * @return
      */
 
-    private BetWithPayoutRes betWithPayout(GameRecordPo gameRecordPo) {
+    private BetWithPayoutRes betWithPayout(BetRecordPo gameRecordPo) {
         //调用单钱包
         BetWithPayoutReq payoutReq = BetWithPayoutReq.builder()
                 .pId(gameRecordPo.getPId())
