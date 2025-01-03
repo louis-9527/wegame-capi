@@ -116,6 +116,9 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
     public GameGrandPrizeTypeEnum calcGameGrandPrize(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo) {
         Long betAmount = rewardHandleDo.getBetAmount();
         Long rewardTotalAmount = rewardResultDo.getRewardTotalAmount();
+        if (Objects.isNull(betAmount) || Objects.isNull(rewardTotalAmount) || betAmount <= 0 || rewardTotalAmount <= 0) {
+            return GameGrandPrizeTypeEnum.NONE_PRIZE;
+        }
         double rewardTimes = NumberUtil.div(rewardTotalAmount.longValue(), betAmount.longValue());
         if (rewardTimes >= 5 && rewardTimes < 10) {
             return GameGrandPrizeTypeEnum.NICE_PRIZE;
