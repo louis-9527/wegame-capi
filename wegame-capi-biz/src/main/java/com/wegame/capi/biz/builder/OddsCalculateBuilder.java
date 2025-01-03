@@ -1,8 +1,8 @@
 package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.SymbolDo;
-import com.wegame.capi.biz.domain.game.OddsCalculateDo;
-import com.wegame.capi.biz.domain.game.RewardHandleDo;
+import com.wegame.capi.biz.domain.OddsCalculateDo;
+import com.wegame.capi.biz.domain.RewardHandleDo;
 import com.wegame.capi.common.enums.RewardLineTypeEnum;
 
 import java.util.Objects;

@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.module.reward;
 
-import com.wegame.capi.biz.domain.game.RewardHandleDo;
-import com.wegame.capi.biz.domain.game.RewardResultDo;
+import com.wegame.capi.biz.domain.RewardHandleDo;
+import com.wegame.capi.biz.domain.RewardResultDo;
 
 /**
  * 中奖handler

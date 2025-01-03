@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.module.odds;
 
-import com.wegame.capi.biz.domain.game.OddsCalculateDo;
+import com.wegame.capi.biz.domain.OddsCalculateDo;
 import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

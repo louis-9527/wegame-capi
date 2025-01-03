@@ -1,8 +1,7 @@
 package com.wegame.capi.biz.builder;
 
-import com.wegame.capi.biz.domain.SymbolDo;
-import com.wegame.capi.biz.domain.game.RewardLineDo;
-import com.wegame.capi.biz.domain.game.RewardResultDo;
+import com.wegame.capi.biz.domain.RewardLineDo;
+import com.wegame.capi.biz.domain.RewardResultDo;
 import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 

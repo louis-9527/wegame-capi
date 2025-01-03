@@ -5,10 +5,9 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
 import com.wegame.capi.biz.domain.MysteriousNonBuyFreeSpinsBetDo;
-import com.wegame.capi.biz.domain.business.bet.GameBetRecordDo;
-import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
-import com.wegame.capi.biz.domain.business.bet.GameBetResultDo;
-import com.wegame.capi.biz.domain.business.bet.MysteriousNonBuyFreeSpinsBetResultDo;
+import com.wegame.capi.biz.domain.GameBetRecordDo;
+import com.wegame.capi.biz.domain.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.MysteriousNonBuyFreeSpinsBetResultDo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordPo;
 import org.springframework.stereotype.Component;
 

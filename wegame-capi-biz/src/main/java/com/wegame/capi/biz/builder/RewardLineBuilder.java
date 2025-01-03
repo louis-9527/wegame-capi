@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.builder;
 
-import com.wegame.capi.biz.domain.game.RewardLineDo;
-import com.wegame.capi.biz.domain.game.RewardRuleLineDo;
+import com.wegame.capi.biz.domain.RewardLineDo;
+import com.wegame.capi.biz.domain.RewardRuleLineDo;
 
 import java.math.BigDecimal;
 import java.util.Objects;

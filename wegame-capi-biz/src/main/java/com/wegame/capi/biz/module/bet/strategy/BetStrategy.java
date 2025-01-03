@@ -3,7 +3,7 @@ package com.wegame.capi.biz.module.bet.strategy;
 
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
-import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.GameBetResultDetailDo;
 
 /**
  * 投注策略

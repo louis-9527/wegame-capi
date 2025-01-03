@@ -5,7 +5,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.BetConverter;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
-import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.GameBetResultDetailDo;
 import com.wegame.capi.biz.module.bet.strategy.BetStrategy;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
 import com.wegame.capi.client.domain.vo.GameBetNormalVo;
