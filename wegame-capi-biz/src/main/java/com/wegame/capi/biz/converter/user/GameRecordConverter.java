@@ -8,7 +8,7 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.GameBetRecordDo;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.common.enums.GameStatusEnum;
@@ -218,7 +218,7 @@ public class GameRecordConverter {
     ///////////////  above auto generated ///////////////
 
 
-    public static BetRecordPo doToPo(GameBetRecordDo gameRecordDo) {
+    public static BetRecordPo doToPo(BetRecordDo gameRecordDo) {
         if (Objects.isNull(gameRecordDo)) {
             return null;
         }
@@ -270,7 +270,7 @@ public class GameRecordConverter {
         detailPo.setMultiple(detailDo.getMultiple());
         detailPo.setBetAmount(detailDo.getBetAmount());
         detailPo.setRewardAmount(detailDo.getRewardAmount());
-        detailPo.setFreeSpinsFlag(detailDo.getFreeSpinsFlag() == null ? null : detailDo.getFreeSpinsFlag().getCode());
+        detailPo.setFreeSpinsFlag(detailDo.isFreeSpinsFlag());
         detailPo.setRewardResult(detailDo.getRewardResults() == null ? null : JSON.toJSONString(detailDo.getRewardResults()));
 
         return detailPo;
@@ -285,7 +285,7 @@ public class GameRecordConverter {
         detaildo.setMultiple(detaildo.getMultiple());
         detaildo.setBetAmount(detaildo.getBetAmount());
         detaildo.setRewardAmount(detaildo.getRewardAmount());
-        detaildo.setFreeSpinsFlag(detailPo.getFreeSpinsFlag() == null ? BooleanEnum.FALSE : BooleanEnum.valueOfCode(detailPo.getFreeSpinsFlag()));
+        detaildo.setFreeSpinsFlag(detailPo.isFreeSpinsFlag());
         detaildo.setGameResult(convertJsonToSymbolDoArray(detailPo.getGameResult()));
 
         detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult()) ? null : JSON.parseArray(detailPo.getRewardResult(), GameBetResultDetailDo.RewardResult.class));

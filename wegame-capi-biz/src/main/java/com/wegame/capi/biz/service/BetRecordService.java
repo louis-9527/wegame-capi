@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.service;
 
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.SingleWalletApi;
@@ -39,13 +40,8 @@ public class BetRecordService {
      * @return 主键id
      */
     public Long add(BetRecordDo betRecordDo) {
-        //        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-        //        BetRecordPo po = BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD);
-        //        AssertUtil.assertNotNull(po, ErrorCode.ERR_PARAM);
-        //        betRecordMapper.insert(po);
-        //        return po.getId();
-        // todo
-        return null;
+        BetRecordPo po = mongoTemplate.insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD));
+        return po.getId();
     }
 
     /**
