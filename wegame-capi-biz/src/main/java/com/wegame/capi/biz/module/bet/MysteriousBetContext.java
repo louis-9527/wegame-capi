@@ -21,7 +21,7 @@ public class MysteriousBetContext extends AbstractBetContext {
             .build();
 
     @Autowired
-    Map<String, BetStrategy<?, ?>> betStrategyMap;
+    Map<String, BetStrategy> betStrategyMap;
 
     @Override
     public Map<BetSubTypeEnum, String> betStrategyNameMap() {
@@ -29,7 +29,7 @@ public class MysteriousBetContext extends AbstractBetContext {
     }
 
     @Override
-    public Map<String, BetStrategy<?, ?>> betStrategyMap() {
+    public Map<String, BetStrategy> betStrategyMap() {
         return betStrategyMap;
     }
 }
