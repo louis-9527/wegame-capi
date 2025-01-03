@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.domain.biz.reward;
 
-import com.wegame.capi.common.enums.PrizeTypeEnum;
 import lombok.AllArgsConstructor;
+import com.wegame.capi.common.enums.PrizeTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

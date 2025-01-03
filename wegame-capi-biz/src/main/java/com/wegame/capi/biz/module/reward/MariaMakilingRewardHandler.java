@@ -137,6 +137,20 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         return PrizeTypeEnum.NONE_PRIZE;
     }
 
+    @Override
+    public <T> PushGrandPrizeResultDo doPushGrandPrizeHandle(PushGrandPrizeDo<T> pushGrandPrizeDo) {
+        T data = pushGrandPrizeDo.getData();
+        AssertUtil.assertTrue(data instanceof com.wegame.capi.biz.domain.game.MariaPushGrandPrizeDo, ErrorCode.ERR_INTER, "data type is not support");
+        com.wegame.capi.biz.domain.game.MariaPushGrandPrizeDo mariaPushGrandPrizeDo = (com.wegame.capi.biz.domain.game.MariaPushGrandPrizeDo) data;
+
+        // 算出中奖金额返回
+        
+
+
+
+            return null;
+    }
+
     private Map<SymbolDo, List<RewardRuleSymbolDo>> initFirstColumSymbol(RewardRuleDo rewardRuleDo) {
         Map<SymbolDo, List<RewardRuleSymbolDo>> firstColumSymbolMapping = new HashMap<>();
         SymbolDo[][] symbolArr = rewardRuleDo.getSymbolArr();
@@ -310,6 +324,4 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
     private boolean isFirstColumSymbolId(Map<SymbolDo, List<RewardRuleSymbolDo>> firstColumSymbolMapping, SymbolDo symbolDo) {
         return Objects.nonNull(firstColumSymbolMapping.get(symbolDo));
     }
-
-
 }
