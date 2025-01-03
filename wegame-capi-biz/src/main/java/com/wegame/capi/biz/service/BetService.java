@@ -36,7 +36,6 @@ public class BetService {
         GameTypeEnum gameEnum = GameTypeEnum.valueOfCode(betDo.getGameId());
         AssertUtil.assertNotNull(gameEnum, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betDo.getBetDetail(), ErrorCode.ERR_PARAM);
-        betDo.getBetDetail().validate();
         String betContextName = contextNameMap.get(gameEnum);
         AssertUtil.assertStrNotEmpty(betContextName, ErrorCode.ERR_PARAM, "Not Support Game");
         AbstractBetContext betContext = contextMap.get(betContextName);

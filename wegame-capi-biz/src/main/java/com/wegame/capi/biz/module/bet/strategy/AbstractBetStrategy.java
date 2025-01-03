@@ -49,7 +49,7 @@ import java.util.Objects;
  * 各游戏共性抽象
  */
 @Component
-public abstract class AbstractBetStrategy<T extends Validate, R> implements BetStrategy<T, R> {
+public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
 
     @Autowired
     IdGeneratorHelper idGeneratorHelper;

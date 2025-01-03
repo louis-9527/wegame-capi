@@ -6,7 +6,7 @@ import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.module.game.MariaMakilingGame;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class AbstractMariaMakilingBetStrategy<T extends Validate, R> extends AbstractBetStrategy<T, R> {
+public abstract class AbstractMariaMakilingBetStrategy<T, R> extends AbstractBetStrategy<T, R> {
 
     @Autowired
     MariaMakilingGame mariaMakilingGame;

@@ -9,7 +9,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 /**
  * 投注策略
  */
-public interface BetStrategy<T extends Validate, R> {
+public interface BetStrategy<T, R> {
 
 
     BetResultDo<R> bet(BetDo<T> betDo);

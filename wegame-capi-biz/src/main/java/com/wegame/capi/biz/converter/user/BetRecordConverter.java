@@ -185,28 +185,7 @@ public class BetRecordConverter {
 
     public static BetRecordQuery requestToQuery(PageQueryBetRecordRequest request, String orderClause) {
         BetRecordQuery query = new BetRecordQuery();
-        query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
-        query.setPId(request.getPId());
-        query.setChannelId(request.getChannelId());
-        query.setGameId(request.getGameId());
         query.setUserId(StringUtils.isNotEmpty(request.getUserId()) ? Long.valueOf(request.getUserId()) : null);
-        query.setPlayerId(request.getPlayerId());
-        query.setPlayerName(request.getPlayerName());
-        query.setBetType(request.getBetType());
-        query.setBetSubType(request.getBetSubType());
-        query.setBetId(request.getBetId());
-        query.setBetSerialNo(request.getBetSerialNo());
-        query.setBetAmount(StringUtils.isNotEmpty(request.getBetAmount()) ? Long.valueOf(request.getBetAmount()) : null);
-        query.setPayOutAmount(StringUtils.isNotEmpty(request.getPayOutAmount()) ? Long.valueOf(request.getPayOutAmount()) : null);
-        query.setMarketFlag(request.getMarketFlag());
-        query.setStatus(request.getStatus());
-        query.setFreeSpinsFlag(request.getFreeSpinsFlag());
-        query.setFreeSpinsTimes(request.getFreeSpinsTimes());
-        query.setDetail(request.getDetail());
-        query.setCreator(request.getCreator());
-        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? new Date(request.getCreateTime()) : null);
-        query.setUpdater(request.getUpdater());
-        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? new Date(request.getUpdateTime()) : null);
         query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) ? new Date(request.getStartCreateTime()) : null);
         query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);
         query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? new Date(request.getStartUpdateTime()) : null);

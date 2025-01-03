@@ -17,7 +17,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetDo<T extends Validate> implements Serializable {
+public class BetDo<T> implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 游戏Id
