@@ -46,7 +46,7 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
         //保存投注记录并派奖
         super.saveBetRecordAndPayOut(betRecord);
         return BetResultDo.<MysteriousNonBuyFreeSpinsBetResultDo>builder()
-                .gameRecordId(betRecord.getId())
+                .betRecordId(betRecord.getId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())

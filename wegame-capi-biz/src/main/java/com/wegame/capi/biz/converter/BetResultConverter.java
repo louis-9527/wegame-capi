@@ -17,7 +17,7 @@ public class BetResultConverter {
             return null;
         }
         return BetResultVo.builder()
-                .gameRecordId(String.valueOf(betResultDo.getGameRecordId()))
+                .betRecordId(String.valueOf(betResultDo.getBetRecordId()))
                 .gameId(betResultDo.getGameId())
                 .betType(betResultDo.getBetType().getCode())
                 .betSubType(betResultDo.getBetSubType().getCode())

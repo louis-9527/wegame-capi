@@ -37,7 +37,7 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
         BetRecordDo betRecord = super.getBetRecord(betDo, betDo.getBetDetail().getPayAmount(), rewardAmount, resultDetails);
         super.saveBetRecordAndPayOut(betRecord);
         return BetResultDo.<MysteriousBuyFreeSpinsBetResultDo>builder()
-                .gameRecordId(betRecord.getId())
+                .betRecordId(betRecord.getId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())

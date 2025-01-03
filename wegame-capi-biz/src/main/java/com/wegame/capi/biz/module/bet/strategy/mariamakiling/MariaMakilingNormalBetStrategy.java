@@ -21,7 +21,7 @@ public class MariaMakilingNormalBetStrategy
         super.saveBetRecordAndPayOut(betRecord);
         // 组装返回结果
         return BetResultDo.<MysteriousNormalBetResultDo>builder()
-                .gameRecordId(betRecord.getId())
+                .betRecordId(betRecord.getId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())

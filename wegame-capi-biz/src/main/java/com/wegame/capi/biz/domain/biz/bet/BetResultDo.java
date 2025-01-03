@@ -21,7 +21,7 @@ public class BetResultDo<R extends Converter> implements Serializable {
     /**
      * 游戏记录id
      */
-    private Long gameRecordId;
+    private Long betRecordId;
     /**
      * 游戏Id
      */
@@ -34,7 +34,6 @@ public class BetResultDo<R extends Converter> implements Serializable {
      * 投注子类型
      */
     private BetSubTypeEnum betSubType;
-
     /**
      * 余额
      */
@@ -43,39 +42,5 @@ public class BetResultDo<R extends Converter> implements Serializable {
      * 投注结果
      */
     private R resultDetail;
-
-    //    @Data
-    //    @NoArgsConstructor
-    //    @AllArgsConstructor
-    //    public class MysteriousNormalBetResultDo implements Validate, Serializable {
-    //        @ApiModelProperty(value = "投注金额", required = true)
-    //        private Long betAmount;
-    //    }
-    //
-    //    /**
-    //     * Mysterious购买免费轮投注结果
-    //     */
-    //    @Data
-    //    @NoArgsConstructor
-    //    @AllArgsConstructor
-    //    public class MysteriousBuyFreeSpinsBetResultDo implements Validate, Serializable {
-    //        @ApiModelProperty(value = "投注金额", required = true)
-    //        private Long betAmount;
-    //        @ApiModelProperty(value = "支付金额", required = true)
-    //        private Long payAmount;
-    //    }
-    //
-    //    /**
-    //     * Mysterious非购买免费轮投注结果
-    //     */
-    //    @Data
-    //    @NoArgsConstructor
-    //    @AllArgsConstructor
-    //    public class MysteriousNonBuyFreeSpinsBetResultDo implements Validate, Serializable {
-    //        /**
-    //         * 游戏记录Id
-    //         */
-    //        private String gameRecordId;
-    //    }
 }
 
