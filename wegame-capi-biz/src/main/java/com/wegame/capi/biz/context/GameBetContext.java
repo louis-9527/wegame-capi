@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.context;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -9,17 +8,13 @@ import com.wegame.capi.biz.domain.business.bet.GameBetReqDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDo;
 import com.wegame.capi.biz.service.bet.AbsGameBetService;
-import com.wegame.capi.biz.service.bet.GameBetNormalService;
 import com.wegame.capi.biz.service.bet.GameBetService;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
-import com.wegame.capi.client.domain.request.update.BetBaseRequest;
-import com.wegame.capi.client.domain.request.update.BetNormalDetailRequest;
+import com.wegame.capi.client.domain.request.update.BetRequest;
 import com.wegame.capi.client.domain.vo.GameBetBaseVo;
 import com.wegame.capi.client.domain.vo.GameBetNormalVo;
 import com.wegame.capi.common.enums.BetSubTypeEnum;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -46,7 +41,7 @@ public class GameBetContext {
      * 投注
      * * @return
      */
-    public <T, R> GameBetBaseVo<Object> bet(BetBaseRequest<Object> betRequest) {
+    public <T, R> GameBetBaseVo<Object> bet(BetRequest<Object> betRequest) {
         BetSubTypeEnum betSubType = BetSubTypeEnum.valueOfCode(betRequest.getBetSubType());
         String betStrategyName = betStrategyNameMap.get(betSubType);
         AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");

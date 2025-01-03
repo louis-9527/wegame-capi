@@ -1,4 +1,4 @@
-package com.wegame.capi.client.domain.request;
+package com.wegame.capi.client.domain.request.update;
 
 import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
@@ -11,27 +11,30 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-/**
- * 投注请求参数
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "投注请求参数")
-public class BetRequest implements Validate, Serializable {
+@ApiModel(description = "下注请求")
+public class BetRequest<T> implements Validate, Serializable {
+    private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "游戏Id", required = true)
     private String gameId;
-    @ApiModelProperty(value = "投注类型：NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
+    @ApiModelProperty(value = "投注类型:NORMAL_BET,免费轮投注:FREE_SPINS_BET", required = true)
     private String betType;
-    @ApiModelProperty(value = "投注明细", required = false)
-    private Object betDetail;
+    @ApiModelProperty(value = "投注子类型:NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
+    private String betSubType;
+    @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true)
+    private T betDetail;
 
     @Override
     public void validateParam() {
-        AssertUtil.assertNotNull(gameId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(betType, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(betType, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(betSubType, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betDetail, ErrorCode.ERR_PARAM);
+        // todo
     }
+
 
     @Data
     @NoArgsConstructor
@@ -40,13 +43,11 @@ public class BetRequest implements Validate, Serializable {
     public class MysteriousNormalBetRequest implements Validate, Serializable {
         @ApiModelProperty(value = "投注金额", required = true)
         private Long betAmount;
-        @ApiModelProperty(value = "是否自动投注", required = true)
-        private Boolean autoBet;
 
         @Override
         public void validateParam() {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-            AssertUtil.assertNotNull(autoBet, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
         }
     }
 
@@ -55,12 +56,17 @@ public class BetRequest implements Validate, Serializable {
     @AllArgsConstructor
     @ApiModel(description = "Mysterious购买免费轮投注请求参数")
     public class MysteriousBuyFreeSpinsBetRequest implements Validate, Serializable {
-        @ApiModelProperty(value = "投注金额/购买金额", required = true)
+        @ApiModelProperty(value = "投注金额", required = true)
         private Long betAmount;
+        @ApiModelProperty(value = "支付金额", required = true)
+        private Long payAmount;
 
         @Override
         public void validateParam() {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
         }
     }
 
@@ -77,4 +83,5 @@ public class BetRequest implements Validate, Serializable {
             AssertUtil.assertStrNotEmpty(gameRecordId, ErrorCode.ERR_PARAM);
         }
     }
+
 }

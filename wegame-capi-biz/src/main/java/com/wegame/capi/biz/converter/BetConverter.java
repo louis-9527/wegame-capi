@@ -1,10 +1,9 @@
 package com.wegame.capi.biz.converter;
 
 import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.business.bet.*;
-import com.wegame.capi.client.domain.request.update.BetBaseRequest;
+import com.wegame.capi.client.domain.request.update.BetRequest;
 import com.wegame.capi.client.domain.request.update.BetBuyDetailRequest;
 import com.wegame.capi.client.domain.request.update.BetNoneBuyDetailRequest;
 import com.wegame.capi.client.domain.request.update.BetNormalDetailRequest;
@@ -24,7 +23,7 @@ import java.util.Objects;
  */
 public class BetConverter {
 
-    public static <T> GameBetReqDo<T> reqToDo(BetBaseRequest<Object> betRequest) {
+    public static <T> GameBetReqDo<T> reqToDo(BetRequest<Object> betRequest) {
         if (Objects.isNull(betRequest)) {
             return null;
         }

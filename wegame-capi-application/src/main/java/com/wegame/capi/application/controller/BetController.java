@@ -6,7 +6,7 @@ import com.wegame.base.domain.CommonResponse;
 
 import com.wegame.capi.biz.context.GameBetContext;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
-import com.wegame.capi.client.domain.request.update.BetBaseRequest;
+import com.wegame.capi.client.domain.request.update.BetRequest;
 import com.wegame.capi.client.domain.vo.GameBetBaseVo;
 import com.wegame.capi.client.domain.vo.GameBetNormalVo;
 import io.swagger.annotations.Api;
@@ -27,7 +27,7 @@ public class BetController {
 
     @ApiOperation(value = "投注", httpMethod = "POST")
     @PostMapping("/bet")
-    public CommonResponse<GameBetBaseVo<Object>> bet(@RequestBody BetBaseRequest<Object> betRequest) {
+    public CommonResponse<GameBetBaseVo<Object>> bet(@RequestBody BetRequest<Object> betRequest) {
         Operator operator = new Operator();
         operator.setPlayerId("1000");
         operator.setName("张三");
