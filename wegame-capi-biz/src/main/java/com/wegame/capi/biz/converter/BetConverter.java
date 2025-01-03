@@ -83,7 +83,7 @@ public class BetConverter {
 
     public static GameBetNormalVo detailToNormalVo(GameBetResultDetailDo detailDo) {
         GameBetNormalVo normalVo = new GameBetNormalVo();
-        normalVo.setPayOutAmountType(detailDo.getRewardAmountType() == null ? null : detailDo.getRewardAmountType().getCode());
+        normalVo.setPayOutAmountType(detailDo.getPrizeType() == null ? null : detailDo.getPrizeType().getCode());
         normalVo.setPayOutTotalAmount(detailDo.getRewardAmount());
         normalVo.setSpinsResult(convertToIntegerArray(detailDo.getGameResult()));
         List<GameBetPayOutDetailVo> detailVos = new ArrayList<>();
@@ -118,7 +118,7 @@ public class BetConverter {
 
     public static GameBetBuyVo detailToBuyVo(GameBetResultDetailDo detailDo) {
         GameBetBuyVo normalVo = new GameBetBuyVo();
-        normalVo.setPayOutAmountType(detailDo.getRewardAmountType() == null ? null : detailDo.getRewardAmountType().getCode());
+        normalVo.setPayOutAmountType(detailDo.getPrizeType() == null ? null : detailDo.getPrizeType().getCode());
         normalVo.setPayOutTotalAmount(detailDo.getRewardAmount());
         normalVo.setSpinsResult(convertToIntegerArray(detailDo.getGameResult()));
         List<GameBetPayOutDetailVo> detailVos = new ArrayList<>();

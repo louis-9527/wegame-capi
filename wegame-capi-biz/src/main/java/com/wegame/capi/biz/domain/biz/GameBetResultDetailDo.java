@@ -1,9 +1,8 @@
 package com.wegame.capi.biz.domain.biz;
 
-import com.wegame.base.enums.BooleanEnum;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
-import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
+import com.wegame.capi.common.enums.PrizeTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,19 +19,34 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class GameBetResultDetailDo {
     private Integer id;
+    /**
+     * 投注金额
+     */
     private Long betAmount;
+    /**
+     * 中奖总金额
+     */
     private Long rewardAmount;
+    /**
+     * 倍率
+     */
     private BigDecimal multiple;
-    private GameGrandPrizeTypeEnum rewardAmountType;
+    /**
+     * 奖励类型
+     */
+    private PrizeTypeEnum prizeType;
     /**
      * 是否中了免费轮
      */
-    private BooleanEnum freeSpinsFlag;
-
+    private boolean freeSpinsFlag;
+    /**
+     * 游戏结果
+     */
     private SymbolDo[][] gameResult;
-    //中奖结果(多条线)
+    /**
+     * 中奖结果列表
+     */
     private List<RewardResult> rewardResults;
-
 
     @Data
     @SuperBuilder
@@ -44,17 +58,24 @@ public class GameBetResultDetailDo {
          * 元素id
          */
         private SymbolDo symbol;
+        /**
+         * 倍率
+         */
         private BigDecimal multiple;
+        /**
+         * 中奖金额
+         */
         private Long rewardAmount;
         /**
          * 赔率
          */
         private BigDecimal odds;
-        //中奖线
-        private List<SymbolIndexDo> rewardIndex;
-
         /**
-         * 当前中奖线的中奖id列表
+         * 中奖线列表
+         */
+        private List<SymbolIndexDo> rewardIndex;
+        /**
+         * 当前中奖线元素集合
          */
         private List<SymbolDo> rewardSymbolList;
     }

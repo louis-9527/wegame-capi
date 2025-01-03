@@ -1,8 +1,6 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
 import com.alibaba.fastjson.JSON;
-import com.wegame.base.Validate;
-import com.wegame.base.enums.BooleanEnum;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.utils.AssertUtil;
@@ -25,13 +23,12 @@ import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
+import com.wegame.capi.common.enums.PrizeTypeEnum;
 import com.wegame.capi.common.enums.GameStatusEnum;
 import com.wegame.capi.common.utils.GameAmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -79,11 +76,12 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
                 .freeSpinsFlag(freeSpinsFlag)
                 .build();
         GamePlayResultDo gamePlayResult = getGame().play(gamePlay);
-        //中奖结果
-        List<WheelRewardDo> rewardResultList = gamePlayResult.getWheelRewardList();
+        AssertUtil.assertNotNull(gamePlayResult, ErrorCode.ERR_INTER);
+        // 滚轮中奖列表
+        List<WheelRewardDo> wheelRewardList = gamePlayResult.getWheelRewardList();
 
         List<GameBetResultDetailDo> resultDetails = new ArrayList<>();
-        rewardResultList.forEach(rewardResultDo -> {
+        wheelRewardList.forEach(rewardResultDo -> {
             RewardResultDo rewardResult = rewardResultDo.getRewardResult();
             GameBetResultDetailDo build = GameBetResultDetailDo.builder()
                     .id(rewardResultDo.getWheelIndex())
@@ -93,14 +91,12 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
             if (rewardResult != null) {
                 build.setRewardAmount(rewardResult.getRewardTotalAmount());
                 build.setMultiple(rewardResult.getWildTotalTimes());
-                build.setRewardAmountType(this.getRewardAmountType());
-                build.setFreeSpinsFlag(rewardResult.isFreeSpin() ? BooleanEnum.TRUE : BooleanEnum.FALSE);
+                build.setPrizeType(this.getRewardAmountType());
+                build.setFreeSpinsFlag(rewardResult.isFreeSpin());
                 build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
             }
             resultDetails.add(build);
         });
-
-        //组装游戏记录
         return resultDetails;
     }
 
@@ -223,8 +219,8 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
     }
 
 
-    private GameGrandPrizeTypeEnum getRewardAmountType() {
-        return GameGrandPrizeTypeEnum.NONE_PRIZE;
+    private PrizeTypeEnum getRewardAmountType() {
+        return PrizeTypeEnum.NONE_PRIZE;
     }
 
 }

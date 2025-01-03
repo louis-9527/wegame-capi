@@ -8,13 +8,12 @@ import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.builder.RewardLineBuilder;
 import com.wegame.capi.biz.builder.RewardResultBuilder;
 import com.wegame.capi.biz.builder.RewardRuleBuilder;
-import com.wegame.capi.biz.domain.*;
 import com.wegame.capi.biz.domain.biz.odds.OddsCalculateDo;
 import com.wegame.capi.biz.domain.biz.reward.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
-import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
+import com.wegame.capi.common.enums.PrizeTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
 
     public abstract boolean bizValidate(RewardHandleDo rewardHandle);
 
-    public abstract GameGrandPrizeTypeEnum calcGameGrandPrize(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo);
+    public abstract PrizeTypeEnum calcGameGrandPrize(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo);
 
     public RewardResultDo handle(RewardHandleDo rewardHandle) {
         this.validate(rewardHandle);

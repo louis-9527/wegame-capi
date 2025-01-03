@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.domain.biz.reward;
 
-import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
+import com.wegame.capi.common.enums.PrizeTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,7 +38,7 @@ public class RewardResultDo implements Serializable {
     /**
      * 中大奖类型
      */
-    private GameGrandPrizeTypeEnum grandPrizeType;
+    private PrizeTypeEnum grandPrizeType;
     /**
      * 中奖类型  单奖励/多奖励
      *

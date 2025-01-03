@@ -9,7 +9,7 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum GameGrandPrizeTypeEnum {
+public enum PrizeTypeEnum {
 
     NONE_PRIZE(-1, "未中大奖"),
     NICE_PRIZE(0, "nice"),
@@ -27,8 +27,8 @@ public enum GameGrandPrizeTypeEnum {
      */
     private final String desc;
 
-    public static GameGrandPrizeTypeEnum valueOfCode(Integer code) {
-        for (GameGrandPrizeTypeEnum item : GameGrandPrizeTypeEnum.values()) {
+    public static PrizeTypeEnum valueOfCode(Integer code) {
+        for (PrizeTypeEnum item : PrizeTypeEnum.values()) {
             if (Objects.equals(item.getCode(), code)) {
                 return item;
             }
