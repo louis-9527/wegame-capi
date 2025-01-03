@@ -4,6 +4,9 @@ import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
 
+import com.wegame.capi.biz.converter.BetConverter;
+import com.wegame.capi.biz.converter.BetResultConverter;
+import com.wegame.capi.biz.domain.BetResultDo;
 import com.wegame.capi.biz.module.bet.GameBetContext;
 import com.wegame.capi.biz.service.BetService;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
@@ -41,8 +44,8 @@ public class BetController {
         OperatorContext.setOperator(operator);
 
         betRequest.validate();
-        BetResultVo betResult = gameBetContext.bet(betRequest);
-        return CommonResponse.build(betResult);
+        BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
+        return CommonResponse.build(BetResultConverter.doToVo(betResultDo));
     }
 
     @ApiOperation(value = "获取免费轮投注结果", httpMethod = "POST")

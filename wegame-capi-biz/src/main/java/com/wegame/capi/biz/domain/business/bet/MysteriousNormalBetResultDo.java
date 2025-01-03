@@ -6,14 +6,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameBetBuyResultDo {
-    private List<Integer> freeSpinIds;
+public class MysteriousNormalBetResultDo {
+
     private GameBetResultDetailDo resultDetailDo;
+
 }

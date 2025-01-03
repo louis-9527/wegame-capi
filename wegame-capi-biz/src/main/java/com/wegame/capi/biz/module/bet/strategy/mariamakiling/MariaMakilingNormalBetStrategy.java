@@ -1,15 +1,33 @@
 package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
+import com.google.common.collect.Lists;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
+import com.wegame.capi.biz.domain.business.bet.GameBetRecordDo;
+import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.business.bet.MysteriousNormalBetResultDo;
 import org.springframework.stereotype.Component;
 
 @Component("mariaMakilingNormalBetStrategy")
-public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStrategy<Object, Object> {
+public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStrategy<BetDo.MysteriousNormalBetDo, MysteriousNormalBetResultDo> {
 
     @Override
-    public BetResultDo<Object> bet(BetDo<Object> betDo) {
-        // todo
-        return null;
+    public BetResultDo<MysteriousNormalBetResultDo> bet(BetDo<BetDo.MysteriousNormalBetDo> betDo) {
+        // 获取游戏结果
+        GameBetResultDetailDo resultDetail = super.getResultDetail(betDo.getGameId(), betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());
+        // 生成投注结果
+        GameBetRecordDo betRecord = super.getBetRecord(betDo, resultDetail.getBetAmount(), resultDetail.getRewardAmount(), Lists.newArrayList(resultDetail));
+        // 保存投注记录并派奖
+        super.saveBetRecordAndPayOut(betRecord);
+        // 组装返回结果
+        return BetResultDo.<MysteriousNormalBetResultDo>builder()
+                .gameRecordId(betRecord.getId())
+                .gameId(betDo.getGameId())
+                .betType(betDo.getBetType())
+                .betSubType(betDo.getBetSubType())
+                .resultDetail(MysteriousNormalBetResultDo.builder()
+                        .resultDetailDo(resultDetail)
+                        .build())
+                .build();
     }
 }

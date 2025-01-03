@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameBetNoneBuyResultDo {
+public class MysteriousBuyFreeSpinsBetResultDo {
     private List<Integer> freeSpinIds;
+    private GameBetResultDetailDo resultDetailDo;
 }

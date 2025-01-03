@@ -4,14 +4,10 @@ import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.BetConverter;
-import com.wegame.capi.biz.domain.business.bet.GameBetReqDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
-import com.wegame.capi.biz.domain.business.bet.GameBetResultDo;
-import com.wegame.capi.biz.service.bet.AbsGameBetService;
-import com.wegame.capi.biz.service.bet.GameBetService;
+import com.wegame.capi.biz.module.bet.strategy.AbsGameBetService;
+import com.wegame.capi.biz.module.bet.strategy.GameBetService;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
-import com.wegame.capi.client.domain.request.BetRequest;
-import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.domain.vo.GameBetNormalVo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,18 +37,18 @@ public class GameBetContext {
      * 投注
      * * @return
      */
-    public <T, R> BetResultVo<Object> bet(BetRequest<Object> betRequest) {
-        BetSubTypeEnum betSubType = BetSubTypeEnum.valueOfCode(betRequest.getBetSubType());
-        String betStrategyName = betStrategyNameMap.get(betSubType);
-        AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");
-        AbsGameBetService<T, R> betStrategy = (AbsGameBetService<T, R>) betStrategyMap.get(betStrategyName);
-        AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
-        //对象转换
-        GameBetReqDo<T> betReqDo = BetConverter.reqToDo(betRequest);
-        //执行下注请求
-        GameBetResultDo<R> betResult = betStrategy.bet(betReqDo);
-        return BetConverter.doToVo(betResult);
-    }
+    //    public <T, R> BetResultVo<Object> bet(BetRequest<Object> betRequest) {
+    //        BetSubTypeEnum betSubType = BetSubTypeEnum.valueOfCode(betRequest.getBetSubType());
+    //        String betStrategyName = betStrategyNameMap.get(betSubType);
+    //        AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");
+    //        AbsGameBetService<T, R> betStrategy = (AbsGameBetService<T, R>) betStrategyMap.get(betStrategyName);
+    //        AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
+    //        //对象转换
+    //        BetDo<?> betReqDo = BetConverter.reqToDo(betRequest);
+    //        //执行下注请求
+    //        GameBetResultDo<R> betResult = betStrategy.bet(betReqDo);
+    //        return BetConverter.doToVo(betResult);
+    //    }
 
     public  <T, R>  GameBetNormalVo queryFreeSpinDetail(QueryFreeSpinRequest request) {
         BetSubTypeEnum betSubType = BetSubTypeEnum.valueOfCode(request.getBetSubType());

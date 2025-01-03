@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.service.bet;
+package com.wegame.capi.biz.module.bet.strategy;
 
 import com.wegame.capi.biz.domain.business.bet.GameBetReqDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;

@@ -1,5 +1,12 @@
 package com.wegame.capi.biz.domain;
 
+import com.wegame.base.Validate;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,16 +23,63 @@ import java.io.Serializable;
 public class BetResultDo<R> implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
+     * 游戏记录id
+     */
+    private Long gameRecordId;
+    /**
      * 游戏Id
      */
-    private Long gameId;
+    private String gameId;
     /**
      * 投注类型
      */
-    private String betType;
+    private BetTypeEnum betType;
+    /**
+     * 投注子类型
+     */
+    private BetSubTypeEnum betSubType;
+
+    /**
+     * 余额
+     */
+    private Long credit;
     /**
      * 投注结果
      */
-    private R betReusult;
+    private R resultDetail;
+
+    //    @Data
+    //    @NoArgsConstructor
+    //    @AllArgsConstructor
+    //    public class MysteriousNormalBetResultDo implements Validate, Serializable {
+    //        @ApiModelProperty(value = "投注金额", required = true)
+    //        private Long betAmount;
+    //    }
+    //
+    //    /**
+    //     * Mysterious购买免费轮投注结果
+    //     */
+    //    @Data
+    //    @NoArgsConstructor
+    //    @AllArgsConstructor
+    //    public class MysteriousBuyFreeSpinsBetResultDo implements Validate, Serializable {
+    //        @ApiModelProperty(value = "投注金额", required = true)
+    //        private Long betAmount;
+    //        @ApiModelProperty(value = "支付金额", required = true)
+    //        private Long payAmount;
+    //    }
+    //
+    //    /**
+    //     * Mysterious非购买免费轮投注结果
+    //     */
+    //    @Data
+    //    @NoArgsConstructor
+    //    @AllArgsConstructor
+    //    public class MysteriousNonBuyFreeSpinsBetResultDo implements Validate, Serializable {
+    //        /**
+    //         * 游戏记录Id
+    //         */
+    //        private String gameRecordId;
+    //    }
 }
 
