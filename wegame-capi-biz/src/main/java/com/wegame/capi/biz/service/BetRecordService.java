@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.service;
 
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.SingleWalletApi;
@@ -9,20 +8,18 @@ import com.wegame.capi.biz.converter.user.BetRecordConverter;
 import com.wegame.capi.biz.domain.user.BetRecordDo;
 import com.wegame.capi.client.domain.request.BetSummaryRequest;
 import com.wegame.capi.client.domain.vo.BetSummaryVo;
-import com.wegame.capi.dao.mapper.user.BetRecordMapper;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
  * po服务
+ *
  * @author genereate
  */
 @Service
@@ -105,8 +102,8 @@ public class BetRecordService {
      * @return 数量
      */
     public long count(BetRecordQuery query) {
-    //        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-    //        return betRecordMapper.count(query);
+        //        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        //        return betRecordMapper.count(query);
         // todo
         return 0;
     }
@@ -116,6 +113,7 @@ public class BetRecordService {
 
     @Autowired
     SingleWalletApi singleWalletApi;
+
     // todo 迁移到对账服务 @maidong
     public BetSummaryVo betSummary(BetSummaryRequest request) {
         String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));

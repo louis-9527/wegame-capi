@@ -7,6 +7,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
 import com.wegame.capi.biz.converter.user.GameRecordConverter;
@@ -18,6 +19,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
+import com.wegame.capi.biz.domain.user.BetRecordDo;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -122,13 +124,14 @@ public abstract class AbstractBetStrategy<T extends Validate, R> implements BetS
 
 
     public GameBetResultDetailDo queryBetFreeSpin(String gameId, Long recordId, Integer freeSpinId) {
-        BetRecordPo gameRecord = mongoTemplate.findById(recordId, BetRecordPo.class);
-        AssertUtil.assertNotNull(gameRecord, ErrorCode.ERR_PARAM);
-        String detail = gameRecord.getDetail();
-        if (StringUtils.isEmpty(detail)) {
+
+        BetRecordDo betRecordDo = betRecordService.get(recordId);
+        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
+        Object detail = betRecordDo.getDetail();
+        if (Objects.isNull(detail)) {
             return null;
         }
-        List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(detail, GameRecordDetailPo.class);
+        List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(FastJsonUtils.toJSONString(detail), GameRecordDetailPo.class);
         GameRecordDetailPo recordDetail = new GameRecordDetailPo();
         for (GameRecordDetailPo detailPo : recordDetailPos) {
             if (Objects.equals(freeSpinId, detailPo.getId())) {
@@ -175,8 +178,9 @@ public abstract class AbstractBetStrategy<T extends Validate, R> implements BetS
         AssertUtil.assertNotNull(gameRecordPo, ErrorCode.ERR_INTER);
         gameRecordPo.setId(betRecordDo.getId());
         gameRecordPo.setBetSerialNo(String.valueOf(betRecordDo.getId()));
+//        betRecordService.add() todo  betRecord所有读写操作 =》 betRecordService @tutu
         BetRecordPo insert = mongoTemplate.insert(gameRecordPo);
-        //调用单钱包
+        //调用单钱包  注释规范 //后加空格
         BetWithPayoutRes betWithPayoutRes = this.betWithPayout(gameRecordPo);
         //判断返回结果
         String betId = betWithPayoutRes.getBetId();

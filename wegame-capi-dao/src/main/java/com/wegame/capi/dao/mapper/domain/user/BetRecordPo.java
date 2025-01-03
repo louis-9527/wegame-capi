@@ -88,9 +88,13 @@ public class BetRecordPo implements Serializable {
      */
     private Integer freeSpinsFlag;
     /**
+     * 免费轮次数
+     */
+    private Integer freeSpinsTimes;
+    /**
      * 游戏记录明细json
      */
-    private String detail;
+    private Object detail;
     /**
      * 创建人
      */

@@ -38,10 +38,10 @@ public class BetRecordVo implements Validate, Serializable {
     private String playerId;
     @ApiModelProperty("玩家名称")
     private String playerName;
-    @ApiModelProperty("投注类型 1正常投注 2免费轮投注")
-    private Integer betType;
-    @ApiModelProperty("投注子类型 11正常投注 21购买免费轮投注 22非购买免费轮投注")
-    private Integer betSubType;
+    @ApiModelProperty(value = "投注类型:NORMAL_BET,免费轮投注:FREE_SPINS_BET", required = true)
+    private String betType;
+    @ApiModelProperty(value = "投注子类型:NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
+    private String betSubType;
     @ApiModelProperty("投注id（单钱包）")
     private String betId;
     @ApiModelProperty("投注流水号（对应单钱包refId）")
@@ -59,7 +59,7 @@ public class BetRecordVo implements Validate, Serializable {
     @ApiModelProperty("免费轮次数")
     private Integer freeSpinsTimes;
     @ApiModelProperty("游戏记录明细json")
-    private String detail;
+    private Object detail;
     @ApiModelProperty("创建人")
     private String creator;
     @ApiModelProperty("创建时间")

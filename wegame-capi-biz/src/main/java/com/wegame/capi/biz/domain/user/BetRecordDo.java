@@ -48,11 +48,11 @@ public class BetRecordDo implements Serializable {
     /**
      * 投注类型 1正常投注 2免费轮投注
      */
-    private Integer betType;
+    private String betType;
     /**
      * 投注子类型 11正常投注 21购买免费轮投注 22非购买免费轮投注
      */
-    private Integer betSubType;
+    private String betSubType;
     /**
      * 投注id（单钱包）
      */
@@ -88,7 +88,7 @@ public class BetRecordDo implements Serializable {
     /**
      * 游戏记录明细json
      */
-    private String detail;
+    private Object detail;
     /**
      * 创建人
      */
