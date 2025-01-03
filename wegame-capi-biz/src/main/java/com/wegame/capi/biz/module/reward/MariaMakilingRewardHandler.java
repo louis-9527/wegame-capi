@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.module.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
@@ -109,6 +110,26 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
             AssertUtil.assertTrue(!Objects.equals(row[0].getId(), SymbolEnum.WildX10.getId()), ErrorCode.ERR_PARAM, "this index can not has wild:the 1 colum");
         }
         return true;
+    }
+
+    @Override
+    public GameGrandPrizeTypeEnum calcGameGrandPrize(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo) {
+        Long betAmount = rewardHandleDo.getBetAmount();
+        Long rewardTotalAmount = rewardResultDo.getRewardTotalAmount();
+        double rewardTimes = NumberUtil.div(rewardTotalAmount.longValue(), betAmount.longValue());
+        if (rewardTimes >= 5 && rewardTimes < 10) {
+            return GameGrandPrizeTypeEnum.NICE_PRIZE;
+        }
+        if (rewardTimes >= 10 && rewardTimes < 15) {
+            return GameGrandPrizeTypeEnum.MEGA_PRIZE;
+        }
+        if (rewardTimes >= 15 && rewardTimes < 20) {
+            return GameGrandPrizeTypeEnum.SUPER_PRIZE;
+        }
+        if (rewardTimes > 20) {
+            return GameGrandPrizeTypeEnum.SENSATIONAL_PRIZE;
+        }
+        return GameGrandPrizeTypeEnum.NONE_PRIZE;
     }
 
     private Map<SymbolDo, List<RewardRuleSymbolDo>> initFirstColumSymbol(RewardRuleDo rewardRuleDo) {

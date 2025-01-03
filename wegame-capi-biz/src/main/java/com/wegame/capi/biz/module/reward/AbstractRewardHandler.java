@@ -12,6 +12,7 @@ import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.game.*;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
+import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
 import com.wegame.capi.common.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,8 @@ public abstract class AbstractRewardHandler implements RewardHandler {
     public abstract boolean hasFreeSpin(GameTypeEnum gameType, SymbolDo[][] symbolArr);
 
     public abstract boolean bizValidate(RewardHandleDo rewardHandle);
+
+    public abstract GameGrandPrizeTypeEnum calcGameGrandPrize(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo);
 
     public RewardResultDo handle(RewardHandleDo rewardHandle) {
         this.validate(rewardHandle);
@@ -70,15 +73,17 @@ public abstract class AbstractRewardHandler implements RewardHandler {
             // 计算后的中奖线列表
             rewardLineList.add(RewardLineBuilder.build(rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
         }
-        // 返回中奖信息
-        return RewardResultBuilder.build(
+
+        RewardResultDo tempRewardResultDo = RewardResultBuilder.build(
                 rewardTotalAmount,
                 rewardLineList,
                 multiple,
                 this.hasFreeSpin(rewardHandle.getGameType(),
                         rewardHandle.getWheel().getSymbolArr()));
+        // 返回中奖信息
+        return RewardResultBuilder.build(tempRewardResultDo,
+                this.calcGameGrandPrize(rewardHandle, tempRewardResultDo));
     }
-
 
     public boolean validate(RewardHandleDo rewardHandle) {
         // 为空
