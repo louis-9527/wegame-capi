@@ -3,7 +3,7 @@ package com.wegame.capi.biz.converter;
 import com.alibaba.fastjson.JSON;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.business.bet.*;
-import com.wegame.capi.client.domain.request.update.BetRequest;
+import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.request.update.BetBuyDetailRequest;
 import com.wegame.capi.client.domain.request.update.BetNoneBuyDetailRequest;
 import com.wegame.capi.client.domain.request.update.BetNormalDetailRequest;
@@ -62,8 +62,8 @@ public class BetConverter {
         return betReqDo;
     }
 
-    public static <R> GameBetBaseVo<Object> doToVo(GameBetResultDo<R> betResult) {
-        GameBetBaseVo<Object> betBaseVo = new GameBetBaseVo<>();
+    public static <R> BetResultVo<Object> doToVo(GameBetResultDo<R> betResult) {
+        BetResultVo<Object> betBaseVo = new BetResultVo<>();
         betBaseVo.setGameRecordId(String.valueOf(betResult.getGameRecordId()));
         betBaseVo.setGameId(betResult.getGameId());
         betBaseVo.setBetType(betResult.getBetType().getCode());

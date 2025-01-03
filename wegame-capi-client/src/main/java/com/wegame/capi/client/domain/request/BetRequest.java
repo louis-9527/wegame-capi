@@ -1,4 +1,4 @@
-package com.wegame.capi.client.domain.request.update;
+package com.wegame.capi.client.domain.request;
 
 import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
@@ -18,7 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "下注请求")
-public class BetRequest<T> implements Validate, Serializable {
+public class BetRequest implements Validate, Serializable {
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "游戏Id", required = true)
     private String gameId;

@@ -1,8 +1,6 @@
 package com.wegame.capi.client.domain.vo;
 
 import com.wegame.base.Validate;
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.utils.AssertUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -13,24 +11,27 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
-/**
- * user：投注结果
- * @author genereate
- */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel("投注结果")
 @EqualsAndHashCode(callSuper = false)
-public class BetResultVo implements Validate, Serializable {
-    private static final long serialVersionUID = -7365176731574744064L;
-    @ApiModelProperty("游戏Id")
-    private Long gameId;
-    @ApiModelProperty("投注类型")
-    private Integer betType;
-    @ApiModelProperty("投注结果")
-    private Object betResult;
+public class BetResultVo implements Serializable {
+    private static final long serialVersionUID = -3682602438304369095L;
+    @ApiModelProperty("游戏投注Id")
+    private String gameRecordId;
+    @ApiModelProperty("游戏ID")
+    private String gameId;
+    @ApiModelProperty(value = "投注类型:NORMAL_BET,免费轮投注:FREE_SPINS_BET", required = true)
+    private String betType;
+    @ApiModelProperty(value = "投注子类型:NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
+    private String betSubType;
+    @ApiModelProperty("玩家余额")
+    private Long credit;
+    @ApiModelProperty("结果明细")
+    private Object resultDetail;
+
 
     @Data
     @NoArgsConstructor
@@ -56,4 +57,3 @@ public class BetResultVo implements Validate, Serializable {
         // todo
     }
 }
-
