@@ -26,7 +26,7 @@ public class GameBetPayOutDetailVo implements Serializable {
     @ApiModelProperty("赔率")
     private BigDecimal odds;
     @ApiModelProperty("中奖坐标")
-    private List<SymbolIndexVo> rewardIndex;
+    private List<SymbolIndexVo> index;
     @ApiModelProperty("当前中奖线Id列表")
     private List<String> rewardSymbolIdList;
     @ApiModelProperty("派奖金额")

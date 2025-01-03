@@ -35,7 +35,10 @@ public abstract class AbstractRewardHandler implements RewardHandler {
 
     public abstract boolean hasFreeSpin(GameTypeEnum gameType, SymbolDo[][] symbolArr);
 
+    public abstract boolean bizValidate(RewardHandleDo rewardHandle);
+
     public RewardResultDo handle(RewardHandleDo rewardHandle) {
+        this.validate(rewardHandle);
         // 中奖规则处理
         RewardRuleDo rewardRuleDo = RewardRuleBuilder.build(rewardHandle);
         AssertUtil.assertNotNull(rewardRuleDo, ErrorCode.ERR_INTER, "rewardRuleDo is null");
@@ -74,5 +77,18 @@ public abstract class AbstractRewardHandler implements RewardHandler {
                 multiple,
                 this.hasFreeSpin(rewardHandle.getGameType(),
                         rewardHandle.getWheel().getSymbolArr()));
+    }
+
+
+    public boolean validate(RewardHandleDo rewardHandle) {
+        // 为空
+        AssertUtil.assertNotNull(rewardHandle, ErrorCode.ERR_PARAM, "rewardHandle is null");
+        AssertUtil.assertNotNull(rewardHandle.getGameType(), ErrorCode.ERR_INTER, "not support gameType");
+        AssertUtil.assertNotNull(rewardHandle.getBetType(), ErrorCode.ERR_PARAM, "not support betType");
+        AssertUtil.assertNotNull(rewardHandle.getBetSubType(), ErrorCode.ERR_PARAM, "not support betSubType");
+        AssertUtil.assertNotNull(rewardHandle.getWheel(), ErrorCode.ERR_PARAM, "wheel is null");
+        AssertUtil.assertNotNull(rewardHandle.getWheel().getIndex(), ErrorCode.ERR_PARAM, "wheel index is null");
+        AssertUtil.assertNotNull(rewardHandle.getWheel().getSymbolArr(), ErrorCode.ERR_PARAM, "wheel symbolArr is null");
+        return this.bizValidate(rewardHandle);
     }
 }

@@ -17,7 +17,6 @@ public class GameBetBuyFreeService extends AbsGameBetService<GameBetBuyReqDo, Ga
         GameBetResultDetailDo betResult = super.getResultDetail(req.getGameId(), req.getBetType(), req.getBetSubType(), req.getBetDetail().getBetAmount());
         //获取免费轮
         List<GameBetResultDetailDo> resultDetails = super.getResultDetail(req.getGameId(), req.getBetType(), req.getBetSubType(), req.getBetDetail().getBetAmount(), Boolean.TRUE);
-        resultDetails.add(betResult);
         long rewardAmount = 0L;
         List<Integer> freeSpinIds = new ArrayList<>(resultDetails.size());
         for (GameBetResultDetailDo resultDetail : resultDetails) {
@@ -27,10 +26,12 @@ public class GameBetBuyFreeService extends AbsGameBetService<GameBetBuyReqDo, Ga
             freeSpinIds.add(resultDetail.getId());
         }
 
+        resultDetails.add(betResult);
         //保存投注记录并派奖
         GameBetRecordDo betRecord = super.getBetRecord(req, req.getBetDetail().getBuyAmount(), rewardAmount, resultDetails);
         super.saveBetRecordAndPayOut(betRecord);
         return GameBetResultDo.<GameBetBuyResultDo>builder()
+                .gameRecordId(betRecord.getId())
                 .gameId(req.getGameId())
                 .betType(req.getBetType())
                 .betSubType(req.getBetSubType())
