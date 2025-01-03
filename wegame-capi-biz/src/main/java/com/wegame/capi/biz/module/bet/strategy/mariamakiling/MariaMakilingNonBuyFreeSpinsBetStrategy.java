@@ -8,6 +8,8 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MysteriousNonBuyFreeSpinsBetDo;
 import com.wegame.capi.biz.domain.biz.bet.MysteriousNonBuyFreeSpinsBetResultDo;
+import com.wegame.capi.biz.domain.user.BetRecordDo;
+import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import org.springframework.stereotype.Component;
 
@@ -18,12 +20,19 @@ import java.util.List;
 public class MariaMakilingNonBuyFreeSpinsBetStrategy
         extends AbstractMariaMakilingBetStrategy<MysteriousNonBuyFreeSpinsBetDo, MysteriousNonBuyFreeSpinsBetResultDo> {
 
+    private final BetRecordService betRecordService;
+
+    public MariaMakilingNonBuyFreeSpinsBetStrategy(BetRecordService betRecordService) {
+        super();
+        this.betRecordService = betRecordService;
+    }
+
     @Override
     public BetResultDo<MysteriousNonBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousNonBuyFreeSpinsBetDo> betDo) {
         Long recordId = Long.valueOf(betDo.getBetDetail().getGameRecordId());
-        BetRecordPo gameRecord = super.mongoTemplate.findById(recordId, BetRecordPo.class);
-        AssertUtil.assertNotNull(gameRecord, ErrorCode.ERR_PARAM);
-
+        BetRecordDo betRecordDo = betRecordService.get(recordId);
+        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
+        // todo 核销：检查获得免费轮标识是否被核销
         // 获取游戏结果
         List<GameBetResultDetailDo> resultDetails = super.getResultDetail(betDo.getGameId(), betDo.getBetType(), betDo.getBetSubType(), 0L, Boolean.TRUE);
         long rewardAmount = 0L;

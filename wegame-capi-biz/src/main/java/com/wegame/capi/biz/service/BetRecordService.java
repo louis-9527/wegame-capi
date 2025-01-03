@@ -106,7 +106,8 @@ public class BetRecordService {
      */
     public BetRecordDo get(Long id) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        return BetRecordConverter.poToDo(betRecordMapper.selectById(id));
+        BetRecordPo betRecordPo = mongoTemplate.findById(id, BetRecordPo.class);
+        return BetRecordConverter.poToDo(betRecordPo);
     }
 
     /**
