@@ -10,7 +10,8 @@ import com.wegame.capi.biz.domain.biz.bet.MysteriousNormalBetResultDo;
 import org.springframework.stereotype.Component;
 
 @Component("mariaMakilingNormalBetStrategy")
-public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStrategy<MysteriousNormalBetDo, MysteriousNormalBetResultDo> {
+public class MariaMakilingNormalBetStrategy
+        extends AbstractMariaMakilingBetStrategy<MysteriousNormalBetDo, MysteriousNormalBetResultDo> {
 
     @Override
     public BetResultDo<MysteriousNormalBetResultDo> bet(BetDo<MysteriousNormalBetDo> betDo) {

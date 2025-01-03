@@ -32,9 +32,9 @@ public abstract class AbstractBetContext {
      *
      * @return map
      */
-    public abstract Map<String, BetStrategy<?, ?>> betStrategyMap();
+    public abstract Map<String, BetStrategy> betStrategyMap();
 
-    public BetResultDo<?> bet(BetDo<?> betDo) {
+    public BetResultDo bet(BetDo betDo) {
         String betStrategyName = betStrategyNameMap().get(betDo.getBetType());
         AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");
         BetStrategy betStrategy = betStrategyMap().get(betStrategyName);

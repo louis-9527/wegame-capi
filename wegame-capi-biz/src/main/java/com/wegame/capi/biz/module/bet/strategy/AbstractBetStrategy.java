@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
 import com.alibaba.fastjson.JSON;
+import com.wegame.base.Validate;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.IdGeneratorHelper;
@@ -46,18 +47,14 @@ import java.util.Objects;
  * 各游戏共性抽象
  */
 @Component
-public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
+public abstract class AbstractBetStrategy<T extends Validate, R> implements BetStrategy<T, R> {
 
     @Autowired
     private IdGeneratorHelper idGeneratorHelper;
     @Autowired
-    private SingleWalletApi singleWalletApi;
-    @Autowired
     public MongoTemplate mongoTemplate;
-    @Autowired
-    private Game game;
 
-
+    public abstract Game getGame();
     // todo fix
 
 
@@ -74,7 +71,7 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
                 .betAmount(betAmount)
                 .freeSpinsFlag(freeSpinsFlag)
                 .build();
-        GamePlayResultDo gamePlayResult = game.play(gamePlay);
+        GamePlayResultDo gamePlayResult = getGame().play(gamePlay);
         //中奖结果
         List<WheelRewardDo> rewardResultList = gamePlayResult.getWheelRewardList();
 
