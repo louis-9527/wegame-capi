@@ -13,6 +13,6 @@ public class GetCreditRes extends SingleWalletBaseRes {
     @ApiModelProperty("玩家姓名")
     private String playerName;
     @ApiModelProperty("玩家余额")
-    private Integer credit;
+    private BigDecimal credit;
 }
 
