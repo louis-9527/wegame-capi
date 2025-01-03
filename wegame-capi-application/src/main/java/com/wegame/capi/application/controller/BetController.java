@@ -1,11 +1,10 @@
 package com.wegame.capi.application.controller;
 
-import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
 
-import com.wegame.capi.biz.context.GameBetContext;
+import com.wegame.capi.biz.module.context.GameBetContext;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
 import com.wegame.capi.client.domain.request.update.BetRequest;
 import com.wegame.capi.client.domain.vo.GameBetBaseVo;
@@ -13,7 +12,6 @@ import com.wegame.capi.client.domain.vo.GameBetNormalVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.index.qual.LengthOf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

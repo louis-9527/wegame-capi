@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.context;
+package com.wegame.capi.biz.module.context;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;

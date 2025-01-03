@@ -1,12 +1,12 @@
-package com.wegame.capi.biz.context.strategy;
+package com.wegame.capi.biz.module.context.strategy;
 
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
 import org.springframework.stereotype.Component;
 
-@Component("mysteriousNormalBetStrategy")
+@Component
+public class MysteriousBuyFreeSpinsBetStrategy extends AbstractMysteriousBetStrategy {
 
-public class MysteriousNormalBetStrategy extends AbstractMysteriousBetStrategy{
     @Override
    public BetResultDo bet(BetDo betDo) {
         // todo

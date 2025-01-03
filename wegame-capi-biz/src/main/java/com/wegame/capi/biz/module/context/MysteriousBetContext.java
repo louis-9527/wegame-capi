@@ -1,13 +1,12 @@
-package com.wegame.capi.biz.context;
+package com.wegame.capi.biz.module.context;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.context.strategy.AbstractMysteriousBetStrategy;
+import com.wegame.capi.biz.module.context.strategy.AbstractMysteriousBetStrategy;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
 import com.wegame.capi.common.enums.BetSubTypeEnum;
-import com.wegame.capi.common.enums.BetTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
