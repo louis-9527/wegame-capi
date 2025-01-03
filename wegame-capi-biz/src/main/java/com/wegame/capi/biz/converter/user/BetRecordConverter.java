@@ -186,8 +186,6 @@ public class BetRecordConverter {
         query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);
         query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? new Date(request.getStartUpdateTime()) : null);
         query.setEndUpdateTime(Objects.nonNull(request.getEndUpdateTime()) ? new Date(request.getEndUpdateTime()) : null);
-        query.setLimit(request.getPageSize());
-        query.setOffset(request.getOffset());
         query.setOrderByClause(orderClause);
         return query;
     }
