@@ -53,7 +53,7 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
     @Autowired
     MongoTemplate mongoTemplate;
     @Autowired
-    BetRecordService betRecordService;
+    public BetRecordService betRecordService;
 
     public abstract Game getGame();
 
@@ -74,27 +74,6 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
                 .resultDetails(resultDetails)
                 .build();
     }
-
-
-    public GameBetResultDetailDo queryBetFreeSpin(String gameId, Long recordId, Integer freeSpinId) {
-
-        com.wegame.capi.biz.domain.user.BetRecordDo betRecordDo = betRecordService.get(recordId);
-        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-        Object detail = betRecordDo.getDetail();
-        if (Objects.isNull(detail)) {
-            return null;
-        }
-        List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(FastJsonUtils.toJSONString(detail), GameRecordDetailPo.class);
-        GameRecordDetailPo recordDetail = new GameRecordDetailPo();
-        for (GameRecordDetailPo detailPo : recordDetailPos) {
-            if (Objects.equals(freeSpinId, detailPo.getId())) {
-                recordDetail = detailPo;
-                break;
-            }
-        }
-        return GameRecordConverter.poToDetailDo(recordDetail);
-    }
-
 
 
 

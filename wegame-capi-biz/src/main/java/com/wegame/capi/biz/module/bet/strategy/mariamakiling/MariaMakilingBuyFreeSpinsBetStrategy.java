@@ -17,6 +17,8 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
 
     @Override
     public BetResultDo<MysteriousBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousBuyFreeSpinsBetDo> betDo) {
+
+
         // 获取轮盘结果,必须包含免费轮
         GameBetResultDetailDo betResult = super.getResultDetail(betDo.getGameId(), betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());
         // 获取免费轮

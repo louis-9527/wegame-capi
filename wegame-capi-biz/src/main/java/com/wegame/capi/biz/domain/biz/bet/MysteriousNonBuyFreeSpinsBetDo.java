@@ -18,12 +18,18 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MysteriousNonBuyFreeSpinsBetDo implements Validate, Serializable {
-    @ApiModelProperty(value = "游戏记录Id", required = true)
-    private String gameRecordId;
+    /**
+     * 投注记录Id
+     */
+    private String betRecordId;
+    /**
+     * 免费轮记录id
+     */
+    private Integer freeSpinsId;
 
     @Override
     public void validateParam() {
-        AssertUtil.assertStrNotEmpty(gameRecordId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
     }
 }
 

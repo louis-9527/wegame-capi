@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Mysterious购买免费轮投注请求参数
@@ -17,16 +18,32 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MysteriousBuyFreeSpinsBetDo implements Validate, Serializable {
-    @ApiModelProperty(value = "投注金额", required = true)
+    /**
+     * 投注记录id
+     */
+    private String betRecordId;
+    /**
+     * 免费轮记录id
+     */
+    private Long freeSpinsId;
+    /**
+     * 投注金额
+     */
     private Long betAmount;
-    @ApiModelProperty(value = "支付金额", required = true)
+    /**
+     * 支付金额
+     */
     private Long payAmount;
 
     @Override
     public void validateParam() {
-        AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
+        if (Objects.nonNull(freeSpinsId)) {
+            AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
+        } else {
+            AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_PARAM);
+        }
     }
 }

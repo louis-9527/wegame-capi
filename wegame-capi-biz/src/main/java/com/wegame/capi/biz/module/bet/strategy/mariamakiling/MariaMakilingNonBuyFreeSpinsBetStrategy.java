@@ -27,7 +27,7 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
 
     @Override
     public BetResultDo<MysteriousNonBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousNonBuyFreeSpinsBetDo> betDo) {
-        Long recordId = Long.valueOf(betDo.getBetDetail().getGameRecordId());
+        Long recordId = Long.valueOf(betDo.getBetDetail().getBetRecordId());
         com.wegame.capi.biz.domain.user.BetRecordDo betRecordDo = betRecordService.get(recordId);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         // todo 核销：检查获得免费轮标识是否被核销

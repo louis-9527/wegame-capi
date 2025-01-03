@@ -42,15 +42,15 @@ public class BetService {
         AssertUtil.assertNotNull(betContext, ErrorCode.ERR_PARAM, "Not Support Game");
         return betContext.bet(betDo);
     }
-
-    public MariaMakilingNormalBetVo queryFreeSpinDetail(QueryFreeSpinRequest request) {
-        // todo fix
-        GameTypeEnum gameEnum = GameTypeEnum.valueOfCode(request.getGameId());
-        AssertUtil.assertNotNull(gameEnum, ErrorCode.ERR_PARAM);
-        String betContextName = contextNameMap.get(gameEnum);
-        AssertUtil.assertStrNotEmpty(betContextName, ErrorCode.ERR_PARAM, "Not Support Game");
-        AbstractBetContext betContext = contextMap.get(betContextName);
-        AssertUtil.assertNotNull(betContext, ErrorCode.ERR_PARAM, "Not Support Game");
-        return betContext.queryBetFreeSpin(request);
-    }
+    //
+    //    public MariaMakilingNormalBetVo queryFreeSpinDetail(QueryFreeSpinRequest request) {
+    //        // todo fix
+    //        GameTypeEnum gameEnum = GameTypeEnum.valueOfCode(request.getGameId());
+    //        AssertUtil.assertNotNull(gameEnum, ErrorCode.ERR_PARAM);
+    //        String betContextName = contextNameMap.get(gameEnum);
+    //        AssertUtil.assertStrNotEmpty(betContextName, ErrorCode.ERR_PARAM, "Not Support Game");
+    //        AbstractBetContext betContext = contextMap.get(betContextName);
+    //        AssertUtil.assertNotNull(betContext, ErrorCode.ERR_PARAM, "Not Support Game");
+    //        return betContext.queryBetFreeSpin(request);
+    //    }
 }
