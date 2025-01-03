@@ -1,9 +1,9 @@
-package com.wegame.capi.application.module;//package com.wegame.capi.application.controller;
+package com.wegame.capi.application.module;
 
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.application.BaseTest;
-import com.wegame.capi.biz.domain.GamePlayDo;
-import com.wegame.capi.biz.domain.WheelDo;
+import com.wegame.capi.biz.domain.biz.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.game.MariaMakilingGame;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;

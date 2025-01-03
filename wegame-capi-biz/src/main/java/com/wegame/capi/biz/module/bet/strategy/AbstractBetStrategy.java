@@ -1,33 +1,21 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
-import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
+import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.converter.user.GameRecordConverter;
-import com.wegame.capi.biz.domain.user.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
-import com.wegame.capi.biz.domain.biz.GamePlayDo;
-import com.wegame.capi.biz.domain.biz.GamePlayResultDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.GameStatusEnum;
-import com.wegame.capi.common.enums.PrizeTypeEnum;
 import com.wegame.capi.common.utils.GameAmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
-import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -35,17 +23,15 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 抽象投注策略<br>
  * 各游戏共性抽象
  */
 @Component
-public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
+public abstract class AbstractBetStrategy<T, R extends Converter> implements BetStrategy<T, R> {
 
     @Autowired
     IdGeneratorHelper idGeneratorHelper;

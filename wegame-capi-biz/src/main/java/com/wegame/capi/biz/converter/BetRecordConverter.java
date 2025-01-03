@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.converter.user;
+package com.wegame.capi.biz.converter;
 
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
@@ -7,7 +7,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
-import com.wegame.capi.biz.domain.user.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import org.apache.commons.lang3.StringUtils;

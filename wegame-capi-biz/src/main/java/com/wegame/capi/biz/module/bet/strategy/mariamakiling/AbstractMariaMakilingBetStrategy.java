@@ -1,11 +1,12 @@
 package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
 import com.alibaba.fastjson.JSON;
-import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.converter.user.GameRecordConverter;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.GamePlayResultDo;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractMariaMakilingBetStrategy<T, R> extends AbstractBetStrategy<T, R> {
+public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> extends AbstractBetStrategy<T, R> {
 
     @Autowired
     MariaMakilingGame mariaMakilingGame;
@@ -109,7 +110,7 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R> extends AbstractBet
 
 
     public GameBetResultDetailDo queryBetFreeSpin(String gameId, Long recordId, Integer freeSpinId) {
-        com.wegame.capi.biz.domain.user.BetRecordDo betRecordDo = betRecordService.get(recordId);
+        BetRecordDo betRecordDo = betRecordService.get(recordId);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         Object detail = betRecordDo.getDetail();
         if (Objects.isNull(detail)) {

@@ -35,6 +35,7 @@ public class ThirdController {
     @PostMapping("/betSummary")
     public CommonResponse<BetSummaryVo> betSummary(@RequestBody BetSummaryRequest request) {
         request.validateParam();
-        return CommonResponse.build(betRecordService.betSummary(request));
+        return null; // todo @maidong
+//        return CommonResponse.build(betRecordService.betSummary(request));
     }
 }
