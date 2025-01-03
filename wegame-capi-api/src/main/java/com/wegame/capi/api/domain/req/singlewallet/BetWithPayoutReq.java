@@ -1,9 +1,11 @@
 package com.wegame.capi.api.domain.req.singlewallet;
 
 import cn.hutool.core.util.NumberUtil;
+import com.alibaba.fastjson.JSON;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.common.utils.GameAmountUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,6 +37,7 @@ public class BetWithPayoutReq extends SingleWalletBaseReq {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BetDetails {
+        private  static final BigDecimal zero = BigDecimal.ZERO;
         private String gameId;
         private String roundNo;
         private Long wagersDate;
@@ -57,12 +60,12 @@ public class BetWithPayoutReq extends SingleWalletBaseReq {
         @NoArgsConstructor
         @AllArgsConstructor
         public static class JackpotPool {
-            private BigDecimal totalJackpotAmount = BigDecimal.ZERO;
-            private GrandPool grandPool;
-            private MajorPool majorPool;
-            private MinorPool minorPool;
-            private MiniPool miniPool;
-            private BetBonusPool betBonusPool;
+            private BigDecimal totalJackpotAmount = zero;
+            private GrandPool grandPool = new GrandPool();
+            private MajorPool majorPool = new MajorPool();
+            private MinorPool minorPool = new MinorPool();
+            private MiniPool miniPool = new MiniPool();
+            private BetBonusPool betBonusPool = new BetBonusPool();
 
         }
 
@@ -71,11 +74,11 @@ public class BetWithPayoutReq extends SingleWalletBaseReq {
         @NoArgsConstructor
         @AllArgsConstructor
         public static class JackpotContributionDetails {
-            private BigDecimal grandContributionAmount = BigDecimal.ZERO;
-            private BigDecimal majorContributionAmount = BigDecimal.ZERO;
-            private BigDecimal minorContributionAmount = BigDecimal.ZERO;
-            private BigDecimal miniContributionAmount = BigDecimal.ZERO;
-            private BigDecimal betBonusContributionAmount = BigDecimal.ZERO;
+            private BigDecimal grandContributionAmount = zero;
+            private BigDecimal majorContributionAmount = zero;
+            private BigDecimal minorContributionAmount = zero;
+            private BigDecimal miniContributionAmount = zero;
+            private BigDecimal betBonusContributionAmount = zero;
 
         }
 
@@ -84,8 +87,8 @@ public class BetWithPayoutReq extends SingleWalletBaseReq {
         @NoArgsConstructor
         @AllArgsConstructor
         public static class GrandPool {
-            private BigDecimal initAmount = BigDecimal.ZERO;
-            private BigDecimal amount = BigDecimal.ZERO;
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
 
         }
 
@@ -94,8 +97,8 @@ public class BetWithPayoutReq extends SingleWalletBaseReq {
         @NoArgsConstructor
         @AllArgsConstructor
         public static class MajorPool {
-            private BigDecimal initAmount = BigDecimal.ZERO;
-            private BigDecimal amount = BigDecimal.ZERO;
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
         }
 
         @Data
@@ -103,8 +106,8 @@ public class BetWithPayoutReq extends SingleWalletBaseReq {
         @NoArgsConstructor
         @AllArgsConstructor
         public static class MinorPool {
-            private BigDecimal initAmount = BigDecimal.ZERO;
-            private BigDecimal amount = BigDecimal.ZERO;
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
 
         }
 
@@ -113,9 +116,8 @@ public class BetWithPayoutReq extends SingleWalletBaseReq {
         @NoArgsConstructor
         @AllArgsConstructor
         public static class MiniPool {
-            private BigDecimal initAmount = BigDecimal.ZERO;
-            private BigDecimal amount = BigDecimal.ZERO;
-
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
         }
 
         @Data
@@ -123,9 +125,24 @@ public class BetWithPayoutReq extends SingleWalletBaseReq {
         @NoArgsConstructor
         @AllArgsConstructor
         public static class BetBonusPool {
-            private BigDecimal initAmount = BigDecimal.ZERO;
-            private BigDecimal amount = BigDecimal.ZERO;
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
         }
+    }
+
+    public static void main(String[] args) {
+        BetWithPayoutReq payoutReq = BetWithPayoutReq.builder()
+                .createTime(DateUtil.toUTC(new Date()))
+                .betDetails(BetWithPayoutReq.BetDetails.builder()
+                        .gameId("111")
+                        .wagersDate(DateUtil.getCurrentTimestamp())
+                        .settlementDate(DateUtil.getCurrentTimestamp())
+                        .isFreeRound(false)
+                        .jackpotDetails(new BetDetails.JackpotDetails())
+                        .build())
+                .build();
+
+        System.out.println(JSON.toJSONString(payoutReq));
     }
 
 }

@@ -59,11 +59,11 @@ public class SingleWalletApi extends BaseApi {
             assembleSingleSignature(req);
             RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
                     URI.create(String.format(BET_WITH_PAYOUT, singleDomain)));
-            log.info("getCredit err, req: {}", req);
+            log.info("betWithPayout , req: {}", req);
             ResponseEntity<CommonRes<BetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<BetWithPayoutRes>>() {
                     });
-            log.info("getCredit err, resp: {}", JSON.toJSONString(responseEntity));
+            log.info("betWithPayout , resp: {}", JSON.toJSONString(responseEntity));
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);

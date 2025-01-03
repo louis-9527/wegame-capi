@@ -4,6 +4,8 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
 import com.wegame.capi.biz.converter.Converter;
@@ -13,6 +15,10 @@ import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.GameStatusEnum;
 import com.wegame.capi.common.utils.GameAmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
@@ -40,6 +46,8 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
     MongoTemplate mongoTemplate;
     @Autowired
     public BetRecordService betRecordService;
+    @Autowired
+    private SingleWalletApi singleWalletApi;
 
     public abstract Game getGame();
 
@@ -48,8 +56,11 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
         long id = idGeneratorHelper.nextId();
         return BetRecordDo.builder()
                 .id(id)
-                .pId("Pid")
-                .channelId("channelId")
+                .pId(UserInfoContext.getUserInfo().getPlatformId())
+                .channelId(UserInfoContext.getUserInfo().getChannelId())
+                .playerId(UserInfoContext.getUserInfo().getPlayerId())
+                .userId(Long.valueOf(UserInfoContext.getUserInfo().getId()))
+                .playerName(UserInfoContext.getUserInfo().getPlayerName())
                 .gameId(betReqDo.getGameId())
                 .betSerialNo(String.valueOf(id))
                 .betType(betReqDo.getBetType().getCode())
@@ -66,18 +77,17 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
     /**
      * 保存投注记录
      *
-     * @return
+     * @return 玩家余额
      */
-    public void saveBetRecordAndPayOut(BetRecordDo betRecordDo) {
+    public Long saveBetRecordAndPayOut(BetRecordDo betRecordDo) {
         //组装中奖数据
         BetRecordPo gameRecordPo = GameRecordConverter.doToPo(betRecordDo);
         AssertUtil.assertNotNull(gameRecordPo, ErrorCode.ERR_INTER);
         gameRecordPo.setId(betRecordDo.getId());
         gameRecordPo.setBetSerialNo(String.valueOf(betRecordDo.getId()));
-//        betRecordService.add() todo  betRecord所有读写操作 =》 betRecordService @tutu
         BetRecordPo insert = mongoTemplate.insert(gameRecordPo);
         //调用单钱包  注释规范 //后加空格
-        BetWithPayoutRes betWithPayoutRes = this.betWithPayout(gameRecordPo);
+        BetWithPayoutRes betWithPayoutRes = new BetWithPayoutRes();// this.betWithPayout(gameRecordPo);
         //判断返回结果
         String betId = betWithPayoutRes.getBetId();
         Query query = new Query(Criteria.where("id").is(insert.getId()));
@@ -88,6 +98,7 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
         update.set("updateTime", new Date());
         //更新记录
         mongoTemplate.updateFirst(query, update, BetRecordPo.class);
+        return GameAmountUtil.toLong(betWithPayoutRes.getCredit());
     }
 
     /**
@@ -111,10 +122,11 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
                         .gameId(gameRecordPo.getGameId())
                         .roundNo(gameRecordPo.getBetSerialNo())
                         .wagersDate(DateUtil.getCurrentTimestamp())
-                        .settlementDate(DateUtil.getCurrentTimestamp()).build())
+                        .settlementDate(DateUtil.getCurrentTimestamp())
+                        .isFreeRound(BetTypeEnum.FREE_SPINS_BET == BetTypeEnum.valueOfCode(gameRecordPo.getBetType()))
+                        .jackpotDetails(new BetWithPayoutReq.BetDetails.JackpotDetails())
+                        .build())
                 .build();
-        BetWithPayoutRes betWithPayoutRes = new BetWithPayoutRes();//singleWalletApi.betWithPayout(payoutReq);
-        betWithPayoutRes.setBetId("121");
-        return betWithPayoutRes;
+        return singleWalletApi.betWithPayout(payoutReq);
     }
 }

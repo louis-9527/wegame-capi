@@ -71,7 +71,7 @@ public class MariaMakilingGame extends AbstractGame {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         for (int i = 0; i < gameInfo.getRow(); i++) {
             for (int j = 0; j < gameInfo.getColumn(); j++) {
-                String symbolId = randomOneSymbol(i, probabilisticConfig);
+                String symbolId = randomOneSymbol(j, probabilisticConfig);
                 symbolArr[i][j] = gameInfo.getSymbolById(symbolId);
             }
         }
@@ -133,7 +133,7 @@ public class MariaMakilingGame extends AbstractGame {
             for (int i = 0; i < gameInfo.getRow(); i++) {
                 for (int j = 0; j < gameInfo.getColumn(); j++) {
                     if (Objects.isNull(symbolArr[i][j]) || !Objects.equals(SymbolTypeEnum.WILD, symbolArr[i][j].getSymbolType())) {
-                        String symbolId = randomOneSymbol(i, probabilisticConfig);
+                        String symbolId = randomOneSymbol(j, probabilisticConfig);
                         SymbolDo symbolDo = gameInfo.getSymbolById(symbolId);
                         symbolArr[i][j] = symbolDo;
                     }

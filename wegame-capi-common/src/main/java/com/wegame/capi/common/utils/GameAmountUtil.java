@@ -11,4 +11,11 @@ public class GameAmountUtil {
         }
        return NumberUtil.div(String.valueOf(amount), "100", 2);
     }
+
+    public static long toLong(BigDecimal amount){
+        if(amount == null){
+            return 0L;
+        }
+        return NumberUtil.mul(amount, 100).longValue();
+    }
 }

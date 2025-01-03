@@ -31,13 +31,6 @@ public class BetController {
     @ApiOperation(value = "投注", httpMethod = "POST")
     @PostMapping("/bet")
     public CommonResponse<BetResultVo> bet(@RequestBody BetRequest betRequest) {
-        // todo fix
-        Operator operator = new Operator();
-        operator.setPlayerId("1000");
-        operator.setName("张三");
-        operator.setUserId(1000L);
-        OperatorContext.setOperator(operator);
-
         betRequest.validate();
         BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
         return CommonResponse.build(BetResultConverter.doToVo(betResultDo));
