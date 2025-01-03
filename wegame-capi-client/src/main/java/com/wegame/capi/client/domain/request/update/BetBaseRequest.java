@@ -1,16 +1,22 @@
 package com.wegame.capi.client.domain.request.update;
 
+import com.wegame.base.Validate;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "下注请求")
-public class BetBaseRequest<T> {
+public class BetBaseRequest<T> implements Validate, Serializable {
+    private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "游戏Id", required = true)
     private String gameId;
     @ApiModelProperty(value = "投注类型:NORMAL_BET,免费轮投注:FREE_SPINS_BET", required = true)
@@ -19,4 +25,14 @@ public class BetBaseRequest<T> {
     private String betSubType;
     @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true)
     private T betDetail;
+
+    @Override
+    public void validateParam() {
+        AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(betType, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(betSubType, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(betDetail, ErrorCode.ERR_PARAM);
+        // todo
+    }
+
 }
