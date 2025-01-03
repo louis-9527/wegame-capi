@@ -30,9 +30,6 @@ public class BetRecordService {
     @Autowired
     public MongoTemplate mongoTemplate;
 
-    @Autowired
-    SingleWalletApi singleWalletApi;
-
     /**
      * 新增
      *
@@ -95,14 +92,4 @@ public class BetRecordService {
     }
 
     ///////////////  above auto generated ///////////////
-
-
-
-    // todo 迁移到对账服务 @maidong
-    public BetSummaryVo betSummary(BetSummaryRequest request) {
-        String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));
-        AssertUtil.assertTrue(StringUtils.equals(hash, request.getHash()), ErrorCode.ERR_PARAM);
-        // todo 麦冬 统计结果
-        return BetSummaryVo.builder().build();
-    }
 }
