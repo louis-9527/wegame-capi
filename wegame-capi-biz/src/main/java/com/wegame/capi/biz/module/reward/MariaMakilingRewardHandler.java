@@ -50,8 +50,8 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                 .forEach(firstSymbol -> this.addSymbolMapping(secondColumSymbolMapping, firstSymbol.getSymbol(), firstSymbol));
 
         // 从第二列开始循环
-        for (int row = 0; row < symbolArr.length; row++) {
-            for (int colum = 1; colum < symbolArr[row].length; colum++) {
+        for (int colum = 1; colum < symbolArr[0].length; colum++) {
+            for (int row = 0; row < symbolArr.length; row++) {
                 SymbolDo symbolDo = symbolArr[row][colum];
                 if (this.isWild(symbolDo)) {
                     // 所有第一列元素的都添加(scatter除外)

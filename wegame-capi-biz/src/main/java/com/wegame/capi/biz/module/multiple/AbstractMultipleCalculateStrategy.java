@@ -17,8 +17,8 @@ public abstract class AbstractMultipleCalculateStrategy implements MultipleCalcu
 
     public BigDecimal calculateMultiple(GameTypeEnum gameType, WheelDo wheel) {
         BigDecimal multiple = new BigDecimal(0);
-        for(SymbolDo[] row : wheel.getSymbolArr()) {
-            for(SymbolDo element : row) {
+        for (SymbolDo[] row : wheel.getSymbolArr()) {
+            for (SymbolDo element : row) {
                 AssertUtil.assertNotNull(element, ErrorCode.ERR_INTER);
                 if (!Objects.equals(element.getSymbolType(), SymbolTypeEnum.WILD)) {
                     continue;
@@ -26,7 +26,7 @@ public abstract class AbstractMultipleCalculateStrategy implements MultipleCalcu
                 if (Objects.isNull(element.getSymbolRule())) {
                     continue;
                 }
-                if (Objects.equals(element.getSymbolRule(), SymbolRuleTypeEnum.MULTIPLE)) {
+                if (Objects.equals(element.getSymbolRule().getSymbolRuleType(), SymbolRuleTypeEnum.MULTIPLE)) {
                     multiple = multiple.add(element.getSymbolRule().getValue());
                 }
             }

@@ -16,7 +16,6 @@ import com.wegame.capi.biz.domain.WheelRewardDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetRecordDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetReqDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
-import com.wegame.capi.biz.domain.business.bet.GameBetResultDo;
 import com.wegame.capi.biz.domain.game.RewardLineDo;
 import com.wegame.capi.biz.domain.game.RewardResultDo;
 import com.wegame.capi.biz.module.game.Game;
@@ -31,7 +30,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -210,8 +208,8 @@ public abstract class AbsGameBetService<T, R> implements GameBetService<T, R> {
     }
 
 
-    private GameRewardAmountTypeEnum getRewardAmountType() {
-        return GameRewardAmountTypeEnum.NONE_PRIZE;
+    private GameGrandPrizeTypeEnum getRewardAmountType() {
+        return GameGrandPrizeTypeEnum.NONE_PRIZE;
     }
 
 }

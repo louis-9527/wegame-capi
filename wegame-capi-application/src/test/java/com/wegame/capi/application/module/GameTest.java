@@ -102,7 +102,7 @@ public class GameTest extends BaseTest {
 
     @Test
     public void test_generate() {
-        int times = 10000;
+        int times = 1;
         //        for (int i = 0; i < times; i++) {
         //            GamePlayDo playDo = GamePlayDo.builder()
         //                    .gameType(GameTypeEnum.MARIA_MAKILING)

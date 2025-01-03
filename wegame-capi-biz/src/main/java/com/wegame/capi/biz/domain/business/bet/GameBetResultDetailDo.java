@@ -3,7 +3,7 @@ package com.wegame.capi.biz.domain.business.bet;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.game.SymbolIndexDo;
-import com.wegame.capi.common.enums.GameRewardAmountTypeEnum;
+import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +23,7 @@ public class GameBetResultDetailDo {
     private Long betAmount;
     private Long rewardAmount;
     private BigDecimal multiple;
-    private GameRewardAmountTypeEnum rewardAmountType;
+    private GameGrandPrizeTypeEnum rewardAmountType;
     /**
      * 是否中了免费轮
      */
