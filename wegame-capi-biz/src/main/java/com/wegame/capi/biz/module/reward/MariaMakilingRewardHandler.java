@@ -87,6 +87,29 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         return scatterCount >= 3;
     }
 
+    @Override
+    public boolean bizValidate(RewardHandleDo rewardHandle) {
+        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.MARIA_MAKILING), ErrorCode.ERR_PARAM, "just support game type of maria makiling");
+        AssertUtil.assertTrue(rewardHandle.getBetAmount() > 0, ErrorCode.ERR_PARAM, "bet amount must greater than 0");
+        // 滚轮校验:必须3*5
+        SymbolDo[][] symbolArr = rewardHandle.getWheel().getSymbolArr();
+        AssertUtil.assertTrue(symbolArr.length == 3, ErrorCode.ERR_PARAM, "symbol arr must be 3 row,5 colum");
+        for (SymbolDo[] row : symbolArr) {
+            AssertUtil.assertTrue(row.length == 5, ErrorCode.ERR_PARAM, "symbol arr must be 3 row,5 colum");
+            // 所有元素不能为空
+            Arrays.stream(row).forEach(rowSymbol -> AssertUtil.assertNotNull(rowSymbol, ErrorCode.ERR_PARAM, "all symbol can not be null"));
+            // 第二列 & 第4列不能包含scatter
+            AssertUtil.assertTrue(!Objects.equals(row[1].getId(), SymbolEnum.Scatter.getId()), ErrorCode.ERR_PARAM, "this index can not has scatter:the 2 colum");
+            AssertUtil.assertTrue(!Objects.equals(row[3].getId(), SymbolEnum.Scatter.getId()), ErrorCode.ERR_PARAM, "this index can not has scatter:the 4 colum");
+            // 第一列不能包含wild
+            AssertUtil.assertTrue(!Objects.equals(row[0].getId(), SymbolEnum.Wild.getId()), ErrorCode.ERR_PARAM, "this index can not has wild:the 1 colum");
+            AssertUtil.assertTrue(!Objects.equals(row[0].getId(), SymbolEnum.WildX2.getId()), ErrorCode.ERR_PARAM, "this index can not has wild:the 1 colum");
+            AssertUtil.assertTrue(!Objects.equals(row[0].getId(), SymbolEnum.WildX3.getId()), ErrorCode.ERR_PARAM, "this index can not has wild:the 1 colum");
+            AssertUtil.assertTrue(!Objects.equals(row[0].getId(), SymbolEnum.WildX5.getId()), ErrorCode.ERR_PARAM, "this index can not has wild:the 1 colum");
+            AssertUtil.assertTrue(!Objects.equals(row[0].getId(), SymbolEnum.WildX10.getId()), ErrorCode.ERR_PARAM, "this index can not has wild:the 1 colum");
+        }
+        return true;
+    }
 
     private Map<SymbolDo, List<RewardRuleSymbolDo>> initFirstColumSymbol(RewardRuleDo rewardRuleDo) {
         Map<SymbolDo, List<RewardRuleSymbolDo>> firstColumSymbolMapping = new HashMap<>();

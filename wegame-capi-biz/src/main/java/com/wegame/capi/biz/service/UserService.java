@@ -232,13 +232,13 @@ public class UserService {
     public Long getCredit() {
         redisTemplate.opsForSet().remove(CUSER_CREDIT_CHANGE, UserInfoContext.getUserInfo().getPlayerName());
         GetCreditRes res = singleWalletApi.getCredit(GetCreditReq.build());
-        return Objects.isNull(res.getCredit()) ? 0L : res.getCredit();
+        return Objects.isNull(res.getCredit()) ? 0L : res.getCredit().longValue();
     }
 
     public Void notifyCreditChange(NotifyCreditChangeRequest request) {
         String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));
         AssertUtil.assertTrue(StringUtils.equals(hash, request.getHash()), ErrorCode.ERR_PARAM);
-        redisTemplate.opsForSet().add(CUSER_CREDIT_CHANGE, request.getPlayerName());
+        redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, request.getPlayerName()), 1);
         // todo 麦冬 返回void结果
         return null;
     }

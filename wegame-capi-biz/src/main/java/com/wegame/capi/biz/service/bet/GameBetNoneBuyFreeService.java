@@ -26,7 +26,9 @@ public class GameBetNoneBuyFreeService extends AbsGameBetService<GameBetNoneBuyR
         long rewardAmount = 0L;
         List<Integer> freeSpinIds = new ArrayList<>(resultDetails.size());
         for (GameBetResultDetailDo resultDetail : resultDetails) {
-            rewardAmount = rewardAmount + resultDetail.getRewardAmount();
+            if (resultDetail.getRewardAmount() != null) {
+                rewardAmount = rewardAmount + resultDetail.getRewardAmount();
+            }
             freeSpinIds.add(resultDetail.getId());
         }
         //获取投注结果
@@ -34,6 +36,7 @@ public class GameBetNoneBuyFreeService extends AbsGameBetService<GameBetNoneBuyR
         //保存投注记录并派奖
         super.saveBetRecordAndPayOut(betRecord);
         return GameBetResultDo.<GameBetNoneBuyResultDo>builder()
+                .gameRecordId(betRecord.getId())
                 .gameId(req.getGameId())
                 .betType(req.getBetType())
                 .betSubType(req.getBetSubType())
