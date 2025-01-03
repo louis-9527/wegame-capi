@@ -39,9 +39,5 @@ public class BetDo<T> implements Serializable {
      * 投注详情
      */
     private T betDetail;
-
-
-
-
 }
 
