@@ -2,10 +2,10 @@ package com.wegame.capi.biz.module.game;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.capi.biz.domain.GameInfoDo;
-import com.wegame.capi.biz.domain.GamePlayDo;
-import com.wegame.capi.biz.domain.SymbolDo;
-import com.wegame.capi.biz.domain.WheelDo;
+import com.wegame.capi.biz.domain.biz.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.reward.RewardHandler;
 import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
 import com.wegame.capi.common.enums.SymbolTypeEnum;

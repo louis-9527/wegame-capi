@@ -1,8 +1,12 @@
 package com.wegame.capi.biz.module.game;
 
-import com.wegame.capi.biz.domain.*;
-import com.wegame.capi.biz.domain.RewardHandleDo;
-import com.wegame.capi.biz.domain.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.GamePlayResultDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
 import com.wegame.capi.biz.module.reward.RewardHandler;
 
 import java.util.List;

@@ -1,9 +1,9 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
 
-import com.wegame.capi.biz.domain.BetDo;
-import com.wegame.capi.biz.domain.BetResultDo;
-import com.wegame.capi.biz.domain.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 
 /**
  * 投注策略

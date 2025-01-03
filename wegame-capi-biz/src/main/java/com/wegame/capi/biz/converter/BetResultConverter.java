@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.converter;
 
-import com.wegame.capi.biz.domain.BetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.client.domain.vo.BetResultVo;
 
 import java.util.Objects;

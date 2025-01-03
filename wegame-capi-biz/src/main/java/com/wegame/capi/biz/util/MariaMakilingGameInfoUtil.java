@@ -1,8 +1,8 @@
 package com.wegame.capi.biz.util;
 
 import com.google.common.collect.ImmutableMap;
-import com.wegame.capi.biz.domain.GameInfoDo;
-import com.wegame.capi.biz.domain.SymbolDo;
+import com.wegame.capi.biz.domain.biz.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.SymbolRuleTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;

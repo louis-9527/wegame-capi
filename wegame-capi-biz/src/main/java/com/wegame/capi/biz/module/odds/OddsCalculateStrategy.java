@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.module.odds;
 
-import com.wegame.capi.biz.domain.OddsCalculateDo;
+import com.wegame.capi.biz.domain.biz.odds.OddsCalculateDo;
 
 import java.math.BigDecimal;
 

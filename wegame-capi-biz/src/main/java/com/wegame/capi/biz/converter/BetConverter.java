@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.biz.bet.*;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.vo.*;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -53,23 +56,23 @@ public class BetConverter {
                 .build();
     }
 
-    public static <R> BetResultVo doToVo(GameBetResultDo<R> betResult) {
+    public static <R> BetResultVo doToVo(BetResultDo<R> betResult) {
         BetResultVo betBaseVo = new BetResultVo();
         betBaseVo.setGameRecordId(String.valueOf(betResult.getGameRecordId()));
         betBaseVo.setGameId(betResult.getGameId());
         betBaseVo.setBetType(betResult.getBetType().getCode());
         betBaseVo.setBetSubType(betResult.getBetSubType().getCode());
         betBaseVo.setCredit(10000L);
-        if (betResult.resultDetail instanceof MysteriousNormalBetResultDo) {
-            MysteriousNormalBetResultDo normalResult = (MysteriousNormalBetResultDo) betResult.resultDetail;
+        if (betResult.getResultDetail() instanceof MysteriousNormalBetResultDo) {
+            MysteriousNormalBetResultDo normalResult = (MysteriousNormalBetResultDo) betResult.getResultDetail();
             GameBetResultDetailDo detailDo = normalResult.getResultDetailDo();
             betBaseVo.setResultDetail(detailToNormalVo(detailDo));
-        } else if (betResult.resultDetail instanceof MysteriousNonBuyFreeSpinsBetResultDo) {
-            MysteriousNonBuyFreeSpinsBetResultDo normalResult = (MysteriousNonBuyFreeSpinsBetResultDo) betResult.resultDetail;
+        } else if (betResult.getResultDetail() instanceof MysteriousNonBuyFreeSpinsBetResultDo) {
+            MysteriousNonBuyFreeSpinsBetResultDo normalResult = (MysteriousNonBuyFreeSpinsBetResultDo) betResult.getResultDetail();
             List<Integer> freeSpinIds = normalResult.getFreeSpinIds();
             betBaseVo.setResultDetail(freeSpinIds);
-        } else if (betResult.resultDetail instanceof MysteriousBuyFreeSpinsBetResultDo) {
-            MysteriousBuyFreeSpinsBetResultDo buyResult = (MysteriousBuyFreeSpinsBetResultDo) betResult.resultDetail;
+        } else if (betResult.getResultDetail() instanceof MysteriousBuyFreeSpinsBetResultDo) {
+            MysteriousBuyFreeSpinsBetResultDo buyResult = (MysteriousBuyFreeSpinsBetResultDo) betResult.getResultDetail();
             List<Integer> freeSpinIds = buyResult.getFreeSpinIds();
             GameBetBuyVo betBuyVo = detailToBuyVo(buyResult.getResultDetailDo());
             betBuyVo.setFreeSpinIds(freeSpinIds);

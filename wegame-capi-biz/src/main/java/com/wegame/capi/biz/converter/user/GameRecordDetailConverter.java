@@ -5,9 +5,9 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.GameRecordDetailDo;
 import com.wegame.capi.client.domain.request.query.PageQueryGameRecordDetailRequest;
 import com.wegame.capi.client.domain.vo.GameRecordDetailVo;
-import com.wegame.capi.biz.domain.GameRecordDetailDo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailQuery;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 /**
  * GameRecordDetailConverter
+ *
  * @author generate
  */
 public class GameRecordDetailConverter {
@@ -92,11 +93,11 @@ public class GameRecordDetailConverter {
 
     public static List<GameRecordDetailDo> poToDoList(List<GameRecordDetailPo> poList) {
         return Optional.ofNullable(poList)
-            .orElse(Collections.emptyList())
-            .stream()
-            .map(GameRecordDetailConverter::poToDo)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(GameRecordDetailConverter::poToDo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public static List<GameRecordDetailPo> doToPoList(List<GameRecordDetailDo> doList, OptEnum optEnum) {
@@ -119,7 +120,7 @@ public class GameRecordDetailConverter {
 
     public static GameRecordDetailQuery requestToQuery(PageQueryGameRecordDetailRequest request, String orderClause) {
         GameRecordDetailQuery query = new GameRecordDetailQuery();
-       // query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
+        // query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
         query.setBetAmount(StringUtils.isNotEmpty(request.getBetAmount()) ? Long.valueOf(request.getBetAmount()) : null);
         query.setRewardAmount(StringUtils.isNotEmpty(request.getRewardAmount()) ? Long.valueOf(request.getRewardAmount()) : null);
         query.setGameResult(request.getGameResult());

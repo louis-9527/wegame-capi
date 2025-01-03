@@ -2,12 +2,12 @@ package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.BetDo;
-import com.wegame.capi.biz.domain.BetResultDo;
-import com.wegame.capi.biz.domain.MysteriousNonBuyFreeSpinsBetDo;
-import com.wegame.capi.biz.domain.GameBetRecordDo;
-import com.wegame.capi.biz.domain.GameBetResultDetailDo;
-import com.wegame.capi.biz.domain.MysteriousNonBuyFreeSpinsBetResultDo;
+import com.wegame.capi.biz.domain.biz.GameBetRecordDo;
+import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.MysteriousNonBuyFreeSpinsBetDo;
+import com.wegame.capi.biz.domain.biz.bet.MysteriousNonBuyFreeSpinsBetResultDo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordPo;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component("mariaMakilingNonBuyFreeSpinsBetStrategy")
-public class MariaMakilingNonBuyFreeSpinsBetStrategy 
+public class MariaMakilingNonBuyFreeSpinsBetStrategy
         extends AbstractMariaMakilingBetStrategy<MysteriousNonBuyFreeSpinsBetDo, MysteriousNonBuyFreeSpinsBetResultDo> {
 
     @Override

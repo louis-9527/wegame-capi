@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.module.multiple;
 
-import com.wegame.capi.biz.domain.WheelDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 
 import java.math.BigDecimal;
@@ -16,7 +16,7 @@ public interface MultipleCalculateStrategy {
      * @param gameType 游戏类型
      * @return 元素数组
      */
-    BigDecimal calculateMultiple(GameTypeEnum gameType,  WheelDo wheel);
+    BigDecimal calculateMultiple(GameTypeEnum gameType, WheelDo wheel);
 }
 
 

@@ -1,7 +1,8 @@
 package com.wegame.capi.biz.builder;
 
-import com.wegame.capi.biz.domain.RewardHandleDo;
-import com.wegame.capi.biz.domain.RewardRuleDo;
+
+import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardRuleDo;
 
 import java.util.Objects;
 

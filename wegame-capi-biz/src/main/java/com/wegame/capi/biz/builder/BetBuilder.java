@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.builder;
 
-import com.wegame.capi.biz.domain.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.enums.BetTypeEnum;
 

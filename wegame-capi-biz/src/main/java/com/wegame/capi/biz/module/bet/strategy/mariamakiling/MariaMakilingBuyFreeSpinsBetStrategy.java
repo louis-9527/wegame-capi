@@ -1,11 +1,11 @@
 package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
-import com.wegame.capi.biz.domain.BetDo;
-import com.wegame.capi.biz.domain.BetResultDo;
-import com.wegame.capi.biz.domain.MysteriousBuyFreeSpinsBetDo;
-import com.wegame.capi.biz.domain.GameBetRecordDo;
-import com.wegame.capi.biz.domain.GameBetResultDetailDo;
-import com.wegame.capi.biz.domain.MysteriousBuyFreeSpinsBetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.MysteriousBuyFreeSpinsBetDo;
+import com.wegame.capi.biz.domain.biz.GameBetRecordDo;
+import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.biz.bet.MysteriousBuyFreeSpinsBetResultDo;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
