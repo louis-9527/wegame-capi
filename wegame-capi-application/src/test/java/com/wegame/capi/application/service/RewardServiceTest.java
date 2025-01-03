@@ -31,15 +31,15 @@ public class RewardServiceTest extends BaseTest {
                 .gameType(GameTypeEnum.MARIA_MAKILING)
                 .betType(BetTypeEnum.NORMAL_BET)
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
-                .wheel(WheelDo.builder().symbolArr(symbolArr).build())
+                .wheel(WheelDo.builder().index(1000).symbolArr(symbolArr).build())
                 .betAmount(200L)
                 .build();
-        long startTime = DateUtil.getCurrentTimestamp();
+        long startTime = DateUtil.getCurrentMilli();
 //        for (int i=0;i<1000000;i++){
 //            mariaMakilingRewardHandler.handle(rewardDo);
 //        }
         RewardResultDo rewardResultDo = mariaMakilingRewardHandler.handle(rewardDo);
-        long endTime = DateUtil.getCurrentTimestamp();
+        long endTime = DateUtil.getCurrentMilli();
 
 //        log.info("消耗时间：{}", endTime - startTime);
 
@@ -103,7 +103,7 @@ public class RewardServiceTest extends BaseTest {
 
         // 第二列
         symbolArr[0][1] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[1][1] = this.buildASymbol(SymbolEnum.Wild, SymbolTypeEnum.WILD, SymbolRuleTypeEnum.MULTIPLE, BigDecimal.ZERO);
+        symbolArr[1][1] = this.buildASymbol(SymbolEnum.WildX2, SymbolTypeEnum.WILD, SymbolRuleTypeEnum.MULTIPLE, BigDecimal.ZERO);
         symbolArr[2][1] = this.buildASymbol(SymbolEnum.Symbol1004, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
 
         // 第三列
