@@ -1,10 +1,9 @@
 package com.wegame.capi.biz.domain.game;
 
-import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.WheelDo;
-import com.wegame.capi.common.enums.BetSubTypeEnum;
-import com.wegame.capi.common.enums.BetTypeEnum;
-import com.wegame.capi.common.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,8 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Map;
 
 /**
  * 中奖do

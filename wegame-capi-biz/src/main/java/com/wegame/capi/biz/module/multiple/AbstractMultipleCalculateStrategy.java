@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.WheelDo;
-import com.wegame.capi.common.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.SymbolRuleTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;

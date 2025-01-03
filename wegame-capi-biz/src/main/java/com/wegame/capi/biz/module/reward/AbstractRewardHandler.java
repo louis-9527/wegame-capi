@@ -12,7 +12,7 @@ import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.game.*;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
-import com.wegame.capi.common.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

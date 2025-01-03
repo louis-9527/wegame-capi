@@ -9,6 +9,7 @@ import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.game.*;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

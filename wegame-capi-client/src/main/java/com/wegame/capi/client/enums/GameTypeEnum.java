@@ -1,11 +1,9 @@
-package com.wegame.capi.common.enums;
+package com.wegame.capi.client.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Objects;
 
 /**
  * 游戏类型枚举

@@ -1,20 +1,21 @@
-package com.wegame.capi.common.enums;
+package com.wegame.capi.client.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.ToString;
 
 /**
- * 投注类型
+ * 投注子类型
  *
  * @author apple
  */
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum BetTypeEnum {
+public enum BetSubTypeEnum {
 
-    NORMAL_BET("NORMAL_BET", "正常投注"),
-    FREE_SPINS_BET("FREE_SPINS_BET", "免费轮投注"),
+    NORMAL_BET("NORMAL_BET", "正常投注", BetTypeEnum.NORMAL_BET),
+    BUY_FREE_SPINS_BET("BUY_FREE_SPINS_BET", "购买免费轮投注", BetTypeEnum.FREE_SPINS_BET),
+    NON_BUY_FREE_SPINS_BET("NON_BUY_FREE_SPINS_BET", "非购买免费轮投注", BetTypeEnum.FREE_SPINS_BET),
 
     ;
 
@@ -28,19 +29,22 @@ public enum BetTypeEnum {
      */
     private final String desc;
 
+    private final BetTypeEnum betType;
+
     /**
      * 私有构造方法.
      *
      * @param code code值
      * @param desc 描述信息
      */
-    private BetTypeEnum(String code, String desc) {
+    private BetSubTypeEnum(String code, String desc, BetTypeEnum betType) {
         this.code = code;
         this.desc = desc;
+        this.betType = betType;
     }
 
-    public static BetTypeEnum valueOfCode(String code) {
-        for (BetTypeEnum item : BetTypeEnum.values()) {
+    public static BetSubTypeEnum valueOfCode(String code) {
+        for (BetSubTypeEnum item : BetSubTypeEnum.values()) {
             if (item.getCode().equals(code)) {
                 return item;
             }
@@ -54,5 +58,9 @@ public enum BetTypeEnum {
 
     public String getDesc() {
         return desc;
+    }
+
+    public BetTypeEnum getBetType() {
+        return betType;
     }
 }

@@ -1,8 +1,8 @@
 package com.wegame.capi.biz.domain.business.bet;
 
 import com.wegame.base.enums.BooleanEnum;
-import com.wegame.capi.common.enums.BetSubTypeEnum;
-import com.wegame.capi.common.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.GameStatusEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

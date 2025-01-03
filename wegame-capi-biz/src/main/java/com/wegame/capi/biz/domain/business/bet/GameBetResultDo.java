@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.domain.business.bet;
 
-import com.wegame.capi.common.enums.BetSubTypeEnum;
-import com.wegame.capi.common.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

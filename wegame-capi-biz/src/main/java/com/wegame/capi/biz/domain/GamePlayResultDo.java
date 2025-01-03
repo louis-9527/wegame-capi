@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.domain;
 
-import com.wegame.capi.biz.domain.game.RewardResultDo;
-import com.wegame.capi.common.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 /**

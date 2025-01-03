@@ -1,8 +1,7 @@
 package com.wegame.capi.biz.module.multiple;
 
-import com.wegame.capi.biz.domain.SymbolDo;
 import com.wegame.capi.biz.domain.WheelDo;
-import com.wegame.capi.common.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 
 import java.math.BigDecimal;
 

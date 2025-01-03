@@ -2,7 +2,7 @@ package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.client.domain.request.update.BetRequest;
-import com.wegame.capi.common.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 
 public class BetBuilder {
 

@@ -5,7 +5,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
 import com.wegame.capi.biz.module.bet.strategy.BetStrategy;
-import com.wegame.capi.common.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

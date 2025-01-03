@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -24,12 +25,13 @@ public class BetRequest<T> implements Validate, Serializable {
     @ApiModelProperty(value = "投注子类型:NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
     private String betSubType;
     @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true)
-    private T betDetail;
+    private Object betDetail;
 
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(betType, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(betSubType, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(betSubType, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betDetail, ErrorCode.ERR_PARAM);
         // todo

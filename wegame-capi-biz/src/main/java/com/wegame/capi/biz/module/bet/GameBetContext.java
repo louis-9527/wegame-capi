@@ -13,7 +13,7 @@ import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
 import com.wegame.capi.client.domain.request.update.BetRequest;
 import com.wegame.capi.client.domain.vo.GameBetBaseVo;
 import com.wegame.capi.client.domain.vo.GameBetNormalVo;
-import com.wegame.capi.common.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

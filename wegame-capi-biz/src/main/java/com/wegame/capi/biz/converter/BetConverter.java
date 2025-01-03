@@ -8,8 +8,8 @@ import com.wegame.capi.client.domain.request.update.BetBuyDetailRequest;
 import com.wegame.capi.client.domain.request.update.BetNoneBuyDetailRequest;
 import com.wegame.capi.client.domain.request.update.BetNormalDetailRequest;
 import com.wegame.capi.client.domain.vo.*;
-import com.wegame.capi.common.enums.BetSubTypeEnum;
-import com.wegame.capi.common.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
