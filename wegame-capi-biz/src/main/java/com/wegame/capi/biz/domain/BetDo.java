@@ -45,62 +45,7 @@ public class BetDo<T> implements Serializable {
     private T betDetail;
 
 
-    /**
-     * Mysterious正常投注请求参数
-     */
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ApiModel(description = "")
-    public class MysteriousNormalBetDo implements Validate, Serializable {
-        @ApiModelProperty(value = "投注金额", required = true)
-        private Long betAmount;
 
-        @Override
-        public void validateParam() {
-            AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-            AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
-        }
-    }
-
-    /**
-     * Mysterious购买免费轮投注请求参数
-     */
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ApiModel(description = "")
-    public class MysteriousBuyFreeSpinsBetDo implements Validate, Serializable {
-        @ApiModelProperty(value = "投注金额", required = true)
-        private Long betAmount;
-        @ApiModelProperty(value = "支付金额", required = true)
-        private Long payAmount;
-
-        @Override
-        public void validateParam() {
-            AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-            AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
-            AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-            AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
-        }
-    }
-
-    /**
-     * Mysterious非购买免费轮投注请求参数
-     */
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ApiModel(description = "")
-    public class MysteriousNonBuyFreeSpinsBetDo implements Validate, Serializable {
-        @ApiModelProperty(value = "游戏记录Id", required = true)
-        private String gameRecordId;
-
-        @Override
-        public void validateParam() {
-            AssertUtil.assertStrNotEmpty(gameRecordId, ErrorCode.ERR_PARAM);
-        }
-    }
 
 }
 

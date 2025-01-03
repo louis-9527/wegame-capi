@@ -3,9 +3,12 @@ package com.wegame.capi.biz.service;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
 import com.wegame.capi.biz.module.bet.AbstractBetContext;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
+import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
+import com.wegame.capi.client.domain.vo.GameBetNormalVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,5 +41,16 @@ public class BetService {
         AbstractBetContext betContext = contextMap.get(betContextName);
         AssertUtil.assertNotNull(betContext, ErrorCode.ERR_PARAM, "Not Support Game");
         return betContext.bet(betDo);
+    }
+
+    public GameBetNormalVo queryFreeSpinDetail(QueryFreeSpinRequest request) {
+        // todo fix
+        GameTypeEnum gameEnum = GameTypeEnum.valueOfCode(request.getGameId());
+        AssertUtil.assertNotNull(gameEnum, ErrorCode.ERR_PARAM);
+        String betContextName = contextNameMap.get(gameEnum);
+        AssertUtil.assertStrNotEmpty(betContextName, ErrorCode.ERR_PARAM, "Not Support Game");
+        AbstractBetContext betContext = contextMap.get(betContextName);
+        AssertUtil.assertNotNull(betContext, ErrorCode.ERR_PARAM, "Not Support Game");
+        return betContext.queryBetFreeSpin(request);
     }
 }

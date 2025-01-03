@@ -4,8 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
-import com.wegame.capi.biz.domain.BetDo;
-import com.wegame.capi.biz.domain.SymbolDo;
+import com.wegame.capi.biz.domain.*;
 import com.wegame.capi.biz.domain.business.bet.*;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.vo.*;
@@ -28,9 +27,9 @@ import java.util.Objects;
 public class BetConverter {
 
     private static final Map<BetSubTypeEnum, Class<?>> mysteriousClassMap = new ImmutableMap.Builder<BetSubTypeEnum, Class<?>>()
-            .put(BetSubTypeEnum.NORMAL_BET, BetDo.MysteriousNormalBetDo.class)
-            .put(BetSubTypeEnum.BUY_FREE_SPINS_BET, BetDo.MysteriousBuyFreeSpinsBetDo.class)
-            .put(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET, BetDo.MysteriousNonBuyFreeSpinsBetDo.class)
+            .put(BetSubTypeEnum.NORMAL_BET, MysteriousNormalBetDo.class)
+            .put(BetSubTypeEnum.BUY_FREE_SPINS_BET, MysteriousBuyFreeSpinsBetDo.class)
+            .put(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET, MysteriousNonBuyFreeSpinsBetDo.class)
             .build();
 
     private static final Map<GameTypeEnum, Map<BetSubTypeEnum, Class<?>>> gameClassMap = new ImmutableMap.Builder<GameTypeEnum, Map<BetSubTypeEnum, Class<?>>>()
@@ -55,45 +54,6 @@ public class BetConverter {
                 .betDetail(FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(betRequest.getBetDetail()), clazz))
                 .build();
     }
-
-    //    public static <T> GameBetReqDo<T> reqToDo(BetRequest betRequest) {
-    //        if (Objects.isNull(betRequest)) {
-    //            return null;
-    //        }
-    //        GameBetReqDo<T> betReqDo = new GameBetReqDo<T>();
-    //        betReqDo.setGameId(betRequest.getGameId());
-    //        betReqDo.setBetType(BetTypeEnum.valueOfCode(betRequest.getBetType()));
-    //        BetSubTypeEnum betSubTypeEnum = BetSubTypeEnum.valueOfCode(betRequest.getBetSubType());
-    //        betReqDo.setBetSubType(betSubTypeEnum);
-    //
-    //        if (BetSubTypeEnum.NORMAL_BET == betSubTypeEnum) {
-    //            //正常投注
-    //            String dataJson = JSON.toJSONString(betRequest.getBetDetail());
-    //            BetNormalDetailRequest request = JSON.parseObject(dataJson, BetNormalDetailRequest.class);
-    //
-    //            GameBetNormalReqDo normalReqDo = new GameBetNormalReqDo();
-    //            normalReqDo.setBetAmount(request.getBetAmount());
-    //            betReqDo.setBetDetail((T) normalReqDo);
-    //        } else if (BetSubTypeEnum.NON_BUY_FREE_SPINS_BET == betSubTypeEnum) {
-    //            //非购买免费轮
-    //            String dataJson = JSON.toJSONString(betRequest.getBetDetail());
-    //            BetNoneBuyDetailRequest request = JSON.parseObject(dataJson, BetNoneBuyDetailRequest.class);
-    //
-    //            GameBetNoneBuyReqDo noneBuyReqDo = new GameBetNoneBuyReqDo();
-    //            noneBuyReqDo.setRecordId(Long.valueOf(request.getGameRecordId()));
-    //            betReqDo.setBetDetail((T) noneBuyReqDo);
-    //        } else if (BetSubTypeEnum.BUY_FREE_SPINS_BET == betSubTypeEnum) {
-    //            //购买免费轮
-    //            String dataJson = JSON.toJSONString(betRequest.getBetDetail());
-    //            BetBuyDetailRequest request = JSON.parseObject(dataJson, BetBuyDetailRequest.class);
-    //
-    //            GameBetBuyReqDo buyReqDo = new GameBetBuyReqDo();
-    //            buyReqDo.setBetAmount(request.getBetAmount());
-    //            buyReqDo.setBuyAmount(request.getBuyAmount());
-    //            betReqDo.setBetDetail((T) buyReqDo);
-    //        }
-    //        return betReqDo;
-    //    }
 
     public static <R> BetResultVo doToVo(GameBetResultDo<R> betResult) {
         BetResultVo betBaseVo = new BetResultVo();

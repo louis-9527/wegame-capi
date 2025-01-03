@@ -15,7 +15,6 @@ import com.wegame.capi.biz.domain.GamePlayDo;
 import com.wegame.capi.biz.domain.GamePlayResultDo;
 import com.wegame.capi.biz.domain.WheelRewardDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetRecordDo;
-import com.wegame.capi.biz.domain.business.bet.GameBetReqDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.game.RewardLineDo;
 import com.wegame.capi.biz.domain.game.RewardResultDo;
@@ -60,7 +59,6 @@ public abstract class AbstractBetStrategy<T, R> implements BetStrategy<T, R> {
 
 
     // todo fix
-
 
 
     public GameBetResultDetailDo getResultDetail(String gameId, BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
