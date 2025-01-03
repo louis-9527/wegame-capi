@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
+import com.wegame.capi.biz.domain.MysteriousBuyFreeSpinsBetDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetRecordDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDo;
@@ -12,10 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component("mariaMakilingBuyFreeSpinsBetStrategy")
-public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingBetStrategy<BetDo.MysteriousBuyFreeSpinsBetDo, MysteriousBuyFreeSpinsBetResultDo> {
+public class MariaMakilingBuyFreeSpinsBetStrategy
+        extends AbstractMariaMakilingBetStrategy<MysteriousBuyFreeSpinsBetDo, MysteriousBuyFreeSpinsBetResultDo> {
 
     @Override
-    public BetResultDo<MysteriousBuyFreeSpinsBetResultDo> bet(BetDo<BetDo.MysteriousBuyFreeSpinsBetDo> betDo) {
+    public BetResultDo<MysteriousBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousBuyFreeSpinsBetDo> betDo) {
         // 获取轮盘结果,必须包含免费轮
         GameBetResultDetailDo betResult = super.getResultDetail(betDo.getGameId(), betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());
         // 获取免费轮

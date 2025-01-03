@@ -3,16 +3,17 @@ package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 import com.google.common.collect.Lists;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
+import com.wegame.capi.biz.domain.MysteriousNormalBetDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetRecordDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.business.bet.MysteriousNormalBetResultDo;
 import org.springframework.stereotype.Component;
 
 @Component("mariaMakilingNormalBetStrategy")
-public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStrategy<BetDo.MysteriousNormalBetDo, MysteriousNormalBetResultDo> {
+public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStrategy<MysteriousNormalBetDo, MysteriousNormalBetResultDo> {
 
     @Override
-    public BetResultDo<MysteriousNormalBetResultDo> bet(BetDo<BetDo.MysteriousNormalBetDo> betDo) {
+    public BetResultDo<MysteriousNormalBetResultDo> bet(BetDo<MysteriousNormalBetDo> betDo) {
         // 获取游戏结果
         GameBetResultDetailDo resultDetail = super.getResultDetail(betDo.getGameId(), betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());
         // 生成投注结果

@@ -17,12 +17,12 @@ public class BetResultConverter {
             return null;
         }
         return BetResultVo.builder()
-                .gameRecordId(betResultDo.getGameRecordId())
+                .gameRecordId(String.valueOf(betResultDo.getGameRecordId()))
                 .gameId(betResultDo.getGameId())
                 .betType(betResultDo.getBetType().getCode())
                 .betSubType(betResultDo.getBetSubType().getCode())
                 .credit(betResultDo.getCredit())
-                .resultDetail(betResultDo.getBetResult())
+                .resultDetail(betResultDo.getResultDetail())
                 .build();
     }
 }

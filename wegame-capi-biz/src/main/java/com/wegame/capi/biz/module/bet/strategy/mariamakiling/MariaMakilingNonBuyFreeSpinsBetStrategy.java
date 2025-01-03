@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.BetDo;
 import com.wegame.capi.biz.domain.BetResultDo;
+import com.wegame.capi.biz.domain.MysteriousNonBuyFreeSpinsBetDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetRecordDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.business.bet.GameBetResultDo;
@@ -16,10 +17,10 @@ import java.util.List;
 
 @Component("mariaMakilingNonBuyFreeSpinsBetStrategy")
 public class MariaMakilingNonBuyFreeSpinsBetStrategy 
-        extends AbstractMariaMakilingBetStrategy<BetDo.MysteriousNonBuyFreeSpinsBetDo, MysteriousNonBuyFreeSpinsBetResultDo> {
+        extends AbstractMariaMakilingBetStrategy<MysteriousNonBuyFreeSpinsBetDo, MysteriousNonBuyFreeSpinsBetResultDo> {
 
     @Override
-    public BetResultDo<MysteriousNonBuyFreeSpinsBetResultDo> bet(BetDo<BetDo.MysteriousNonBuyFreeSpinsBetDo> betDo) {
+    public BetResultDo<MysteriousNonBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousNonBuyFreeSpinsBetDo> betDo) {
         Long recordId = Long.valueOf(betDo.getBetDetail().getGameRecordId());
         GameRecordPo gameRecord = super.mongoTemplate.findById(recordId, GameRecordPo.class);
         AssertUtil.assertNotNull(gameRecord, ErrorCode.ERR_PARAM);
