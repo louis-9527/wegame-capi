@@ -5,7 +5,7 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.converter.BetConverter;
 import com.wegame.capi.biz.converter.BetResultConverter;
-import com.wegame.capi.biz.domain.BetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.service.BetService;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.request.query.QueryFreeSpinRequest;
