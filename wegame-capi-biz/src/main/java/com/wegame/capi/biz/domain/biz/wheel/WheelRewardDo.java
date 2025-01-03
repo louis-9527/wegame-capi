@@ -1,5 +1,6 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.wheel;
 
+import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

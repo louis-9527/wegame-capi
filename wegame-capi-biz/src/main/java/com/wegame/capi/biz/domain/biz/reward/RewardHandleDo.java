@@ -1,9 +1,9 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.reward;
 
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.OddsTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 
 /**
- * 赔率计算DO
+ * 中奖do
  *
  * @author generate
  */
@@ -22,8 +22,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class OddsCalculateDo implements Serializable {
-    private static final long serialVersionUID = -2098745454848L;
+public class RewardHandleDo implements Serializable {
+    private static final long serialVersionUID = -226232434848L;
+
     /**
      * 游戏类型
      */
@@ -37,11 +38,11 @@ public class OddsCalculateDo implements Serializable {
      */
     private BetSubTypeEnum betSubType;
     /**
-     * 赔率类型
+     * 投注金额
      */
-    private OddsTypeEnum oddsType;
+    private Long betAmount;
     /**
-     * 元素
+     * 滚轮
      */
-    private SymbolDo symbol;
+    private WheelDo wheel;
 }

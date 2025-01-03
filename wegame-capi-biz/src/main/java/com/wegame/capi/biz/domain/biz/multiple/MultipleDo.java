@@ -1,28 +1,29 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.multiple;
 
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
+
+/**
+ * 倍数do
+ *
+ * @author generate
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameBetReqDo<T> {
+public class MultipleDo implements Serializable {
+    private static final long serialVersionUID = -2263345345345648L;
+
     /**
-     * 游戏Id
+     * 游戏id
      */
     private String gameId;
-
-    private BetTypeEnum betType;
-
-    private BetSubTypeEnum betSubType;
-
-    private T betDetail;
 
 }

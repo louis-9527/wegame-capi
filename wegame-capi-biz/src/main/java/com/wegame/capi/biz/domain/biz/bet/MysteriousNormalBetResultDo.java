@@ -1,18 +1,19 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.bet;
 
+import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MysteriousNonBuyFreeSpinsBetResultDo {
-    private List<Integer> freeSpinIds;
+public class MysteriousNormalBetResultDo {
+
+    private GameBetResultDetailDo resultDetailDo;
+
 }

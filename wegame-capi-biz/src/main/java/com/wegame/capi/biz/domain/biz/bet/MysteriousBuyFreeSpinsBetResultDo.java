@@ -1,5 +1,6 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.bet;
 
+import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

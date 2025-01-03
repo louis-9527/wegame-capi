@@ -1,5 +1,7 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.reward;
 
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 import com.wegame.capi.common.enums.RewardLineTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.AllArgsConstructor;

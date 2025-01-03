@@ -1,5 +1,6 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.reward;
 
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -11,17 +12,18 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
+/**
+ * 中奖规则do
+ *
+ * @author generate
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetDo<T> implements Serializable {
-    private static final long serialVersionUID = -2266308277093710848L;
-    /**
-     * 游戏Id
-     */
-    private String gameId;
+public class RewardRuleDo implements Serializable {
+    private static final long serialVersionUID = -2266308273445L;
     /**
      * 游戏类型
      */
@@ -35,12 +37,7 @@ public class BetDo<T> implements Serializable {
      */
     private BetSubTypeEnum betSubType;
     /**
-     * 投注详情
+     * 元素数组
      */
-    private T betDetail;
-
-
-
-
+    private SymbolDo[][] symbolArr;
 }
-

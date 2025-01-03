@@ -1,6 +1,8 @@
 package com.wegame.capi.biz.domain.biz;
 
 import com.wegame.base.enums.BooleanEnum;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;

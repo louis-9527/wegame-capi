@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.reward;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * 倍数do
+ * 中奖规则结果do
  *
  * @author generate
  */
@@ -18,12 +19,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MultipleDo implements Serializable {
-    private static final long serialVersionUID = -2263345345345648L;
-
+public class RewardRuleResultDo implements Serializable {
+    private static final long serialVersionUID = -2266308273454848L;
     /**
-     * 游戏id
+     * 中奖线中奖列表
      */
-    private String gameId;
-
+    private List<RewardRuleLineDo> rewardRuleLineList;
 }

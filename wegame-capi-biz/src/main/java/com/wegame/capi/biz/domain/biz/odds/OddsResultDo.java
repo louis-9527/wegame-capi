@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.odds;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 
 /**
- * 倍数do
+ * 赔率do
  *
  * @author generate
  */
@@ -17,8 +17,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 //@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MultipleResultDo implements Serializable {
-    private static final long serialVersionUID = -2262243356445648L;
+public class OddsResultDo implements Serializable {
+    private static final long serialVersionUID = -223245454848L;
 
 
 }

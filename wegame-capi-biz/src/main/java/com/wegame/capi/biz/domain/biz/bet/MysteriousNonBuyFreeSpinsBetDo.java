@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.bet;
 
 
 import com.wegame.base.Validate;

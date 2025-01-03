@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.reward;
 
 import com.wegame.capi.common.enums.GameGrandPrizeTypeEnum;
 import lombok.AllArgsConstructor;
