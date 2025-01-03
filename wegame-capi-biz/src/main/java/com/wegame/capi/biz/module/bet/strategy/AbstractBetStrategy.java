@@ -51,12 +51,15 @@ public abstract class AbstractBetStrategy<T extends Validate, R> implements BetS
 
     @Autowired
     IdGeneratorHelper idGeneratorHelper;
+    // todo 删除 依赖
     @Autowired
     MongoTemplate mongoTemplate;
     @Autowired
     BetRecordService betRecordService;
 
     public abstract Game getGame();
+
+
     // todo fix
 
 
