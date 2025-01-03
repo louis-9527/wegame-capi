@@ -1,6 +1,7 @@
 package com.wegame.capi.application.controller;
 
-import com.wegame.base.annotation.LoginRequired;
+import com.wegame.base.context.Operator;
+import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.converter.BetConverter;
 import com.wegame.capi.biz.converter.BetResultConverter;
@@ -28,10 +29,17 @@ public class BetController {
     @Autowired
     BetService betService;
 
-    @LoginRequired
+    //    @LoginRequired todo fix
     @ApiOperation(value = "投注", httpMethod = "POST")
     @PostMapping("/bet")
     public CommonResponse<BetResultVo> bet(@RequestBody BetRequest betRequest) {
+        // todo fix
+        Operator operator = new Operator();
+        operator.setPlayerId("1000");
+        operator.setName("张三");
+        operator.setUserId(1000L);
+        OperatorContext.setOperator(operator);
+
         betRequest.validate();
         BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
         return CommonResponse.build(BetResultConverter.doToVo(betResultDo));
