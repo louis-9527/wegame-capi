@@ -12,7 +12,7 @@ public class GetAuthLoginTokenReqBuilder {
 
     public static GetAuthLoginTokenReq build(UserLoginDo request) {
         return GetAuthLoginTokenReq.builder()
-                .pId(request.getPlatformId())
+                .pId(request.getPId())
                 .channelId(request.getChanelId())
                 .playerName(request.getPlayerName())
                 .createTime(DateUtil.toUTC(new Date()))

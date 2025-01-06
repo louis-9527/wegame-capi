@@ -1,5 +1,6 @@
 package com.wegame.capi.common.context;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -23,8 +24,9 @@ public class UserInfo implements Serializable {
 
     @ApiModelProperty("id")
     private String id;
+    @JsonProperty("pId")
     @ApiModelProperty(value = "平台id")
-    private String platformId;
+    private String pId;
     @ApiModelProperty(value = "渠道id")
     private String channelId;
     @ApiModelProperty(value = "游戏id")

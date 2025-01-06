@@ -2,8 +2,6 @@ package com.wegame.capi.client.domain.request.query;
 
 import com.wegame.base.domain.PageQueryRequest;
 import com.wegame.base.Validate;
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.utils.AssertUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -25,7 +23,7 @@ public class PageQueryUserRequest extends PageQueryRequest implements Validate {
     @ApiModelProperty(value = "主键ID", required = false)
     private String id;
     @ApiModelProperty(value = "平台id", required = false)
-    private String platformId;
+    private String pId;
     @ApiModelProperty(value = "用户姓名", required = false)
     private String playerId;
     @ApiModelProperty(value = "用户姓名", required = false)

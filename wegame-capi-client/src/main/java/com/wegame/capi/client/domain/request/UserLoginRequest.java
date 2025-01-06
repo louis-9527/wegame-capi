@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -21,7 +22,8 @@ import java.io.Serializable;
 @ApiModel(description = "用户登录请求参数")
 public class UserLoginRequest implements Validate, Serializable {
     @ApiModelProperty(value = "平台id", required = true)
-    private String platformId;
+    @JsonProperty("pId")
+    private String pId;
     @ApiModelProperty(value = "渠道id", required = true)
     private String chanelId;
     @ApiModelProperty(value = "游戏id", required = true)
@@ -41,7 +43,7 @@ public class UserLoginRequest implements Validate, Serializable {
 
     @Override
     public void validateParam() {
-        AssertUtil.assertStrNotEmpty(platformId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(pId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(chanelId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM);

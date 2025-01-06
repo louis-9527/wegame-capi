@@ -167,7 +167,7 @@ public class SingleWalletApi extends BaseApi {
                 .playerName(UserInfoContext.getUserInfo().getPlayerName())
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .createTime(DateUtil.toUTC(new Date()))
-                .pId(UserInfoContext.getUserInfo().getPlatformId())
+                .pId(UserInfoContext.getUserInfo().getPId())
                 .build();
         GetCreditRes creditRes = this.getCredit(creditReq);
         return BetWithPayoutRes.builder().betId(betStatusRes.getBetId()).playerName(creditReq.getPlayerName()).credit(creditRes.getCredit()).build();

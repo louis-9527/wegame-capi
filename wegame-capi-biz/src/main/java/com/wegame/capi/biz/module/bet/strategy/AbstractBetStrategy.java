@@ -1,13 +1,10 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.enums.OptEnum;
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
-import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
@@ -46,7 +43,7 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
         long id = idGeneratorHelper.nextId();
         return BetRecordDo.builder()
                 .id(id)
-                .pId(UserInfoContext.getUserInfo().getPlatformId())
+                .pId(UserInfoContext.getUserInfo().getPId())
                 .channelId(UserInfoContext.getUserInfo().getChannelId())
                 .playerId(UserInfoContext.getUserInfo().getPlayerId())
                 .userId(Long.valueOf(UserInfoContext.getUserInfo().getId()))
