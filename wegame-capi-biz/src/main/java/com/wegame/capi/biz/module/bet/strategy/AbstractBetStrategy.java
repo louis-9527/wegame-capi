@@ -30,7 +30,7 @@ import java.util.List;
 public abstract class AbstractBetStrategy<T, R extends Converter> implements BetStrategy<T, R> {
 
     @Autowired
-    IdGeneratorHelper idGeneratorHelper;
+    public IdGeneratorHelper idGeneratorHelper;
     @Autowired
     public BetRecordService betRecordService;
     @Autowired
@@ -40,28 +40,6 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
     public abstract Object extendHandle(Object obj);
 
     public abstract Game getGame();
-
-    public BetRecordDo getBetRecord(BetDo<T> betDo, Long betAmount, Long payAmount, List<GameBetResultDetailDo> resultDetails) {
-        //组装投注记录
-        long id = idGeneratorHelper.nextId();
-        return BetRecordDo.builder()
-                .id(id)
-                .pId(UserInfoContext.getUserInfo().getPlatformId())
-                .channelId(UserInfoContext.getUserInfo().getChannelId())
-                .playerId(UserInfoContext.getUserInfo().getPlayerId())
-                .userId(Long.valueOf(UserInfoContext.getUserInfo().getId()))
-                .playerName(UserInfoContext.getUserInfo().getPlayerName())
-                .gameId(betDo.getGameId())
-                .betSerialNo(String.valueOf(id))
-                .betType(betDo.getBetType().getCode())
-                .betSubType(betDo.getBetSubType().getCode())
-                .betAmount(betAmount)
-                .payOutAmount(payAmount)
-                .status(GameStatusEnum.ING.getCode())
-                .detail(resultDetails)
-                .build();
-    }
-
 
     /**
      * 保存投注记录

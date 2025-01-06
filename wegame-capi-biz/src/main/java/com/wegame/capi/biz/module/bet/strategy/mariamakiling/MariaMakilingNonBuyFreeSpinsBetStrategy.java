@@ -1,27 +1,23 @@
 package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
-import com.wegame.base.enums.BooleanEnum;
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingNonBuyFreeSpinsBetDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingNonBuyFreeSpinsBetResultDo;
-import com.wegame.capi.biz.domain.biz.bet.*;
 import com.wegame.capi.biz.domain.biz.reward.MariaNotifyDo;
-import com.wegame.capi.biz.domain.biz.reward.PushGrandPrizeDo;
 import com.wegame.capi.biz.domain.biz.reward.MariaNotifyResultDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.PushGrandPrizeTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.common.enums.GameStatusEnum;
-import com.wegame.capi.common.utils.GameAmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import org.springframework.stereotype.Component;
 
@@ -73,7 +69,8 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
             freeSpinIds.add(resultDetail.getId());
         }
         // 获取投注结果
-        BetRecordDo betRecord = super.getBetRecord(betDo, 0L, rewardAmount, resultDetails);
+        long betRecordId = idGeneratorHelper.nextId();
+        BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId,0L, rewardAmount, resultDetails);
         betRecord.setFreeSpinsRefId(recordId);
         betRecord.setFreeSpinsTimes(resultDetails.size());
         // 保存投注记录并派奖

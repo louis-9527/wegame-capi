@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
+import com.wegame.base.id.IdGeneratorHelper;
+import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBuyFreeSpinsBetDo;
@@ -14,6 +16,13 @@ import java.util.List;
 @Component("mariaMakilingBuyFreeSpinsBetStrategy")
 public class MariaMakilingBuyFreeSpinsBetStrategy
         extends AbstractMariaMakilingBetStrategy<MariaMakilingBuyFreeSpinsBetDo, MariaMakilingBuyFreeSpinsBetResultDo> {
+
+    private final IdGeneratorHelper idGeneratorHelper;
+
+    public MariaMakilingBuyFreeSpinsBetStrategy(IdGeneratorHelper idGeneratorHelper) {
+        super();
+        this.idGeneratorHelper = idGeneratorHelper;
+    }
 
     @Override
     public BetResultDo<MariaMakilingBuyFreeSpinsBetResultDo> bet(BetDo<MariaMakilingBuyFreeSpinsBetDo> betDo) {
@@ -46,8 +55,9 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
         }
 
         resultDetails.add(betResult);
-        //保存投注记录并派奖
-        BetRecordDo betRecord = super.getBetRecord(betDo, betDo.getBetDetail().getPayAmount(), rewardAmount, resultDetails);
+        // 保存投注记录并派奖
+        long betRecordId = idGeneratorHelper.nextId();
+        BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId, betDo.getBetDetail().getPayAmount(), rewardAmount, resultDetails);
         Long credit = super.saveBetRecordAndPayOut(betRecord);
         return BetResultDo.<MariaMakilingBuyFreeSpinsBetResultDo>builder()
                 .betRecordId(betRecord.getId())

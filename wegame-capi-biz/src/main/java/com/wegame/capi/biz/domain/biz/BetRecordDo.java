@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetRecordDo implements Serializable {
+public class BetRecordDo<T> implements Serializable {
     private static final long serialVersionUID = -3514324297343525888L;
     /**
      * 主键ID
@@ -90,9 +90,9 @@ public class BetRecordDo implements Serializable {
      */
     private Long freeSpinsRefId;
     /**
-     * 游戏记录明细json
+     * 游戏记录明细
      */
-    private Object detail;
+    private T detail;
     /**
      * 创建人
      */
