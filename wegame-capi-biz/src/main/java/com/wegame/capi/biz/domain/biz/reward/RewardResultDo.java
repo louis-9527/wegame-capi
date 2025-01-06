@@ -1,7 +1,8 @@
 package com.wegame.capi.biz.domain.biz.reward;
 
+import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
-import com.wegame.capi.common.enums.PrizeTypeEnum;
+import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -24,29 +25,28 @@ import java.util.List;
 public class RewardResultDo implements Serializable {
     private static final long serialVersionUID = -2262432373454848L;
     /**
+     * 中奖类型
+     */
+    private RewardTypeEnum rewardType;
+    /**
+     * 中奖子类型
+     */
+    private RewardSubTypeEnum rewardSubType;
+    /**
      * 中奖总金额.单位：分
      */
     private Long rewardTotalAmount;
     /**
-     * 中奖线中奖列表
-     */
-    private List<RewardLineDo> rewardLineList;
-    /**
-     * 倍率
-     */
-    private BigDecimal multiple;
-    /**
-     * 奖励类型
-     */
-    private PrizeTypeEnum prizeType;
-    /**
-     * 中奖类型  单奖励/多奖励
-     *
-     * @see com.wegame.capi.common.enums.RewardTypeEnum
-     */
-    private Integer rewardType;
-    /**
      * 是否中了免费轮
      */
     private boolean isFreeSpin;
+    /**
+     * 中奖线列表
+     */
+    private List<RewardLineDo> rewardLineList;
+    /**
+     * 中奖总倍率
+     */
+    private BigDecimal multiple;
+
 }

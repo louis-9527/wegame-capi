@@ -2,7 +2,7 @@ package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.common.enums.PrizeTypeEnum;
+import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 
 import java.math.BigDecimal;
@@ -16,14 +16,20 @@ public class RewardResultBuilder {
             return null;
         }
 
-        return RewardResultDo.builder().rewardTotalAmount(rewardTotalAmount).rewardLineList(rewardLineList).multiple(wildTotalTimes).rewardType(rewardLineList.size() <= 1 ? RewardTypeEnum.SINGLE.getCode() : RewardTypeEnum.MULTIPLE.getCode()).isFreeSpin(isFreeSpin).build();
+        return RewardResultDo.builder()
+                .rewardTotalAmount(rewardTotalAmount)
+                .rewardLineList(rewardLineList)
+                .multiple(wildTotalTimes)
+                .rewardType(rewardLineList.size() <= 1 ? RewardTypeEnum.SINGLE : RewardTypeEnum.MULTIPLE)
+                .isFreeSpin(isFreeSpin)
+                .build();
     }
 
-    public static RewardResultDo build(RewardResultDo rewardResultDo, PrizeTypeEnum gameGrandPrizeType) {
-        if (Objects.isNull(rewardResultDo) || Objects.isNull(gameGrandPrizeType)) {
+    public static RewardResultDo build(RewardResultDo rewardResultDo, RewardSubTypeEnum rewardSubType) {
+        if (Objects.isNull(rewardResultDo) || Objects.isNull(rewardSubType)) {
             return null;
         }
-        rewardResultDo.setPrizeType(gameGrandPrizeType);
+        rewardResultDo.setRewardSubType(rewardSubType);
         return rewardResultDo;
     }
 

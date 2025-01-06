@@ -25,10 +25,6 @@ import java.util.List;
 public class RewardLineDo implements Serializable {
     private static final long serialVersionUID = -2876565534848L;
     /**
-     * 中奖元素
-     */
-    private SymbolDo symbol;
-    /**
      * 中奖金额
      */
     private Long rewardAmount;
@@ -41,11 +37,15 @@ public class RewardLineDo implements Serializable {
      */
     private BigDecimal multiple;
     /**
-     * 中奖线的中奖元素坐标列表
+     * 中奖元素
      */
-    private List<SymbolIndexDo> symbolIndexList;
+    private SymbolDo symbol;
     /**
      * 中奖线的中奖元素列表
      */
     private List<SymbolDo> symbolList;
+    /**
+     * 中奖线的中奖元素坐标列表
+     */
+    private List<SymbolIndexDo> symbolIndexList;
 }

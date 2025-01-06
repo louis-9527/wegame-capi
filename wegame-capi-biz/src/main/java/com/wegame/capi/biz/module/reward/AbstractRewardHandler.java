@@ -13,7 +13,7 @@ import com.wegame.capi.biz.domain.biz.reward.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
-import com.wegame.capi.common.enums.PrizeTypeEnum;
+import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
 
     public abstract boolean bizValidate(RewardHandleDo rewardHandle);
 
-    public abstract PrizeTypeEnum calcGameGrandPrize(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo);
+    public abstract RewardSubTypeEnum rewardSubType(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo);
 
     public RewardResultDo handle(RewardHandleDo rewardHandle) {
         this.validate(rewardHandle);
@@ -83,7 +83,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
                         rewardHandle.getWheel().getSymbolArr()));
         // 返回中奖信息
         return RewardResultBuilder.build(tempRewardResultDo,
-                this.calcGameGrandPrize(rewardHandle, tempRewardResultDo));
+                this.rewardSubType(rewardHandle, tempRewardResultDo));
     }
 
     public boolean validate(RewardHandleDo rewardHandle) {
