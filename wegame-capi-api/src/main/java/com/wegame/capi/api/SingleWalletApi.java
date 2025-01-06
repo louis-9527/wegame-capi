@@ -57,10 +57,8 @@ public class SingleWalletApi extends BaseApi {
             String encrypt = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
             AssertUtil.assertNotNull(encrypt, ErrorCode.ERR_PARAM);
             req.setHash(encrypt);
-            RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
-                    URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
-            ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = restTemplate.exchange(requestEntity,
-                    new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {});
+            RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST, URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
+            ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {});
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM);

@@ -2,7 +2,7 @@ package com.wegame.capi.application.controller;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.biz.manager.GameNotifyManager;
+import com.wegame.capi.biz.manager.RewardManager;
 import com.wegame.capi.client.domain.vo.RewardInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class RewardController {
 
     @Autowired
-    GameNotifyManager gameNotifyManager; // todo fix
+    RewardManager rewardManager;
 
     @LoginRequired
     @ApiOperation(value = "查询大奖结果", httpMethod = "GET")
-    @GetMapping("/query") // todo
-    public CommonResponse<RewardInfoVo> query() {
-        return CommonResponse.build(gameNotifyManager.query());
+    @GetMapping("/list")
+    public CommonResponse<RewardInfoVo> list() {
+        return CommonResponse.build(rewardManager.list());
     }
 }
