@@ -2,6 +2,7 @@ package com.wegame.capi.biz.domain.biz;
 
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.common.enums.PrizeTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GameBetResultDetailDo {
+public class MariaMakilingGameRecordDetailDo {
     private Integer id;
     /**
      * 投注金额
@@ -41,19 +42,24 @@ public class GameBetResultDetailDo {
     private boolean freeSpinsFlag;
     /**
      * 游戏结果
+     * todo delete
      */
     private SymbolDo[][] gameResult;
     /**
+     * 滚轮
+     */
+    private WheelDo wheel;
+    /**
      * 中奖结果列表
      */
-    private List<RewardResult> rewardResults;
+    private List<RewardLineResultDo> rewardResults;
 
     @Data
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
-    public static class RewardResult {
+    public static class RewardLineResultDo {
         /**
          * 元素id
          */
@@ -71,12 +77,13 @@ public class GameBetResultDetailDo {
          */
         private BigDecimal odds;
         /**
-         * 中奖线列表
-         */
-        private List<SymbolIndexDo> rewardIndex;
-        /**
-         * 当前中奖线元素集合
+         * 中奖线元素列表
          */
         private List<SymbolDo> rewardSymbolList;
+        /**
+         * 中奖线元素坐标列表
+         */
+        private List<SymbolIndexDo> rewardIndexList;
+
     }
 }

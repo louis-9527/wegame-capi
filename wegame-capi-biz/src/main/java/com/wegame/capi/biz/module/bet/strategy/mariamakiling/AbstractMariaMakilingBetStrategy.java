@@ -1,13 +1,9 @@
 package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
-import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.converter.Converter;
-import com.wegame.capi.biz.converter.GameRecordConverter;
-import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.biz.MariaMakilingGameRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayResultDo;
 import com.wegame.capi.biz.domain.biz.reward.MariaNotifyDo;
@@ -21,9 +17,6 @@ import com.wegame.capi.biz.module.game.MariaMakilingGame;
 import com.wegame.capi.biz.service.WheelTimerService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.Constants;
-import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,10 +28,6 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
     MariaMakilingGame mariaMakilingGame;
     @Autowired
     WheelTimerService wheelTimerService;
-
-    MariaNotifyResultDo pushGrandPrizeHandle(MariaNotifyDo marizNotifyDo) {
-        return null;
-    }
 
     @Override
     public Game getGame() {
@@ -53,22 +42,10 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
      * @param betAmount
      * @return
      */
-    public GameBetResultDetailDo getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
-        List<GameBetResultDetailDo> resultDetail = this.getGameBetResult(betType, betSubType, betAmount, false);
+    public MariaMakilingGameRecordDetailDo getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
+        List<MariaMakilingGameRecordDetailDo> resultDetail = this.getGameBetResult(betType, betSubType, betAmount, false);
         return resultDetail.get(0);
     }
-
-    // todo fix
-    //    @Override
-    //    public Object extendHandle(Object obj) {
-    //        AssertUtil.assertTrue(obj instanceof MariaNotifyDo, ErrorCode.ERR_INTER, "data type is not support");
-    //        MariaNotifyResultDo notifyDo = this.pushGrandPrizeHandle((MariaNotifyDo) obj);
-    //        if (Objects.nonNull(notifyDo)) {
-    //            wheelTimerService.delayPushPrize(notifyDo, String.format(Constants.PUSH_PRIZE_REDIS_KEY, notifyDo.getGameTypeId()));
-    //        }
-    //        return notifyDo;
-    //    }
-
 
     /**
      * 获取多个游戏结果
@@ -79,7 +56,7 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
      * @param freeSpinsFlag 是否免费轮,如果是怎会获取多条记录
      * @return
      */
-    public List<GameBetResultDetailDo> getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount, Boolean freeSpinsFlag) {
+    public List<MariaMakilingGameRecordDetailDo> getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount, Boolean freeSpinsFlag) {
         GamePlayDo gamePlay = GamePlayDo.builder()
                 .gameType(this.mariaMakilingGame.getGameInfo().getGameType())
                 .betType(betType)
@@ -91,7 +68,7 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         AssertUtil.assertNotNull(gamePlayResult, ErrorCode.ERR_INTER);
         // 滚轮中奖列表
         List<WheelRewardDo> wheelRewardList = gamePlayResult.getWheelRewardList();
-        List<GameBetResultDetailDo> resultDetails = new ArrayList<>();
+        List<MariaMakilingGameRecordDetailDo> resultDetails = new ArrayList<>();
         wheelRewardList.forEach(rewardResultDo -> {
             resultDetails.add(this.buildBetResult(rewardResultDo, betAmount));
         });
@@ -105,26 +82,26 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
      * @param rewardLineList
      * @return
      */
-    private List<GameBetResultDetailDo.RewardResult> getRewardLineResults(List<RewardLineDo> rewardLineList) {
+    private List<MariaMakilingGameRecordDetailDo.RewardLineResultDo> getRewardLineResults(List<RewardLineDo> rewardLineList) {
         if (CollectionUtils.isEmpty(rewardLineList)) {
             return new ArrayList<>();
         }
-        List<GameBetResultDetailDo.RewardResult> rewardResults = new ArrayList<>();
+        List<MariaMakilingGameRecordDetailDo.RewardLineResultDo> rewardResults = new ArrayList<>();
         rewardLineList.forEach(tt ->
-                rewardResults.add(GameBetResultDetailDo.RewardResult.builder()
+                rewardResults.add(MariaMakilingGameRecordDetailDo.RewardLineResultDo.builder()
                         .symbol(tt.getSymbolDo())
                         .odds(tt.getOdds())
                         .multiple(tt.getRewardMultiple())
                         .rewardAmount(tt.getRewardAmount())
-                        .rewardIndex(tt.getRewardSymbolIndexList())
+                        .rewardIndexList(tt.getRewardSymbolIndexList())
                         .rewardSymbolList(tt.getRewardSymbolList())
                         .build()));
         return rewardResults;
     }
 
 
-    private GameBetResultDetailDo buildBetResult(WheelRewardDo rewardResultDo, Long betAmount) {
-        GameBetResultDetailDo build = GameBetResultDetailDo.builder()
+    private MariaMakilingGameRecordDetailDo buildBetResult(WheelRewardDo rewardResultDo, Long betAmount) {
+        MariaMakilingGameRecordDetailDo build = MariaMakilingGameRecordDetailDo.builder()
                 .id(rewardResultDo.getWheelIndex())
                 .gameResult(rewardResultDo.getWheel().getSymbolArr())
                 .betAmount(betAmount)

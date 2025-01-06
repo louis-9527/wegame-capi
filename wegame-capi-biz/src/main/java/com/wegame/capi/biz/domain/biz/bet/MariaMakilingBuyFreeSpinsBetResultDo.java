@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.domain.biz.bet;
 
 import com.wegame.capi.biz.converter.Converter;
-import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.biz.MariaMakilingGameRecordDetailDo;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.client.domain.vo.GameBetPayOutDetailVo;
 import com.wegame.capi.client.domain.vo.MariaMakilingNonBuyFreeSpinsBetResultVo;
@@ -23,7 +23,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class MariaMakilingBuyFreeSpinsBetResultDo implements Converter<Object> {
     private List<Integer> freeSpinIds;
-    private GameBetResultDetailDo resultDetail;
+    private MariaMakilingGameRecordDetailDo resultDetail;
 
     @Override
     public Object toVo() {
@@ -32,9 +32,9 @@ public class MariaMakilingBuyFreeSpinsBetResultDo implements Converter<Object> {
         vo.setPayOutTotalAmount(resultDetail.getRewardAmount());
         vo.setSpinsResult(SymbolBuilder.build(resultDetail.getGameResult()));
         List<GameBetPayOutDetailVo> detailVos = new ArrayList<>();
-        List<GameBetResultDetailDo.RewardResult> rewardResults = resultDetail.getRewardResults();
+        List<MariaMakilingGameRecordDetailDo.RewardLineResultDo> rewardResults = resultDetail.getRewardResults();
         if (CollectionUtils.isNotEmpty(rewardResults)) {
-            for (GameBetResultDetailDo.RewardResult rewardResult : rewardResults) {
+            for (MariaMakilingGameRecordDetailDo.RewardLineResultDo rewardResult : rewardResults) {
                 GameBetPayOutDetailVo detailVo = new GameBetPayOutDetailVo();
                 List<String> rewardSymbolIdList = new ArrayList<>();
                 if (CollectionUtils.isNotEmpty(rewardResult.getRewardSymbolList())) {
@@ -45,8 +45,8 @@ public class MariaMakilingBuyFreeSpinsBetResultDo implements Converter<Object> {
                 detailVo.setOdds(rewardResult.getOdds());
                 detailVo.setPayOutAmount(rewardResult.getRewardAmount());
                 List<SymbolIndexVo> symbolIndexVo = new ArrayList<>();
-                if (CollectionUtils.isNotEmpty(rewardResult.getRewardIndex())) {
-                    rewardResult.getRewardIndex().forEach(indexDo -> {
+                if (CollectionUtils.isNotEmpty(rewardResult.getRewardIndexList())) {
+                    rewardResult.getRewardIndexList().forEach(indexDo -> {
                         symbolIndexVo.add(SymbolIndexVo.build(indexDo.getRowIndex(), indexDo.getColumIndex()));
                     });
                 }

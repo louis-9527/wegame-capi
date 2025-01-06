@@ -10,7 +10,7 @@ import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.converter.GameRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.biz.MariaMakilingGameRecordDetailDo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
@@ -105,7 +105,7 @@ public class BetRecordService {
     ///////////////  above auto generated ///////////////
 
 
-    public GameBetResultDetailDo getResultDetail(Long recordId, Integer freeSpinId) {
+    public MariaMakilingGameRecordDetailDo getResultDetail(Long recordId, Integer freeSpinId) {
         AssertUtil.assertNotNull(recordId, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(freeSpinId, ErrorCode.ERR_PARAM);
         BetRecordPo betRecord = mongoTemplate.findById(recordId, BetRecordPo.class);
