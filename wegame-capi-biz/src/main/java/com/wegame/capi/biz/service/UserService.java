@@ -11,6 +11,7 @@ import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
 import com.wegame.capi.biz.converter.user.UserConverter;
 import com.wegame.capi.biz.domain.user.UserDo;
+import com.wegame.capi.client.domain.dto.CreditChangeNotifyDto;
 import com.wegame.capi.client.domain.request.CreditChangeNotifyRequest;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.user.UserManualMapper;
@@ -239,10 +240,10 @@ public class UserService {
         return Objects.isNull(res.getCredit()) ? 0L : res.getCredit().longValue();
     }
 
-    public Void notifyCreditChange(CreditChangeNotifyRequest request) {
-        String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));
-        AssertUtil.assertTrue(StringUtils.equals(hash, request.getHash()), ErrorCode.ERR_PARAM);
-        redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, request.getPlayerName()), 1);
+    public Void notifyCreditChange(CreditChangeNotifyDto dto) {
+        String hash = singleWalletApi.hash(dto.getChannelId(), dto.getHash(), dto.getRefId(), DateUtil.toUTC(dto.getCreateTime()));
+        AssertUtil.assertTrue(StringUtils.equals(hash, dto.getHash()), ErrorCode.ERR_PARAM);
+        redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, dto.getPlayerName()), 1);
         // todo 麦冬 返回void结果
         return null;
     }

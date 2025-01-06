@@ -1,7 +1,8 @@
 package com.wegame.capi.application.controller.platform;
 
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.biz.service.BetRecordService;
+import com.wegame.capi.biz.converter.PlatformCallbackConverter;
+import com.wegame.capi.biz.service.BetSummaryService;
 import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.client.domain.request.BetReconciliationRequest;
 import com.wegame.capi.client.domain.request.CreditChangeNotifyRequest;
@@ -22,21 +23,19 @@ public class PlatformCallbackController {
     @Autowired
     UserService userService;
     @Autowired
-    BetRecordService betRecordService;
+    BetSummaryService betSummaryService;
 
     @ApiOperation(value = "余额变动通知", httpMethod = "POST")
     @PostMapping("/notifyCreditChange")
     public CommonResponse<Void> notifyCreditChange(@RequestBody CreditChangeNotifyRequest request) {
         request.validateParam();
-        // todo request to Do @maidong
-        return CommonResponse.build(userService.notifyCreditChange(request));
+        return CommonResponse.build(userService.notifyCreditChange(PlatformCallbackConverter.requestToDto(request)));
     }
 
     @ApiOperation(value = "对账", httpMethod = "POST")
     @PostMapping("/betSummary")
     public CommonResponse<BetSummaryVo> betSummary(@RequestBody BetReconciliationRequest request) {
         request.validateParam();
-        return null; // todo @maidong
-        //        return CommonResponse.build(betRecordService.betSummary(request));
+        return CommonResponse.build(betSummaryService.betSummary(PlatformCallbackConverter.requestToDto(request)));
     }
 }
