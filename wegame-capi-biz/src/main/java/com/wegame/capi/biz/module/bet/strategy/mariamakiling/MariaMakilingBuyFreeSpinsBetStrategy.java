@@ -19,7 +19,6 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
 
     @Override
     public BetResultDo<MysteriousBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousBuyFreeSpinsBetDo> betDo) {
-        // todo 判断是否免费轮 标识, 是则查询返回
         MysteriousBuyFreeSpinsBetDo betDetail = betDo.getBetDetail();
         if (betDetail.getBetRecordId() != null && betDetail.getFreeSpinsId() != null) {
             //查询免费轮详情

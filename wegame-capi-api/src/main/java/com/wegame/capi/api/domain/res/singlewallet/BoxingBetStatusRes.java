@@ -27,6 +27,8 @@ public class BoxingBetStatusRes implements Serializable {
      */
     private String refId;
 
+    private String betId;
+
     /**
      * 注单状态码??
      */

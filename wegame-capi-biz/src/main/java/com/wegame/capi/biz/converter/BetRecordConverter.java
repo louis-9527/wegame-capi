@@ -70,6 +70,7 @@ public class BetRecordConverter {
         betRecordDo.setStatus(po.getStatus());
         betRecordDo.setFreeSpinsFlag(po.getFreeSpinsFlag());
         betRecordDo.setFreeSpinsTimes(po.getFreeSpinsTimes());
+        betRecordDo.setFreeSpinsRefId(po.getFreeSpinsRefId());
         betRecordDo.setDetail(po.getDetail());
         betRecordDo.setCreator(po.getCreator());
         betRecordDo.setCreateTime(po.getCreateTime());
@@ -101,6 +102,7 @@ public class BetRecordConverter {
         po.setStatus(betRecordDo.getStatus());
         po.setFreeSpinsFlag(betRecordDo.getFreeSpinsFlag());
         po.setFreeSpinsTimes(betRecordDo.getFreeSpinsTimes());
+        po.setFreeSpinsRefId(betRecordDo.getFreeSpinsRefId());
         po.setDetail(betRecordDo.getDetail());
         if (OptEnum.ADD.equals(optEnum)) {
             po.setCreator(operator.getName());
