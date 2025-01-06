@@ -34,9 +34,6 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
     @Autowired
     private SingleWalletApi singleWalletApi;
 
-    // 投注额外信息处理
-    public abstract Object extendHandle(Object obj);
-
     public abstract Game getGame();
 
     /**
