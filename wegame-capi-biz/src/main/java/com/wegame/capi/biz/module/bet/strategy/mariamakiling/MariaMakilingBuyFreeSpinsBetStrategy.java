@@ -69,9 +69,4 @@ public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingB
                         .build())
                 .build();
     }
-
-    @Override
-    public Object extendHandle(Object obj) {
-        return null;
-    }
 }

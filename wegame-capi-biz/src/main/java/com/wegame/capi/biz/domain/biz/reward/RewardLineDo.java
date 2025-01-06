@@ -24,29 +24,28 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class RewardLineDo implements Serializable {
     private static final long serialVersionUID = -2876565534848L;
-
     /**
-     * 元素id
+     * 中奖元素
      */
-    private SymbolDo symbolDo;
+    private SymbolDo symbol;
     /**
      * 中奖金额
      */
     private Long rewardAmount;
     /**
-     * 中奖倍数
-     */
-    private BigDecimal rewardMultiple;
-    /**
      * 赔率
      */
     private BigDecimal odds;
     /**
-     * 当前中奖线的中奖元素坐标列表
+     * 倍率
      */
-    private List<SymbolIndexDo> rewardSymbolIndexList;
+    private BigDecimal multiple;
     /**
-     * 当前中奖线的中奖id列表
+     * 中奖线的中奖元素坐标列表
      */
-    private List<SymbolDo> rewardSymbolList;
+    private List<SymbolIndexDo> symbolIndexList;
+    /**
+     * 中奖线的中奖元素列表
+     */
+    private List<SymbolDo> symbolList;
 }

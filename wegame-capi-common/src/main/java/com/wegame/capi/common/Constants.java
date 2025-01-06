@@ -18,4 +18,17 @@ public class Constants {
     // redis
     // 推送中大奖redis key
     public static final String PUSH_PRIZE_REDIS_KEY = "wegame:push_prize:%s";
+    // 推送大奖lua脚本
+    public static final String PUSH_PRIZE_LUA_SCRIPT = "local key = KEYS[1]\n" +
+            "local value = ARGV[1]\n" +
+            "local maxSize = tonumber(ARGV[2])\n" +
+            "\n" +
+            "redis.call('RPUSH', key, value)\n" +
+            "if redis.call('LLEN', key) > maxSize then\n" +
+            "    redis.call('LTRIM', key, -maxSize, -1)\n" +
+            "end";
+    public static final Integer PUSH_PRIZE_LIMIT = 10;
+    // 推送大奖tips内容
+    public static final String PUSH_PRIZE_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+
 }

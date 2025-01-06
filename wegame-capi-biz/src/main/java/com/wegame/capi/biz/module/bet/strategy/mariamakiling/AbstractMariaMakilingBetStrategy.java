@@ -1,22 +1,23 @@
 package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.converter.Converter;
+import com.wegame.capi.biz.converter.GameRecordConverter;
 import com.wegame.capi.biz.domain.biz.MariaMakilingGameRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayResultDo;
-import com.wegame.capi.biz.domain.biz.reward.MariaNotifyDo;
-import com.wegame.capi.biz.domain.biz.reward.MariaNotifyResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
 import com.wegame.capi.biz.module.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.module.game.MariaMakilingGame;
-import com.wegame.capi.biz.service.WheelTimerService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,14 +27,18 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
 
     @Autowired
     MariaMakilingGame mariaMakilingGame;
-    @Autowired
-    WheelTimerService wheelTimerService;
 
     @Override
     public Game getGame() {
         return mariaMakilingGame;
     }
 
+
+
+
+
+
+    //////////////////////  =============
     /**
      * 获取单个结果
      *
@@ -89,12 +94,12 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         List<MariaMakilingGameRecordDetailDo.RewardLineResultDo> rewardResults = new ArrayList<>();
         rewardLineList.forEach(tt ->
                 rewardResults.add(MariaMakilingGameRecordDetailDo.RewardLineResultDo.builder()
-                        .symbol(tt.getSymbolDo())
+                        .symbol(tt.getSymbol())
                         .odds(tt.getOdds())
-                        .multiple(tt.getRewardMultiple())
+                        .multiple(tt.getMultiple())
                         .rewardAmount(tt.getRewardAmount())
-                        .rewardIndexList(tt.getRewardSymbolIndexList())
-                        .rewardSymbolList(tt.getRewardSymbolList())
+                        .rewardIndexList(tt.getSymbolIndexList())
+                        .rewardSymbolList(tt.getSymbolList())
                         .build()));
         return rewardResults;
     }
@@ -109,13 +114,11 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         RewardResultDo rewardResult = rewardResultDo.getRewardResult();
         if (rewardResult != null) {
             build.setRewardAmount(rewardResult.getRewardTotalAmount());
-            build.setMultiple(rewardResult.getWildTotalTimes());
+            build.setMultiple(rewardResult.getMultiple());
             build.setPrizeType(rewardResult.getPrizeType());
             build.setFreeSpinsFlag(rewardResult.isFreeSpin());
             build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
         }
         return build;
     }
-
-
 }

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -34,5 +35,26 @@ public class GamePlayResultDo implements Serializable {
      * 游戏滚轮中奖列表
      */
     private List<WheelRewardDo> wheelRewardList;
+
+    /**
+     * 是否中奖
+     * @return
+     */
+    public boolean hasReward() {
+        return CollectionUtils.isNotEmpty(wheelRewardList);
+    }
+
+    /**
+     * 是否中奖免费轮
+     * @return
+     */
+    public boolean hasRewardFreeSpins() {
+        return CollectionUtils.isNotEmpty(wheelRewardList) && wheelRewardList
+                .stream()
+                .filter(item -> item.getRewardResult().isFreeSpin())
+                .count() > 0;
+    }
+
+
 }
 

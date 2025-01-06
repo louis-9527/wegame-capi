@@ -54,6 +54,11 @@ public class MariaMakilingGameRecordDetailDo {
      */
     private List<RewardLineResultDo> rewardResults;
 
+    /**
+     * 是否最大免费轮id
+     */
+    private boolean maxFreeSpinsIdFlag;
+
     @Data
     @SuperBuilder
     @NoArgsConstructor

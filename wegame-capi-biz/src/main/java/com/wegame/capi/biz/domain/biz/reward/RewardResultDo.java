@@ -32,9 +32,9 @@ public class RewardResultDo implements Serializable {
      */
     private List<RewardLineDo> rewardLineList;
     /**
-     * wild总倍数
+     * 倍率
      */
-    private BigDecimal wildTotalTimes;
+    private BigDecimal multiple;
     /**
      * 奖励类型
      */
@@ -49,6 +49,4 @@ public class RewardResultDo implements Serializable {
      * 是否中了免费轮
      */
     private boolean isFreeSpin;
-
-
 }

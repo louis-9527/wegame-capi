@@ -15,12 +15,12 @@ public class RewardLineBuilder {
         }
 
         return RewardLineDo.builder()
-                .symbolDo(rewardRuleLine.getSymbol())
+                .symbol(rewardRuleLine.getSymbol())
                 .rewardAmount(rewardAmount)
-                .rewardMultiple(multiple)
+                .multiple(multiple)
                 .odds(odds)
-                .rewardSymbolIndexList(rewardRuleLine.getRewardSymbolIndexList())
-                .rewardSymbolList(rewardRuleLine.getRewardSymbolIdList())
+                .symbolIndexList(rewardRuleLine.getRewardSymbolIndexList())
+                .symbolList(rewardRuleLine.getRewardSymbolIdList())
                 .build();
     }
 

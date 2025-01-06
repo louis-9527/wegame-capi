@@ -8,6 +8,8 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 /**
  * GameRecordConverter
  *
@@ -261,7 +263,7 @@ public class GameRecordConverter {
     //        return detailPo;
     //    }
 
-    public static MariaMakilingGameRecordDetailDo poToDetailDo(GameRecordDetailPo detailPo) {
+    public static MariaMakilingGameRecordDetailDo poToDetailDo(GameRecordDetailPo detailPo, Integer maxFreeSpinsDetailId) {
         if (detailPo == null) {
             return null;
         }
@@ -273,6 +275,7 @@ public class GameRecordConverter {
         detaildo.setFreeSpinsFlag(detailPo.isFreeSpinsFlag());
         detaildo.setGameResult(convertJsonToSymbolDoArray(detailPo.getGameResult()));
         detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult()) ? null : JSON.parseArray(detailPo.getRewardResult(), MariaMakilingGameRecordDetailDo.RewardLineResultDo.class));
+        detaildo.setMaxFreeSpinsIdFlag(Objects.equals(detailPo.getId(), maxFreeSpinsDetailId));
         return detaildo;
     }
 
