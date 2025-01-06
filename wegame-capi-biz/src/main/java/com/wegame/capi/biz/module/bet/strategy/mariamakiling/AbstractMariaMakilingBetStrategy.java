@@ -10,16 +10,19 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayResultDo;
+import com.wegame.capi.biz.domain.biz.reward.MariaNotifyDo;
+import com.wegame.capi.biz.domain.biz.reward.MariaNotifyResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
 import com.wegame.capi.biz.module.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.module.game.MariaMakilingGame;
+import com.wegame.capi.biz.service.WheelTimerService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.PrizeTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +33,55 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
 
     @Autowired
     MariaMakilingGame mariaMakilingGame;
+    @Autowired
+    WheelTimerService wheelTimerService;
+
+    MariaNotifyResultDo pushGrandPrizeHandle(MariaNotifyDo marizNotifyDo) {
+        return null;
+    }
 
     @Override
     public Game getGame() {
         return mariaMakilingGame;
     }
 
-    // todo fix
-
-
-    public GameBetResultDetailDo getResultDetail(String gameId, BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
-        List<GameBetResultDetailDo> resultDetail = this.getResultDetail(gameId, betType, betSubType, betAmount, false);
+    /**
+     * 获取单个结果
+     *
+     * @param betType
+     * @param betSubType
+     * @param betAmount
+     * @return
+     */
+    public GameBetResultDetailDo getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
+        List<GameBetResultDetailDo> resultDetail = this.getGameBetResult(betType, betSubType, betAmount, false);
         return resultDetail.get(0);
     }
 
-    public List<GameBetResultDetailDo> getResultDetail(String gameId, BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount, Boolean freeSpinsFlag) {
+    // todo fix
+    //    @Override
+    //    public Object extendHandle(Object obj) {
+    //        AssertUtil.assertTrue(obj instanceof MariaNotifyDo, ErrorCode.ERR_INTER, "data type is not support");
+    //        MariaNotifyResultDo notifyDo = this.pushGrandPrizeHandle((MariaNotifyDo) obj);
+    //        if (Objects.nonNull(notifyDo)) {
+    //            wheelTimerService.delayPushPrize(notifyDo, String.format(Constants.PUSH_PRIZE_REDIS_KEY, notifyDo.getGameTypeId()));
+    //        }
+    //        return notifyDo;
+    //    }
+
+
+    /**
+     * 获取多个游戏结果
+     *
+     * @param betType       游戏类型
+     * @param betSubType    游戏子类型
+     * @param betAmount     投注金额
+     * @param freeSpinsFlag 是否免费轮,如果是怎会获取多条记录
+     * @return
+     */
+    public List<GameBetResultDetailDo> getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount, Boolean freeSpinsFlag) {
         GamePlayDo gamePlay = GamePlayDo.builder()
-                .gameType(GameTypeEnum.valueOfCode(gameId))
+                .gameType(this.mariaMakilingGame.getGameInfo().getGameType())
                 .betType(betType)
                 .betSubType(betSubType)
                 .betAmount(betAmount)
@@ -56,23 +91,9 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         AssertUtil.assertNotNull(gamePlayResult, ErrorCode.ERR_INTER);
         // 滚轮中奖列表
         List<WheelRewardDo> wheelRewardList = gamePlayResult.getWheelRewardList();
-
         List<GameBetResultDetailDo> resultDetails = new ArrayList<>();
         wheelRewardList.forEach(rewardResultDo -> {
-            RewardResultDo rewardResult = rewardResultDo.getRewardResult();
-            GameBetResultDetailDo build = GameBetResultDetailDo.builder()
-                    .id(rewardResultDo.getWheelIndex())
-                    .gameResult(rewardResultDo.getWheel().getSymbolArr())
-                    .betAmount(betAmount)
-                    .build();
-            if (rewardResult != null) {
-                build.setRewardAmount(rewardResult.getRewardTotalAmount());
-                build.setMultiple(rewardResult.getWildTotalTimes());
-                build.setPrizeType(rewardResult.getPrizeType());
-                build.setFreeSpinsFlag(rewardResult.isFreeSpin());
-                build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
-            }
-            resultDetails.add(build);
+            resultDetails.add(this.buildBetResult(rewardResultDo, betAmount));
         });
         return resultDetails;
     }
@@ -101,21 +122,22 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         return rewardResults;
     }
 
-    public GameBetResultDetailDo queryBetFreeSpin(String gameId, Long recordId, Integer freeSpinId) {
-        BetRecordDo betRecordDo = betRecordService.get(recordId);
-        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-        Object detail = betRecordDo.getDetail();
-        if (Objects.isNull(detail)) {
-            return null;
+
+    private GameBetResultDetailDo buildBetResult(WheelRewardDo rewardResultDo, Long betAmount) {
+        GameBetResultDetailDo build = GameBetResultDetailDo.builder()
+                .id(rewardResultDo.getWheelIndex())
+                .gameResult(rewardResultDo.getWheel().getSymbolArr())
+                .betAmount(betAmount)
+                .build();
+        RewardResultDo rewardResult = rewardResultDo.getRewardResult();
+        if (rewardResult != null) {
+            build.setRewardAmount(rewardResult.getRewardTotalAmount());
+            build.setMultiple(rewardResult.getWildTotalTimes());
+            build.setPrizeType(rewardResult.getPrizeType());
+            build.setFreeSpinsFlag(rewardResult.isFreeSpin());
+            build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
         }
-        List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(FastJsonUtils.toJSONString(detail), GameRecordDetailPo.class);
-        GameRecordDetailPo recordDetail = Optional.ofNullable(recordDetailPos)
-                .orElse(Collections.emptyList())
-                .stream()
-                .filter(item -> Objects.equals(item.getId(), freeSpinId))
-                .findFirst()
-                .orElse(null);
-        return GameRecordConverter.poToDetailDo(recordDetail);
+        return build;
     }
 
 

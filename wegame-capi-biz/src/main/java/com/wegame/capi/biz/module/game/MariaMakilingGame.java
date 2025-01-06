@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_SCATTER;
-import static com.wegame.capi.biz.util.RandomSymbolUtil.randomOneSymbol;
+import static com.wegame.capi.biz.util.SymbolRandomUtil.randomOneSymbol;
 
 @Slf4j
 @Component
@@ -153,7 +153,7 @@ public class MariaMakilingGame extends AbstractGame {
         return wheels;
     }
 
-    private Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
+    public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
         if (gamePlay.isFreeSpinsFlag()) {
             return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
         } else {

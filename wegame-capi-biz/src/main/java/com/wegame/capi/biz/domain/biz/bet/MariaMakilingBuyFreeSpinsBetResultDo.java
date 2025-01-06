@@ -2,7 +2,7 @@ package com.wegame.capi.biz.domain.biz.bet;
 
 import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
-import com.wegame.capi.biz.util.SymbolUtil;
+import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.client.domain.vo.GameBetPayOutDetailVo;
 import com.wegame.capi.client.domain.vo.MariaMakilingNonBuyFreeSpinsBetResultVo;
 import com.wegame.capi.client.domain.vo.SymbolIndexVo;
@@ -30,7 +30,7 @@ public class MariaMakilingBuyFreeSpinsBetResultDo implements Converter<Object> {
         MariaMakilingNonBuyFreeSpinsBetResultVo vo = new MariaMakilingNonBuyFreeSpinsBetResultVo();
         vo.setPrizeType(resultDetail.getPrizeType() == null ? null : resultDetail.getPrizeType().getCode());
         vo.setPayOutTotalAmount(resultDetail.getRewardAmount());
-        vo.setSpinsResult(SymbolUtil.convert(resultDetail.getGameResult()));
+        vo.setSpinsResult(SymbolBuilder.build(resultDetail.getGameResult()));
         List<GameBetPayOutDetailVo> detailVos = new ArrayList<>();
         List<GameBetResultDetailDo.RewardResult> rewardResults = resultDetail.getRewardResults();
         if (CollectionUtils.isNotEmpty(rewardResults)) {

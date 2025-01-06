@@ -16,8 +16,8 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "用户余额变动请求参数")
-public class NotifyCreditChangeRequest implements Validate, Serializable {
+@ApiModel(description = "余额变更通知请求参数")
+public class CreditChangeNotifyRequest implements Validate, Serializable {
     @ApiModelProperty(value = "渠道id", required = true)
     private String channelId;
     @ApiModelProperty(value = "玩家姓名", required = true)

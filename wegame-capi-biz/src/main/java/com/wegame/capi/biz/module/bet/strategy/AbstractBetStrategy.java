@@ -7,58 +7,34 @@ import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
 import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.GameStatusEnum;
-import com.wegame.capi.common.utils.GameAmountUtil;
+import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 抽象投注策略<br>
- * 各游戏共性抽象
+ * 各游戏共性抽象<br/>
+ * 1、获取具体游戏
+ * 2、
  */
 @Component
 public abstract class AbstractBetStrategy<T, R extends Converter> implements BetStrategy<T, R> {
 
     @Autowired
-    IdGeneratorHelper idGeneratorHelper;
+    public IdGeneratorHelper idGeneratorHelper;
     @Autowired
     public BetRecordService betRecordService;
     @Autowired
     private SingleWalletApi singleWalletApi;
 
     public abstract Game getGame();
-
-    public BetRecordDo getBetRecord(BetDo<T> betDo, Long betAmount, Long payAmount, List<GameBetResultDetailDo> resultDetails) {
-        //组装投注记录
-        long id = idGeneratorHelper.nextId();
-        return BetRecordDo.builder()
-                .id(id)
-                .pId(UserInfoContext.getUserInfo().getPId())
-                .channelId(UserInfoContext.getUserInfo().getChannelId())
-                .playerId(UserInfoContext.getUserInfo().getPlayerId())
-                .userId(Long.valueOf(UserInfoContext.getUserInfo().getId()))
-                .playerName(UserInfoContext.getUserInfo().getPlayerName())
-                .gameId(betDo.getGameId())
-                .betSerialNo(String.valueOf(id))
-                .betType(betDo.getBetType().getCode())
-                .betSubType(betDo.getBetSubType().getCode())
-                .betAmount(betAmount)
-                .payOutAmount(payAmount)
-                .status(GameStatusEnum.ING.getCode())
-                .detail(resultDetails)
-                .build();
-    }
-
 
     /**
      * 保存投注记录
@@ -74,7 +50,7 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
         // 更新记录
         BetRecordDo updateRecord = BetRecordDo.builder().id(betRecordDo.getId()).betId(betId).status(GameStatusEnum.SUCCESS.getCode()).build();
         betRecordService.update(updateRecord);
-        return GameAmountUtil.toLong(betWithPayoutRes.getCredit());
+        return AmountUtil.toLong(betWithPayoutRes.getCredit());
     }
 
     /**
@@ -92,8 +68,8 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
                 .playerName(gameRecordPo.getPlayerName())
                 .refId(gameRecordPo.getBetSerialNo())
                 .createTime(DateUtil.toUTC(new Date()))
-                .betAmount(GameAmountUtil.toBigDecimal(gameRecordPo.getBetAmount()))
-                .payoutAmount(GameAmountUtil.toBigDecimal(gameRecordPo.getPayOutAmount()))
+                .betAmount(AmountUtil.toBigDecimal(gameRecordPo.getBetAmount()))
+                .payoutAmount(AmountUtil.toBigDecimal(gameRecordPo.getPayOutAmount()))
                 .betDetails(BetWithPayoutReq.BetDetails.builder()
                         .gameId(gameRecordPo.getGameId())
                         .roundNo(gameRecordPo.getBetSerialNo())

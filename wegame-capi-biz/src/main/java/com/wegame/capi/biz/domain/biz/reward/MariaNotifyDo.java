@@ -1,5 +1,6 @@
-package com.wegame.capi.biz.domain.game;
+package com.wegame.capi.biz.domain.biz.reward;
 
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,28 +19,20 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MariaPushGrandPrizeDo implements Serializable {
+public class MariaNotifyDo implements Serializable {
     private static final long serialVersionUID = -22633876654348L;
     /**
-     * 中奖用户id
+     * 游戏类型
      */
-    private Long userId;
+    private GameTypeEnum gameType;
     /**
-     * 中奖用户名称
+     * 正常玩游戏记录id
      */
-    private String userName;
+    private Long normalGmeRecordId;
     /**
-     * 游戏记录id
+     * 免费轮游戏记录id
      */
-    private Long gameRecordId;
-    /**
-     * 免费轮次数
-     */
-    private Integer freeSpinsCount;
+    private Long freeSpinsGameRecordId;
 
-    /**
-     * 免费轮中奖总金额
-     */
-    private Long freeSpinsTotalAmount;
 
 }
