@@ -38,14 +38,11 @@ import java.util.Objects;
 @Component
 public class SingleWalletApi extends BaseApi {
 
-    public static final String GET_CREDIT_URL_FORMAT = "%s/getCredit";
-
-    public static final String BET_WITH_PAYOUT = "%s/betWithPayout";
-    public static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
-
+    private static final String AUTH_LOGIN_TOKEN_URL_FORMAT = "%s/authLoginToken";
+    private static final String GET_CREDIT_URL_FORMAT = "%s/getCredit";
+    private static final String BET_WITH_PAYOUT_URL_FORMAT = "%s/betWithPayout";
+    private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
     private static final int BET_TYPE = 2;
-
-    public static final String AUTH_LOGIN_TOKEN_URL_FORMAT = "%s/authLoginToken";
 
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
         try {
@@ -53,6 +50,7 @@ public class SingleWalletApi extends BaseApi {
             String preSignature = String.format("%s%s%s%s", req.getChannelId(), req.getPlayerName(),req.getCreateTime(), req.getRefId());
             String key = StringUtils.equals(String.valueOf(req.getPId()), cpPlatformId) ? cpPrivateKey : igoPrivateKey;
             String iv = StringUtils.equals(String.valueOf(req.getPId()), cpPlatformId) ? cpPrivateIv : igoPrivateIv;
+            // todo delete log
             log.info("platformId: {}; preSignature: {}; key: {}; iv: {}", req.getPId(), preSignature, key, iv);
             String encrypt = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
             AssertUtil.assertNotNull(encrypt, ErrorCode.ERR_PARAM);
@@ -80,6 +78,7 @@ public class SingleWalletApi extends BaseApi {
             ResponseEntity<CommonRes<GetCreditRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<GetCreditRes>>() {
                     });
+            // todo delete log
             log.info("getCredit err, req: {}, res: {}", req, responseEntity);
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
@@ -101,7 +100,7 @@ public class SingleWalletApi extends BaseApi {
             // 参数签名
             assembleSingleSignature(req);
             RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
-                    URI.create(String.format(BET_WITH_PAYOUT, singleDomain)));
+                    URI.create(String.format(BET_WITH_PAYOUT_URL_FORMAT, singleDomain)));
             ResponseEntity<CommonRes<BetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<BetWithPayoutRes>>() {
                     });
@@ -158,10 +157,14 @@ public class SingleWalletApi extends BaseApi {
     }
 
     private BetWithPayoutRes queryBetDetail(BetWithPayoutReq req) {
-        //此时状态为成功,请求betStatus获取订单betId
-        BoxingBetStatusReq betStatusReq = BoxingBetStatusReq.builder().betType(BET_TYPE).wagersDate(req.getBetDetails().getWagersDate()).refId(req.getRefId()).build();
+        // 此时状态为成功,请求betStatus获取订单betId
+        BoxingBetStatusReq betStatusReq = BoxingBetStatusReq.builder()
+                .betType(BET_TYPE)
+                .wagersDate(req.getBetDetails().getWagersDate())
+                .refId(req.getRefId())
+                .build();
         BoxingBetStatusRes betStatusRes = this.betStatus(betStatusReq);
-        //获取余额
+        // 获取余额
         GetCreditReq creditReq = GetCreditReq.builder()
                 .channelId(UserInfoContext.getUserInfo().getChannelId())
                 .playerName(UserInfoContext.getUserInfo().getPlayerName())
@@ -170,7 +173,11 @@ public class SingleWalletApi extends BaseApi {
                 .pId(UserInfoContext.getUserInfo().getPlatformId())
                 .build();
         GetCreditRes creditRes = this.getCredit(creditReq);
-        return BetWithPayoutRes.builder().betId(betStatusRes.getBetId()).playerName(creditReq.getPlayerName()).credit(creditRes.getCredit()).build();
+        return BetWithPayoutRes.builder()
+                .betId(betStatusRes.getBetId())
+                .playerName(creditReq.getPlayerName())
+                .credit(creditRes.getCredit())
+                .build();
     }
 
 }
