@@ -37,8 +37,6 @@ public class UserLoginService {
         UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
         Long userId = userService.insertOrUpdate(userDo);
         UserInfo userInfo = UserInfoBuilder.buildUserInfo(userLoginDo, userId, token);
-        // 处理多端登录 todo 去掉对端登录问题 @maidong
-        innerLogout(userDo.getPlayerId());
 
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
