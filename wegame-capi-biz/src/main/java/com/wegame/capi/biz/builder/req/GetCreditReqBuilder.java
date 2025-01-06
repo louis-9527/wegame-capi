@@ -1,0 +1,21 @@
+package com.wegame.capi.biz.builder.req;
+
+import com.wegame.base.utils.DateUtil;
+import com.wegame.base.utils.ThreadMdcUtil;
+import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
+import com.wegame.capi.common.context.UserInfoContext;
+import org.slf4j.MDC;
+
+import java.util.Date;
+
+public class GetCreditReqBuilder {
+    public static GetCreditReq build() {
+        return GetCreditReq.builder()
+                .channelId(UserInfoContext.getUserInfo().getChannelId())
+                .playerName(UserInfoContext.getUserInfo().getPlayerName())
+                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
+                .createTime(DateUtil.toUTC(new Date()))
+                .pId(UserInfoContext.getUserInfo().getPlatformId())
+                .build();
+    }
+}

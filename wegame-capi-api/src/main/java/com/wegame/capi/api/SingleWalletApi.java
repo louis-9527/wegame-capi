@@ -1,8 +1,11 @@
 package com.wegame.capi.api;
 
 import com.alibaba.fastjson.JSON;
+import com.wegame.base.utils.SingleWalletSignatureUtil;
+import com.wegame.capi.api.domain.req.GetAuthLoginTokenReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
+import com.wegame.capi.api.domain.res.AuthLoginTokenRes;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
 import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
@@ -11,6 +14,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -27,6 +31,33 @@ public class SingleWalletApi extends BaseApi {
     public static final String GET_CREDIT_URL_FORMAT = "%s/getCredit";
 
     public static final String BET_WITH_PAYOUT = "%s/betWithPayout";
+
+    public static final String AUTH_LOGIN_TOKEN_URL_FORMAT = "%s/authLoginToken";
+
+    public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
+        try {
+            // 设置token签名
+            String preSignature = String.format("%s%s%s%s", req.getChannelId(), req.getPlayerName(),req.getCreateTime(), req.getRefId());
+            String key = StringUtils.equals(String.valueOf(req.getPId()), cpPlatformId) ? cpPrivateKey : igoPrivateKey;
+            String iv = StringUtils.equals(String.valueOf(req.getPId()), cpPlatformId) ? cpPrivateIv : igoPrivateIv;
+            log.info("platformId: {}; preSignature: {}; key: {}; iv: {}", req.getPId(), preSignature, key, iv);
+            String encrypt = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
+            AssertUtil.assertNotNull(encrypt, ErrorCode.ERR_PARAM);
+            req.setHash(encrypt);
+            RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
+                    URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
+            ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = restTemplate.exchange(requestEntity,
+                    new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {});
+            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
+            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            return responseEntity.getBody().getData();
+        } catch (Exception e) {
+            log.error("authTokenLogin err, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw e;
+        }
+    }
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public GetCreditRes getCredit(GetCreditReq req) {
@@ -77,6 +108,4 @@ public class SingleWalletApi extends BaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
-
-
 }
