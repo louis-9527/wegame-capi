@@ -3,7 +3,7 @@ package com.wegame.capi.biz.domain.biz;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.common.enums.PrizeTypeEnum;
+import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,7 +35,7 @@ public class MariaMakilingGameRecordDetailDo {
     /**
      * 奖励类型
      */
-    private PrizeTypeEnum prizeType;
+    private RewardSubTypeEnum prizeType;
     /**
      * 是否中了免费轮
      */

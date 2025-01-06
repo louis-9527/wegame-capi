@@ -118,26 +118,26 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
     }
 
     @Override
-    public PrizeTypeEnum calcGameGrandPrize(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo) {
+    public RewardSubTypeEnum rewardSubType(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo) {
         Long betAmount = rewardHandleDo.getBetAmount();
         Long rewardTotalAmount = rewardResultDo.getRewardTotalAmount();
         if (Objects.isNull(betAmount) || Objects.isNull(rewardTotalAmount) || betAmount <= 0 || rewardTotalAmount <= 0) {
-            return PrizeTypeEnum.NONE_PRIZE;
+            return RewardSubTypeEnum.NONE_PRIZE;
         }
         double rewardTimes = NumberUtil.div(rewardTotalAmount.longValue(), betAmount.longValue());
         if (rewardTimes >= 5 && rewardTimes < 10) {
-            return PrizeTypeEnum.NICE_PRIZE;
+            return RewardSubTypeEnum.NICE_PRIZE;
         }
         if (rewardTimes >= 10 && rewardTimes < 15) {
-            return PrizeTypeEnum.MEGA_PRIZE;
+            return RewardSubTypeEnum.MEGA_PRIZE;
         }
         if (rewardTimes >= 15 && rewardTimes < 20) {
-            return PrizeTypeEnum.SUPER_PRIZE;
+            return RewardSubTypeEnum.SUPER_PRIZE;
         }
         if (rewardTimes > 20) {
-            return PrizeTypeEnum.SENSATIONAL_PRIZE;
+            return RewardSubTypeEnum.SENSATIONAL_PRIZE;
         }
-        return PrizeTypeEnum.NONE_PRIZE;
+        return RewardSubTypeEnum.NONE_PRIZE;
     }
 
     private Map<SymbolDo, List<RewardRuleSymbolDo>> initFirstColumSymbol(RewardRuleDo rewardRuleDo) {

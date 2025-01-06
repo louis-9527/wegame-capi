@@ -1,11 +1,8 @@
 package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
-import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.converter.Converter;
-import com.wegame.capi.biz.converter.GameRecordConverter;
 import com.wegame.capi.biz.domain.biz.MariaMakilingGameRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayResultDo;
@@ -17,7 +14,6 @@ import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.module.game.MariaMakilingGame;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -128,7 +124,7 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         if (rewardResult != null) {
             build.setRewardAmount(rewardResult.getRewardTotalAmount());
             build.setMultiple(rewardResult.getMultiple());
-            build.setPrizeType(rewardResult.getPrizeType());
+            build.setPrizeType(rewardResult.getRewardSubType());
             build.setFreeSpinsFlag(rewardResult.isFreeSpin());
             build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
         }
