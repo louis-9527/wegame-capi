@@ -3,7 +3,7 @@ package com.wegame.capi.biz.domain.biz;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.common.enums.GameStatusEnum;
+import com.wegame.capi.common.enums.GameBetStatusEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -81,7 +81,7 @@ public class GameRecordDo<T> implements Serializable {
     /**
      * 状态 0进行中 1已完结 2无效
      */
-    private GameStatusEnum status;
+    private GameBetStatusEnum status;
     /**
      * 免费轮获得标识 0否 1是
      */

@@ -34,7 +34,6 @@ public abstract class AbstractGame implements Game {
         // 判断-滚轮中奖结果
         List<MariaMakilingGameRecordDo> gameRecords = wheelList.stream().map(wheel -> {
             RewardResultDo rewardResult = getRewardHandler().handle(build(gameInfo, gamePlay, wheel));
-            AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
             return MariaMakilingGameRecordDo.builder()
                     .index(wheel.getIndex())
                     .wheel(wheel)
