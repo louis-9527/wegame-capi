@@ -21,10 +21,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * po服务
@@ -117,12 +114,14 @@ public class BetRecordService {
             return null;
         }
         List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(FastJsonUtils.toJSONString(detail), GameRecordDetailPo.class);
+        GameRecordDetailPo maxGameRecordDetailPo = Optional.ofNullable(recordDetailPos)
+                .orElse(Collections.emptyList()).stream().max(Comparator.comparingLong(GameRecordDetailPo::getId)).orElse(null);
         GameRecordDetailPo recordDetail = Optional.ofNullable(recordDetailPos)
                 .orElse(Collections.emptyList())
                 .stream()
                 .filter(item -> Objects.equals(item.getId(), freeSpinId))
                 .findFirst()
                 .orElse(null);
-        return GameRecordConverter.poToDetailDo(recordDetail);
+        return GameRecordConverter.poToDetailDo(recordDetail, Optional.ofNullable(maxGameRecordDetailPo).map(GameRecordDetailPo::getId).orElse(null));
     }
 }
