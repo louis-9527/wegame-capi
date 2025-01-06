@@ -21,11 +21,11 @@ public class MysteriousBuyFreeSpinsBetDo implements Validate, Serializable {
     /**
      * 投注记录id
      */
-    private String betRecordId;
+    private Long betRecordId;
     /**
      * 免费轮记录id
      */
-    private Long freeSpinsId;
+    private Integer freeSpinsId;
     /**
      * 投注金额
      */

@@ -95,7 +95,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
     }
 
     public boolean validate(RewardHandleDo rewardHandle) {
-        rewardHandle.getWheel().print();
+      //  rewardHandle.getWheel().print();
         // 为空
         AssertUtil.assertNotNull(rewardHandle, ErrorCode.ERR_PARAM, "rewardHandle is null");
         AssertUtil.assertNotNull(rewardHandle.getGameType(), ErrorCode.ERR_INTER, "not support gameType");

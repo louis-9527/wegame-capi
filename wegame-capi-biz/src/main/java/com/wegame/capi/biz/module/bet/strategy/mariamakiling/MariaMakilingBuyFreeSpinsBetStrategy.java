@@ -7,6 +7,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.MysteriousBuyFreeSpinsBetResultDo;
 import com.wegame.capi.common.utils.GameAmountUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -19,6 +20,20 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
     @Override
     public BetResultDo<MysteriousBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousBuyFreeSpinsBetDo> betDo) {
         // todo 判断是否免费轮 标识, 是则查询返回
+        MysteriousBuyFreeSpinsBetDo betDetail = betDo.getBetDetail();
+        if (betDetail.getBetRecordId() != null && betDetail.getFreeSpinsId() != null) {
+            //查询免费轮详情
+            GameBetResultDetailDo gameBetResultDetailDo = super.queryBetFreeSpin(betDo.getGameId(), betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
+            return BetResultDo.<MysteriousBuyFreeSpinsBetResultDo>builder()
+                    .betRecordId(betDetail.getBetRecordId())
+                    .gameId(betDo.getGameId())
+                    .betType(betDo.getBetType())
+                    .betSubType(betDo.getBetSubType())
+                    .resultDetail(MysteriousBuyFreeSpinsBetResultDo.builder()
+                            .resultDetail(gameBetResultDetailDo)
+                            .build())
+                    .build();
+        }
 
         // 获取轮盘结果,必须包含免费轮
         GameBetResultDetailDo betResult = super.getResultDetail(betDo.getGameId(), betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());

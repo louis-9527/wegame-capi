@@ -4,10 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
-import com.wegame.capi.biz.domain.biz.bet.MysteriousNonBuyFreeSpinsBetDo;
-import com.wegame.capi.biz.domain.biz.bet.MysteriousNonBuyFreeSpinsBetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.*;
 import com.wegame.capi.biz.service.BetRecordService;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +18,20 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
     @Override
     public BetResultDo<MysteriousNonBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousNonBuyFreeSpinsBetDo> betDo) {
         // todo 判断是否免费轮 标识
-
+        MysteriousNonBuyFreeSpinsBetDo betDetail = betDo.getBetDetail();
+        if (betDetail.getBetRecordId() != null && betDetail.getFreeSpinsId() != null) {
+            //查询免费轮详情
+            GameBetResultDetailDo gameBetResultDetailDo = super.queryBetFreeSpin(betDo.getGameId(), betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
+            return BetResultDo.<MysteriousNonBuyFreeSpinsBetResultDo>builder()
+                    .betRecordId(betDetail.getBetRecordId())
+                    .gameId(betDo.getGameId())
+                    .betType(betDo.getBetType())
+                    .betSubType(betDo.getBetSubType())
+                    .resultDetail(MysteriousNonBuyFreeSpinsBetResultDo.builder()
+                            .resultDetail(gameBetResultDetailDo)
+                            .build())
+                    .build();
+        }
 
         Long recordId = Long.valueOf(betDo.getBetDetail().getBetRecordId());
         BetRecordDo betRecordDo = super.betRecordService.get(recordId);

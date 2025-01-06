@@ -21,7 +21,7 @@ public class MysteriousNonBuyFreeSpinsBetDo implements Validate, Serializable {
     /**
      * 投注记录Id
      */
-    private String betRecordId;
+    private Long betRecordId;
     /**
      * 免费轮记录id
      */
@@ -29,7 +29,7 @@ public class MysteriousNonBuyFreeSpinsBetDo implements Validate, Serializable {
 
     @Override
     public void validateParam() {
-        AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_PARAM);
     }
 }
 
