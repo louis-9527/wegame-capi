@@ -51,7 +51,7 @@ public class SingleWalletService {
             betSingleWalletResult.setBetStatus(GameBetStatusEnum.SUCCESS);
             return betSingleWalletResult;
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
-            //获取返回状态
+            // 获取返回状态
             return this.queryBetDetail(betRecordDo);
         } else {
             // 获取余额

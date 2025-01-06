@@ -34,7 +34,6 @@ public class SingleWalletApi extends BaseApi {
     private static final String BET_WITH_PAYOUT_URL_FORMAT = "%s/betWithPayout";
     private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
 
-
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
         try {
             // 设置token签名
@@ -96,7 +95,6 @@ public class SingleWalletApi extends BaseApi {
             ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
                     });
-
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             return responseEntity.getBody();
