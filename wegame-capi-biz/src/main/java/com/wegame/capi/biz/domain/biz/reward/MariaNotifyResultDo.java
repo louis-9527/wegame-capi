@@ -18,7 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class PushGrandPrizeResultDo implements Serializable {
+public class MariaNotifyResultDo implements Serializable {
     private static final long serialVersionUID = -22633876654348L;
     /**
      * 游戏类型
@@ -49,4 +49,7 @@ public class PushGrandPrizeResultDo implements Serializable {
      */
     public String tipsContent;
 
+    public String generatorTipsContent() {
+        return null;
+    }
 }

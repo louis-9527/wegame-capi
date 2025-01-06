@@ -10,16 +10,19 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayResultDo;
+import com.wegame.capi.biz.domain.biz.reward.MariaNotifyDo;
+import com.wegame.capi.biz.domain.biz.reward.MariaNotifyResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
 import com.wegame.capi.biz.module.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.module.game.MariaMakilingGame;
+import com.wegame.capi.biz.service.WheelTimerService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.PrizeTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +33,29 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
 
     @Autowired
     MariaMakilingGame mariaMakilingGame;
+    @Autowired
+    WheelTimerService wheelTimerService;
+
+    MariaNotifyResultDo pushGrandPrizeHandle(MariaNotifyDo marizNotifyDo) {
+        return null;
+    }
 
     @Override
     public Game getGame() {
         return mariaMakilingGame;
     }
 
+    @Override
+    public Object extendHandle(Object obj) {
+        AssertUtil.assertTrue(obj instanceof MariaNotifyDo, ErrorCode.ERR_INTER, "data type is not support");
+        MariaNotifyResultDo notifyDo = this.pushGrandPrizeHandle((MariaNotifyDo) obj);
+        if (Objects.nonNull(notifyDo)) {
+            wheelTimerService.delayPushPrize(notifyDo, String.format(Constants.PUSH_PRIZE_REDIS_KEY, notifyDo.getGameTypeId()));
+        }
+        return notifyDo;
+    }
+
     // todo fix
-
-
     public GameBetResultDetailDo getResultDetail(String gameId, BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
         List<GameBetResultDetailDo> resultDetail = this.getResultDetail(gameId, betType, betSubType, betAmount, false);
         return resultDetail.get(0);

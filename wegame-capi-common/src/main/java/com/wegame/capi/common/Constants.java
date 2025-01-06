@@ -15,4 +15,7 @@ public class Constants {
 
     public static final String BUSY_OPT_TIP = "操作繁忙，请稍后重试";
 
+    // redis
+    // 推送中大奖redis key
+    public static final String PUSH_PRIZE_REDIS_KEY = "wegame:push_prize:%s";
 }
