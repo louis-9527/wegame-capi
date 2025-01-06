@@ -42,6 +42,9 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordQuery.getChannelId())) {
             criteria.and("channelId").is(recordQuery.getChannelId());
         }
+        if (Objects.nonNull(recordQuery.getFreeSpinsRefId())) {
+            criteria.and("freeSpinsRefId").is(recordQuery.getFreeSpinsRefId());
+        }
 
         if (Objects.nonNull(recordQuery.getGameId())) {
             criteria.and("gameId").is(recordQuery.getGameId());
@@ -115,9 +118,7 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordDo.getUpdater())) {
             update.set("updater", recordDo.getUpdater());
         }
-        if (Objects.nonNull(recordDo.getUpdateTime())) {
-            update.set("updateTime", recordDo.getUpdateTime());
-        }
+        update.set("updateTime", recordDo.getUpdateTime());
         return update;
     }
 

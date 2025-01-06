@@ -86,6 +86,10 @@ public class BetRecordDo implements Serializable {
      */
     private Integer freeSpinsTimes;
     /**
+     *  免费轮关联原投注记录Id
+     */
+    private Long freeSpinsRefId;
+    /**
      * 游戏记录明细json
      */
     private Object detail;

@@ -24,7 +24,7 @@ public class RandomSymbolUtil {
         Integer sum = map.values()
                 .stream()
                 .reduce(0, Integer::sum);
-        AssertUtil.assertTrue(sum == 10000, ErrorCode.ERR_PARAM, "Not Support Game");
+        AssertUtil.assertTrue(sum == 10000, ErrorCode.ERR_INTER, "Symbol config error,cellNo:" + cellNo);
         Random random = new Random();
         // 生成一个1到10000之间的随机整数
         int randomNumber = 1 + random.nextInt(10000);
