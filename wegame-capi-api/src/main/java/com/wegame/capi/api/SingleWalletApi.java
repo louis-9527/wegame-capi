@@ -1,7 +1,9 @@
 package com.wegame.capi.api;
 
 import com.alibaba.fastjson.JSON;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.SingleWalletSignatureUtil;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.GetAuthLoginTokenReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.req.singlewallet.BoxingBetStatusReq;
@@ -16,9 +18,11 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletCommonRes;
+import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -27,6 +31,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.Objects;
 
 @Slf4j
@@ -159,7 +164,13 @@ public class SingleWalletApi extends BaseApi {
         BoxingBetStatusReq betStatusReq = BoxingBetStatusReq.builder().betType(BET_TYPE).wagersDate(req.getBetDetails().getWagersDate()).refId(req.getRefId()).build();
         BoxingBetStatusRes betStatusRes = this.betStatus(betStatusReq);
         //获取余额
-        GetCreditReq creditReq = GetCreditReq.build();
+        GetCreditReq creditReq = GetCreditReq.builder()
+                .channelId(UserInfoContext.getUserInfo().getChannelId())
+                .playerName(UserInfoContext.getUserInfo().getPlayerName())
+                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
+                .createTime(DateUtil.toUTC(new Date()))
+                .pId(UserInfoContext.getUserInfo().getPlatformId())
+                .build();
         GetCreditRes creditRes = this.getCredit(creditReq);
         return BetWithPayoutRes.builder().betId(betStatusRes.getBetId()).playerName(creditReq.getPlayerName()).credit(creditRes.getCredit()).build();
     }

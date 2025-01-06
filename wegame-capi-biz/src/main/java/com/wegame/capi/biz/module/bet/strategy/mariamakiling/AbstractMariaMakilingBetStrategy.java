@@ -68,7 +68,7 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
             if (rewardResult != null) {
                 build.setRewardAmount(rewardResult.getRewardTotalAmount());
                 build.setMultiple(rewardResult.getWildTotalTimes());
-                build.setPrizeType(rewardResult.getGrandPrizeType());
+                build.setPrizeType(rewardResult.getPrizeType());
                 build.setFreeSpinsFlag(rewardResult.isFreeSpin());
                 build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
             }
