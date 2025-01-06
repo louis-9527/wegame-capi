@@ -9,7 +9,7 @@ import com.wegame.capi.biz.converter.GameRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
-import com.wegame.capi.biz.domain.biz.GamePlayResultDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
@@ -109,8 +109,6 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
             return null;
         }
         List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(FastJsonUtils.toJSONString(detail), GameRecordDetailPo.class);
-
-
         GameRecordDetailPo recordDetail = Optional.ofNullable(recordDetailPos)
                 .orElse(Collections.emptyList())
                 .stream()

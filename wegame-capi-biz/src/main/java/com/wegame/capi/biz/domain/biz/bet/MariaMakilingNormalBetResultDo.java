@@ -4,7 +4,7 @@ import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.biz.util.SymbolUtil;
 import com.wegame.capi.client.domain.vo.GameBetPayOutDetailVo;
-import com.wegame.capi.client.domain.vo.MariaMakilingNonBuyFreeSpinsBetResultVo;
+import com.wegame.capi.client.domain.vo.MariaMakilingNormalBetVo;
 import com.wegame.capi.client.domain.vo.SymbolIndexVo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,17 +21,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MysteriousNonBuyFreeSpinsBetResultDo implements Converter<Object> {
+public class MariaMakilingNormalBetResultDo implements Converter<MariaMakilingNormalBetVo> {
 
     private GameBetResultDetailDo resultDetail;
-    private List<Integer> freeSpinIds;
 
     @Override
-    public Object toVo() {
-        MariaMakilingNonBuyFreeSpinsBetResultVo vo = new MariaMakilingNonBuyFreeSpinsBetResultVo();
-        vo.setPrizeType(resultDetail.getPrizeType() == null ? null : resultDetail.getPrizeType().getCode());
-        vo.setPayOutTotalAmount(resultDetail.getRewardAmount());
-        vo.setSpinsResult(SymbolUtil.convert(resultDetail.getGameResult()));
+    public MariaMakilingNormalBetVo toVo() {
+        MariaMakilingNormalBetVo normalVo = new MariaMakilingNormalBetVo();
+        normalVo.setPrizeType(resultDetail.getPrizeType() == null ? null : resultDetail.getPrizeType().getCode());
+        normalVo.setPayOutTotalAmount(resultDetail.getRewardAmount());
+        normalVo.setSpinsResult(SymbolUtil.convert(resultDetail.getGameResult()));
         List<GameBetPayOutDetailVo> detailVos = new ArrayList<>();
         List<GameBetResultDetailDo.RewardResult> rewardResults = resultDetail.getRewardResults();
         for (GameBetResultDetailDo.RewardResult rewardResult : CollectionUtils.emptyIfNull(rewardResults)) {
@@ -53,8 +52,7 @@ public class MysteriousNonBuyFreeSpinsBetResultDo implements Converter<Object> {
             detailVo.setIndex(symbolIndexVo);
             detailVos.add(detailVo);
         }
-        vo.setPayOutResult(detailVos);
-        vo.setFreeSpinIds(freeSpinIds);
-        return vo;
+        normalVo.setPayOutResult(detailVos);
+        return normalVo;
     }
 }

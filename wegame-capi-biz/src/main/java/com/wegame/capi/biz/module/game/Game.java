@@ -2,7 +2,7 @@ package com.wegame.capi.biz.module.game;
 
 import com.wegame.capi.biz.domain.biz.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
-import com.wegame.capi.biz.domain.biz.GamePlayResultDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayResultDo;
 
 /**
  * 游戏

@@ -53,15 +53,4 @@ public class GetAuthLoginTokenReq implements Serializable {
      * cp主站token
      */
     private String token;
-
-    public static GetAuthLoginTokenReq buildClientReq(UserLoginRequest request) {
-        return GetAuthLoginTokenReq.builder()
-                .pId(request.getPlatformId())
-                .channelId(request.getChanelId())
-                .playerName(request.getPlayerName())
-                .createTime(DateUtil.toUTC(new Date()))
-                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
-                .token(request.getToken())
-                .build();
-    }
 }

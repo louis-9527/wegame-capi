@@ -1,10 +1,13 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.enums.OptEnum;
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
+import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
@@ -38,7 +41,7 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
 
     public abstract Game getGame();
 
-    public BetRecordDo getBetRecord(BetDo<T> betReqDo, Long betAmount, Long payAmount, List<GameBetResultDetailDo> resultDetails) {
+    public BetRecordDo getBetRecord(BetDo<T> betDo, Long betAmount, Long payAmount, List<GameBetResultDetailDo> resultDetails) {
         //组装投注记录
         long id = idGeneratorHelper.nextId();
         return BetRecordDo.builder()
@@ -48,10 +51,10 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
                 .playerId(UserInfoContext.getUserInfo().getPlayerId())
                 .userId(Long.valueOf(UserInfoContext.getUserInfo().getId()))
                 .playerName(UserInfoContext.getUserInfo().getPlayerName())
-                .gameId(betReqDo.getGameId())
+                .gameId(betDo.getGameId())
                 .betSerialNo(String.valueOf(id))
-                .betType(betReqDo.getBetType().getCode())
-                .betSubType(betReqDo.getBetSubType().getCode())
+                .betType(betDo.getBetType().getCode())
+                .betSubType(betDo.getBetSubType().getCode())
                 .betAmount(betAmount)
                 .payOutAmount(payAmount)
                 .status(GameStatusEnum.ING.getCode())

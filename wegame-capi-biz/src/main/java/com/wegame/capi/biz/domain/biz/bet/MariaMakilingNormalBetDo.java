@@ -12,24 +12,19 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * Mysterious非购买免费轮投注请求参数
+ * Mysterious正常投注请求参数
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MysteriousNonBuyFreeSpinsBetDo implements Validate, Serializable {
-    /**
-     * 投注记录Id
-     */
-    private Long betRecordId;
-    /**
-     * 免费轮记录id
-     */
-    private Integer freeSpinsId;
+public class MariaMakilingNormalBetDo implements Validate, Serializable {
+    @ApiModelProperty(value = "投注金额", required = true)
+    private Long betAmount;
 
     @Override
     public void validateParam() {
-        AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
     }
 }
 

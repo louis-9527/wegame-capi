@@ -17,13 +17,5 @@ import java.util.Date;
 @ApiModel("获取用户余额请求模型")
 public class GetCreditReq extends SingleWalletBaseReq {
 
-    public static GetCreditReq build() {
-        return GetCreditReq.builder()
-                .channelId(UserInfoContext.getUserInfo().getChannelId())
-                .playerName(UserInfoContext.getUserInfo().getPlayerName())
-                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
-                .createTime(DateUtil.toUTC(new Date()))
-                .pId(UserInfoContext.getUserInfo().getPlatformId())
-                .build();
-    }
+
 }

@@ -5,6 +5,10 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.MariaMakilingNonBuyFreeSpinsBetDo;
+import com.wegame.capi.biz.domain.biz.bet.MariaMakilingNonBuyFreeSpinsBetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.*;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -18,20 +22,20 @@ import java.util.List;
 
 @Component("mariaMakilingNonBuyFreeSpinsBetStrategy")
 public class MariaMakilingNonBuyFreeSpinsBetStrategy
-        extends AbstractMariaMakilingBetStrategy<MysteriousNonBuyFreeSpinsBetDo, MysteriousNonBuyFreeSpinsBetResultDo> {
+        extends AbstractMariaMakilingBetStrategy<MariaMakilingNonBuyFreeSpinsBetDo, MariaMakilingNonBuyFreeSpinsBetResultDo> {
 
     @Override
-    public BetResultDo<MysteriousNonBuyFreeSpinsBetResultDo> bet(BetDo<MysteriousNonBuyFreeSpinsBetDo> betDo) {
-        MysteriousNonBuyFreeSpinsBetDo betDetail = betDo.getBetDetail();
+    public BetResultDo<MariaMakilingNonBuyFreeSpinsBetResultDo> bet(BetDo<MariaMakilingNonBuyFreeSpinsBetDo> betDo) {
+        MariaMakilingNonBuyFreeSpinsBetDo betDetail = betDo.getBetDetail();
         if (betDetail.getBetRecordId() != null && betDetail.getFreeSpinsId() != null) {
-            //查询免费轮详情
-            GameBetResultDetailDo gameBetResultDetailDo = super.queryBetFreeSpin(betDo.getGameId(), betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
-            return BetResultDo.<MysteriousNonBuyFreeSpinsBetResultDo>builder()
+            // 查询免费轮详情
+            GameBetResultDetailDo gameBetResultDetailDo = super.queryBetFreeSpin(betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
+            return BetResultDo.<MariaMakilingNonBuyFreeSpinsBetResultDo>builder()
                     .betRecordId(betDetail.getBetRecordId())
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .resultDetail(MysteriousNonBuyFreeSpinsBetResultDo.builder()
+                    .resultDetail(MariaMakilingNonBuyFreeSpinsBetResultDo.builder()
                             .resultDetail(gameBetResultDetailDo)
                             .build())
                     .build();
@@ -57,18 +61,18 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
             }
             freeSpinIds.add(resultDetail.getId());
         }
-        //获取投注结果
+        // 获取投注结果
         BetRecordDo betRecord = super.getBetRecord(betDo, 0L, rewardAmount, resultDetails);
         betRecord.setFreeSpinsRefId(recordId);
         betRecord.setFreeSpinsTimes(resultDetails.size());
-        //保存投注记录并派奖
+        // 保存投注记录并派奖
         super.saveBetRecordAndPayOut(betRecord);
-        return BetResultDo.<MysteriousNonBuyFreeSpinsBetResultDo>builder()
+        return BetResultDo.<MariaMakilingNonBuyFreeSpinsBetResultDo>builder()
                 .betRecordId(betRecord.getId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
-                .resultDetail(MysteriousNonBuyFreeSpinsBetResultDo.builder().freeSpinIds(freeSpinIds).build())
+                .resultDetail(MariaMakilingNonBuyFreeSpinsBetResultDo.builder().freeSpinIds(freeSpinIds).build())
                 .build();
     }
 }
