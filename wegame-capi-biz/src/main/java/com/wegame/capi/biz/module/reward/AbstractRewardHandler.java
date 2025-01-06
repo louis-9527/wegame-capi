@@ -76,6 +76,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         }
 
         RewardResultDo tempRewardResultDo = RewardResultBuilder.build(
+                rewardHandle.getBetAmount(),
                 rewardTotalAmount,
                 rewardLineList,
                 multiple,

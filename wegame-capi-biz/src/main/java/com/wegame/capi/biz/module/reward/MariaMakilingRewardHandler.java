@@ -120,7 +120,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
     @Override
     public RewardSubTypeEnum rewardSubType(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo) {
         Long betAmount = rewardHandleDo.getBetAmount();
-        Long rewardTotalAmount = rewardResultDo.getRewardTotalAmount();
+        Long rewardTotalAmount = rewardResultDo.getTotalRewardAmount();
         if (Objects.isNull(betAmount) || Objects.isNull(rewardTotalAmount) || betAmount <= 0 || rewardTotalAmount <= 0) {
             return RewardSubTypeEnum.NONE_PRIZE;
         }

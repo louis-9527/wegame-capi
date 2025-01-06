@@ -18,17 +18,19 @@ import java.util.List;
 @AllArgsConstructor
 @ApiModel("正常投注返回")
 @EqualsAndHashCode(callSuper = false)
-public class GameBetPayOutDetailVo implements Serializable {
+public class MariaMakilingRewardDetailVo implements Serializable {
     private static final long serialVersionUID = 6487808344235380369L;
     @ApiModelProperty("倍率")
     private BigDecimal multiple;
     @ApiModelProperty("赔率")
     private BigDecimal odds;
-    @ApiModelProperty("中奖坐标")
-    private List<SymbolIndexVo> index;
-    @ApiModelProperty("当前中奖线Id列表")
-    private List<String> rewardSymbolIdList;
-    @ApiModelProperty("派奖金额")
-    private Long payOutAmount;
+    @ApiModelProperty("中奖元素坐标列表")
+    private List<SymbolIndexVo> symbolIndexList;
+    @ApiModelProperty("中奖线元素Id列表")
+    private List<String> symbolIdList;
+    @ApiModelProperty("中奖金额")
+    private Long rewardAmount;
+    @ApiModelProperty("投注金额")
+    private Long betAmount;
 }
 

@@ -24,6 +24,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class RewardLineDo implements Serializable {
     private static final long serialVersionUID = -2876565534848L;
+    private Long betAmount;
+
     /**
      * 中奖金额
      */

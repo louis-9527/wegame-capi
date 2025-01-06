@@ -19,14 +19,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class WheelRewardDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
-    /**
-     * 滚轮序号: 默认1
-     */
-    private Integer wheelIndex = 1;
-    /**
-     * 滚轮
-     */
-    private WheelDo wheel;
+
     /**
      * 滚轮中奖结果
      */

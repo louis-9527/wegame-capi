@@ -33,9 +33,13 @@ public class RewardResultDo implements Serializable {
      */
     private RewardSubTypeEnum rewardSubType;
     /**
+     * 投注金额
+     */
+    private Long betAmount;
+    /**
      * 中奖总金额.单位：分
      */
-    private Long rewardTotalAmount;
+    private Long totalRewardAmount;
     /**
      * 是否中了免费轮
      */
@@ -47,6 +51,5 @@ public class RewardResultDo implements Serializable {
     /**
      * 中奖总倍率
      */
-    private BigDecimal multiple;
-
+    private BigDecimal totalMultiple;
 }

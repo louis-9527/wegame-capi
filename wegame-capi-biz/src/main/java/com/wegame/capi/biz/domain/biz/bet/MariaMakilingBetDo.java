@@ -17,9 +17,21 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MariaMakilingNormalBetDo implements Validate, Serializable {
+public class MariaMakilingBetDo implements Validate, Serializable {
     @ApiModelProperty(value = "投注金额", required = true)
     private Long betAmount;
+    /**
+     * 投注记录id
+     */
+    private Long betRecordId;
+    /**
+     * 免费轮记录id
+     */
+    private Integer freeSpinsId;
+    /**
+     * 支付金额
+     */
+    private Long payAmount;
 
     @Override
     public void validateParam() {

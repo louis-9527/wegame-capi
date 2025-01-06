@@ -3,7 +3,7 @@ package com.wegame.capi.biz.converter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.wegame.capi.biz.domain.biz.MariaMakilingGameRecordDetailDo;
+import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import org.apache.commons.lang3.StringUtils;
@@ -263,18 +263,18 @@ public class GameRecordConverter {
     //        return detailPo;
     //    }
 
-    public static MariaMakilingGameRecordDetailDo poToDetailDo(GameRecordDetailPo detailPo, Integer maxFreeSpinsDetailId) {
+    public static MariaMakilingBetRecordDetailDo poToDetailDo(GameRecordDetailPo detailPo, Integer maxFreeSpinsDetailId) {
         if (detailPo == null) {
             return null;
         }
-        MariaMakilingGameRecordDetailDo detaildo = new MariaMakilingGameRecordDetailDo();
+        MariaMakilingBetRecordDetailDo detaildo = new MariaMakilingBetRecordDetailDo();
         detaildo.setId(detaildo.getId());
         detaildo.setMultiple(detaildo.getMultiple());
         detaildo.setBetAmount(detaildo.getBetAmount());
         detaildo.setRewardAmount(detaildo.getRewardAmount());
         detaildo.setFreeSpinsFlag(detailPo.isFreeSpinsFlag());
         detaildo.setGameResult(convertJsonToSymbolDoArray(detailPo.getGameResult()));
-        detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult()) ? null : JSON.parseArray(detailPo.getRewardResult(), MariaMakilingGameRecordDetailDo.RewardLineResultDo.class));
+        detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult()) ? null : JSON.parseArray(detailPo.getRewardResult(), MariaMakilingBetRecordDetailDo.RewardLineResultDo.class));
         detaildo.setMaxFreeSpinsIdFlag(Objects.equals(detailPo.getId(), maxFreeSpinsDetailId));
         return detaildo;
     }

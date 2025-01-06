@@ -11,15 +11,16 @@ import java.util.Objects;
 
 public class RewardResultBuilder {
 
-    public static RewardResultDo build(Long rewardTotalAmount, List<RewardLineDo> rewardLineList, BigDecimal wildTotalTimes, boolean isFreeSpin) {
+    public static RewardResultDo build(Long betAmount, Long rewardTotalAmount, List<RewardLineDo> rewardLineList, BigDecimal wildTotalTimes, boolean isFreeSpin) {
         if (Objects.isNull(rewardTotalAmount) || Objects.isNull(rewardLineList)) {
             return null;
         }
 
         return RewardResultDo.builder()
-                .rewardTotalAmount(rewardTotalAmount)
+                .betAmount(betAmount)
+                .totalRewardAmount(rewardTotalAmount)
                 .rewardLineList(rewardLineList)
-                .multiple(wildTotalTimes)
+                .totalMultiple(wildTotalTimes)
                 .rewardType(rewardLineList.size() <= 1 ? RewardTypeEnum.SINGLE : RewardTypeEnum.MULTIPLE)
                 .isFreeSpin(isFreeSpin)
                 .build();

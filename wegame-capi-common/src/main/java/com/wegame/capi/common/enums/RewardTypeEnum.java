@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 中奖类型
@@ -14,23 +15,23 @@ import lombok.ToString;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum RewardTypeEnum {
-    SINGLE(1, "单奖励"),
-    MULTIPLE(2, "多奖励"),
+    SINGLE("SINGLE", "单奖励"),
+    MULTIPLE("MULTIPLE", "多奖励"),
     ;
 
     /**
      * 枚举码.
      */
-    private final Integer code;
+    private final String code;
 
     /**
      * 描述信息.
      */
     private final String desc;
 
-    public static RewardTypeEnum valueOfCode(Integer code) {
+    public static RewardTypeEnum valueOfCode(String code) {
         for (RewardTypeEnum item : RewardTypeEnum.values()) {
-            if (item.getCode().equals(code)) {
+            if (StringUtils.equals(item.getCode(), code)) {
                 return item;
             }
         }

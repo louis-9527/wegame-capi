@@ -2,7 +2,9 @@ package com.wegame.capi.biz.module.game;
 
 import com.wegame.capi.biz.domain.biz.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
-import com.wegame.capi.biz.domain.biz.game.GamePlayResultDo;
+import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+
+import java.util.List;
 
 /**
  * 游戏
@@ -20,7 +22,7 @@ public interface Game {
      * 玩游戏
      *
      * @param gamePlay
-     * @return
+     * @return 游戏记录
      */
-    GamePlayResultDo play(GamePlayDo gamePlay);
+    List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay);
 }

@@ -26,32 +26,12 @@ import java.util.Date;
  */
 @Component
 public abstract class AbstractBetStrategy<T, R extends Converter> implements BetStrategy<T, R> {
-
-    @Autowired
-    public IdGeneratorHelper idGeneratorHelper;
     @Autowired
     public BetRecordService betRecordService;
     @Autowired
     private SingleWalletApi singleWalletApi;
 
     public abstract Game getGame();
-
-    /**
-     * 保存投注记录
-     *
-     * @return 玩家余额
-     */
-    public Long saveBetRecordAndPayOut(BetRecordDo betRecordDo) {
-        betRecordService.add(betRecordDo);
-        // 调用单钱包
-        BetWithPayoutRes betWithPayoutRes = new BetWithPayoutRes();// this.betWithPayout(gameRecordPo);
-        // 判断返回结果
-        String betId = betWithPayoutRes.getBetId();
-        // 更新记录
-        BetRecordDo updateRecord = BetRecordDo.builder().id(betRecordDo.getId()).betId(betId).status(GameStatusEnum.SUCCESS.getCode()).build();
-        betRecordService.update(updateRecord);
-        return AmountUtil.toLong(betWithPayoutRes.getCredit());
-    }
 
     /**
      * 调用单钱包
