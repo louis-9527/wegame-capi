@@ -1,11 +1,11 @@
 package com.wegame.capi.biz.service;
 
 import cn.hutool.crypto.SecureUtil;
-import com.wegame.capi.api.CommonApi;
-import com.wegame.capi.api.domain.req.GetAuthLoginTokenReq;
+import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
+import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
+import com.wegame.capi.biz.domain.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.client.domain.request.UserLoginRequest;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
@@ -26,17 +26,19 @@ public class UserLoginService {
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
-    CommonApi commonApi;
+    SingleWalletApi singleWalletApi;
 
-    public UserInfo login(HttpServletResponse response, UserLoginRequest request) {
-        commonApi.authLoginToken(GetAuthLoginTokenReq.buildClientReq(request));
+    public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
+        // todo fix token认证 结果判断  @maidong
+        singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
 
-        String token = SecureUtil.md5(request.getToken());
+        String token = SecureUtil.md5(userLoginDo.getToken());
         response.addHeader(Constants._TOKEN_, token);
-        UserDo userDo = UserInfoBuilder.buildUserDo(request);
+        UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
         Long userId = userService.insertOrUpdate(userDo);
-        UserInfo userInfo = UserInfoBuilder.buildUserInfo(request, userId, token);
-        userInfo.setId(String.valueOf(userId));
+        UserInfo userInfo = UserInfoBuilder.buildUserInfo(userLoginDo, userId, token);
+        // 处理多端登录 todo 去掉对端登录问题 @maidong
+        innerLogout(userDo.getPlayerId());
 
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);

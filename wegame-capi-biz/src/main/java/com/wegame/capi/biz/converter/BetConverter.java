@@ -5,9 +5,9 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.bet.MysteriousBuyFreeSpinsBetDo;
-import com.wegame.capi.biz.domain.biz.bet.MysteriousNonBuyFreeSpinsBetDo;
-import com.wegame.capi.biz.domain.biz.bet.MysteriousNormalBetDo;
+import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBuyFreeSpinsBetDo;
+import com.wegame.capi.biz.domain.biz.bet.MariaMakilingNonBuyFreeSpinsBetDo;
+import com.wegame.capi.biz.domain.biz.bet.MariaMakilingNormalBetDo;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -25,9 +25,9 @@ import java.util.Objects;
 public class BetConverter {
 
     private static final Map<BetSubTypeEnum, Class<?>> mysteriousClassMap = new ImmutableMap.Builder<BetSubTypeEnum, Class<?>>()
-            .put(BetSubTypeEnum.NORMAL_BET, MysteriousNormalBetDo.class)
-            .put(BetSubTypeEnum.BUY_FREE_SPINS_BET, MysteriousBuyFreeSpinsBetDo.class)
-            .put(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET, MysteriousNonBuyFreeSpinsBetDo.class)
+            .put(BetSubTypeEnum.NORMAL_BET, MariaMakilingNormalBetDo.class)
+            .put(BetSubTypeEnum.BUY_FREE_SPINS_BET, MariaMakilingBuyFreeSpinsBetDo.class)
+            .put(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET, MariaMakilingNonBuyFreeSpinsBetDo.class)
             .build();
 
     private static final Map<GameTypeEnum, Map<BetSubTypeEnum, Class<?>>> gameClassMap = new ImmutableMap.Builder<GameTypeEnum, Map<BetSubTypeEnum, Class<?>>>()

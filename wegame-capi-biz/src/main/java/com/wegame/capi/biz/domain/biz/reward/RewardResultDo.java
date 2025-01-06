@@ -36,9 +36,9 @@ public class RewardResultDo implements Serializable {
      */
     private BigDecimal wildTotalTimes;
     /**
-     * 中大奖类型
+     * 奖励类型
      */
-    private PrizeTypeEnum grandPrizeType;
+    private PrizeTypeEnum prizeType;
     /**
      * 中奖类型  单奖励/多奖励
      *

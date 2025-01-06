@@ -9,6 +9,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
 import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
+import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
 import com.wegame.capi.biz.converter.user.UserConverter;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.client.domain.request.NotifyCreditChangeRequest;
@@ -229,8 +230,13 @@ public class UserService {
     }
 
     public Long getCredit() {
-        redisTemplate.opsForSet().remove(CUSER_CREDIT_CHANGE, UserInfoContext.getUserInfo().getPlayerName());
-        GetCreditRes res = singleWalletApi.getCredit(GetCreditReq.build());
+        try {
+            redisTemplate.opsForSet().remove(CUSER_CREDIT_CHANGE, UserInfoContext.getUserInfo().getPlayerName());
+        } catch (Exception e) {
+            log.error("getCredit err, errMsg: {}", e.getMessage(), e);
+        }
+        GetCreditRes res = singleWalletApi.getCredit(GetCreditReqBuilder.build());
+        // todo 空的时候返回 0L 是否合适 @maidong
         return Objects.isNull(res.getCredit()) ? 0L : res.getCredit().longValue();
     }
 
