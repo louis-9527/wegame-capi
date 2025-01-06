@@ -27,7 +27,7 @@ public class UserLoginDo implements Serializable {
     /**
      * 渠道id
      */
-    private String chanelId;
+    private String channelId;
     /**
      * 游戏id
      */
