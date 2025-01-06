@@ -21,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MysteriousBuyFreeSpinsBetResultDo implements Converter<Object> {
+public class MariaMakilingBuyFreeSpinsBetResultDo implements Converter<Object> {
     private List<Integer> freeSpinIds;
     private GameBetResultDetailDo resultDetail;
 

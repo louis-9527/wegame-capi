@@ -3,7 +3,6 @@ package com.wegame.capi.biz.domain.biz.bet;
 import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +16,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MysteriousBuyFreeSpinsBetDo implements Validate, Serializable {
+public class MariaMakilingBuyFreeSpinsBetDo implements Validate, Serializable {
     /**
      * 投注记录id
      */

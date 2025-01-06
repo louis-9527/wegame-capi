@@ -107,7 +107,7 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
     }
 
 
-    public GameBetResultDetailDo queryBetFreeSpin(String gameId, Long recordId, Integer freeSpinId) {
+    public GameBetResultDetailDo queryBetFreeSpin(Long recordId, Integer freeSpinId) {
         BetRecordDo betRecordDo = betRecordService.get(recordId);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         Object detail = betRecordDo.getDetail();
@@ -115,8 +115,6 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
             return null;
         }
         List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(FastJsonUtils.toJSONString(detail), GameRecordDetailPo.class);
-
-
         GameRecordDetailPo recordDetail = Optional.ofNullable(recordDetailPos)
                 .orElse(Collections.emptyList())
                 .stream()
