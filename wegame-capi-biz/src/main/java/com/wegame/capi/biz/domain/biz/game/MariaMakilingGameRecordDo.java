@@ -16,6 +16,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -52,7 +53,7 @@ public class MariaMakilingGameRecordDo implements Serializable, Converter<MariaM
      * @return
      */
     public boolean hasReward() {
-        return CollectionUtils.isNotEmpty(rewardResult.getRewardLineList());
+        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineList());
     }
 
     /**
@@ -61,23 +62,27 @@ public class MariaMakilingGameRecordDo implements Serializable, Converter<MariaM
      * @return
      */
     public boolean hasRewardFreeSpins() {
-        return CollectionUtils.isNotEmpty(rewardResult.getRewardLineList()) && rewardResult.isFreeSpin();
+        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineList()) && rewardResult.isFreeSpin();
     }
 
 
     @Override
     public MariaMakilingBetResultVo toVo() {
-        return MariaMakilingBetResultVo.builder()
-                .rewardType(rewardResult.getRewardType() == null ? null : rewardResult.getRewardType().getCode())
-                .rewardSubType(rewardResult.getRewardSubType() == null ? null : rewardResult.getRewardSubType().getCode())
-                .totalRewardAmount(rewardResult.getTotalRewardAmount())
-                .totalRewardMultiple(rewardResult.getTotalMultiple())
-                .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
-                .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineList())
-                        .orElse(Collections.emptyList())
-                        .stream()
-                        .map(item -> {
-                            return MariaMakilingBetResultVo.MariaMakilingRewardLineVo.builder()
+        if (Objects.isNull(rewardResult)) {
+            return MariaMakilingBetResultVo.builder()
+                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .build();
+        } else {
+            return MariaMakilingBetResultVo.builder()
+                    .rewardType(rewardResult.getRewardType() == null ? null : rewardResult.getRewardType().getCode())
+                    .rewardSubType(rewardResult.getRewardSubType() == null ? null : rewardResult.getRewardSubType().getCode())
+                    .totalRewardAmount(rewardResult.getTotalRewardAmount())
+                    .totalRewardMultiple(rewardResult.getTotalMultiple())
+                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineList())
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .map(item -> MariaMakilingBetResultVo.MariaMakilingRewardLineVo.builder()
                                     .multiple(item.getMultiple())
                                     .odds(item.getOdds())
                                     .symbolIdList(Optional.ofNullable(item.getSymbolList()).orElse(Collections.emptyList())
@@ -93,11 +98,11 @@ public class MariaMakilingGameRecordDo implements Serializable, Converter<MariaM
                                                     .build()).collect(Collectors.toList()))
                                     .betAmount(item.getBetAmount())
                                     .rewardAmount(item.getRewardAmount())
-                                    .build();
-                        }).collect(Collectors.toList()))
-                .freeSpinFlag(rewardResult.isFreeSpin() ? 1 : 0)
-                .freeSpinIds(freeSpinIds)
-                .build();
+                                    .build()).collect(Collectors.toList()))
+                    .freeSpinFlag(rewardResult.isFreeSpin() ? 1 : 0)
+                    .freeSpinIds(freeSpinIds)
+                    .build();
+        }
     }
 }
 

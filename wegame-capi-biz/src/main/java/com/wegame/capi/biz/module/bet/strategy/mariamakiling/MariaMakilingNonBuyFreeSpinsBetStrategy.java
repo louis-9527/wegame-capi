@@ -72,9 +72,7 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
         AssertUtil.assertNotEmpty(gameRecords, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(gameRecords.size() == 1, ErrorCode.ERR_INTER);
         MariaMakilingGameRecordDo gameRecord = gameRecords.get(0);
-        if (gameRecord.hasReward()) {
-            rets.addAll(gameRecords);
-        }
+        rets.addAll(gameRecords);
 
         // 构建投注记录
         Long rewardAmount = rets.stream().mapToLong(item -> item.getRewardResult().getTotalRewardAmount()).sum();

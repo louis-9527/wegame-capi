@@ -53,9 +53,7 @@ public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingB
         AssertUtil.assertNotEmpty(gameRecords, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(gameRecords.size() == 1, ErrorCode.ERR_INTER);
         MariaMakilingGameRecordDo gameRecord = gameRecords.get(0);
-        if (gameRecord.hasReward()) {
-            rets.addAll(gameRecords);
-        }
+        rets.addAll(gameRecords);
         if (gameRecord.hasRewardFreeSpins()) {
             List<MariaMakilingGameRecordDo> freeSpinsGameRecords = getGame().play(GamePlayDo.builder()
                     .gameType(betDo.getGameType())
