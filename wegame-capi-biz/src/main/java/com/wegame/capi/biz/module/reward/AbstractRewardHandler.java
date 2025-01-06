@@ -13,11 +13,9 @@ import com.wegame.capi.biz.domain.biz.reward.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
-import com.wegame.capi.biz.service.WheelTimerService;
 import com.wegame.capi.common.enums.PrizeTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -30,8 +28,6 @@ import java.util.Objects;
 @Slf4j
 @Service
 public abstract class AbstractRewardHandler implements RewardHandler {
-    @Autowired
-    WheelTimerService wheelTimerService;
 
     public abstract OddsCalculateStrategy oddsCalculateStrategy();
 

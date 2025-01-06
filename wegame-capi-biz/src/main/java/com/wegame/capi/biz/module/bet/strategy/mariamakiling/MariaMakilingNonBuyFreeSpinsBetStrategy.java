@@ -11,25 +11,29 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingNonBuyFreeSpinsBetDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingNonBuyFreeSpinsBetResultDo;
-import com.wegame.capi.biz.domain.biz.reward.MariaNotifyDo;
 import com.wegame.capi.biz.domain.biz.reward.MariaNotifyResultDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.PushGrandPrizeTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@Slf4j
 @Component("mariaMakilingNonBuyFreeSpinsBetStrategy")
 public class MariaMakilingNonBuyFreeSpinsBetStrategy
         extends AbstractMariaMakilingBetStrategy<MariaMakilingNonBuyFreeSpinsBetDo, MariaMakilingNonBuyFreeSpinsBetResultDo> {
-    private static final String PUSH_PRIZE_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public BetResultDo<MariaMakilingNonBuyFreeSpinsBetResultDo> bet(BetDo<MariaMakilingNonBuyFreeSpinsBetDo> betDo) {
@@ -37,6 +41,9 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
         if (betDetail.getBetRecordId() != null && betDetail.getFreeSpinsId() != null) {
             // 查询免费轮详情
             MariaMakilingGameRecordDetailDo gameBetResultDetailDo = betRecordService.getResultDetail(betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
+            if (Objects.nonNull(gameBetResultDetailDo) && gameBetResultDetailDo.isMaxFreeSpinsIdFlag()) {
+                this.notifyPrizeHandle(betDo.getGameType(), betDetail.getBetRecordId());
+            }
             return BetResultDo.<MariaMakilingNonBuyFreeSpinsBetResultDo>builder()
                     .betRecordId(betDetail.getBetRecordId())
                     .gameId(betDo.getGameId())
@@ -70,16 +77,11 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
         // 获取投注结果
 
         long betRecordId = idGeneratorHelper.nextId();
-        BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId,0L, rewardAmount, resultDetails);
+        BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId, 0L, rewardAmount, resultDetails);
         betRecord.setFreeSpinsRefId(recordId);
         betRecord.setFreeSpinsTimes(resultDetails.size());
         // 保存投注记录并派奖
         super.saveBetRecordAndPayOut(betRecord);
-        // 额外操作
-        super.extendHandle(MariaNotifyDo.builder()
-                .gameType(GameTypeEnum.MARIA_MAKILING)
-                .normalGmeRecordId(betRecordDo.getId())
-                .freeSpinsGameRecordId(betRecord.getId()).build());
         return BetResultDo.<MariaMakilingNonBuyFreeSpinsBetResultDo>builder()
                 .betRecordId(betRecord.getId())
                 .gameId(betDo.getGameId())
@@ -89,26 +91,33 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
                 .build();
     }
 
-    @Override
-    MariaNotifyResultDo pushGrandPrizeHandle(MariaNotifyDo marizNotifyDo) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        // 算出中奖金额返回。正常玩的记录派彩金额，免费轮的所有派彩金额
-        BetRecordDo normalBetRecordDo = betRecordService.get(marizNotifyDo.getNormalGmeRecordId());
-        AssertUtil.assertNotNull(normalBetRecordDo, ErrorCode.ERR_INTER, "normalBetRecord is not exist");
-        BetRecordDo freeSpinsBetRecordDo = betRecordService.get(marizNotifyDo.getFreeSpinsGameRecordId());
-        AssertUtil.assertNotNull(freeSpinsBetRecordDo, ErrorCode.ERR_INTER, "freeSpinsBetRecord is not exist");
-        // 计算出所有金额
-        Long normalPayOutAmount = Optional.ofNullable(normalBetRecordDo.getPayOutAmount()).orElse(0L);
-        Long freeSpinsPayOutAmount = Optional.ofNullable(freeSpinsBetRecordDo.getPayOutAmount()).orElse(0L);
-        return MariaNotifyResultDo.builder()
-                .gameTypeId(GameTypeEnum.MARIA_MAKILING.getId())
-                .userId(Long.valueOf(userInfo.getId()))
-                .userName(userInfo.getUserName())
-                .grandPrizeType(PushGrandPrizeTypeEnum.NORMAL_FREE_SPINS.name())
-                .grandTime(DateUtil.getCurrentMilli())
-                .tipsContent(String.format(PUSH_PRIZE_CONTENT_FORMAT, DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
-                        userInfo.getUserName(), NumberUtil.div(normalPayOutAmount + freeSpinsPayOutAmount, 100), 10))
-                .build();
+    void notifyPrizeHandle(GameTypeEnum gameType, Long freeSpinsBetRecordId) {
+        try {
+            UserInfo userInfo = UserInfoContext.getUserInfo();
+            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+            // 算出中奖金额返回。正常玩的记录派彩金额，免费轮的所有派彩金额
+            BetRecordDo freeSpinsBetRecordDo = betRecordService.get(freeSpinsBetRecordId);
+            AssertUtil.assertNotNull(freeSpinsBetRecordDo, ErrorCode.ERR_INTER, "freeSpinsBetRecord is not exist");
+            BetRecordDo normalBetRecordDo = betRecordService.get(freeSpinsBetRecordDo.getFreeSpinsRefId());
+            AssertUtil.assertNotNull(normalBetRecordDo, ErrorCode.ERR_INTER, "normalBetRecord is not exist");
+
+            // 计算出所有金额
+            Long normalPayOutAmount = Optional.ofNullable(normalBetRecordDo.getPayOutAmount()).orElse(0L);
+            Long freeSpinsPayOutAmount = Optional.ofNullable(freeSpinsBetRecordDo.getPayOutAmount()).orElse(0L);
+            MariaNotifyResultDo notifyResultDo = MariaNotifyResultDo.builder()
+                    .gameTypeId(GameTypeEnum.MARIA_MAKILING.getId())
+                    .userId(Long.valueOf(userInfo.getId()))
+                    .userName(userInfo.getUserName())
+                    .grandPrizeType(PushGrandPrizeTypeEnum.NORMAL_FREE_SPINS.name())
+                    .grandTime(DateUtil.getCurrentMilli())
+                    .tipsContent(String.format(Constants.PUSH_PRIZE_CONTENT_FORMAT, DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
+                            userInfo.getUserName(), NumberUtil.div(normalPayOutAmount + freeSpinsPayOutAmount, 100), 10))
+                    .build();
+            String key = String.format(Constants.PUSH_PRIZE_REDIS_KEY, gameType.getId());
+            DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.PUSH_PRIZE_LUA_SCRIPT, Long.class);
+            redisTemplate.execute(script, Collections.singletonList(key), notifyResultDo, Constants.PUSH_PRIZE_LIMIT);
+        } catch (Exception e) {
+            log.error("[MariaMakilingNonBuyFreeSpinsBetStrategy-notifyPrizeHandle] error,freeSpinsBetRecordId:{}", freeSpinsBetRecordId, e);
+        }
     }
 }
