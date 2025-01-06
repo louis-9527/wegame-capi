@@ -4,6 +4,9 @@ package com.wegame.capi.client.enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.ToString;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 投注子类型
  *
@@ -63,5 +66,10 @@ public enum BetSubTypeEnum {
 
     public BetTypeEnum getBetType() {
         return betType;
+    }
+
+    public static Boolean isFreeFound(String betSubType) {
+        List<String> freeCodeList =Arrays.asList(FREE_SPINS_NORMAL_BET.getCode(), FREE_SPINS_BUY_BET.getCode());
+        return freeCodeList.contains(betSubType);
     }
 }

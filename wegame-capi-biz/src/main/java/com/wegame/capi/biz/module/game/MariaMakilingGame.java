@@ -158,9 +158,10 @@ public class MariaMakilingGame extends AbstractGame {
         } else {
             switch (gamePlay.getBetSubType()) {
                 case NORMAL_BET:
+                case BUY_BET:
                     return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
-                case NON_BUY_FREE_SPINS_BET:
-                case BUY_FREE_SPINS_BET:
+                case FREE_SPINS_NORMAL_BET:
+                case FREE_SPINS_BUY_BET:
                     return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
                 default:
                     throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");

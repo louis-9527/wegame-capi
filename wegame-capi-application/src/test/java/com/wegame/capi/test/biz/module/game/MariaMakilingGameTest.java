@@ -137,8 +137,8 @@ public class MariaMakilingGameTest extends BaseTest {
         for (int i = 0; i < times; i++) {
             GamePlayDo playDo = GamePlayDo.builder()
                     .gameType(GameTypeEnum.MARIA_MAKILING)
-                    .betType(BetTypeEnum.FREE_SPINS_BET)
-                    .betSubType(BetSubTypeEnum.BUY_FREE_SPINS_BET)
+                    .betType(BetTypeEnum.BUY_BET)
+                    .betSubType(BetSubTypeEnum.FREE_SPINS_BUY_BET)
                     .betAmount(100L)
                     .freeSpinsFlag(true)
                     .build();
