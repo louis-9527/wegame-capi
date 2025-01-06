@@ -1,4 +1,4 @@
-package com.wegame.capi.application.controller.third;
+package com.wegame.capi.application.controller.platform;
 
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.service.BetRecordService;
