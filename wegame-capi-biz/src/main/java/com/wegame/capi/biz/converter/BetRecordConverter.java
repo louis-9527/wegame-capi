@@ -86,6 +86,7 @@ public class BetRecordConverter {
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         BetRecordPo po = new BetRecordPo();
+        po.setId(betRecordDo.getId());
         po.setPId(betRecordDo.getPId());
         po.setChannelId(betRecordDo.getChannelId());
         po.setGameId(betRecordDo.getGameId());
