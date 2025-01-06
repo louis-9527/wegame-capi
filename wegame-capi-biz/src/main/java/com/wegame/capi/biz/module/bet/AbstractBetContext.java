@@ -6,7 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.bet.strategy.BetStrategy;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.utils.LockNameUtil;
@@ -28,7 +28,7 @@ public abstract class AbstractBetContext {
      *
      * @return map
      */
-    public abstract Map<BetSubTypeEnum, String> betStrategyNameMap();
+    public abstract Map<BetTypeEnum, String> betStrategyNameMap();
 
     /**
      * 获取投注策略Map
@@ -38,7 +38,7 @@ public abstract class AbstractBetContext {
     public abstract Map<String, BetStrategy> betStrategyMap();
 
     public BetResultDo bet(BetDo betDo) {
-        String betStrategyName = betStrategyNameMap().get(betDo.getBetSubType());
+        String betStrategyName = betStrategyNameMap().get(betDo.getBetType());
         AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");
         BetStrategy betStrategy = betStrategyMap().get(betStrategyName);
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");

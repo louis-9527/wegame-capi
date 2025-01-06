@@ -50,11 +50,10 @@ public class MariaMakilingGame extends AbstractGame {
             return multiWheelGenerate(gameInfo, probabilisticConfig);
         } else {
             // 根据投注类型：生成游戏滚轮
-            switch (gamePlay.getBetSubType()) {
+            switch (gamePlay.getBetType()) {
                 case NORMAL_BET:
                     return Arrays.asList(normalWheelGenerate(gameInfo, probabilisticConfig));
-                case BUY_FREE_SPINS_BET:
-                case NON_BUY_FREE_SPINS_BET:
+                case BUY_BET:
                     return Arrays.asList(freeSpinsWheelGenerate(gameInfo, probabilisticConfig));
                 default:
                     throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");

@@ -1,8 +1,10 @@
 package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 
+import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
@@ -11,18 +13,30 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+import com.wegame.capi.biz.domain.biz.reward.MariaNotifyResultDo;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.Constants;
+import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.common.enums.PushGrandPrizeTypeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component("mariaMakilingNormalBetStrategy")
 public class MariaMakilingNormalBetStrategy
         extends AbstractMariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
 
     @Autowired
     IdGeneratorHelper idGeneratorHelper;
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo<MariaMakilingBetDo> betDo) {
@@ -30,6 +44,9 @@ public class MariaMakilingNormalBetStrategy
         if (Objects.nonNull(betDetail.getBetRecordId()) && Objects.nonNull(betDetail.getFreeSpinsId())) {
             BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDo.getBetDetail().getBetRecordId());
             MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
+            if (betRecordDetailDo.isLastFreeSpins(betDetail.getFreeSpinsId())) {
+                notifyPrizeHandle(betDo.getGameType(), betRecordDetailDo.freeSpinCount(), betRecordDo.getPayOutAmount());
+            }
             // 如果最后一次查询则，返回总的中奖金额 todo
             return BetResultDo.<MariaMakilingGameRecordDo>builder()
                     .betRecordId(betDetail.getBetRecordId())
@@ -96,5 +113,28 @@ public class MariaMakilingNormalBetStrategy
                 .betSubType(betDo.getBetSubType())
                 .resultDetail(rets.get(0))
                 .build();
+    }
+
+
+    // 正常玩 非免费轮
+    void notifyPrizeHandle(GameTypeEnum gameType, long freeSpinsCount, long totalAmount) {
+        try {
+            UserInfo userInfo = UserInfoContext.getUserInfo();
+            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+            MariaNotifyResultDo notifyResultDo = MariaNotifyResultDo.builder()
+                    .gameTypeId(GameTypeEnum.MARIA_MAKILING.getId())
+                    .userId(Long.valueOf(userInfo.getId()))
+                    .userName(userInfo.getUserName())
+                    .grandPrizeType(PushGrandPrizeTypeEnum.NORMAL_FREE_SPINS.name())
+                    .grandTime(DateUtil.getCurrentMilli())
+                    .tipsContent(String.format(Constants.PUSH_PRIZE_CONTENT_FORMAT, DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
+                            userInfo.getUserName(), NumberUtil.div(totalAmount, 100), freeSpinsCount))
+                    .build();
+            String key = String.format(Constants.PUSH_PRIZE_REDIS_KEY, gameType.getId());
+            DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.PUSH_PRIZE_LUA_SCRIPT, Long.class);
+            redisTemplate.execute(script, Collections.singletonList(key), notifyResultDo, Constants.PUSH_PRIZE_LIMIT);
+        } catch (Exception e) {
+            log.error("[MariaMakilingNonBuyFreeSpinsBetStrategy-notifyPrizeHandle] error", e);
+        }
     }
 }

@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component("mariaMakilingBuyFreeSpinsBetStrategy")
-public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
+@Component("mariaMakilingBuyBetStrategy")
+public class MariaMakilingBuyBetStrategy extends AbstractMariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
 
     @Autowired
     IdGeneratorHelper idGeneratorHelper;
@@ -94,4 +94,5 @@ public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingB
                 .resultDetail(rets.get(0))
                 .build();
     }
+
 }

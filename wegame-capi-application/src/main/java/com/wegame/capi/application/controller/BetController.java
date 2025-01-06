@@ -1,7 +1,6 @@
 package com.wegame.capi.application.controller;
 
-import com.wegame.base.context.Operator;
-import com.wegame.base.context.OperatorContext;
+import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.converter.BetConverter;
 import com.wegame.capi.biz.converter.BetResultConverter;
@@ -27,7 +26,7 @@ public class BetController {
     @Autowired
     BetService betService;
 
-    //    @LoginRequired todo fix
+    @LoginRequired
     @ApiOperation(value = "投注", httpMethod = "POST")
     @PostMapping("/bet")
     public CommonResponse<BetResultVo> bet(@RequestBody BetRequest betRequest) {

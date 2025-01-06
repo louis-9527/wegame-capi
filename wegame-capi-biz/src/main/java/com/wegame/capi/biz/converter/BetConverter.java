@@ -24,8 +24,10 @@ public class BetConverter {
 
     private static final Map<BetSubTypeEnum, Class<?>> mysteriousClassMap = new ImmutableMap.Builder<BetSubTypeEnum, Class<?>>()
             .put(BetSubTypeEnum.NORMAL_BET, MariaMakilingBetDo.class)
-            .put(BetSubTypeEnum.BUY_FREE_SPINS_BET, MariaMakilingBetDo.class)
-            .put(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET, MariaMakilingBetDo.class)
+            .put(BetSubTypeEnum.FREE_SPINS_NORMAL_BET, MariaMakilingBetDo.class)
+            .put(BetSubTypeEnum.BUY_BET, MariaMakilingBetDo.class)
+            .put(BetSubTypeEnum.FREE_SPINS_BUY_BET, MariaMakilingBetDo.class)
+
             .build();
 
     private static final Map<GameTypeEnum, Map<BetSubTypeEnum, Class<?>>> gameClassMap = new ImmutableMap.Builder<GameTypeEnum, Map<BetSubTypeEnum, Class<?>>>()

@@ -22,9 +22,13 @@ public class BetRequest implements Validate, Serializable {
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "游戏Id", required = true)
     private String gameId;
-    @ApiModelProperty(value = "投注类型:NORMAL_BET,免费轮投注:FREE_SPINS_BET", required = true)
+    @ApiModelProperty(value = "投注类型:NORMAL_BET,购买投注:BUY_BET", required = true)
     private String betType;
-    @ApiModelProperty(value = "投注子类型:NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
+    @ApiModelProperty(value = "投注子类型:" +
+            "NORMAL_BET:正常投注, " +
+            "FREE_SPINS_NORMAL_BET: 正常免费轮投注，" +
+            "BUY_BET:购买投注, " +
+            "FREE_SPINS_BUY_BET: 免费轮购买投注", required = true)
     private String betSubType;
 
     // todo 调试结束后， 修改类型为Object @bruce
