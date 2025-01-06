@@ -58,15 +58,16 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         return resultDetail.get(0);
     }
 
-    @Override
-    public Object extendHandle(Object obj) {
-        AssertUtil.assertTrue(obj instanceof MariaNotifyDo, ErrorCode.ERR_INTER, "data type is not support");
-        MariaNotifyResultDo notifyDo = this.pushGrandPrizeHandle((MariaNotifyDo) obj);
-        if (Objects.nonNull(notifyDo)) {
-            wheelTimerService.delayPushPrize(notifyDo, String.format(Constants.PUSH_PRIZE_REDIS_KEY, notifyDo.getGameTypeId()));
-        }
-        return notifyDo;
-    }
+    // todo fix
+    //    @Override
+    //    public Object extendHandle(Object obj) {
+    //        AssertUtil.assertTrue(obj instanceof MariaNotifyDo, ErrorCode.ERR_INTER, "data type is not support");
+    //        MariaNotifyResultDo notifyDo = this.pushGrandPrizeHandle((MariaNotifyDo) obj);
+    //        if (Objects.nonNull(notifyDo)) {
+    //            wheelTimerService.delayPushPrize(notifyDo, String.format(Constants.PUSH_PRIZE_REDIS_KEY, notifyDo.getGameTypeId()));
+    //        }
+    //        return notifyDo;
+    //    }
 
 
     /**
