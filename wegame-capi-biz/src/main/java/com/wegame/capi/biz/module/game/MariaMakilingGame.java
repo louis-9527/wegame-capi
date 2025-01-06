@@ -153,7 +153,7 @@ public class MariaMakilingGame extends AbstractGame {
         return wheels;
     }
 
-    private Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
+    public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
         if (gamePlay.isFreeSpinsFlag()) {
             return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
         } else {
