@@ -11,6 +11,7 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
+import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,8 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
 
     @Autowired
     MultipleCalculateStrategy mariaMakilingMultipleCalculateStrategy;
+    @Autowired
+    BetRecordService betRecordService;
 
     @Override
     public OddsCalculateStrategy oddsCalculateStrategy() {
@@ -137,20 +140,6 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         return PrizeTypeEnum.NONE_PRIZE;
     }
 
-    @Override
-    public <T> PushGrandPrizeResultDo doPushGrandPrizeHandle(PushGrandPrizeDo<T> pushGrandPrizeDo) {
-        T data = pushGrandPrizeDo.getData();
-        AssertUtil.assertTrue(data instanceof com.wegame.capi.biz.domain.game.MariaPushGrandPrizeDo, ErrorCode.ERR_INTER, "data type is not support");
-        com.wegame.capi.biz.domain.game.MariaPushGrandPrizeDo mariaPushGrandPrizeDo = (com.wegame.capi.biz.domain.game.MariaPushGrandPrizeDo) data;
-
-        // 算出中奖金额返回
-        
-
-
-
-            return null;
-    }
-
     private Map<SymbolDo, List<RewardRuleSymbolDo>> initFirstColumSymbol(RewardRuleDo rewardRuleDo) {
         Map<SymbolDo, List<RewardRuleSymbolDo>> firstColumSymbolMapping = new HashMap<>();
         SymbolDo[][] symbolArr = rewardRuleDo.getSymbolArr();
@@ -246,35 +235,6 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                 loopFindRewardLine(symbolDo, currentColum, maxColum, columTreeMap, tempRewardSymbolIndexList, tempSymbolIdList, complexRewardLineList);
             }
         }
-    }
-
-    private List<RewardRuleLineDo> generatorRewardLinesForSimple(SymbolDo symbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap) {
-        // 获取每一列的个数并计算出总的个数
-        int lineCount = 1;
-        for (Integer colum : columTreeMap.keySet()) {
-            lineCount = lineCount * columTreeMap.get(colum).size();
-        }
-
-        if (lineCount <= 0) {
-            return null;
-        }
-        List<RewardRuleLineDo> simpleRewardLineList = Lists.newArrayList();
-        List<SymbolDo> rewardSymbolList = Lists.newArrayList();
-
-        for (Integer colum : columTreeMap.keySet()) {
-            rewardSymbolList.add(symbolDo);
-        }
-
-        for (int i = 0; i < lineCount; i++) {
-            RewardRuleLineDo lineDo = RewardRuleLineDo.builder()
-                    .symbol(symbolDo)
-                    .rewardLineType(this.getRewardLineType(columTreeMap.keySet().size()))
-                    .rewardSymbolIdList(rewardSymbolList)
-                    .build();
-            simpleRewardLineList.add(lineDo);
-        }
-
-        return simpleRewardLineList;
     }
 
     private RewardLineTypeEnum getRewardLineType(int linkCount) {

@@ -20,4 +20,6 @@ public enum PushGrandPrizeTypeEnum {
 
     NORMAL_FREE_SPINS,
     ;
+
+
 }

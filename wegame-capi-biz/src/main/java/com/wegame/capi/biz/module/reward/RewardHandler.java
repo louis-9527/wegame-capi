@@ -1,8 +1,5 @@
 package com.wegame.capi.biz.module.reward;
 
-
-import com.wegame.capi.biz.domain.biz.reward.PushGrandPrizeDo;
-import com.wegame.capi.biz.domain.biz.reward.PushGrandPrizeResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 
@@ -18,12 +15,4 @@ public interface RewardHandler {
      * @return result
      */
     RewardResultDo handle(RewardHandleDo rewardHandle);
-
-    /**
-     * 推送中大奖处理
-     *
-     * @param pushGrandPrizeDo pushGrandPrizeDo
-     * @return result
-     */
-    <T> PushGrandPrizeResultDo pushGrandPrizeHandle(PushGrandPrizeDo<T> pushGrandPrizeDo);
 }

@@ -1,13 +1,10 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.enums.OptEnum;
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
-import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
@@ -38,6 +35,9 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
     public BetRecordService betRecordService;
     @Autowired
     private SingleWalletApi singleWalletApi;
+
+    // 投注额外信息处理
+    public abstract Object extendHandle(Object obj);
 
     public abstract Game getGame();
 
