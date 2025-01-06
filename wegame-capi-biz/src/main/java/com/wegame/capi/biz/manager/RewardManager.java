@@ -14,14 +14,14 @@ import java.util.Objects;
 import static com.wegame.capi.common.Constants.CUSER_CREDIT_CHANGE;
 
 @Service
-public class GameNotifyManager {
+public class RewardManager {
 
     @Autowired
     RedisTemplate redisTemplate;
 
-    public RewardInfoVo query() {
+    public RewardInfoVo list() {
         RewardInfoVo vo = new RewardInfoVo();
-        String messageStr = (String) redisTemplate.opsForValue().get(Constants.REWARD_MESSAGE);
+        String messageStr = (String) redisTemplate.opsForValue().get(String.format(Constants.REWARD_MESSAGE, UserInfoContext.getUserInfo().getGameId()));
         if (Objects.nonNull(messageStr) && JSONUtil.isTypeJSONObject(messageStr)) {
             vo.setMessages(JSON.parseArray(messageStr, String.class));
         }
