@@ -1,6 +1,7 @@
-package com.wegame.capi.application;
+package com.wegame.capi.test;
 
 
+import com.wegame.capi.application.Application;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;

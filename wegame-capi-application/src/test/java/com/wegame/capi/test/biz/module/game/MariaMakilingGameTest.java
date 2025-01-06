@@ -1,7 +1,7 @@
-package com.wegame.capi.application.module.game;
+package com.wegame.capi.test.biz.module.game;
 
 import com.wegame.base.utils.FastJsonUtils;
-import com.wegame.capi.application.BaseTest;
+import com.wegame.capi.test.BaseTest;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.game.MariaMakilingGame;

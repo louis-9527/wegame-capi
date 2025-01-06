@@ -1,8 +1,8 @@
-package com.wegame.capi.application.module.reward;//package com.wegame.capi.application.controller;
+package com.wegame.capi.test.biz.module.reward;//package com.wegame.capi.application.controller;
 
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
-import com.wegame.capi.application.BaseTest;
+import com.wegame.capi.test.BaseTest;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardRuleDo;

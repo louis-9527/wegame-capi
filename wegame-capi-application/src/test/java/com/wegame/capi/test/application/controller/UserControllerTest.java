@@ -1,6 +1,8 @@
-package com.wegame.capi.application.module.bet;
+package com.wegame.capi.test.application.controller;
 
-import com.wegame.capi.application.BaseTest;
+import cn.hutool.core.lang.Assert;
+import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.test.BaseTest;
 import com.wegame.capi.application.controller.UserController;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
@@ -10,7 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
-public class XxxTest extends BaseTest {
+public class UserControllerTest extends BaseTest {
 
     @Autowired
     UserController userController;
@@ -23,7 +25,14 @@ public class XxxTest extends BaseTest {
     }
 
     @Test
-    public void test_XxxMethod() {
-
+    public void test_me() {
+        CommonResponse<UserInfo> response = userController.me();
+        log.info("me: {}", response);
+        Assert.notNull(response);
+        Assert.isNull(response.getData());
     }
+
+    // 补充单测 todo @maidong
+
+
 }

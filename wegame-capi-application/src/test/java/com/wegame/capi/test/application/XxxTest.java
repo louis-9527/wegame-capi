@@ -1,6 +1,6 @@
-package com.wegame.capi.application.module.multiple;
+package com.wegame.capi.test.application;
 
-import com.wegame.capi.application.BaseTest;
+import com.wegame.capi.test.BaseTest;
 import com.wegame.capi.application.controller.UserController;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
