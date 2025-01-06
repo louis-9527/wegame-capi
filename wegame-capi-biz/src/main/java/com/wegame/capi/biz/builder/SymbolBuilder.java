@@ -13,20 +13,20 @@ public class SymbolBuilder {
                 || Objects.isNull(symbolArr[0])) {
             return null;
         }
-        return Arrays.stream(symbolArr)
-                .map(innerArr -> Arrays.stream(innerArr)
-                        .map(item -> Objects.isNull(item) ? null : item.getId()))
-                .toArray(String[][]::new);
+//        return Arrays.stream(symbolArr)
+//                .map(innerArr -> Arrays.stream(innerArr)
+//                        .map(item -> Objects.isNull(item) ? null : item.getId()))
+//                .toArray(String[][]::new);
 
         // todo delete
-        //        int rows = symbolArr.length;
-        //        int cols = symbolArr[0].length;
-        //        String[][] integerArray = new String[rows][cols];
-        //        for (int i = 0; i < rows; i++) {
-        //            for (int j = 0; j < cols; j++) {
-        //                integerArray[i][j] = symbolArr[i][j].getId();
-        //            }
-        //        }
-        //        return integerArray;
+        int rows = symbolArr.length;
+        int cols = symbolArr[0].length;
+        String[][] integerArray = new String[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                integerArray[i][j] = symbolArr[i][j].getId();
+            }
+        }
+        return integerArray;
     }
 }

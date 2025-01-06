@@ -1,100 +1,99 @@
-//package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
-//
-//import cn.hutool.core.util.NumberUtil;
-//import com.wegame.base.enums.ErrorCode;
-//import com.wegame.base.id.IdGeneratorHelper;
-//import com.wegame.base.utils.AssertUtil;
-//import com.wegame.base.utils.DateUtil;
-//import com.wegame.capi.biz.builder.BetRecordBuilder;
-//import com.wegame.capi.biz.domain.biz.BetRecordDo;
-//import com.wegame.capi.biz.domain.biz.GamePlayDo;
-//import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
-//import com.wegame.capi.biz.domain.biz.bet.BetDo;
-//import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
-//import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
-//import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
-//import com.wegame.capi.biz.domain.biz.reward.MariaNotifyResultDo;
-//import com.wegame.capi.client.enums.GameTypeEnum;
-//import com.wegame.capi.common.Constants;
-//import com.wegame.capi.common.context.UserInfo;
-//import com.wegame.capi.common.context.UserInfoContext;
-//import com.wegame.capi.common.enums.PushGrandPrizeTypeEnum;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.data.redis.core.RedisTemplate;
-//import org.springframework.data.redis.core.script.DefaultRedisScript;
-//import org.springframework.stereotype.Component;
-//
-//import java.util.*;
-//
-//@Slf4j
-//@Component("mariaMakilingNonBuyFreeSpinsBetStrategy")
-//public class MariaMakilingNonBuyFreeSpinsBetStrategy
-//        extends AbstractMariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
-//
-//    @Autowired
-//    IdGeneratorHelper idGeneratorHelper;
-//    @Autowired
-//    RedisTemplate<String, Object> redisTemplate;
-//
-//    @Override
-//    public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo<MariaMakilingBetDo> betDo) {
-//        MariaMakilingBetDo betDetail = betDo.getBetDetail();
-//        if (Objects.nonNull(betDetail.getBetRecordId()) && Objects.nonNull(betDetail.getFreeSpinsId())) {
-//            BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDo.getBetDetail().getBetRecordId());
-//            MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
-//            if (betRecordDetailDo.isLastFreeSpins(betDetail.getFreeSpinsId())) {
-//                notifyPrizeHandle(betDo.getGameType(), betRecordDetailDo.freeSpinCount(), betRecordDo.getPayOutAmount());
-//            }
-//            // 如果最后一次查询则，返回总的中奖金额 todo
-//            return BetResultDo.<MariaMakilingGameRecordDo>builder()
-//                    .betRecordId(betDetail.getBetRecordId())
-//                    .gameId(betDo.getGameId())
-//                    .betType(betDo.getBetType())
-//                    .betSubType(betDo.getBetSubType())
-//                    .resultDetail(betRecordDetailDo.getGameRecordList()
-//                            .stream()
-//                            .filter(item -> item.getIndex() == betDetail.getFreeSpinsId())
-//                            .findFirst()
-//                            .orElse(null))
-//                    .build();
-//        }
-//
-//        List<MariaMakilingGameRecordDo> rets = new ArrayList<>();
-//        List<MariaMakilingGameRecordDo> gameRecords = getGame().play(GamePlayDo.builder()
-//                .gameType(betDo.getGameType())
-//                .betType(betDo.getBetType())
-//                .betSubType(betDo.getBetSubType())
-//                .betAmount(betDo.getBetDetail().getBetAmount())
-//                .freeSpinsFlag(false)
-//                .build());
-//        AssertUtil.assertNotNull(gameRecords, ErrorCode.ERR_INTER);
-//        AssertUtil.assertNotEmpty(gameRecords, ErrorCode.ERR_INTER);
-//        AssertUtil.assertTrue(gameRecords.size() == 1, ErrorCode.ERR_INTER);
-//        MariaMakilingGameRecordDo gameRecord = gameRecords.get(0);
-//        if (gameRecord.hasReward()) {
-//            rets.addAll(gameRecords);
-//        }
-//
-//        // 构建投注记录
-//        Long rewardAmount = rets.stream().mapToLong(item -> item.getRewardResult().getTotalRewardAmount()).sum();
-//        long betRecordId = idGeneratorHelper.nextId();
-//        BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId, betDo.getBetDetail().getBetAmount(), rewardAmount, MariaMakilingBetRecordDetailDo.builder()
-//                .gameRecordList(rets)
-//                .build());
-//        Long id = betRecordService.add(betRecord);
-//        AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
-//        // 单钱包投注并派彩 todo
-//        // 修改投注状态 todo
-//        // 组装返回结果
-//        return BetResultDo.<MariaMakilingGameRecordDo>builder()
-//                .betRecordId(betRecord.getId())
-//                .gameId(betDo.getGameId())
-//                .betType(betDo.getBetType())
-//                .betSubType(betDo.getBetSubType())
-//                .resultDetail(rets.get(0))
-//                .build();
-//    }
-//
-
+////package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
+////
+////import cn.hutool.core.util.NumberUtil;
+////import com.wegame.base.enums.ErrorCode;
+////import com.wegame.base.id.IdGeneratorHelper;
+////import com.wegame.base.utils.AssertUtil;
+////import com.wegame.base.utils.DateUtil;
+////import com.wegame.capi.biz.builder.BetRecordBuilder;
+////import com.wegame.capi.biz.domain.biz.BetRecordDo;
+////import com.wegame.capi.biz.domain.biz.GamePlayDo;
+////import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
+////import com.wegame.capi.biz.domain.biz.bet.BetDo;
+////import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
+////import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
+////import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+////import com.wegame.capi.biz.domain.biz.reward.MariaNotifyResultDo;
+////import com.wegame.capi.client.enums.GameTypeEnum;
+////import com.wegame.capi.common.Constants;
+////import com.wegame.capi.common.context.UserInfo;
+////import com.wegame.capi.common.context.UserInfoContext;
+////import com.wegame.capi.common.enums.PushGrandPrizeTypeEnum;
+////import lombok.extern.slf4j.Slf4j;
+////import org.springframework.beans.factory.annotation.Autowired;
+////import org.springframework.data.redis.core.RedisTemplate;
+////import org.springframework.data.redis.core.script.DefaultRedisScript;
+////import org.springframework.stereotype.Component;
+////
+////import java.util.*;
+////
+////@Slf4j
+////@Component("mariaMakilingNonBuyFreeSpinsBetStrategy")
+////public class MariaMakilingNonBuyFreeSpinsBetStrategy
+////        extends AbstractMariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
+////
+////    @Autowired
+////    IdGeneratorHelper idGeneratorHelper;
+////    @Autowired
+////    RedisTemplate<String, Object> redisTemplate;
+////
+////    @Override
+////    public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo<MariaMakilingBetDo> betDo) {
+////        MariaMakilingBetDo betDetail = betDo.getBetDetail();
+////        if (Objects.nonNull(betDetail.getBetRecordId()) && Objects.nonNull(betDetail.getFreeSpinsId())) {
+////            BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDo.getBetDetail().getBetRecordId());
+////            MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
+////            if (betRecordDetailDo.isLastFreeSpins(betDetail.getFreeSpinsId())) {
+////                notifyPrizeHandle(betDo.getGameType(), betRecordDetailDo.freeSpinCount(), betRecordDo.getPayOutAmount());
+////            }
+////            // 如果最后一次查询则，返回总的中奖金额 todo
+////            return BetResultDo.<MariaMakilingGameRecordDo>builder()
+////                    .betRecordId(betDetail.getBetRecordId())
+////                    .gameId(betDo.getGameId())
+////                    .betType(betDo.getBetType())
+////                    .betSubType(betDo.getBetSubType())
+////                    .resultDetail(betRecordDetailDo.getGameRecordList()
+////                            .stream()
+////                            .filter(item -> item.getIndex() == betDetail.getFreeSpinsId())
+////                            .findFirst()
+////                            .orElse(null))
+////                    .build();
+////        }
+////
+////        List<MariaMakilingGameRecordDo> rets = new ArrayList<>();
+////        List<MariaMakilingGameRecordDo> gameRecords = getGame().play(GamePlayDo.builder()
+////                .gameType(betDo.getGameType())
+////                .betType(betDo.getBetType())
+////                .betSubType(betDo.getBetSubType())
+////                .betAmount(betDo.getBetDetail().getBetAmount())
+////                .freeSpinsFlag(false)
+////                .build());
+////        AssertUtil.assertNotNull(gameRecords, ErrorCode.ERR_INTER);
+////        AssertUtil.assertNotEmpty(gameRecords, ErrorCode.ERR_INTER);
+////        AssertUtil.assertTrue(gameRecords.size() == 1, ErrorCode.ERR_INTER);
+////        MariaMakilingGameRecordDo gameRecord = gameRecords.get(0);
+////        if (gameRecord.hasReward()) {
+////            rets.addAll(gameRecords);
+////        }
+////
+////        // 构建投注记录
+////        Long rewardAmount = rets.stream().mapToLong(item -> item.getRewardResult().getTotalRewardAmount()).sum();
+////        long betRecordId = idGeneratorHelper.nextId();
+////        BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId, betDo.getBetDetail().getBetAmount(), rewardAmount, MariaMakilingBetRecordDetailDo.builder()
+////                .gameRecordList(rets)
+////                .build());
+////        Long id = betRecordService.add(betRecord);
+////        AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
+////        // 单钱包投注并派彩 todo
+////        // 修改投注状态 todo
+////        // 组装返回结果
+////        return BetResultDo.<MariaMakilingGameRecordDo>builder()
+////                .betRecordId(betRecord.getId())
+////                .gameId(betDo.getGameId())
+////                .betType(betDo.getBetType())
+////                .betSubType(betDo.getBetSubType())
+////                .resultDetail(rets.get(0))
+////                .build();
+////    }
+////
 //}
