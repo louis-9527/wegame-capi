@@ -24,7 +24,7 @@ public class UserPo implements Serializable {
     /**
      * 平台id
      */
-    private String platformId;
+    private String pId;
     /**
      * 用户姓名
      */

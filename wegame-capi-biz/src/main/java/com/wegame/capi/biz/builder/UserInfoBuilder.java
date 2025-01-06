@@ -2,7 +2,6 @@ package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.client.domain.request.UserLoginRequest;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 
@@ -17,7 +16,7 @@ public class UserInfoBuilder {
     public static UserInfo buildUserInfo(UserLoginDo userLoginDo, Long userId, String token) {
         return UserInfo.builder()
                 .id(String.valueOf(userId))
-                .platformId(userLoginDo.getPlatformId())
+                .pId(userLoginDo.getPId())
                 .channelId(userLoginDo.getChanelId())
                 .gameId(userLoginDo.getGameId())
                 .playerId(userLoginDo.getPlayerId())
@@ -32,7 +31,7 @@ public class UserInfoBuilder {
     public static UserDo buildUserDo(UserLoginDo userLoginDo) {
         return UserDo.builder()
                 .id(null)
-                .platformId(userLoginDo.getPlatformId())
+                .pId(userLoginDo.getPId())
                 .playerId(userLoginDo.getPlayerId())
                 .playerName(userLoginDo.getPlayerName())
                 .nickName(Optional.ofNullable(userLoginDo.getNickName()).orElse(""))

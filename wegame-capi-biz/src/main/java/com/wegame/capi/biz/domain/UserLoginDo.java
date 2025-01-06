@@ -23,7 +23,7 @@ public class UserLoginDo implements Serializable {
     /**
      * 平台id
      */
-    private String platformId;
+    private String pId;
     /**
      * 渠道id
      */

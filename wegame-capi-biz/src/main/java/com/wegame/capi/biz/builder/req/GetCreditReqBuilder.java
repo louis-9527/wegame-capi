@@ -15,7 +15,7 @@ public class GetCreditReqBuilder {
                 .playerName(UserInfoContext.getUserInfo().getPlayerName())
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .createTime(DateUtil.toUTC(new Date()))
-                .pId(UserInfoContext.getUserInfo().getPlatformId())
+                .pId(UserInfoContext.getUserInfo().getPId())
                 .build();
     }
 }

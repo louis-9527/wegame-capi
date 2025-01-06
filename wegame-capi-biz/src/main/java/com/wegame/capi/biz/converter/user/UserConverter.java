@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.converter.user;
 
 import com.wegame.base.context.Operator;
-import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
@@ -27,7 +26,7 @@ public class UserConverter {
             return null;
         }
         UserDo userDo = new UserDo();
-        userDo.setPlatformId(vo.getPlatformId());
+        userDo.setPId(vo.getPlatformId());
         userDo.setPlayerId(vo.getPlayerId());
         userDo.setPlayerName(vo.getPlayerName());
         userDo.setNickName(vo.getNickName());
@@ -48,7 +47,7 @@ public class UserConverter {
         }
         UserDo userDo = new UserDo();
         userDo.setId(po.getId());
-        userDo.setPlatformId(po.getPlatformId());
+        userDo.setPId(po.getPId());
         userDo.setPlayerId(po.getPlayerId());
         userDo.setPlayerName(po.getPlayerName());
         userDo.setNickName(po.getNickName());
@@ -70,7 +69,7 @@ public class UserConverter {
         Operator operator = OperatorUtil.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserPo po = new UserPo();
-        po.setPlatformId(userDo.getPlatformId());
+        po.setPId(userDo.getPId());
         po.setPlayerId(userDo.getPlayerId());
         po.setPlayerName(userDo.getPlayerName());
         po.setNickName(userDo.getNickName());
@@ -97,7 +96,7 @@ public class UserConverter {
         }
         UserVo vo = new UserVo();
         vo.setId(Objects.nonNull(userDo.getId()) ? String.valueOf(userDo.getId()) : null);
-        vo.setPlatformId(userDo.getPlatformId());
+        vo.setPlatformId(userDo.getPId());
         vo.setPlayerId(userDo.getPlayerId());
         vo.setPlayerName(userDo.getPlayerName());
         vo.setNickName(userDo.getNickName());
@@ -151,7 +150,7 @@ public class UserConverter {
     public static UserQuery requestToQuery(PageQueryUserRequest request, String orderClause) {
         UserQuery query = new UserQuery();
         query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
-        query.setPlatformId(request.getPlatformId());
+        query.setPId(request.getPId());
         query.setPlayerId(request.getPlayerId());
         query.setPlayerName(request.getPlayerName());
         query.setNickName(request.getNickName());
