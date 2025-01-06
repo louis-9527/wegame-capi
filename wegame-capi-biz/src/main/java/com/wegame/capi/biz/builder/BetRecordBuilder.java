@@ -10,7 +10,7 @@ public class BetRecordBuilder {
     public static <T> BetRecordDo build(BetDo betDo, Long betRecordId, Long betAmount, Long payAmount, T detail) {
         return BetRecordDo.builder()
                 .id(betRecordId)
-                .pId(UserInfoContext.getUserInfo().getPlatformId())
+                .pId(UserInfoContext.getUserInfo().getPId())
                 .channelId(UserInfoContext.getUserInfo().getChannelId())
                 .playerId(UserInfoContext.getUserInfo().getPlayerId())
                 .userId(Long.valueOf(UserInfoContext.getUserInfo().getId()))
