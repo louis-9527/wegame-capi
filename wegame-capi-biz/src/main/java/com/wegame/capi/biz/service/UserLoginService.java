@@ -1,7 +1,10 @@
 package com.wegame.capi.biz.service;
 
 import cn.hutool.crypto.SecureUtil;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.SingleWalletApi;
+import com.wegame.capi.api.domain.res.AuthLoginTokenRes;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
 import com.wegame.capi.biz.domain.UserLoginDo;
@@ -27,8 +30,8 @@ public class UserLoginService {
     SingleWalletApi singleWalletApi;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
-        // todo fix token认证 结果判断  @maidong
-        singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
+        AuthLoginTokenRes authLoginTokenRes = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
+        AssertUtil.assertNotNull(authLoginTokenRes, ErrorCode.ERR_MIDDLE_PLATFORM);
 
         String token = SecureUtil.md5(userLoginDo.getToken());
         response.addHeader(Constants._TOKEN_, token);
