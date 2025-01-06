@@ -28,8 +28,8 @@ public class MariaMakilingNormalBetStrategy
     public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo<MariaMakilingBetDo> betDo) {
         MariaMakilingBetDo betDetail = betDo.getBetDetail();
         if (Objects.nonNull(betDetail.getBetRecordId()) && Objects.nonNull(betDetail.getFreeSpinsId())) {
-            // 查询免费轮详情
-            MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordService.getResultDetail(betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
+            BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDo.getBetDetail().getBetRecordId());
+            MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
             // 如果最后一次查询则，返回总的中奖金额 todo
             return BetResultDo.<MariaMakilingGameRecordDo>builder()
                     .betRecordId(betDetail.getBetRecordId())
