@@ -15,11 +15,13 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("投注记录")
+@ApiModel("中奖信息")
 @EqualsAndHashCode(callSuper = false)
-public class GameNotifyVo implements Serializable {
-    @ApiModelProperty("通知消息")
+public class RewardInfoVo implements Serializable {
+
+    @ApiModelProperty("中奖信息列表")
     private List<String> messages;
-    @ApiModelProperty("余额是否变动 0否 1是")
+
+    @ApiModelProperty("当前用户余额是否变动 0否 1是")
     private int creditChange;
 }

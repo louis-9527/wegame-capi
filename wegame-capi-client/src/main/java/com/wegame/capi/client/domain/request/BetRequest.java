@@ -26,7 +26,8 @@ public class BetRequest implements Validate, Serializable {
     private String betType;
     @ApiModelProperty(value = "投注子类型:NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
     private String betSubType;
-    @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true)
+
+    @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true, reference = "MariaMakilingBuyFreeSpinsBetRequest")
     private Object betDetail;
 
     @Override
