@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class RandomSymbolUtil {
+public class SymbolRandomUtil {
 
     public static String randomOneSymbol(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
         Map<String, Integer> map = new HashMap<>();
