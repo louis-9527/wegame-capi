@@ -6,8 +6,6 @@ import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.domain.biz.MariaMakilingGameRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayResultDo;
-import com.wegame.capi.biz.domain.biz.reward.MariaNotifyDo;
-import com.wegame.capi.biz.domain.biz.reward.MariaNotifyResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
@@ -34,6 +32,12 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         return mariaMakilingGame;
     }
 
+
+
+
+
+
+    //////////////////////  =============
     /**
      * 获取单个结果
      *
@@ -89,12 +93,12 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         List<MariaMakilingGameRecordDetailDo.RewardLineResultDo> rewardResults = new ArrayList<>();
         rewardLineList.forEach(tt ->
                 rewardResults.add(MariaMakilingGameRecordDetailDo.RewardLineResultDo.builder()
-                        .symbol(tt.getSymbolDo())
+                        .symbol(tt.getSymbol())
                         .odds(tt.getOdds())
-                        .multiple(tt.getRewardMultiple())
+                        .multiple(tt.getMultiple())
                         .rewardAmount(tt.getRewardAmount())
-                        .rewardIndexList(tt.getRewardSymbolIndexList())
-                        .rewardSymbolList(tt.getRewardSymbolList())
+                        .rewardIndexList(tt.getSymbolIndexList())
+                        .rewardSymbolList(tt.getSymbolList())
                         .build()));
         return rewardResults;
     }
@@ -109,7 +113,7 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         RewardResultDo rewardResult = rewardResultDo.getRewardResult();
         if (rewardResult != null) {
             build.setRewardAmount(rewardResult.getRewardTotalAmount());
-            build.setMultiple(rewardResult.getWildTotalTimes());
+            build.setMultiple(rewardResult.getMultiple());
             build.setPrizeType(rewardResult.getPrizeType());
             build.setFreeSpinsFlag(rewardResult.isFreeSpin());
             build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));

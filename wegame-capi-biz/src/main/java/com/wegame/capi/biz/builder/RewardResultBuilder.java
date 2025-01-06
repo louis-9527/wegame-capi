@@ -16,7 +16,7 @@ public class RewardResultBuilder {
             return null;
         }
 
-        return RewardResultDo.builder().rewardTotalAmount(rewardTotalAmount).rewardLineList(rewardLineList).wildTotalTimes(wildTotalTimes).rewardType(rewardLineList.size() <= 1 ? RewardTypeEnum.SINGLE.getCode() : RewardTypeEnum.MULTIPLE.getCode()).isFreeSpin(isFreeSpin).build();
+        return RewardResultDo.builder().rewardTotalAmount(rewardTotalAmount).rewardLineList(rewardLineList).multiple(wildTotalTimes).rewardType(rewardLineList.size() <= 1 ? RewardTypeEnum.SINGLE.getCode() : RewardTypeEnum.MULTIPLE.getCode()).isFreeSpin(isFreeSpin).build();
     }
 
     public static RewardResultDo build(RewardResultDo rewardResultDo, PrizeTypeEnum gameGrandPrizeType) {

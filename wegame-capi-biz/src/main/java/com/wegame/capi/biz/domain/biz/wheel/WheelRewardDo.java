@@ -28,7 +28,7 @@ public class WheelRewardDo implements Serializable {
      */
     private WheelDo wheel;
     /**
-     * 中奖结果（滚轮对应中奖结果）
+     * 滚轮中奖结果
      */
     private RewardResultDo rewardResult;
 }
