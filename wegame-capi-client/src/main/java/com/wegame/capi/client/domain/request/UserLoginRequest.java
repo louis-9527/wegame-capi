@@ -25,7 +25,7 @@ public class UserLoginRequest implements Validate, Serializable {
     @JsonProperty("pId")
     private String pId;
     @ApiModelProperty(value = "渠道id", required = true)
-    private String chanelId;
+    private String channelId;
     @ApiModelProperty(value = "游戏id", required = true)
     private String gameId;
     @ApiModelProperty(value = "用户id", required = true)
@@ -44,7 +44,7 @@ public class UserLoginRequest implements Validate, Serializable {
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(pId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(chanelId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(channelId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(playerName.length() <= 50, ErrorCode.ERR_PARAM);

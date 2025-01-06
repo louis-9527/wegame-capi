@@ -17,7 +17,7 @@ public class UserInfoBuilder {
         return UserInfo.builder()
                 .id(String.valueOf(userId))
                 .pId(userLoginDo.getPId())
-                .channelId(userLoginDo.getChanelId())
+                .channelId(userLoginDo.getChannelId())
                 .gameId(userLoginDo.getGameId())
                 .playerId(userLoginDo.getPlayerId())
                 .playerName(userLoginDo.getPlayerName())

@@ -13,7 +13,7 @@ public class GetAuthLoginTokenReqBuilder {
     public static GetAuthLoginTokenReq build(UserLoginDo request) {
         return GetAuthLoginTokenReq.builder()
                 .pId(request.getPId())
-                .channelId(request.getChanelId())
+                .channelId(request.getChannelId())
                 .playerName(request.getPlayerName())
                 .createTime(DateUtil.toUTC(new Date()))
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
