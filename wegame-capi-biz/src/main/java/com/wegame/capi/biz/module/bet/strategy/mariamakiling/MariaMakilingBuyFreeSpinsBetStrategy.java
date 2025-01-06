@@ -17,11 +17,10 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
 
     @Override
     public BetResultDo<MariaMakilingBuyFreeSpinsBetResultDo> bet(BetDo<MariaMakilingBuyFreeSpinsBetDo> betDo) {
-        // todo 判断是否免费轮 标识, 是则查询返回
         MariaMakilingBuyFreeSpinsBetDo betDetail = betDo.getBetDetail();
         if (betDetail.getBetRecordId() != null && betDetail.getFreeSpinsId() != null) {
             //查询免费轮详情
-            GameBetResultDetailDo gameBetResultDetailDo = super.queryBetFreeSpin(betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
+            GameBetResultDetailDo gameBetResultDetailDo = super.queryBetFreeSpin(betDo.getGameId(),betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
             return BetResultDo.<MariaMakilingBuyFreeSpinsBetResultDo>builder()
                     .betRecordId(betDetail.getBetRecordId())
                     .gameId(betDo.getGameId())

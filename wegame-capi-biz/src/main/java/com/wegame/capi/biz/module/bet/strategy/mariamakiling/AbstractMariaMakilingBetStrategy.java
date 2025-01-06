@@ -68,7 +68,7 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
             if (rewardResult != null) {
                 build.setRewardAmount(rewardResult.getRewardTotalAmount());
                 build.setMultiple(rewardResult.getWildTotalTimes());
-                build.setPrizeType(this.getRewardAmountType());
+                build.setPrizeType(rewardResult.getPrizeType());
                 build.setFreeSpinsFlag(rewardResult.isFreeSpin());
                 build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
             }
@@ -101,13 +101,7 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         return rewardResults;
     }
 
-
-    private PrizeTypeEnum getRewardAmountType() {
-        return PrizeTypeEnum.NONE_PRIZE;
-    }
-
-
-    public GameBetResultDetailDo queryBetFreeSpin(Long recordId, Integer freeSpinId) {
+    public GameBetResultDetailDo queryBetFreeSpin(String gameId, Long recordId, Integer freeSpinId) {
         BetRecordDo betRecordDo = betRecordService.get(recordId);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         Object detail = betRecordDo.getDetail();
@@ -123,7 +117,6 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
                 .orElse(null);
         return GameRecordConverter.poToDetailDo(recordDetail);
     }
-
 
 
 }

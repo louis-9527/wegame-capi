@@ -91,6 +91,11 @@ public class BetRecordPo implements Serializable {
      * 免费轮次数
      */
     private Integer freeSpinsTimes;
+
+    /**
+     * 免费轮关联原投注记录Id
+     */
+    private Long freeSpinsRefId;
     /**
      * 游戏记录明细json
      */
