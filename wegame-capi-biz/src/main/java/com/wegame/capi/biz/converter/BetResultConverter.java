@@ -2,6 +2,7 @@ package com.wegame.capi.biz.converter;
 
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.client.domain.vo.BetResultVo;
+import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 
 import java.util.Objects;
 
@@ -23,7 +24,7 @@ public class BetResultConverter {
                 .betSubType(betResultDo.getBetSubType().getCode())
                 .credit(betResultDo.getCredit())
                 .resultDetail(Objects.nonNull(betResultDo.getResultDetail())
-                        ? betResultDo.getResultDetail().toVo()
+                        ? (MariaMakilingBetResultVo)betResultDo.getResultDetail().toVo() // todo fix
                         : null)
                 .build();
     }

@@ -28,6 +28,8 @@ public class BetResultVo implements Serializable {
     private String betSubType;
     @ApiModelProperty("用户余额")
     private Long credit;
+
+    // todo 联调后修改类型 为 object @bruce
     @ApiModelProperty("结果明细")
-    private Object resultDetail;
+    private MariaMakilingBetResultVo resultDetail;
 }
