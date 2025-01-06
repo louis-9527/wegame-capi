@@ -3,7 +3,7 @@ package com.wegame.capi.biz.builder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.common.context.UserInfoContext;
-import com.wegame.capi.common.enums.GameStatusEnum;
+import com.wegame.capi.common.enums.GameBetStatusEnum;
 
 public class BetRecordBuilder {
 
@@ -21,7 +21,7 @@ public class BetRecordBuilder {
                 .betSubType(betDo.getBetSubType().getCode())
                 .betAmount(betAmount)
                 .payOutAmount(payAmount)
-                .status(GameStatusEnum.ING.getCode())
+                .status(GameBetStatusEnum.ING.getCode())
                 .detail(detail)
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.wegame.capi.api.domain.res.singlewallet;
 
+import com.wegame.capi.common.enums.GameBetStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,10 +15,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class BetWithPayoutRes  extends SingleWalletBaseRes implements Serializable {
+public class SingleWalletBetWithPayoutRes extends SingleWalletBaseRes implements Serializable {
     private static final long serialVersionUID = -1827164647777864099L;
     private String playerName;
     private String betId;
     private BigDecimal credit;
     private String refId;
+    private GameBetStatusEnum betStatus;
 }

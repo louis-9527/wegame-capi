@@ -2,7 +2,7 @@ package com.wegame.capi.common.enums;
 
 import java.util.Objects;
 
-public enum GameStatusEnum {
+public enum GameBetStatusEnum {
 
     ING(0, "进行中"),
     SUCCESS(1, "成功"),
@@ -24,13 +24,13 @@ public enum GameStatusEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private GameStatusEnum(Integer code, String desc) {
+    private GameBetStatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public static GameStatusEnum valueOfCode(Integer code) {
-        for (GameStatusEnum item : GameStatusEnum.values()) {
+    public static GameBetStatusEnum valueOfCode(Integer code) {
+        for (GameBetStatusEnum item : GameBetStatusEnum.values()) {
             if (Objects.equals(item.getCode(), code)) {
                 return item;
             }

@@ -1,12 +1,17 @@
 package com.wegame.capi.scheduler;
 
+import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
+import com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.service.BetRecordService;
-import com.wegame.capi.common.enums.GameStatusEnum;
+import com.wegame.capi.biz.service.SingleWalletService;
+import com.wegame.capi.common.enums.GameBetStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -25,8 +30,10 @@ import java.util.Optional;
 public class BetRecordBetStatusScheduler extends AbstractScheduler implements Runnable {
     @Autowired
     private BetRecordService betRecordService;
+    @Autowired
+    private SingleWalletService singleWalletService;
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    //@Scheduled(cron = "0 0/5 * * * ?")
     public void schedule() {
         scheduleWithLock(LockNameUtil.getBetRecordPayOutStatusSchedulerLockName(), this);
     }
@@ -40,7 +47,7 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
         int pageNo = 1;
         List<BetRecordDo> recordList;
         do {
-           recordList = betRecordService.list(BetRecordQuery.builder().status(GameStatusEnum.ING.getCode())
+            recordList = betRecordService.list(BetRecordQuery.builder().status(GameBetStatusEnum.ING.getCode())
                     .endCreateTime(fiveMinutesAgo)
                     .limit(DEFAULT_PAGE_SIZE)
                     .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
@@ -53,8 +60,31 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
         } while (CollectionUtils.isNotEmpty(recordList));
     }
 
-    private void handle(BetRecordDo betRecordDo){
-        //todo 调用单钱包,并且更新状态
+    private void handle(BetRecordDo betRecordDo) {
+        if (!GameBetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
+            return;
+        }
+        //获取当前订单状态
+        BetStatusReq betStatusReq = BetWithPayoutReqBuilder.buildStatusReq(betRecordDo);
+        Pair<String, GameBetStatusEnum> betStatus = singleWalletService.getBetStatus(betStatusReq);
+        if (GameBetStatusEnum.SUCCESS == betStatus.getRight()) {
+            // 更新记录
+            BetRecordDo updateRecord = BetRecordDo.builder()
+                    .id(betRecordDo.getId())
+                    .betId(betStatus.getLeft())
+                    .status(GameBetStatusEnum.SUCCESS.getCode()).build();
+            betRecordService.update(updateRecord);
+            return;
+        }
+        if (GameBetStatusEnum.FAIL == betStatus.getRight()) {
+            // 更新记录
+            BetRecordDo updateRecord = BetRecordDo.builder()
+                    .id(betRecordDo.getId())
+                    .betId(betStatus.getLeft())
+                    .status(GameBetStatusEnum.FAIL.getCode()).build();
+            betRecordService.update(updateRecord);
+        }
+
 
     }
 }

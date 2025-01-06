@@ -1,28 +1,21 @@
 package com.wegame.capi.api;
 
-import com.alibaba.fastjson.JSON;
-import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.SingleWalletSignatureUtil;
-import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.GetAuthLoginTokenReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
-import com.wegame.capi.api.domain.req.singlewallet.BoxingBetStatusReq;
+import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
 import com.wegame.capi.api.domain.res.AuthLoginTokenRes;
 import com.wegame.capi.api.domain.res.CommonRes;
-import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
-import com.wegame.capi.api.domain.res.singlewallet.BoxingBetStatusRes;
+import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
+import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
 import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.api.domain.res.singlewallet.SingleWalletCommonRes;
-import com.wegame.capi.common.context.UserInfoContext;
-import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.MDC;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -31,8 +24,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.Date;
-import java.util.Objects;
 
 @Slf4j
 @Component
@@ -96,22 +87,18 @@ public class SingleWalletApi extends BaseApi {
     }
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
-    public CommonRes<BetWithPayoutRes> betWithPayout(BetWithPayoutReq req) {
+    public CommonRes<SingleWalletBetWithPayoutRes> betWithPayout(BetWithPayoutReq req) {
         try {
             // 参数签名
             assembleSingleSignature(req);
             RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
                     URI.create(String.format(BET_WITH_PAYOUT_URL_FORMAT, singleDomain)));
-            ResponseEntity<CommonRes<BetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
-                    new ParameterizedTypeReference<CommonRes<BetWithPayoutRes>>() {
+            ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
+                    new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
                     });
 
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
-            CommonRes<BetWithPayoutRes> commonRes = responseEntity.getBody();
-            AssertUtil.assertTrue(commonRes.isSuc() ||
-                            Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode()),
-                    ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             return responseEntity.getBody();
         } catch (BusinessException be) {
             log.error("betWithPayout err, req: {}, errMsg: {}", req, be.getMessage(), be);
@@ -129,20 +116,19 @@ public class SingleWalletApi extends BaseApi {
      * @return response
      */
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
-    public BoxingBetStatusRes betStatus(BoxingBetStatusReq req) {
+    public CommonRes<BetStatusRes> getBetStatus(BetStatusReq req) {
         try {
             // 参数签名
             assembleSingleSignature(req);
-            RequestEntity<BoxingBetStatusReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
+            RequestEntity<BetStatusReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
                     URI.create(String.format(BET_STATUS_URL_FORMAT, singleDomain)));
-            ResponseEntity<SingleWalletCommonRes<BoxingBetStatusRes>> responseEntity = restTemplate.exchange(requestEntity,
-                    new ParameterizedTypeReference<SingleWalletCommonRes<BoxingBetStatusRes>>() {
+            ResponseEntity<CommonRes<BetStatusRes>> responseEntity = restTemplate.exchange(requestEntity,
+                    new ParameterizedTypeReference<CommonRes<BetStatusRes>>() {
                     });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
-            return responseEntity.getBody().getData();
+            return responseEntity.getBody();
         } catch (BusinessException be) {
             log.error("betStatus business err, req: {}, errMsg: {}", req, be.getMessage(), be);
             throw be;
