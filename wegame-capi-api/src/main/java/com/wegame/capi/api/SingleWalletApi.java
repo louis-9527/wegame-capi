@@ -42,12 +42,12 @@ public class SingleWalletApi extends BaseApi {
     private static final String GET_CREDIT_URL_FORMAT = "%s/getCredit";
     private static final String BET_WITH_PAYOUT_URL_FORMAT = "%s/betWithPayout";
     private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
-    private static final int BET_TYPE = 2;
+
 
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
         try {
             // 设置token签名
-            String preSignature = String.format("%s%s%s%s", req.getChannelId(), req.getPlayerName(),req.getCreateTime(), req.getRefId());
+            String preSignature = String.format("%s%s%s%s", req.getChannelId(), req.getPlayerName(), req.getCreateTime(), req.getRefId());
             String key = StringUtils.equals(String.valueOf(req.getPId()), cpPlatformId) ? cpPrivateKey : igoPrivateKey;
             String iv = StringUtils.equals(String.valueOf(req.getPId()), cpPlatformId) ? cpPrivateIv : igoPrivateIv;
             // todo delete log
@@ -56,7 +56,8 @@ public class SingleWalletApi extends BaseApi {
             AssertUtil.assertNotNull(encrypt, ErrorCode.ERR_PARAM);
             req.setHash(encrypt);
             RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST, URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
-            ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {});
+            ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {
+            });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -95,7 +96,7 @@ public class SingleWalletApi extends BaseApi {
     }
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
-    public BetWithPayoutRes betWithPayout(BetWithPayoutReq req) {
+    public CommonRes<BetWithPayoutRes> betWithPayout(BetWithPayoutReq req) {
         try {
             // 参数签名
             assembleSingleSignature(req);
@@ -104,19 +105,14 @@ public class SingleWalletApi extends BaseApi {
             ResponseEntity<CommonRes<BetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<BetWithPayoutRes>>() {
                     });
+
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             CommonRes<BetWithPayoutRes> commonRes = responseEntity.getBody();
-            // 成功或者重复的refId都当作成功处理
-            if (commonRes.isSuc()) {
-                AssertUtil.assertNotNull(commonRes.getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
-                return responseEntity.getBody().getData();
-            } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
-                return this.queryBetDetail(req);
-            } else {
-                log.error("betWithPayout result err, req: {}, res: {}", JSON.toJSONString(req), JSON.toJSONString(commonRes));
-                throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "bet error,please retry again later");
-            }
+            AssertUtil.assertTrue(commonRes.isSuc() ||
+                            Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode()),
+                    ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
+            return responseEntity.getBody();
         } catch (BusinessException be) {
             log.error("betWithPayout err, req: {}, errMsg: {}", req, be.getMessage(), be);
             throw be;
@@ -154,30 +150,6 @@ public class SingleWalletApi extends BaseApi {
             log.error("betStatus err, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
-    }
-
-    private BetWithPayoutRes queryBetDetail(BetWithPayoutReq req) {
-        // 此时状态为成功,请求betStatus获取订单betId
-        BoxingBetStatusReq betStatusReq = BoxingBetStatusReq.builder()
-                .betType(BET_TYPE)
-                .wagersDate(req.getBetDetails().getWagersDate())
-                .refId(req.getRefId())
-                .build();
-        BoxingBetStatusRes betStatusRes = this.betStatus(betStatusReq);
-        // 获取余额
-        GetCreditReq creditReq = GetCreditReq.builder()
-                .channelId(UserInfoContext.getUserInfo().getChannelId())
-                .playerName(UserInfoContext.getUserInfo().getPlayerName())
-                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
-                .createTime(DateUtil.toUTC(new Date()))
-                .pId(UserInfoContext.getUserInfo().getPId())
-                .build();
-        GetCreditRes creditRes = this.getCredit(creditReq);
-        return BetWithPayoutRes.builder()
-                .betId(betStatusRes.getBetId())
-                .playerName(creditReq.getPlayerName())
-                .credit(creditRes.getCredit())
-                .build();
     }
 
 }

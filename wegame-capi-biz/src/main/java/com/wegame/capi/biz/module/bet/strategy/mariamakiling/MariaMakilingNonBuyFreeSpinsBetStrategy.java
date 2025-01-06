@@ -65,7 +65,7 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
         AssertUtil.assertTrue(count <= 0,
                 ErrorCode.ERR_PARAM, "freeSpins status error,recordId:{}" + recordId);
         // 获取游戏结果
-        List<MariaMakilingGameRecordDetailDo> resultDetails = super.getGameBetResult(betDo.getBetType(), betDo.getBetSubType(), 0L, Boolean.TRUE);
+        List<MariaMakilingGameRecordDetailDo> resultDetails = super.getGameBetResultList(betDo.getBetType(), betDo.getBetSubType(), 0L);
         long rewardAmount = 0L;
         List<Integer> freeSpinIds = new ArrayList<>(resultDetails.size());
         for (MariaMakilingGameRecordDetailDo resultDetail : resultDetails) {

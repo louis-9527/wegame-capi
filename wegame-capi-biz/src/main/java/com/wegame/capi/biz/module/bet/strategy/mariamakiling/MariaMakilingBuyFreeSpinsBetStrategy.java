@@ -42,7 +42,7 @@ public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingB
         // 获取轮盘结果,必须包含免费轮
         MariaMakilingGameRecordDetailDo betResult = super.getGameBetResult(betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());
         // 获取免费轮
-        List<MariaMakilingGameRecordDetailDo> resultDetails = super.getGameBetResult(betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount(), Boolean.TRUE);
+        List<MariaMakilingGameRecordDetailDo> resultDetails = super.getGameBetResultList(betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());
         long rewardAmount = 0L;
         List<Integer> freeSpinIds = new ArrayList<>(resultDetails.size());
         for (MariaMakilingGameRecordDetailDo resultDetail : resultDetails) {

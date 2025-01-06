@@ -39,21 +39,34 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
 
 
     //////////////////////  =============
+
+
     /**
-     * 获取单个结果
+     * 获取游戏结果
      *
-     * @param betType
-     * @param betSubType
-     * @param betAmount
+     * @param betType    游戏类型
+     * @param betSubType 游戏子类型
+     * @param betAmount  投注金额
      * @return
      */
     public MariaMakilingGameRecordDetailDo getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
-        List<MariaMakilingGameRecordDetailDo> resultDetail = this.getGameBetResult(betType, betSubType, betAmount, false);
-        return resultDetail.get(0);
+        return this.getGameBetResult(betType, betSubType, betAmount, Boolean.FALSE).get(0);
     }
 
     /**
-     * 获取多个游戏结果
+     * 获取游戏结果
+     *
+     * @param betType       游戏类型
+     * @param betSubType    游戏子类型
+     * @param betAmount     投注金额
+     * @return
+     */
+    public List<MariaMakilingGameRecordDetailDo> getGameBetResultList(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
+        return this.getGameBetResult(betType, betSubType, betAmount, Boolean.TRUE);
+    }
+
+    /**
+     * 获取游戏结果
      *
      * @param betType       游戏类型
      * @param betSubType    游戏子类型
@@ -61,7 +74,7 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
      * @param freeSpinsFlag 是否免费轮,如果是怎会获取多条记录
      * @return
      */
-    public List<MariaMakilingGameRecordDetailDo> getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount, Boolean freeSpinsFlag) {
+    private List<MariaMakilingGameRecordDetailDo> getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount, Boolean freeSpinsFlag) {
         GamePlayDo gamePlay = GamePlayDo.builder()
                 .gameType(this.mariaMakilingGame.getGameInfo().getGameType())
                 .betType(betType)

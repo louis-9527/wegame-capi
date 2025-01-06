@@ -9,6 +9,7 @@ import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
+import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.GameStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
@@ -27,12 +28,13 @@ import java.util.Date;
 @Component
 public abstract class AbstractBetStrategy<T, R extends Converter> implements BetStrategy<T, R> {
 
+
     @Autowired
     public IdGeneratorHelper idGeneratorHelper;
     @Autowired
     public BetRecordService betRecordService;
     @Autowired
-    private SingleWalletApi singleWalletApi;
+    private SingleWalletService singleWalletService;
 
     public abstract Game getGame();
 
@@ -79,6 +81,6 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
                         .jackpotDetails(new BetWithPayoutReq.BetDetails.JackpotDetails())
                         .build())
                 .build();
-        return singleWalletApi.betWithPayout(payoutReq);
+        return singleWalletService.betWithPayout(payoutReq);
     }
 }
