@@ -20,7 +20,9 @@ import java.util.Date;
 
 /**
  * 抽象投注策略<br>
- * 各游戏共性抽象
+ * 各游戏共性抽象<br/>
+ * 1、获取具体游戏
+ * 2、
  */
 @Component
 public abstract class AbstractBetStrategy<T, R extends Converter> implements BetStrategy<T, R> {
