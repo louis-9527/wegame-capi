@@ -1,14 +1,19 @@
 package com.wegame.capi.biz.service;
 
+import com.alibaba.fastjson.JSON;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.converter.BetRecordConverter;
+import com.wegame.capi.biz.converter.GameRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
+import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,8 +21,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * po服务
@@ -90,10 +97,32 @@ public class BetRecordService {
      */
     public long count(BetRecordQuery query) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return mongoTemplate.count(BetRecordQueryBuilder.buildMongodbQuery(query),BetRecordPo.class);
+        return mongoTemplate.count(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
 
 
     }
 
     ///////////////  above auto generated ///////////////
+
+
+    public GameBetResultDetailDo getResultDetail(Long recordId, Integer freeSpinId) {
+        AssertUtil.assertNotNull(recordId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(freeSpinId, ErrorCode.ERR_PARAM);
+        BetRecordPo betRecord = mongoTemplate.findById(recordId, BetRecordPo.class);
+        if (betRecord == null) {
+            return null;
+        }
+        Object detail = betRecord.getDetail();
+        if (Objects.isNull(detail)) {
+            return null;
+        }
+        List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(FastJsonUtils.toJSONString(detail), GameRecordDetailPo.class);
+        GameRecordDetailPo recordDetail = Optional.ofNullable(recordDetailPos)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(item -> Objects.equals(item.getId(), freeSpinId))
+                .findFirst()
+                .orElse(null);
+        return GameRecordConverter.poToDetailDo(recordDetail);
+    }
 }
