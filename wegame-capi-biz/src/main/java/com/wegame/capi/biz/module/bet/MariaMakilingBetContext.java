@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * Mysterious投注上下文
+ * mariaMakilingBetContext投注上下文
  */
-@Component("mysteriousBetContext")
-public class MysteriousBetContext extends AbstractBetContext {
+@Component("mariaMakilingBetContext")
+public class MariaMakilingBetContext extends AbstractBetContext {
 
     private static final Map<BetSubTypeEnum, String> betStrategyNameMap = new ImmutableMap.Builder<BetSubTypeEnum, String>()
             .put(BetSubTypeEnum.NORMAL_BET, "mariaMakilingNormalBetStrategy")
