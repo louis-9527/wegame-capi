@@ -75,16 +75,6 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
         if (gameRecord.hasReward()) {
             rets.addAll(gameRecords);
         }
-        if (gameRecord.hasRewardFreeSpins()) {
-            List<MariaMakilingGameRecordDo> freeSpinsGameRecords = getGame().play(GamePlayDo.builder()
-                    .gameType(betDo.getGameType())
-                    .betType(betDo.getBetType())
-                    .betSubType(betDo.getBetSubType())
-                    .betAmount(betDo.getBetDetail().getBetAmount())
-                    .freeSpinsFlag(true)
-                    .build());
-            rets.addAll(freeSpinsGameRecords);
-        }
 
         // 构建游戏记录明细
         // 构建投注记录

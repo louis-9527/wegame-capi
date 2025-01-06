@@ -12,9 +12,8 @@ import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("mariaMakilingBuyFreeSpinsBetStrategy")
 public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
@@ -65,6 +64,14 @@ public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingB
                     .betAmount(betDo.getBetDetail().getBetAmount())
                     .freeSpinsFlag(true)
                     .build());
+
+            MariaMakilingGameRecordDo recordDo = rets.get(0);
+            recordDo.setFreeSpinIds(Optional.ofNullable(freeSpinsGameRecords)
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .map(item -> item.getIndex())
+                    .collect(Collectors.toList()));
+
             rets.addAll(freeSpinsGameRecords);
         }
 

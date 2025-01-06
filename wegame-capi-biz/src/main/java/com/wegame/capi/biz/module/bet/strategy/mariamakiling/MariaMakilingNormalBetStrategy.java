@@ -14,9 +14,8 @@ import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("mariaMakilingNormalBetStrategy")
 public class MariaMakilingNormalBetStrategy
@@ -68,6 +67,14 @@ public class MariaMakilingNormalBetStrategy
                     .betAmount(betDo.getBetDetail().getBetAmount())
                     .freeSpinsFlag(true)
                     .build());
+
+            MariaMakilingGameRecordDo recordDo = rets.get(0);
+            recordDo.setFreeSpinIds(Optional.ofNullable(freeSpinsGameRecords)
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .map(item -> item.getIndex())
+                    .collect(Collectors.toList()));
+
             rets.addAll(freeSpinsGameRecords);
         }
 
@@ -81,6 +88,7 @@ public class MariaMakilingNormalBetStrategy
         Long id = betRecordService.add(betRecord);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         // 单钱包投注并派彩 todo
+
 
         // 组装返回结果
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
