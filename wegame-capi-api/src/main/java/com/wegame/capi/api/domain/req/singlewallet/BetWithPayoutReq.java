@@ -1,21 +1,15 @@
 package com.wegame.capi.api.domain.req.singlewallet;
 
-import cn.hutool.core.util.NumberUtil;
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.base.utils.ThreadMdcUtil;
-import com.wegame.capi.common.context.UserInfoContext;
-import com.wegame.capi.common.utils.GameAmountUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.slf4j.MDC;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Objects;
 
 @Data
 @SuperBuilder
