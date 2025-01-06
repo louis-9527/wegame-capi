@@ -38,7 +38,7 @@ public class MariaMakilingGame extends AbstractGame {
     }
 
     @Override
-    protected RewardHandler getRewardHandler() {
+    public RewardHandler getRewardHandler() {
         return mariaMakilingRewardHandler;
     }
 

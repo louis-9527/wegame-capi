@@ -1,5 +1,6 @@
-package com.wegame.capi.biz.domain.biz;
+package com.wegame.capi.biz.domain.biz.game;
 
+import com.wegame.capi.biz.domain.biz.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelRewardDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.AllArgsConstructor;

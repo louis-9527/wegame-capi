@@ -23,7 +23,7 @@ public class RewardResultBuilder {
         if (Objects.isNull(rewardResultDo) || Objects.isNull(gameGrandPrizeType)) {
             return null;
         }
-        rewardResultDo.setGrandPrizeType(gameGrandPrizeType);
+        rewardResultDo.setPrizeType(gameGrandPrizeType);
         return rewardResultDo;
     }
 
