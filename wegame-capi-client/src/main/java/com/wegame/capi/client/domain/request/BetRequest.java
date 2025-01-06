@@ -27,7 +27,7 @@ public class BetRequest implements Validate, Serializable {
     @ApiModelProperty(value = "投注子类型:NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
     private String betSubType;
 
-    // todo
+    // todo 调试结束后， 修改类型为Object @bruce
     @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true, reference = "MariaMakilingBuyFreeSpinsBetRequest")
     private MariaMakilingBetRequest betDetail;
 
@@ -40,5 +40,8 @@ public class BetRequest implements Validate, Serializable {
         AssertUtil.assertStrNotEmpty(betSubType, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(BetSubTypeEnum.valueOfCode(betSubType), ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betDetail, ErrorCode.ERR_PARAM);
+        betDetail.validateParam(GameTypeEnum.valueOfCode(gameId),
+                BetTypeEnum.valueOfCode(betType),
+                BetSubTypeEnum.valueOfCode(betSubType));
     }
 }
