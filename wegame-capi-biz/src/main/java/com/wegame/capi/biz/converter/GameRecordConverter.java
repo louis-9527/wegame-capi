@@ -215,61 +215,60 @@ public class GameRecordConverter {
     ///////////////  above auto generated ///////////////
 
 
-    public static BetRecordPo doToPo(BetRecordDo betRecordDo) {
-        if (Objects.isNull(betRecordDo)) {
-            return null;
-        }
-        Operator operator = OperatorContext.getOperator();
-        AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
-        BetRecordPo po = new BetRecordPo();
-        po.setId(betRecordDo.getId());
-        po.setBetSerialNo(betRecordDo.getBetSerialNo());
-        po.setPId(betRecordDo.getPId());
-        po.setChannelId(betRecordDo.getChannelId());
-        po.setGameId(betRecordDo.getGameId());
-        po.setUserId(operator.getUserId());
-        po.setPlayerId(operator.getPlayerId());
-        po.setPlayerName(operator.getName());
-        po.setBetType(betRecordDo.getBetType());
-        po.setBetSubType(betRecordDo.getBetSubType());
-        po.setBetSerialNo(betRecordDo.getBetSerialNo());
-        po.setBetAmount(betRecordDo.getBetAmount());
-        po.setPayOutAmount(betRecordDo.getPayOutAmount());
-        po.setMarketFlag(betRecordDo.getMarketFlag());
-        po.setStatus(betRecordDo.getStatus());
-        po.setDetail(betRecordDo.getDetail());
-        po.setCreator(operator.getName());
-        po.setCreateTime(new Date());
-        po.setUpdater(operator.getName());
-        po.setUpdateTime(new Date());
-        return po;
-    }
+    //    public static BetRecordPo doToPo(BetRecordDo betRecordDo) {
+    //        if (Objects.isNull(betRecordDo)) {
+    //            return null;
+    //        }
+    //        Operator operator = OperatorContext.getOperator();
+    //        AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
+    //        BetRecordPo po = new BetRecordPo();
+    //        po.setId(betRecordDo.getId());
+    //        po.setBetSerialNo(betRecordDo.getBetSerialNo());
+    //        po.setPId(betRecordDo.getPId());
+    //        po.setChannelId(betRecordDo.getChannelId());
+    //        po.setGameId(betRecordDo.getGameId());
+    //        po.setUserId(operator.getUserId());
+    //        po.setPlayerId(operator.getPlayerId());
+    //        po.setPlayerName(operator.getName());
+    //        po.setBetType(betRecordDo.getBetType());
+    //        po.setBetSubType(betRecordDo.getBetSubType());
+    //        po.setBetSerialNo(betRecordDo.getBetSerialNo());
+    //        po.setBetAmount(betRecordDo.getBetAmount());
+    //        po.setPayOutAmount(betRecordDo.getPayOutAmount());
+    //        po.setMarketFlag(betRecordDo.getMarketFlag());
+    //        po.setStatus(betRecordDo.getStatus());
+    //        po.setDetail(betRecordDo.getDetail());
+    //        po.setCreator(operator.getName());
+    //        po.setCreateTime(new Date());
+    //        po.setUpdater(operator.getName());
+    //        po.setUpdateTime(new Date());
+    //        return po;
+    //    }
 
+    //    public static List<GameRecordDetailPo> doToDetailPoList(List<GameBetResultDetailDo> doList) {
+    //        return Optional.ofNullable(doList)
+    //                .orElse(Collections.emptyList())
+    //                .stream()
+    //                .map(GameRecordConverter::doToDetailPo)
+    //                .filter(Objects::nonNull)
+    //                .collect(Collectors.toList());
+    //    }
 
-    public static List<GameRecordDetailPo> doToDetailPoList(List<GameBetResultDetailDo> doList) {
-        return Optional.ofNullable(doList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(GameRecordConverter::doToDetailPo)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
-    public static GameRecordDetailPo doToDetailPo(GameBetResultDetailDo detailDo) {
-        if (detailDo == null) {
-            return null;
-        }
-        GameRecordDetailPo detailPo = new GameRecordDetailPo();
-        detailPo.setId(detailDo.getId());
-        detailPo.setGameResult(detailDo.getGameResult() == null ? null : JSON.toJSONString(detailDo.getGameResult()));
-        detailPo.setMultiple(detailDo.getMultiple());
-        detailPo.setBetAmount(detailDo.getBetAmount());
-        detailPo.setRewardAmount(detailDo.getRewardAmount());
-        detailPo.setFreeSpinsFlag(detailDo.isFreeSpinsFlag());
-        detailPo.setRewardResult(detailDo.getRewardResults() == null ? null : JSON.toJSONString(detailDo.getRewardResults()));
-
-        return detailPo;
-    }
+    //    public static GameRecordDetailPo doToDetailPo(GameBetResultDetailDo detailDo) {
+    //        if (detailDo == null) {
+    //            return null;
+    //        }
+    //        GameRecordDetailPo detailPo = new GameRecordDetailPo();
+    //        detailPo.setId(detailDo.getId());
+    //        detailPo.setGameResult(detailDo.getGameResult() == null ? null : JSON.toJSONString(detailDo.getGameResult()));
+    //        detailPo.setMultiple(detailDo.getMultiple());
+    //        detailPo.setBetAmount(detailDo.getBetAmount());
+    //        detailPo.setRewardAmount(detailDo.getRewardAmount());
+    //        detailPo.setFreeSpinsFlag(detailDo.isFreeSpinsFlag());
+    //        detailPo.setRewardResult(detailDo.getRewardResults() == null ? null : JSON.toJSONString(detailDo.getRewardResults()));
+    //
+    //        return detailPo;
+    //    }
 
     public static GameBetResultDetailDo poToDetailDo(GameRecordDetailPo detailPo) {
         if (detailPo == null) {

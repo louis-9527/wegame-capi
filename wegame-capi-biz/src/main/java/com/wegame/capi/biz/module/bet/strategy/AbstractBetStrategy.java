@@ -1,12 +1,14 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.enums.OptEnum;
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetWithPayoutRes;
+import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.converter.GameRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -78,7 +80,7 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
      */
     public Long saveBetRecordAndPayOut(BetRecordDo betRecordDo) {
         //组装中奖数据
-        BetRecordPo gameRecordPo = GameRecordConverter.doToPo(betRecordDo);
+        BetRecordPo gameRecordPo = BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD);
         AssertUtil.assertNotNull(gameRecordPo, ErrorCode.ERR_INTER);
         gameRecordPo.setId(betRecordDo.getId());
         gameRecordPo.setBetSerialNo(String.valueOf(betRecordDo.getId()));
