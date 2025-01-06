@@ -15,7 +15,7 @@ public class MariaMakilingNormalBetStrategy
     @Override
     public BetResultDo<MariaMakilingNormalBetResultDo> bet(BetDo<MariaMakilingNormalBetDo> betDo) {
         // 获取游戏结果
-        GameBetResultDetailDo resultDetail = super.getResultDetail(betDo.getGameId(), betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());
+        GameBetResultDetailDo resultDetail = super.getGameBetResult(betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());
         // 生成投注结果
         long betRecordId = idGeneratorHelper.nextId();
         BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId, resultDetail.getBetAmount(), resultDetail.getRewardAmount(), Lists.newArrayList(resultDetail));

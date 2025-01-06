@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.bet.strategy.mariamakiling;
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -36,7 +37,7 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
         MariaMakilingNonBuyFreeSpinsBetDo betDetail = betDo.getBetDetail();
         if (betDetail.getBetRecordId() != null && betDetail.getFreeSpinsId() != null) {
             // 查询免费轮详情
-            GameBetResultDetailDo gameBetResultDetailDo = super.queryBetFreeSpin(betDo.getGameId(),betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
+            GameBetResultDetailDo gameBetResultDetailDo = betRecordService.getResultDetail(betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
             return BetResultDo.<MariaMakilingNonBuyFreeSpinsBetResultDo>builder()
                     .betRecordId(betDetail.getBetRecordId())
                     .gameId(betDo.getGameId())
@@ -49,17 +50,16 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
         }
 
         Long recordId = Long.valueOf(betDo.getBetDetail().getBetRecordId());
-        BetRecordDo betRecordDo = super.betRecordService.get(recordId);
+        BetRecordDo betRecordDo = betRecordService.get(recordId);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(BetSubTypeEnum.NON_BUY_FREE_SPINS_BET.getCode().equals(betRecordDo.getBetSubType()), ErrorCode.ERR_PARAM);
 
         // 必须是免费轮,并且免费轮未被核销
-
-        long count = super.betRecordService.count(BetRecordQuery.builder().gameId(betDo.getGameId()).freeSpinsRefId(recordId).build());
+        long count = betRecordService.count(BetRecordQuery.builder().gameId(betDo.getGameId()).freeSpinsRefId(recordId).build());
         AssertUtil.assertTrue(count <= 0,
                 ErrorCode.ERR_PARAM, "freeSpins status error,recordId:{}" + recordId);
         // 获取游戏结果
-        List<GameBetResultDetailDo> resultDetails = super.getResultDetail(betDo.getGameId(), betDo.getBetType(), betDo.getBetSubType(), 0L, Boolean.TRUE);
+        List<GameBetResultDetailDo> resultDetails = super.getGameBetResult(betDo.getBetType(), betDo.getBetSubType(), 0L, Boolean.TRUE);
         long rewardAmount = 0L;
         List<Integer> freeSpinIds = new ArrayList<>(resultDetails.size());
         for (GameBetResultDetailDo resultDetail : resultDetails) {
@@ -69,6 +69,7 @@ public class MariaMakilingNonBuyFreeSpinsBetStrategy
             freeSpinIds.add(resultDetail.getId());
         }
         // 获取投注结果
+
         long betRecordId = idGeneratorHelper.nextId();
         BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId,0L, rewardAmount, resultDetails);
         betRecord.setFreeSpinsRefId(recordId);

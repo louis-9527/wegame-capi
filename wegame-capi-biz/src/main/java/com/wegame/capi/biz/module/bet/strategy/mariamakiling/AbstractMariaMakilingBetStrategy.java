@@ -45,26 +45,42 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         return mariaMakilingGame;
     }
 
-    // todo delete
-    //    @Override
-    //    public Object extendHandle(Object obj) {
-    //        AssertUtil.assertTrue(obj instanceof MariaNotifyDo, ErrorCode.ERR_INTER, "data type is not support");
-    //        MariaNotifyResultDo notifyDo = this.pushGrandPrizeHandle((MariaNotifyDo) obj);
-    //        if (Objects.nonNull(notifyDo)) {
-    //            wheelTimerService.delayPushPrize(notifyDo, String.format(Constants.PUSH_PRIZE_REDIS_KEY, notifyDo.getGameTypeId()));
-    //        }
-    //        return notifyDo;
-    //    }
-
-    // todo fix
-    public GameBetResultDetailDo getResultDetail(String gameId, BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
-        List<GameBetResultDetailDo> resultDetail = this.getResultDetail(gameId, betType, betSubType, betAmount, false);
+    /**
+     * 获取单个结果
+     *
+     * @param betType
+     * @param betSubType
+     * @param betAmount
+     * @return
+     */
+    public GameBetResultDetailDo getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount) {
+        List<GameBetResultDetailDo> resultDetail = this.getGameBetResult(betType, betSubType, betAmount, false);
         return resultDetail.get(0);
     }
 
-    public List<GameBetResultDetailDo> getResultDetail(String gameId, BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount, Boolean freeSpinsFlag) {
+    @Override
+    public Object extendHandle(Object obj) {
+        AssertUtil.assertTrue(obj instanceof MariaNotifyDo, ErrorCode.ERR_INTER, "data type is not support");
+        MariaNotifyResultDo notifyDo = this.pushGrandPrizeHandle((MariaNotifyDo) obj);
+        if (Objects.nonNull(notifyDo)) {
+            wheelTimerService.delayPushPrize(notifyDo, String.format(Constants.PUSH_PRIZE_REDIS_KEY, notifyDo.getGameTypeId()));
+        }
+        return notifyDo;
+    }
+
+
+    /**
+     * 获取多个游戏结果
+     *
+     * @param betType       游戏类型
+     * @param betSubType    游戏子类型
+     * @param betAmount     投注金额
+     * @param freeSpinsFlag 是否免费轮,如果是怎会获取多条记录
+     * @return
+     */
+    public List<GameBetResultDetailDo> getGameBetResult(BetTypeEnum betType, BetSubTypeEnum betSubType, Long betAmount, Boolean freeSpinsFlag) {
         GamePlayDo gamePlay = GamePlayDo.builder()
-                .gameType(GameTypeEnum.valueOfCode(gameId))
+                .gameType(this.mariaMakilingGame.getGameInfo().getGameType())
                 .betType(betType)
                 .betSubType(betSubType)
                 .betAmount(betAmount)
@@ -74,23 +90,9 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         AssertUtil.assertNotNull(gamePlayResult, ErrorCode.ERR_INTER);
         // 滚轮中奖列表
         List<WheelRewardDo> wheelRewardList = gamePlayResult.getWheelRewardList();
-
         List<GameBetResultDetailDo> resultDetails = new ArrayList<>();
         wheelRewardList.forEach(rewardResultDo -> {
-            RewardResultDo rewardResult = rewardResultDo.getRewardResult();
-            GameBetResultDetailDo build = GameBetResultDetailDo.builder()
-                    .id(rewardResultDo.getWheelIndex())
-                    .gameResult(rewardResultDo.getWheel().getSymbolArr())
-                    .betAmount(betAmount)
-                    .build();
-            if (rewardResult != null) {
-                build.setRewardAmount(rewardResult.getRewardTotalAmount());
-                build.setMultiple(rewardResult.getWildTotalTimes());
-                build.setPrizeType(rewardResult.getPrizeType());
-                build.setFreeSpinsFlag(rewardResult.isFreeSpin());
-                build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
-            }
-            resultDetails.add(build);
+            resultDetails.add(this.buildBetResult(rewardResultDo, betAmount));
         });
         return resultDetails;
     }
@@ -119,21 +121,22 @@ public abstract class AbstractMariaMakilingBetStrategy<T, R extends Converter> e
         return rewardResults;
     }
 
-    public GameBetResultDetailDo queryBetFreeSpin(String gameId, Long recordId, Integer freeSpinId) {
-        BetRecordDo betRecordDo = betRecordService.get(recordId);
-        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-        Object detail = betRecordDo.getDetail();
-        if (Objects.isNull(detail)) {
-            return null;
+
+    private GameBetResultDetailDo buildBetResult(WheelRewardDo rewardResultDo, Long betAmount) {
+        GameBetResultDetailDo build = GameBetResultDetailDo.builder()
+                .id(rewardResultDo.getWheelIndex())
+                .gameResult(rewardResultDo.getWheel().getSymbolArr())
+                .betAmount(betAmount)
+                .build();
+        RewardResultDo rewardResult = rewardResultDo.getRewardResult();
+        if (rewardResult != null) {
+            build.setRewardAmount(rewardResult.getRewardTotalAmount());
+            build.setMultiple(rewardResult.getWildTotalTimes());
+            build.setPrizeType(rewardResult.getPrizeType());
+            build.setFreeSpinsFlag(rewardResult.isFreeSpin());
+            build.setRewardResults(this.getRewardLineResults(rewardResult.getRewardLineList()));
         }
-        List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(FastJsonUtils.toJSONString(detail), GameRecordDetailPo.class);
-        GameRecordDetailPo recordDetail = Optional.ofNullable(recordDetailPos)
-                .orElse(Collections.emptyList())
-                .stream()
-                .filter(item -> Objects.equals(item.getId(), freeSpinId))
-                .findFirst()
-                .orElse(null);
-        return GameRecordConverter.poToDetailDo(recordDetail);
+        return build;
     }
 
 

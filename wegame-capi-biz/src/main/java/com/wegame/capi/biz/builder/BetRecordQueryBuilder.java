@@ -48,15 +48,21 @@ public class BetRecordQueryBuilder {
 
         if (Objects.nonNull(recordQuery.getGameId())) {
             criteria.and("gameId").is(recordQuery.getGameId());
+        }
 
-            if (Objects.nonNull(recordQuery.getStartCreateTime()) && Objects.nonNull(recordQuery.getEndCreateTime())) {
-                criteria.andOperator(
-                        Criteria.where("createTime").gt(recordQuery.getStartCreateTime()),
-                        Criteria.where("createTime").lte(recordQuery.getEndCreateTime())
-                );
-            }
+
+        if (Objects.nonNull(recordQuery.getStartCreateTime()) && Objects.nonNull(recordQuery.getEndCreateTime())) {
+            criteria.andOperator(
+                    Criteria.where("createTime").gt(recordQuery.getStartCreateTime()),
+                    Criteria.where("createTime").lte(recordQuery.getEndCreateTime())
+            );
+        }
+
+        if (Objects.isNull(recordQuery.getStartCreateTime()) && Objects.nonNull(recordQuery.getEndCreateTime())) {
+            criteria.and("createTime").lte(recordQuery.getEndCreateTime());
         }
         return criteria;
+
     }
 
     public static Update buildMongoUpdate(BetRecordDo recordDo) {

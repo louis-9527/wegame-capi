@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component("mariaMakilingBuyFreeSpinsBetStrategy")
-public class MariaMakilingBuyFreeSpinsBetStrategy
-        extends AbstractMariaMakilingBetStrategy<MariaMakilingBuyFreeSpinsBetDo, MariaMakilingBuyFreeSpinsBetResultDo> {
+public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingBetStrategy<MariaMakilingBuyFreeSpinsBetDo, MariaMakilingBuyFreeSpinsBetResultDo> {
 
     private final IdGeneratorHelper idGeneratorHelper;
 
@@ -29,7 +28,7 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
         MariaMakilingBuyFreeSpinsBetDo betDetail = betDo.getBetDetail();
         if (betDetail.getBetRecordId() != null && betDetail.getFreeSpinsId() != null) {
             //查询免费轮详情
-            GameBetResultDetailDo gameBetResultDetailDo = super.queryBetFreeSpin(betDo.getGameId(),betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
+            GameBetResultDetailDo gameBetResultDetailDo = betRecordService.getResultDetail(betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
             return BetResultDo.<MariaMakilingBuyFreeSpinsBetResultDo>builder()
                     .betRecordId(betDetail.getBetRecordId())
                     .gameId(betDo.getGameId())
@@ -40,11 +39,10 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
                             .build())
                     .build();
         }
-
         // 获取轮盘结果,必须包含免费轮
-        GameBetResultDetailDo betResult = super.getResultDetail(betDo.getGameId(), betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());
+        GameBetResultDetailDo betResult = super.getGameBetResult(betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount());
         // 获取免费轮
-        List<GameBetResultDetailDo> resultDetails = super.getResultDetail(betDo.getGameId(), betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount(), Boolean.TRUE);
+        List<GameBetResultDetailDo> resultDetails = super.getGameBetResult(betDo.getBetType(), betDo.getBetSubType(), betDo.getBetDetail().getBetAmount(), Boolean.TRUE);
         long rewardAmount = 0L;
         List<Integer> freeSpinIds = new ArrayList<>(resultDetails.size());
         for (GameBetResultDetailDo resultDetail : resultDetails) {
@@ -70,5 +68,10 @@ public class MariaMakilingBuyFreeSpinsBetStrategy
                         .resultDetail(betResult)
                         .build())
                 .build();
+    }
+
+    @Override
+    public Object extendHandle(Object obj) {
+        return null;
     }
 }
