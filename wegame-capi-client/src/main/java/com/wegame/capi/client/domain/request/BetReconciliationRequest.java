@@ -16,7 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "对账请求参数")
-public class BetSummaryRequest implements Validate, Serializable {
+public class BetReconciliationRequest implements Validate, Serializable {
     @ApiModelProperty(value = "渠道id", required = true)
     private String channelId;
     @ApiModelProperty(value = "hash", required = true)

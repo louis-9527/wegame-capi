@@ -7,12 +7,11 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.SingleWalletApi;
-import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
 import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
 import com.wegame.capi.biz.converter.user.UserConverter;
 import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.client.domain.request.NotifyCreditChangeRequest;
+import com.wegame.capi.client.domain.request.CreditChangeNotifyRequest;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.user.UserManualMapper;
 import com.wegame.capi.dao.mapper.user.UserMapper;
@@ -240,7 +239,7 @@ public class UserService {
         return Objects.isNull(res.getCredit()) ? 0L : res.getCredit().longValue();
     }
 
-    public Void notifyCreditChange(NotifyCreditChangeRequest request) {
+    public Void notifyCreditChange(CreditChangeNotifyRequest request) {
         String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));
         AssertUtil.assertTrue(StringUtils.equals(hash, request.getHash()), ErrorCode.ERR_PARAM);
         redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, request.getPlayerName()), 1);
