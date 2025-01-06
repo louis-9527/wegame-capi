@@ -3,19 +3,10 @@ package com.wegame.capi.biz.converter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.wegame.base.context.Operator;
-import com.wegame.base.context.OperatorContext;
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.GameBetResultDetailDo;
+import com.wegame.capi.biz.domain.biz.MariaMakilingGameRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.dao.mapper.domain.user.GameRecordDetailPo;
-import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * GameRecordConverter
@@ -270,18 +261,18 @@ public class GameRecordConverter {
     //        return detailPo;
     //    }
 
-    public static GameBetResultDetailDo poToDetailDo(GameRecordDetailPo detailPo) {
+    public static MariaMakilingGameRecordDetailDo poToDetailDo(GameRecordDetailPo detailPo) {
         if (detailPo == null) {
             return null;
         }
-        GameBetResultDetailDo detaildo = new GameBetResultDetailDo();
+        MariaMakilingGameRecordDetailDo detaildo = new MariaMakilingGameRecordDetailDo();
         detaildo.setId(detaildo.getId());
         detaildo.setMultiple(detaildo.getMultiple());
         detaildo.setBetAmount(detaildo.getBetAmount());
         detaildo.setRewardAmount(detaildo.getRewardAmount());
         detaildo.setFreeSpinsFlag(detailPo.isFreeSpinsFlag());
         detaildo.setGameResult(convertJsonToSymbolDoArray(detailPo.getGameResult()));
-        detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult()) ? null : JSON.parseArray(detailPo.getRewardResult(), GameBetResultDetailDo.RewardResult.class));
+        detaildo.setRewardResults(StringUtils.isEmpty(detailPo.getRewardResult()) ? null : JSON.parseArray(detailPo.getRewardResult(), MariaMakilingGameRecordDetailDo.RewardLineResultDo.class));
         return detaildo;
     }
 
