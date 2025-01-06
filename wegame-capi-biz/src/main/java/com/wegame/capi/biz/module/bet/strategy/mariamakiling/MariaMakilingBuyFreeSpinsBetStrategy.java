@@ -75,7 +75,6 @@ public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingB
             rets.addAll(freeSpinsGameRecords);
         }
 
-        // 构建游戏记录明细
         // 构建投注记录
         Long rewardAmount = rets.stream().mapToLong(item -> item.getRewardResult().getTotalRewardAmount()).sum();
         long betRecordId = idGeneratorHelper.nextId();
@@ -85,7 +84,7 @@ public class MariaMakilingBuyFreeSpinsBetStrategy extends AbstractMariaMakilingB
         Long id = betRecordService.add(betRecord);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         // 单钱包投注并派彩 todo
-
+        // 修改投注状态 todo
         // 组装返回结果
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betRecord.getId())
