@@ -33,17 +33,14 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         AssertUtil.assertNotEmpty(betRecordDetailDo.getGameRecordList(), ErrorCode.ERR_PARAM);
         List<MariaMakilingGameRecordDo> gameRecordList = betRecordDetailDo.getGameRecordList();
 
-        //获取最大ID
-        Optional<Integer> maxId = gameRecordList.stream()
-                .map(MariaMakilingGameRecordDo::getIndex)
-                .max(Integer::compareTo);
         MariaMakilingGameRecordDo mariaMakilingGameRecordDo = gameRecordList
                 .stream()
                 .filter(item -> Objects.equals(item.getIndex(), freeSpinsId))
                 .findFirst()
                 .orElse(null);
-        // 如果最后一次查询则，返回总的中奖金额
-        if (mariaMakilingGameRecordDo != null && Objects.equals(mariaMakilingGameRecordDo.getIndex(), maxId.get())) {
+            AssertUtil.assertNotNull(mariaMakilingGameRecordDo, ErrorCode.ERR_PARAM);
+            // 如果最后一次查询则，返回总的中奖金额
+        if (betRecordDetailDo.isLastFreeSpins(freeSpinsId)) {
             mariaMakilingGameRecordDo.setRewardTotalAmount(betRecordDo.getPayOutAmount());
         }
         return mariaMakilingGameRecordDo;
