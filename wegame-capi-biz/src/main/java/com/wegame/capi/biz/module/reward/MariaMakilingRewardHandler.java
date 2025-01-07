@@ -51,8 +51,6 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         Map<SymbolDo, List<RewardRuleSymbolDo>> firstColumSymbolMapping = this.initFirstColumSymbol(rewardRuleDo);
         // 本轮必要元素每一列出现的统计.<元素,<列号，本列中奖规则元素列表>>
         Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping = new HashMap<>();
-        // symbolId是否有wild参与<元素,boolean>
-        Map<SymbolDo, Boolean> symbolIdHasWildMap = new HashMap<>();
 
         SymbolDo[][] symbolArr = rewardRuleDo.getSymbolArr();
         // 第一列初始化到统计的数据中去
@@ -68,7 +66,6 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     for (SymbolDo firstSymbol : firstColumSymbolMapping.keySet()) {
                         if (!isScatter(firstSymbol)) {
                             this.addSymbolMapping(secondColumSymbolMapping, firstSymbol, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).coordinate(SymbolIndexDo.build(row, colum)).build());
-                            symbolIdHasWildMap.put(firstSymbol, true);
                         }
                     }
                 } else if (isFirstColumSymbolId(firstColumSymbolMapping, symbolDo)) {
@@ -77,7 +74,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
             }
         }
         // 中奖线统计
-        return generatorRewardLines(symbolIdHasWildMap, secondColumSymbolMapping);
+        return generatorRewardLines(secondColumSymbolMapping);
     }
 
     @Override
@@ -160,7 +157,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         return firstColumSymbolMapping;
     }
 
-    private RewardRuleResultDo generatorRewardLines(Map<SymbolDo, Boolean> symbolIdHasWildMap, Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping) {
+    private RewardRuleResultDo generatorRewardLines(Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping) {
         // 中奖线统计普通元素，scatter
         // 中奖线列表
         List<RewardRuleLineDo> rewardRuleLineList = Lists.newArrayList();
