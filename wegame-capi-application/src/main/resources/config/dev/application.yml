@@ -15,11 +15,11 @@ server:
   tomcat:
     uri-encoding: UTF-8
     connection-timeout: 3000
-    max-connections: 100000
+    max-connections: 1000000
     keep-alive-timeout: 3000
     accept-count: 100
     threads:
-      max: 20000
+      max: 30000
       min-spare: 20
   servlet:
     context-path: /capi/game
@@ -107,12 +107,6 @@ spring:
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: false
-        wegame_business_db:
-          url: jdbc:mysql://dev-nba-backend-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_business_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: root
-          password: ENC(DHb76s+Gg5rikLGRiZVPz0E+iAwmb+SfJw0Vy2DJI5lMd9rLRK8GWiB/8z78PJ7HEaFZ5mF2LSlXR3gxerZskA==)
-          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-          type: com.alibaba.druid.pool.DruidDataSource
   data:
     mongodb:
       uri: mongodb+srv://DEVnbaBACKENDuser:5rs4P71xD2zHbjpx@nba-backend-dev.yuens.mongodb.net/wegame_mdb?retryWrites=true&w=majority&readPreference=secondaryPreferred
