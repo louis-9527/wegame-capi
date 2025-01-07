@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.module.game;
 
-import com.wegame.capi.biz.domain.biz.GameInfoDo;
-import com.wegame.capi.biz.domain.biz.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 
 import java.util.List;

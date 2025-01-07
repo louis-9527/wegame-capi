@@ -1,6 +1,5 @@
 package com.wegame.capi.api.domain.res.singlewallet;
 
-import com.wegame.capi.common.enums.GameBetStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

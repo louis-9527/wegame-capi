@@ -22,21 +22,21 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- * 游戏记录模块
+ * 投注记录模块
  *
  * @author generate
  */
 @Slf4j
 @RestController
 @RequestMapping("betRecord")
-@Api(value = "游戏记录模块", tags = {"游戏记录模块"})
+@Api(value = "投注记录模块", tags = {"投注记录模块"})
 public class BetRecordController {
 
     @Autowired
     BetRecordService betRecordService;
 
     @LoginRequired
-    @ApiOperation(value = "分页查询（批量：根据查询条件）", httpMethod = "POST")
+    @ApiOperation(value = "分页查询", httpMethod = "POST")
     @PostMapping("/pageQuery")
     public CommonResponse<PageInfoVo<BetRecordPageVo>> pageQuery(@RequestBody PageQueryBetRecordRequest request) {
         request.validate();
@@ -57,10 +57,10 @@ public class BetRecordController {
     }
 
     @LoginRequired
-    @ApiOperation(value = "根据投注记录id查详情", httpMethod = "GET")
-    @GetMapping("/{id}")
-    public CommonResponse<BetRecordPageVo> detail(@PathVariable("id") String id) {
-        AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM, "id is empty");
+    @ApiOperation(value = "查询详情", httpMethod = "GET")
+    @GetMapping("/get/{id}")
+    public CommonResponse<BetRecordPageVo> get(@PathVariable("id") String id) {
+        AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id));
         return CommonResponse.build(BetRecordPageConverter.doToPageDetailVo(betRecordDo));
     }

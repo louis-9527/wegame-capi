@@ -3,17 +3,15 @@ package com.wegame.capi.scheduler;
 import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;
-import com.wegame.capi.common.enums.GameBetStatusEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -47,7 +45,7 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
         int pageNo = 1;
         List<BetRecordDo> recordList;
         do {
-            recordList = betRecordService.list(BetRecordQuery.builder().status(GameBetStatusEnum.ING.getCode())
+            recordList = betRecordService.list(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
                     .endCreateTime(fiveMinutesAgo)
                     .limit(DEFAULT_PAGE_SIZE)
                     .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
@@ -61,27 +59,27 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
     }
 
     private void handle(BetRecordDo betRecordDo) {
-        if (!GameBetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
+        if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
             return;
         }
         //获取当前订单状态
         BetStatusReq betStatusReq = BetWithPayoutReqBuilder.buildStatusReq(betRecordDo);
-        Pair<String, GameBetStatusEnum> betStatus = singleWalletService.getBetStatus(betStatusReq);
-        if (GameBetStatusEnum.SUCCESS == betStatus.getRight()) {
+        Pair<String, BetStatusEnum> betStatus = singleWalletService.getBetStatus(betStatusReq);
+        if (BetStatusEnum.SUCCESS == betStatus.getRight()) {
             // 更新记录
             BetRecordDo updateRecord = BetRecordDo.builder()
                     .id(betRecordDo.getId())
                     .betId(betStatus.getLeft())
-                    .status(GameBetStatusEnum.SUCCESS.getCode()).build();
+                    .status(BetStatusEnum.SUCCESS.getCode()).build();
             betRecordService.update(updateRecord);
             return;
         }
-        if (GameBetStatusEnum.FAIL == betStatus.getRight()) {
+        if (BetStatusEnum.FAIL == betStatus.getRight()) {
             // 更新记录
             BetRecordDo updateRecord = BetRecordDo.builder()
                     .id(betRecordDo.getId())
                     .betId(betStatus.getLeft())
-                    .status(GameBetStatusEnum.FAIL.getCode()).build();
+                    .status(BetStatusEnum.FAIL.getCode()).build();
             betRecordService.update(updateRecord);
         }
 

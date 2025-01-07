@@ -1,6 +1,6 @@
 package com.wegame.capi.api.domain.res.singlewallet;
 
-import com.wegame.capi.common.enums.GameBetStatusEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,5 +21,5 @@ public class SingleWalletBetWithPayoutRes extends SingleWalletBaseRes implements
     private String betId;
     private BigDecimal credit;
     private String refId;
-    private GameBetStatusEnum betStatus;
+    private BetStatusEnum betStatus;
 }

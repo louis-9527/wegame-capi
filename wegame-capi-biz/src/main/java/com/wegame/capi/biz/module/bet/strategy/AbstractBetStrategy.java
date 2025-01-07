@@ -1,22 +1,16 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
 import com.wegame.base.id.IdGeneratorHelper;
-import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 import com.wegame.capi.biz.converter.Converter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.common.enums.GameBetStatusEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 /**
  * 抽象投注策略<br>
@@ -70,7 +64,7 @@ public abstract class AbstractBetStrategy<T, R extends Converter> implements Bet
     public Long saveBetRecordAndPayOut(BetRecordDo betRecordDo) {
         betRecordService.add(betRecordDo);
         // 调用单钱包
-        SingleWalletBetWithPayoutRes betWithPayoutRes = SingleWalletBetWithPayoutRes.builder().betStatus(GameBetStatusEnum.SUCCESS).build();//singleWalletService.betWithPayout(betRecordDo);
+        SingleWalletBetWithPayoutRes betWithPayoutRes = SingleWalletBetWithPayoutRes.builder().betStatus(BetStatusEnum.SUCCESS).build();//singleWalletService.betWithPayout(betRecordDo);
         // 判断返回结果
         String betId = betWithPayoutRes.getBetId();
         // 更新记录
