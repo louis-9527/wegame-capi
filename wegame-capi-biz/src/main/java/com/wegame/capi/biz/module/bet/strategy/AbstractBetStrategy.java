@@ -30,36 +30,16 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
 
     public abstract Game getGame();
 
-//    /**
-//     * 调用单钱包
-//     *
-//     * @param gameRecordPo
-//     * @return
-//     */
-//
-//    private BetWithPayoutRes betWithPayout(BetRecordPo gameRecordPo) {
-//        // 调用单钱包
-//        BetWithPayoutReq payoutReq = BetWithPayoutReq.builder()
-//                .pId(gameRecordPo.getPId())
-//                .channelId(gameRecordPo.getChannelId())
-//                .playerName(gameRecordPo.getPlayerName())
-//                .refId(gameRecordPo.getBetSerialNo())
-//                .createTime(DateUtil.toUTC(new Date()))
-//                .betAmount(AmountUtil.toBigDecimal(gameRecordPo.getBetAmount()))
-//                .payoutAmount(AmountUtil.toBigDecimal(gameRecordPo.getPayOutAmount()))
-//                .betDetails(BetWithPayoutReq.BetDetails.builder()
-//                        .gameId(gameRecordPo.getGameId())
-//                        .roundNo(gameRecordPo.getBetSerialNo())
-//                        .wagersDate(DateUtil.getCurrentTimestamp())
-//                        .settlementDate(DateUtil.getCurrentTimestamp())
-//                        .isFreeRound(BetTypeEnum.FREE_SPINS_BET == BetTypeEnum.valueOfCode(gameRecordPo.getBetType()))
-//                        .jackpotDetails(new BetWithPayoutReq.BetDetails.JackpotDetails())
-//                        .build())
-//                .build();
-//        return singleWalletService.betWithPayout(payoutReq);
-//    }
+    public long getRecordId() {
+        return idGeneratorHelper.nextId();
+    }
 
-
+    /**
+     * 保存投注记录并派奖
+     *
+     * @param betRecordDo
+     * @return
+     */
     public Long saveBetRecordAndPayOut(BetRecordDo betRecordDo) {
         betRecordService.add(betRecordDo);
         // 调用单钱包
@@ -71,4 +51,5 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
         betRecordService.update(updateRecord);
         return AmountUtil.toLong(betWithPayoutRes.getCredit());
     }
+
 }
