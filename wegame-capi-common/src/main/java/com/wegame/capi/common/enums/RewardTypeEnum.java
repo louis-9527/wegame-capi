@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum RewardTypeEnum {
+    UN_KNOWN("UN_KNOWN", "未中奖"),
     SINGLE("SINGLE", "单奖励"),
     MULTIPLE("MULTIPLE", "多奖励"),
     ;

@@ -3,6 +3,7 @@ package com.wegame.capi.common.enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -11,25 +12,25 @@ import java.util.Objects;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum RewardSubTypeEnum {
 
-    NONE_PRIZE(-1, "未中大奖"),
-    NICE_PRIZE(0, "nice"),
-    MEGA_PRIZE(1, "mega"),
-    SUPER_PRIZE(2, "super"),
-    SENSATIONAL_PRIZE(3, "sensational");
+    NONE("none", "未中奖"),
+    NICE("nice", "nice"),
+    MEGA("mega", "mega"),
+    SUPER("super", "super"),
+    SENSATIONAL("sensational", "sensational");
 
     /**
      * 枚举码.
      */
-    private final Integer code;
+    private final String code;
 
     /**
      * 描述信息.
      */
     private final String desc;
 
-    public static RewardSubTypeEnum valueOfCode(Integer code) {
+    public static RewardSubTypeEnum valueOfCode(String code) {
         for (RewardSubTypeEnum item : RewardSubTypeEnum.values()) {
-            if (Objects.equals(item.getCode(), code)) {
+            if (StringUtils.equals(item.getCode(), code)) {
                 return item;
             }
         }

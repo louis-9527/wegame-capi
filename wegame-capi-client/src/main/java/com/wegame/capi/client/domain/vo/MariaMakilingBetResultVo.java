@@ -20,10 +20,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class MariaMakilingBetResultVo implements Serializable {
     private static final long serialVersionUID = -4792907227811616042L;
-    @ApiModelProperty("中奖类型:-1:未中奖，SINGLE单奖励，MULTIPLE多奖励 ")
+    @ApiModelProperty("中奖类型: NONE未中奖，SINGLE单奖励，MULTIPLE多奖励 ")
     private String rewardType;
-    @ApiModelProperty("中奖子类型,-1:未中大奖:0:niec,1:mege,2:super,3:sensati")
-    private Integer rewardSubType;
+    @ApiModelProperty("中奖子类型: none,niec,mege,super,sensational")
+    private String rewardSubType;
     @ApiModelProperty("中奖总金额")
     private Long totalRewardAmount;
     @ApiModelProperty("中奖总倍率")
