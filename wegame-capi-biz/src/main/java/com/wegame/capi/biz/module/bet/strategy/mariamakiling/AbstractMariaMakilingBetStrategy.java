@@ -4,8 +4,6 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.module.bet.strategy.AbstractBetStrategy;
@@ -23,13 +21,12 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     MariaMakilingGame mariaMakilingGame;
 
     @Override
-    public Game getGame() {
+    public Game<MariaMakilingGameRecordDo> getGame() {
         return mariaMakilingGame;
     }
 
-
-        public MariaMakilingGameRecordDo queryFreeBetRecord(MariaMakilingBetDo betDetail) {
-        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId());
+    public MariaMakilingGameRecordDo queryGameRecord(Long betRecordId, Integer freeSpinsId) {
+        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betRecordId);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
         AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);

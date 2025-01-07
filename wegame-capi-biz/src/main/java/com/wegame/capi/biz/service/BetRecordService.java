@@ -60,7 +60,7 @@ public class BetRecordService {
 
     /**
      * 查询：根据主键id查询
-     *
+     * todo 添加二级缓存 与 更新联动
      * @param id 主键id
      * @return BetRecordDo 投注记录
      */
