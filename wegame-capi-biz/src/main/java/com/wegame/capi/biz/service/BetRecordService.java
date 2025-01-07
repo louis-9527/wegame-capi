@@ -51,7 +51,7 @@ public class BetRecordService {
      * @param betRecordDo 投注记录
      * @return true/false
      */
-    @CacheEvict(value = CacheConstants.BET_RECORD, key = "#id")
+    @CacheEvict(value = CacheConstants.BET_RECORD, key = "#betRecordDo.id")
     public boolean update(BetRecordDo betRecordDo) {
         log.info("BetRecordService#update betRecordDo:{}", betRecordDo);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
