@@ -5,6 +5,8 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.reward.RewardHandler;
@@ -17,13 +19,15 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_SCATTER;
 import static com.wegame.capi.biz.util.SymbolRandomUtil.randomOneSymbol;
 
 @Slf4j
 @Component
-public class MariaMakilingGame extends AbstractGame {
+public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
     private static final Random random = new Random();
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
@@ -52,13 +56,25 @@ public class MariaMakilingGame extends AbstractGame {
             // 根据投注类型：生成游戏滚轮
             switch (gamePlay.getBetType()) {
                 case NORMAL_BET:
-                    return Arrays.asList(normalWheelGenerate(gameInfo, probabilisticConfig));
+                    return Collections.singletonList(normalWheelGenerate(gameInfo, probabilisticConfig));
                 case BUY_BET:
-                    return Arrays.asList(freeSpinsWheelGenerate(gameInfo, probabilisticConfig));
+                    return Collections.singletonList(freeSpinsWheelGenerate(gameInfo, probabilisticConfig));
                 default:
                     throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
             }
         }
+    }
+
+    @Override
+    public List<MariaMakilingGameRecordDo> getRewardResult(GameInfoDo gameInfo, GamePlayDo gamePlay, List<WheelDo> wheelList) {
+        return Optional.ofNullable(wheelList).orElse(Collections.emptyList()).stream().map(wheel -> {
+            RewardResultDo rewardResult = getRewardHandler().handle(build(gameInfo, gamePlay, wheel));
+            return MariaMakilingGameRecordDo.builder()
+                    .index(wheel.getIndex())
+                    .wheel(wheel)
+                    .rewardResult(rewardResult)
+                    .build();
+        }).collect(Collectors.toList());
     }
 
     /**

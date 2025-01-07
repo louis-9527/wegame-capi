@@ -21,7 +21,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     MariaMakilingGame mariaMakilingGame;
 
     @Override
-    public Game getGame() {
+    public Game<MariaMakilingGameRecordDo> getGame() {
         return mariaMakilingGame;
     }
 
