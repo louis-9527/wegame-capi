@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * po服务
+ * 投注记录服务
  *
  * @author genereate
  */
@@ -91,33 +91,7 @@ public class BetRecordService {
     public long count(BetRecordQuery query) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         return mongoTemplate.count(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
-
-
     }
 
     ///////////////  above auto generated ///////////////
-
-    //
-    //    public MariaMakilingBetRecordDetailDo getResultDetail(Long recordId, Integer freeSpinId) {
-    //        AssertUtil.assertNotNull(recordId, ErrorCode.ERR_PARAM);
-    //        AssertUtil.assertNotNull(freeSpinId, ErrorCode.ERR_PARAM);
-    //        BetRecordPo betRecord = mongoTemplate.findById(recordId, BetRecordPo.class);
-    //        if (betRecord == null) {
-    //            return null;
-    //        }
-    //        Object detail = betRecord.getDetail();
-    //        if (Objects.isNull(detail)) {
-    //            return null;
-    //        }
-    //        List<GameRecordDetailPo> recordDetailPos = JSON.parseArray(FastJsonUtils.toJSONString(detail), GameRecordDetailPo.class);
-    //        GameRecordDetailPo maxGameRecordDetailPo = Optional.ofNullable(recordDetailPos)
-    //                .orElse(Collections.emptyList()).stream().max(Comparator.comparingLong(GameRecordDetailPo::getId)).orElse(null);
-    //        GameRecordDetailPo recordDetail = Optional.ofNullable(recordDetailPos)
-    //                .orElse(Collections.emptyList())
-    //                .stream()
-    //                .filter(item -> Objects.equals(item.getId(), freeSpinId))
-    //                .findFirst()
-    //                .orElse(null);
-    //        return GameRecordConverter.poToDetailDo(recordDetail, Optional.ofNullable(maxGameRecordDetailPo).map(GameRecordDetailPo::getId).orElse(null));
-    //    }
 }
