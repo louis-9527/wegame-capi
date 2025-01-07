@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component("mariaMakilingBuyBetStrategy")
-public class MariaMakilingBuyBetStrategy extends AbstractMariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
+public class MariaMakilingBuyBetStrategy extends AbstractMariaMakilingBetStrategy {
 
     @Autowired
     IdGeneratorHelper idGeneratorHelper;
@@ -25,19 +25,12 @@ public class MariaMakilingBuyBetStrategy extends AbstractMariaMakilingBetStrateg
     public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo<MariaMakilingBetDo> betDo) {
         MariaMakilingBetDo betDetail = betDo.getBetDetail();
         if (Objects.nonNull(betDetail.getBetRecordId()) && Objects.nonNull(betDetail.getFreeSpinsId())) {
-            BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDo.getBetDetail().getBetRecordId());
-            MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
-            // 如果最后一次查询则，返回总的中奖金额 todo
             return BetResultDo.<MariaMakilingGameRecordDo>builder()
                     .betRecordId(betDetail.getBetRecordId())
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .resultDetail(betRecordDetailDo.getGameRecordList()
-                            .stream()
-                            .filter(item -> item.getIndex() == betDetail.getFreeSpinsId())
-                            .findFirst()
-                            .orElse(null))
+                    .resultDetail(super.queryFreeBetRecord(betDetail))
                     .build();
         }
 
@@ -74,7 +67,7 @@ public class MariaMakilingBuyBetStrategy extends AbstractMariaMakilingBetStrateg
         }
 
         // 构建投注记录
-        Long rewardAmount = rets.stream().mapToLong(item -> item.getRewardResult().getTotalRewardAmount()).sum();
+        Long rewardAmount = rets.stream().filter(item -> item.getRewardResult() != null).mapToLong(item -> item.getRewardResult().getTotalRewardAmount()).sum();
         long betRecordId = idGeneratorHelper.nextId();
         BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId, betDo.getBetDetail().getBetAmount(), rewardAmount, MariaMakilingBetRecordDetailDo.builder()
                 .gameRecordList(rets)

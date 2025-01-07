@@ -72,7 +72,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
             // 中奖结果处理
             rewardTotalAmount = rewardTotalAmount + lineRewardAmount.longValue();
             // 计算后的中奖线列表
-            rewardLineList.add(RewardLineBuilder.build(rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
+            rewardLineList.add(RewardLineBuilder.build(rewardHandle.getBetAmount(),rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
         }
 
         RewardResultDo tempRewardResultDo = RewardResultBuilder.build(

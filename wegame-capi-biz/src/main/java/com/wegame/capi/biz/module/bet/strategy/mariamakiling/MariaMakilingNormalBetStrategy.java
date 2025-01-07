@@ -30,8 +30,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component("mariaMakilingNormalBetStrategy")
-public class MariaMakilingNormalBetStrategy
-        extends AbstractMariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
+public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStrategy {
 
     @Autowired
     IdGeneratorHelper idGeneratorHelper;
@@ -94,7 +93,7 @@ public class MariaMakilingNormalBetStrategy
         }
 
         // 构建投注记录
-        Long rewardAmount = rets.stream().mapToLong(item -> item.getRewardResult().getTotalRewardAmount()).sum();
+        Long rewardAmount = rets.stream().filter(item -> item.getRewardResult() != null).mapToLong(item -> item.getRewardResult().getTotalRewardAmount()).sum();
         long betRecordId = idGeneratorHelper.nextId();
         BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId, betDo.getBetDetail().getBetAmount(), rewardAmount, MariaMakilingBetRecordDetailDo.builder()
                 .gameRecordList(rets)

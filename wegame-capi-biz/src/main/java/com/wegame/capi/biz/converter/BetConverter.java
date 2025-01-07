@@ -22,16 +22,16 @@ import java.util.Objects;
  */
 public class BetConverter {
 
-    private static final Map<BetSubTypeEnum, Class<?>> mysteriousClassMap = new ImmutableMap.Builder<BetSubTypeEnum, Class<?>>()
-            .put(BetSubTypeEnum.NORMAL_BET, MariaMakilingBetDo.class)
-            .put(BetSubTypeEnum.FREE_SPINS_NORMAL_BET, MariaMakilingBetDo.class)
-            .put(BetSubTypeEnum.BUY_BET, MariaMakilingBetDo.class)
-            .put(BetSubTypeEnum.FREE_SPINS_BUY_BET, MariaMakilingBetDo.class)
+//    private static final Map<BetSubTypeEnum, Class<?>> mysteriousClassMap = new ImmutableMap.Builder<BetSubTypeEnum, Class<?>>()
+//            .put(BetSubTypeEnum.NORMAL_BET, MariaMakilingBetDo.class)
+//            .put(BetSubTypeEnum.FREE_SPINS_NORMAL_BET, MariaMakilingBetDo.class)
+//            .put(BetSubTypeEnum.BUY_BET, MariaMakilingBetDo.class)
+//            .put(BetSubTypeEnum.FREE_SPINS_BUY_BET, MariaMakilingBetDo.class)
+//
+//            .build();
 
-            .build();
-
-    private static final Map<GameTypeEnum, Map<BetSubTypeEnum, Class<?>>> gameClassMap = new ImmutableMap.Builder<GameTypeEnum, Map<BetSubTypeEnum, Class<?>>>()
-            .put(GameTypeEnum.MARIA_MAKILING, mysteriousClassMap)
+    private static final Map<GameTypeEnum, Class<?>> gameClassMap = new ImmutableMap.Builder<GameTypeEnum,Class<?>>()
+            .put(GameTypeEnum.MARIA_MAKILING, MariaMakilingBetDo.class)
             .build();
 
     public static BetDo requestToDo(BetRequest betRequest) {
@@ -40,9 +40,9 @@ public class BetConverter {
         }
         GameTypeEnum gameType = GameTypeEnum.valueOfCode(betRequest.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
-        Map<BetSubTypeEnum, Class<?>> map = gameClassMap.get(gameType);
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_PARAM);
-        Class clazz = map.get(BetSubTypeEnum.valueOfCode(betRequest.getBetSubType()));
+        Class<?> clazz = gameClassMap.get(gameType);
+        //AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_PARAM);
+       // Class clazz = map.get(BetSubTypeEnum.valueOfCode(betRequest.getBetSubType()));
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
         return BetDo.builder()
                 .gameId(betRequest.getGameId())

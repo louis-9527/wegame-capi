@@ -82,7 +82,6 @@ public class BaseApi {
         AssertUtil.assertNotNull(hash, ErrorCode.ERR_PARAM);
         return hash;
     }
-
 }
 
 
