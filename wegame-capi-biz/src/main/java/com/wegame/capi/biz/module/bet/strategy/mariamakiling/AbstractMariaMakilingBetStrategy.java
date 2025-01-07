@@ -4,6 +4,8 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.module.bet.strategy.AbstractBetStrategy;
@@ -25,7 +27,8 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         return mariaMakilingGame;
     }
 
-    public MariaMakilingGameRecordDo queryFreeBetRecord(MariaMakilingBetDo betDetail) {
+
+        public MariaMakilingGameRecordDo queryFreeBetRecord(MariaMakilingBetDo betDetail) {
         BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId());
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
@@ -33,17 +36,14 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         AssertUtil.assertNotEmpty(betRecordDetailDo.getGameRecordList(), ErrorCode.ERR_PARAM);
         List<MariaMakilingGameRecordDo> gameRecordList = betRecordDetailDo.getGameRecordList();
 
-        //获取最大ID
-        Optional<Integer> maxId = gameRecordList.stream()
-                .map(MariaMakilingGameRecordDo::getIndex)
-                .max(Integer::compareTo);
         MariaMakilingGameRecordDo mariaMakilingGameRecordDo = gameRecordList
                 .stream()
                 .filter(item -> Objects.equals(item.getIndex(), betDetail.getFreeSpinsId()))
                 .findFirst()
                 .orElse(null);
-        // 如果最后一次查询则，返回总的中奖金额
-        if (mariaMakilingGameRecordDo != null && Objects.equals(mariaMakilingGameRecordDo.getIndex(), maxId.get())) {
+            AssertUtil.assertNotNull(mariaMakilingGameRecordDo, ErrorCode.ERR_PARAM);
+            // 如果最后一次查询则，返回总的中奖金额
+        if (betRecordDetailDo.isLastFreeSpins(betDetail.getFreeSpinsId())) {
             mariaMakilingGameRecordDo.setRewardTotalAmount(betRecordDo.getPayOutAmount());
         }
         return mariaMakilingGameRecordDo;
