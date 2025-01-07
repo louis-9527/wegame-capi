@@ -24,6 +24,11 @@ public class MariaMakilingBetRecordDetailDo {
      */
     private List<MariaMakilingGameRecordDo> gameRecordList;
 
+    /**
+     * 总派奖金额
+     */
+    private Long payOutTotalAmount;
+
     public boolean isLastFreeSpins(int freeSpinCount) {
         int size = CollectionUtils.isEmpty(gameRecordList) ? 0 : gameRecordList.size();
         return freeSpinCount == size - 1;
