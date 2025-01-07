@@ -23,6 +23,7 @@ public class BetResultConverter {
                 .betType(betResultDo.getBetType().getCode())
                 .betSubType(betResultDo.getBetSubType().getCode())
                 .credit(betResultDo.getCredit())
+                .overallRewardAmount(betResultDo.getOverallRewardAmount())
                 .resultDetail(Objects.nonNull(betResultDo.getResultDetail())
                         ? (MariaMakilingBetResultVo)betResultDo.getResultDetail().toVo() // todo fix
                         : null)
