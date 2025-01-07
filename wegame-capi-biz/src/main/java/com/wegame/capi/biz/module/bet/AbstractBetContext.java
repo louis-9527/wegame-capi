@@ -44,7 +44,7 @@ public abstract class AbstractBetContext {
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
         UserInfo userInfo = UserInfoContext.getUserInfo();
         String lockName = LockNameUtil.getBetLockName(userInfo.getPlayerId(), betDo.getGameId());
-        return distributeLock.lockThenCall(lockName, () -> betStrategy.bet(betDo), "Please do not place duplicate bets during the betting process");
+        return betStrategy.bet(betDo);
 
 
     }
