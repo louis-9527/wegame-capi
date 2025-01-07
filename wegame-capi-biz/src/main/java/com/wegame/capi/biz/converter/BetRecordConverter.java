@@ -98,9 +98,6 @@ public class BetRecordConverter {
         po.setPayOutAmount(betRecordDo.getPayOutAmount());
         po.setMarketFlag(betRecordDo.getMarketFlag());
         po.setStatus(betRecordDo.getStatus());
-        //        po.setFreeSpinsFlag(betRecordDo.getFreeSpinsFlag());
-        //        po.setFreeSpinsTimes(betRecordDo.getFreeSpinsTimes());
-        //        po.setFreeSpinsRefId(betRecordDo.getFreeSpinsRefId());
         po.setDetail(betRecordDo.getDetail());
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
