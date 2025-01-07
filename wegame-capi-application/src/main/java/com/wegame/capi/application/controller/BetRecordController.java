@@ -6,11 +6,10 @@ import com.wegame.base.domain.PageInfoVo;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.BetRecordConverter;
-import com.wegame.capi.biz.converter.BetRecordPageConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
-import com.wegame.capi.client.domain.vo.BetRecordPageVo;
+import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,7 +37,7 @@ public class BetRecordController {
     @LoginRequired
     @ApiOperation(value = "分页查询", httpMethod = "POST")
     @PostMapping("/pageQuery")
-    public CommonResponse<PageInfoVo<BetRecordPageVo>> pageQuery(@RequestBody PageQueryBetRecordRequest request) {
+    public CommonResponse<PageInfoVo<BetRecordVo>> pageQuery(@RequestBody PageQueryBetRecordRequest request) {
         request.validate();
         BetRecordQuery query = BetRecordConverter.requestToQuery(request, "createTime");
         long cnt = betRecordService.count(query);
@@ -52,16 +51,16 @@ public class BetRecordController {
         query.setOffset(request.getOffset());
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                BetRecordPageConverter.doToPageVoList(betRecordService.list(query)),
+                BetRecordConverter.doToVoList(betRecordService.list(query)),
                 cnt));
     }
 
     @LoginRequired
     @ApiOperation(value = "查询详情", httpMethod = "GET")
     @GetMapping("/get/{id}")
-    public CommonResponse<BetRecordPageVo> get(@PathVariable("id") String id) {
+    public CommonResponse<BetRecordVo> get(@PathVariable("id") String id) {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id));
-        return CommonResponse.build(BetRecordPageConverter.doToPageDetailVo(betRecordDo));
+        return CommonResponse.build(BetRecordConverter.doToVo(betRecordDo, true));
     }
 }
