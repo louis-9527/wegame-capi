@@ -16,6 +16,7 @@ import java.util.Objects;
 public abstract class AbstractMultipleCalculateStrategy implements MultipleCalculateStrategy {
 
     public BigDecimal calculateMultiple(GameTypeEnum gameType, WheelDo wheel) {
+        long current = System.currentTimeMillis();
         BigDecimal multiple = new BigDecimal(0);
         for (SymbolDo[] row : wheel.getSymbolArr()) {
             for (SymbolDo element : row) {
@@ -31,6 +32,7 @@ public abstract class AbstractMultipleCalculateStrategy implements MultipleCalcu
                 }
             }
         }
+        log.info("multiple cost time: {} ms", System.currentTimeMillis() - current);
         return multiple;
     }
 

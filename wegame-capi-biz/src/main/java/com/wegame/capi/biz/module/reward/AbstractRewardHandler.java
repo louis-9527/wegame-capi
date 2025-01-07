@@ -8,13 +8,13 @@ import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.builder.RewardLineBuilder;
 import com.wegame.capi.biz.builder.RewardResultBuilder;
 import com.wegame.capi.biz.builder.RewardRuleBuilder;
+import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.odds.OddsCalculateDo;
 import com.wegame.capi.biz.domain.biz.reward.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -35,14 +35,15 @@ public abstract class AbstractRewardHandler implements RewardHandler {
 
     public abstract RewardRuleResultDo calcRewardLines(RewardRuleDo rewardRuleDo);
 
-    public abstract boolean hasFreeSpin(GameTypeEnum gameType, SymbolDo[][] symbolArr);
+    public abstract boolean hasRewardFreeSpin(GameInfoDo gameInfo, SymbolDo[][] symbolArr);
 
     public abstract boolean bizValidate(RewardHandleDo rewardHandle);
 
     public abstract RewardSubTypeEnum rewardSubType(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo);
 
     public RewardResultDo handle(RewardHandleDo rewardHandle) {
-        this.validate(rewardHandle);
+        long current = System.currentTimeMillis();
+        validate(rewardHandle);
         // 中奖规则处理
         RewardRuleDo rewardRuleDo = RewardRuleBuilder.build(rewardHandle);
         AssertUtil.assertNotNull(rewardRuleDo, ErrorCode.ERR_INTER, "rewardRuleDo is null");
@@ -62,7 +63,6 @@ public abstract class AbstractRewardHandler implements RewardHandler {
             OddsCalculateDo oddsCalculateDo = OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType());
             AssertUtil.assertNotNull(oddsCalculateDo, ErrorCode.ERR_INTER, "oddsCalculateDo is null");
             BigDecimal odds = oddsCalculateStrategy().calculateOdds(oddsCalculateDo);
-
             // 中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
             // scatter 无需进行倍率计算
             BigDecimal lineRewardAmount = BigDecimal.valueOf(rewardHandle.getBetAmount()).multiply(odds);
@@ -72,7 +72,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
             // 中奖结果处理
             rewardTotalAmount = rewardTotalAmount + lineRewardAmount.longValue();
             // 计算后的中奖线列表
-            rewardLineList.add(RewardLineBuilder.build(rewardHandle.getBetAmount(),rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
+            rewardLineList.add(RewardLineBuilder.build(rewardHandle.getBetAmount(), rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
         }
 
         RewardResultDo tempRewardResultDo = RewardResultBuilder.build(
@@ -80,16 +80,14 @@ public abstract class AbstractRewardHandler implements RewardHandler {
                 rewardTotalAmount,
                 rewardLineList,
                 multiple,
-                this.hasFreeSpin(rewardHandle.getGameType(),
-                        rewardHandle.getWheel().getSymbolArr()));
+                hasRewardFreeSpin(rewardHandle.getGameInfo(), rewardHandle.getWheel().getSymbolArr()));
         // 返回中奖信息
-        return RewardResultBuilder.build(tempRewardResultDo,
-                this.rewardSubType(rewardHandle, tempRewardResultDo));
+        RewardResultDo rewardResultDo = RewardResultBuilder.build(tempRewardResultDo, rewardSubType(rewardHandle, tempRewardResultDo));
+        log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
+        return rewardResultDo;
     }
 
     public boolean validate(RewardHandleDo rewardHandle) {
-      //  rewardHandle.getWheel().print();
-        // 为空
         AssertUtil.assertNotNull(rewardHandle, ErrorCode.ERR_PARAM, "rewardHandle is null");
         AssertUtil.assertNotNull(rewardHandle.getGameType(), ErrorCode.ERR_INTER, "not support gameType");
         AssertUtil.assertNotNull(rewardHandle.getBetType(), ErrorCode.ERR_PARAM, "not support betType");

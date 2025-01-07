@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.reward;
 
+import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -24,11 +25,14 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class RewardHandleDo implements Serializable {
     private static final long serialVersionUID = -226232434848L;
-
     /**
      * 游戏类型
      */
     private GameTypeEnum gameType;
+    /**
+     * 游戏信息
+     */
+    private GameInfoDo gameInfo;
     /**
      * 投注类型
      */
