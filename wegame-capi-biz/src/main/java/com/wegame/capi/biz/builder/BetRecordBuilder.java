@@ -7,7 +7,7 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 
 public class BetRecordBuilder {
 
-    public static <T> BetRecordDo build(Long betRecordId, BetDo betDo, Long betAmount, Long payOutAmount, T detail) {
+    public static <T> BetRecordDo build(Long betRecordId, BetDo betDo, Long betAmount, Long payAmount, Long payOutAmount, T detail) {
         return BetRecordDo.builder()
                 .id(betRecordId)
                 .pId(UserInfoContext.getUserInfo().getPId())
@@ -20,6 +20,7 @@ public class BetRecordBuilder {
                 .betType(betDo.getBetType().getCode())
                 .betSubType(betDo.getBetSubType().getCode())
                 .betAmount(betAmount)
+                .payAmount(payAmount)
                 .payOutAmount(payOutAmount)
                 .status(BetStatusEnum.ING.getCode())
                 .detail(detail)

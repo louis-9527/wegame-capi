@@ -40,8 +40,6 @@ public class BetRecordConverter {
         betRecordDo.setBetAmount(StringUtils.isNotEmpty(vo.getBetAmount()) ? Long.valueOf(vo.getBetAmount()) : null);
         betRecordDo.setPayOutAmount(StringUtils.isNotEmpty(vo.getPayOutAmount()) ? Long.valueOf(vo.getPayOutAmount()) : null);
         betRecordDo.setStatus(vo.getStatus());
-        betRecordDo.setFreeSpinsFlag(vo.getFreeSpinsFlag());
-        betRecordDo.setFreeSpinsTimes(vo.getFreeSpinsTimes());
         betRecordDo.setCreator(vo.getCreator());
         betRecordDo.setCreateTime(vo.getCreateTime());
         betRecordDo.setUpdater(vo.getUpdater());
@@ -69,9 +67,6 @@ public class BetRecordConverter {
         betRecordDo.setPayOutAmount(po.getPayOutAmount());
         betRecordDo.setMarketFlag(po.getMarketFlag());
         betRecordDo.setStatus(po.getStatus());
-        betRecordDo.setFreeSpinsFlag(po.getFreeSpinsFlag());
-        betRecordDo.setFreeSpinsTimes(po.getFreeSpinsTimes());
-        betRecordDo.setFreeSpinsRefId(po.getFreeSpinsRefId());
         betRecordDo.setDetail(po.getDetail());
         betRecordDo.setCreator(po.getCreator());
         betRecordDo.setCreateTime(po.getCreateTime());
@@ -99,12 +94,13 @@ public class BetRecordConverter {
         po.setBetId(betRecordDo.getBetId());
         po.setBetSerialNo(betRecordDo.getBetSerialNo());
         po.setBetAmount(betRecordDo.getBetAmount());
+        po.setPayAmount(betRecordDo.getPayAmount());
         po.setPayOutAmount(betRecordDo.getPayOutAmount());
         po.setMarketFlag(betRecordDo.getMarketFlag());
         po.setStatus(betRecordDo.getStatus());
-        po.setFreeSpinsFlag(betRecordDo.getFreeSpinsFlag());
-        po.setFreeSpinsTimes(betRecordDo.getFreeSpinsTimes());
-        po.setFreeSpinsRefId(betRecordDo.getFreeSpinsRefId());
+        //        po.setFreeSpinsFlag(betRecordDo.getFreeSpinsFlag());
+        //        po.setFreeSpinsTimes(betRecordDo.getFreeSpinsTimes());
+        //        po.setFreeSpinsRefId(betRecordDo.getFreeSpinsRefId());
         po.setDetail(betRecordDo.getDetail());
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
@@ -139,8 +135,6 @@ public class BetRecordConverter {
         vo.setBetAmount(Objects.nonNull(betRecordDo.getBetAmount()) ? String.valueOf(betRecordDo.getBetAmount()) : null);
         vo.setPayOutAmount(Objects.nonNull(betRecordDo.getPayOutAmount()) ? String.valueOf(betRecordDo.getPayOutAmount()) : null);
         vo.setStatus(betRecordDo.getStatus());
-        vo.setFreeSpinsFlag(betRecordDo.getFreeSpinsFlag());
-        vo.setFreeSpinsTimes(betRecordDo.getFreeSpinsTimes());
         vo.setCreator(betRecordDo.getCreator());
         vo.setCreateTime(Objects.nonNull(betRecordDo.getCreateTime()) ? betRecordDo.getCreateTime() : null);
         vo.setUpdater(betRecordDo.getUpdater());

@@ -49,7 +49,7 @@ public class BetRecordService {
      * @return true/false
      */
     public boolean update(BetRecordDo betRecordDo) {
-        log.info("BoxingBetRecordService#update record:{}", betRecordDo);
+        log.info("BetRecordService#update betRecordDo:{}", betRecordDo);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is empty");
         UpdateResult result = mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(betRecordDo.getId())),

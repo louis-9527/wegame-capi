@@ -89,8 +89,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                     .collect(Collectors.toList()));
             gameRecordList.addAll(freeSpinsGameRecordList);
         }
-
-        // 构建投注记录(正常轮和免费轮合并)
+        // 构建-投注记录
         Long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> item.getRewardResult() != null)
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
@@ -98,15 +97,22 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         MariaMakilingBetRecordDetailDo detailDo = MariaMakilingBetRecordDetailDo.builder()
                 .gameRecordList(gameRecordList)
                 .build();
-        BetRecordDo betRecord = BetRecordBuilder.build(generateRecordId(), betDo, betDo.getBetDetail().getPayAmount(), totalRewardAmount, detailDo);
+        BetRecordDo betRecord = BetRecordBuilder.build(generateRecordId(),
+                betDo,
+                betDo.getBetDetail().getBetAmount(),
+                betDo.getBetDetail().getPayAmount(),
+                totalRewardAmount,
+                detailDo);
         // 保存投注记录并派奖
-        super.saveBetRecordAndPayOut(betRecord);
+        Long userCredit = saveBetRecordAndBetWithPayout(betRecord);
         // 组装返回结果
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betRecord.getId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
+                .credit(userCredit)
+                .overallRewardAmount(Objects.nonNull(firstGameRecord.getRewardResult()) ? firstGameRecord.getRewardResult().getBetAmount() : 0L)
                 .resultDetail(firstGameRecord)
                 .build();
     }

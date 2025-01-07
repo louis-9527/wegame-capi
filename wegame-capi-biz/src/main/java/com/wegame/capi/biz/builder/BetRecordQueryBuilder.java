@@ -112,19 +112,19 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordDo.getStatus())) {
             update.set("status", recordDo.getStatus());
         }
-        if (Objects.nonNull(recordDo.getFreeSpinsFlag())) {
-            update.set("freeSpinsFlag", recordDo.getFreeSpinsFlag());
-        }
-        if (Objects.nonNull(recordDo.getFreeSpinsTimes())) {
-            update.set("freeSpinsTimes", recordDo.getFreeSpinsTimes());
-        }
+        //        if (Objects.nonNull(recordDo.getFreeSpinsFlag())) {
+        //            update.set("freeSpinsFlag", recordDo.getFreeSpinsFlag());
+        //        }
+        //        if (Objects.nonNull(recordDo.getFreeSpinsTimes())) {
+        //            update.set("freeSpinsTimes", recordDo.getFreeSpinsTimes());
+        //        }
         if (Objects.nonNull(recordDo.getDetail())) {
             update.set("detail", recordDo.getDetail());
         }
         if (Objects.nonNull(recordDo.getUpdater())) {
             update.set("updater", recordDo.getUpdater());
         }
-        update.set("updateTime", recordDo.getUpdateTime());
+        update.set("updateTime", System.currentTimeMillis());
         return update;
     }
 

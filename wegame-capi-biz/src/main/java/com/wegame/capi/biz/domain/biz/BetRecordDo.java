@@ -46,13 +46,13 @@ public class BetRecordDo<T> implements Serializable {
      */
     private String playerName;
     /**
-     * 投注类型 1正常投注 2免费轮投注
+     * 投注类型
      */
     private String betType;
     /**
-     * 投注子类型 11正常投注 21购买免费轮投注 22非购买免费轮投注
+     * 投注子类型
      */
-    private String /**/betSubType;
+    private String betSubType;
     /**
      * 投注id（单钱包）
      */
@@ -81,18 +81,18 @@ public class BetRecordDo<T> implements Serializable {
      * 状态 0进行中 1已完结 2无效
      */
     private Integer status;
-    /**
-     * 免费轮获得标识 0否 1是
-     */
-    private Integer freeSpinsFlag;
-    /**
-     * 免费轮次数
-     */
-    private Integer freeSpinsTimes;
-    /**
-     *  免费轮关联原投注记录Id
-     */
-    private Long freeSpinsRefId;
+    //    /**
+    //     * 免费轮获得标识 0否 1是
+    //     */
+    //    private Integer freeSpinsFlag;
+    //    /**
+    //     * 免费轮次数
+    //     */
+    //    private Integer freeSpinsTimes;
+    //    /**
+    //     *  免费轮关联原投注记录Id
+    //     */
+    //    private Long freeSpinsRefId;
     /**
      * 游戏记录明细
      */
