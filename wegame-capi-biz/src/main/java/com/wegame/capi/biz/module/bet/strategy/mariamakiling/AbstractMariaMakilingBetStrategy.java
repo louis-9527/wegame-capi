@@ -30,67 +30,27 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         return mariaMakilingGame;
     }
 
-    public MariaMakilingBetRecordDetailDo queryGameRecord(Long betRecordId, Integer freeSpinsId) {
-        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betRecordId);
-        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-        MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
-        AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotEmpty(betRecordDetailDo.getGameRecordList(), ErrorCode.ERR_PARAM);
-        List<MariaMakilingGameRecordDo> gameRecordList = betRecordDetailDo.getGameRecordList();
-        // 匹配结果
-        MariaMakilingGameRecordDo mariaMakilingGameRecordDo = gameRecordList
-                .stream()
-                .filter(item -> Objects.equals(item.getIndex(), freeSpinsId))
-                .findFirst()
-                .orElse(null);
-        AssertUtil.assertNotNull(mariaMakilingGameRecordDo, ErrorCode.ERR_PARAM);
-        // 如果最后一次查询则，返回总的中奖金额
-        MariaMakilingBetRecordDetailDo resultDetail = MariaMakilingBetRecordDetailDo.builder()
-                .gameRecordList(Lists.newArrayList(mariaMakilingGameRecordDo)).build();
-        if (betRecordDetailDo.isLastFreeSpins(freeSpinsId)) {
-            resultDetail.setPayOutTotalAmount(betRecordDo.getPayOutAmount());
-        }
-        return resultDetail;
-    }
 
-
+    @Override
     public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo<MariaMakilingBetDo> betDo) {
-        //是否查询免费轮详情
+        // 是否查询免费轮详情
         if (betDo.getBetSubType() == BetSubTypeEnum.FREE_SPINS_BUY_BET ||
                 betDo.getBetSubType() == BetSubTypeEnum.FREE_SPINS_NORMAL_BET) {
             MariaMakilingBetDo betDetail = betDo.getBetDetail();
-            BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId());
-            AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-            MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
-            AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);
-            AssertUtil.assertNotEmpty(betRecordDetailDo.getGameRecordList(), ErrorCode.ERR_PARAM);
-            List<MariaMakilingGameRecordDo> gameRecordList = betRecordDetailDo.getGameRecordList();
-            // 匹配结果
-            MariaMakilingGameRecordDo mariaMakilingGameRecordDo = gameRecordList
-                    .stream()
-                    .filter(item -> Objects.equals(item.getIndex(), betDetail.getFreeSpinsId()))
-                    .findFirst()
-                    .orElse(null);
-            AssertUtil.assertNotNull(mariaMakilingGameRecordDo, ErrorCode.ERR_PARAM);
-            // 如果最后一次查询则，返回总的中奖金额
-            MariaMakilingBetRecordDetailDo resultDetail = MariaMakilingBetRecordDetailDo.builder()
-                    .gameRecordList(Lists.newArrayList(mariaMakilingGameRecordDo)).build();
-            if (betRecordDetailDo.isLastFreeSpins(betDetail.getFreeSpinsId())) {
-                resultDetail.setPayOutTotalAmount(betRecordDo.getPayOutAmount());
-            }
+            MariaMakilingBetRecordDetailDo resultDetail = this.queryGameRecord(betDetail.getBetRecordId(), betDetail.getFreeSpinsId());
+            // 免费轮子类处理逻辑
             this.freeSpinsHandler(betDo, resultDetail);
-
-            //返回免费轮详情
+            // 返回免费轮详情
             return BetResultDo.<MariaMakilingGameRecordDo>builder()
                     .betRecordId(betDetail.getBetRecordId())
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .resultDetail(mariaMakilingGameRecordDo)
+                    .resultDetail(resultDetail.getGameRecordList().get(0))
                     .build();
 
         }
-
+        // 首次游戏结果
         MariaMakilingGameRecordDo gameRecord = this.gameRecordFirst(betDo);
         List<MariaMakilingGameRecordDo> gameRecordDos = new ArrayList<>();
         gameRecordDos.add(gameRecord);
@@ -164,6 +124,29 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                 .freeSpinsFlag(true)
                 .build());
 
+    }
+
+    private MariaMakilingBetRecordDetailDo queryGameRecord(Long betRecordId, Integer freeSpinsId) {
+        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betRecordId);
+        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
+        MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
+        AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotEmpty(betRecordDetailDo.getGameRecordList(), ErrorCode.ERR_PARAM);
+        List<MariaMakilingGameRecordDo> gameRecordList = betRecordDetailDo.getGameRecordList();
+        // 匹配结果
+        MariaMakilingGameRecordDo mariaMakilingGameRecordDo = gameRecordList
+                .stream()
+                .filter(item -> Objects.equals(item.getIndex(), freeSpinsId))
+                .findFirst()
+                .orElse(null);
+        AssertUtil.assertNotNull(mariaMakilingGameRecordDo, ErrorCode.ERR_PARAM);
+        // 如果最后一次查询则，返回总的中奖金额
+        MariaMakilingBetRecordDetailDo resultDetail = MariaMakilingBetRecordDetailDo.builder()
+                .gameRecordList(Lists.newArrayList(mariaMakilingGameRecordDo)).build();
+        if (betRecordDetailDo.isLastFreeSpins(freeSpinsId)) {
+            resultDetail.setPayOutTotalAmount(betRecordDo.getPayOutAmount());
+        }
+        return resultDetail;
     }
 
     public void freeSpinsHandler(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo recordDetail) {
