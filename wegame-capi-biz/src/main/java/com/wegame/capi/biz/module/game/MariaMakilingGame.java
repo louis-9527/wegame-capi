@@ -66,15 +66,12 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     }
 
     @Override
-    public List<MariaMakilingGameRecordDo> buildGameRecordList(GameInfoDo gameInfo, GamePlayDo gamePlay, List<WheelDo> wheelList) {
-        return Optional.ofNullable(wheelList).orElse(Collections.emptyList()).stream().map(wheel -> {
-            RewardResultDo rewardResult = getRewardHandler().handle(build(gameInfo, gamePlay, wheel));
-            return MariaMakilingGameRecordDo.builder()
-                    .index(wheel.getIndex())
-                    .wheel(wheel)
-                    .rewardResult(rewardResult)
-                    .build();
-        }).collect(Collectors.toList());
+    public MariaMakilingGameRecordDo buildGameRecord(WheelDo wheel, RewardResultDo rewardResult) {
+        return MariaMakilingGameRecordDo.builder()
+                .index(wheel.getIndex())
+                .wheel(wheel)
+                .rewardResult(rewardResult)
+                .build();
     }
 
     /**
