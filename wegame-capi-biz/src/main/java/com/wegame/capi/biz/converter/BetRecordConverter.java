@@ -5,6 +5,7 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -42,9 +43,9 @@ public class BetRecordConverter {
         betRecordDo.setFreeSpinsFlag(vo.getFreeSpinsFlag());
         betRecordDo.setFreeSpinsTimes(vo.getFreeSpinsTimes());
         betRecordDo.setCreator(vo.getCreator());
-        betRecordDo.setCreateTime(Objects.nonNull(vo.getCreateTime()) ? new Date(vo.getCreateTime()) : null);
+        betRecordDo.setCreateTime(vo.getCreateTime());
         betRecordDo.setUpdater(vo.getUpdater());
-        betRecordDo.setUpdateTime(Objects.nonNull(vo.getUpdateTime()) ? new Date(vo.getUpdateTime()) : null);
+        betRecordDo.setUpdateTime(vo.getUpdateTime());
         return betRecordDo;
     }
 
@@ -106,13 +107,14 @@ public class BetRecordConverter {
         po.setFreeSpinsRefId(betRecordDo.getFreeSpinsRefId());
         po.setDetail(betRecordDo.getDetail());
         if (OptEnum.ADD.equals(optEnum)) {
+            long currentMilli = DateUtil.getCurrentMilli();
             po.setCreator(operator.getName());
-            po.setCreateTime(new Date());
+            po.setCreateTime(DateUtil.getCurrentMilli());
             po.setUpdater(operator.getName());
-            po.setUpdateTime(new Date());
+            po.setUpdateTime(currentMilli);
         } else {
             po.setUpdater(operator.getName());
-            po.setUpdateTime(new Date());
+            po.setUpdateTime(DateUtil.getCurrentMilli());
             po.setId(betRecordDo.getId());
         }
         return po;
@@ -140,9 +142,9 @@ public class BetRecordConverter {
         vo.setFreeSpinsFlag(betRecordDo.getFreeSpinsFlag());
         vo.setFreeSpinsTimes(betRecordDo.getFreeSpinsTimes());
         vo.setCreator(betRecordDo.getCreator());
-        vo.setCreateTime(Objects.nonNull(betRecordDo.getCreateTime()) ? betRecordDo.getCreateTime().getTime() : null);
+        vo.setCreateTime(Objects.nonNull(betRecordDo.getCreateTime()) ? betRecordDo.getCreateTime() : null);
         vo.setUpdater(betRecordDo.getUpdater());
-        vo.setUpdateTime(Objects.nonNull(betRecordDo.getUpdateTime()) ? betRecordDo.getUpdateTime().getTime() : null);
+        vo.setUpdateTime(Objects.nonNull(betRecordDo.getUpdateTime()) ? betRecordDo.getUpdateTime() : null);
         return vo;
     }
 

@@ -100,7 +100,7 @@ public class BetRecordDo<T> implements Serializable {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Long createTime;
     /**
      * 更新人
      */
@@ -108,7 +108,7 @@ public class BetRecordDo<T> implements Serializable {
     /**
      * 更新时间
      */
-    private Date updateTime;
+    private Long updateTime;
 
     ///////////////  above auto generated ///////////////
 }

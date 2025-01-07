@@ -90,16 +90,16 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                     .collect(Collectors.toList()));
             gameRecordDos.addAll(gameRecordFreeSpins);
         }
+
         // 构建投注记录(正常轮和免费轮合并)
         Long rewardAmount = gameRecordDos.stream().filter(item -> item.getRewardResult() != null).mapToLong(item -> item.getRewardResult().getTotalRewardAmount()).sum();
-        long betRecordId = idGeneratorHelper.nextId();
-        BetRecordDo betRecord = BetRecordBuilder.build(betDo, betRecordId, betDo.getBetDetail().getBetAmount(), rewardAmount, MariaMakilingBetRecordDetailDo.builder()
+        BetRecordDo betRecord = BetRecordBuilder.build(betDo, getRecordId(), betDo.getBetDetail().getBetAmount(), rewardAmount, MariaMakilingBetRecordDetailDo.builder()
                 .gameRecordList(gameRecordDos)
                 .build());
-        Long id = betRecordService.add(betRecord);
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
-        // 单钱包投注并派彩 todo
-        // 修改投注状态 todo
+
+        // 保存投注记录并派奖
+        super.saveBetRecordAndPayOut(betRecord);
+
         // 组装返回结果
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betRecord.getId())
