@@ -1,5 +1,6 @@
 package com.wegame.capi.common.context;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 
 /**
- * 用户
+ * 玩家
  * @author apple
  */
 @Data
@@ -23,10 +24,13 @@ public class UserInfo implements Serializable {
 
     @ApiModelProperty("id")
     private String id;
+    @JsonProperty("pId")
     @ApiModelProperty(value = "平台id")
-    private String platformId;
+    private String pId;
     @ApiModelProperty(value = "渠道id")
     private String channelId;
+    @ApiModelProperty(value = "游戏id")
+    private String gameId;
     @ApiModelProperty(value = "用户id")
     private String playerId;
     @ApiModelProperty(value = "用户姓名")
@@ -37,8 +41,6 @@ public class UserInfo implements Serializable {
     private String userLevel;
     @ApiModelProperty(value = "用户姓名")
     private String userName;
-    @ApiModelProperty(value = "用户生日")
-    private String birthday;
     @ApiModelProperty(value = "中台token")
     private String token;
 }

@@ -1,11 +1,14 @@
 package com.wegame.capi.biz.service;
 
 import cn.hutool.crypto.SecureUtil;
-import com.wegame.capi.api.CommonApi;
-import com.wegame.capi.api.domain.req.GetAuthLoginTokenReq;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.api.SingleWalletApi;
+import com.wegame.capi.api.domain.res.AuthLoginTokenRes;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
+import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
+import com.wegame.capi.biz.domain.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.client.domain.request.UserLoginRequest;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -24,19 +27,20 @@ public class UserLoginService {
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
-    CommonApi commonApi;
+    SingleWalletApi singleWalletApi;
 
-    public UserInfo login(HttpServletResponse response, UserLoginRequest request) {
-        commonApi.authLoginToken(GetAuthLoginTokenReq.buildClientReq(request));
+    public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
+        AuthLoginTokenRes authLoginTokenRes = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
+        AssertUtil.assertNotNull(authLoginTokenRes, ErrorCode.ERR_MIDDLE_PLATFORM);
 
-        String token = SecureUtil.md5(request.getToken());
+        String token = SecureUtil.md5(userLoginDo.getToken());
         response.addHeader(Constants._TOKEN_, token);
-        UserDo userDo = UserInfoBuilder.buildUserDo(request);
+        UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
         Long userId = userService.insertOrUpdate(userDo);
-        UserInfo userInfo = UserInfoBuilder.buildUserInfo(request, userId, token);
-        userInfo.setId(String.valueOf(userId));
+        UserInfo userInfo = UserInfoBuilder.buildUserInfo(userLoginDo, userId, token);
 
-        redisTemplate.opsForValue().set(String.format(Constants.CUSER_LOGIN_TOKEN, token), userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
+        String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
+        redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
         return userInfo;
     }
 

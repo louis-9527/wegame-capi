@@ -32,5 +32,5 @@ public class NacosConfig {
 
 
     @Value("${example.config.value:0}")
-    String tmSendApiErrorMessageSwitch;
+    String exampleConfigValue;
 }

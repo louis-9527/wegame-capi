@@ -2,6 +2,7 @@ package com.wegame.capi.application.controller;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.biz.converter.UserLoginConvert;
 import com.wegame.capi.biz.service.UserLoginService;
 import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
@@ -14,13 +15,16 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+/**
+ * 用户模块
+ * @author generate
+ */
 @Slf4j
 @RestController
 @RequestMapping("user")
@@ -31,15 +35,13 @@ public class UserController {
     UserLoginService userLoginService;
     @Autowired
     UserService userService;
-    @Autowired
-    RedisTemplate redisTemplate;
 
     @ApiOperation(value = "登录", httpMethod = "POST")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
     @PostMapping("/login")
     public CommonResponse<UserInfo> login(HttpServletResponse response, @Valid @RequestBody UserLoginRequest request) {
         request.validateParam();
-        return CommonResponse.build(userLoginService.login(response, request));
+        return CommonResponse.build(userLoginService.login(response, UserLoginConvert.requestToDo(request)));
     }
 
     @LoginRequired
@@ -58,10 +60,9 @@ public class UserController {
     }
 
     @LoginRequired
-    @ApiOperation(value = "余额", httpMethod = "GET")
+    @ApiOperation(value = "查询余额", httpMethod = "GET")
     @GetMapping("/getCredit")
     public CommonResponse<Long> getCredit() {
         return CommonResponse.build(userService.getCredit());
     }
-
 }

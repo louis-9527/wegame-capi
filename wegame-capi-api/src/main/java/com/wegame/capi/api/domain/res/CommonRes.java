@@ -25,6 +25,8 @@ public class CommonRes<T> implements Serializable {
      * 响应码: 200成功
      */
     private Integer status;
+
+    private String message;
     /**
      * 响应消息
      */

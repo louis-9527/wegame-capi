@@ -1,0 +1,55 @@
+package com.wegame.capi.biz.converter;
+
+import com.google.common.collect.ImmutableMap;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
+import com.wegame.capi.client.domain.request.BetRequest;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import org.apache.commons.collections4.MapUtils;
+
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * UserConverter
+ *
+ * @author generate
+ */
+public class BetConverter {
+
+//    private static final Map<BetSubTypeEnum, Class<?>> mysteriousClassMap = new ImmutableMap.Builder<BetSubTypeEnum, Class<?>>()
+//            .put(BetSubTypeEnum.NORMAL_BET, MariaMakilingBetDo.class)
+//            .put(BetSubTypeEnum.FREE_SPINS_NORMAL_BET, MariaMakilingBetDo.class)
+//            .put(BetSubTypeEnum.BUY_BET, MariaMakilingBetDo.class)
+//            .put(BetSubTypeEnum.FREE_SPINS_BUY_BET, MariaMakilingBetDo.class)
+//
+//            .build();
+
+    private static final Map<GameTypeEnum, Class<?>> gameClassMap = new ImmutableMap.Builder<GameTypeEnum,Class<?>>()
+            .put(GameTypeEnum.MARIA_MAKILING, MariaMakilingBetDo.class)
+            .build();
+
+    public static BetDo requestToDo(BetRequest betRequest) {
+        if (Objects.isNull(betRequest)) {
+            return null;
+        }
+        GameTypeEnum gameType = GameTypeEnum.valueOfCode(betRequest.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        Class<?> clazz = gameClassMap.get(gameType);
+        //AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_PARAM);
+       // Class clazz = map.get(BetSubTypeEnum.valueOfCode(betRequest.getBetSubType()));
+        AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
+        return BetDo.builder()
+                .gameId(betRequest.getGameId())
+                .gameType(GameTypeEnum.valueOfCode(betRequest.getGameId()))
+                .betType(BetTypeEnum.valueOfCode(betRequest.getBetType()))
+                .betSubType(BetSubTypeEnum.valueOfCode(betRequest.getBetSubType()))
+                .betDetail(FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(betRequest.getBetDetail()), clazz))
+                .build();
+    }
+}

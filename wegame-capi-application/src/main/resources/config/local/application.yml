@@ -95,24 +95,6 @@ spring:
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: false
-        wegame_backend_db:
-          url: jdbc:mysql://localhost:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: root
-          password: ENC(YNkAqtiSqYCkHLUlQcUkJwinsDrTnnxC/q5p2JRLGozqSGKFeap13wRM9BiqQYFXpRtIEWfKVZug+LSFFvd3JQ==)
-          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-          type: com.alibaba.druid.pool.DruidDataSource
-          druid:
-            initial-size: 10
-            min-idle: 10
-            max-active: 500
-            max-wait: 1000
-            time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 3000
-            validation-query: SELECT 1 FROM DUAL
-            test-while-idle: true
-            test-on-borrow: false
-            test-on-return: false
-            pool-prepared-statements: false
         wegame_business_db:
           url: jdbc:mysql://localhost:3306/wegame_business_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: root
@@ -147,18 +129,18 @@ amazon:
 api:
   sport:
     platformDomain: https://test-restful.sportslive.com.ph
-    singleDomain: https://sw-http-main-apisix.igo8.me/
+    singleDomain: https://sw-http-main-apisix.igo8.me
     cp:
       platformId: 50
-      channelId: 1002
-      privateKey: fb2ec7910649acefa3da8b01872dc0bbe2d30ef767d9e4db4a3c206ea158e643
-      privateIv: c8cc3bac311ef9ca5a50e1054815fdf6
+      channelId: 1050
+      privateKey: 739cf125387017046c02d5610a122859844502203284d3509ff897dc54f7bc09
+      privateIv: 32f8e4c142810c8d9a75bce4666198ea
       agentKey: MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEFey5q0WeGxUSQ5M7K0D+6jZ5C+a4KcB5iA125+a8JFyeYYNPwXP7tPr6JwfodX0cgoK76Ecv54d5A/SOcBBuY5QIDAQABAkECfJ7Uq+lShhHTw1vnPJCNbU9Oh8VkyvWd9nUBubymXS7Po43R0F8epjAFut795e/JFZxlYUTPj7WbyKhKV0DxwQIhAxK8M6QE5EXHAuFTKYUW0k/nP2DV24dDPn7VbhfH3tDNAiEByJa3tGqOIrH/XXgooXhc/f/MdDcmj5zOUup1jihWiHkCIDU6SnwkYJVf+4/nIn4Ap0YErUMN9QZXxFisdABj421ZAiEBOgZ+3nUSwMYPTifgOf3gZ0lRQvTTbp54QQrEQzt3GHECIBZfUhEt2JB+sd7T/s43p5Z+eUk8KxAcw5L/HsrsqNjQ
     igo:
       platformId: 55
-      channelId: 1035
-      privateKey: 2ee2cd2db8c02bab79991dfa6ffacd57204ca98ffe0d588e284b45436bc03fe7
-      privateIv: 9ff843c66fa938b9d5b5bdb3d957db04
+      channelId: 1051
+      privateKey: 42a495b8c0e9416bd91ff6a7b65043c970acd88f3665e20cb6a12ddeb8e7e47d
+      privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
       agentKey: MIIBCgKCAQEAjpeqhcFzzqIkpOOSHpFkCXGVCdLau09V3opTAard1fbbRBodFRF8AFtEFsA4Uw590IC8Ey4n+uNR0SfevlmWyKvmC+5HVYoHEURRrENMleCFBfiMjYY5WTZoNeRl1LA2kZsFIzA6h5uY7oBKNDOkmVnlCKDCUJMj3h8cc3nPFOtPR6kJh60GSi6cRB4GHQZVixfvFqIuPWTO54RVjZm7U9D6G/BmRsbMMq2xD5kDaZYUOYjclOzY274bLaE8eUeY/nl5S26nZX++rVQ2a0IMu/hM94mCmCO7pPMllswuOdJX5XQCh3BNQzFd8sqC4tdc9OXKzzDDUzS5DiiSVSsauwIDAQAB
 #lark
 lark:

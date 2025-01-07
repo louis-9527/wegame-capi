@@ -121,6 +121,10 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
         <!--        cloud end -->
         <!--aws s3-->
         <dependency>
@@ -195,9 +199,9 @@
     <profiles>
         <profile>
             <id>local</id>
-            <!--			<activation>-->
-            <!--				<activeByDefault>true</activeByDefault>-->
-            <!--			</activation>-->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <config-dir>local</config-dir>
             </properties>
