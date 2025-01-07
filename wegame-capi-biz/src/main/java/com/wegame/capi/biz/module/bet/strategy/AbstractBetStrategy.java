@@ -2,7 +2,7 @@ package com.wegame.capi.biz.module.bet.strategy;
 
 import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
-import com.wegame.capi.biz.converter.Converter;
+import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
@@ -19,8 +19,7 @@ import org.springframework.stereotype.Component;
  * 2、
  */
 @Component
-public abstract class AbstractBetStrategy<T, R extends Converter> implements BetStrategy<T, R> {
-
+public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements BetStrategy<T, R> {
 
     @Autowired
     public IdGeneratorHelper idGeneratorHelper;

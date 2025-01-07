@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.domain.biz.game;
 
 import com.wegame.capi.biz.builder.SymbolBuilder;
-import com.wegame.capi.biz.converter.Converter;
+import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MariaMakilingGameRecordDo implements Serializable, Converter<MariaMakilingBetResultVo> {
+public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 序号: 默认1

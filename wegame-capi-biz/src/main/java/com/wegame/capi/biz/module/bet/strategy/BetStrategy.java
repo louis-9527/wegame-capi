@@ -1,14 +1,14 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
 
-import com.wegame.capi.biz.converter.Converter;
+import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 
 /**
  * 投注策略
  */
-public interface BetStrategy<T, R extends Converter> {
+public interface BetStrategy<T, R extends ToVoConverter> {
 
     /**
      * 投注

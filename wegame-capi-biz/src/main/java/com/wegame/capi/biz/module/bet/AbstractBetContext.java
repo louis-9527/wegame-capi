@@ -20,8 +20,9 @@ import java.util.Map;
  */
 @Component
 public abstract class AbstractBetContext {
+
     @Autowired
-    private DistributeLock distributeLock;
+    DistributeLock distributeLock;
 
     /**
      * 获取投注策略名称Map
@@ -43,9 +44,11 @@ public abstract class AbstractBetContext {
         BetStrategy betStrategy = betStrategyMap().get(betStrategyName);
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        String lockName = LockNameUtil.getBetLockName(userInfo.getPlayerId(), betDo.getGameId());
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_PARAM, "Not Login");
+        // String lockName = LockNameUtil.getBetLockName(userInfo.getPlayerId(), betDo.getGameId());
+        //                return distributeLock.lockThenCall(lockName, () -> {
+        //                    return betStrategy.bet(betDo);
+        //                }, BUSY_OPT_TIP);
         return betStrategy.bet(betDo);
-
-
     }
 }

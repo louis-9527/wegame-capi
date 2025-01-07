@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("bet")
-@Api(value = "投注", tags = {"bet模块"})
+@Api(value = "投注模块", tags = {"投注模块"})
 public class BetController {
 
     @Autowired
