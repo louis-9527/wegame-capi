@@ -15,11 +15,10 @@ public class Constants {
 
     public static final String BUSY_OPT_TIP = "please try again later";
 
-    // redis
     // 推送中大奖redis key
-    public static final String PUSH_PRIZE_REDIS_KEY = "wegame:push_prize:%s";
+    public static final String WEGAME_REWARD_NOTIFY_KEY_FORMAT = "wegame:reward.notify:%s";
     // 推送大奖lua脚本
-    public static final String PUSH_PRIZE_LUA_SCRIPT = "local key = KEYS[1]\n" +
+    public static final String WEGAME_REWARD_NOTIFY_LUA_SCRIPT = "local key = KEYS[1]\n" +
             "local value = ARGV[1]\n" +
             "local maxSize = tonumber(ARGV[2])\n" +
             "\n" +
@@ -27,8 +26,8 @@ public class Constants {
             "if redis.call('LLEN', key) > maxSize then\n" +
             "    redis.call('LTRIM', key, -maxSize, -1)\n" +
             "end";
-    public static final Integer PUSH_PRIZE_LIMIT = 10;
+    public static final Integer WEGAME_REWARD_NOTIFY_SIZE = 10;
     // 推送大奖tips内容
-    public static final String PUSH_PRIZE_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+    public static final String WEGAME_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
 
 }

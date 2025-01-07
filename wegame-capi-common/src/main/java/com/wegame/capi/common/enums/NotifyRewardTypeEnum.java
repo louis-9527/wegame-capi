@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 推送的中大奖类型枚举
@@ -16,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum PushGrandPrizeTypeEnum {
+public enum NotifyRewardTypeEnum {
 
     NORMAL_FREE_SPINS,
     ;

@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.reward;
 
+import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,14 +19,18 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MariaNotifyResultDo implements Serializable {
+public class RewardNotifyInfoDo implements Serializable {
     private static final long serialVersionUID = -22633876654348L;
     /**
-     * 游戏类型
+     * 游戏id
      *
      * @see com.wegame.capi.client.enums.GameTypeEnum
      */
-    private String gameTypeId;
+    private String gameId;
+    /**
+     * 游戏名称
+     */
+    private String gameName;
     /**
      * 中奖用户id
      */
@@ -35,19 +40,19 @@ public class MariaNotifyResultDo implements Serializable {
      */
     private String userName;
     /**
-     * 中大奖类型
+     * 中奖类型
      *
-     * @see com.wegame.capi.common.enums.PushGrandPrizeTypeEnum
+     * @see NotifyRewardTypeEnum
      */
-    private String grandPrizeType;
+    private String notifyRewardType;
     /**
-     * 中奖时间戳
+     * 中奖时间
      */
-    private Long grandTime;
+    private Long rewardTime;
     /**
-     * 推送文案
+     * 中奖内容
      */
-    public String tipsContent;
+    public String rewardContent;
 
     public String generatorTipsContent() {
         return null;
