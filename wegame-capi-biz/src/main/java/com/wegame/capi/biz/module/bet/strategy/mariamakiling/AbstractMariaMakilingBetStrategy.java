@@ -35,12 +35,12 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
 
         MariaMakilingGameRecordDo mariaMakilingGameRecordDo = gameRecordList
                 .stream()
-                .filter(item -> Objects.equals(item.getIndex(), betDetail.getFreeSpinsId()))
+                .filter(item -> Objects.equals(item.getIndex(), freeSpinsId))
                 .findFirst()
                 .orElse(null);
             AssertUtil.assertNotNull(mariaMakilingGameRecordDo, ErrorCode.ERR_PARAM);
             // 如果最后一次查询则，返回总的中奖金额
-        if (betRecordDetailDo.isLastFreeSpins(betDetail.getFreeSpinsId())) {
+        if (betRecordDetailDo.isLastFreeSpins(freeSpinsId)) {
             mariaMakilingGameRecordDo.setRewardTotalAmount(betRecordDo.getPayOutAmount());
         }
         return mariaMakilingGameRecordDo;
