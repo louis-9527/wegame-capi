@@ -33,7 +33,7 @@ public class BetRecordPageConverter {
         vo.setBetAmount(Objects.nonNull(betRecordDo.getBetAmount()) ? String.valueOf(betRecordDo.getBetAmount()) : null);
         vo.setPayOutAmount(Objects.nonNull(betRecordDo.getPayOutAmount()) ? String.valueOf(betRecordDo.getPayOutAmount()) : null);
         vo.setStatus(betRecordDo.getStatus());
-        vo.setCreateTime(Objects.nonNull(betRecordDo.getCreateTime()) ? betRecordDo.getCreateTime().getTime() : null);
+        vo.setCreateTime(betRecordDo.getCreateTime());
         return vo;
     }
 
@@ -65,7 +65,7 @@ public class BetRecordPageConverter {
         vo.setBetAmount(Objects.nonNull(betRecordDo.getBetAmount()) ? String.valueOf(betRecordDo.getBetAmount()) : null);
         vo.setPayOutAmount(Objects.nonNull(betRecordDo.getPayOutAmount()) ? String.valueOf(betRecordDo.getPayOutAmount()) : null);
         vo.setStatus(betRecordDo.getStatus());
-        vo.setCreateTime(Objects.nonNull(betRecordDo.getCreateTime()) ? betRecordDo.getCreateTime().getTime() : null);
+        vo.setCreateTime(betRecordDo.getCreateTime());
         vo.setDetailVoList(detailDoListToDetailVoList(detail.getGameRecordList()));
         return vo;
     }

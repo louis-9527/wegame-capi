@@ -48,7 +48,7 @@ public class BetWithPayoutReqBuilder {
                 .playerName(betRecordDo.getPlayerName())
                 .refId(betRecordDo.getBetSerialNo())
                 .betType(2)
-                .wagersDate(betRecordDo.getCreateTime().getTime()/1000)
+                .wagersDate(betRecordDo.getCreateTime()/1000)
                 .build();
     }
 }
