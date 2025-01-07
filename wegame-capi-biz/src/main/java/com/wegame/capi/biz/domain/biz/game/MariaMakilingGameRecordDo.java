@@ -47,7 +47,6 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      */
     private List<Integer> freeSpinIds;
 
-
     /**
      * 是否中奖
      *

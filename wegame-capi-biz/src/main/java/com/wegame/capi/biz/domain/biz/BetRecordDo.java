@@ -62,9 +62,13 @@ public class BetRecordDo<T> implements Serializable {
      */
     private String betSerialNo;
     /**
-     * 投注总金额 单位：分
+     * 投注金额 单位：分
      */
     private Long betAmount;
+    /**
+     * 支付金额 单位：分
+     */
+    private Long payAmount;
     /**
      * 派彩总金额 单位：分
      */

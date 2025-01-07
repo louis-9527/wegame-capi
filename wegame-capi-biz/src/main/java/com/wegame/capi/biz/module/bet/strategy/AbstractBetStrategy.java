@@ -30,7 +30,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
 
     public abstract Game getGame();
 
-    public long getRecordId() {
+    public long generateRecordId() {
         return idGeneratorHelper.nextId();
     }
 
