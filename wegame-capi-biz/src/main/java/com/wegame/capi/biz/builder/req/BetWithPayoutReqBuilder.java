@@ -7,7 +7,6 @@ import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 
 import java.util.Date;
@@ -27,7 +26,7 @@ public class BetWithPayoutReqBuilder {
                         .roundNo(betRecordDo.getBetSerialNo())
                         .wagersDate(DateUtil.getCurrentTimestamp())
                         .settlementDate(DateUtil.getCurrentTimestamp())
-                        .isFreeRound(BetSubTypeEnum.isFreeFound(betRecordDo.getBetSubType()))
+                        .isFreeRound(BetSubTypeEnum.isFreeSpins(betRecordDo.getBetSubType()))
                         .jackpotDetails(new BetWithPayoutReq.BetDetails.JackpotDetails())
                         .build())
                 .build();

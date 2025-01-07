@@ -110,14 +110,14 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
 
 
     @Override
-    public void freeSpinsHandler(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo recordDetail) {
+    public void freeSpinsAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo recordDetail, Long totalRewardAmount) {
         if (recordDetail.isLastFreeSpins(betDo.getBetDetail().getFreeSpinsId())) {
-            this.notifyPrizeHandle(betDo.getGameType(), recordDetail.freeSpinCount(), recordDetail.getPayOutTotalAmount());
+            this.notifyPrizeHandle(betDo.getGameType(), recordDetail.freeSpinCount(), totalRewardAmount);
         }
     }
 
     // 正常玩 非免费轮
-    void notifyPrizeHandle(GameTypeEnum gameType, long freeSpinsCount, long totalAmount) {
+    void notifyPrizeHandle(GameTypeEnum gameType, long freeSpinsCount, long totalRewardAmount) {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
@@ -128,7 +128,7 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
                     .grandPrizeType(PushGrandPrizeTypeEnum.NORMAL_FREE_SPINS.name())
                     .grandTime(DateUtil.getCurrentMilli())
                     .tipsContent(String.format(Constants.PUSH_PRIZE_CONTENT_FORMAT, DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
-                            userInfo.getUserName(), NumberUtil.div(totalAmount, 100), freeSpinsCount))
+                            userInfo.getUserName(), NumberUtil.div(totalRewardAmount, 100), freeSpinsCount))
                     .build();
             String key = String.format(Constants.PUSH_PRIZE_REDIS_KEY, gameType.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.PUSH_PRIZE_LUA_SCRIPT, Long.class);

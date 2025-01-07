@@ -52,7 +52,7 @@ public class BetRecordDo<T> implements Serializable {
     /**
      * 投注子类型 11正常投注 21购买免费轮投注 22非购买免费轮投注
      */
-    private String betSubType;
+    private String /**/betSubType;
     /**
      * 投注id（单钱包）
      */

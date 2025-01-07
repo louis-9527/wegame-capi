@@ -33,7 +33,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
     /**
      * 序号: 默认1
      */
-    private Integer index = 1;
+    private Integer index;
     /**
      * 滚轮
      */
@@ -86,7 +86,8 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                             .map(item -> MariaMakilingBetResultVo.MariaMakilingRewardLineVo.builder()
                                     .multiple(item.getMultiple())
                                     .odds(item.getOdds())
-                                    .symbolIdList(Optional.ofNullable(item.getSymbolList()).orElse(Collections.emptyList())
+                                    .symbolIdList(Optional.ofNullable(item.getSymbolList())
+                                            .orElse(Collections.emptyList())
                                             .stream()
                                             .map(symbol -> symbol.getId())
                                             .collect(Collectors.toList()))
@@ -96,7 +97,8 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                                             .map(symbolIndex -> SymbolIndexVo.builder()
                                                     .rowIndex(symbolIndex.getRowIndex())
                                                     .columIndex(symbolIndex.getColumIndex())
-                                                    .build()).collect(Collectors.toList()))
+                                                    .build()
+                                            ).collect(Collectors.toList()))
                                     .betAmount(item.getBetAmount())
                                     .rewardAmount(item.getRewardAmount())
                                     .build()).collect(Collectors.toList()))

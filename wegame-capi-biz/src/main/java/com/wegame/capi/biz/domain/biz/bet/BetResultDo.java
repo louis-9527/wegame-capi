@@ -39,6 +39,10 @@ public class BetResultDo<R extends ToVoConverter> implements Serializable {
      */
     private Long credit;
     /**
+     * 合计中奖总金额
+     */
+    private Long overallRewardAmount;
+    /**
      * 投注结果
      */
     private R resultDetail;

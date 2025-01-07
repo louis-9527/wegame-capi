@@ -10,6 +10,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Data
@@ -24,14 +25,9 @@ public class MariaMakilingBetRecordDetailDo {
      */
     private List<MariaMakilingGameRecordDo> gameRecordList;
 
-    /**
-     * 总派奖金额
-     */
-    private Long payOutTotalAmount;
-
-    public boolean isLastFreeSpins(int freeSpinCount) {
-        int size = CollectionUtils.isEmpty(gameRecordList) ? 0 : gameRecordList.size();
-        return freeSpinCount == size - 1;
+    public boolean isLastFreeSpins(int freeSpinsId) {
+        MariaMakilingGameRecordDo recordDo = CollectionUtils.isEmpty(gameRecordList) ? null : gameRecordList.get(gameRecordList.size() - 1);
+        return Objects.isNull(recordDo) ? false : Objects.equals(recordDo.getIndex(), freeSpinsId);
     }
 
     public long freeSpinCount() {
