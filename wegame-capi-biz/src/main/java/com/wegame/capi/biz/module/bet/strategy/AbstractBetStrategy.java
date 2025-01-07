@@ -1,6 +1,8 @@
 package com.wegame.capi.biz.module.bet.strategy;
 
+import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.IdGeneratorHelper;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -30,25 +32,34 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
 
     public abstract Game getGame();
 
-    public long getRecordId() {
+    public long generateRecordId() {
         return idGeneratorHelper.nextId();
     }
 
     /**
-     * 保存投注记录并派奖
+     * 保存投注记录并投注派彩
      *
      * @param betRecordDo
-     * @return
+     * @return 用户余额
      */
-    public Long saveBetRecordAndPayOut(BetRecordDo betRecordDo) {
-        betRecordService.add(betRecordDo);
+    public Long saveBetRecordAndBetWithPayout(BetRecordDo betRecordDo) {
+        Long betRecordId = betRecordService.add(betRecordDo);
+        AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         // 调用单钱包
-        SingleWalletBetWithPayoutRes betWithPayoutRes = SingleWalletBetWithPayoutRes.builder().betStatus(BetStatusEnum.SUCCESS).build();//singleWalletService.betWithPayout(betRecordDo);
+        SingleWalletBetWithPayoutRes betWithPayoutRes = SingleWalletBetWithPayoutRes.builder()
+                .betStatus(BetStatusEnum.SUCCESS)
+                .build();
+        // todo singleWalletService.betWithPayout(betRecordDo);
         // 判断返回结果
         String betId = betWithPayoutRes.getBetId();
         // 更新记录
-        BetRecordDo updateRecord = BetRecordDo.builder().id(betRecordDo.getId()).betId(betId).status(betWithPayoutRes.getBetStatus().getCode()).build();
-        betRecordService.update(updateRecord);
+        BetRecordDo updateRecord = BetRecordDo.builder()
+                .id(betRecordDo.getId())
+                .betId(betId)
+                .status(betWithPayoutRes.getBetStatus().getCode())
+                .build();
+        boolean ret = betRecordService.update(updateRecord);
+        AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         return AmountUtil.toLong(betWithPayoutRes.getCredit());
     }
 

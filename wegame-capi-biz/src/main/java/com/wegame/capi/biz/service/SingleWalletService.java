@@ -38,9 +38,6 @@ public class SingleWalletService {
     @Autowired
     SingleWalletApi singleWalletApi;
 
-    // todo
-
-
     public BetSingleWalletResultDo betWithPayout(BetRecordDo betRecordDo) {
         BetWithPayoutReq betWithPayoutReq = BetWithPayoutReqBuilder.buildReq(betRecordDo);
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = singleWalletApi.betWithPayout(betWithPayoutReq);

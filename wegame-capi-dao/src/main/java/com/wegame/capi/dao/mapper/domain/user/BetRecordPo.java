@@ -72,6 +72,10 @@ public class BetRecordPo implements Serializable {
      */
     private Long betAmount;
     /**
+     * 支付金额 单位：分
+     */
+    private Long payAmount;
+    /**
      * 派彩金额 单位：分
      */
     private Long payOutAmount;
@@ -83,19 +87,6 @@ public class BetRecordPo implements Serializable {
      * 状态 0进行中 1已完结 2无效
      */
     private Integer status;
-    /**
-     * 免费轮获得标识 0否 1是
-     */
-    private Integer freeSpinsFlag;
-    /**
-     * 免费轮次数
-     */
-    private Integer freeSpinsTimes;
-
-    /**
-     * 免费轮关联原投注记录Id
-     */
-    private Long freeSpinsRefId;
     /**
      * 游戏记录明细json
      */

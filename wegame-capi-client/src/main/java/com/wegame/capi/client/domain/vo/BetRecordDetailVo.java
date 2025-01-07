@@ -11,9 +11,10 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
- * bet_record：投注记录分页vo
+ * bet_record：游戏明细
  *
  * @author genereate
  */
@@ -25,11 +26,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = false)
 public class BetRecordDetailVo implements Validate, Serializable {
     private static final long serialVersionUID = -5835715678741184L;
-    @ApiModelProperty("3*5的格子")
-    private String[][] gameResult;
-    @ApiModelProperty("wild倍数")
-    private BigDecimal multiple;
-    @ApiModelProperty("明细中奖金额")
-    private Long rewardAmount;
+    @ApiModelProperty("游戏明细列表")
+    private List<BetRecordGameDetailVo> gameDetailVoList;
 }
 

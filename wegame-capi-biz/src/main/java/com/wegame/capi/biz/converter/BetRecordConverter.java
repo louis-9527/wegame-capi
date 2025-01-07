@@ -6,6 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -18,36 +19,10 @@ import java.util.stream.Collectors;
 
 /**
  * BetRecordConverter
+ *
  * @author generate
  */
 public class BetRecordConverter {
-
-    public static BetRecordDo voToDo(BetRecordVo vo) {
-        if (Objects.isNull(vo)) {
-            return null;
-        }
-        BetRecordDo betRecordDo = new BetRecordDo();
-        betRecordDo.setPId(vo.getPId());
-        betRecordDo.setChannelId(vo.getChannelId());
-        betRecordDo.setGameId(vo.getGameId());
-        betRecordDo.setUserId(StringUtils.isNotEmpty(vo.getUserId()) ? Long.valueOf(vo.getUserId()) : null);
-        betRecordDo.setPlayerId(vo.getPlayerId());
-        betRecordDo.setPlayerName(vo.getPlayerName());
-        betRecordDo.setBetType(vo.getBetType());
-        betRecordDo.setBetSubType(vo.getBetSubType());
-        betRecordDo.setBetId(vo.getBetId());
-        betRecordDo.setBetSerialNo(vo.getBetSerialNo());
-        betRecordDo.setBetAmount(StringUtils.isNotEmpty(vo.getBetAmount()) ? Long.valueOf(vo.getBetAmount()) : null);
-        betRecordDo.setPayOutAmount(StringUtils.isNotEmpty(vo.getPayOutAmount()) ? Long.valueOf(vo.getPayOutAmount()) : null);
-        betRecordDo.setStatus(vo.getStatus());
-        betRecordDo.setFreeSpinsFlag(vo.getFreeSpinsFlag());
-        betRecordDo.setFreeSpinsTimes(vo.getFreeSpinsTimes());
-        betRecordDo.setCreator(vo.getCreator());
-        betRecordDo.setCreateTime(vo.getCreateTime());
-        betRecordDo.setUpdater(vo.getUpdater());
-        betRecordDo.setUpdateTime(vo.getUpdateTime());
-        return betRecordDo;
-    }
 
     public static BetRecordDo poToDo(BetRecordPo po) {
         if (Objects.isNull(po)) {
@@ -69,9 +44,6 @@ public class BetRecordConverter {
         betRecordDo.setPayOutAmount(po.getPayOutAmount());
         betRecordDo.setMarketFlag(po.getMarketFlag());
         betRecordDo.setStatus(po.getStatus());
-        betRecordDo.setFreeSpinsFlag(po.getFreeSpinsFlag());
-        betRecordDo.setFreeSpinsTimes(po.getFreeSpinsTimes());
-        betRecordDo.setFreeSpinsRefId(po.getFreeSpinsRefId());
         betRecordDo.setDetail(po.getDetail());
         betRecordDo.setCreator(po.getCreator());
         betRecordDo.setCreateTime(po.getCreateTime());
@@ -99,12 +71,10 @@ public class BetRecordConverter {
         po.setBetId(betRecordDo.getBetId());
         po.setBetSerialNo(betRecordDo.getBetSerialNo());
         po.setBetAmount(betRecordDo.getBetAmount());
+        po.setPayAmount(betRecordDo.getPayAmount());
         po.setPayOutAmount(betRecordDo.getPayOutAmount());
         po.setMarketFlag(betRecordDo.getMarketFlag());
         po.setStatus(betRecordDo.getStatus());
-        po.setFreeSpinsFlag(betRecordDo.getFreeSpinsFlag());
-        po.setFreeSpinsTimes(betRecordDo.getFreeSpinsTimes());
-        po.setFreeSpinsRefId(betRecordDo.getFreeSpinsRefId());
         po.setDetail(betRecordDo.getDetail());
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
@@ -120,7 +90,7 @@ public class BetRecordConverter {
         return po;
     }
 
-    public static BetRecordVo doToVo(BetRecordDo betRecordDo) {
+    public static BetRecordVo doToVo(BetRecordDo betRecordDo, boolean includeDetail) {
         if (Objects.isNull(betRecordDo)) {
             return null;
         }
@@ -128,9 +98,7 @@ public class BetRecordConverter {
         vo.setId(Objects.nonNull(betRecordDo.getId()) ? String.valueOf(betRecordDo.getId()) : null);
         vo.setPId(betRecordDo.getPId());
         vo.setChannelId(betRecordDo.getChannelId());
-        vo.setGameId(betRecordDo.getGameId());
         vo.setUserId(Objects.nonNull(betRecordDo.getUserId()) ? String.valueOf(betRecordDo.getUserId()) : null);
-        vo.setPlayerId(betRecordDo.getPlayerId());
         vo.setPlayerName(betRecordDo.getPlayerName());
         vo.setBetType(betRecordDo.getBetType());
         vo.setBetSubType(betRecordDo.getBetSubType());
@@ -139,31 +107,20 @@ public class BetRecordConverter {
         vo.setBetAmount(Objects.nonNull(betRecordDo.getBetAmount()) ? String.valueOf(betRecordDo.getBetAmount()) : null);
         vo.setPayOutAmount(Objects.nonNull(betRecordDo.getPayOutAmount()) ? String.valueOf(betRecordDo.getPayOutAmount()) : null);
         vo.setStatus(betRecordDo.getStatus());
-        vo.setFreeSpinsFlag(betRecordDo.getFreeSpinsFlag());
-        vo.setFreeSpinsTimes(betRecordDo.getFreeSpinsTimes());
-        vo.setCreator(betRecordDo.getCreator());
         vo.setCreateTime(Objects.nonNull(betRecordDo.getCreateTime()) ? betRecordDo.getCreateTime() : null);
-        vo.setUpdater(betRecordDo.getUpdater());
-        vo.setUpdateTime(Objects.nonNull(betRecordDo.getUpdateTime()) ? betRecordDo.getUpdateTime() : null);
+        if (includeDetail) {
+            vo.setDetail(BetRecordDetailConverter.doToVo((MariaMakilingBetRecordDetailDo) betRecordDo.getDetail()));
+        }
         return vo;
-    }
-
-    public static List<BetRecordDo> voToDoList(List<BetRecordVo> voList) {
-        return Optional.ofNullable(voList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(BetRecordConverter::voToDo)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
     }
 
     public static List<BetRecordDo> poToDoList(List<BetRecordPo> poList) {
         return Optional.ofNullable(poList)
-            .orElse(Collections.emptyList())
-            .stream()
-            .map(BetRecordConverter::poToDo)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(BetRecordConverter::poToDo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public static List<BetRecordPo> doToPoList(List<BetRecordDo> doList, OptEnum optEnum) {
@@ -179,7 +136,7 @@ public class BetRecordConverter {
         return Optional.ofNullable(doList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(BetRecordConverter::doToVo)
+                .map(record -> BetRecordConverter.doToVo(record, true))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

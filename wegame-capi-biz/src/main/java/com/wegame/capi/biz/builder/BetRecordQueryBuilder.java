@@ -42,15 +42,9 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordQuery.getChannelId())) {
             criteria.and("channelId").is(recordQuery.getChannelId());
         }
-        if (Objects.nonNull(recordQuery.getFreeSpinsRefId())) {
-            criteria.and("freeSpinsRefId").is(recordQuery.getFreeSpinsRefId());
-        }
-
         if (Objects.nonNull(recordQuery.getGameId())) {
             criteria.and("gameId").is(recordQuery.getGameId());
         }
-
-
         if (Objects.nonNull(recordQuery.getStartCreateTime()) && Objects.nonNull(recordQuery.getEndCreateTime())) {
             criteria.andOperator(
                     Criteria.where("createTime").gt(recordQuery.getStartCreateTime()),
@@ -112,19 +106,13 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordDo.getStatus())) {
             update.set("status", recordDo.getStatus());
         }
-        if (Objects.nonNull(recordDo.getFreeSpinsFlag())) {
-            update.set("freeSpinsFlag", recordDo.getFreeSpinsFlag());
-        }
-        if (Objects.nonNull(recordDo.getFreeSpinsTimes())) {
-            update.set("freeSpinsTimes", recordDo.getFreeSpinsTimes());
-        }
         if (Objects.nonNull(recordDo.getDetail())) {
             update.set("detail", recordDo.getDetail());
         }
         if (Objects.nonNull(recordDo.getUpdater())) {
             update.set("updater", recordDo.getUpdater());
         }
-        update.set("updateTime", recordDo.getUpdateTime());
+        update.set("updateTime", System.currentTimeMillis());
         return update;
     }
 
