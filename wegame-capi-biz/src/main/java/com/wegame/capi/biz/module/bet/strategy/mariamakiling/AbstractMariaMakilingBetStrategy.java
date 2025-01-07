@@ -25,8 +25,8 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         return mariaMakilingGame;
     }
 
-    public MariaMakilingGameRecordDo queryFreeBetRecord(MariaMakilingBetDo betDetail) {
-        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId());
+    public MariaMakilingGameRecordDo queryGameRecord(Long betRecordId, Integer freeSpinsId) {
+        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betRecordId);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
         AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);
@@ -39,7 +39,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                 .max(Integer::compareTo);
         MariaMakilingGameRecordDo mariaMakilingGameRecordDo = gameRecordList
                 .stream()
-                .filter(item -> Objects.equals(item.getIndex(), betDetail.getFreeSpinsId()))
+                .filter(item -> Objects.equals(item.getIndex(), freeSpinsId))
                 .findFirst()
                 .orElse(null);
         // 如果最后一次查询则，返回总的中奖金额

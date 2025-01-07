@@ -30,7 +30,7 @@ public class MariaMakilingBuyBetStrategy extends AbstractMariaMakilingBetStrateg
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .resultDetail(super.queryFreeBetRecord(betDetail))
+                    .resultDetail(super.queryGameRecord(betDetail.getBetRecordId(), betDo.getBetDetail().getFreeSpinsId()))
                     .build();
         }
 
