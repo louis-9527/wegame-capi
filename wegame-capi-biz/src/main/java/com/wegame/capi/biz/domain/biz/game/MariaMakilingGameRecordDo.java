@@ -47,10 +47,6 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      */
     private List<Integer> freeSpinIds;
 
-    /**
-     * 中奖总金额(只有最后一条记录返回)
-     */
-    private Long rewardTotalAmount;
 
     /**
      * 是否中奖
