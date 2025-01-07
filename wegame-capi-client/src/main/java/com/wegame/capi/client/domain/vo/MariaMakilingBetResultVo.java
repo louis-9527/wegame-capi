@@ -16,22 +16,22 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("正常投注返回")
+@ApiModel("MariaMakiling投注结果")
 @EqualsAndHashCode(callSuper = false)
 public class MariaMakilingBetResultVo implements Serializable {
     private static final long serialVersionUID = -4792907227811616042L;
-    @ApiModelProperty("中奖类型:SINGLE单奖励，MULTIPLE多奖励 ")
+    @ApiModelProperty("中奖类型:-1:未中奖，SINGLE单奖励，MULTIPLE多奖励 ")
     private String rewardType;
     @ApiModelProperty("中奖子类型,-1:未中大奖:0:niec,1:mege,2:super,3:sensati")
     private Integer rewardSubType;
     @ApiModelProperty("中奖总金额")
     private Long totalRewardAmount;
-    @ApiModelProperty("总中奖倍率")
+    @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
-    @ApiModelProperty("滚轮结果")
-    private String[][] spinsResult;
     @ApiModelProperty("中奖线列表")
     private List<MariaMakilingRewardLineVo> rewardLineList;
+    @ApiModelProperty("滚轮结果")
+    private String[][] spinsResult;
     @ApiModelProperty("免费轮标识,0:否,1:是")
     private Integer freeSpinFlag;
     @ApiModelProperty("免费轮Id列表")
@@ -41,7 +41,7 @@ public class MariaMakilingBetResultVo implements Serializable {
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("中奖详情")
+    @ApiModel("MariaMakiling中奖线详情")
     @EqualsAndHashCode(callSuper = false)
     public static class MariaMakilingRewardLineVo implements Serializable {
         private static final long serialVersionUID = 6487808344235380369L;

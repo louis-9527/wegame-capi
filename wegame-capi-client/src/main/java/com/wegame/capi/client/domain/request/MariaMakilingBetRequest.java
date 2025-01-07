@@ -1,6 +1,7 @@
 package com.wegame.capi.client.domain.request;
 
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -33,16 +34,28 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
         if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
-            if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_NORMAL_BET)) {
+            if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {
+                AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
+            } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_NORMAL_BET)) {
+                AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
                 AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
                 AssertUtil.assertNotNull(freeSpinsId, ErrorCode.ERR_PARAM);
+            } else {
+                throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
-            AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-            AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
-            if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
+            if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
+                AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * 100), ErrorCode.ERR_PARAM);
+            } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
+                AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
                 AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
                 AssertUtil.assertNotNull(freeSpinsId, ErrorCode.ERR_PARAM);
+            } else {
+                throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         }
     }
