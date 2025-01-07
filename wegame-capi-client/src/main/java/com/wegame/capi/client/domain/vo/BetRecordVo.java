@@ -10,9 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * bet_record：投注记录
+ * bet_record：投注记录分页vo
  *
  * @author genereate
  */
@@ -30,12 +31,8 @@ public class BetRecordVo implements Validate, Serializable {
     private String pId;
     @ApiModelProperty("渠道id")
     private String channelId;
-    @ApiModelProperty("游戏id")
-    private String gameId;
     @ApiModelProperty("用户id")
     private String userId;
-    @ApiModelProperty("玩家id")
-    private String playerId;
     @ApiModelProperty("玩家名称")
     private String playerName;
     @ApiModelProperty(value = "投注类型:NORMAL_BET,免费轮投注:FREE_SPINS_BET", required = true)
@@ -52,17 +49,9 @@ public class BetRecordVo implements Validate, Serializable {
     private String payOutAmount;
     @ApiModelProperty("状态 0进行中 1已完结 2无效")
     private Integer status;
-    @ApiModelProperty("免费轮获得标识 0否 1是")
-    private Integer freeSpinsFlag;
-    @ApiModelProperty("免费轮次数")
-    private Integer freeSpinsTimes;
-    @ApiModelProperty("创建人")
-    private String creator;
     @ApiModelProperty("创建时间")
     private Long createTime;
-    @ApiModelProperty("更新人")
-    private String updater;
-    @ApiModelProperty("更新时间")
-    private Long updateTime;
+    @ApiModelProperty("详情")
+    private BetRecordDetailVo detail;
 }
 
