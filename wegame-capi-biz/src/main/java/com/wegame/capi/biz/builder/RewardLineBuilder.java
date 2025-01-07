@@ -9,12 +9,13 @@ import java.util.Objects;
 
 public class RewardLineBuilder {
 
-    public static RewardLineDo build(RewardRuleLineDo rewardRuleLine, Long rewardAmount, BigDecimal multiple, BigDecimal odds) {
-        if (Objects.isNull(rewardRuleLine) || Objects.isNull(rewardAmount) || Objects.isNull(multiple) || Objects.isNull(odds)) {
+    public static RewardLineDo build(Long betAmount, RewardRuleLineDo rewardRuleLine, Long rewardAmount, BigDecimal multiple, BigDecimal odds) {
+        if (Objects.isNull(rewardRuleLine) || Objects.isNull(rewardAmount) || Objects.isNull(multiple) || Objects.isNull(odds) || Objects.isNull(betAmount)) {
             return null;
         }
 
         return RewardLineDo.builder()
+                .betAmount(betAmount)
                 .symbol(rewardRuleLine.getSymbol())
                 .rewardAmount(rewardAmount)
                 .multiple(multiple)
