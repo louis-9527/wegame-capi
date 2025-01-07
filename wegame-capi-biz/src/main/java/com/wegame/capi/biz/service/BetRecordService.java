@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.service;
 
 import com.mongodb.client.result.UpdateResult;
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
@@ -11,6 +12,8 @@ import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -48,6 +51,7 @@ public class BetRecordService {
      * @param betRecordDo 投注记录
      * @return true/false
      */
+    @CacheEvict(value = CacheConstants.BET_RECORD, key = "#id")
     public boolean update(BetRecordDo betRecordDo) {
         log.info("BetRecordService#update betRecordDo:{}", betRecordDo);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
@@ -60,10 +64,11 @@ public class BetRecordService {
 
     /**
      * 查询：根据主键id查询
-     * todo 添加二级缓存 与 更新联动
+     *
      * @param id 主键id
      * @return BetRecordDo 投注记录
      */
+    @Cacheable(value = CacheConstants.BET_RECORD, key = "#id")
     public <T> BetRecordDo<T> get(Long id) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         BetRecordPo betRecordPo = mongoTemplate.findById(id, BetRecordPo.class);
