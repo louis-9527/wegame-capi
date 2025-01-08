@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wegame.base.Validate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -27,6 +28,7 @@ public class BetRecordVo implements Validate, Serializable {
     private static final long serialVersionUID = -5835716727611741184L;
     @ApiModelProperty("主键ID")
     private String id;
+    @JsonProperty("pId")
     @ApiModelProperty("平台id")
     private String pId;
     @ApiModelProperty("渠道id")
@@ -45,6 +47,8 @@ public class BetRecordVo implements Validate, Serializable {
     private String betSerialNo;
     @ApiModelProperty("投注总金额 单位：分")
     private String betAmount;
+    @ApiModelProperty("支付金额 单位：分")
+    private String payAmount;
     @ApiModelProperty("派彩总金额 单位：分")
     private String payOutAmount;
     @ApiModelProperty("状态 0进行中 1已完结 2无效")

@@ -78,7 +78,7 @@ spring:
       strict: true
       datasource:
         wegame_user_db:
-          url: jdbc:mysql://localhost:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          url: jdbc:mysql://localhost:3306/wegame_user_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: root
           password: ENC(YNkAqtiSqYCkHLUlQcUkJwinsDrTnnxC/q5p2JRLGozqSGKFeap13wRM9BiqQYFXpRtIEWfKVZug+LSFFvd3JQ==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
