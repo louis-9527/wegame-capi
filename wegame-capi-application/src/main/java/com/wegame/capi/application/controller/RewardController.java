@@ -2,6 +2,8 @@ package com.wegame.capi.application.controller;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.biz.converter.RewardInfoConverter;
+import com.wegame.capi.biz.domain.biz.reward.RewardInfoDo;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.domain.vo.RewardInfoVo;
 import io.swagger.annotations.Api;
@@ -28,6 +30,6 @@ public class RewardController {
     @ApiOperation(value = "查询大奖信息", httpMethod = "GET")
     @GetMapping("/get")
     public CommonResponse<RewardInfoVo> get() {
-        return CommonResponse.build(rewardService.get());
+        return CommonResponse.build(RewardInfoConverter.doToVo(rewardService.get()));
     }
 }

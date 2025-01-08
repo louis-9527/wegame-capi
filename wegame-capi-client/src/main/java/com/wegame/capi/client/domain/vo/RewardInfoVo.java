@@ -18,10 +18,8 @@ import java.util.List;
 @ApiModel("中奖信息")
 @EqualsAndHashCode(callSuper = false)
 public class RewardInfoVo implements Serializable {
-
     @ApiModelProperty("中奖信息列表")
-    private List<String> messages;
-
+    private List<String> rewardMessageList;
     @ApiModelProperty("当前用户余额是否变动 0否 1是")
-    private int creditChange;
+    private int userCreditChange;
 }
