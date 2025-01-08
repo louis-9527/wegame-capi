@@ -44,7 +44,7 @@ public class BetRecordController {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         request.setUserId(userInfo.getId());
-        request.setPlayerId(userInfo.getPlayerId());
+//        request.setPlayerId(userInfo.getPlayerId());
         BetRecordQuery query = BetRecordConverter.requestToQuery(request, "createTime");
         long cnt = betRecordService.count(query);
         if (Objects.equals(cnt, 0L)) {
@@ -55,6 +55,7 @@ public class BetRecordController {
         }
         query.setLimit(request.getPageSize());
         query.setOffset(request.getOffset());
+        query.setLastCreateTime(request.getLastCreateTime());
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
                 BetRecordConverter.doToVoList(betRecordService.list(query)),

@@ -8,6 +8,7 @@ import java.util.Date;
 
 /**
  * 游戏记录查询模型
+ *
  * @author genereate
  */
 @Data
@@ -48,5 +49,9 @@ public class BetRecordQuery extends BetRecordPo implements Serializable {
 
     ///////////////  above auto generated ///////////////
 
+    /**
+     * 上一夜最后一条的创建时间
+     */
+    private Long lastCreateTime;
 }
 
