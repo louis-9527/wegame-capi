@@ -98,6 +98,7 @@ public class BetRecordConverter {
         vo.setUserId(Objects.nonNull(betRecordDo.getUserId()) ? String.valueOf(betRecordDo.getUserId()) : null);
         vo.setPlayerName(betRecordDo.getPlayerName());
         vo.setBetAmount(betRecordDo.getBetAmount());
+        vo.setPayAmount(betRecordDo.getPayAmount());
         vo.setPayOutAmount(betRecordDo.getPayOutAmount());
         vo.setStatus(betRecordDo.getStatus());
         vo.setCreateTime(betRecordDo.getCreateTime());
