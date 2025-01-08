@@ -11,6 +11,7 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.service.BetRecordService;
@@ -93,6 +94,30 @@ public class MariaMakilingRewardHandler2 extends AbstractRewardHandler2 {
         }
     }
 
+    public boolean hasRewardFreeSpin(GameInfoDo gameInfo, WheelDo wheel) {
+        AssertUtil.assertNotNull(gameInfo, ErrorCode.ERR_PARAM, "gameInfo is null");
+        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_PARAM, "wheel is null");
+        SymbolDo[][] symbolArr = wheel.getSymbolArr();
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM, "wheel is null");
+        // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
+        for (Integer columIndex : SCATTER_COLUM_INDEX_LIST) {
+            boolean columHasScatter = false;
+            for (int i = 0; i < gameInfo.getRow(); i++) {
+                SymbolDo symbol = symbolArr[i][columIndex];
+                if (Objects.equals(SymbolTypeEnum.SCATTER, symbol.getSymbolType())) {
+                    columHasScatter = true;
+                    break;
+                }
+            }
+            if (!columHasScatter) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /////////////// todo delete //////////////
+
     public RewardRuleResultDo calcRewardLines(RewardRuleDo rewardRuleDo) {
         // 第一列中奖元素映射<元素,中奖规则元素列表>  // 初始化第一列数据
         Map<SymbolDo, List<RewardRuleSymbolDo>> firstColumSymbolMapping = this.initFirstColumSymbol(rewardRuleDo);
@@ -124,23 +149,7 @@ public class MariaMakilingRewardHandler2 extends AbstractRewardHandler2 {
         return generatorRewardLines(secondColumSymbolMapping);
     }
 
-    public boolean hasRewardFreeSpin(GameInfoDo gameInfo, SymbolDo[][] symbolArr) {
-        // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
-        for (Integer columIndex : SCATTER_COLUM_INDEX_LIST) {
-            boolean columHasScatter = false;
-            for (int i = 0; i < gameInfo.getRow(); i++) {
-                SymbolDo symbol = symbolArr[i][columIndex];
-                if (Objects.equals(SymbolTypeEnum.SCATTER, symbol.getSymbolType())) {
-                    columHasScatter = true;
-                    break;
-                }
-            }
-            if (!columHasScatter) {
-                return false;
-            }
-        }
-        return true;
-    }
+
 
 
     public RewardSubTypeEnum rewardSubType(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo) {
