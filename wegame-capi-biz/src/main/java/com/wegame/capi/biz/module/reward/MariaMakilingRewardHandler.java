@@ -10,27 +10,27 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.*;
+import com.wegame.capi.common.enums.RewardLineTypeEnum;
+import com.wegame.capi.common.enums.RewardSubTypeEnum;
+import com.wegame.capi.common.enums.SymbolEnum;
+import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_SCATTER;
-
 @Slf4j
 @Component
 public class MariaMakilingRewardHandler extends AbstractRewardHandler {
 
+    private static final List<Integer> SCATTER_COLUM_LIST = Arrays.asList(0, 2, 4);
     @Autowired
     OddsCalculateStrategy mariaMakilingOddsCalculateStrategy;
-
     @Autowired
     MultipleCalculateStrategy mariaMakilingMultipleCalculateStrategy;
     @Autowired
@@ -80,8 +80,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
     @Override
     public boolean hasRewardFreeSpin(GameInfoDo gameInfo, SymbolDo[][] symbolArr) {
         // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
-        List<Integer> scatterColumList = Arrays.asList(0, 2, 4);
-        for (Integer columIndex : scatterColumList) {
+        for (Integer columIndex : SCATTER_COLUM_LIST) {
             boolean columHasScatter = false;
             for (int i = 0; i < gameInfo.getRow(); i++) {
                 SymbolDo symbol = symbolArr[i][columIndex];
