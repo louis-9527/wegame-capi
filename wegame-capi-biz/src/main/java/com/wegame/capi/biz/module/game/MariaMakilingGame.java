@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.game;
 
+import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
@@ -14,14 +15,13 @@ import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_SCATTER;
 import static com.wegame.capi.biz.util.SymbolRandomUtil.randomOneSymbol;
 
@@ -31,6 +31,13 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
     private static final Random random = new Random();
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
+    // todo 配置
+    private static final Map<Integer, Integer> map = new ImmutableMap.Builder<Integer, Integer>()
+            .put(10, 50)
+            .put(11, 35)
+            .put(12, 10)
+            .put(13, 5)
+            .build();
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
     @Autowired
@@ -135,7 +142,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @return 滚轮列表
      */
     private List<WheelDo> multiWheelGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
-        int wheelNumber = 10 + random.nextInt(15 - 10 + 1);
+        int wheelNumber = getWheelNumber();
         List<WheelDo> wheels = new ArrayList<>();
         WheelDo preWheel = null;
         for (int number = 1; number <= wheelNumber; number++) {
@@ -180,5 +187,18 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                     throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
             }
         }
+    }
+
+    private Integer getWheelNumber() {
+        int randomNumber = 1 + random.nextInt(100);
+        int startVal = 0;
+        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+                return entry.getKey();
+            } else {
+                startVal += entry.getValue();
+            }
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER);
     }
 }
