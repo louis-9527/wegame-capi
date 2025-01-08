@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 单钱包基础请求模型
@@ -39,7 +40,7 @@ public class SingleWalletBaseReq implements Serializable {
      */
     private String refId;
     /**
-     * request refId
+     *
      */
     private String createTime;
 }

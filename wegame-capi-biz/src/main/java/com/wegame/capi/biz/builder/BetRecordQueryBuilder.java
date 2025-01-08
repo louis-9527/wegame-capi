@@ -43,6 +43,9 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordQuery.getChannelId())) {
             criteria.and("channelId").is(recordQuery.getChannelId());
         }
+        if (Objects.nonNull(recordQuery.getStatus())) {
+            criteria.and("status").is(recordQuery.getStatus());
+        }
         if (Objects.nonNull(recordQuery.getGameId())) {
             criteria.and("gameId").is(recordQuery.getGameId());
         }
