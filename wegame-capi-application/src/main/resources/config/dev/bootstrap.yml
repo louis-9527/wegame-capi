@@ -13,7 +13,7 @@ spring:
       username: nacos
       password: nacos
 #      discovery:
-#        server-addr: 43.198.184.127:8847,43.198.184.127:8849,43.198.184.127:8851
+#        server-addr: 16.162.139.203:8847,16.162.139.203:8849,16.162.139.203:8851
 #        group: ${spring.profiles.active}
 #        namespace: cd274f91-247f-4b5d-8bd1-0a8c7fd386ec
 #        metadata:
@@ -21,7 +21,7 @@ spring:
       config:
         import-check:
           enabled: true
-        server-addr: 43.198.184.127:8847,43.198.184.127:8849,43.198.184.127:8851
+        server-addr: 16.162.139.203:8847,16.162.139.203:8849,16.162.139.203:8851
         group: ${spring.profiles.active}
         namespace: cd274f91-247f-4b5d-8bd1-0a8c7fd386ec
         file-extension: yaml
