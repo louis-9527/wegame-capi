@@ -45,9 +45,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         long current = System.currentTimeMillis();
         validate(rewardHandle);
         // 中奖规则处理
-        RewardRuleDo rewardRuleDo = RewardRuleBuilder.build(rewardHandle);
-        AssertUtil.assertNotNull(rewardRuleDo, ErrorCode.ERR_INTER, "rewardRuleDo is null");
-        RewardRuleResultDo rewardRuleResultDo = this.calcRewardLines(rewardRuleDo);
+        RewardRuleResultDo rewardRuleResultDo = this.calcRewardLines(RewardRuleBuilder.build(rewardHandle));
         if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardRuleLineList())) {
             // 未中奖
             return null;

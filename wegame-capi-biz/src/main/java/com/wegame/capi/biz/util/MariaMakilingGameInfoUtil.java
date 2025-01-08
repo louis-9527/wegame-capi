@@ -137,5 +137,6 @@ public class MariaMakilingGameInfoUtil {
             .gameType(GameTypeEnum.MARIA_MAKILING)
             .row(3)
             .column(5)
-            .symbolMap(SYMBOL_MAP).build();
+            .symbolMap(SYMBOL_MAP)
+            .build();
 }

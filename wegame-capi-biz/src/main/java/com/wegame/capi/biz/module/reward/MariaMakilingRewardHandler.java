@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Slf4j
-@Component
+@Component("mariaMakilingRewardHandler")
 public class MariaMakilingRewardHandler extends AbstractRewardHandler {
 
     private static final List<Integer> SCATTER_COLUM_LIST = Arrays.asList(0, 2, 4);
@@ -47,6 +47,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
     }
 
     public RewardRuleResultDo calcRewardLines(RewardRuleDo rewardRuleDo) {
+        AssertUtil.assertNotNull(rewardRuleDo, ErrorCode.ERR_INTER, "rewardRuleDo is null");
         // 第一列中奖元素映射<元素,中奖规则元素列表>  // 初始化第一列数据
         Map<SymbolDo, List<RewardRuleSymbolDo>> firstColumSymbolMapping = this.initFirstColumSymbol(rewardRuleDo);
         // 本轮必要元素每一列出现的统计.<元素,<列号，本列中奖规则元素列表>>
