@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.manager;
+package com.wegame.capi.biz.service;
 
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
@@ -14,12 +14,12 @@ import java.util.Objects;
 import static com.wegame.capi.common.Constants.CUSER_CREDIT_CHANGE;
 
 @Service
-public class RewardManager {
+public class RewardService {
 
     @Autowired
     RedisTemplate redisTemplate;
 
-    public RewardInfoVo list() {
+    public RewardInfoVo get() {
         RewardInfoVo vo = new RewardInfoVo();
         String messageStr = (String) redisTemplate.opsForValue().get(String.format(Constants.REWARD_MESSAGE, UserInfoContext.getUserInfo().getGameId()));
         if (Objects.nonNull(messageStr) && JSONUtil.isTypeJSONObject(messageStr)) {
