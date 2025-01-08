@@ -26,9 +26,8 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = false)
 public class RewardRuleLineDo implements Serializable {
     private static final long serialVersionUID = -2878827643634848L;
-
     /**
-     * 元素id
+     * 中奖元素
      */
     private SymbolDo symbol;
     /**
@@ -42,7 +41,7 @@ public class RewardRuleLineDo implements Serializable {
     /**
      * 当前中奖线的中奖元素列表
      */
-    private List<SymbolDo> rewardSymbolIdList;
+    private List<SymbolDo> rewardSymbolList;
 
     public boolean isCommonReward() {
         return Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.COMMON);

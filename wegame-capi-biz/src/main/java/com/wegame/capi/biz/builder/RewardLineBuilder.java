@@ -19,7 +19,7 @@ public class RewardLineBuilder {
                 .multiple(multiple)
                 .odds(odds)
                 .symbolIndexList(rewardRuleLine.getRewardSymbolIndexList())
-                .symbolList(rewardRuleLine.getRewardSymbolIdList())
+                .symbolList(rewardRuleLine.getRewardSymbolList())
                 .build();
     }
 
