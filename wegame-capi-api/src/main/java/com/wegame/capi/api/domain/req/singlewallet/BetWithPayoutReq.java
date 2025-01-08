@@ -123,20 +123,20 @@ public class BetWithPayoutReq extends SingleWalletBaseReq {
             private BigDecimal amount = zero;
         }
     }
-
-    public static void main(String[] args) {
-        BetWithPayoutReq payoutReq = BetWithPayoutReq.builder()
-                .createTime(DateUtil.toUTC(new Date()))
-                .betDetails(BetWithPayoutReq.BetDetails.builder()
-                        .gameId("111")
-                        .wagersDate(DateUtil.getCurrentTimestamp())
-                        .settlementDate(DateUtil.getCurrentTimestamp())
-                        .isFreeRound(false)
-                        .jackpotDetails(new BetDetails.JackpotDetails())
-                        .build())
-                .build();
-
-        System.out.println(JSON.toJSONString(payoutReq));
-    }
+//
+//    public static void main(String[] args) {
+//        BetWithPayoutReq payoutReq = BetWithPayoutReq.builder()
+//                .createTime(DateUtil.toUTC(new Date()))
+//                .betDetails(BetWithPayoutReq.BetDetails.builder()
+//                        .gameId("111")
+//                        .wagersDate(DateUtil.getCurrentTimestamp())
+//                        .settlementDate(DateUtil.getCurrentTimestamp())
+//                        .isFreeRound(false)
+//                        .jackpotDetails(new BetDetails.JackpotDetails())
+//                        .build())
+//                .build();
+//
+//        System.out.println(JSON.toJSONString(payoutReq));
+//    }
 
 }

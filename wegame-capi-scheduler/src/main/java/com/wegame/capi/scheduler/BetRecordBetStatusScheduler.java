@@ -12,10 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,9 +31,9 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
     @Autowired
     private SingleWalletService singleWalletService;
 
-    //@Scheduled(cron = "0 0/5 * * * ?")
+   // @Scheduled(cron = "0 0/5 * * * ?")
     public void schedule() {
-        scheduleWithLock(LockNameUtil.getBetRecordPayOutStatusSchedulerLockName(), this);
+        scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(), this);
     }
 
     @Override
@@ -41,12 +41,12 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
         /**
          * 1.获取5分钟前,还在运行中的投注记录
          */
-        Date fiveMinutesAgo = new Date(System.currentTimeMillis() - 5 * 60 * 1000);
+        long fiveMinutesAgo = System.currentTimeMillis() - 5 * 60 * 1000;
         int pageNo = 1;
         List<BetRecordDo> recordList;
         do {
             recordList = betRecordService.list(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
-                    .endCreateTime(fiveMinutesAgo.getTime())
+                    .endCreateTime(fiveMinutesAgo)
                     .limit(DEFAULT_PAGE_SIZE)
                     .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
 
