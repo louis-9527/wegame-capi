@@ -6,9 +6,11 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.service.BetRecordService;
@@ -19,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+
+import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_SCATTER;
 
 @Slf4j
 @Component
@@ -47,8 +51,6 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         Map<SymbolDo, List<RewardRuleSymbolDo>> firstColumSymbolMapping = this.initFirstColumSymbol(rewardRuleDo);
         // 本轮必要元素每一列出现的统计.<元素,<列号，本列中奖规则元素列表>>
         Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping = new HashMap<>();
-        // symbolId是否有wild参与<元素,boolean>
-        Map<SymbolDo, Boolean> symbolIdHasWildMap = new HashMap<>();
 
         SymbolDo[][] symbolArr = rewardRuleDo.getSymbolArr();
         // 第一列初始化到统计的数据中去
@@ -64,7 +66,6 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     for (SymbolDo firstSymbol : firstColumSymbolMapping.keySet()) {
                         if (!isScatter(firstSymbol)) {
                             this.addSymbolMapping(secondColumSymbolMapping, firstSymbol, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).coordinate(SymbolIndexDo.build(row, colum)).build());
-                            symbolIdHasWildMap.put(firstSymbol, true);
                         }
                     }
                 } else if (isFirstColumSymbolId(firstColumSymbolMapping, symbolDo)) {
@@ -73,24 +74,27 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
             }
         }
         // 中奖线统计
-        return generatorRewardLines(symbolIdHasWildMap, secondColumSymbolMapping);
+        return generatorRewardLines(secondColumSymbolMapping);
     }
 
     @Override
-    public boolean hasFreeSpin(GameTypeEnum gameType, SymbolDo[][] symbolArr) {
-        int scatterCount = 0;
-        for (SymbolDo[] row : symbolArr) {
-            for (SymbolDo element : row) {
-                AssertUtil.assertNotNull(element, ErrorCode.ERR_INTER);
-                if (scatterCount >= 3) {
-                    return true;
-                }
-                if (Objects.equals(element.getSymbolType(), SymbolTypeEnum.SCATTER)) {
-                    scatterCount++;
+    public boolean hasRewardFreeSpin(GameInfoDo gameInfo, SymbolDo[][] symbolArr) {
+        // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
+        List<Integer> scatterColumList = Arrays.asList(0, 2, 4);
+        for (Integer columIndex : scatterColumList) {
+            boolean columHasScatter = false;
+            for (int i = 0; i < gameInfo.getRow(); i++) {
+                SymbolDo symbol = symbolArr[i][columIndex];
+                if (Objects.equals(SymbolTypeEnum.SCATTER, symbol.getSymbolType())) {
+                    columHasScatter = true;
+                    break;
                 }
             }
+            if (!columHasScatter) {
+                return false;
+            }
         }
-        return scatterCount >= 3;
+        return true;
     }
 
     @Override
@@ -153,7 +157,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         return firstColumSymbolMapping;
     }
 
-    private RewardRuleResultDo generatorRewardLines(Map<SymbolDo, Boolean> symbolIdHasWildMap, Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping) {
+    private RewardRuleResultDo generatorRewardLines(Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping) {
         // 中奖线统计普通元素，scatter
         // 中奖线列表
         List<RewardRuleLineDo> rewardRuleLineList = Lists.newArrayList();

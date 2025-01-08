@@ -59,12 +59,12 @@ public class MariaMakilingRewardHandlerTest extends BaseTest {
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
                 .symbolArr(symbolArr)
                 .build();
-        long startTime = DateUtil.getCurrentTimestamp();
+        long startTime = DateUtil.getCurrentMilli();
 //        for (int i=0;i<1000000;i++){
 //            RewardRuleResultDo resultDo = mariaMakilingRewardHandler.calcRewardLines(rewardRuleDo);
 //        }
         RewardRuleResultDo resultDo = mariaMakilingRewardHandler.calcRewardLines(rewardRuleDo);
-        long endTime = DateUtil.getCurrentTimestamp();
+        long endTime = DateUtil.getCurrentMilli();
 
         log.info("消耗时间：{}", endTime - startTime);
 

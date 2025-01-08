@@ -21,8 +21,8 @@ public class RewardResultBuilder {
                 .totalRewardAmount(rewardTotalAmount)
                 .rewardLineList(rewardLineList)
                 .totalMultiple(wildTotalTimes)
-                .rewardType(rewardLineList.size() <= 1 ? RewardTypeEnum.SINGLE : RewardTypeEnum.MULTIPLE)
-                .isFreeSpin(isFreeSpin)
+                .rewardType(rewardLineList.size() == 1 ? RewardTypeEnum.SINGLE : RewardTypeEnum.MULTIPLE)
+                .hasRewardFreeSpin(isFreeSpin)
                 .build();
     }
 

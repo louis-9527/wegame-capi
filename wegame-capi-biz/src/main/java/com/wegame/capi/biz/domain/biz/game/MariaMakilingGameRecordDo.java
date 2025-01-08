@@ -62,7 +62,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      * @return
      */
     public boolean hasRewardFreeSpins() {
-        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineList()) && rewardResult.isFreeSpin();
+        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineList()) && rewardResult.isHasRewardFreeSpin();
     }
 
 
@@ -101,7 +101,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                                     .betAmount(item.getBetAmount())
                                     .rewardAmount(item.getRewardAmount())
                                     .build()).collect(Collectors.toList()))
-                    .freeSpinFlag(rewardResult.isFreeSpin() ? 1 : 0)
+                    .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
                     .freeSpinIds(freeSpinIds)
                     .build();
         }

@@ -16,6 +16,7 @@ public class RewardHandlerBuilder {
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
         return RewardHandleDo.builder()
                 .gameType(gameInfo.getGameType())
+                .gameInfo(gameInfo)
                 .betType(gamePlay.getBetType())
                 .betSubType(gamePlay.getBetSubType())
                 .betAmount(gamePlay.getBetAmount())

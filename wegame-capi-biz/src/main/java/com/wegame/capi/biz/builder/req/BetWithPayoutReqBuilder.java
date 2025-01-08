@@ -19,7 +19,7 @@ public class BetWithPayoutReqBuilder {
                 .playerName(betRecordDo.getPlayerName())
                 .refId(betRecordDo.getBetSerialNo())
                 .createTime(DateUtil.toUTC(new Date()))
-                .betAmount(AmountUtil.toBigDecimal(betRecordDo.getBetAmount()))
+                .betAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()))
                 .payoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()))
                 .betDetails(BetWithPayoutReq.BetDetails.builder()
                         .gameId(betRecordDo.getGameId())

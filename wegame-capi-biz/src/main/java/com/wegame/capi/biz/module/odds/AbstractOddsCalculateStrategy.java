@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.module.odds;
 
 import com.wegame.capi.biz.domain.biz.odds.OddsCalculateDo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.util.Objects;
 /**
  * 抽象赔率计算策略
  */
+@Slf4j
 public abstract class AbstractOddsCalculateStrategy implements OddsCalculateStrategy {
 
     /**
@@ -22,6 +24,7 @@ public abstract class AbstractOddsCalculateStrategy implements OddsCalculateStra
 
     @Override
     public BigDecimal calculateOdds(OddsCalculateDo oddsCalculateDo) {
+        long current = System.currentTimeMillis();
         Map<String, Map<String, BigDecimal>> oddsMap = getOddsMap(oddsCalculateDo);
         if (MapUtils.isEmpty(oddsMap)) {
             return BigDecimal.ZERO;
@@ -31,6 +34,8 @@ public abstract class AbstractOddsCalculateStrategy implements OddsCalculateStra
             return BigDecimal.ZERO;
         }
         BigDecimal odds = map.get(oddsCalculateDo.getOddsType().getCode());
-        return Objects.isNull(odds) ? (BigDecimal.ZERO) : odds;
+        BigDecimal val = Objects.isNull(odds) ? (BigDecimal.ZERO) : odds;
+        log.info("odds cost time: {} ms", System.currentTimeMillis() - current);
+        return val;
     }
 }
