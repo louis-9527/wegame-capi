@@ -66,11 +66,11 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     // 所有第一列元素的都添加(scatter除外)
                     for (SymbolDo firstSymbol : firstColumSymbolMapping.keySet()) {
                         if (!isScatter(firstSymbol)) {
-                            this.addSymbolMapping(secondColumSymbolMapping, firstSymbol, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).coordinate(SymbolIndexDo.build(row, colum)).build());
+                            this.addSymbolMapping(secondColumSymbolMapping, firstSymbol, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).symbolIndex(SymbolIndexDo.build(row, colum)).build());
                         }
                     }
                 } else if (isFirstColumSymbolId(firstColumSymbolMapping, symbolDo)) {
-                    this.addSymbolMapping(secondColumSymbolMapping, symbolDo, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).coordinate(SymbolIndexDo.build(row, colum)).build());
+                    this.addSymbolMapping(secondColumSymbolMapping, symbolDo, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).symbolIndex(SymbolIndexDo.build(row, colum)).build());
                 }
             }
         }
@@ -151,9 +151,9 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         firstColumSymbolMapping.put(symbolArr[1][0], Lists.newArrayList());
         firstColumSymbolMapping.put(symbolArr[2][0], Lists.newArrayList());
 
-        firstColumSymbolMapping.get(symbolArr[0][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[0][0]).coordinate(SymbolIndexDo.build(0, 0)).build());
-        firstColumSymbolMapping.get(symbolArr[1][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[1][0]).coordinate(SymbolIndexDo.build(1, 0)).build());
-        firstColumSymbolMapping.get(symbolArr[2][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[2][0]).coordinate(SymbolIndexDo.build(2, 0)).build());
+        firstColumSymbolMapping.get(symbolArr[0][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[0][0]).symbolIndex(SymbolIndexDo.build(0, 0)).build());
+        firstColumSymbolMapping.get(symbolArr[1][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[1][0]).symbolIndex(SymbolIndexDo.build(1, 0)).build());
+        firstColumSymbolMapping.get(symbolArr[2][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[2][0]).symbolIndex(SymbolIndexDo.build(2, 0)).build());
         return firstColumSymbolMapping;
     }
 
@@ -192,7 +192,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
 
         columTreeMap.values().stream().flatMap(Collection::stream).forEach(rewardRuleSymbolDo -> {
             rewardSymbolIdList.add(rewardRuleSymbolDo.getSymbol());
-            rewardSymbolIndexList.add(rewardRuleSymbolDo.getCoordinate());
+            rewardSymbolIndexList.add(rewardRuleSymbolDo.getSymbolIndex());
         });
         return RewardRuleLineDo.builder()
                 .symbol(symbolDo)
@@ -206,7 +206,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         List<RewardRuleLineDo> complexRewardLineList = Lists.newArrayList();
         List<RewardRuleSymbolDo> firstColumSymbolDoList = columTreeMap.get(0);
         for (RewardRuleSymbolDo firstColumSymbolDo : firstColumSymbolDoList) {
-            loopFindRewardLine(symbolDo, 1, columTreeMap.keySet().size() - 1, columTreeMap, Lists.newArrayList(firstColumSymbolDo.getCoordinate()), Lists.newArrayList(firstColumSymbolDo.getSymbol()), complexRewardLineList);
+            loopFindRewardLine(symbolDo, 1, columTreeMap.keySet().size() - 1, columTreeMap, Lists.newArrayList(firstColumSymbolDo.getSymbolIndex()), Lists.newArrayList(firstColumSymbolDo.getSymbol()), complexRewardLineList);
         }
         return complexRewardLineList;
     }
@@ -218,7 +218,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                 List<SymbolDo> currentLineSymbolIdList = Lists.newArrayList(symbolIdList);
                 List<SymbolIndexDo> currentRewardSymbolIndexList = Lists.newArrayList(rewardSymbolIndexList);
                 currentLineSymbolIdList.add(rewardRuleSymbolDo.getSymbol());
-                currentRewardSymbolIndexList.add(rewardRuleSymbolDo.getCoordinate());
+                currentRewardSymbolIndexList.add(rewardRuleSymbolDo.getSymbolIndex());
                 RewardRuleLineDo lineDo = RewardRuleLineDo.builder()
                         .symbol(symbolDo)
                         .rewardLineType(this.getRewardLineType(currentLineSymbolIdList.size()))
@@ -234,7 +234,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
             for (RewardRuleSymbolDo rewardRuleSymbolDo : rewardRuleSymbolDos) {
                 List<SymbolIndexDo> tempRewardSymbolIndexList = Lists.newArrayList(rewardSymbolIndexList);
                 List<SymbolDo> tempSymbolIdList = Lists.newArrayList(symbolIdList);
-                tempRewardSymbolIndexList.add(rewardRuleSymbolDo.getCoordinate());
+                tempRewardSymbolIndexList.add(rewardRuleSymbolDo.getSymbolIndex());
                 tempSymbolIdList.add(rewardRuleSymbolDo.getSymbol());
                 loopFindRewardLine(symbolDo, currentColum, maxColum, columTreeMap, tempRewardSymbolIndexList, tempSymbolIdList, complexRewardLineList);
             }
@@ -255,7 +255,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
     }
 
     private void addSymbolMapping(Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> mappingMap, SymbolDo mappingMapKey, RewardRuleSymbolDo rewardRuleSymbolDo) {
-        Integer columNum = rewardRuleSymbolDo.getCoordinate().getColumIndex();
+        Integer columNum = rewardRuleSymbolDo.getSymbolIndex().getColumIndex();
         TreeMap<Integer, List<RewardRuleSymbolDo>> columListMap = mappingMap.get(mappingMapKey);
         if (Objects.isNull(columListMap)) {
             columListMap = new TreeMap<>();

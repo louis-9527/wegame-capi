@@ -26,13 +26,13 @@ public class RewardRuleSymbolDo implements Serializable {
      */
     private GameTypeEnum gameType;
     /**
-     * 投注类型: @see GameBetTypeEnum
+     * 中奖元素坐标
      */
     private SymbolDo symbol;
     /**
-     * 坐标
+     * 中奖元素坐标
      */
-    private SymbolIndexDo coordinate;
+    private SymbolIndexDo symbolIndex;
 
 }
 
