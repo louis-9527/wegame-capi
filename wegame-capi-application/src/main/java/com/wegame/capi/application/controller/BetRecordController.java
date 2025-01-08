@@ -10,6 +10,8 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
+import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +41,10 @@ public class BetRecordController {
     @PostMapping("/pageQuery")
     public CommonResponse<PageInfoVo<BetRecordVo>> pageQuery(@RequestBody PageQueryBetRecordRequest request) {
         request.validate();
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        request.setUserId(userInfo.getId());
+        request.setPlayerId(userInfo.getPlayerId());
         BetRecordQuery query = BetRecordConverter.requestToQuery(request, "createTime");
         long cnt = betRecordService.count(query);
         if (Objects.equals(cnt, 0L)) {

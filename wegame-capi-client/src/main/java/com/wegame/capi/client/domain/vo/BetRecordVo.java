@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -25,33 +26,56 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class BetRecordVo implements Validate, Serializable {
     private static final long serialVersionUID = -5835716727611741184L;
-    @ApiModelProperty("主键ID")
+    @ApiModelProperty("主键ID/投注记录id")
     private String id;
-    @ApiModelProperty("平台id")
-    private String pId;
-    @ApiModelProperty("渠道id")
-    private String channelId;
     @ApiModelProperty("用户id")
     private String userId;
     @ApiModelProperty("玩家名称")
     private String playerName;
-    @ApiModelProperty(value = "投注类型:NORMAL_BET,免费轮投注:FREE_SPINS_BET", required = true)
-    private String betType;
-    @ApiModelProperty(value = "投注子类型:NORMAL_BET:正常投注, BUY_FREE_SPINS_BET:购买免费轮投注, NON_BUY_FREE_SPINS_BET:非购买免费轮投注", required = true)
-    private String betSubType;
-    @ApiModelProperty("投注id（单钱包）")
-    private String betId;
-    @ApiModelProperty("投注流水号（对应单钱包refId）")
-    private String betSerialNo;
-    @ApiModelProperty("投注总金额 单位：分")
-    private String betAmount;
+    @ApiModelProperty("投注金额 单位：分")
+    private Long betAmount;
+    @ApiModelProperty("支付金额 单位：分")
+    private Long payAmount;
     @ApiModelProperty("派彩总金额 单位：分")
-    private String payOutAmount;
+    private Long payOutAmount;
     @ApiModelProperty("状态 0进行中 1已完结 2无效")
     private Integer status;
     @ApiModelProperty("创建时间")
     private Long createTime;
+    // todo fix 联调后 修改类型为 Object
     @ApiModelProperty("详情")
-    private BetRecordDetailVo detail;
+    private MariaMakilingBetRecordDetailVo detail;
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel("MariaMakiling投注记录详情")
+    @EqualsAndHashCode(callSuper = false)
+    public static class MariaMakilingBetRecordDetailVo implements Validate, Serializable {
+        private static final long serialVersionUID = -5835715678741184L;
+        @ApiModelProperty("游戏记录列表")
+        private List<MariaMakilingGameRecordVo> gameRecordList;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel("MariaMakiling游戏记录")
+    @EqualsAndHashCode(callSuper = false)
+    public static class MariaMakilingGameRecordVo implements Validate, Serializable {
+        private static final long serialVersionUID = -5835715678741184L;
+        @ApiModelProperty("序号：0为Main，大于0为Free")
+        private Integer index;
+        @ApiModelProperty("投注金额")
+        private Long betAmount;
+        @ApiModelProperty("中奖金额")
+        private Long rewardAmount;
+        @ApiModelProperty("滚轮结果")
+        private String[][] spinsResult;
+        @ApiModelProperty("倍率")
+        private BigDecimal multiple;
+    }
 }
 

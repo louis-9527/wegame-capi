@@ -46,7 +46,7 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
         List<BetRecordDo> recordList;
         do {
             recordList = betRecordService.list(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
-                    .endCreateTime(fiveMinutesAgo)
+                    .endCreateTime(fiveMinutesAgo.getTime())
                     .limit(DEFAULT_PAGE_SIZE)
                     .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
 
@@ -82,7 +82,5 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
                     .status(BetStatusEnum.FAIL.getCode()).build();
             betRecordService.update(updateRecord);
         }
-
-
     }
 }

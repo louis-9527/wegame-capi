@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -13,14 +14,14 @@ import java.util.Objects;
 
 public class BetRecordQueryBuilder {
 
-
     public static Query buildMongodbQuery(BetRecordQuery recordQuery) {
         Query query = new Query(buildMongodbCriteria(recordQuery));
         if (Objects.nonNull(recordQuery.getOffset()) && Objects.nonNull(recordQuery.getLimit())) {
             query.skip(recordQuery.getOffset()).limit(recordQuery.getLimit());
         }
-        query.with(Sort.by(Sort.Direction.DESC, recordQuery.getOrderByClause()));
-
+        if (StringUtils.isNotEmpty(recordQuery.getOrderByClause())) {
+            query.with(Sort.by(Sort.Direction.DESC, recordQuery.getOrderByClause()));
+        }
         return query;
     }
 

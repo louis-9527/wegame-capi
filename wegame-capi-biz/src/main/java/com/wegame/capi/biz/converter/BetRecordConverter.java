@@ -12,7 +12,6 @@ import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -90,26 +89,22 @@ public class BetRecordConverter {
         return po;
     }
 
-    public static BetRecordVo doToVo(BetRecordDo betRecordDo, boolean includeDetail) {
+    public static BetRecordVo doToVo(BetRecordDo betRecordDo, boolean orNotBuildDetail) {
         if (Objects.isNull(betRecordDo)) {
             return null;
         }
         BetRecordVo vo = new BetRecordVo();
         vo.setId(Objects.nonNull(betRecordDo.getId()) ? String.valueOf(betRecordDo.getId()) : null);
-        vo.setPId(betRecordDo.getPId());
-        vo.setChannelId(betRecordDo.getChannelId());
         vo.setUserId(Objects.nonNull(betRecordDo.getUserId()) ? String.valueOf(betRecordDo.getUserId()) : null);
         vo.setPlayerName(betRecordDo.getPlayerName());
-        vo.setBetType(betRecordDo.getBetType());
-        vo.setBetSubType(betRecordDo.getBetSubType());
-        vo.setBetId(betRecordDo.getBetId());
-        vo.setBetSerialNo(betRecordDo.getBetSerialNo());
-        vo.setBetAmount(Objects.nonNull(betRecordDo.getBetAmount()) ? String.valueOf(betRecordDo.getBetAmount()) : null);
-        vo.setPayOutAmount(Objects.nonNull(betRecordDo.getPayOutAmount()) ? String.valueOf(betRecordDo.getPayOutAmount()) : null);
+        vo.setBetAmount(betRecordDo.getBetAmount());
+        vo.setPayOutAmount(betRecordDo.getPayOutAmount());
         vo.setStatus(betRecordDo.getStatus());
-        vo.setCreateTime(Objects.nonNull(betRecordDo.getCreateTime()) ? betRecordDo.getCreateTime() : null);
-        if (includeDetail) {
-            vo.setDetail(BetRecordDetailConverter.doToVo((MariaMakilingBetRecordDetailDo) betRecordDo.getDetail()));
+        vo.setCreateTime(betRecordDo.getCreateTime());
+        if (orNotBuildDetail && Objects.nonNull(betRecordDo.getDetail())) {
+            if (betRecordDo.getDetail() instanceof MariaMakilingBetRecordDetailDo) {
+                vo.setDetail(MariaMakilingBetRecordDetailConverter.doToVo((MariaMakilingBetRecordDetailDo) betRecordDo.getDetail()));
+            }
         }
         return vo;
     }
@@ -143,11 +138,10 @@ public class BetRecordConverter {
 
     public static BetRecordQuery requestToQuery(PageQueryBetRecordRequest request, String orderClause) {
         BetRecordQuery query = new BetRecordQuery();
-        query.setUserId(StringUtils.isNotEmpty(request.getUserId()) ? Long.valueOf(request.getUserId()) : null);
-        query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) ? new Date(request.getStartCreateTime()) : null);
-        query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);
-        query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? new Date(request.getStartUpdateTime()) : null);
-        query.setEndUpdateTime(Objects.nonNull(request.getEndUpdateTime()) ? new Date(request.getEndUpdateTime()) : null);
+        query.setUserId(Long.valueOf(request.getUserId()));
+        query.setPlayerId(request.getPlayerId());
+        query.setStartCreateTime(request.getStartCreateTime());
+        query.setEndCreateTime(request.getEndCreateTime());
         query.setOrderByClause(orderClause);
         return query;
     }
