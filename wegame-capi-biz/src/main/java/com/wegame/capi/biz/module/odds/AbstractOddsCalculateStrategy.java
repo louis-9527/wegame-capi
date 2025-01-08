@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.module.odds;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.odds.OddsCalculateDo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -25,6 +27,7 @@ public abstract class AbstractOddsCalculateStrategy implements OddsCalculateStra
     @Override
     public BigDecimal calculateOdds(OddsCalculateDo oddsCalculateDo) {
         long current = System.currentTimeMillis();
+        AssertUtil.assertNotNull(oddsCalculateDo, ErrorCode.ERR_INTER, "oddsCalculate is required");
         Map<String, Map<String, BigDecimal>> oddsMap = getOddsMap(oddsCalculateDo);
         if (MapUtils.isEmpty(oddsMap)) {
             return BigDecimal.ZERO;

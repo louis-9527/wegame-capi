@@ -44,8 +44,7 @@ public class RewardRuleLineDo implements Serializable {
      */
     private List<SymbolDo> rewardSymbolIdList;
 
-
     public boolean isCommonReward() {
-        return Objects.equals(this.symbol.getSymbolType(), SymbolTypeEnum.COMMON);
+        return Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.COMMON);
     }
 }

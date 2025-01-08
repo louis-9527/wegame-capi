@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,51 +46,43 @@ public abstract class AbstractRewardHandler2 implements RewardHandler {
         long current = System.currentTimeMillis();
         // 1、业务校验
         validate(rewardHandle);
-        // 2、
-
-        //        long current = System.currentTimeMillis();
-        //        validate(rewardHandle);
-        //        // 中奖规则处理
-                RewardRuleDo rewardRuleDo = RewardRuleBuilder.build(rewardHandle);
-        //        AssertUtil.assertNotNull(rewardRuleDo, ErrorCode.ERR_INTER, "rewardRuleDo is null");
-        //        RewardRuleResultDo rewardRuleResultDo = this.calcRewardLines(rewardRuleDo);
-        //        if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardRuleLineList())) {
-        //            // 未中奖
-        //            return null;
-        //        }
-        //        // 计算倍率
-        //        BigDecimal multiple = multipleCalculateStrategy().calculateMultiple(rewardHandle.getGameType(), rewardHandle.getWheel());
-        //        // 中奖总金额
-        //        long rewardTotalAmount = 0L;
-        //        // 中奖坐标列表
-        //        List<RewardLineDo> rewardLineList = Lists.newArrayList();
-        //        for (RewardRuleLineDo rewardRuleLine : rewardRuleResultDo.getRewardRuleLineList()) {
-        //            // 获取赔率
-        //            OddsCalculateDo oddsCalculateDo = OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType());
-        //            AssertUtil.assertNotNull(oddsCalculateDo, ErrorCode.ERR_INTER, "oddsCalculateDo is null");
-        //            BigDecimal odds = oddsCalculateStrategy().calculateOdds(oddsCalculateDo);
-        //            // 中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
-        //            // scatter 无需进行倍率计算
-        //            BigDecimal lineRewardAmount = BigDecimal.valueOf(rewardHandle.getBetAmount()).multiply(odds);
-        //            if (rewardRuleLine.isCommonReward()) {
-        //                lineRewardAmount = lineRewardAmount.multiply(BigDecimal.ONE.add(multiple));
-        //            }
-        //            // 中奖结果处理
-        //            rewardTotalAmount = rewardTotalAmount + lineRewardAmount.longValue();
-        //            // 计算后的中奖线列表
-        //            rewardLineList.add(RewardLineBuilder.build(rewardHandle.getBetAmount(), rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
-        //        }
-        //
-        //        RewardResultDo tempRewardResultDo = RewardResultBuilder.build(
-        //                rewardHandle.getBetAmount(),
-        //                rewardTotalAmount,
-        //                rewardLineList,
-        //                multiple,
-        //                hasRewardFreeSpin(rewardHandle.getGameInfo(), rewardHandle.getWheel().getSymbolArr()));
-        //        // 返回中奖信息
-        //        RewardResultDo rewardResultDo = RewardResultBuilder.build(tempRewardResultDo, rewardSubType(rewardHandle, tempRewardResultDo));
-        //        log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
-        //        return rewardResultDo;
+        // 2、计算中奖线
+        List<RewardRuleLineDo> rewardRuleLineList = new ArrayList<>(); //  calcRewardLines todo
+        if (CollectionUtil.isEmpty(rewardRuleLineList)) {
+            // 未中奖
+            return null;
+        }
+        // 3、计算倍率
+        BigDecimal multiple = multipleCalculateStrategy().calculateMultiple(rewardHandle.getGameType(), rewardHandle.getWheel());
+//        // 中奖总金额
+//        long rewardTotalAmount = 0L;
+//        // 中奖坐标列表
+//        List<RewardLineDo> rewardLineList = Lists.newArrayList();
+//        for (RewardRuleLineDo rewardRuleLine : rewardRuleLineList) {
+//            // 计算赔率
+//            BigDecimal odds = oddsCalculateStrategy().calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType()));
+//            // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
+//            // scatter 无需进行倍率计算
+//            BigDecimal lineRewardAmount = BigDecimal.valueOf(rewardHandle.getBetAmount()).multiply(odds);
+//            if (rewardRuleLine.isCommonReward()) {
+//                lineRewardAmount = lineRewardAmount.multiply(BigDecimal.ONE.add(multiple));
+//            }
+//            // 中奖结果处理
+//            rewardTotalAmount = rewardTotalAmount + lineRewardAmount.longValue();
+//            // 计算后的中奖线列表
+//            rewardLineList.add(RewardLineBuilder.build(rewardHandle.getBetAmount(), rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
+//        }
+//
+//        RewardResultDo tempRewardResultDo = RewardResultBuilder.build(
+//                rewardHandle.getBetAmount(),
+//                rewardTotalAmount,
+//                rewardLineList,
+//                multiple,
+//                hasRewardFreeSpin(rewardHandle.getGameInfo(), rewardHandle.getWheel().getSymbolArr()));
+//        // 返回中奖信息
+//        RewardResultDo rewardResultDo = RewardResultBuilder.build(tempRewardResultDo, rewardSubType(rewardHandle, tempRewardResultDo));
+//        log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
+//        return rewardResultDo;
         return null;
     }
 }
