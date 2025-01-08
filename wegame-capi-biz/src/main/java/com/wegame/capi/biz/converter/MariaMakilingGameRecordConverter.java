@@ -33,7 +33,7 @@ public class MariaMakilingGameRecordConverter {
         }
         return BetRecordVo.MariaMakilingGameRecordVo.builder()
                 .index(gameRecordDo.getIndex())
-                .betAmount(gameRecordDo.getRewardResult().getBetAmount())
+                .betAmount(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getBetAmount).orElse(0L))
                 .rewardAmount(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getTotalRewardAmount).orElse(0L))
                 .spinsResult(SymbolBuilder.build(gameRecordDo.getWheel().getSymbolArr()))
                 .multiple(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getTotalMultiple).orElse(null))
