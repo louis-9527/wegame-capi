@@ -33,6 +33,5 @@ public class RewardRuleSymbolDo implements Serializable {
      * 中奖元素坐标
      */
     private SymbolIndexDo symbolIndex;
-
 }
 
