@@ -101,7 +101,7 @@ public class BetRecordConverter {
         vo.setPayOutAmount(betRecordDo.getPayOutAmount());
         vo.setStatus(betRecordDo.getStatus());
         vo.setCreateTime(betRecordDo.getCreateTime());
-        if (orNotBuildDetail && Objects.nonNull(betRecordDo.getDetail())) {
+        if (!orNotBuildDetail && Objects.nonNull(betRecordDo.getDetail())) {
             if (betRecordDo.getDetail() instanceof MariaMakilingBetRecordDetailDo) {
                 vo.setDetail(MariaMakilingBetRecordDetailConverter.doToVo((MariaMakilingBetRecordDetailDo) betRecordDo.getDetail()));
             }

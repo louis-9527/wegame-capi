@@ -67,6 +67,6 @@ public class BetRecordController {
     public CommonResponse<BetRecordVo> get(@PathVariable("id") String id) {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id));
-        return CommonResponse.build(BetRecordConverter.doToVo(betRecordDo, true));
+        return CommonResponse.build(BetRecordConverter.doToVo(betRecordDo, false));
     }
 }
