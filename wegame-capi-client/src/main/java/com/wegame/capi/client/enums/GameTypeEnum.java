@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum GameTypeEnum {
 
-    MARIA_MAKILING("10000", "MariaMakiling");;
+    MARIA_MAKILING("zhumeng001", "MariaMakiling");;
 
     /**
      * 枚举码.
