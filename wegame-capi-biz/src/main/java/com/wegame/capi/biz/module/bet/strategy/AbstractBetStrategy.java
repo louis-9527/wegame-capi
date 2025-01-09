@@ -49,6 +49,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
         SingleWalletBetWithPayoutRes betWithPayoutRes = SingleWalletBetWithPayoutRes.builder()
                 .betStatus(BetStatusEnum.SUCCESS)
                 .build();
+
        // singleWalletService.betWithPayout(betRecordDo);
         // 判断返回结果
         String betId = betWithPayoutRes.getBetId();
