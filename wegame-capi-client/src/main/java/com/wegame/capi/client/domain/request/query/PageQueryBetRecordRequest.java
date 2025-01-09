@@ -23,6 +23,8 @@ import lombok.experimental.SuperBuilder;
 @ApiModel(description = "分页查询投注记录请求参数", parent = PageQueryRequest.class)
 public class PageQueryBetRecordRequest extends PageQueryRequest implements Validate {
     private static final long serialVersionUID = -8029880166975261696L;
+    @ApiModelProperty(value = "投注记录id", required = false)
+    private String id;
     @ApiModelProperty(value = "用户id", required = false)
     private String userId;
     @ApiModelProperty(value = "玩家id", required = false)
@@ -31,8 +33,6 @@ public class PageQueryBetRecordRequest extends PageQueryRequest implements Valid
     private Long startCreateTime;
     @ApiModelProperty(value = "结束创建/投注时间", required = false)
     private Long endCreateTime;
-
-
     @ApiModelProperty(value = "上一页最后一条数据的createTime", required = false)
     private Long lastCreateTime;
 }
