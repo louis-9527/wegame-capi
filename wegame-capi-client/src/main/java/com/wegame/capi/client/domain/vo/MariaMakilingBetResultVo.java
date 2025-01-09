@@ -22,7 +22,7 @@ public class MariaMakilingBetResultVo implements Serializable {
     private static final long serialVersionUID = -4792907227811616042L;
     @ApiModelProperty("中奖类型: NONE未中奖，SINGLE单奖励，MULTIPLE多奖励 ")
     private String rewardType;
-    @ApiModelProperty("中奖子类型: none,niec,mege,super,sensational")
+    @ApiModelProperty("中奖子类型: none,nice,mega,super,sensational")
     private String rewardSubType;
     @ApiModelProperty("中奖总金额")
     private Long totalRewardAmount;

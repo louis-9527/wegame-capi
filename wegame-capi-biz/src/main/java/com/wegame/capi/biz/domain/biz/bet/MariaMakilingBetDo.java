@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
@@ -15,9 +16,10 @@ import java.io.Serializable;
  * Mysterious正常投注请求参数
  */
 @Data
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MariaMakilingBetDo implements Validate, Serializable {
+public class MariaMakilingBetDo implements Validate ,Serializable {
     @ApiModelProperty(value = "投注金额", required = true)
     private Long betAmount;
     /**
