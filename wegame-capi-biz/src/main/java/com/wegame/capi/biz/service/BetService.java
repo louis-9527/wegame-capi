@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.bet.AbstractBetContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +31,7 @@ public class BetService {
     @Autowired
     Map<String, AbstractBetContext> contextMap;
 
-    public BetResultDo bet(BetDo betDo) {
+    public  BetResultDo bet(BetDo<T> betDo) {
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_PARAM);
         GameTypeEnum gameType = GameTypeEnum.valueOfCode(betDo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);

@@ -109,7 +109,7 @@ spring:
             pool-prepared-statements: false
   data:
     mongodb:
-      uri: mongodb+srv://DEVnbaBACKENDuser:5rs4P71xD2zHbjpx@nba-backend-dev.yuens.mongodb.net/wegame_mdb?retryWrites=true&w=majority&readPreference=secondaryPreferred
+      uri: mongodb://172.31.27.141:27017/wegame_mdb
 ## fastjson
 fastjson:
   parser:
