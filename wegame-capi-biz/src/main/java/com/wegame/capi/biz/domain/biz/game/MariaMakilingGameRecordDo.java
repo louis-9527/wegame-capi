@@ -85,6 +85,8 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                             .map(item -> MariaMakilingBetResultVo.MariaMakilingRewardLineVo.builder()
                                     .multiple(item.getMultiple())
                                     .odds(item.getOdds())
+                                    .rewardLineType(Objects.nonNull(item.getRewardLineType()) ? item.getRewardLineType().getCode() : "")
+                                    .rewardLineSubType(Objects.nonNull(item.getRewardLineSubType()) ? item.getRewardLineSubType().getCode() : "")
                                     .symbolIdList(Optional.ofNullable(item.getSymbolList())
                                             .orElse(Collections.emptyList())
                                             .stream()

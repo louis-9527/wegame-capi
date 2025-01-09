@@ -2,6 +2,8 @@ package com.wegame.capi.biz.domain.biz.reward;
 
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
+import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
+import com.wegame.capi.common.enums.RewardLineTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,6 +42,14 @@ public class RewardLineDo implements Serializable {
      * 倍率
      */
     private BigDecimal multiple;
+    /**
+     * 中奖线类型
+     */
+    private RewardLineTypeEnum rewardLineType;
+    /**
+     * 中奖线子类型
+     */
+    private RewardLineSubTypeEnum rewardLineSubType;
     /**
      * 中奖元素
      */
