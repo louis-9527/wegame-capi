@@ -38,7 +38,7 @@ public class RewardRuleLineDo implements Serializable {
     /**
      * 中奖线子类型
      */
-    private RewardLineSubTypeEnum rewardLineSubType = RewardLineSubTypeEnum.SCATTER;
+    private RewardLineSubTypeEnum rewardLineSubType;
     /**
      * 中奖线的中奖元素列表
      */

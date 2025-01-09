@@ -1,4 +1,5 @@
-use `wegame_user_db`;
+use
+`wegame_user_db`;
 
 -- ----------------------------
 -- Table structure for user
@@ -7,7 +8,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`
 (
     `id`             bigint       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-    `p_id`    varchar(64)  NOT NULL COMMENT '平台id',
+    `p_id`           varchar(64)  NOT NULL COMMENT '平台id',
     `player_id`      varchar(128) NOT NULL COMMENT '用户姓名',
     `player_name`    varchar(128) NOT NULL COMMENT '用户姓名',
     `nick_name`      varchar(50)  NOT NULL DEFAULT '' COMMENT '用户昵称',
