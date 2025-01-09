@@ -57,7 +57,7 @@ public class MariaMakilingBetResultVo implements Serializable {
         private List<SymbolIndexVo> symbolIndexList;
         @ApiModelProperty("中奖线元素Id列表")
         private List<String> symbolIdList;
-        @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率(1 + 倍率) = 中奖金额）； " +
+        @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (1 + 倍率) = 中奖金额）； " +
                 "SCATTER中奖计算公式（投注金额 * 赔率 = 中奖金额）")
         private Long rewardAmount;
         @ApiModelProperty("投注金额")
