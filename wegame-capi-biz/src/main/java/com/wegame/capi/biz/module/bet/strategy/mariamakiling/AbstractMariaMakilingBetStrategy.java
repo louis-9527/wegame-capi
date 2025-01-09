@@ -112,7 +112,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
                 .credit(userCredit)
-                .overallRewardAmount(Objects.nonNull(firstGameRecord.getRewardResult()) ? firstGameRecord.getRewardResult().getBetAmount() : 0L)
+                .overallRewardAmount(Objects.nonNull(firstGameRecord.getRewardResult()) ? firstGameRecord.getRewardResult().getTotalRewardAmount() : 0L)
                 .resultDetail(firstGameRecord)
                 .build();
     }

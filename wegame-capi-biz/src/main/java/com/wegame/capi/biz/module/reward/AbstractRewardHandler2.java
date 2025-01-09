@@ -32,7 +32,7 @@
 //
 //    public abstract boolean hasRewardFreeSpin(GameInfoDo gameInfo, WheelDo wheel);
 //
-//    public abstract RewardRuleResultDo calcRewardLines(RewardRuleDo rewardRuleDo);
+////    public abstract RewardRuleResultDo calcRewardLines(RewardRuleDo rewardRuleDo);
 //
 //    //    public abstract RewardSubTypeEnum rewardSubType(RewardHandleDo rewardHandleDo, RewardResultDo rewardResultDo);
 //

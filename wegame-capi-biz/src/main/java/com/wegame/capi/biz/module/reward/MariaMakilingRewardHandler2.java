@@ -21,11 +21,13 @@
 //import com.wegame.capi.common.enums.SymbolEnum;
 //import com.wegame.capi.common.enums.SymbolTypeEnum;
 //import lombok.extern.slf4j.Slf4j;
+//import org.apache.commons.collections4.CollectionUtils;
 //import org.apache.commons.lang3.StringUtils;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Component;
 //
 //import java.util.*;
+//import java.util.stream.Collectors;
 //
 //import static com.wegame.capi.common.constants.GameConstants.*;
 //
@@ -122,78 +124,56 @@
 //        SymbolDo[][] symbolArr = wheel.getSymbolArr();
 //        // Map<第一列元素, TreeMap<列序号，满足规则的元素列表>
 //        Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> map = new HashMap<>();
+//        //// 目标元素集合targetSymbolSet
+//        Set<SymbolDo> targetSymbolSet = new HashSet<>();
 //        // 1、处理第一列
 //        for (int row = 0; row < gameInfo.getRow(); row++) {
-//            map.put(symbolArr[0][0], new TreeMap<>());
+//            SymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
+//            targetSymbolSet.add(targetSymbol);
+//            map.put(targetSymbol, new TreeMap<>());
 //        }
-//        Set<SymbolDo> symbolTargetSet = map.keySet();
-//        // 2、循环处理
+//        // 2、循环处理(从第1列开始处理)
 //        for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+//            Integer currentColum = colum;
 //            for (int row = 0; row < gameInfo.getRow(); row++) {
-//                if (Objects.equals(colum, 0) && Objects.equals(row, 0)) {
-//                    map.put(symbolArr[row][colum], buildTreeMap(row, colum, symbolArr[row][colum]));
-//                } else {
-//                    // 上一个序号的数据是否为空， 为空则不处理
-//                    map.get
-//                    boolean isTargetSymbol = orNotTargetSymbol(symbolTargetSet, symbolArr[row][colum]);
-//                    if (isTargetSymbol) {
-//
+//                Integer currentRow = row;
+//                // 处理非第2,3,4...列
+//                List<SymbolDo> hitTargetSymbolList = hitTargetSymbolList(targetSymbolSet, symbolArr[row][colum]);
+//                for (SymbolDo symbol : CollectionUtils.emptyIfNull(hitTargetSymbolList)) {
+//                    TreeMap<Integer, List<RewardRuleSymbolDo>> treeMap = map.get(symbol);
+//                    if (CollectionUtils.isEmpty(treeMap.get(currentColum - 1))) {
+//                        // 上一列的数据为空，则不处理
+//                        // do nothing
+//                    } else {
+//                        RewardRuleSymbolDo rewardRuleSymbol = RewardRuleSymbolDo.builder()
+//                                .symbol(symbol)
+//                                .symbolIndex(SymbolIndexDo.build(currentRow, currentColum))
+//                                .build();
+//                        if (Objects.isNull(treeMap.get(currentColum))) {
+//                            List<RewardRuleSymbolDo> list = new ArrayList<>();
+//                            list.add(rewardRuleSymbol); // todo
+//                            treeMap.put(currentColum, list);
+//                        } else {
+//                            treeMap.get(currentColum).add(rewardRuleSymbol);
+//                        }
 //                    }
 //                }
-//                //                SymbolDo symbolDo = symbolArr[row][colum];
-//                //                if (this.isWild(symbolDo)) {
-//                //                    // 所有第一列元素的都添加(scatter除外)
-//                //                    for (SymbolDo firstSymbol : firstColumSymbolMapping.keySet()) {
-//                //                        if (!isScatter(firstSymbol)) {
-//                //                            this.addSymbolMapping(secondColumSymbolMapping, firstSymbol, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).symbolIndex(SymbolIndexDo.build(row, colum)).build());
-//                //                        }
-//                //                    }
-//                //                } else if (isFirstColumSymbolId(firstColumSymbolMapping, symbolDo)) {
-//                //                    this.addSymbolMapping(secondColumSymbolMapping, symbolDo, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).symbolIndex(SymbolIndexDo.build(row, colum)).build());
-//                //                }
 //            }
 //        }
-//
-////        // 第一列中奖元素映射<元素,中奖规则元素列表>  // 初始化第一列数据
-////        Map<SymbolDo, List<RewardRuleSymbolDo>> firstColumSymbolMapping = this.initFirstColumSymbol(rewardRuleDo);
-////        // 本轮必要元素每一列出现的统计.<元素,<列号，本列中奖规则元素列表>>
-////        Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping = new HashMap<>();
-////
-////        SymbolDo[][] symbolArr = rewardRuleDo.getSymbolArr();
-////        // 第一列初始化到统计的数据中去
-////        firstColumSymbolMapping.values().stream().flatMap(Collection::stream)
-////                .forEach(firstSymbol -> this.addSymbolMapping(secondColumSymbolMapping, firstSymbol.getSymbol(), firstSymbol));
-////
-////        // 从第二列开始循环
-////        for (int colum = 1; colum < symbolArr[0].length; colum++) {
-////            for (int row = 0; row < symbolArr.length; row++) {
-////                SymbolDo symbolDo = symbolArr[row][colum];
-////                if (this.isWild(symbolDo)) {
-////                    // 所有第一列元素的都添加(scatter除外)
-////                    for (SymbolDo firstSymbol : firstColumSymbolMapping.keySet()) {
-////                        if (!isScatter(firstSymbol)) {
-////                            this.addSymbolMapping(secondColumSymbolMapping, firstSymbol, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).symbolIndex(SymbolIndexDo.build(row, colum)).build());
-////                        }
-////                    }
-////                } else if (isFirstColumSymbolId(firstColumSymbolMapping, symbolDo)) {
-////                    this.addSymbolMapping(secondColumSymbolMapping, symbolDo, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).symbolIndex(SymbolIndexDo.build(row, colum)).build());
-////                }
-////            }
-////        }
-////        // 中奖线统计
-////        return generatorRewardLines(secondColumSymbolMapping);
-//        return null;
+//        // 3、统计中奖线
+//        List<RewardRuleLineDo> list = new ArrayList<>();
+//        // 4、返回中奖线列表
+//        return list;
 //    }
 //
-//    private boolean orNotTargetSymbol(Set<SymbolDo> symbolTargetSet, SymbolDo symbolDo) {
+//    private List<SymbolDo> hitTargetSymbolList(Set<SymbolDo> symbolTargetSet, SymbolDo symbolDo) {
 //        return symbolTargetSet.stream()
 //                .filter(item -> Objects.equals(item, symbolDo) || Objects.equals(symbolDo.getSymbolType(), SymbolEnum.Wild))
-//                .findFirst()
-//                .orElse(null) != null;
+//                .collect(Collectors.toList());
 //    }
 //
 //    private TreeMap<Integer, List<RewardRuleSymbolDo>> buildTreeMap(int row, int colum, SymbolDo symbol) {
-//        TreeMap<Integer, List<RewardRuleSymbolDo>> map = new TreeMap<>();
+//        TreeMap<Integer, List<RewardRuleSymbolDo>> map = new TreeMap<Integer, List<RewardRuleSymbolDo>>();
 //        map.put(colum, Arrays.asList(RewardRuleSymbolDo.builder()
 //                .symbol(symbol)
 //                .symbolIndex(SymbolIndexDo.build(row, colum))

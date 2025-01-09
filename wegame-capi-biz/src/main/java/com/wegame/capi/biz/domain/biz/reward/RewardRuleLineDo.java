@@ -2,6 +2,7 @@ package com.wegame.capi.biz.domain.biz.reward;
 
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
+import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
 import com.wegame.capi.common.enums.RewardLineTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,10 @@ public class RewardRuleLineDo implements Serializable {
      * 中奖线类型
      */
     private RewardLineTypeEnum rewardLineType;
+    /**
+     * 中奖线子类型
+     */
+    private RewardLineSubTypeEnum rewardLineSubType = RewardLineSubTypeEnum.SCATTER;
     /**
      * 中奖线的中奖元素列表
      */

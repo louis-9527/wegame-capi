@@ -14,6 +14,7 @@ import com.wegame.capi.biz.domain.biz.reward.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
+import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,12 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         // 中奖坐标列表
         List<RewardLineDo> rewardLineList = Lists.newArrayList();
         for (RewardRuleLineDo rewardRuleLine : rewardRuleResultDo.getRewardRuleLineList()) {
+            // todo fix 设置中奖线子类型
+            if (rewardRuleLine.isCommonReward()) {
+                rewardRuleLine.setRewardLineSubType(RewardLineSubTypeEnum.COMMON);
+            } else {
+                rewardRuleLine.setRewardLineSubType(RewardLineSubTypeEnum.SCATTER);
+            }
             // 获取赔率
             OddsCalculateDo oddsCalculateDo = OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType());
             AssertUtil.assertNotNull(oddsCalculateDo, ErrorCode.ERR_INTER, "oddsCalculateDo is null");
