@@ -26,7 +26,7 @@ public class RewardRuleSymbolDo implements Serializable {
      */
     private GameTypeEnum gameType;
     /**
-     * 中奖元素坐标
+     * 中奖元素
      */
     private SymbolDo symbol;
     /**
