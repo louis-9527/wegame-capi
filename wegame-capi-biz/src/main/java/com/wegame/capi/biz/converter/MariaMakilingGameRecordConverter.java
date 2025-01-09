@@ -5,6 +5,7 @@ import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -36,7 +37,7 @@ public class MariaMakilingGameRecordConverter {
                 .betAmount(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getBetAmount).orElse(0L))
                 .rewardAmount(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getTotalRewardAmount).orElse(0L))
                 .spinsResult(SymbolBuilder.build(gameRecordDo.getWheel().getSymbolArr()))
-                .multiple(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getTotalMultiple).orElse(null))
+                .multiple(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getTotalMultiple).orElse(BigDecimal.ZERO))
                 .build();
     }
 }
