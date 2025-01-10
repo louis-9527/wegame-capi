@@ -29,3 +29,4 @@ RUN mkdir -p /log/wegame-capi
 WORKDIR /opt/wegame-capi
 RUN chmod 777 /opt/wegame-capi/target/wegame-capi-1.0.0.jar
 WORKDIR /opt/wegame-capi/target
+RUN npm install -g aws4
