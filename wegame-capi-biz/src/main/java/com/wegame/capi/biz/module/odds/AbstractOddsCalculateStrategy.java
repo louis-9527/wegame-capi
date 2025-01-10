@@ -24,17 +24,17 @@ public abstract class AbstractOddsCalculateStrategy implements OddsCalculateStra
      * @param oddsCalculateDo
      * @return
      */
-    public abstract Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> getOddsMap(OddsCalculateDo oddsCalculateDo);
+    public abstract Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> getOddsConfig(OddsCalculateDo oddsCalculateDo);
 
     @Override
     public BigDecimal calculateOdds(OddsCalculateDo oddsCalculateDo) {
         long current = System.currentTimeMillis();
         AssertUtil.assertNotNull(oddsCalculateDo, ErrorCode.ERR_INTER, "oddsCalculate is required");
-        Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> oddsMap = getOddsMap(oddsCalculateDo);
+        Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> oddsMap = getOddsConfig(oddsCalculateDo);
         if (MapUtils.isEmpty(oddsMap)) {
             return BigDecimal.ZERO;
         }
-        Map<OddsTypeEnum, BigDecimal> map = oddsMap.get(String.valueOf(oddsCalculateDo.getSymbol()));
+        Map<OddsTypeEnum, BigDecimal> map = oddsMap.get(SymbolEnum.valueOfId(oddsCalculateDo.getSymbol().getId()));
         if (MapUtils.isEmpty(map)) {
             return BigDecimal.ZERO;
         }
