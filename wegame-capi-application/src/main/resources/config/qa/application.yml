@@ -117,7 +117,7 @@ spring:
           type: com.alibaba.druid.pool.DruidDataSource
   data:
     mongodb:
-      uri: mongodb+srv://QATmakilingService:BYZI0NkzBB7mtmQjx8zY@makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority
+      uri: mongodb+srv://QATmakilingService2:QWR0ZEgUi1MiUYZB@makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority
 ## fastjson
 fastjson:
   parser:
