@@ -21,6 +21,9 @@ ENV JAVA_HOME=/usr/lib/jvm/java-8-amazon-corretto
 ENV PATH=$PATH:$JAVA_HOME/bin
 ENV CLASSPATH=.:$JAVA_HOME/lib/rt.jar
 
+#install nodejs npm
+RUN apk add --no-cache nodejs npm python3 make g++
+
 #install jmx exporter
 RUN mkdir -p /opt/jmx-prometheus-javaagent
 RUN wget -O /opt/jmx-prometheus-javaagent/jmx_prometheus_javaagent-0.17.0.jar https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.17.0/jmx_prometheus_javaagent-0.17.0.jar
