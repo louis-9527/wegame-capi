@@ -115,9 +115,12 @@ spring:
           password: ENC(Lm5nLGO2RTUPqHi/nkBU31uk6Zn/vV6GevM9jwwx4Bfck539re9GPagkh6bBi1t/lgexud3+wkye7Gz8qXTqhg==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           type: com.alibaba.druid.pool.DruidDataSource
+#  data:
+#    mongodb:
+#      uri: mongodb+srv://QATmakilingService:BYZI0NkzBB7mtmQjx8zY@makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority
   data:
     mongodb:
-      uri: mongodb+srv://QATmakilingService:BYZI0NkzBB7mtmQjx8zY@makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority
+      uri: mongodb://16.162.139.203:27017/wegame_mdb
 ## fastjson
 fastjson:
   parser:
