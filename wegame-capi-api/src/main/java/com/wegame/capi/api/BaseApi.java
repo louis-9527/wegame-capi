@@ -1,13 +1,9 @@
 package com.wegame.capi.api;
 
-import com.wegame.capi.api.domain.req.BaseReq;
-import com.wegame.capi.api.domain.req.singlewallet.SingleWalletBaseReq;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.BeanUtil;
 import com.wegame.base.utils.SingleWalletSignatureUtil;
-import com.wegame.base.utils.SportsSdkSignatureUtil;
+import com.wegame.capi.api.domain.req.singlewallet.SingleWalletBaseReq;
 import com.wegame.capi.common.annotation.Client;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -56,18 +52,6 @@ public class BaseApi {
 
     @Autowired
     RestTemplate restTemplate;
-
-    public void assembleSignature(BaseReq req) {
-        String agentKey;
-        if (StringUtils.equals(req.getPlatformId(), cpPlatformId)) {
-            agentKey = cpAgentKey;
-        } else if (StringUtils.equals(req.getPlatformId(), igoPlatformId)) {
-            agentKey = igoAgentKey;
-        } else {
-            throw new BusinessException(ErrorCode.ERR_PARAM);
-        }
-        req.setSignature(SportsSdkSignatureUtil.sign(agentKey, BeanUtil.toMap(req)));
-    }
 
     public void assembleSingleSignature(SingleWalletBaseReq req) {
         String hash = hash(req.getChannelId(), req.getPlayerName(), req.getCreateTime(), req.getRefId());

@@ -2,6 +2,7 @@ package com.wegame.capi.test.application.controller;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.client.domain.request.UserLoginRequest;
 import com.wegame.capi.test.BaseTest;
 import com.wegame.capi.application.controller.UserController;
 import com.wegame.capi.common.context.UserInfo;
@@ -32,7 +33,17 @@ public class UserControllerTest extends BaseTest {
         Assert.isNull(response.getData());
     }
 
-    // 补充单测 todo @maidong
+    @Test
+    public void test_login() {
+        UserLoginRequest request = new UserLoginRequest();
+        CommonResponse<UserInfo> response = userController.login(null, request);
+        Assert.notNull(response);
+        Assert.isNull(response.getData());
+    }
 
+    @Test
+    public void test_getCredit() {
+
+    }
 
 }
