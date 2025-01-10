@@ -2,6 +2,7 @@ package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 
@@ -19,6 +20,7 @@ public class UserInfoBuilder {
                 .pId(userLoginDo.getPId())
                 .channelId(userLoginDo.getChannelId())
                 .gameId(userLoginDo.getGameId())
+                .gameType(GameTypeEnum.valueOfId(userLoginDo.getGameId()))
                 .playerId(userLoginDo.getPlayerId())
                 .playerName(userLoginDo.getPlayerName())
                 .nickName(userLoginDo.getNickName())

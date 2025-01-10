@@ -5,6 +5,7 @@ import com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
@@ -31,7 +32,7 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
     @Autowired
     private SingleWalletService singleWalletService;
 
-   // @Scheduled(cron = "0 0/5 * * * ?")
+    // @Scheduled(cron = "0 0/5 * * * ?")
     public void schedule() {
         scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(), this);
     }
@@ -45,12 +46,12 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
         int pageNo = 1;
         List<BetRecordDo> recordList;
         do {
+            // todo 定时任务gametype 通用
             recordList = betRecordService.list(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
                     .endCreateTime(fiveMinutesAgo)
                     .limit(DEFAULT_PAGE_SIZE)
                     .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
-
-                    .build());
+                    .build(),GameTypeEnum.MARIA_MAKILING);
             Optional.ofNullable(recordList)
                     .orElse(Collections.emptyList())
                     .forEach(this::handle);
@@ -71,7 +72,8 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
                     .id(betRecordDo.getId())
                     .betId(betStatus.getLeft())
                     .status(BetStatusEnum.SUCCESS.getCode()).build();
-            betRecordService.update(updateRecord);
+            // todo 定时任务gametype 通用
+            betRecordService.update(updateRecord, GameTypeEnum.MARIA_MAKILING);
             return;
         }
         if (BetStatusEnum.FAIL == betStatus.getRight()) {
@@ -80,7 +82,8 @@ public class BetRecordBetStatusScheduler extends AbstractScheduler implements Ru
                     .id(betRecordDo.getId())
                     .betId(betStatus.getLeft())
                     .status(BetStatusEnum.FAIL.getCode()).build();
-            betRecordService.update(updateRecord);
+            // todo 定时任务gametype 通用
+            betRecordService.update(updateRecord, GameTypeEnum.MARIA_MAKILING);
         }
     }
 }

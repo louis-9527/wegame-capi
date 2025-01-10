@@ -42,7 +42,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
 
     private BetResultDo<MariaMakilingGameRecordDo> betForFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
         MariaMakilingBetDo betDetail = betDo.getBetDetail();
-        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId());
+        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), getGame().getGameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
         AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);

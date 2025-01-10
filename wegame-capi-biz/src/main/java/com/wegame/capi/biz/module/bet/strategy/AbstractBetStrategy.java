@@ -43,7 +43,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
      * @return 用户余额
      */
     public Long saveBetRecordAndBetWithPayout(BetRecordDo betRecordDo) {
-        Long betRecordId = betRecordService.add(betRecordDo);
+        Long betRecordId = betRecordService.add(betRecordDo, getGame().getGameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         // 调用单钱包
         SingleWalletBetWithPayoutRes betWithPayoutRes = SingleWalletBetWithPayoutRes.builder()
@@ -59,7 +59,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
                 .betId(betId)
                 .status(betWithPayoutRes.getBetStatus().getCode())
                 .build();
-        boolean ret = betRecordService.update(updateRecord);
+        boolean ret = betRecordService.update(updateRecord, getGame().getGameInfo().getGameType());
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         return AmountUtil.toLong(betWithPayoutRes.getCredit());
     }
