@@ -71,7 +71,13 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        // 校验-免费轮次数概率配置
+        int sum = MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG.values().stream().mapToInt(Integer::intValue).sum();
+        AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG ERR");
 
+        //        MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG.forEach((key, value) -> {
+        //            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER);
+        //        }) todo
     }
 
     /**
