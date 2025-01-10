@@ -10,6 +10,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
@@ -46,7 +47,7 @@ public class BetRecordController {
         request.setUserId(userInfo.getId());
 //        request.setPlayerId(userInfo.getPlayerId());
         BetRecordQuery query = BetRecordConverter.requestToQuery(request, "createTime");
-        long cnt = betRecordService.count(query, userInfo.getGameType());
+        long cnt = betRecordService.count(query, GameTypeEnum.valueOfId(userInfo.getGameId()));
         if (Objects.equals(cnt, 0L)) {
             return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                     request.getPageSize(),
@@ -58,7 +59,7 @@ public class BetRecordController {
         query.setLastCreateTime(request.getLastCreateTime());
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                BetRecordConverter.doToVoList(betRecordService.list(query, userInfo.getGameType())),
+                BetRecordConverter.doToVoList(betRecordService.list(query, GameTypeEnum.valueOfId(userInfo.getGameId()))),
                 cnt));
     }
 
@@ -69,7 +70,7 @@ public class BetRecordController {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id), userInfo.getGameType());
+        BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id), GameTypeEnum.valueOfId(userInfo.getGameId()));
         return CommonResponse.build(BetRecordConverter.doToVo(betRecordDo, false));
     }
 }

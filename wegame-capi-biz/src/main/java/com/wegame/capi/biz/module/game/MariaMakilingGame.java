@@ -32,12 +32,13 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     private static final Random random = new Random();
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     // todo 配置
-    private static final Map<Integer, Integer> map = new ImmutableMap.Builder<Integer, Integer>()
+    private static final Map<Integer, Integer> FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG = new ImmutableMap.Builder<Integer, Integer>()
             .put(10, 50)
             .put(11, 35)
             .put(12, 10)
             .put(13, 5)
             .build();
+
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
     @Autowired
@@ -192,7 +193,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     private Integer getWheelNumber() {
         int randomNumber = 1 + random.nextInt(100);
         int startVal = 0;
-        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
                 return entry.getKey();
             } else {
