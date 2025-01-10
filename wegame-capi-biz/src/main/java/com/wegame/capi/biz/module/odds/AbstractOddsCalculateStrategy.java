@@ -3,6 +3,8 @@ package com.wegame.capi.biz.module.odds;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.odds.OddsCalculateDo;
+import com.wegame.capi.common.enums.OddsTypeEnum;
+import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 
@@ -18,25 +20,25 @@ public abstract class AbstractOddsCalculateStrategy implements OddsCalculateStra
 
     /**
      * 获取赔率表 <br/>
-     * key: 元素id，val：{key: 赔率类型，val：赔率}
+     * key: 元素，val：{key: 赔率类型，val：赔率}
      * @param oddsCalculateDo
      * @return
      */
-    public abstract Map<String, Map<String, BigDecimal>> getOddsMap(OddsCalculateDo oddsCalculateDo);
+    public abstract Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> getOddsMap(OddsCalculateDo oddsCalculateDo);
 
     @Override
     public BigDecimal calculateOdds(OddsCalculateDo oddsCalculateDo) {
         long current = System.currentTimeMillis();
         AssertUtil.assertNotNull(oddsCalculateDo, ErrorCode.ERR_INTER, "oddsCalculate is required");
-        Map<String, Map<String, BigDecimal>> oddsMap = getOddsMap(oddsCalculateDo);
+        Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> oddsMap = getOddsMap(oddsCalculateDo);
         if (MapUtils.isEmpty(oddsMap)) {
             return BigDecimal.ZERO;
         }
-        Map<String, BigDecimal> map = oddsMap.get(String.valueOf(oddsCalculateDo.getSymbol().getId()));
+        Map<OddsTypeEnum, BigDecimal> map = oddsMap.get(String.valueOf(oddsCalculateDo.getSymbol()));
         if (MapUtils.isEmpty(map)) {
             return BigDecimal.ZERO;
         }
-        BigDecimal odds = map.get(oddsCalculateDo.getOddsType().getCode());
+        BigDecimal odds = map.get(oddsCalculateDo.getOddsType());
         BigDecimal val = Objects.isNull(odds) ? (BigDecimal.ZERO) : odds;
         log.info("odds cost time: {} ms", System.currentTimeMillis() - current);
         return val;

@@ -22,13 +22,13 @@ import java.util.Map;
 public class GameInfoDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
-     * 游戏类型
-     */
-    private GameTypeEnum gameType;
-    /**
      * 游戏id
      */
     private String id;
+    /**
+     * 游戏类型
+     */
+    private GameTypeEnum gameType;
     /**
      * 游戏名称
      */
