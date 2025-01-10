@@ -142,17 +142,6 @@ public class MariaMakilingGameHelper {
             .build();
 
     /**
-     * MARIA_MAKILING免费轮次数概率配置 <br/>
-     * Map<次数，次数对应概率>
-     */
-    public static final Map<Integer, Integer> MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG = new ImmutableMap.Builder<Integer, Integer>()
-            .put(10, 50)
-            .put(11, 35)
-            .put(12, 10)
-            .put(13, 5)
-            .build();
-
-    /**
      * MARIA_MAKILING正常轮元素概率配置
      */
     public static final Map<SymbolEnum, List<BigDecimal>> MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG = new ImmutableMap.Builder<SymbolEnum, List<BigDecimal>>()
@@ -355,7 +344,22 @@ public class MariaMakilingGameHelper {
                     new BigDecimal(0)))
             .build();
 
-    public static final Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> MARIA_MAKILING_COMMON_ODDS_CONFIG_MAP = new ImmutableMap.Builder<SymbolEnum, Map<OddsTypeEnum, BigDecimal>>()
+    /**
+     * MARIA_MAKILING免费轮次数概率配置 <br/>
+     * Map<次数，次数对应概率>
+     */
+    public static final Map<Integer, Integer> MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG = new ImmutableMap.Builder<Integer, Integer>()
+            .put(10, 50)
+            .put(11, 35)
+            .put(12, 10)
+            .put(13, 5)
+            .build();
+
+    /**
+     * 赔率配置
+     * Map<元素类型，Map<赔率类型，赔率值>>
+     */
+    public static final Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> MARIA_MAKILING_COMMON_ODDS_CONFIG = new ImmutableMap.Builder<SymbolEnum, Map<OddsTypeEnum, BigDecimal>>()
             .put(SymbolEnum.Symbol1001, new ImmutableMap.Builder<OddsTypeEnum, BigDecimal>()
                     .put(OddsTypeEnum.THREE, new BigDecimal(0.1))
                     .put(OddsTypeEnum.FOUR, new BigDecimal(0.2))
