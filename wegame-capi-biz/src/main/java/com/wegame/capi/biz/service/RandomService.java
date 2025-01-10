@@ -9,7 +9,6 @@ import java.util.Random;
 @Component
 public class RandomService {
 
-    private Random random = new Random();
 
     /**
      * 生成随机数据[min, max]
@@ -18,6 +17,7 @@ public class RandomService {
      * @return
      */
     public int randomInt(int min, int max) {
+        Random random = new Random();
         AssertUtil.assertTrue(min < max, ErrorCode.ERR_INTER);
         return random.nextInt(max - min + 1) + min;
     }

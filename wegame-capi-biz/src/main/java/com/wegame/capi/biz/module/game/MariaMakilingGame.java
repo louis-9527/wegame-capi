@@ -12,9 +12,9 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.reward.RewardHandler;
 import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
-import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,13 +25,11 @@ import static com.wegame.capi.biz.helper.MariaMakilingGameHelper.*;
 
 @Slf4j
 @Component
-public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
+public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> implements InitializingBean {
 
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
-    @Autowired
-    NacosMariaMakilingConfig nacosMariaMakilingConfig;
 
     @Override
     public GameInfoDo getGameInfo() {
@@ -69,6 +67,17 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 .wheel(wheel)
                 .rewardResult(rewardResult)
                 .build();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        // 校验-免费轮次数概率配置
+        int sum = MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG.values().stream().mapToInt(Integer::intValue).sum();
+        AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG ERR");
+
+        //        MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG.forEach((key, value) -> {
+        //            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER);
+        //        }) todo
     }
 
     /**

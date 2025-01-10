@@ -1,24 +1,24 @@
 package com.wegame.capi.test.biz.module.game;
 
 import com.wegame.base.utils.FastJsonUtils;
-import com.wegame.capi.test.BaseTest;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.game.MariaMakilingGame;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.SymbolEnum;
+import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.junit.platform.commons.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.wegame.capi.biz.module.game.AbstractSymbol.randomOneSymbol;
 
 @Slf4j
 public class MariaMakilingGameTest extends BaseTest {
@@ -38,16 +38,16 @@ public class MariaMakilingGameTest extends BaseTest {
         for (int index = 1; index <= 5; index++) {
             Map<String, AtomicInteger> map = new HashMap<>();
             for (int i = 0; i < 100000000; i++) {
-                String symbolId = randomOneSymbol(index, mariaMakilingGame.getProbabilisticConfig(playDo));
-                if (StringUtils.isNotBlank(symbolId)) {
-                    if (map.containsKey(symbolId)) {
-                        AtomicInteger atomicInteger = map.get(symbolId);
+                SymbolEnum symbol = mariaMakilingGame.randomOneSymbol(index, mariaMakilingGame.getProbabilisticConfig(playDo));
+                if (Objects.nonNull(symbol)) {
+                    if (map.containsKey(symbol)) {
+                        AtomicInteger atomicInteger = map.get(symbol);
                         atomicInteger.incrementAndGet();
-                        map.put(symbolId, atomicInteger);
+                        map.put(symbol.getId(), atomicInteger);
                     } else {
                         AtomicInteger atomicInteger = new AtomicInteger(0);
                         atomicInteger.incrementAndGet();
-                        map.put(symbolId, atomicInteger);
+                        map.put(symbol.getId(), atomicInteger);
                     }
                 } else {
                     log.error("symbolDo is null");
@@ -75,16 +75,16 @@ public class MariaMakilingGameTest extends BaseTest {
         for (int index = 1; index <= 5; index++) {
             Map<String, AtomicInteger> map = new HashMap<>();
             for (int i = 0; i < 100000000; i++) {
-                String symbolId = randomOneSymbol(index, mariaMakilingGame.getProbabilisticConfig(playDo));
-                if (StringUtils.isNotBlank(symbolId)) {
-                    if (map.containsKey(symbolId)) {
-                        AtomicInteger atomicInteger = map.get(symbolId);
+                SymbolEnum symbol = mariaMakilingGame.randomOneSymbol(index, mariaMakilingGame.getProbabilisticConfig(playDo));
+                if (Objects.nonNull(symbol)) {
+                    if (map.containsKey(symbol)) {
+                        AtomicInteger atomicInteger = map.get(symbol.getId());
                         atomicInteger.incrementAndGet();
-                        map.put(symbolId, atomicInteger);
+                        map.put(symbol.getId(), atomicInteger);
                     } else {
                         AtomicInteger atomicInteger = new AtomicInteger(0);
                         atomicInteger.incrementAndGet();
-                        map.put(symbolId, atomicInteger);
+                        map.put(symbol.getId(), atomicInteger);
                     }
                 } else {
                     log.error("symbolDo is null");

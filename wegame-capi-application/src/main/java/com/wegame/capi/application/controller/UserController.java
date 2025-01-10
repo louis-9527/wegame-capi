@@ -3,7 +3,7 @@ package com.wegame.capi.application.controller;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.converter.UserLoginConvert;
-import com.wegame.capi.biz.service.UserLoginService;
+import com.wegame.capi.biz.service.LoginService;
 import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
 import com.wegame.capi.common.Constants;
@@ -32,7 +32,7 @@ import javax.validation.Valid;
 public class UserController {
 
     @Autowired
-    UserLoginService userLoginService;
+    LoginService loginService;
     @Autowired
     UserService userService;
 
@@ -41,7 +41,7 @@ public class UserController {
     @PostMapping("/login")
     public CommonResponse<UserInfo> login(HttpServletResponse response, @Valid @RequestBody UserLoginRequest request) {
         request.validateParam();
-        return CommonResponse.build(userLoginService.login(response, UserLoginConvert.requestToDo(request)));
+        return CommonResponse.build(loginService.login(response, UserLoginConvert.requestToDo(request)));
     }
 
     @LoginRequired
@@ -49,7 +49,7 @@ public class UserController {
     @GetMapping("/logout")
     public CommonResponse<Boolean> logout(HttpServletRequest request) {
         String token = request.getHeader(Constants._TOKEN_);
-        return CommonResponse.build(userLoginService.logout(token));
+        return CommonResponse.build(loginService.logout(token));
     }
 
     @LoginRequired

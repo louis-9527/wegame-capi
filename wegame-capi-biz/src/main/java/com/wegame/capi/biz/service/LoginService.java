@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-public class UserLoginService {
+public class LoginService {
     @Autowired
     UserService userService;
     @Autowired
