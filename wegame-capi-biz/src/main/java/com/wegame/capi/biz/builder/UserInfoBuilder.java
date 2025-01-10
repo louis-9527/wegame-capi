@@ -20,7 +20,6 @@ public class UserInfoBuilder {
                 .pId(userLoginDo.getPId())
                 .channelId(userLoginDo.getChannelId())
                 .gameId(userLoginDo.getGameId())
-                .gameType(GameTypeEnum.valueOfId(userLoginDo.getGameId()))
                 .playerId(userLoginDo.getPlayerId())
                 .playerName(userLoginDo.getPlayerName())
                 .nickName(userLoginDo.getNickName())

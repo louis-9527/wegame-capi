@@ -33,8 +33,6 @@ public class UserInfo implements Serializable {
     private String channelId;
     @ApiModelProperty(value = "游戏id")
     private String gameId;
-    @ApiModelProperty(value = "游戏类型")
-    private GameTypeEnum gameType;
     @ApiModelProperty(value = "用户id")
     private String playerId;
     @ApiModelProperty(value = "用户姓名")
