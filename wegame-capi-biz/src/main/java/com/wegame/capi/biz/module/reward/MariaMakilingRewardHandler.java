@@ -9,6 +9,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
@@ -66,11 +67,11 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     // 所有第一列元素的都添加(scatter除外)
                     for (SymbolDo firstSymbol : firstColumSymbolMapping.keySet()) {
                         if (!isScatter(firstSymbol)) {
-                            this.addSymbolMapping(secondColumSymbolMapping, firstSymbol, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).symbolIndex(SymbolIndexDo.build(row, colum)).build());
+                            this.addSymbolMapping(secondColumSymbolMapping, firstSymbol, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).symbolIndex(SymbolIndexFactory.build(row, colum)).build());
                         }
                     }
                 } else if (isFirstColumSymbolId(firstColumSymbolMapping, symbolDo)) {
-                    this.addSymbolMapping(secondColumSymbolMapping, symbolDo, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).symbolIndex(SymbolIndexDo.build(row, colum)).build());
+                    this.addSymbolMapping(secondColumSymbolMapping, symbolDo, RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolDo).symbolIndex(SymbolIndexFactory.build(row, colum)).build());
                 }
             }
         }
@@ -151,9 +152,9 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         firstColumSymbolMapping.put(symbolArr[1][0], Lists.newArrayList());
         firstColumSymbolMapping.put(symbolArr[2][0], Lists.newArrayList());
 
-        firstColumSymbolMapping.get(symbolArr[0][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[0][0]).symbolIndex(SymbolIndexDo.build(0, 0)).build());
-        firstColumSymbolMapping.get(symbolArr[1][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[1][0]).symbolIndex(SymbolIndexDo.build(1, 0)).build());
-        firstColumSymbolMapping.get(symbolArr[2][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[2][0]).symbolIndex(SymbolIndexDo.build(2, 0)).build());
+        firstColumSymbolMapping.get(symbolArr[0][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[0][0]).symbolIndex(SymbolIndexFactory.build(0, 0)).build());
+        firstColumSymbolMapping.get(symbolArr[1][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[1][0]).symbolIndex(SymbolIndexFactory.build(1, 0)).build());
+        firstColumSymbolMapping.get(symbolArr[2][0]).add(RewardRuleSymbolDo.builder().gameType(rewardRuleDo.getGameType()).symbol(symbolArr[2][0]).symbolIndex(SymbolIndexFactory.build(2, 0)).build());
         return firstColumSymbolMapping;
     }
 
