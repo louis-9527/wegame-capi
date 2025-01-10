@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.module.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;
@@ -50,7 +51,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
                 .betStatus(BetStatusEnum.SUCCESS)
                 .build();
 
-       // singleWalletService.betWithPayout(betRecordDo);
+       // BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
         // 判断返回结果
         String betId = betWithPayoutRes.getBetId();
         // 更新记录
