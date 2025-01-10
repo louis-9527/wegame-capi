@@ -14,6 +14,7 @@ import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ import static com.wegame.capi.biz.helper.MariaMakilingGameHelper.*;
 
 @Slf4j
 @Component
-public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
+public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> implements InitializingBean {
 
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     @Autowired
@@ -66,6 +67,11 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 .wheel(wheel)
                 .rewardResult(rewardResult)
                 .build();
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
     }
 
     /**
