@@ -1,7 +1,6 @@
 package com.wegame.capi.common.context;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
