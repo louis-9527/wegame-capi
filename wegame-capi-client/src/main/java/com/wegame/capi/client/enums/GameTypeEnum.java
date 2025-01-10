@@ -1,6 +1,5 @@
 package com.wegame.capi.client.enums;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum GameTypeEnum {
 
-    MARIA_MAKILING("zhumeng001", "MariaMakiling", "maria_makiling_bet_record");;
+    MARIA_MAKILING("zhumeng001", "MariaMakiling", "maria_makiling_bet_record");
 
     /**
      * 枚举码.
