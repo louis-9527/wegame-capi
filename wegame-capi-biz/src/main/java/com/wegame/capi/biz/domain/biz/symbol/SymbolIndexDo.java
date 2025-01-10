@@ -7,7 +7,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-import static com.wegame.capi.biz.module.reward.SymbolIndexContext.*;
+import static com.wegame.capi.biz.domain.biz.symbol.SymbolIndexContext.*;
 
 /**
  * 元素坐标

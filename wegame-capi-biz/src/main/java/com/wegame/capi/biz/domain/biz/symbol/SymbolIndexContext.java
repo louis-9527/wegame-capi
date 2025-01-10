@@ -1,8 +1,7 @@
-package com.wegame.capi.biz.module.reward;
+package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
