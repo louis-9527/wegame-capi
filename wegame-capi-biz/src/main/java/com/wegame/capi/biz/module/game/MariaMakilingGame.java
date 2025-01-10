@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.module.game;
 
-import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
@@ -11,7 +10,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.reward.RewardHandler;
-import com.wegame.capi.biz.util.MariaMakilingGameInfoUtil;
+import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -22,23 +21,13 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.wegame.capi.biz.util.MariaMakilingGameInfoUtil.MARIA_MAKILING_SCATTER;
-import static com.wegame.capi.biz.util.SymbolRandomUtil.randomOneSymbol;
+import static com.wegame.capi.biz.helper.MariaMakilingGameHelper.*;
 
 @Slf4j
 @Component
 public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
-    private static final Random random = new Random();
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
-    // todo 配置
-    private static final Map<Integer, Integer> FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG = new ImmutableMap.Builder<Integer, Integer>()
-            .put(10, 50)
-            .put(11, 35)
-            .put(12, 10)
-            .put(13, 5)
-            .build();
-
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
     @Autowired
@@ -46,7 +35,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
     @Override
     public GameInfoDo getGameInfo() {
-        return MariaMakilingGameInfoUtil.MARIA_MAKILING_GAME_INFO;
+        return MARIA_MAKILING_GAME_INFO;
     }
 
     @Override
@@ -57,7 +46,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     @Override
     public List<WheelDo> generate(GamePlayDo gamePlay) {
         GameInfoDo gameInfo = getGameInfo();
-        Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
+        Map<SymbolEnum, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
         if (gamePlay.isFreeSpinsFlag()) {
             return multiWheelGenerate(gameInfo, probabilisticConfig);
         } else {
@@ -88,12 +77,12 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo normalWheelGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo normalWheelGenerate(GameInfoDo gameInfo, Map<SymbolEnum, List<BigDecimal>> probabilisticConfig) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         for (int i = 0; i < gameInfo.getRow(); i++) {
             for (int j = 0; j < gameInfo.getColumn(); j++) {
-                String symbolId = randomOneSymbol(j, probabilisticConfig);
-                SymbolDo symbolDo = gameInfo.getSymbolById(symbolId);
+                SymbolEnum symbol = randomOneSymbol(j, probabilisticConfig);
+                SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
                 AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
                 symbolArr[i][j] = symbolDo;
             }
@@ -110,7 +99,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo freeSpinsWheelGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo freeSpinsWheelGenerate(GameInfoDo gameInfo, Map<SymbolEnum, List<BigDecimal>> probabilisticConfig) {
         WheelDo wheelDo = normalWheelGenerate(gameInfo, probabilisticConfig);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
         // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
@@ -126,7 +115,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             }
             if (!hasScatter) {
                 // 生成一个0到行之间的随机整数
-                int randomRow = random.nextInt(gameInfo.getRow());
+                int randomRow = randomService.randomInt(0, gameInfo.getRow() - 1);
                 symbolArr[randomRow][cell] = MARIA_MAKILING_SCATTER;
             }
         }
@@ -142,7 +131,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮列表
      */
-    private List<WheelDo> multiWheelGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private List<WheelDo> multiWheelGenerate(GameInfoDo gameInfo, Map<SymbolEnum, List<BigDecimal>> probabilisticConfig) {
         int wheelNumber = getWheelNumber();
         List<WheelDo> wheels = new ArrayList<>();
         WheelDo preWheel = null;
@@ -156,8 +145,8 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             for (int i = 0; i < gameInfo.getRow(); i++) {
                 for (int j = 0; j < gameInfo.getColumn(); j++) {
                     if (Objects.isNull(symbolArr[i][j]) || !Objects.equals(SymbolTypeEnum.WILD, symbolArr[i][j].getSymbolType())) {
-                        String symbolId = randomOneSymbol(j, probabilisticConfig);
-                        SymbolDo symbolDo = gameInfo.getSymbolById(symbolId);
+                        SymbolEnum symbol = randomOneSymbol(j, probabilisticConfig);
+                        SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
                         AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
                         symbolArr[i][j] = symbolDo;
                     }
@@ -173,17 +162,17 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         return wheels;
     }
 
-    public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
+    public Map<SymbolEnum, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
         if (gamePlay.isFreeSpinsFlag()) {
-            return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
+            return MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG;
         } else {
             switch (gamePlay.getBetSubType()) {
                 case NORMAL_BET:
                 case BUY_BET:
-                    return nacosMariaMakilingConfig.getCommonProbabilisticConfig();
+                    return MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG;
                 case FREE_SPINS_NORMAL_BET:
                 case FREE_SPINS_BUY_BET:
-                    return nacosMariaMakilingConfig.getFreeProbabilisticConfig();
+                    return MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG;
                 default:
                     throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
             }
@@ -191,9 +180,9 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     }
 
     private Integer getWheelNumber() {
-        int randomNumber = 1 + random.nextInt(100);
+        int randomNumber = randomService.randomInt(1, 100);
         int startVal = 0;
-        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG.entrySet())) {
+        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
                 return entry.getKey();
             } else {
