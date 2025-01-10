@@ -1,7 +1,6 @@
 package com.wegame.capi.common.context;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -33,8 +32,6 @@ public class UserInfo implements Serializable {
     private String channelId;
     @ApiModelProperty(value = "游戏id")
     private String gameId;
-    @ApiModelProperty(value = "游戏类型")
-    private GameTypeEnum gameType;
     @ApiModelProperty(value = "用户id")
     private String playerId;
     @ApiModelProperty(value = "用户姓名")
