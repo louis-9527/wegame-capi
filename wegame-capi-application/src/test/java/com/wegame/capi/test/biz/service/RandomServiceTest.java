@@ -31,7 +31,7 @@ public class RandomServiceTest extends BaseTest {
                 System.out.println(randomNumber);
             }
         } catch (Exception e) {
-
+            log.error("test_randomInt err, errMsg: {}", e.getMessage(), e);
         }
     }
 }

@@ -12,7 +12,6 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.reward.RewardHandler;
 import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
-import com.wegame.capi.infrastructure.config.nacos.NacosMariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,6 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
-    @Autowired
-    NacosMariaMakilingConfig nacosMariaMakilingConfig;
 
     @Override
     public GameInfoDo getGameInfo() {
