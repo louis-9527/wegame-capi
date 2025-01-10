@@ -1,14 +1,13 @@
-package com.wegame.capi.biz.util;
+package com.wegame.capi.biz.module.reward;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SymbolIndexUtil {
+public class SymbolIndexContext {
 
     private static final Map<String, SymbolIndexDo> SYMBOL_INDEX_DO_MAP = new ConcurrentHashMap<>();
     private static final String SYMBOL_INDEX_DO_MAP_KEY = "%d-%d";

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.wegame.capi.biz.util.SymbolRandomUtil.randomOneSymbol;
+import static com.wegame.capi.biz.module.game.AbstractSymbol.randomOneSymbol;
 
 @Slf4j
 public class MariaMakilingGameTest extends BaseTest {
