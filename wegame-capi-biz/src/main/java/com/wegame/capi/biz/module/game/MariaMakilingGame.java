@@ -71,13 +71,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // 校验-免费轮次数概率配置
-        int sum = MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG.values().stream().mapToInt(Integer::intValue).sum();
-        AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG ERR");
-
-        //        MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG.forEach((key, value) -> {
-        //            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER);
-        //        }) todo
+        configValidate();
     }
 
     /**
@@ -199,5 +193,53 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
             }
         }
         throw new BusinessException(ErrorCode.ERR_INTER);
+    }
+
+    private void configValidate() {
+        // 校验-免费轮次数概率配置
+        int sum = MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG.values()
+                .stream()
+                .reduce(0, Integer::sum);
+        AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG ERR");
+
+        GameInfoDo gameInfo = getGameInfo();
+        MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG.forEach((key, value) -> {
+            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG key: " + key.getId() + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), gameInfo.getColumn()), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG key: " + key.getId() + " ERR");
+        });
+        for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+            Integer columNo = colum;
+            Map<SymbolEnum, Integer> map = new HashMap<>();
+            MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG.entrySet().forEach(item -> {
+                int val = (item.getValue().get(columNo).multiply(new BigDecimal(100))).intValue();
+                if (val > 0) {
+                    map.put(item.getKey(), val);
+                }
+            });
+            Integer sumProbabilistic = map.values()
+                    .stream()
+                    .reduce(0, Integer::sum);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, 10000), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG ERR, columNo:" + columNo);
+        }
+
+        MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG.forEach((key, value) -> {
+            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG key: " + key.getId() + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), gameInfo.getColumn()), ErrorCode.ERR_INTER, "MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG key: " + key.getId() + " ERR");
+        });
+
+        for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+            Integer columNo = colum;
+            Map<SymbolEnum, Integer> map = new HashMap<>();
+            MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG.entrySet().forEach(item -> {
+                int val = (item.getValue().get(columNo).multiply(new BigDecimal(100))).intValue();
+                if (val > 0) {
+                    map.put(item.getKey(), val);
+                }
+            });
+            Integer sumProbabilistic = map.values()
+                    .stream()
+                    .reduce(0, Integer::sum);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, 10000), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG ERR, columNo:" + columNo);
+        }
     }
 }

@@ -60,7 +60,6 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
                 .stream()
                 .reduce(0, Integer::sum);
         AssertUtil.assertTrue(sum == 10000, ErrorCode.ERR_INTER, "Symbol config error,cellNo:" + cellNo);
-        Random random = new Random();
         // 生成一个1到10000之间的随机整数
         int randomNumber = randomService.randomInt(1, 10000);
         int startVal = 0;
