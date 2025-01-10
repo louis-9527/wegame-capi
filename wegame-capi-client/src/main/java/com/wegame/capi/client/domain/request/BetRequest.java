@@ -37,13 +37,13 @@ public class BetRequest implements Validate, Serializable {
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(GameTypeEnum.valueOfCode(gameId), ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(GameTypeEnum.valueOfId(gameId), ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(betType, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(BetTypeEnum.valueOfCode(betType), ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(betSubType, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(BetSubTypeEnum.valueOfCode(betSubType), ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betDetail, ErrorCode.ERR_PARAM);
-        betDetail.validateParam(GameTypeEnum.valueOfCode(gameId),
+        betDetail.validateParam(GameTypeEnum.valueOfId(gameId),
                 BetTypeEnum.valueOfCode(betType),
                 BetSubTypeEnum.valueOfCode(betSubType));
     }

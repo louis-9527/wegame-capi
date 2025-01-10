@@ -46,7 +46,7 @@ public class BetRecordController {
         request.setUserId(userInfo.getId());
 //        request.setPlayerId(userInfo.getPlayerId());
         BetRecordQuery query = BetRecordConverter.requestToQuery(request, "createTime");
-        long cnt = betRecordService.count(query);
+        long cnt = betRecordService.count(query, userInfo.getGameType());
         if (Objects.equals(cnt, 0L)) {
             return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                     request.getPageSize(),
@@ -58,7 +58,7 @@ public class BetRecordController {
         query.setLastCreateTime(request.getLastCreateTime());
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                BetRecordConverter.doToVoList(betRecordService.list(query)),
+                BetRecordConverter.doToVoList(betRecordService.list(query, userInfo.getGameType())),
                 cnt));
     }
 
@@ -67,7 +67,9 @@ public class BetRecordController {
     @GetMapping("/get/{id}")
     public CommonResponse<BetRecordVo> get(@PathVariable("id") String id) {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
-        BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id));
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id), userInfo.getGameType());
         return CommonResponse.build(BetRecordConverter.doToVo(betRecordDo, false));
     }
 }
