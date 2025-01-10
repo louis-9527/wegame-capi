@@ -21,7 +21,7 @@ spring:
       config:
         import-check:
           enabled: true
-        server-addr: nacos-cs.nacos.svc.cluster.local:8848
+        server-addr: nacos.makillingslot.net:8848
         group: ${spring.profiles.active}
-        namespace: c364c8cf-3770-4b55-9304-2f05d6eba5c2
+        namespace: 0caac310-8fc6-4a5a-8607-0f33c1bbe203
         file-extension: yaml
