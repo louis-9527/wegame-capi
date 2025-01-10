@@ -52,7 +52,7 @@ public class BetRecordService {
      * @param betRecordDo 投注记录
      * @return true/false
      */
-    @CacheEvict(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName-#betRecordDo.id")
+    @CacheEvict(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #betRecordDo.id")
     public boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         log.info("BetRecordService#update betRecordDo:{}", betRecordDo);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
@@ -69,7 +69,7 @@ public class BetRecordService {
      * @param id 主键id
      * @return BetRecordDo 投注记录
      */
-    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName-#id")
+    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #id")
     public <T> BetRecordDo<T> get(Long id, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         BetRecordPo betRecordPo = mongoTemplate.findById(id, BetRecordPo.class, gameType.getCollectionName());
