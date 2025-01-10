@@ -18,7 +18,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@Document("bet_record")
 public class BetRecordPo implements Serializable {
     private static final long serialVersionUID = -633389003068449792L;
     /**

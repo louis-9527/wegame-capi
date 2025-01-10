@@ -25,7 +25,7 @@ public class BetConverter {
             .build();
 
     public static <T extends BetRequestValidate, R> BetDo<R> requestToDo(BetRequest betRequest) {
-        GameTypeEnum gameType = GameTypeEnum.valueOfCode(betRequest.getGameId());
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(betRequest.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         BetToDoConvert<T, R> converter = (BetToDoConvert<T, R>) GAME_BET_CLASS_MAP.get(gameType);
         AssertUtil.assertNotNull(converter, ErrorCode.ERR_PARAM);

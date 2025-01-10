@@ -72,9 +72,9 @@ spring:
       strict: true
       datasource:
         wegame_user_db:
-          url: jdbc:mysql://dev-nba-backend-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          url: jdbc:mysql://172.31.27.141:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: root
-          password: ENC(DHb76s+Gg5rikLGRiZVPz0E+iAwmb+SfJw0Vy2DJI5lMd9rLRK8GWiB/8z78PJ7HEaFZ5mF2LSlXR3gxerZskA==)
+          password: ENC(YNkAqtiSqYCkHLUlQcUkJwinsDrTnnxC/q5p2JRLGozqSGKFeap13wRM9BiqQYFXpRtIEWfKVZug+LSFFvd3JQ==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
@@ -90,9 +90,9 @@ spring:
             test-on-return: false
             pool-prepared-statements: false
         wegame_backend_db:
-          url: jdbc:mysql://dev-nba-backend-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          url: jdbc:mysql://172.31.27.141:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: root
-          password: ENC(DHb76s+Gg5rikLGRiZVPz0E+iAwmb+SfJw0Vy2DJI5lMd9rLRK8GWiB/8z78PJ7HEaFZ5mF2LSlXR3gxerZskA==)
+          password: ENC(YNkAqtiSqYCkHLUlQcUkJwinsDrTnnxC/q5p2JRLGozqSGKFeap13wRM9BiqQYFXpRtIEWfKVZug+LSFFvd3JQ==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
@@ -151,4 +151,4 @@ api:
       agentKey: MIIBCgKCAQEAjpeqhcFzzqIkpOOSHpFkCXGVCdLau09V3opTAard1fbbRBodFRF8AFtEFsA4Uw590IC8Ey4n+uNR0SfevlmWyKvmC+5HVYoHEURRrENMleCFBfiMjYY5WTZoNeRl1LA2kZsFIzA6h5uY7oBKNDOkmVnlCKDCUJMj3h8cc3nPFOtPR6kJh60GSi6cRB4GHQZVixfvFqIuPWTO54RVjZm7U9D6G/BmRsbMMq2xD5kDaZYUOYjclOzY274bLaE8eUeY/nl5S26nZX++rVQ2a0IMu/hM94mCmCO7pPMllswuOdJX5XQCh3BNQzFd8sqC4tdc9OXKzzDDUzS5DiiSVSsauwIDAQAB
 #lark
 lark:
-  robot: 1abf2d83-03ca-4073-84a2-6d79d804ca3a
+  robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

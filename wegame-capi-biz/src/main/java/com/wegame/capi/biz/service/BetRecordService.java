@@ -8,6 +8,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +41,8 @@ public class BetRecordService {
      * @param betRecordDo 投注记录
      * @return 主键id
      */
-    public Long add(BetRecordDo betRecordDo) {
-        BetRecordPo po = mongoTemplate.insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD));
+    public Long add(BetRecordDo betRecordDo, GameTypeEnum gameType) {
+        BetRecordPo po = mongoTemplate.insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD), gameType.getCollectionName());
         return po.getId();
     }
 
@@ -51,14 +52,14 @@ public class BetRecordService {
      * @param betRecordDo 投注记录
      * @return true/false
      */
-    @CacheEvict(value = CacheConstants.BET_RECORD, key = "#betRecordDo.id")
-    public boolean update(BetRecordDo betRecordDo) {
+    @CacheEvict(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName-#betRecordDo.id")
+    public boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         log.info("BetRecordService#update betRecordDo:{}", betRecordDo);
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is empty");
         UpdateResult result = mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(betRecordDo.getId())),
                 BetRecordQueryBuilder.buildMongoUpdate(betRecordDo),
-                BetRecordPo.class);
+                BetRecordPo.class, gameType.getCollectionName());
         return Objects.nonNull(result) && result.getModifiedCount() > 0;
     }
 
@@ -68,10 +69,10 @@ public class BetRecordService {
      * @param id 主键id
      * @return BetRecordDo 投注记录
      */
-    @Cacheable(value = CacheConstants.BET_RECORD, key = "#id")
-    public <T> BetRecordDo<T> get(Long id) {
+    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName-#id")
+    public <T> BetRecordDo<T> get(Long id, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        BetRecordPo betRecordPo = mongoTemplate.findById(id, BetRecordPo.class);
+        BetRecordPo betRecordPo = mongoTemplate.findById(id, BetRecordPo.class, gameType.getCollectionName());
         return BetRecordConverter.poToDo(betRecordPo);
     }
 
@@ -81,9 +82,9 @@ public class BetRecordService {
      * @param query 查询参数
      * @return List<BetRecordDo> 游戏记录列表
      */
-    public List<BetRecordDo> list(BetRecordQuery query) {
+    public List<BetRecordDo> list(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        List<BetRecordPo> recordPoList = mongoTemplate.find(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
+        List<BetRecordPo> recordPoList = mongoTemplate.find(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class, gameType.getCollectionName());
         return BetRecordConverter.poToDoList(recordPoList);
     }
 
@@ -93,9 +94,9 @@ public class BetRecordService {
      * @param query 查询参数
      * @return 数量
      */
-    public long count(BetRecordQuery query) {
+    public long count(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return mongoTemplate.count(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
+        return mongoTemplate.count(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class, gameType.getCollectionName());
     }
 
     ///////////////  above auto generated ///////////////
