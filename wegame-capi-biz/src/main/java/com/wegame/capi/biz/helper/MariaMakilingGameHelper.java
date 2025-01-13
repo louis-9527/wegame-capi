@@ -147,63 +147,63 @@ public class MariaMakilingGameHelper {
     public static final Map<SymbolEnum, List<BigDecimal>> MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG = new ImmutableMap.Builder<SymbolEnum, List<BigDecimal>>()
             .put(SymbolEnum.Symbol1001, Arrays.asList(
                     new BigDecimal("15"),
-                    new BigDecimal("15"),
-                    new BigDecimal("15.4"),
-                    new BigDecimal("14"),
+                    new BigDecimal("14.5"),
+                    new BigDecimal("14.5"),
+                    new BigDecimal("14.5"),
                     new BigDecimal("15")))
             .put(SymbolEnum.Symbol1002, Arrays.asList(
                     new BigDecimal("15"),
-                    new BigDecimal("15"),
-                    new BigDecimal("14"),
-                    new BigDecimal("14"),
+                    new BigDecimal("14.4"),
+                    new BigDecimal("14.4"),
+                    new BigDecimal("14.4"),
                     new BigDecimal("15")))
             .put(SymbolEnum.Symbol1003, Arrays.asList(
                     new BigDecimal("15"),
-                    new BigDecimal("15"),
-                    new BigDecimal("14"),
-                    new BigDecimal("14"),
+                    new BigDecimal("14.1"),
+                    new BigDecimal("14.1"),
+                    new BigDecimal("14.1"),
                     new BigDecimal("15")))
             .put(SymbolEnum.Symbol1004, Arrays.asList(
                     new BigDecimal("15"),
                     new BigDecimal("14"),
                     new BigDecimal("14"),
-                    new BigDecimal("15"),
+                    new BigDecimal("14"),
                     new BigDecimal("15")))
             .put(SymbolEnum.Symbol1005, Arrays.asList(
                     new BigDecimal("15"),
-                    new BigDecimal("13.8"),
                     new BigDecimal("14"),
-                    new BigDecimal("15"),
+                    new BigDecimal("14"),
+                    new BigDecimal("14"),
                     new BigDecimal("15")))
             .put(SymbolEnum.Symbol2001, Arrays.asList(
                     new BigDecimal("5.1"),
-                    new BigDecimal("5.3"),
-                    new BigDecimal("5"),
-                    new BigDecimal("5.3"),
+                    new BigDecimal("6.3"),
+                    new BigDecimal("6.3"),
+                    new BigDecimal("6.3"),
                     new BigDecimal("5.1")))
             .put(SymbolEnum.Symbol2002, Arrays.asList(
                     new BigDecimal("5.1"),
-                    new BigDecimal("5.3"),
-                    new BigDecimal("5"),
-                    new BigDecimal("5.3"),
+                    new BigDecimal("6.1"),
+                    new BigDecimal("6.1"),
+                    new BigDecimal("6.1"),
                     new BigDecimal("5.1")))
             .put(SymbolEnum.Symbol2003, Arrays.asList(
                     new BigDecimal("5"),
-                    new BigDecimal("4.5"),
-                    new BigDecimal("5"),
-                    new BigDecimal("5.3"),
+                    new BigDecimal("5.5"),
+                    new BigDecimal("5.5"),
+                    new BigDecimal("5.5"),
                     new BigDecimal("5")))
             .put(SymbolEnum.Symbol2004, Arrays.asList(
                     new BigDecimal("4.9"),
                     new BigDecimal("4.3"),
-                    new BigDecimal("5"),
+                    new BigDecimal("4.3"),
                     new BigDecimal("4.3"),
                     new BigDecimal("4.9")))
             .put(SymbolEnum.Symbol2005, Arrays.asList(
                     new BigDecimal("4.8"),
-                    new BigDecimal("4.3"),
-                    new BigDecimal("5"),
-                    new BigDecimal("4.3"),
+                    new BigDecimal("3.3"),
+                    new BigDecimal("3.2"),
+                    new BigDecimal("3.3"),
                     new BigDecimal("4.8")))
             .put(SymbolEnum.Scatter, Arrays.asList(
                     new BigDecimal("0.1"),
