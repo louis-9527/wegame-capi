@@ -55,7 +55,7 @@
 //        List<RewardLineDetailDo> rewardLineList = Lists.newArrayList();
 //        for (RewardLineDo rewardRuleLine : rewardRuleLineList) {
 //            // 计算赔率  todo  优化，相同元素的中奖线，会触发多次赔率计算
-//            BigDecimal odds = oddsCalculateStrategy().calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType()));
+//            BigDecimal odds = oddsCalculateStrategy().calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getRewardSymbol(), rewardRuleLine.getRewardLineType()));
 //            // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
 //            BigDecimal lineRewardAmount = calculateLineRewardAmount(rewardHandle.getBetAmount(), rewardRuleLine, odds, multiple);
 //            // 累加中奖总金额

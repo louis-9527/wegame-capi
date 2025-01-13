@@ -26,7 +26,7 @@ public class RandomServiceTest extends BaseTest {
     public void test_randomInt() {
         try {
             for (int i = 1; i < 100; i++) {
-                int randomNumber = randomService.randomInt(0, i);
+                int randomNumber = randomService.randomIntOld(0, i);
                 log.info("randomNumber={}", randomNumber);
                 System.out.println(randomNumber);
             }

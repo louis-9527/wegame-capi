@@ -63,7 +63,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
                 .reduce(0, Integer::sum);
         AssertUtil.assertTrue(sum == 10000, ErrorCode.ERR_INTER, "Symbol config error,cellNo:" + cellNo);
         // 生成一个1到10000之间的随机整数
-        int randomNumber = randomService.randomInt(1, 10000);
+        int randomNumber = randomService.randomIntOld(1, 10000);
         int startVal = 0;
         for (Map.Entry<SymbolEnum, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {

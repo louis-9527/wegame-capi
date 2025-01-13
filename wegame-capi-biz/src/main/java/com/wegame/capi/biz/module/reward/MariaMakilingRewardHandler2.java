@@ -122,24 +122,24 @@
 //        return true;
 //    }
 //
-//    /////////////// todo delete //////////////
-//
 //    public List<RewardLineDo> calcRewardLines(GameInfoDo gameInfo, WheelDo wheel) {
 //        SymbolDo[][] symbolArr = wheel.getSymbolArr();
 //        // Map<第一列元素, TreeMap<列序号，满足规则的元素列表>
 //        Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> map = new HashMap<>();
-//        //// 目标元素集合targetSymbolSet
+//        // 目标元素集合targetSymbolSet
 //        Set<SymbolDo> targetSymbolSet = new HashSet<>();
 //        // 1、处理第一列
 //        for (int row = 0; row < gameInfo.getRow(); row++) {
 //            SymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
 //            targetSymbolSet.add(targetSymbol);
-//            map.put(targetSymbol, new TreeMap<>());
+//            if (!map.containsKey(targetSymbol)) {
+//                map.put(targetSymbol, new TreeMap<>());
+//            }
 //        }
 //        // 2、循环处理(从第1列开始处理)
-//        for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+//        for (int colum = ONE_COLUM_INDEX; colum < gameInfo.getColumn(); colum++) {
 //            Integer currentColum = colum;
-//            for (int row = 0; row < gameInfo.getRow(); row++) {
+//            for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
 //                Integer currentRow = row;
 //                for (SymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
 //                    boolean isMatch = isMatchTargetSymbol(symbolArr[row][colum], targetSymbol);
@@ -172,7 +172,6 @@
 //    private List<RewardLineDo> statisticsRewardLineList(Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> map) {
 //        List<RewardLineDo> list = Lists.newArrayList();
 //        for (Map.Entry<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
-//            SymbolDo symbolDo = entry.getKey();
 //            if (MapUtils.isEmpty(entry.getValue())) {
 //                continue;
 //            }
@@ -180,13 +179,18 @@
 //            if (columMap.size() < 3) {
 //                continue;
 //            }
+//
+//
 //            buildRewardLine(list, 0, columMap, null, null);
 //        }
 //        // 结果组装
 //        return list;
 //    }
 //
-//    private void buildRewardLine(List<RewardLineDo> list, Integer colum, TreeMap<Integer, List<RewardRuleSymbolDo>> columMap, List<SymbolDo> symbolList, List<SymbolIndexDo> symbolIndexList) {
+//    private void buildRewardLine(List<RewardLineDo> list,
+//                                 Integer colum,
+//                                 TreeMap<Integer, List<RewardRuleSymbolDo>> columMap, List<SymbolDo> symbolList,
+//                                 List<SymbolIndexDo> symbolIndexList) {
 //        if (Objects.equals(colum, ONE_COLUM_INDEX)) {
 //            symbolList = new ArrayList<>();
 //            symbolIndexList = new ArrayList<>();
@@ -235,7 +239,7 @@
 //            rewardSymbolIndexList.add(rewardRuleSymbolDo.getSymbolIndex());
 //        });
 //        return RewardLineDo.builder()
-//                .symbol(symbolDo)
+//                .rewardSymbol(symbolDo)
 //                .rewardLineType(this.getRewardLineType(rewardSymbolIdList.size()))
 //                .rewardSymbolList(rewardSymbolIdList)
 //                .rewardSymbolIndexList(rewardSymbolIndexList)
@@ -260,7 +264,7 @@
 //                currentLineSymbolIdList.add(rewardRuleSymbolDo.getSymbol());
 //                currentRewardSymbolIndexList.add(rewardRuleSymbolDo.getSymbolIndex());
 //                RewardLineDo lineDo = RewardLineDo.builder()
-//                        .symbol(symbolDo)
+//                        .rewardSymbol(symbolDo)
 //                        .rewardLineType(this.getRewardLineType(currentLineSymbolIdList.size()))
 //                        .rewardSymbolList(currentLineSymbolIdList)
 //                        .rewardSymbolIndexList(currentRewardSymbolIndexList)
