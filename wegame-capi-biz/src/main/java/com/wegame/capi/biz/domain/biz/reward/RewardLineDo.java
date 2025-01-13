@@ -49,6 +49,10 @@ public class RewardLineDo implements Serializable {
     private List<SymbolIndexDo> rewardSymbolIndexList;
 
     public boolean isCommonReward() {
-        return Objects.equals(rewardSymbol.getSymbolType(), SymbolTypeEnum.COMMON);
+        return Objects.equals(rewardLineSubType, RewardLineSubTypeEnum.COMMON);
+    }
+
+    public boolean isScatterReward() {
+        return Objects.equals(rewardLineSubType, RewardLineSubTypeEnum.SCATTER);
     }
 }

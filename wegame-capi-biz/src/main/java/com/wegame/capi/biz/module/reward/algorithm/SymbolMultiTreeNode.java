@@ -5,7 +5,9 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Getter
@@ -28,6 +30,14 @@ public class SymbolMultiTreeNode {
      * 子节点列表
      */
     private List<SymbolMultiTreeNode> children;
+
+
+    public void addChildren(SymbolMultiTreeNode node) {
+        if (Objects.isNull(node)) {
+            children = new ArrayList<>();
+        }
+        children.add(node);
+    }
 
     @Override
     public String toString() {

@@ -8,8 +8,12 @@ import java.util.Objects;
 
 public class RewardLineDetailBuilder {
 
-    public static RewardLineDetailDo build(Long betAmount, RewardLineDo rewardRuleLine, Long rewardAmount, BigDecimal multiple, BigDecimal odds) {
-        if (Objects.isNull(rewardRuleLine) || Objects.isNull(rewardAmount) || Objects.isNull(multiple) || Objects.isNull(odds) || Objects.isNull(betAmount)) {
+    public static RewardLineDetailDo build(Long betAmount,
+                                           RewardLineDo rewardLine,
+                                           Long rewardAmount,
+                                           BigDecimal multiple,
+                                           BigDecimal odds) {
+        if (Objects.isNull(rewardLine) || Objects.isNull(rewardAmount) || Objects.isNull(multiple) || Objects.isNull(odds) || Objects.isNull(betAmount)) {
             return null;
         }
         return RewardLineDetailDo.builder()
@@ -17,11 +21,11 @@ public class RewardLineDetailBuilder {
                 .rewardAmount(rewardAmount)
                 .odds(odds)
                 .multiple(multiple)
-                .rewardLineType(rewardRuleLine.getRewardLineType())
-                .rewardLineSubType(rewardRuleLine.getRewardLineSubType())
-                .symbol(rewardRuleLine.getRewardSymbol())
-                .symbolList(rewardRuleLine.getRewardSymbolList())
-                .symbolIndexList(rewardRuleLine.getRewardSymbolIndexList())
+                .rewardLineType(rewardLine.getRewardLineType())
+                .rewardLineSubType(rewardLine.getRewardLineSubType())
+                .symbol(rewardLine.getRewardSymbol())
+                .symbolList(rewardLine.getRewardSymbolList())
+                .symbolIndexList(rewardLine.getRewardSymbolIndexList())
                 .build();
     }
 

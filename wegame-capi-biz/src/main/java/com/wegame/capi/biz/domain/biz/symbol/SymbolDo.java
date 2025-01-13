@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 游戏元素
@@ -37,6 +38,14 @@ public class SymbolDo implements Serializable {
      * 元素规则：倍数（目前只支持）
      */
     private SymbolRuleDo symbolRule;
+
+    public boolean isScatterSymbol() {
+        return Objects.equals(symbolType, SymbolTypeEnum.SCATTER);
+    }
+
+    public boolean isWildSymbol() {
+        return Objects.equals(symbolType, SymbolTypeEnum.WILD);
+    }
 
     /**
      * 元素规则
