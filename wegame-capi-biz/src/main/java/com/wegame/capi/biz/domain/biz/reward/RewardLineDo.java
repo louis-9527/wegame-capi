@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 中奖规则线do
+ * 中奖线
  *
  * @author generate
  */
@@ -25,7 +25,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RewardRuleLineDo implements Serializable {
+public class RewardLineDo implements Serializable {
     private static final long serialVersionUID = -2878827643634848L;
     /**
      * 中奖元素

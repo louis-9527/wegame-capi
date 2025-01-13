@@ -24,5 +24,5 @@ public class RewardRuleResultDo implements Serializable {
     /**
      * 中奖线中奖列表
      */
-    private List<RewardRuleLineDo> rewardRuleLineList;
+    private List<RewardLineDo> rewardLineList;
 }

@@ -47,7 +47,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         validate(rewardHandle);
         // 中奖规则处理
         RewardRuleResultDo rewardRuleResultDo = this.calcRewardLines(RewardRuleBuilder.build(rewardHandle));
-        if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardRuleLineList())) {
+        if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardLineList())) {
             // 未中奖
             return null;
         }
@@ -57,7 +57,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         long rewardTotalAmount = 0L;
         // 中奖坐标列表
         List<RewardLineDetailDo> rewardLineDetailList = Lists.newArrayList();
-        for (RewardRuleLineDo rewardRuleLine : rewardRuleResultDo.getRewardRuleLineList()) {
+        for (RewardLineDo rewardRuleLine : rewardRuleResultDo.getRewardLineList()) {
             // todo fix 设置中奖线子类型
             if (rewardRuleLine.isCommonReward()) {
                 rewardRuleLine.setRewardLineSubType(RewardLineSubTypeEnum.COMMON);

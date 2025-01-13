@@ -41,7 +41,7 @@
 //        // 1、业务校验
 //        validate(rewardHandle);
 //        // 2、计算中奖线
-//        List<RewardRuleLineDo> rewardRuleLineList = new ArrayList<>(); //  calcRewardLines todo
+//        List<RewardLineDo> rewardRuleLineList = new ArrayList<>(); //  calcRewardLines todo
 //        if (CollectionUtil.isEmpty(rewardRuleLineList)) {
 //            // 未中奖
 //            return null;
@@ -53,7 +53,7 @@
 //        long rewardTotalAmount = 0L;
 //        // 中奖坐标列表
 //        List<RewardLineDetailDo> rewardLineList = Lists.newArrayList();
-//        for (RewardRuleLineDo rewardRuleLine : rewardRuleLineList) {
+//        for (RewardLineDo rewardRuleLine : rewardRuleLineList) {
 //            // 计算赔率  todo  优化，相同元素的中奖线，会触发多次赔率计算
 //            BigDecimal odds = oddsCalculateStrategy().calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType()));
 //            // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
@@ -77,7 +77,7 @@
 //        return rewardResult;
 //    }
 //
-//    private static BigDecimal calculateLineRewardAmount(Long betAmount, RewardRuleLineDo rewardRuleLine, BigDecimal odds, BigDecimal multiple) {
+//    private static BigDecimal calculateLineRewardAmount(Long betAmount, RewardLineDo rewardRuleLine, BigDecimal odds, BigDecimal multiple) {
 //        if (rewardRuleLine.isCommonReward()) {
 //            return BigDecimal.valueOf(betAmount).multiply(odds).multiply(BigDecimal.ONE.add(multiple));
 //        } else {
