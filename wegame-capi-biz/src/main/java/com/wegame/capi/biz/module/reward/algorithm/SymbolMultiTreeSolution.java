@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.module.reward.algorithm;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,13 +24,16 @@ public class SymbolMultiTreeSolution {
             return;
         }
         currentPath.add(node);
-        // 如果是叶子节点，将当前路径添加到结果列表中
-        if (Objects.isNull(node.getChildren())) {
+        if (CollectionUtils.isEmpty(node.getChildren())) {
+            // 叶子节点，将当前路径添加到结果列表中
             pathList.add(new ArrayList<>(currentPath));
         } else {
+            // 非叶子节点，递归深度处理
             for (SymbolMultiTreeNode child : node.getChildren()) {
                 // 递归遍历所有子节点
-                dfs(child, currentPath, pathList);
+                if (Objects.nonNull(child)) {
+                    dfs(child, currentPath, pathList);
+                }
             }
         }
         // Backtrack: remove the current node's value from the current path
