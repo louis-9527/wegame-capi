@@ -53,7 +53,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      * @return
      */
     public boolean hasReward() {
-        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineList());
+        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
     }
 
     /**
@@ -62,7 +62,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      * @return
      */
     public boolean hasRewardFreeSpins() {
-        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineList()) && rewardResult.isHasRewardFreeSpin();
+        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin();
     }
 
 
@@ -79,7 +79,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
-                    .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineList())
+                    .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineDetailList())
                             .orElse(Collections.emptyList())
                             .stream()
                             .map(item -> MariaMakilingBetResultVo.MariaMakilingRewardLineVo.builder()

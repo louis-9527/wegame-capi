@@ -14,6 +14,7 @@
 //import com.wegame.capi.biz.domain.biz.reward.RewardRuleSymbolDo;
 //import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 //import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
+//import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexFactory;
 //import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 //import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
 //import com.wegame.capi.biz.module.odds.OddsCalculateStrategy;
@@ -150,7 +151,7 @@
 //                    if (Objects.equals(colum, ONE_COLUM_INDEX) || CollectionUtils.isNotEmpty(treeMap.get(currentColum - 1))) {
 //                        RewardRuleSymbolDo rewardRuleSymbol = RewardRuleSymbolDo.builder()
 //                                .symbol(symbolArr[row][colum])
-//                                .symbolIndex(SymbolIndexDo.build(currentRow, currentColum))
+//                                .symbolIndex(SymbolIndexFactory.build(currentRow, currentColum))
 //                                .build();
 //                        if (Objects.isNull(treeMap.get(currentColum))) {
 //                            List<RewardRuleSymbolDo> list = new ArrayList<>();

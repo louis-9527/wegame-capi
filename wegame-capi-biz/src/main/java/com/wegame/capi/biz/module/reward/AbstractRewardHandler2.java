@@ -3,7 +3,7 @@
 //import cn.hutool.core.collection.CollectionUtil;
 //import com.google.common.collect.Lists;
 //import com.wegame.capi.biz.builder.OddsCalculateBuilder;
-//import com.wegame.capi.biz.builder.RewardLineBuilder;
+//import com.wegame.capi.biz.builder.RewardLineDetailBuilder;
 //import com.wegame.capi.biz.builder.RewardResultBuilder;
 //import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 //import com.wegame.capi.biz.domain.biz.reward.*;
@@ -52,7 +52,7 @@
 //        // 中奖总金额
 //        long rewardTotalAmount = 0L;
 //        // 中奖坐标列表
-//        List<RewardLineDo> rewardLineList = Lists.newArrayList();
+//        List<RewardLineDetailDo> rewardLineList = Lists.newArrayList();
 //        for (RewardRuleLineDo rewardRuleLine : rewardRuleLineList) {
 //            // 计算赔率  todo  优化，相同元素的中奖线，会触发多次赔率计算
 //            BigDecimal odds = oddsCalculateStrategy().calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType()));
@@ -61,7 +61,7 @@
 //            // 累加中奖总金额
 //            rewardTotalAmount = rewardTotalAmount + lineRewardAmount.longValue();
 //            // 计算后的中奖线列表
-//            rewardLineList.add(RewardLineBuilder.build(rewardHandle.getBetAmount(), rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
+//            rewardLineList.add(RewardLineDetailBuilder.build(rewardHandle.getBetAmount(), rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
 //        }
 //        // 5.构建中奖结果
 //        RewardResultDo rewardResult = RewardResultBuilder.build(

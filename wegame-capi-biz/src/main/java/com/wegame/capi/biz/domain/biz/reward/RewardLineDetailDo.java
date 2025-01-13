@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 中奖线do
+ * 中奖线明细
  *
  * @author generate
  */
@@ -24,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RewardLineDo implements Serializable {
+public class RewardLineDetailDo implements Serializable {
     private static final long serialVersionUID = -2876565534848L;
     /**
      * 投注金额
