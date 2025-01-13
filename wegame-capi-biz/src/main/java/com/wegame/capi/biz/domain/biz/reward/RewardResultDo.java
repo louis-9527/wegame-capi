@@ -47,7 +47,7 @@ public class RewardResultDo implements Serializable {
     /**
      * 中奖线列表
      */
-    private List<RewardLineDo> rewardLineList;
+    private List<RewardLineDetailDo> rewardLineDetailList;
     /**
      * 中奖总倍率
      */

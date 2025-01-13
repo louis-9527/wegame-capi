@@ -161,20 +161,20 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
     private RewardRuleResultDo generatorRewardLines(Map<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> secondColumSymbolMapping) {
         // 中奖线统计普通元素，scatter
         // 中奖线列表
-        List<RewardRuleLineDo> rewardRuleLineList = Lists.newArrayList();
+        List<RewardLineDo> rewardRuleLineList = Lists.newArrayList();
         for (Map.Entry<SymbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>>> columSymbolEntry : secondColumSymbolMapping.entrySet()) {
             SymbolDo symbolDo = columSymbolEntry.getKey();
             TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap = columSymbolEntry.getValue();
             if (columTreeMap.keySet().size() >= 3) {
 
                 if (!isScatter(symbolDo)) {
-                    List<RewardRuleLineDo> complexRewardLineList = this.generatorComonRewardLines(symbolDo, columTreeMap);
+                    List<RewardLineDo> complexRewardLineList = this.generatorComonRewardLines(symbolDo, columTreeMap);
                     if (CollectionUtil.isNotEmpty(complexRewardLineList)) {
                         rewardRuleLineList.addAll(complexRewardLineList);
                     }
                 } else {
                     // scatter
-                    RewardRuleLineDo ruleLineDo = this.generatorScatterRewardLines(symbolDo, columTreeMap);
+                    RewardLineDo ruleLineDo = this.generatorScatterRewardLines(symbolDo, columTreeMap);
                     if (Objects.nonNull(ruleLineDo)) {
                         rewardRuleLineList.add(ruleLineDo);
                     }
@@ -183,11 +183,11 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         }
         // 结果组装
         return RewardRuleResultDo.builder()
-                .rewardRuleLineList(rewardRuleLineList)
+                .rewardLineList(rewardRuleLineList)
                 .build();
     }
 
-    private RewardRuleLineDo generatorScatterRewardLines(SymbolDo symbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap) {
+    private RewardLineDo generatorScatterRewardLines(SymbolDo symbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap) {
         List<SymbolDo> rewardSymbolIdList = Lists.newArrayList();
         List<SymbolIndexDo> rewardSymbolIndexList = Lists.newArrayList();
 
@@ -195,16 +195,16 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
             rewardSymbolIdList.add(rewardRuleSymbolDo.getSymbol());
             rewardSymbolIndexList.add(rewardRuleSymbolDo.getSymbolIndex());
         });
-        return RewardRuleLineDo.builder()
-                .symbol(symbolDo)
+        return RewardLineDo.builder()
+                .rewardSymbol(symbolDo)
                 .rewardLineType(this.getRewardLineType(rewardSymbolIdList.size()))
                 .rewardSymbolList(rewardSymbolIdList)
                 .rewardSymbolIndexList(rewardSymbolIndexList)
                 .build();
     }
 
-    private List<RewardRuleLineDo> generatorComonRewardLines(SymbolDo symbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap) {
-        List<RewardRuleLineDo> complexRewardLineList = Lists.newArrayList();
+    private List<RewardLineDo> generatorComonRewardLines(SymbolDo symbolDo, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap) {
+        List<RewardLineDo> complexRewardLineList = Lists.newArrayList();
         List<RewardRuleSymbolDo> firstColumSymbolDoList = columTreeMap.get(0);
         for (RewardRuleSymbolDo firstColumSymbolDo : firstColumSymbolDoList) {
             loopFindRewardLine(symbolDo, 1, columTreeMap.keySet().size() - 1, columTreeMap, Lists.newArrayList(firstColumSymbolDo.getSymbolIndex()), Lists.newArrayList(firstColumSymbolDo.getSymbol()), complexRewardLineList);
@@ -212,7 +212,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         return complexRewardLineList;
     }
 
-    private void loopFindRewardLine(SymbolDo symbolDo, Integer currentColum, Integer maxColum, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap, List<SymbolIndexDo> rewardSymbolIndexList, List<SymbolDo> symbolIdList, List<RewardRuleLineDo> complexRewardLineList) {
+    private void loopFindRewardLine(SymbolDo symbolDo, Integer currentColum, Integer maxColum, TreeMap<Integer, List<RewardRuleSymbolDo>> columTreeMap, List<SymbolIndexDo> rewardSymbolIndexList, List<SymbolDo> symbolIdList, List<RewardLineDo> complexRewardLineList) {
         if (Objects.equals(currentColum, maxColum)) {
             for (RewardRuleSymbolDo rewardRuleSymbolDo : columTreeMap.get(currentColum)) {
                 // 计算线
@@ -220,8 +220,8 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                 List<SymbolIndexDo> currentRewardSymbolIndexList = Lists.newArrayList(rewardSymbolIndexList);
                 currentLineSymbolIdList.add(rewardRuleSymbolDo.getSymbol());
                 currentRewardSymbolIndexList.add(rewardRuleSymbolDo.getSymbolIndex());
-                RewardRuleLineDo lineDo = RewardRuleLineDo.builder()
-                        .symbol(symbolDo)
+                RewardLineDo lineDo = RewardLineDo.builder()
+                        .rewardSymbol(symbolDo)
                         .rewardLineType(this.getRewardLineType(currentLineSymbolIdList.size()))
                         .rewardSymbolList(currentLineSymbolIdList)
                         .rewardSymbolIndexList(currentRewardSymbolIndexList)
