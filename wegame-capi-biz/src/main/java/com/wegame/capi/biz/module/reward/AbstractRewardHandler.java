@@ -65,7 +65,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
                 rewardRuleLine.setRewardLineSubType(RewardLineSubTypeEnum.SCATTER);
             }
             // 获取赔率
-            OddsCalculateDo oddsCalculateDo = OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType());
+            OddsCalculateDo oddsCalculateDo = OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getRewardSymbol(), rewardRuleLine.getRewardLineType());
             AssertUtil.assertNotNull(oddsCalculateDo, ErrorCode.ERR_INTER, "oddsCalculateDo is null");
             BigDecimal odds = oddsCalculateStrategy().calculateOdds(oddsCalculateDo);
             // 中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)

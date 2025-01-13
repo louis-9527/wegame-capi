@@ -19,7 +19,7 @@ public class RewardLineDetailBuilder {
                 .multiple(multiple)
                 .rewardLineType(rewardRuleLine.getRewardLineType())
                 .rewardLineSubType(rewardRuleLine.getRewardLineSubType())
-                .symbol(rewardRuleLine.getSymbol())
+                .symbol(rewardRuleLine.getRewardSymbol())
                 .symbolList(rewardRuleLine.getRewardSymbolList())
                 .symbolIndexList(rewardRuleLine.getRewardSymbolIndexList())
                 .build();

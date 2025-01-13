@@ -196,7 +196,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
             rewardSymbolIndexList.add(rewardRuleSymbolDo.getSymbolIndex());
         });
         return RewardLineDo.builder()
-                .symbol(symbolDo)
+                .rewardSymbol(symbolDo)
                 .rewardLineType(this.getRewardLineType(rewardSymbolIdList.size()))
                 .rewardSymbolList(rewardSymbolIdList)
                 .rewardSymbolIndexList(rewardSymbolIndexList)
@@ -221,7 +221,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                 currentLineSymbolIdList.add(rewardRuleSymbolDo.getSymbol());
                 currentRewardSymbolIndexList.add(rewardRuleSymbolDo.getSymbolIndex());
                 RewardLineDo lineDo = RewardLineDo.builder()
-                        .symbol(symbolDo)
+                        .rewardSymbol(symbolDo)
                         .rewardLineType(this.getRewardLineType(currentLineSymbolIdList.size()))
                         .rewardSymbolList(currentLineSymbolIdList)
                         .rewardSymbolIndexList(currentRewardSymbolIndexList)

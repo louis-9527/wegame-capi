@@ -30,7 +30,7 @@ public class RewardLineDo implements Serializable {
     /**
      * 中奖元素
      */
-    private SymbolDo symbol;
+    private SymbolDo rewardSymbol;
     /**
      * 中奖线类型
      */
@@ -49,6 +49,6 @@ public class RewardLineDo implements Serializable {
     private List<SymbolIndexDo> rewardSymbolIndexList;
 
     public boolean isCommonReward() {
-        return Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.COMMON);
+        return Objects.equals(rewardSymbol.getSymbolType(), SymbolTypeEnum.COMMON);
     }
 }
