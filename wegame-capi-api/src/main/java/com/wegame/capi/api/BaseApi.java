@@ -25,6 +25,8 @@ public class BaseApi {
     String platformDomain;
     @Value("${api.sport.singleDomain}")
     String singleDomain;
+    @Value("${api.go.wegameGoDomain}")
+    String wegameGoDomain;
 
     // cp
     @Value("${api.sport.cp.platformId}")
