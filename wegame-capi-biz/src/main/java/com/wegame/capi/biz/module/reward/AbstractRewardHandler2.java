@@ -3,7 +3,7 @@
 //import cn.hutool.core.collection.CollectionUtil;
 //import com.google.common.collect.Lists;
 //import com.wegame.capi.biz.builder.OddsCalculateBuilder;
-//import com.wegame.capi.biz.builder.RewardLineBuilder;
+//import com.wegame.capi.biz.builder.RewardLineDetailBuilder;
 //import com.wegame.capi.biz.builder.RewardResultBuilder;
 //import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 //import com.wegame.capi.biz.domain.biz.reward.*;
@@ -41,7 +41,7 @@
 //        // 1、业务校验
 //        validate(rewardHandle);
 //        // 2、计算中奖线
-//        List<RewardRuleLineDo> rewardRuleLineList = new ArrayList<>(); //  calcRewardLines todo
+//        List<RewardLineDo> rewardRuleLineList = new ArrayList<>(); //  calcRewardLines todo
 //        if (CollectionUtil.isEmpty(rewardRuleLineList)) {
 //            // 未中奖
 //            return null;
@@ -52,8 +52,8 @@
 //        // 中奖总金额
 //        long rewardTotalAmount = 0L;
 //        // 中奖坐标列表
-//        List<RewardLineDo> rewardLineList = Lists.newArrayList();
-//        for (RewardRuleLineDo rewardRuleLine : rewardRuleLineList) {
+//        List<RewardLineDetailDo> rewardLineList = Lists.newArrayList();
+//        for (RewardLineDo rewardRuleLine : rewardRuleLineList) {
 //            // 计算赔率  todo  优化，相同元素的中奖线，会触发多次赔率计算
 //            BigDecimal odds = oddsCalculateStrategy().calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardRuleLine.getSymbol(), rewardRuleLine.getRewardLineType()));
 //            // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
@@ -61,7 +61,7 @@
 //            // 累加中奖总金额
 //            rewardTotalAmount = rewardTotalAmount + lineRewardAmount.longValue();
 //            // 计算后的中奖线列表
-//            rewardLineList.add(RewardLineBuilder.build(rewardHandle.getBetAmount(), rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
+//            rewardLineList.add(RewardLineDetailBuilder.build(rewardHandle.getBetAmount(), rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
 //        }
 //        // 5.构建中奖结果
 //        RewardResultDo rewardResult = RewardResultBuilder.build(
@@ -77,7 +77,7 @@
 //        return rewardResult;
 //    }
 //
-//    private static BigDecimal calculateLineRewardAmount(Long betAmount, RewardRuleLineDo rewardRuleLine, BigDecimal odds, BigDecimal multiple) {
+//    private static BigDecimal calculateLineRewardAmount(Long betAmount, RewardLineDo rewardRuleLine, BigDecimal odds, BigDecimal multiple) {
 //        if (rewardRuleLine.isCommonReward()) {
 //            return BigDecimal.valueOf(betAmount).multiply(odds).multiply(BigDecimal.ONE.add(multiple));
 //        } else {

@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
-import com.wegame.capi.biz.builder.RewardLineBuilder;
+import com.wegame.capi.biz.builder.RewardLineDetailBuilder;
 import com.wegame.capi.biz.builder.RewardResultBuilder;
 import com.wegame.capi.biz.builder.RewardRuleBuilder;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
@@ -47,7 +47,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         validate(rewardHandle);
         // 中奖规则处理
         RewardRuleResultDo rewardRuleResultDo = this.calcRewardLines(RewardRuleBuilder.build(rewardHandle));
-        if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardRuleLineList())) {
+        if (Objects.isNull(rewardRuleResultDo) || CollectionUtil.isEmpty(rewardRuleResultDo.getRewardLineList())) {
             // 未中奖
             return null;
         }
@@ -56,8 +56,8 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         // 中奖总金额
         long rewardTotalAmount = 0L;
         // 中奖坐标列表
-        List<RewardLineDo> rewardLineList = Lists.newArrayList();
-        for (RewardRuleLineDo rewardRuleLine : rewardRuleResultDo.getRewardRuleLineList()) {
+        List<RewardLineDetailDo> rewardLineDetailList = Lists.newArrayList();
+        for (RewardLineDo rewardRuleLine : rewardRuleResultDo.getRewardLineList()) {
             // todo fix 设置中奖线子类型
             if (rewardRuleLine.isCommonReward()) {
                 rewardRuleLine.setRewardLineSubType(RewardLineSubTypeEnum.COMMON);
@@ -77,13 +77,13 @@ public abstract class AbstractRewardHandler implements RewardHandler {
             // 中奖结果处理
             rewardTotalAmount = rewardTotalAmount + lineRewardAmount.longValue();
             // 计算后的中奖线列表
-            rewardLineList.add(RewardLineBuilder.build(rewardHandle.getBetAmount(), rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
+            rewardLineDetailList.add(RewardLineDetailBuilder.build(rewardHandle.getBetAmount(), rewardRuleLine, lineRewardAmount.longValue(), multiple, odds));
         }
 
         RewardResultDo tempRewardResultDo = RewardResultBuilder.build(
                 rewardHandle.getBetAmount(),
                 rewardTotalAmount,
-                rewardLineList,
+                rewardLineDetailList,
                 multiple,
                 hasRewardFreeSpin(rewardHandle.getGameInfo(), rewardHandle.getWheel().getSymbolArr()));
         // 返回中奖信息

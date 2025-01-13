@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.builder;
 
-import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class RewardResultBuilder {
 
-    public static RewardResultDo build(Long betAmount, Long rewardTotalAmount, List<RewardLineDo> rewardLineList, BigDecimal wildTotalTimes, boolean isFreeSpin) {
+    public static RewardResultDo build(Long betAmount, Long rewardTotalAmount, List<RewardLineDetailDo> rewardLineList, BigDecimal wildTotalTimes, boolean isFreeSpin) {
         if (Objects.isNull(rewardTotalAmount) || Objects.isNull(rewardLineList)) {
             return null;
         }
@@ -19,7 +19,7 @@ public class RewardResultBuilder {
         return RewardResultDo.builder()
                 .betAmount(betAmount)
                 .totalRewardAmount(rewardTotalAmount)
-                .rewardLineList(rewardLineList)
+                .rewardLineDetailList(rewardLineList)
                 .totalMultiple(wildTotalTimes)
                 .rewardType(rewardLineList.size() == 1 ? RewardTypeEnum.SINGLE : RewardTypeEnum.MULTIPLE)
                 .hasRewardFreeSpin(isFreeSpin)

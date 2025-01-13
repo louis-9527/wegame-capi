@@ -4,7 +4,6 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
 import com.wegame.capi.common.enums.RewardLineTypeEnum;
-import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,11 +11,11 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 /**
- * 中奖规则线do
+ * 中奖线明细
  *
  * @author generate
  */
@@ -25,12 +24,24 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RewardRuleLineDo implements Serializable {
-    private static final long serialVersionUID = -2878827643634848L;
+public class RewardLineDetailDo implements Serializable {
+    private static final long serialVersionUID = -2876565534848L;
     /**
-     * 中奖元素
+     * 投注金额
      */
-    private SymbolDo symbol;
+    private Long betAmount;
+    /**
+     * 中奖金额
+     */
+    private Long rewardAmount;
+    /**
+     * 赔率
+     */
+    private BigDecimal odds;
+    /**
+     * 倍率
+     */
+    private BigDecimal multiple;
     /**
      * 中奖线类型
      */
@@ -40,15 +51,15 @@ public class RewardRuleLineDo implements Serializable {
      */
     private RewardLineSubTypeEnum rewardLineSubType;
     /**
+     * 中奖元素
+     */
+    private SymbolDo symbol;
+    /**
      * 中奖线的中奖元素列表
      */
-    private List<SymbolDo> rewardSymbolList;
+    private List<SymbolDo> symbolList;
     /**
      * 中奖线的中奖元素坐标列表
      */
-    private List<SymbolIndexDo> rewardSymbolIndexList;
-
-    public boolean isCommonReward() {
-        return Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.COMMON);
-    }
+    private List<SymbolIndexDo> symbolIndexList;
 }
