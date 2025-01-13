@@ -118,7 +118,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
             }
             if (!hasScatter) {
                 // 生成一个0到行之间的随机整数
-                int randomRow = randomService.randomInt(0, gameInfo.getRow() - 1);
+                int randomRow = randomService.randomIntOld(0, gameInfo.getRow() - 1);
                 symbolArr[randomRow][cell] = MARIA_MAKILING_SCATTER;
             }
         }
@@ -183,7 +183,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
     }
 
     private Integer getWheelNumber() {
-        int randomNumber = randomService.randomInt(1, 100);
+        int randomNumber = randomService.randomIntOld(1, 100);
         int startVal = 0;
         for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
