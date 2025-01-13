@@ -53,7 +53,12 @@ spring:
     timeout: 500
     cluster:
       nodes:
-        - dev-nba-backend-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
+        - 172.31.27.141:7001
+        - 172.31.27.141:7002
+        - 172.31.27.141:7003
+        - 172.31.27.141:7004
+        - 172.31.27.141:7005
+        - 172.31.27.141:7006
       max-redirects: 5
     lettuce:
       pool:
