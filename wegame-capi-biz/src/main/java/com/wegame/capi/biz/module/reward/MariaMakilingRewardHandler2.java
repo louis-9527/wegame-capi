@@ -1,13 +1,11 @@
 package com.wegame.capi.biz.module.reward;
 
-import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexFactory;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -99,7 +97,7 @@ public class MariaMakilingRewardHandler2 extends AbstractRewardHandler2 {
         // 构建-多叉树
         SymbolMultiTreeNode root = buildTree(gameInfo, wheel);
         // 查找-多叉树路径列表
-        List<List<SymbolMultiTreeNode>> pathList = SymbolMultiTreeSolution.treePaths(root);
+        List<List<SymbolMultiTreeNode>> pathList = SymbolMultiTreeSolution.findTreePathList(root);
         // 构建-中奖线列表
         List<RewardLineDo> rewardLineList = new ArrayList<>();
         for (List<SymbolMultiTreeNode> path : CollectionUtils.emptyIfNull(pathList)) {

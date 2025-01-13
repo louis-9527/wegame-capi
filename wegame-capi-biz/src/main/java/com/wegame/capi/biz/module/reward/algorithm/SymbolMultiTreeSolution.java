@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class SymbolMultiTreeSolution {
 
-    public static List<List<SymbolMultiTreeNode>> treePaths(SymbolMultiTreeNode root) {
+    public static List<List<SymbolMultiTreeNode>> findTreePathList(SymbolMultiTreeNode root) {
         List<List<SymbolMultiTreeNode>> pathList = new ArrayList<>();
         if (Objects.isNull(root)) {
             return pathList;
