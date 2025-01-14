@@ -34,6 +34,7 @@ import static com.wegame.capi.common.constants.GameConstants.*;
 @Component("mariaMakilingRewardHandler")
 public class MariaMakilingRewardHandler extends AbstractRewardHandler {
 
+    // ONE_COLUM_INDEX,THREE_COLUM_INDEX,FIVE_COLUM_INDEX顺序不可更改
     private static final List<Integer> SCATTER_COLUM_INDEX_LIST = Arrays.asList(
             ONE_COLUM_INDEX,
             THREE_COLUM_INDEX,
@@ -130,13 +131,16 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         for (int colum = ONE_COLUM_INDEX; colum < gameInfo.getColumn(); colum++) {
             Integer currentColum = colum;
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
+                SymbolDo currentSymbol = symbolArr[row][currentColum];
                 for (SymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
-                    boolean isMatch = isMatchTargetSymbol(symbolArr[row][colum], targetSymbol);
-                    if (!isMatch) {
+                    if (targetSymbol.isScatterSymbol() && !SCATTER_COLUM_INDEX_LIST.contains(currentColum)) {
+                        continue;
+                    }
+                    if (!isMatchTargetSymbol(currentSymbol, targetSymbol)) {
                         continue;
                     }
                     TreeMap<Integer, List<SymbolDo>> treeMap = map.get(targetSymbol);
-                    if (Objects.equals(colum, ONE_COLUM_INDEX) || CollectionUtils.isNotEmpty(treeMap.get(getPreColum(symbolArr[row][colum], currentColum)))) {
+                    if (canPutIn(treeMap, currentSymbol, currentColum)) {
                         if (Objects.isNull(treeMap.get(currentColum))) {
                             List<SymbolDo> list = new ArrayList<>();
                             list.add(symbolArr[row][colum]);
@@ -154,6 +158,21 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         return list;
     }
 
+    private boolean canPutIn(TreeMap<Integer, List<SymbolDo>> treeMap, SymbolDo currentSymbol, Integer currentColum) {
+        // 第一列必处理
+        if (Objects.equals(currentColum, ONE_COLUM_INDEX)) {
+            return true;
+        }
+        if (currentSymbol.isScatterSymbol()) {
+            // scatter元素，判断（逻辑上的）上一列的列表元素是否为空： 说明，scatter只能出现在135列
+            int preColumIndex = SCATTER_COLUM_INDEX_LIST.get(SCATTER_COLUM_INDEX_LIST.indexOf(currentColum) - 1);
+            return CollectionUtils.isNotEmpty(treeMap.get(preColumIndex));
+        } else {
+            // 非scatter元素，判断上一列的列表是否为空
+            return CollectionUtils.isNotEmpty(treeMap.get(currentColum - 1));
+        }
+    }
+
     private List<RewardLineDo> buildRewardLineList(Map<SymbolDo, TreeMap<Integer, List<SymbolDo>>> map) {
         List<RewardLineDo> list = new ArrayList<>();
         for (Map.Entry<SymbolDo, TreeMap<Integer, List<SymbolDo>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
@@ -161,7 +180,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                 continue;
             }
             TreeMap<Integer, List<SymbolDo>> columMap = entry.getValue();
-            if (columMap.size() < 3) {
+            if (columMap.size() < RewardLineTypeEnum.THREE.getNo()) {
                 continue;
             }
             int totalLineCount = columMap.values()
@@ -182,16 +201,6 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         return Objects.equals(symbol, targetSymbol)
                 || Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.WILD)
                 || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
-    }
-
-    private Integer getPreColum(SymbolDo currentSymbol, Integer currentColum) {
-        if (currentSymbol.isCommonSymbol()) {
-            return currentColum - 1;
-        } else if (currentSymbol.isScatterSymbol()) {
-            return SCATTER_COLUM_INDEX_LIST.get(SCATTER_COLUM_INDEX_LIST.indexOf(currentColum) - 1);
-        } else {
-            return currentColum - 1;
-        }
     }
 
     private void validate(RewardHandleDo rewardHandle) {
