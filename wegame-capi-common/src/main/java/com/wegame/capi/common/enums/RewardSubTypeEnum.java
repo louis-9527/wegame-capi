@@ -13,6 +13,7 @@ import java.util.Objects;
 public enum RewardSubTypeEnum {
 
     NONE("none", "未中奖"),
+    OTHER("other", "其他"),
     NICE("nice", "nice"),
     MEGA("mega", "mega"),
     SUPER("super", "super"),

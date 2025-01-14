@@ -29,12 +29,19 @@ public abstract class AbstractRewardHandler implements RewardHandler {
      */
     public BigDecimal calculateLineRewardAmount(RewardLineDo rewardLine, Long betAmount, BigDecimal odds, BigDecimal multiple) {
         if (rewardLine.isCommonReward()) {
-            return BigDecimal.valueOf(betAmount).multiply(odds).multiply(BigDecimal.ONE.add(multiple));
+            return BigDecimal.valueOf(betAmount)
+                    .multiply(odds)
+                    .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()))
+                    .multiply(BigDecimal.ONE.add(multiple));
         } else if (rewardLine.isScatterReward()) {
             // scatter 无需进行倍率计算
-            return BigDecimal.valueOf(betAmount).multiply(odds);
+            return BigDecimal.valueOf(betAmount)
+                    .multiply(odds)
+                    .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
         } else {
-            return BigDecimal.valueOf(betAmount).multiply(multiple);
+            return BigDecimal.valueOf(betAmount)
+                    .multiply(multiple)
+                    .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
         }
     }
 
@@ -60,8 +67,9 @@ public abstract class AbstractRewardHandler implements RewardHandler {
             return RewardSubTypeEnum.SUPER;
         } else if (rewardTimes > 20) {
             return RewardSubTypeEnum.SENSATIONAL;
+        } else {
+            return RewardSubTypeEnum.OTHER;
         }
-        return RewardSubTypeEnum.NONE;
     }
 
     public boolean hasRewardScatter(List<RewardLineDo> rewardLineList) {

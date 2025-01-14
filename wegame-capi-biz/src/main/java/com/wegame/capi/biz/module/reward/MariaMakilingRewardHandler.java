@@ -119,7 +119,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         // 目标元素集合targetSymbolSet
         Set<SymbolDo> targetSymbolSet = new HashSet<>();
         // 1、处理第一列
-        for (int row = 0; row < gameInfo.getRow(); row++) {
+        for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             SymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
             targetSymbolSet.add(targetSymbol);
             if (!map.containsKey(targetSymbol)) {
@@ -136,7 +136,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                         continue;
                     }
                     TreeMap<Integer, List<SymbolDo>> treeMap = map.get(targetSymbol);
-                    if (Objects.equals(colum, ONE_COLUM_INDEX) || CollectionUtils.isNotEmpty(treeMap.get(getPreColum(targetSymbol, currentColum)))) {
+                    if (Objects.equals(colum, ONE_COLUM_INDEX) || CollectionUtils.isNotEmpty(treeMap.get(getPreColum(symbolArr[row][colum], currentColum)))) {
                         if (Objects.isNull(treeMap.get(currentColum))) {
                             List<SymbolDo> list = new ArrayList<>();
                             list.add(symbolArr[row][colum]);
@@ -164,15 +164,15 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
             if (columMap.size() < 3) {
                 continue;
             }
-            int lineCount = columMap.values()
+            int totalLineCount = columMap.values()
                     .stream()
                     .map(item -> item.size())
                     .reduce(1, (a, b) -> a * b);
             list.add(RewardLineDo.builder()
                     .rewardSymbol(entry.getKey())
-                    .rewardLineType(RewardLineTypeEnum.valueOfNo(lineCount))
+                    .rewardLineType(RewardLineTypeEnum.valueOfNo(columMap.size()))
                     .rewardLineSubType(entry.getKey().isScatterSymbol() ? RewardLineSubTypeEnum.SCATTER : RewardLineSubTypeEnum.COMMON)
-                    .rewardLineCount(lineCount)
+                    .rewardLineCount(totalLineCount)
                     .build());
         }
         return list;
@@ -180,14 +180,14 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
 
     private boolean isMatchTargetSymbol(SymbolDo symbol, SymbolDo targetSymbol) {
         return Objects.equals(symbol, targetSymbol)
-                || Objects.equals(symbol.getSymbolType(), SymbolEnum.Wild)
-                || Objects.equals(targetSymbol.getSymbolType(), SymbolEnum.Wild);
+                || Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.WILD)
+                || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
     }
 
-    private Integer getPreColum(SymbolDo targetSymbol, Integer currentColum) {
-        if (targetSymbol.isCommonSymbol()) {
+    private Integer getPreColum(SymbolDo currentSymbol, Integer currentColum) {
+        if (currentSymbol.isCommonSymbol()) {
             return currentColum - 1;
-        } else if (targetSymbol.isScatterSymbol()) {
+        } else if (currentSymbol.isScatterSymbol()) {
             return SCATTER_COLUM_INDEX_LIST.get(SCATTER_COLUM_INDEX_LIST.indexOf(currentColum) - 1);
         } else {
             return currentColum - 1;

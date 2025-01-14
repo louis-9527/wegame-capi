@@ -49,7 +49,8 @@ public class MariaMakilingRewardHandler2Test extends BaseTest {
         RewardResultDo rewardResult = mariaMakilingRewardHandler.handle(rewardHandle);
         long endTime = DateUtil.getCurrentMilli();
         Assert.notNull(rewardResult);
-        Assert.isTrue(rewardResult.getRewardLineDetailList().size() == 9);
+        rewardResult.print();
+        Assert.isTrue(rewardResult.getRewardLineDetailList().size() == 2);
         log.info("test_handle，耗时：{}", endTime - startTime);
     }
 
