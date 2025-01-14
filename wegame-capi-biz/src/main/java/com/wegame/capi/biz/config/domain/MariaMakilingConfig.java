@@ -3,7 +3,6 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -86,8 +85,6 @@ public class MariaMakilingConfig {
         Assert.notNull(probabilisticConfig.commonPlayWheelProbabilisticConfig, "probabilisticConfig is null");
         Assert.notNull(probabilisticConfig.freePlayWheelProbabilisticConfig, "probabilisticConfig is null");
         Assert.notNull(probabilisticConfig.freeWheelTimesProbabilisticConfig, "probabilisticConfig is null");
-
-        // todo fix
         // 校验-免费轮次数概率配置
         int sum = probabilisticConfig.freeWheelTimesProbabilisticConfig.values()
                 .stream()
@@ -133,5 +130,5 @@ public class MariaMakilingConfig {
                     .reduce(0, Integer::sum);
             AssertUtil.assertTrue(Objects.equals(sumProbabilistic, 10000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columNo:" + columNo);
         }
-        }
+    }
 }
