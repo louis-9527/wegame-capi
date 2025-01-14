@@ -79,7 +79,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
-                    .symbolIndexSet(Optional.ofNullable(rewardResult.getRewardLineDetailList())
+                    .rewardSymbolIndexSet(Optional.ofNullable(rewardResult.getRewardLineDetailList())
                             .orElse(Collections.emptyList())
                             .stream()
                             .filter(o -> CollectionUtils.isNotEmpty(o.getRewardSymbolList()))
