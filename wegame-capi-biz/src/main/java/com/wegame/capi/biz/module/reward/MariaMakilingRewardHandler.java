@@ -11,6 +11,8 @@ import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
+import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
+import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
@@ -96,8 +98,8 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     .rewardLineType(rewardLine.getRewardLineType())
                     .rewardLineSubType(rewardLine.getRewardLineSubType())
                     .rewardLineCount(rewardLine.getRewardLineCount())
-                    .symbol(rewardLine.getRewardSymbol())
-                    .symbolList(rewardLine.getRewardSymbolList())
+                    .rewardSymbol(rewardLine.getRewardSymbol())
+                    .rewardSymbolList(rewardLine.getRewardSymbolList())
                     .build());
         }
         // 5.构建中奖结果
@@ -118,7 +120,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
     private List<RewardLineDo> calcRewardLineList(GameInfoDo gameInfo, WheelDo wheel) {
         SymbolDo[][] symbolArr = wheel.getSymbolArr();
         // Map<第一列元素, TreeMap<列序号，满足规则的元素列表>
-        Map<SymbolDo, TreeMap<Integer, List<SymbolDo>>> map = new HashMap<>();
+        Map<SymbolDo, TreeMap<Integer, List<RewardSymbolDo>>> map = new HashMap<>();
         // 目标元素集合targetSymbolSet
         Set<SymbolDo> targetSymbolSet = new HashSet<>();
         // 1、处理第一列
@@ -133,6 +135,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         for (int colum = ONE_COLUM_INDEX; colum < gameInfo.getColumn(); colum++) {
             Integer currentColum = colum;
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
+                Integer currentRow = row;
                 SymbolDo currentSymbol = symbolArr[row][currentColum];
                 for (SymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
                     if (targetSymbol.isScatterSymbol() && !SCATTER_COLUM_INDEX_LIST.contains(currentColum)) {
@@ -141,14 +144,18 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     if (!isMatchTargetSymbol(currentSymbol, targetSymbol)) {
                         continue;
                     }
-                    TreeMap<Integer, List<SymbolDo>> treeMap = map.get(targetSymbol);
+                    TreeMap<Integer, List<RewardSymbolDo>> treeMap = map.get(targetSymbol);
                     if (canPutIn(treeMap, currentSymbol, currentColum)) {
+                        RewardSymbolDo symbolIndex = RewardSymbolDo.builder()
+                                .symbol(currentSymbol)
+                                .index(IndexFactory.build(currentRow, currentColum))
+                                .build();
                         if (Objects.isNull(treeMap.get(currentColum))) {
-                            List<SymbolDo> list = new ArrayList<>();
-                            list.add(symbolArr[row][colum]);
+                            List<RewardSymbolDo> list = new ArrayList<>();
+                            list.add(symbolIndex);
                             treeMap.put(currentColum, list);
                         } else {
-                            treeMap.get(currentColum).add(symbolArr[row][colum]);
+                            treeMap.get(currentColum).add(symbolIndex);
                         }
                     }
                 }
@@ -160,7 +167,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         return list;
     }
 
-    private boolean canPutIn(TreeMap<Integer, List<SymbolDo>> treeMap, SymbolDo currentSymbol, Integer currentColum) {
+    private boolean canPutIn(TreeMap<Integer, List<RewardSymbolDo>> treeMap, SymbolDo currentSymbol, Integer currentColum) {
         // 第一列必处理
         if (Objects.equals(currentColum, ONE_COLUM_INDEX)) {
             return true;
@@ -175,13 +182,13 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         }
     }
 
-    private List<RewardLineDo> buildRewardLineList(Map<SymbolDo, TreeMap<Integer, List<SymbolDo>>> map) {
+    private List<RewardLineDo> buildRewardLineList(Map<SymbolDo, TreeMap<Integer, List<RewardSymbolDo>>> map) {
         List<RewardLineDo> list = new ArrayList<>();
-        for (Map.Entry<SymbolDo, TreeMap<Integer, List<SymbolDo>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+        for (Map.Entry<SymbolDo, TreeMap<Integer, List<RewardSymbolDo>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (MapUtils.isEmpty(entry.getValue())) {
                 continue;
             }
-            TreeMap<Integer, List<SymbolDo>> columMap = entry.getValue();
+            TreeMap<Integer, List<RewardSymbolDo>> columMap = entry.getValue();
             if (columMap.size() < RewardLineTypeEnum.THREE.getNo()) {
                 continue;
             }

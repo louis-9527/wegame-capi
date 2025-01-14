@@ -5,6 +5,8 @@ import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
+import com.wegame.capi.client.domain.vo.IndexVo;
+import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * 玩游戏结果模型
+ * 玩游戏记录模型
  */
 @Data
 @SuperBuilder
@@ -47,15 +49,6 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
     private List<Integer> freeSpinIds;
 
     /**
-     * 是否中奖
-     *
-     * @return
-     */
-    public boolean hasReward() {
-        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
-    }
-
-    /**
      * 是否中奖免费轮
      *
      * @return
@@ -64,12 +57,20 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
         return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin();
     }
 
-
     @Override
     public MariaMakilingBetResultVo toVo() {
         if (Objects.isNull(rewardResult)) {
             return MariaMakilingBetResultVo.builder()
                     .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .build();
+        } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
+            return MariaMakilingBetResultVo.builder()
+                    .rewardType(rewardResult.getRewardType() == null ? null : rewardResult.getRewardType().getCode())
+                    .rewardSubType(rewardResult.getRewardSubType() == null ? null : rewardResult.getRewardSubType().getCode())
+                    .totalRewardAmount(rewardResult.getTotalRewardAmount())
+                    .totalRewardMultiple(rewardResult.getTotalMultiple())
+                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .freeSpinFlag(0)
                     .build();
         } else {
             return MariaMakilingBetResultVo.builder()
@@ -78,31 +79,32 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .symbolIndexSet(Optional.ofNullable(rewardResult.getRewardLineDetailList())
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .filter(o -> CollectionUtils.isNotEmpty(o.getRewardSymbolList()))
+                            .map(detail -> detail.getRewardSymbolList()
+                                    .stream()
+                                    .map(rewardSymbol -> IndexVo.builder()
+                                            .rowIndex(rewardSymbol.getIndex().getRowIndex())
+                                            .columIndex(rewardSymbol.getIndex().getColumIndex())
+                                            .build()
+                                    ).collect(Collectors.toList())
+                            ).flatMap(List::stream)
+                            .collect(Collectors.toSet()))
                     .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineDetailList())
                             .orElse(Collections.emptyList())
                             .stream()
-                            .map(item -> MariaMakilingBetResultVo.MariaMakilingRewardLineVo.builder()
-                                    .multiple(item.getMultiple())
-                                    .odds(item.getOdds())
-                                    .rewardLineType(Objects.nonNull(item.getRewardLineType()) ? item.getRewardLineType().getCode() : "")
-                                    .rewardLineSubType(Objects.nonNull(item.getRewardLineSubType()) ? item.getRewardLineSubType().getCode() : "")
-                                    .rewardLineCount(item.getRewardLineCount())
-                                    .symbolIdList(Optional.ofNullable(item.getSymbolList())
-                                            .orElse(Collections.emptyList())
-                                            .stream()
-                                            .map(symbol -> symbol.getId())
-                                            .collect(Collectors.toList()))
-                                    //                                    .symbolIndexList(Optional.ofNullable(item.getSymbolIndexList())
-                                    //                                            .orElse(Collections.emptyList())
-                                    //                                            .stream()
-                                    //                                            .map(symbolIndex -> SymbolIndexVo.builder()
-                                    //                                                    .rowIndex(symbolIndex.getRowIndex())
-                                    //                                                    .columIndex(symbolIndex.getColumIndex())
-                                    //                                                    .build()
-                                    //                                            ).collect(Collectors.toList()))
-                                    .betAmount(item.getBetAmount())
-                                    .rewardAmount(item.getRewardAmount())
-                                    .build()).collect(Collectors.toList()))
+                            .map(subItem -> MariaMakilingBetResultVo.MariaMakilingRewardLineVo.builder()
+                                    .multiple(subItem.getMultiple())
+                                    .odds(subItem.getOdds())
+                                    .rewardLineType(Objects.nonNull(subItem.getRewardLineType()) ? subItem.getRewardLineType().getCode() : "")
+                                    .rewardLineSubType(Objects.nonNull(subItem.getRewardLineSubType()) ? subItem.getRewardLineSubType().getCode() : "")
+                                    .rewardLineCount(subItem.getRewardLineCount())
+                                    .betAmount(subItem.getBetAmount())
+                                    .rewardAmount(subItem.getRewardAmount())
+                                    .build()
+                            ).collect(Collectors.toList()))
                     .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
                     .freeSpinIds(freeSpinIds)
                     .build();

@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @SuperBuilder
@@ -28,10 +29,12 @@ public class MariaMakilingBetResultVo implements Serializable {
     private Long totalRewardAmount;
     @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
-    @ApiModelProperty("中奖线列表")
-    private List<MariaMakilingRewardLineVo> rewardLineList;
     @ApiModelProperty("滚轮结果")
     private String[][] spinsResult;
+    @ApiModelProperty("中奖元素坐标集合")
+    private Set<IndexVo> symbolIndexSet;
+    @ApiModelProperty("中奖线列表")
+    private List<MariaMakilingRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识,0:否,1:是")
     private Integer freeSpinFlag;
     @ApiModelProperty("免费轮Id列表")
@@ -45,6 +48,8 @@ public class MariaMakilingBetResultVo implements Serializable {
     @EqualsAndHashCode(callSuper = false)
     public static class MariaMakilingRewardLineVo implements Serializable {
         private static final long serialVersionUID = 6487808344235380369L;
+        @ApiModelProperty("中奖线元素Id: 中奖线第一个中奖元素id")
+        private String symbolId;
         @ApiModelProperty("倍率")
         private BigDecimal multiple;
         @ApiModelProperty("赔率")
@@ -55,10 +60,6 @@ public class MariaMakilingBetResultVo implements Serializable {
         private String rewardLineSubType;
         @ApiModelProperty("中奖线数量")
         private Integer rewardLineCount;
-        //        @ApiModelProperty("中奖元素坐标列表")
-        //        private List<SymbolIndexVo> symbolIndexList;
-        @ApiModelProperty("中奖线元素Id列表")
-        private List<String> symbolIdList;
         @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (中奖线数量WAYS)*(1 + 倍率) = 中奖金额）； " +
                 "SCATTER中奖计算公式（投注金额 * 赔率 * （中奖线数量WAYS）= 中奖金额）")
         private Long rewardAmount;

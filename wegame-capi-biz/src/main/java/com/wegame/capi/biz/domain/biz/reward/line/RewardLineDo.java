@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.domain.biz.reward.line;
 
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
 import com.wegame.capi.common.enums.RewardLineTypeEnum;
 import lombok.AllArgsConstructor;
@@ -26,10 +27,6 @@ import java.util.Objects;
 public class RewardLineDo implements Serializable {
     private static final long serialVersionUID = -2878827643634848L;
     /**
-     * 中奖元素
-     */
-    private SymbolDo rewardSymbol;
-    /**
      * 中奖线类型
      */
     private RewardLineTypeEnum rewardLineType;
@@ -40,15 +37,15 @@ public class RewardLineDo implements Serializable {
     /**
      * 中奖线数量
      */
-    private int rewardLineCount = 0;
+    private int rewardLineCount;
+    /**
+     * 中奖元素
+     */
+    private SymbolDo rewardSymbol;
     /**
      * 中奖线的中奖元素列表
      */
-    private List<SymbolDo> rewardSymbolList;
-    //    /**
-    //     * 中奖线的中奖元素坐标列表
-    //     */
-    //    private List<SymbolIndexDo> rewardSymbolIndexList;
+    private List<RewardSymbolDo> rewardSymbolList;
 
     public boolean isCommonReward() {
         return Objects.equals(rewardLineSubType, RewardLineSubTypeEnum.COMMON);
