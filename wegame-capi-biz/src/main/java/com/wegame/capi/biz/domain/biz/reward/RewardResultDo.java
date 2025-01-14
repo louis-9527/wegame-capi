@@ -66,11 +66,9 @@ public class RewardResultDo implements Serializable {
         System.out.println("中奖子类型：" + rewardSubType.getDesc());
         System.out.println("命中免费轮：" + (hasRewardFreeSpin ? "否" : "是"));
         System.out.println("中奖明细： " + rewardLineDetailList.size() + "条中奖线");
-        AtomicInteger number = new AtomicInteger();
         Optional.ofNullable(rewardLineDetailList)
                 .orElse(Collections.emptyList())
                 .forEach(item -> {
-                    System.out.println("中奖线" + number.incrementAndGet());
                     item.print();
                 });
 

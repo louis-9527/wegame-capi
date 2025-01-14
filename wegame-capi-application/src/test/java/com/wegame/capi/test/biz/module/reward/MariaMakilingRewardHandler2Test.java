@@ -29,7 +29,7 @@ public class MariaMakilingRewardHandler2Test extends BaseTest {
     MariaMakilingRewardHandler mariaMakilingRewardHandler;
 
     @Test
-    public void test_handle() {
+    public void test_handle_9() {
         RewardHandleDo rewardHandle = RewardHandleDo.builder()
                 .gameInfo(MARIA_MAKILING_GAME_INFO)
                 .gameType(GameTypeEnum.MARIA_MAKILING)
@@ -37,14 +37,11 @@ public class MariaMakilingRewardHandler2Test extends BaseTest {
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
                 .wheel(WheelDo.builder()
                         .index(1000)
-                        .symbolArr(this.manualGeneratorSymbolArr())
+                        .symbolArr(this.buildSymbolArr9())
                         .build())
                 .betAmount(200L)
                 .build();
         long startTime = DateUtil.getCurrentMilli();
-        //        for (int i=0;i<1000000;i++){
-        //            mariaMakilingRewardHandler.handle(rewardDo);
-        //        }
         RewardResultDo rewardResult = mariaMakilingRewardHandler.handle(rewardHandle);
         long endTime = DateUtil.getCurrentMilli();
         Assert.notNull(rewardResult);
@@ -53,8 +50,60 @@ public class MariaMakilingRewardHandler2Test extends BaseTest {
         log.info("test_handle，耗时：{}", endTime - startTime);
     }
 
+    @Test
+    public void test_handle_243() {
+        RewardHandleDo rewardHandle = RewardHandleDo.builder()
+                .gameInfo(MARIA_MAKILING_GAME_INFO)
+                .gameType(GameTypeEnum.MARIA_MAKILING)
+                .betType(BetTypeEnum.NORMAL_BET)
+                .betSubType(BetSubTypeEnum.NORMAL_BET)
+                .wheel(WheelDo.builder()
+                        .index(1000)
+                        .symbolArr(this.buildSymbolArr9())
+                        .build())
+                .betAmount(200L)
+                .build();
+        long startTime = DateUtil.getCurrentMilli();
+        RewardResultDo rewardResult = mariaMakilingRewardHandler.handle(rewardHandle);
+        long endTime = DateUtil.getCurrentMilli();
+        Assert.notNull(rewardResult);
+        rewardResult.print();
+        Assert.isTrue(rewardResult.getRewardLineDetailList().size() == 1);
+        log.info("test_handle，耗时：{}", endTime - startTime);
+    }
 
-    private SymbolDo[][] manualGeneratorSymbolArr() {
+
+    private SymbolDo[][] buildSymbolArr9() {
+        SymbolDo[][] symbolArr = new SymbolDo[3][5];
+        // 8+1线
+        // 第一列
+        symbolArr[0][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[1][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[2][0] = this.buildASymbol(SymbolEnum.Scatter, SymbolTypeEnum.SCATTER, SymbolRuleTypeEnum.COMMON, null);
+
+        // 第二列
+        symbolArr[0][1] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[1][1] = this.buildASymbol(SymbolEnum.WildX2, SymbolTypeEnum.WILD, SymbolRuleTypeEnum.MULTIPLE, BigDecimal.valueOf(2L));
+        symbolArr[2][1] = this.buildASymbol(SymbolEnum.Symbol1004, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+
+        // 第三列
+        symbolArr[0][2] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[1][2] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[2][2] = this.buildASymbol(SymbolEnum.Scatter, SymbolTypeEnum.SCATTER, SymbolRuleTypeEnum.COMMON, null);
+
+        // 第四列
+        symbolArr[0][3] = this.buildASymbol(SymbolEnum.Symbol1004, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[1][3] = this.buildASymbol(SymbolEnum.Symbol1005, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[2][3] = this.buildASymbol(SymbolEnum.Symbol1005, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+
+        // 第五列
+        symbolArr[0][4] = this.buildASymbol(SymbolEnum.Symbol1004, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[1][4] = this.buildASymbol(SymbolEnum.Scatter, SymbolTypeEnum.SCATTER, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[2][4] = this.buildASymbol(SymbolEnum.WildX2, SymbolTypeEnum.WILD, SymbolRuleTypeEnum.MULTIPLE, BigDecimal.valueOf(2L));
+        return symbolArr;
+    }
+
+    private SymbolDo[][] buildSymbolArr243() {
         SymbolDo[][] symbolArr = new SymbolDo[3][5];
         // 243线
         // 第一列
@@ -81,32 +130,6 @@ public class MariaMakilingRewardHandler2Test extends BaseTest {
         symbolArr[0][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
         symbolArr[1][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
         symbolArr[2][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-
-// 8+1线
-//        // 第一列
-//        symbolArr[0][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-//        symbolArr[1][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-//        symbolArr[2][0] = this.buildASymbol(SymbolEnum.Scatter, SymbolTypeEnum.SCATTER, SymbolRuleTypeEnum.COMMON, null);
-//
-//        // 第二列
-//        symbolArr[0][1] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-//        symbolArr[1][1] = this.buildASymbol(SymbolEnum.WildX2, SymbolTypeEnum.WILD, SymbolRuleTypeEnum.MULTIPLE, BigDecimal.valueOf(2L));
-//        symbolArr[2][1] = this.buildASymbol(SymbolEnum.Symbol1004, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-//
-//        // 第三列
-//        symbolArr[0][2] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-//        symbolArr[1][2] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-//        symbolArr[2][2] = this.buildASymbol(SymbolEnum.Scatter, SymbolTypeEnum.SCATTER, SymbolRuleTypeEnum.COMMON, null);
-//
-//        // 第四列
-//        symbolArr[0][3] = this.buildASymbol(SymbolEnum.Symbol1004, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-//        symbolArr[1][3] = this.buildASymbol(SymbolEnum.Symbol1005, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-//        symbolArr[2][3] = this.buildASymbol(SymbolEnum.Symbol1005, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-//
-//        // 第五列
-//        symbolArr[0][4] = this.buildASymbol(SymbolEnum.Symbol1004, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-//        symbolArr[1][4] = this.buildASymbol(SymbolEnum.Scatter, SymbolTypeEnum.SCATTER, SymbolRuleTypeEnum.COMMON, null);
-//        symbolArr[2][4] = this.buildASymbol(SymbolEnum.WildX2, SymbolTypeEnum.WILD, SymbolRuleTypeEnum.MULTIPLE, BigDecimal.valueOf(2L));
         return symbolArr;
     }
 
