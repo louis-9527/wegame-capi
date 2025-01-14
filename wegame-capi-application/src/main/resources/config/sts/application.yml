@@ -144,7 +144,7 @@ amazon:
 api:
   sport:
     platformDomain: http://qat-restful-private-service
-    singleDomain: https://sw-http-main-apisix.igo8.me/
+    singleDomain: https://sw-http-main-apisix-stress.igo8.me
     cp:
       platformId: 50
       channelId: 1050
