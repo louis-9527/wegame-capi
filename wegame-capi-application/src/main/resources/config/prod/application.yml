@@ -141,7 +141,7 @@ amazon:
 api:
   sport:
     platformDomain: http://prod-restful-private-service
-    singleDomain: https://sw-http-main-apisix.igo8.me/
+    singleDomain: https://sw-http-main-apisix.igo10.me/
     cp:
       platformId: 50
       channelId: 2002
