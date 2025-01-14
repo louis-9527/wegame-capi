@@ -22,11 +22,17 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static com.wegame.capi.biz.helper.MariaMakilingGameHelper.*;
+import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
 @Component
 public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> implements InitializingBean {
 
+    // ONE_COLUM_INDEX,THREE_COLUM_INDEX,FIVE_COLUM_INDEX顺序不可更改
+    private static final List<Integer> SCATTER_COLUM_INDEX_LIST = Arrays.asList(
+            ONE_COLUM_INDEX,
+            THREE_COLUM_INDEX,
+            FIVE_COLUM_INDEX);
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
@@ -82,12 +88,26 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
      */
     private WheelDo normalWheelGenerate(GameInfoDo gameInfo, Map<SymbolEnum, List<BigDecimal>> probabilisticConfig) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-        for (int i = 0; i < gameInfo.getRow(); i++) {
-            for (int j = 0; j < gameInfo.getColumn(); j++) {
-                SymbolEnum symbol = randomOneSymbol(j, probabilisticConfig);
+        for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+            boolean hasScatter = false;
+            for (int row = 0; row < gameInfo.getRow(); ) {
+                SymbolEnum symbol = randomOneSymbol(colum, probabilisticConfig);
                 SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
                 AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
-                symbolArr[i][j] = symbolDo;
+                if (hasScatter) {
+                    if (symbolDo.isScatterSymbol()) {
+                        // do nothing
+                    } else {
+                        symbolArr[row][colum] = symbolDo;
+                        row++;
+                    }
+                } else {
+                    symbolArr[row][colum] = symbolDo;
+                    row++;
+                    if (symbolDo.isScatterSymbol()) {
+                        hasScatter = true;
+                    }
+                }
             }
         }
         return WheelDo.builder()
@@ -106,12 +126,11 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
         WheelDo wheelDo = normalWheelGenerate(gameInfo, probabilisticConfig);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
         // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
-        List<Integer> scatterCellList = Arrays.asList(0, 2, 4);
-        for (Integer cell : scatterCellList) {
+        for (Integer colum : SCATTER_COLUM_INDEX_LIST) {
             boolean hasScatter = false;
             for (int i = 0; i < gameInfo.getRow(); i++) {
-                SymbolDo symbol = symbolArr[i][cell];
-                if (Objects.equals(SymbolTypeEnum.SCATTER, symbol.getSymbolType())) {
+                SymbolDo symbol = symbolArr[i][colum];
+                if (symbol.isScatterSymbol()) {
                     hasScatter = true;
                     break;
                 }
@@ -119,7 +138,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
             if (!hasScatter) {
                 // 生成一个0到行之间的随机整数
                 int randomRow = randomService.randomIntOld(0, gameInfo.getRow() - 1);
-                symbolArr[randomRow][cell] = MARIA_MAKILING_SCATTER;
+                symbolArr[randomRow][colum] = MARIA_MAKILING_SCATTER;
             }
         }
         return WheelDo.builder()

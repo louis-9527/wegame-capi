@@ -102,7 +102,7 @@ public class MariaMakilingGameTest extends BaseTest {
 
     @Test
     public void test_generate() {
-        int times = 1;
+        int times = 10000000;
         //        for (int i = 0; i < times; i++) {
         //            GamePlayDo playDo = GamePlayDo.builder()
         //                    .gameType(GameTypeEnum.MARIA_MAKILING)
@@ -134,6 +134,7 @@ public class MariaMakilingGameTest extends BaseTest {
         //            wheelDos.forEach(WheelDo::print);
         //        }
 
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < times; i++) {
             GamePlayDo playDo = GamePlayDo.builder()
                     .gameType(GameTypeEnum.MARIA_MAKILING)
@@ -143,8 +144,10 @@ public class MariaMakilingGameTest extends BaseTest {
                     .freeSpinsFlag(true)
                     .build();
             List<WheelDo> wheelDos = mariaMakilingGame.generate(playDo);
-            wheelDos.forEach(WheelDo::print);
+            //            wheelDos.forEach(WheelDo::print);
         }
+        long endTime = System.currentTimeMillis();
+        log.info("times: {}, cost time: {} ms", times, endTime - startTime);
     }
 
 }
