@@ -10,7 +10,7 @@ logging:
     com.alibaba.cloud.nacos: DEBUG
 ## server
 server:
-  port: 9000
+  port: 9500
   shutdown: graceful
   tomcat:
     uri-encoding: UTF-8
