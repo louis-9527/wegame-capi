@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.game;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
@@ -14,19 +15,19 @@ import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.wegame.capi.biz.helper.MariaMakilingGameHelper.*;
+import static com.wegame.capi.biz.helper.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
+import static com.wegame.capi.biz.helper.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
 @Component
-public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> implements InitializingBean {
+public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
     // ONE_COLUM_INDEX,THREE_COLUM_INDEX,FIVE_COLUM_INDEX顺序不可更改
     private static final List<Integer> SCATTER_COLUM_INDEX_LIST = Arrays.asList(
@@ -34,6 +35,8 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
             THREE_COLUM_INDEX,
             FIVE_COLUM_INDEX);
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
+    @Autowired
+    MariaMakilingConfig mariaMakilingConfig;
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
 
@@ -50,7 +53,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
     @Override
     public List<WheelDo> generate(GamePlayDo gamePlay) {
         GameInfoDo gameInfo = getGameInfo();
-        Map<SymbolEnum, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
+        Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
         if (gamePlay.isFreeSpinsFlag()) {
             return multiWheelGenerate(gameInfo, probabilisticConfig);
         } else {
@@ -75,18 +78,13 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
                 .build();
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        configValidate();
-    }
-
     /**
      * 正常滚轮生成：生成逻辑无任何限制
      *
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo normalWheelGenerate(GameInfoDo gameInfo, Map<SymbolEnum, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo normalWheelGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
             boolean hasScatter = false;
@@ -122,7 +120,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo freeSpinsWheelGenerate(GameInfoDo gameInfo, Map<SymbolEnum, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo freeSpinsWheelGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         WheelDo wheelDo = normalWheelGenerate(gameInfo, probabilisticConfig);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
         // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
@@ -153,7 +151,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
      * @param gameInfo 游戏信息
      * @return 滚轮列表
      */
-    private List<WheelDo> multiWheelGenerate(GameInfoDo gameInfo, Map<SymbolEnum, List<BigDecimal>> probabilisticConfig) {
+    private List<WheelDo> multiWheelGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         int wheelNumber = getWheelNumber();
         List<WheelDo> wheels = new ArrayList<>();
         WheelDo preWheel = null;
@@ -184,17 +182,17 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
         return wheels;
     }
 
-    public Map<SymbolEnum, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
+    public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
         if (gamePlay.isFreeSpinsFlag()) {
-            return MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG;
+            return mariaMakilingConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
         } else {
             switch (gamePlay.getBetSubType()) {
                 case NORMAL_BET:
                 case BUY_BET:
-                    return MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG;
+                    return mariaMakilingConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
                 case FREE_SPINS_NORMAL_BET:
                 case FREE_SPINS_BUY_BET:
-                    return MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG;
+                    return mariaMakilingConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
                 default:
                     throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
             }
@@ -204,7 +202,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
     private Integer getWheelNumber() {
         int randomNumber = randomService.randomIntOld(1, 100);
         int startVal = 0;
-        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG.entrySet())) {
+        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(mariaMakilingConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
                 return entry.getKey();
             } else {
@@ -212,53 +210,5 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> i
             }
         }
         throw new BusinessException(ErrorCode.ERR_INTER);
-    }
-
-    private void configValidate() {
-        // 校验-免费轮次数概率配置
-        int sum = MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG.values()
-                .stream()
-                .reduce(0, Integer::sum);
-        AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEELS_TIMES_PROBABILISTIC_CONFIG ERR");
-
-        GameInfoDo gameInfo = getGameInfo();
-        MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG.forEach((key, value) -> {
-            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG key: " + key.getId() + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), gameInfo.getColumn()), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG key: " + key.getId() + " ERR");
-        });
-        for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
-            Integer columNo = colum;
-            Map<SymbolEnum, Integer> map = new HashMap<>();
-            MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(100))).intValue();
-                if (val > 0) {
-                    map.put(item.getKey(), val);
-                }
-            });
-            Integer sumProbabilistic = map.values()
-                    .stream()
-                    .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, 10000), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG ERR, columNo:" + columNo);
-        }
-
-        MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG.forEach((key, value) -> {
-            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG key: " + key.getId() + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), gameInfo.getColumn()), ErrorCode.ERR_INTER, "MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG key: " + key.getId() + " ERR");
-        });
-
-        for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
-            Integer columNo = colum;
-            Map<SymbolEnum, Integer> map = new HashMap<>();
-            MARIA_MAKILING_COMMON_WHEEL_PROBABILISTIC_CONFIG.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(100))).intValue();
-                if (val > 0) {
-                    map.put(item.getKey(), val);
-                }
-            });
-            Integer sumProbabilistic = map.values()
-                    .stream()
-                    .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, 10000), ErrorCode.ERR_INTER, "MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG ERR, columNo:" + columNo);
-        }
     }
 }

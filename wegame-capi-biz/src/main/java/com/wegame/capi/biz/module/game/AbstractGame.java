@@ -49,9 +49,9 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
                 .collect(Collectors.toList());
     }
 
-    public SymbolEnum randomOneSymbol(int cellNo, Map<SymbolEnum, List<BigDecimal>> probabilisticConfigMap) {
+    public SymbolEnum randomOneSymbol(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
-        Map<SymbolEnum, Integer> map = new HashMap<>();
+        Map<String, Integer> map = new HashMap<>();
         probabilisticConfigMap.entrySet().forEach(item -> {
             int val = (item.getValue().get(cellNo).multiply(new BigDecimal(100))).intValue();
             if (val > 0) {
@@ -65,9 +65,9 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         // 生成一个1到10000之间的随机整数
         int randomNumber = randomService.randomIntOld(1, 10000);
         int startVal = 0;
-        for (Map.Entry<SymbolEnum, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+        for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-                return entry.getKey();
+                return SymbolEnum.valueOfId(entry.getKey());
             } else {
                 startVal += entry.getValue();
             }

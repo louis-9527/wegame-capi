@@ -56,8 +56,7 @@
                 <directory>src/main/resources/config/${config-dir}</directory>
             </resource>
             <resource>
-                <directory>src/main/resources/public</directory>
-                <targetPath>public/</targetPath>
+                <directory>src/main/resources/json</directory>
             </resource>
         </resources>
         <directory>../target</directory>
