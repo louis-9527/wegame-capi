@@ -196,7 +196,9 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     .rewardLineCount(totalLineCount)
                     .rewardSymbolList(columMap.values()
                             .stream()
+                            .filter(CollectionUtils::isNotEmpty)
                             .flatMap(List::stream)
+                            .filter(Objects::nonNull)
                             .collect(Collectors.toList()))
                     .build());
         }
