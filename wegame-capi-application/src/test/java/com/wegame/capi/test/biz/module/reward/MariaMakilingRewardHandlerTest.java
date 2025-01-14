@@ -1,9 +1,10 @@
-package com.wegame.capi.test.biz.module.reward;//package com.wegame.capi.application.controller;
+package com.wegame.capi.test.biz.module.reward;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.reward.MariaMakilingRewardHandler;
@@ -23,7 +24,7 @@ import java.math.BigDecimal;
 import static com.wegame.capi.biz.helper.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 
 @Slf4j
-public class MariaMakilingRewardHandler2Test extends BaseTest {
+public class MariaMakilingRewardHandlerTest extends BaseTest {
 
     @Resource()
     MariaMakilingRewardHandler mariaMakilingRewardHandler;
@@ -47,6 +48,10 @@ public class MariaMakilingRewardHandler2Test extends BaseTest {
         Assert.notNull(rewardResult);
         rewardResult.print();
         Assert.isTrue(rewardResult.getRewardLineDetailList().size() == 2);
+        Assert.isTrue(  rewardResult.getRewardLineDetailList()
+                .stream()
+                .map(RewardLineDetailDo::getRewardLineCount)
+                .reduce(0, Integer::sum) == 9);
         log.info("test_handle，耗时：{}", endTime - startTime);
     }
 
@@ -69,6 +74,10 @@ public class MariaMakilingRewardHandler2Test extends BaseTest {
         Assert.notNull(rewardResult);
         rewardResult.print();
         Assert.isTrue(rewardResult.getRewardLineDetailList().size() == 1);
+        Assert.isTrue(  rewardResult.getRewardLineDetailList()
+                .stream()
+                .map(RewardLineDetailDo::getRewardLineCount)
+                .reduce(0, Integer::sum) == 243);
         log.info("test_handle，耗时：{}", endTime - startTime);
     }
 

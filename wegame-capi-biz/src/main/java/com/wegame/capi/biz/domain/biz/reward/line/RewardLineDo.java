@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -40,10 +41,10 @@ public class RewardLineDo implements Serializable {
      * 中奖线数量
      */
     private int rewardLineCount = 0;
-    //    /**
-    //     * 中奖线的中奖元素列表
-    //     */
-    //    private List<SymbolDo> rewardSymbolList;
+    /**
+     * 中奖线的中奖元素列表
+     */
+    private List<SymbolDo> rewardSymbolList;
     //    /**
     //     * 中奖线的中奖元素坐标列表
     //     */

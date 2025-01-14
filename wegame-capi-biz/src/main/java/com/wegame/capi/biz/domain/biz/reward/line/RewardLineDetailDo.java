@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.domain.biz.reward.line;
 
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
 import com.wegame.capi.common.enums.RewardLineTypeEnum;
 import lombok.AllArgsConstructor;
@@ -44,10 +43,6 @@ public class RewardLineDetailDo implements Serializable {
      */
     private BigDecimal multiple;
     /**
-     * 中奖元素
-     */
-    private SymbolDo symbol;
-    /**
      * 中奖线类型
      */
     private RewardLineTypeEnum rewardLineType;
@@ -59,11 +54,14 @@ public class RewardLineDetailDo implements Serializable {
      * 中奖线数量
      */
     private Integer rewardLineCount;
-
-    //    /**
-    //     * 中奖线的中奖元素列表
-    //     */
-    //    private List<SymbolDo> symbolList;
+    /**
+     * 中奖元素:第一个元素
+     */
+    private SymbolDo symbol;
+    /**
+     * 中奖线的中奖元素列表
+     */
+    private List<SymbolDo> symbolList;
     //    /**
     //     * 中奖线的中奖元素坐标列表
     //     */

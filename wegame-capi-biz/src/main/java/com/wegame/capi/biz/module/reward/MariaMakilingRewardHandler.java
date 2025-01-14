@@ -8,9 +8,9 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.multiple.MultipleCalculateStrategy;
@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.constants.GameConstants.*;
 
@@ -92,10 +93,11 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     .rewardAmount(lineRewardAmount.longValue())
                     .odds(odds)
                     .multiple(totalMultiple)
-                    .symbol(rewardLine.getRewardSymbol())
                     .rewardLineType(rewardLine.getRewardLineType())
                     .rewardLineSubType(rewardLine.getRewardLineSubType())
                     .rewardLineCount(rewardLine.getRewardLineCount())
+                    .symbol(rewardLine.getRewardSymbol())
+                    .symbolList(rewardLine.getRewardSymbolList())
                     .build());
         }
         // 5.构建中奖结果
@@ -192,6 +194,10 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     .rewardLineType(RewardLineTypeEnum.valueOfNo(columMap.size()))
                     .rewardLineSubType(entry.getKey().isScatterSymbol() ? RewardLineSubTypeEnum.SCATTER : RewardLineSubTypeEnum.COMMON)
                     .rewardLineCount(totalLineCount)
+                    .rewardSymbolList(columMap.values()
+                            .stream()
+                            .flatMap(List::stream)
+                            .collect(Collectors.toList()))
                     .build());
         }
         return list;
