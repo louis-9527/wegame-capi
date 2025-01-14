@@ -248,9 +248,9 @@ public class MariaMakilingGameHelper {
     public static final Map<SymbolEnum, List<BigDecimal>> MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG = new ImmutableMap.Builder<SymbolEnum, List<BigDecimal>>()
             .put(SymbolEnum.Symbol1001, Arrays.asList(
                     new BigDecimal("20"),
-                    new BigDecimal("17.58"),
-                    new BigDecimal("17.58"),
-                    new BigDecimal("17.58"),
+                    new BigDecimal("17"),
+                    new BigDecimal("17"),
+                    new BigDecimal("17"),
                     new BigDecimal("20")))
             .put(SymbolEnum.Symbol1002, Arrays.asList(
                     new BigDecimal("14"),
@@ -302,9 +302,9 @@ public class MariaMakilingGameHelper {
                     new BigDecimal("5")))
             .put(SymbolEnum.Symbol2005, Arrays.asList(
                     new BigDecimal("4"),
-                    new BigDecimal("4"),
-                    new BigDecimal("4"),
-                    new BigDecimal("4"),
+                    new BigDecimal("4.58"),
+                    new BigDecimal("4.58"),
+                    new BigDecimal("4.58"),
                     new BigDecimal("4")))
             .put(SymbolEnum.Scatter, Arrays.asList(
                     new BigDecimal("0"),
