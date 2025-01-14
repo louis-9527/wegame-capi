@@ -302,9 +302,9 @@ public class MariaMakilingGameHelper {
                     new BigDecimal("5")))
             .put(SymbolEnum.Symbol2005, Arrays.asList(
                     new BigDecimal("4"),
-                    new BigDecimal("4.59"),
-                    new BigDecimal("4.59"),
-                    new BigDecimal("4.59"),
+                    new BigDecimal("4.6"),
+                    new BigDecimal("4.6"),
+                    new BigDecimal("4.6"),
                     new BigDecimal("4")))
             .put(SymbolEnum.Scatter, Arrays.asList(
                     new BigDecimal("0"),
@@ -314,15 +314,15 @@ public class MariaMakilingGameHelper {
                     new BigDecimal("0")))
             .put(SymbolEnum.Wild, Arrays.asList(
                     new BigDecimal("0"),
-                    new BigDecimal("0.82"),
-                    new BigDecimal("0.82"),
-                    new BigDecimal("0.82"),
+                    new BigDecimal("0.8"),
+                    new BigDecimal("0.8"),
+                    new BigDecimal("0.8"),
                     new BigDecimal("0")))
             .put(SymbolEnum.WildX2, Arrays.asList(
                     new BigDecimal("0"),
-                    new BigDecimal("0.79"),
-                    new BigDecimal("0.79"),
-                    new BigDecimal("0.79"),
+                    new BigDecimal("0.8"),
+                    new BigDecimal("0.8"),
+                    new BigDecimal("0.8"),
                     new BigDecimal("0")))
             .put(SymbolEnum.WildX3, Arrays.asList(
                     new BigDecimal("0"),
