@@ -55,14 +55,14 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         GameInfoDo gameInfo = getGameInfo();
         Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
         if (gamePlay.isFreeSpinsFlag()) {
-            return multiWheelGenerate(gameInfo, probabilisticConfig);
+            return generateMultiWheel(gameInfo, probabilisticConfig);
         } else {
             // 根据投注类型：生成游戏滚轮
             switch (gamePlay.getBetType()) {
                 case NORMAL_BET:
-                    return Collections.singletonList(normalWheelGenerate(gameInfo, probabilisticConfig));
+                    return Collections.singletonList(generateNormalWheel(gameInfo, probabilisticConfig));
                 case BUY_BET:
-                    return Collections.singletonList(freeSpinsWheelGenerate(gameInfo, probabilisticConfig));
+                    return Collections.singletonList(generateFreeSpinsWheel(gameInfo, probabilisticConfig));
                 default:
                     throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
             }
@@ -84,7 +84,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo normalWheelGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
             boolean hasScatter = false;
@@ -120,8 +120,8 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo freeSpinsWheelGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
-        WheelDo wheelDo = normalWheelGenerate(gameInfo, probabilisticConfig);
+    private WheelDo generateFreeSpinsWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+        WheelDo wheelDo = generateNormalWheel(gameInfo, probabilisticConfig);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
         // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
         for (Integer colum : SCATTER_COLUM_INDEX_LIST) {
@@ -151,7 +151,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮列表
      */
-    private List<WheelDo> multiWheelGenerate(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private List<WheelDo> generateMultiWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         int wheelNumber = getWheelNumber();
         List<WheelDo> wheels = new ArrayList<>();
         WheelDo preWheel = null;
