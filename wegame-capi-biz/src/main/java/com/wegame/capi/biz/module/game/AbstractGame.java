@@ -12,6 +12,7 @@ import com.wegame.capi.biz.module.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.common.enums.SymbolEnum;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -49,6 +50,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
     }
 
     public SymbolEnum randomOneSymbol(int cellNo, Map<SymbolEnum, List<BigDecimal>> probabilisticConfigMap) {
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
         Map<SymbolEnum, Integer> map = new HashMap<>();
         probabilisticConfigMap.entrySet().forEach(item -> {
             int val = (item.getValue().get(cellNo).multiply(new BigDecimal(100))).intValue();
@@ -60,9 +62,8 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
                 .stream()
                 .reduce(0, Integer::sum);
         AssertUtil.assertTrue(sum == 10000, ErrorCode.ERR_INTER, "Symbol config error,cellNo:" + cellNo);
-        Random random = new Random();
         // 生成一个1到10000之间的随机整数
-        int randomNumber = randomService.randomInt(1, 10000);
+        int randomNumber = randomService.randomIntOld(1, 10000);
         int startVal = 0;
         for (Map.Entry<SymbolEnum, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {

@@ -4,10 +4,10 @@ spring:
     env: local
   profiles:
     active: local
-  config:
-    import:
-      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
-      - "optional:nacos:${spring.application.name}-maria-makiling-config-${spring.profiles.active}.json"
+#  config:
+#    import:
+#      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
+#      - "optional:nacos:${spring.application.name}-maria-makiling-config-${spring.profiles.active}.json"
   cloud:
     nacos:
       username: nacos

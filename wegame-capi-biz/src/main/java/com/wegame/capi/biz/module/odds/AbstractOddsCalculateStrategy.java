@@ -27,18 +27,18 @@ public abstract class AbstractOddsCalculateStrategy implements OddsCalculateStra
     public abstract Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> getOddsConfig(OddsCalculateDo oddsCalculateDo);
 
     @Override
-    public BigDecimal calculateOdds(OddsCalculateDo oddsCalculateDo) {
+    public BigDecimal calculateOdds(OddsCalculateDo oddsCalculate) {
         long current = System.currentTimeMillis();
-        AssertUtil.assertNotNull(oddsCalculateDo, ErrorCode.ERR_INTER, "oddsCalculate is required");
-        Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> oddsMap = getOddsConfig(oddsCalculateDo);
+        AssertUtil.assertNotNull(oddsCalculate, ErrorCode.ERR_INTER, "oddsCalculate is required");
+        Map<SymbolEnum, Map<OddsTypeEnum, BigDecimal>> oddsMap = getOddsConfig(oddsCalculate);
         if (MapUtils.isEmpty(oddsMap)) {
             return BigDecimal.ZERO;
         }
-        Map<OddsTypeEnum, BigDecimal> map = oddsMap.get(SymbolEnum.valueOfId(oddsCalculateDo.getSymbol().getId()));
+        Map<OddsTypeEnum, BigDecimal> map = oddsMap.get(SymbolEnum.valueOfId(oddsCalculate.getSymbol().getId()));
         if (MapUtils.isEmpty(map)) {
             return BigDecimal.ZERO;
         }
-        BigDecimal odds = map.get(oddsCalculateDo.getOddsType());
+        BigDecimal odds = map.get(oddsCalculate.getOddsType());
         BigDecimal val = Objects.isNull(odds) ? (BigDecimal.ZERO) : odds;
         log.info("odds cost time: {} ms", System.currentTimeMillis() - current);
         return val;
