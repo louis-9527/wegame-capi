@@ -5,7 +5,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.WeGameGoApi;
 import com.wegame.capi.api.domain.req.wegamego.MinMaxRandomReq;
 import com.wegame.capi.api.domain.req.wegamego.MultiMinMaxRandomReq;
-import com.wegame.capi.api.domain.res.wegamego.MinMaxRandomRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
