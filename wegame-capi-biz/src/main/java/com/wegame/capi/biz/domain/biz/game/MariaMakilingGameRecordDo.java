@@ -96,6 +96,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                             .orElse(Collections.emptyList())
                             .stream()
                             .map(subItem -> MariaMakilingBetResultVo.MariaMakilingRewardLineVo.builder()
+                                    .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
                                     .multiple(subItem.getMultiple())
                                     .odds(subItem.getOdds())
                                     .rewardLineType(Objects.nonNull(subItem.getRewardLineType()) ? subItem.getRewardLineType().getCode() : "")
