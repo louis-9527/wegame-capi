@@ -3,6 +3,9 @@ package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
 
 /**
  * 中奖线类型
@@ -13,12 +16,13 @@ import lombok.ToString;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum RewardLineTypeEnum {
 
-    THREE("THREE", "三连", OddsTypeEnum.THREE),
-    FOUR("FOUR", "四连", OddsTypeEnum.FOUR),
-    FIVE("FIVE", "五连", OddsTypeEnum.FIVE),
+    THREE(3,"THREE", "三连", OddsTypeEnum.THREE),
+    FOUR(4,"FOUR", "四连", OddsTypeEnum.FOUR),
+    FIVE(5,"FIVE", "五连", OddsTypeEnum.FIVE),
 
     ;
 
+    private int no;
     /**
      * 枚举码.
      */
@@ -37,7 +41,8 @@ public enum RewardLineTypeEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private RewardLineTypeEnum(String code, String desc, OddsTypeEnum oddsType) {
+    RewardLineTypeEnum(Integer no, String code, String desc, OddsTypeEnum oddsType) {
+        this.no = no;
         this.code = code;
         this.desc = desc;
         this.oddsType = oddsType;
@@ -45,11 +50,24 @@ public enum RewardLineTypeEnum {
 
     public static RewardLineTypeEnum valueOfCode(String code) {
         for (RewardLineTypeEnum item : RewardLineTypeEnum.values()) {
-            if (item.getCode().equals(code)) {
+            if (StringUtils.equals(item.getCode(), code)) {
                 return item;
             }
         }
         return null;
+    }
+
+    public static RewardLineTypeEnum valueOfNo(Integer no) {
+        for (RewardLineTypeEnum item : RewardLineTypeEnum.values()) {
+            if (Objects.equals(item.getNo(), no)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public Integer getNo() {
+        return no;
     }
 
     public String getCode() {

@@ -248,9 +248,9 @@ public class MariaMakilingGameHelper {
     public static final Map<SymbolEnum, List<BigDecimal>> MARIA_MAKILING_FREE_WHEEL_PROBABILISTIC_CONFIG = new ImmutableMap.Builder<SymbolEnum, List<BigDecimal>>()
             .put(SymbolEnum.Symbol1001, Arrays.asList(
                     new BigDecimal("20"),
-                    new BigDecimal("17.3"),
-                    new BigDecimal("17.3"),
-                    new BigDecimal("17.3"),
+                    new BigDecimal("17"),
+                    new BigDecimal("17"),
+                    new BigDecimal("17"),
                     new BigDecimal("20")))
             .put(SymbolEnum.Symbol1002, Arrays.asList(
                     new BigDecimal("14"),
@@ -278,15 +278,15 @@ public class MariaMakilingGameHelper {
                     new BigDecimal("10")))
             .put(SymbolEnum.Symbol2001, Arrays.asList(
                     new BigDecimal("9"),
-                    new BigDecimal("9"),
-                    new BigDecimal("9"),
-                    new BigDecimal("9"),
+                    new BigDecimal("10"),
+                    new BigDecimal("10"),
+                    new BigDecimal("10"),
                     new BigDecimal("9")))
             .put(SymbolEnum.Symbol2002, Arrays.asList(
                     new BigDecimal("8"),
-                    new BigDecimal("8"),
-                    new BigDecimal("8"),
-                    new BigDecimal("8"),
+                    new BigDecimal("7.9"),
+                    new BigDecimal("7.9"),
+                    new BigDecimal("7.9"),
                     new BigDecimal("8")))
             .put(SymbolEnum.Symbol2003, Arrays.asList(
                     new BigDecimal("7"),
@@ -302,9 +302,9 @@ public class MariaMakilingGameHelper {
                     new BigDecimal("5")))
             .put(SymbolEnum.Symbol2005, Arrays.asList(
                     new BigDecimal("4"),
-                    new BigDecimal("4"),
-                    new BigDecimal("4"),
-                    new BigDecimal("4"),
+                    new BigDecimal("4.58"),
+                    new BigDecimal("4.58"),
+                    new BigDecimal("4.58"),
                     new BigDecimal("4")))
             .put(SymbolEnum.Scatter, Arrays.asList(
                     new BigDecimal("0"),
@@ -314,15 +314,15 @@ public class MariaMakilingGameHelper {
                     new BigDecimal("0")))
             .put(SymbolEnum.Wild, Arrays.asList(
                     new BigDecimal("0"),
-                    new BigDecimal("1.6"),
-                    new BigDecimal("1.6"),
-                    new BigDecimal("1.6"),
+                    new BigDecimal("0.83"),
+                    new BigDecimal("0.83"),
+                    new BigDecimal("0.83"),
                     new BigDecimal("0")))
             .put(SymbolEnum.WildX2, Arrays.asList(
                     new BigDecimal("0"),
-                    new BigDecimal("1.1"),
-                    new BigDecimal("1.1"),
-                    new BigDecimal("1.1"),
+                    new BigDecimal("0.79"),
+                    new BigDecimal("0.79"),
+                    new BigDecimal("0.79"),
                     new BigDecimal("0")))
             .put(SymbolEnum.WildX3, Arrays.asList(
                     new BigDecimal("0"),
@@ -338,9 +338,9 @@ public class MariaMakilingGameHelper {
                     new BigDecimal("0")))
             .put(SymbolEnum.WildX10, Arrays.asList(
                     new BigDecimal("0"),
-                    new BigDecimal("0.2"),
-                    new BigDecimal("0.2"),
-                    new BigDecimal("0.2"),
+                    new BigDecimal("0.1"),
+                    new BigDecimal("0.1"),
+                    new BigDecimal("0.1"),
                     new BigDecimal("0")))
             .build();
 

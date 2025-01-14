@@ -10,7 +10,7 @@ logging:
     com.alibaba.cloud.nacos: DEBUG
 ## server
 server:
-  port: 9000
+  port: 9500
   shutdown: graceful
   tomcat:
     uri-encoding: UTF-8
@@ -157,6 +157,7 @@ api:
       agentKey: MIIBCgKCAQEAjpeqhcFzzqIkpOOSHpFkCXGVCdLau09V3opTAard1fbbRBodFRF8AFtEFsA4Uw590IC8Ey4n+uNR0SfevlmWyKvmC+5HVYoHEURRrENMleCFBfiMjYY5WTZoNeRl1LA2kZsFIzA6h5uY7oBKNDOkmVnlCKDCUJMj3h8cc3nPFOtPR6kJh60GSi6cRB4GHQZVixfvFqIuPWTO54RVjZm7U9D6G/BmRsbMMq2xD5kDaZYUOYjclOzY274bLaE8eUeY/nl5S26nZX++rVQ2a0IMu/hM94mCmCO7pPMllswuOdJX5XQCh3BNQzFd8sqC4tdc9OXKzzDDUzS5DiiSVSsauwIDAQAB
   go:
     wegameGoDomain: https://XXXXXXXXX/go/game
+    secretString: cvFz78Gsxtwtpp2Wol6RcHBhRY5wdGEOcdUUhUzGzDDdzzWl94FDrFJKX3Z7nyBm
 #lark
 lark:
   robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

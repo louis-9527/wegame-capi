@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 /**
  * 中奖类型
  *
@@ -15,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum RewardTypeEnum {
-    UN_KNOWN("UN_KNOWN", "未中奖"),
+    NONE("NONE", "未中奖"),
     SINGLE("SINGLE", "单奖励"),
     MULTIPLE("MULTIPLE", "多奖励"),
     ;
@@ -37,6 +39,16 @@ public enum RewardTypeEnum {
             }
         }
         return null;
+    }
+
+    public static RewardTypeEnum valueOfRewardLineCont(int rewardLineCount) {
+        if (Objects.equals(rewardLineCount, 1)) {
+            return SINGLE;
+        } else if (rewardLineCount > 1) {
+            return MULTIPLE;
+        } else {
+            return NONE;
+        }
     }
 
 }

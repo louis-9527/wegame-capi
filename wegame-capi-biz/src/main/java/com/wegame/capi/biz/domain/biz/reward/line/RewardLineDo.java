@@ -1,10 +1,8 @@
-package com.wegame.capi.biz.domain.biz.reward;
+package com.wegame.capi.biz.domain.biz.reward.line;
 
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolIndexDo;
 import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
 import com.wegame.capi.common.enums.RewardLineTypeEnum;
-import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -40,15 +37,23 @@ public class RewardLineDo implements Serializable {
      */
     private RewardLineSubTypeEnum rewardLineSubType;
     /**
-     * 中奖线的中奖元素列表
+     * 中奖线数量
      */
-    private List<SymbolDo> rewardSymbolList;
-    /**
-     * 中奖线的中奖元素坐标列表
-     */
-    private List<SymbolIndexDo> rewardSymbolIndexList;
+    private int rewardLineCount = 0;
+    //    /**
+    //     * 中奖线的中奖元素列表
+    //     */
+    //    private List<SymbolDo> rewardSymbolList;
+    //    /**
+    //     * 中奖线的中奖元素坐标列表
+    //     */
+    //    private List<SymbolIndexDo> rewardSymbolIndexList;
 
     public boolean isCommonReward() {
-        return Objects.equals(rewardSymbol.getSymbolType(), SymbolTypeEnum.COMMON);
+        return Objects.equals(rewardLineSubType, RewardLineSubTypeEnum.COMMON);
+    }
+
+    public boolean isScatterReward() {
+        return Objects.equals(rewardLineSubType, RewardLineSubTypeEnum.SCATTER);
     }
 }

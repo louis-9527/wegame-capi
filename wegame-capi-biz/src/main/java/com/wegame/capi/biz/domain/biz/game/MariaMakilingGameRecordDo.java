@@ -5,7 +5,6 @@ import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
-import com.wegame.capi.client.domain.vo.SymbolIndexVo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -87,19 +86,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                                     .odds(item.getOdds())
                                     .rewardLineType(Objects.nonNull(item.getRewardLineType()) ? item.getRewardLineType().getCode() : "")
                                     .rewardLineSubType(Objects.nonNull(item.getRewardLineSubType()) ? item.getRewardLineSubType().getCode() : "")
-                                    .symbolIdList(Optional.ofNullable(item.getSymbolList())
-                                            .orElse(Collections.emptyList())
-                                            .stream()
-                                            .map(symbol -> symbol.getId())
-                                            .collect(Collectors.toList()))
-                                    .symbolIndexList(Optional.ofNullable(item.getSymbolIndexList())
-                                            .orElse(Collections.emptyList())
-                                            .stream()
-                                            .map(symbolIndex -> SymbolIndexVo.builder()
-                                                    .rowIndex(symbolIndex.getRowIndex())
-                                                    .columIndex(symbolIndex.getColumIndex())
-                                                    .build()
-                                            ).collect(Collectors.toList()))
+                                    .rewardLineCount(item.getRewardLineCount())
                                     .betAmount(item.getBetAmount())
                                     .rewardAmount(item.getRewardAmount())
                                     .build()).collect(Collectors.toList()))

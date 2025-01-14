@@ -30,4 +30,8 @@ public class Constants {
     // 推送大奖tips内容
     public static final String WEGAME_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
 
+    // go sec header
+    public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
+
+
 }
