@@ -49,7 +49,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
                 .collect(Collectors.toList());
     }
 
-    public SymbolEnum randomOneSymbol(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
+    public Map<String, Integer> buildColumProbabilisticMap(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
         Map<String, Integer> map = new HashMap<>();
         probabilisticConfigMap.entrySet().forEach(item -> {
@@ -62,6 +62,10 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
                 .stream()
                 .reduce(0, Integer::sum);
         AssertUtil.assertTrue(sum == 10000, ErrorCode.ERR_INTER, "Symbol config error,cellNo:" + cellNo);
+        return map;
+    }
+
+    public SymbolEnum randomOneSymbol(Map<String, Integer> map) {
         // 生成一个1到10000之间的随机整数
         int randomNumber = randomService.randomIntOld(1, 10000);
         int startVal = 0;

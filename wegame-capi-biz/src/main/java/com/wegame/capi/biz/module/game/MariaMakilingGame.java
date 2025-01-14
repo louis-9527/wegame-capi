@@ -88,8 +88,9 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
             boolean hasScatter = false;
+            Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
             for (int row = 0; row < gameInfo.getRow(); ) {
-                SymbolEnum symbol = randomOneSymbol(colum, probabilisticConfig);
+                SymbolEnum symbol = randomOneSymbol(columProbabilisticMap);
                 SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
                 AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
                 if (hasScatter) {
@@ -162,13 +163,14 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             } else {
                 symbolArr = preWheel.copy().getSymbolArr();
             }
-            for (int i = 0; i < gameInfo.getRow(); i++) {
-                for (int j = 0; j < gameInfo.getColumn(); j++) {
-                    if (Objects.isNull(symbolArr[i][j]) || !Objects.equals(SymbolTypeEnum.WILD, symbolArr[i][j].getSymbolType())) {
-                        SymbolEnum symbol = randomOneSymbol(j, probabilisticConfig);
+            for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+                Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
+                for (int row = 0; row < gameInfo.getRow(); row++) {
+                    if (Objects.isNull(symbolArr[row][colum]) || !Objects.equals(SymbolTypeEnum.WILD, symbolArr[row][colum].getSymbolType())) {
+                        SymbolEnum symbol = randomOneSymbol(columProbabilisticMap);
                         SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
                         AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
-                        symbolArr[i][j] = symbolDo;
+                        symbolArr[row][colum] = symbolDo;
                     }
                 }
             }
