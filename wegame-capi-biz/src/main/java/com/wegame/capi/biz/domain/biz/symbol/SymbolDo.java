@@ -39,6 +39,10 @@ public class SymbolDo implements Serializable {
      */
     private SymbolRuleDo symbolRule;
 
+    public boolean isCommonSymbol() {
+        return Objects.equals(symbolType, SymbolTypeEnum.COMMON);
+    }
+
     public boolean isScatterSymbol() {
         return Objects.equals(symbolType, SymbolTypeEnum.SCATTER);
     }

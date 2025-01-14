@@ -22,7 +22,7 @@ public class MariaMakilingBetResultVo implements Serializable {
     private static final long serialVersionUID = -4792907227811616042L;
     @ApiModelProperty("中奖类型: NONE未中奖，SINGLE单奖励，MULTIPLE多奖励 ")
     private String rewardType;
-    @ApiModelProperty("中奖子类型: none,nice,mega,super,sensational")
+    @ApiModelProperty("中奖子类型: NONE:未中奖,nice,mega,super,sensational")
     private String rewardSubType;
     @ApiModelProperty("中奖总金额")
     private Long totalRewardAmount;
@@ -53,12 +53,10 @@ public class MariaMakilingBetResultVo implements Serializable {
         private String rewardLineType;
         @ApiModelProperty("中奖线子类型：COMMON（普通），SCATTER（SCATTER）")
         private String rewardLineSubType;
-        @ApiModelProperty("中奖元素坐标列表")
-        private List<SymbolIndexVo> symbolIndexList;
-        @ApiModelProperty("中奖线元素Id列表")
-        private List<String> symbolIdList;
-        @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (1 + 倍率) = 中奖金额）； " +
-                "SCATTER中奖计算公式（投注金额 * 赔率 = 中奖金额）")
+        @ApiModelProperty("中奖线数量")
+        private Integer rewardLineCount;
+        @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (中奖线数量WAYS)*(1 + 倍率) = 中奖金额）； " +
+                "SCATTER中奖计算公式（投注金额 * 赔率 * （中奖线数量WAYS）= 中奖金额）")
         private Long rewardAmount;
         @ApiModelProperty("投注金额")
         private Long betAmount;

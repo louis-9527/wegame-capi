@@ -17,7 +17,7 @@ import java.util.Objects;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum RewardTypeEnum {
-    UN_KNOWN("UN_KNOWN", "未中奖"),
+    NONE("NONE", "未中奖"),
     SINGLE("SINGLE", "单奖励"),
     MULTIPLE("MULTIPLE", "多奖励"),
     ;
@@ -47,7 +47,7 @@ public enum RewardTypeEnum {
         } else if (rewardLineCount > 1) {
             return MULTIPLE;
         } else {
-            return UN_KNOWN;
+            return NONE;
         }
     }
 
