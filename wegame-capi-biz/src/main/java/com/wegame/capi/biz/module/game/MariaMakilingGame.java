@@ -86,27 +86,26 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      */
     private WheelDo generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+        // 生成整盘随机数(row*column)
+        List<Integer> randomArray = randomService.randomIntArray(1, 10000, gameInfo.getRow() * gameInfo.getColumn());
+        int index = 0;
         for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+            // 一列只能包含一个scatter
             boolean hasScatter = false;
             Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
-            for (int row = 0; row < gameInfo.getRow(); ) {
-                SymbolEnum symbol = randomOneSymbol(columProbabilisticMap);
-                SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
-                AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
+            for (int row = 0; row < gameInfo.getRow(); row++) {
+                Integer random = randomArray.get(index);
                 if (hasScatter) {
-                    if (symbolDo.isScatterSymbol()) {
-                        // do nothing
-                    } else {
-                        symbolArr[row][colum] = symbolDo;
-                        row++;
-                    }
-                } else {
+                    // 如果已经包含了Scatter,则只能生成包含非scatter
+                    SymbolDo symbolDo = this.randomNoScatterSymbol(random, gameInfo, columProbabilisticMap);
                     symbolArr[row][colum] = symbolDo;
-                    row++;
-                    if (symbolDo.isScatterSymbol()) {
-                        hasScatter = true;
-                    }
+                } else {
+                    //随机生成
+                    SymbolDo symbolDo = this.randomNormalSymbol(random, gameInfo, columProbabilisticMap);
+                    symbolArr[row][colum] = symbolDo;
+                    hasScatter = symbolDo.isScatterSymbol();
                 }
+                index++;
             }
         }
         return WheelDo.builder()
@@ -148,30 +147,41 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
     /**
      * 生成多个滚轮
+     * 1.无 Scatter
+     * 2.wild需要保留
      *
      * @param gameInfo 游戏信息
      * @return 滚轮列表
      */
     private List<WheelDo> generateMultiWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+        // 保存全局wild
+        SymbolDo[][] wildIndex = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+        // 免费次数
         int wheelNumber = getWheelNumber();
+        // 生成轮盘总和
         List<WheelDo> wheels = new ArrayList<>();
-        WheelDo preWheel = null;
         for (int number = 1; number <= wheelNumber; number++) {
-            SymbolDo[][] symbolArr;
-            if (Objects.isNull(preWheel)) {
-                symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-            } else {
-                symbolArr = preWheel.copy().getSymbolArr();
-            }
+            // 生成整盘随机数(row*column)
+            List<Integer> randomArray = randomService.randomIntArray(1, 10000, gameInfo.getRow() * gameInfo.getColumn());
+            SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+            int index = 0;
             for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+                // 当前列元素概率
                 Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
                 for (int row = 0; row < gameInfo.getRow(); row++) {
-                    if (Objects.isNull(symbolArr[row][colum]) || !Objects.equals(SymbolTypeEnum.WILD, symbolArr[row][colum].getSymbolType())) {
-                        SymbolEnum symbol = randomOneSymbol(columProbabilisticMap);
-                        SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
-                        AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
+                    // 当前坐标是否有wild
+                    SymbolDo wildSymDo = wildIndex[row][colum];
+                    if (wildSymDo != null) {
+                        symbolArr[row][colum] = wildSymDo;
+                    } else {
+                        // 生成非Scatter
+                        SymbolDo symbolDo = this.randomNoScatterSymbol(randomArray.get(index), gameInfo, columProbabilisticMap);
                         symbolArr[row][colum] = symbolDo;
+                        if (symbolDo.isWildSymbol()) {
+                            wildIndex[row][colum] = symbolDo;
+                        }
                     }
+                    index++;
                 }
             }
             WheelDo wheelDo = WheelDo.builder()
@@ -179,10 +189,46 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                     .symbolArr(symbolArr)
                     .build();
             wheels.add(wheelDo);
-            preWheel = wheelDo;
+
         }
+
         return wheels;
     }
+
+    /**
+     * 根据随机数生成非Scatter 元素
+     *
+     * @param random
+     * @param gameInfo
+     * @param columProbabilisticMap
+     * @return
+     */
+    private SymbolDo randomNoScatterSymbol(Integer random, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
+        Integer randomPr = random;
+        while (true) {
+            SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, randomPr);
+            SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
+            if (!symbolDo.isScatterSymbol()) {
+                return symbolDo;
+            }
+            // 如果非第一次则更新Random值(小概率)
+            randomPr = randomService.randomInt(1, 10000);
+        }
+    }
+
+    /**
+     * 根据随机数生成非Scatter 元素
+     *
+     * @param random
+     * @param gameInfo
+     * @param columProbabilisticMap
+     * @return
+     */
+    private SymbolDo randomNormalSymbol(Integer random, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
+        SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, random);
+        return gameInfo.getSymbolById(symbol.getId());
+    }
+
 
     public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
         if (gamePlay.isFreeSpinsFlag()) {

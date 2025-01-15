@@ -19,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * MariaMakiling类游戏投注抽象接口
+ */
 public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
 
     @Autowired
@@ -74,13 +77,20 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                 .build();
     }
 
+    /**
+     * 非免费轮投注
+     * @param betDo
+     * @return
+     */
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
         List<MariaMakilingGameRecordDo> gameRecordList = new ArrayList<>();
-        MariaMakilingGameRecordDo firstGameRecord = firstPlayGame(betDo);
+        // 投注
+        MariaMakilingGameRecordDo firstGameRecord = this.firstPlayGame(betDo);
         gameRecordList.add(firstGameRecord);
         // 判断-是否中免费轮
         if (firstGameRecord.hasRewardFreeSpins()) {
-            List<MariaMakilingGameRecordDo> freeSpinsGameRecordList = freeSpinsPlayGame(betDo);
+            // 执行免费轮投注
+            List<MariaMakilingGameRecordDo> freeSpinsGameRecordList = this.freeSpinsPlayGame(betDo);
             // 组装-免费轮IDS
             firstGameRecord.setFreeSpinIds(Optional.ofNullable(freeSpinsGameRecordList)
                     .orElse(Collections.emptyList())
@@ -89,7 +99,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                     .collect(Collectors.toList()));
             gameRecordList.addAll(freeSpinsGameRecordList);
         }
-        // 构建-投注记录
+        // 总中奖金额
         Long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> item.getRewardResult() != null)
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
@@ -97,7 +107,8 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         MariaMakilingBetRecordDetailDo detailDo = MariaMakilingBetRecordDetailDo.builder()
                 .gameRecordList(gameRecordList)
                 .build();
-        BetRecordDo betRecord = BetRecordBuilder.build(generateRecordId(),
+        // 构建投注记录
+        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecord = BetRecordBuilder.build(generateRecordId(),
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
@@ -118,7 +129,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     }
 
     private MariaMakilingGameRecordDo firstPlayGame(BetDo<MariaMakilingBetDo> betDo) {
-        List<MariaMakilingGameRecordDo> gameRecords = getGame().play(GamePlayDo.builder()
+        List<MariaMakilingGameRecordDo> gameRecords = this.getGame().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())

@@ -5,9 +5,11 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.WeGameGoApi;
 import com.wegame.capi.api.domain.req.wegamego.MinMaxRandomReq;
 import com.wegame.capi.api.domain.req.wegamego.MultiMinMaxRandomReq;
+import com.wegame.capi.common.utils.SecureRandomUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -25,9 +27,20 @@ public class RandomService {
      * @return
      */
     public int randomInt(int min, int max) {
-        Random random = new Random();
         AssertUtil.assertTrue(min < max, ErrorCode.ERR_INTER);
+        Random random = new Random();
         return random.nextInt(max - min + 1) + min;
+    }
+
+    /**
+     * 生成随机数据[min, max]
+     *
+     * @param min 最小值
+     * @param max 最大值
+     * @return
+     */
+    public List<Integer> randomIntArray(int min, int max,int count) {
+       return SecureRandomUtil.randomIntInRangeList(min,max,count);
     }
 
     /**
