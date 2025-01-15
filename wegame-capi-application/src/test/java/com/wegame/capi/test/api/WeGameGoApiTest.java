@@ -52,7 +52,7 @@ public class WeGameGoApiTest extends BaseTest {
         long startMill = System.currentTimeMillis();
 
         for (int i = 0; i < 100; i++) {
-            int random = randomService.randomIntOld(1, 10000);
+            int random = randomService.randomInt(1, 10000);
             log.info("test_randomService:{}", random);
         }
         long endMill = System.currentTimeMillis();

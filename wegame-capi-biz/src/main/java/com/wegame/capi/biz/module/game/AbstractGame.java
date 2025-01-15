@@ -67,7 +67,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
 
     public SymbolEnum randomOneSymbol(Map<String, Integer> map) {
         // 生成一个1到10000之间的随机整数
-        int randomNumber = randomService.randomIntOld(1, 10000);
+        int randomNumber = randomService.randomInt(1, 10000);
         int startVal = 0;
         for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {

@@ -24,7 +24,7 @@ public class RandomService {
      * @param max 最大值
      * @return
      */
-    public int randomIntOld(int min, int max) {
+    public int randomIntLocal(int min, int max) {
         Random random = new Random();
         AssertUtil.assertTrue(min < max, ErrorCode.ERR_INTER);
         return random.nextInt(max - min + 1) + min;
