@@ -38,8 +38,7 @@ public class RandomService {
      * @return
      */
     public int randomIntRemote(int min, int max) {
-        Integer random = weGameGoApi.minMaxRandom(MinMaxRandomReq.builder().min(1).max(max - min + 1).build());
-        return random + min;
+        return weGameGoApi.minMaxRandom(MinMaxRandomReq.builder().min(min).max(max).build());
     }
 
     /**
@@ -50,6 +49,6 @@ public class RandomService {
      * @return
      */
     public List<Integer> randomMultiInt(int count, int min, int max) {
-        return weGameGoApi.multiMinMaxRandom(MultiMinMaxRandomReq.builder().count(count).min(1).max(max - min + 1).build());
+        return weGameGoApi.multiMinMaxRandom(MultiMinMaxRandomReq.builder().count(count).min(min).max(max).build());
     }
 }
