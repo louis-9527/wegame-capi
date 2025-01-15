@@ -159,7 +159,7 @@ api:
       privateIv: b3417fdeb120093da5ba14ec2225d762
       agentKey: MIIBCgKCAQEAjpeqhcFzzqIkpOOSHpFkCXGVCdLau09V3opTAard1fbbRBodFRF8AFtEFsA4Uw590IC8Ey4n+uNR0SfevlmWyKvmC+5HVYoHEURRrENMleCFBfiMjYY5WTZoNeRl1LA2kZsFIzA6h5uY7oBKNDOkmVnlCKDCUJMj3h8cc3nPFOtPR6kJh60GSi6cRB4GHQZVixfvFqIuPWTO54RVjZm7U9D6G/BmRsbMMq2xD5kDaZYUOYjclOzY274bLaE8eUeY/nl5S26nZX++rVQ2a0IMu/hM94mCmCO7pPMllswuOdJX5XQCh3BNQzFd8sqC4tdc9OXKzzDDUzS5DiiSVSsauwIDAQAB
   go:
-    wegameGoDomain: https://XXXXXXXXX/go/game
+    wegameGoDomain: https://wegame-go-svc.wegame-uat.svc.cluster.local/go/game
     secretString: xETPPpSvBtJ4CShtVQwme9ngrNixUfXHbi7UkXBJ7u8LxlJwwcNwNdJQgZUguTwa
 #lark
 lark:
