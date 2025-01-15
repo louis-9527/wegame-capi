@@ -6,8 +6,8 @@ logging:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: trace
     org.apache.ibatis: trace
-    com.alibaba.nacos: info
-    com.alibaba.cloud.nacos: DEBUG
+#    com.alibaba.nacos: info
+#    com.alibaba.cloud.nacos: DEBUG
 ## server
 server:
   port: 9500
@@ -34,6 +34,11 @@ mybatis:
     cacheEnabled: true
 ## spring
 spring:
+  application:
+    name: wegame-capi
+    env: local
+  profiles:
+    active: local
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
@@ -95,11 +100,11 @@ spring:
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: false
-        wegame_business_db:
-          url: jdbc:mysql://localhost:3306/wegame_business_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: root
-          password: rootroot
-          type: com.alibaba.druid.pool.DruidDataSource
+#        wegame_business_db:
+#          url: jdbc:mysql://localhost:3306/wegame_business_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+#          username: root
+#          password: rootroot
+#          type: com.alibaba.druid.pool.DruidDataSource
   data:
     mongodb:
       uri: mongodb://localhost:27017/wegame_mdb
@@ -116,15 +121,15 @@ knife4j:
     description: ""
     version: v1.0.0
 ## aws s3
-amazon:
-  aws:
-    access-key-id: AKIAW3MEDX6WK5QMNG5N
-    access-key-secret: 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
-  s3:
-    endpoint: https://qatlivsports.s3.ap-east-1.amazonaws.com
-    region: ap-east-1
-    bucket: qatlivsports
-    upload-path: ChengDuLocalImage/local/
+#amazon:
+#  aws:
+#    access-key-id: AKIAW3MEDX6WK5QMNG5N
+#    access-key-secret: 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
+#  s3:
+#    endpoint: https://qatlivsports.s3.ap-east-1.amazonaws.com
+#    region: ap-east-1
+#    bucket: qatlivsports
+#    upload-path: ChengDuLocalImage/local/
 ## api
 api:
   sport:

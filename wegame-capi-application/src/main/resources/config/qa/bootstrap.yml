@@ -1,27 +1,27 @@
-spring:
-  application:
-    name: wegame-capi
-    env: qa
-  profiles:
-    active: qa
-#  config:
-#    import:
-#      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
-#      - "optional:nacos:${spring.application.name}-maria-makiling-config-${spring.profiles.active}.json"
-  cloud:
-    nacos:
-      username: nacos
-      password: nacos
-#      discovery:
-#        server-addr: nacos-cs.nacos.svc.cluster.local:8848
+#spring:
+#  application:
+#    name: wegame-capi
+#    env: qa
+#  profiles:
+#    active: qa
+##  config:
+##    import:
+##      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
+##      - "optional:nacos:${spring.application.name}-maria-makiling-config-${spring.profiles.active}.json"
+#  cloud:
+#    nacos:
+#      username: nacos
+#      password: nacos
+##      discovery:
+##        server-addr: nacos-cs.nacos.svc.cluster.local:8848
+##        group: ${spring.profiles.active}
+##        namespace: c364c8cf-3770-4b55-9304-2f05d6eba5c2
+##        metadata:
+##          application: ${spring.application.name}-${spring.profiles.active}
+#      config:
+#        import-check:
+#          enabled: true
+#        server-addr: 16.162.139.203:8847,16.162.139.203:8849,16.162.139.203:8851
 #        group: ${spring.profiles.active}
-#        namespace: c364c8cf-3770-4b55-9304-2f05d6eba5c2
-#        metadata:
-#          application: ${spring.application.name}-${spring.profiles.active}
-      config:
-        import-check:
-          enabled: true
-        server-addr: 16.162.139.203:8847,16.162.139.203:8849,16.162.139.203:8851
-        group: ${spring.profiles.active}
-        namespace: e0ab850a-99b5-477b-af37-5c2a2aea72c9
-        file-extension: yaml
+#        namespace: e0ab850a-99b5-477b-af37-5c2a2aea72c9
+#        file-extension: yaml

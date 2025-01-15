@@ -6,8 +6,6 @@ logging:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: trace
     org.apache.ibatis: trace
-    com.alibaba.nacos: info
-    com.alibaba.cloud.nacos: DEBUG
 ## server
 server:
   port: 9500
@@ -34,6 +32,11 @@ mybatis:
     cacheEnabled: true
 ## spring
 spring:
+  application:
+    name: wegame-capi
+    env: dev
+  profiles:
+    active: dev
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
@@ -93,24 +96,24 @@ spring:
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: false
-        wegame_backend_db:
-          url: jdbc:mysql://172.31.27.141:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: root
-          password: ENC(YNkAqtiSqYCkHLUlQcUkJwinsDrTnnxC/q5p2JRLGozqSGKFeap13wRM9BiqQYFXpRtIEWfKVZug+LSFFvd3JQ==)
-          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-          type: com.alibaba.druid.pool.DruidDataSource
-          druid:
-            initial-size: 10
-            min-idle: 10
-            max-active: 500
-            max-wait: 1000
-            time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 3000
-            validation-query: SELECT 1 FROM DUAL
-            test-while-idle: true
-            test-on-borrow: false
-            test-on-return: false
-            pool-prepared-statements: false
+#        wegame_backend_db:
+#          url: jdbc:mysql://172.31.27.141:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+#          username: root
+#          password: ENC(YNkAqtiSqYCkHLUlQcUkJwinsDrTnnxC/q5p2JRLGozqSGKFeap13wRM9BiqQYFXpRtIEWfKVZug+LSFFvd3JQ==)
+#          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
+#          type: com.alibaba.druid.pool.DruidDataSource
+#          druid:
+#            initial-size: 10
+#            min-idle: 10
+#            max-active: 500
+#            max-wait: 1000
+#            time-between-eviction-runs-millis: 6000
+#            min-evictable-idle-time-millis: 3000
+#            validation-query: SELECT 1 FROM DUAL
+#            test-while-idle: true
+#            test-on-borrow: false
+#            test-on-return: false
+#            pool-prepared-statements: false
   data:
     mongodb:
       uri: mongodb://172.31.27.141:27017/wegame_mdb
@@ -126,16 +129,16 @@ knife4j:
     title: 接口文档
     description: "接口文档"
     version: v1.0.0
-## aws s3
-amazon:
-  aws:
-    access-key-id: AKIAW3MEDX6WK5QMNG5N
-    access-key-secret: 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
-  s3:
-    endpoint: https://qatlivsports.s3.ap-east-1.amazonaws.com
-    region: ap-east-1
-    bucket: qatlivsports
-    upload-path: ChengDuDevImage/dev/
+### aws s3
+#amazon:
+#  aws:
+#    access-key-id: AKIAW3MEDX6WK5QMNG5N
+#    access-key-secret: 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
+#  s3:
+#    endpoint: https://qatlivsports.s3.ap-east-1.amazonaws.com
+#    region: ap-east-1
+#    bucket: qatlivsports
+#    upload-path: ChengDuDevImage/dev/
 ## api
 api:
   sport:

@@ -14,7 +14,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -29,7 +28,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAsync
 @EnableCaching
 @EnableTransactionManagement
-@EnableDiscoveryClient
 @MapperScan(value = {"com.wegame.capi.dao.*"})
 @SpringBootApplication(scanBasePackages = {"com.wegame.*"}, exclude = {RedissonAutoConfiguration.class, SessionAutoConfiguration.class})
 public class Application implements CommandLineRunner {
