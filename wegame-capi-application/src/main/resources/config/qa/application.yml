@@ -160,7 +160,7 @@ api:
       privateKey: 42a495b8c0e9416bd91ff6a7b65043c970acd88f3665e20cb6a12ddeb8e7e47d
       privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
   go:
-    wegameGoDomain: http://wegame-go-svc.wegame-qat.svc.cluster.local/go/game
+    wegameGoDomain: http://wegame-go-svc.wegame-qat.svc.cluster.local:9800/go/game
     secretString: oYolXtz4KDiZPEh1rLS0a1gOLetpNad0kDjl4rzy3e3HMkQDHojagOjXEMeNYjsg
 #lark
 lark:
