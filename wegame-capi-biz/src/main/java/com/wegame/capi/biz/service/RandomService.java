@@ -24,7 +24,7 @@ public class RandomService {
      * @param max 最大值
      * @return
      */
-    public int randomIntLocal(int min, int max) {
+    public int randomInt(int min, int max) {
         Random random = new Random();
         AssertUtil.assertTrue(min < max, ErrorCode.ERR_INTER);
         return random.nextInt(max - min + 1) + min;
@@ -37,7 +37,7 @@ public class RandomService {
      * @param max 最大值
      * @return
      */
-    public int randomInt(int min, int max) {
+    public int randomIntRemote(int min, int max) {
         Integer random = weGameGoApi.minMaxRandom(MinMaxRandomReq.builder().min(1).max(max - min + 1).build());
         return random + min;
     }
