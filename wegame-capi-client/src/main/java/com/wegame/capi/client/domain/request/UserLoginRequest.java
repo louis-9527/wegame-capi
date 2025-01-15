@@ -44,7 +44,7 @@ public class UserLoginRequest implements Validate, Serializable {
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(pId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(channelId, ErrorCode.ERR_PARAM);
+       // AssertUtil.assertStrNotEmpty(channelId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(playerName.length() <= 50, ErrorCode.ERR_PARAM);
