@@ -43,4 +43,6 @@ public class SingleWalletBaseReq implements Serializable {
      *
      */
     private String createTime;
+
+
 }

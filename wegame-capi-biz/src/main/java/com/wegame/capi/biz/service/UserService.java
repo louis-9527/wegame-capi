@@ -21,6 +21,7 @@ import com.wegame.capi.dao.mapper.domain.user.UserQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -241,7 +242,8 @@ public class UserService {
     }
 
     public Void notifyCreditChange(CreditChangeNotifyDto dto) {
-        String hash = singleWalletApi.hash(dto.getChannelId(), dto.getHash(), dto.getRefId(), DateUtil.toUTC(dto.getCreateTime()));
+        Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(dto.getChannelId());
+        String hash = singleWalletApi.hash(dto.getChannelId(), dto.getPlayerName(), DateUtil.toUTC(dto.getCreateTime()),dto.getRefId() ,privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
         AssertUtil.assertTrue(StringUtils.equals(hash, dto.getHash()), ErrorCode.ERR_PARAM);
         redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, dto.getPlayerName()), 1);
         // todo 麦冬 返回void结果

@@ -1,6 +1,7 @@
 package com.wegame.capi.api;
 
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.SingleWalletSignatureUtil;
 import com.wegame.capi.api.domain.req.singlewallet.SingleWalletBaseReq;
@@ -8,6 +9,7 @@ import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.annotation.Client;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -23,9 +25,6 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class BaseApi {
 
-    // domain
-    @Value("${api.sport.platformDomain}")
-    String platformDomain;
     @Value("${api.sport.singleDomain}")
     String singleDomain;
     @Value("${api.go.wegameGoDomain}")
@@ -62,15 +61,18 @@ public class BaseApi {
     @Autowired
     RestTemplate restTemplate;
 
+
     public void assembleSingleSignature(SingleWalletBaseReq req) {
-        String hash = hash(req.getChannelId(), req.getPlayerName(), req.getCreateTime(), req.getRefId());
+        String channelId = getChannelId(req.getPId());
+        Pair<String, String> privateKeyAndIv = getPrivateKeyAndIv(req.getPId());
+        String hash = hash(channelId, req.getPlayerName(), req.getCreateTime(), req.getRefId(), privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
+        req.setChannelId(channelId);
         req.setHash(hash);
     }
 
-    public String hash(String channelId, String playerName, String createTime, String refId) {
+
+    public String hash(String channelId, String playerName, String createTime, String refId, String key, String iv) {
         String preSignature = String.format("%s%s%s%s", channelId, playerName, createTime, refId);
-        String key = StringUtils.equals(channelId, cpChannelId) ? cpPrivateKey : igoPrivateKey;
-        String iv = StringUtils.equals(channelId, cpChannelId) ? cpPrivateIv : igoPrivateIv;
         String hash = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
         AssertUtil.assertNotNull(hash, ErrorCode.ERR_PARAM);
         return hash;
@@ -81,6 +83,38 @@ public class BaseApi {
         multiValueMap.add(Constants.WE_GAME_GO_SEC_HEADER, secretString);
         return multiValueMap;
     }
+
+
+    public String getChannelId(String platformId) {
+        if (StringUtils.equals(platformId, cpPlatformId)) {
+            return cpChannelId;
+        }
+        if (StringUtils.equals(platformId, igoPlatformId)) {
+            return igoChannelId;
+        }
+        throw new BusinessException(ErrorCode.ERR_PARAM);
+    }
+
+    public Pair<String, String> getPrivateKeyAndIv(String platformId) {
+        if (StringUtils.equals(platformId, cpPlatformId)) {
+            return Pair.of(cpPrivateKey, cpPrivateIv);
+        }
+        if (StringUtils.equals(platformId, igoPlatformId)) {
+            return Pair.of(igoPrivateKey, igoPrivateIv);
+        }
+        throw new BusinessException(ErrorCode.ERR_PARAM);
+    }
+
+    public Pair<String, String> getPrivateKeyAndIvByChannelId(String channelId) {
+        if (StringUtils.equals(channelId, cpChannelId)) {
+            return Pair.of(cpPrivateKey, cpPrivateIv);
+        }
+        if (StringUtils.equals(channelId, igoChannelId)) {
+            return Pair.of(igoPrivateKey, igoPrivateIv);
+        }
+        throw new BusinessException(ErrorCode.ERR_PARAM);
+    }
+
 }
 
 

@@ -11,6 +11,7 @@ import java.util.Date;
 public class GetCreditReqBuilder {
     public static GetCreditReq build() {
         return GetCreditReq.builder()
+                .pId(UserInfoContext.getUserInfo().getPId())
                 .channelId(UserInfoContext.getUserInfo().getChannelId())
                 .playerName(UserInfoContext.getUserInfo().getPlayerName())
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))

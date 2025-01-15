@@ -1,6 +1,5 @@
 package com.wegame.capi.api;
 
-import com.wegame.base.utils.SingleWalletSignatureUtil;
 import com.wegame.capi.api.domain.req.GetAuthLoginTokenReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
@@ -15,7 +14,6 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -36,15 +34,7 @@ public class SingleWalletApi extends BaseApi {
 
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
         try {
-            // 设置token签名
-            String preSignature = String.format("%s%s%s%s", req.getChannelId(), req.getPlayerName(), req.getCreateTime(), req.getRefId());
-            String key = StringUtils.equals(String.valueOf(req.getPId()), cpPlatformId) ? cpPrivateKey : igoPrivateKey;
-            String iv = StringUtils.equals(String.valueOf(req.getPId()), cpPlatformId) ? cpPrivateIv : igoPrivateIv;
-            // todo delete log
-            log.info("platformId: {}; preSignature: {}; key: {}; iv: {}", req.getPId(), preSignature, key, iv);
-            String encrypt = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
-            AssertUtil.assertNotNull(encrypt, ErrorCode.ERR_PARAM);
-            req.setHash(encrypt);
+            assembleSingleSignature(req);
             RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST, URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
             ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {
             });
