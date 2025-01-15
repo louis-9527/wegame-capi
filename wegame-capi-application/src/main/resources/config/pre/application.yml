@@ -144,20 +144,19 @@ knife4j:
 ## api
 api:
   sport:
-    platformDomain: http://uat-restful-private-service
     singleDomain: https://sw-http-main-apisix.igo9.me/
+    # 是否调用
+    invoke: true
     cp:
       platformId: 50
       channelId: 2050
       privateKey: cbb82974fd6bf143e68b1dc51d2426951e5b1fc7d35c656f5ac8f18ae9254023
       privateIv: 4e1d77560440ab55fea1a18e0b6da6b9
-      agentKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxckZfZgqTqkxZW+hVKsx5qclITEtrVXYDVPz3nRRH1wYllP9KSxupjx4987Ad9f05a3Mn9yjf2iyqMYihiZ0JglYMSkOeh19OIOwiJfpG7pUSS7bXQP/mpaoip2IdL1ulkwe5o84kjLptudSowcLOVzWZKYJu8aCi9fe+6Xg/WC99WMjEXP42XL1uXldhWeKdVAFuIu4+YyOecQkB01BWzwKP2UUvJPOiGNVub1jrtQqsWqRTIy5LHBdRxPNTvXQ4lmjjNjPKzuwqJv/jtKwVO2fwCqRhIzMZUBpJr8LVfYCdjtaBPP21zVK5Q2zLZvrd74xE6ay5OQd/82zXv4P9QIDAQAB
     igo:
       platformId: 55
       channelId: 2051
       privateKey: 6bc0257eac0e3d0245b97cbc3e6ea802ab555587a0cadbe30d9c9c0cfe9a6c08
       privateIv: b3417fdeb120093da5ba14ec2225d762
-      agentKey: MIIBCgKCAQEAjpeqhcFzzqIkpOOSHpFkCXGVCdLau09V3opTAard1fbbRBodFRF8AFtEFsA4Uw590IC8Ey4n+uNR0SfevlmWyKvmC+5HVYoHEURRrENMleCFBfiMjYY5WTZoNeRl1LA2kZsFIzA6h5uY7oBKNDOkmVnlCKDCUJMj3h8cc3nPFOtPR6kJh60GSi6cRB4GHQZVixfvFqIuPWTO54RVjZm7U9D6G/BmRsbMMq2xD5kDaZYUOYjclOzY274bLaE8eUeY/nl5S26nZX++rVQ2a0IMu/hM94mCmCO7pPMllswuOdJX5XQCh3BNQzFd8sqC4tdc9OXKzzDDUzS5DiiSVSsauwIDAQAB
   go:
     wegameGoDomain: https://wegame-go-svc.wegame-uat.svc.cluster.local/go/game
     secretString: xETPPpSvBtJ4CShtVQwme9ngrNixUfXHbi7UkXBJ7u8LxlJwwcNwNdJQgZUguTwa

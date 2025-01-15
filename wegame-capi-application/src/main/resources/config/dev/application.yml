@@ -142,8 +142,9 @@ knife4j:
 ## api
 api:
   sport:
-    platformDomain: https://test-restful.sportslive.com.ph
     singleDomain: https://sw-http-main-apisix.igo8.me/
+    # 是否调用
+    invoke: false
     cp:
       platformId: 50
       channelId: 1050

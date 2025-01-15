@@ -29,7 +29,8 @@ public class BaseApi {
     String singleDomain;
     @Value("${api.go.wegameGoDomain}")
     String wegameGoDomain;
-
+    @Value("${api.sport.invoke}")
+    public Boolean invoke;
     // cp
     @Value("${api.sport.cp.platformId}")
     public String cpPlatformId;
@@ -39,8 +40,6 @@ public class BaseApi {
     String cpPrivateKey;
     @Value("${api.sport.cp.privateIv}")
     String cpPrivateIv;
-    @Value("${api.sport.cp.agentKey}")
-    String cpAgentKey;
 
     // igo
     @Value("${api.sport.igo.platformId}")
@@ -51,8 +50,6 @@ public class BaseApi {
     String igoPrivateKey;
     @Value("${api.sport.igo.privateIv}")
     String igoPrivateIv;
-    @Value("${api.sport.igo.agentKey}")
-    String igoAgentKey;
 
     // go
     @Value("${api.go.secretString}")

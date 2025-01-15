@@ -18,11 +18,13 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletBetStatusResStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Random;
 
 
 /**
@@ -40,6 +42,9 @@ public class SingleWalletService {
 
     public BetSingleWalletResultDo betWithPayout(BetRecordDo betRecordDo) {
         BetWithPayoutReq betWithPayoutReq = BetWithPayoutReqBuilder.buildReq(betRecordDo);
+        if (!singleWalletApi.invoke) {
+            return BetSingleWalletResultDo.builder().betStatus(BetStatusEnum.SUCCESS).betId(String.valueOf(RandomUtils.nextInt())).build();
+        }
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = singleWalletApi.betWithPayout(betWithPayoutReq);
         // 成功或者重复的refId都当作成功处理
         if (commonRes.isSuc()) {
