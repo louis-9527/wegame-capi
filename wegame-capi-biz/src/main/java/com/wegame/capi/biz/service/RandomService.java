@@ -9,7 +9,6 @@ import com.wegame.capi.common.utils.SecureRandomUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -39,7 +38,7 @@ public class RandomService {
      * @param max 最大值
      * @return
      */
-    public List<Integer> randomIntArray(int min, int max,int count) {
+    public List<Integer> randomIntList(int min, int max, int count) {
        return SecureRandomUtil.randomIntInRangeList(min,max,count);
     }
 

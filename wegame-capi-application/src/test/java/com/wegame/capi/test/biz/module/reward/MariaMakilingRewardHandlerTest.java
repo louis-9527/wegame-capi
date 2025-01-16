@@ -7,7 +7,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.reward.MariaMakilingRewardHandler;
+import com.wegame.capi.biz.module.mariamakiling.reward.MariaMakilingRewardHandler;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -21,7 +21,7 @@ import org.junit.Test;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 
-import static com.wegame.capi.biz.helper.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
+import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 
 @Slf4j
 public class MariaMakilingRewardHandlerTest extends BaseTest {
