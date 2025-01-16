@@ -96,7 +96,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 Integer random = randomNumberList.get(randomNumberindex);
                 if (hasScatter) {
                     // 生成非scatter
-                    SymbolDo symbolDo = randomNoScatterSymbol(random, gameInfo, columProbabilisticMap);
+                    SymbolDo symbolDo = randomNonScatterSymbol(random, gameInfo, columProbabilisticMap);
                     symbolArr[row][colum] = symbolDo;
                 } else {
                     // 随机生成
@@ -177,7 +177,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                         symbolArr[row][colum] = wildSymDo;
                     } else {
                         // 生成非Scatter
-                        SymbolDo symbolDo = randomNoScatterSymbol(randomNumberList.get(randomNumberIndex), gameInfo, columProbabilisticMap);
+                        SymbolDo symbolDo = randomNonScatterSymbol(randomNumberList.get(randomNumberIndex), gameInfo, columProbabilisticMap);
                         symbolArr[row][colum] = symbolDo;
                         if (symbolDo.isWildSymbol()) {
                             wildIndex[row][colum] = symbolDo;
@@ -197,16 +197,16 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         return wheels;
     }
 
-    private SymbolDo randomNoScatterSymbol(Integer random, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
-        Integer randomPr = random;
+    private SymbolDo randomNonScatterSymbol(Integer randomNumber, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
+        Integer tempRandomNumber = randomNumber;
         while (true) {
-            SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, randomPr);
+            SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, tempRandomNumber);
             SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
             if (!symbolDo.isScatterSymbol()) {
                 return symbolDo;
             }
             // 如果非第一次则更新Random值(小概率)
-            randomPr = randomService.randomInt(1, 10000);
+            tempRandomNumber = randomService.randomInt(1, 10000);
         }
     }
 
