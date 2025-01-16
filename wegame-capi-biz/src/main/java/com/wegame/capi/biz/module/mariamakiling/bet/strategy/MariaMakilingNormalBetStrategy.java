@@ -8,8 +8,6 @@ import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.Objects;
 
 @Slf4j
 @Component("mariaMakilingNormalBetStrategy")
@@ -34,7 +31,7 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
 
     @Override
     public void freeSpinsAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo recordDetail, Long totalRewardAmount) {
-        if (Objects.equals(betDo.getBetSubType(), BetSubTypeEnum.FREE_SPINS_NORMAL_BET) && recordDetail.isLastFreeSpins(betDo.getBetDetail().getFreeSpinsId())) {
+        if (recordDetail.isLastFreeSpins(betDo.getBetDetail().getFreeSpinsId())) {
             updateRewardNotifyInfo(betDo.getGameType(), recordDetail.freeSpinCount(), totalRewardAmount);
         }
     }
