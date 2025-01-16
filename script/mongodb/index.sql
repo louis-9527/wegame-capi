@@ -13,3 +13,6 @@ db.bet_record.createIndex(
    }
 )
 
+// 索引
+db.maria_makiling_bet_record.createIndex({userId:1,createTime:-1})
+
