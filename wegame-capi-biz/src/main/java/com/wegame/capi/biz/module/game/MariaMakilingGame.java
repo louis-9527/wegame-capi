@@ -87,25 +87,25 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     private WheelDo generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 生成整盘随机数(row*column)
-        List<Integer> randomArray = randomService.randomIntArray(1, 10000, gameInfo.getRow() * gameInfo.getColumn());
-        int index = 0;
+        List<Integer> randomNumberList = randomService.randomIntArray(1, 10000, gameInfo.getRow() * gameInfo.getColumn());
+        int randomNumberindex = 0;
         for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
             // 一列只能包含一个scatter
             boolean hasScatter = false;
             Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
             for (int row = 0; row < gameInfo.getRow(); row++) {
-                Integer random = randomArray.get(index);
+                Integer random = randomNumberList.get(randomNumberindex);
                 if (hasScatter) {
-                    // 如果已经包含了Scatter,则只能生成包含非scatter
-                    SymbolDo symbolDo = this.randomNoScatterSymbol(random, gameInfo, columProbabilisticMap);
+                    // 生成非scatter
+                    SymbolDo symbolDo = randomNoScatterSymbol(random, gameInfo, columProbabilisticMap);
                     symbolArr[row][colum] = symbolDo;
                 } else {
-                    //随机生成
-                    SymbolDo symbolDo = this.randomNormalSymbol(random, gameInfo, columProbabilisticMap);
+                    // 随机生成
+                    SymbolDo symbolDo = randomNormalSymbol(random, gameInfo, columProbabilisticMap);
                     symbolArr[row][colum] = symbolDo;
                     hasScatter = symbolDo.isScatterSymbol();
                 }
-                index++;
+                randomNumberindex++;
             }
         }
         return WheelDo.builder()
@@ -162,9 +162,9 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         List<WheelDo> wheels = new ArrayList<>();
         for (int number = 1; number <= wheelNumber; number++) {
             // 生成整盘随机数(row*column)
-            List<Integer> randomArray = randomService.randomIntArray(1, 10000, gameInfo.getRow() * gameInfo.getColumn());
+            List<Integer> randomNumberList = randomService.randomIntArray(1, 10000, gameInfo.getRow() * gameInfo.getColumn());
+            int randomNumberIndex = 0;
             SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-            int index = 0;
             for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
                 // 当前列元素概率
                 Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
@@ -175,13 +175,13 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                         symbolArr[row][colum] = wildSymDo;
                     } else {
                         // 生成非Scatter
-                        SymbolDo symbolDo = this.randomNoScatterSymbol(randomArray.get(index), gameInfo, columProbabilisticMap);
+                        SymbolDo symbolDo = randomNoScatterSymbol(randomNumberList.get(randomNumberIndex), gameInfo, columProbabilisticMap);
                         symbolArr[row][colum] = symbolDo;
                         if (symbolDo.isWildSymbol()) {
                             wildIndex[row][colum] = symbolDo;
                         }
                     }
-                    index++;
+                    randomNumberIndex++;
                 }
             }
             WheelDo wheelDo = WheelDo.builder()
@@ -195,14 +195,6 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         return wheels;
     }
 
-    /**
-     * 根据随机数生成非Scatter 元素
-     *
-     * @param random
-     * @param gameInfo
-     * @param columProbabilisticMap
-     * @return
-     */
     private SymbolDo randomNoScatterSymbol(Integer random, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
         Integer randomPr = random;
         while (true) {
@@ -216,19 +208,10 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         }
     }
 
-    /**
-     * 根据随机数生成非Scatter 元素
-     *
-     * @param random
-     * @param gameInfo
-     * @param columProbabilisticMap
-     * @return
-     */
     private SymbolDo randomNormalSymbol(Integer random, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
         SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, random);
         return gameInfo.getSymbolById(symbol.getId());
     }
-
 
     public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {
         if (gamePlay.isFreeSpinsFlag()) {
