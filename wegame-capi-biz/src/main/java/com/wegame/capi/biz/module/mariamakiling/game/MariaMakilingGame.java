@@ -122,6 +122,9 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     private WheelDo generateFreeSpinsWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         WheelDo wheelDo = generateNormalWheel(gameInfo, probabilisticConfig);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
+        // 生成整盘随机数(SCATTER_COLUM_INDEX_LIST.size())个
+        List<Integer> randomNumberList = randomService.randomIntList(0, gameInfo.getRow() - 1, SCATTER_COLUM_INDEX_LIST.size());
+        int randomNumberIndex = 0;
         // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
         for (Integer colum : SCATTER_COLUM_INDEX_LIST) {
             boolean hasScatter = false;
@@ -134,7 +137,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             }
             if (!hasScatter) {
                 // 生成一个0到行之间的随机整数
-                int randomRow = randomService.randomInt(0, gameInfo.getRow() - 1);
+                int randomRow = randomNumberList.get(randomNumberIndex++);
                 symbolArr[randomRow][colum] = MARIA_MAKILING_SCATTER;
             }
         }
