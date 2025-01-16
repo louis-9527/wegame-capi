@@ -6,6 +6,7 @@ import lombok.ToString;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 投注子类型
@@ -45,6 +46,16 @@ public enum BetSubTypeEnum {
         this.code = code;
         this.desc = desc;
         this.betType = betType;
+    }
+
+    public static BetSubTypeEnum valueOfFreeSpinsBetSubType(BetTypeEnum betType) {
+        if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
+            return FREE_SPINS_BUY_BET;
+        } else if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
+            return FREE_SPINS_NORMAL_BET;
+        } else {
+            return null;
+        }
     }
 
     public static BetSubTypeEnum valueOfCode(String code) {
