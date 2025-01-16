@@ -43,6 +43,11 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         }
     }
 
+    /**
+     * 免费轮投注
+     * @param betDo
+     * @return
+     */
     private BetResultDo<MariaMakilingGameRecordDo> betForFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
         MariaMakilingBetDo betDetail = betDo.getBetDetail();
         BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), getGame().getGameInfo().getGameType());
@@ -85,19 +90,19 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
         List<MariaMakilingGameRecordDo> gameRecordList = new ArrayList<>();
         // 投注
-        MariaMakilingGameRecordDo firstGameRecord = this.firstPlayGame(betDo);
-        gameRecordList.add(firstGameRecord);
+        MariaMakilingGameRecordDo gameRecord = firstPlayGame(betDo);
+        gameRecordList.add(gameRecord);
         // 判断-是否中免费轮
-        if (firstGameRecord.hasRewardFreeSpins()) {
+        if (gameRecord.hasRewardFreeSpins()) {
             // 执行免费轮投注
-            List<MariaMakilingGameRecordDo> freeSpinsGameRecordList = this.freeSpinsPlayGame(betDo);
+            List<MariaMakilingGameRecordDo> list = this.freeSpinsPlayGame(betDo);
             // 组装-免费轮IDS
-            firstGameRecord.setFreeSpinIds(Optional.ofNullable(freeSpinsGameRecordList)
+            gameRecord.setFreeSpinIds(Optional.ofNullable(list)
                     .orElse(Collections.emptyList())
                     .stream()
                     .map(MariaMakilingGameRecordDo::getIndex)
                     .collect(Collectors.toList()));
-            gameRecordList.addAll(freeSpinsGameRecordList);
+            gameRecordList.addAll(list);
         }
         // 总中奖金额
         Long totalRewardAmount = gameRecordList.stream()
@@ -123,8 +128,8 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
                 .credit(userCredit)
-                .overallRewardAmount(Objects.nonNull(firstGameRecord.getRewardResult()) ? firstGameRecord.getRewardResult().getTotalRewardAmount() : 0L)
-                .resultDetail(firstGameRecord)
+                .overallRewardAmount(Objects.nonNull(gameRecord.getRewardResult()) ? gameRecord.getRewardResult().getTotalRewardAmount() : 0L)
+                .resultDetail(gameRecord)
                 .build();
     }
 

@@ -162,21 +162,20 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         int wheelNumber = getWheelNumber();
         // 生成轮盘总和
         List<WheelDo> wheels = new ArrayList<>();
+        // 生成整盘随机数(row*column)
+        List<Integer> randomNumberList = randomService.randomIntList(1, 10000, wheelNumber * gameInfo.getRow() * gameInfo.getColumn());
+        int randomNumberIndex = 0;
         for (int number = 1; number <= wheelNumber; number++) {
-            // 生成整盘随机数(row*column)
-            List<Integer> randomNumberList = randomService.randomIntList(1, 10000, gameInfo.getRow() * gameInfo.getColumn());
-            int randomNumberIndex = 0;
             SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
             for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
                 // 当前列元素概率
                 Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
                 for (int row = 0; row < gameInfo.getRow(); row++) {
-                    // 当前坐标是否有wild
-                    SymbolDo wildSymDo = wildIndex[row][colum];
-                    if (wildSymDo != null) {
-                        symbolArr[row][colum] = wildSymDo;
+                    if (wildIndex[row][colum] != null) {
+                        // 当前坐标对应元素为wild
+                        symbolArr[row][colum] = wildIndex[row][colum];
                     } else {
-                        // 生成非Scatter
+                        // 当前坐标对应元素为wild，重新生成元素（非Scatter元素）
                         SymbolDo symbolDo = randomNonScatterSymbol(randomNumberList.get(randomNumberIndex), gameInfo, columProbabilisticMap);
                         symbolArr[row][colum] = symbolDo;
                         if (symbolDo.isWildSymbol()) {
@@ -191,7 +190,6 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                     .symbolArr(symbolArr)
                     .build();
             wheels.add(wheelDo);
-
         }
 
         return wheels;
