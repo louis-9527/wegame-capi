@@ -2,7 +2,7 @@ package com.wegame.capi.biz.builder.req;
 
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
-import com.wegame.capi.api.domain.req.GetAuthLoginTokenReq;
+import com.wegame.capi.api.domain.req.singlewallet.GetAuthLoginTokenReq;
 import com.wegame.capi.biz.domain.UserLoginDo;
 import org.slf4j.MDC;
 

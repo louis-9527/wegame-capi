@@ -16,10 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class MultiMinMaxRandomReq implements Serializable {
     private static final long serialVersionUID = 45678554444567L;
-    /**
-     * 期望生成数量
-     */
-    private Integer count;
+
     /**
      * 区间最小
      */
@@ -28,4 +25,8 @@ public class MultiMinMaxRandomReq implements Serializable {
      * 区间最大
      */
     private Integer max;
+    /**
+     * 数量
+     */
+    private Integer count;
 }

@@ -1,6 +1,6 @@
 package com.wegame.capi.api;
 
-import com.wegame.capi.api.domain.req.GetAuthLoginTokenReq;
+import com.wegame.capi.api.domain.req.singlewallet.GetAuthLoginTokenReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
