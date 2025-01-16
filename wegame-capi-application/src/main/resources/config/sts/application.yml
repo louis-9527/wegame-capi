@@ -120,7 +120,8 @@ spring:
 #          type: com.alibaba.druid.pool.DruidDataSource
   data:
     mongodb:
-      uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS
+      uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondary
+#      uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS
 ## fastjson
 fastjson:
   parser:
