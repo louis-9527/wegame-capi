@@ -11,7 +11,6 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
-import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,7 +156,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      */
     private List<WheelDo> generateMultiWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         // 保存全局wild
-        SymbolDo[][] wildIndex = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+        SymbolDo[][] wildSymbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 免费次数
         int wheelNumber = getWheelNumber();
         // 生成轮盘总和
@@ -171,15 +170,15 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 // 当前列元素概率
                 Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
                 for (int row = 0; row < gameInfo.getRow(); row++) {
-                    if (wildIndex[row][colum] != null) {
+                    if (wildSymbolArr[row][colum] != null) {
                         // 当前坐标对应元素为wild
-                        symbolArr[row][colum] = wildIndex[row][colum];
+                        symbolArr[row][colum] = wildSymbolArr[row][colum];
                     } else {
                         // 当前坐标对应元素为wild，重新生成元素（非Scatter元素）
                         SymbolDo symbolDo = randomNonScatterSymbol(randomNumberList.get(randomNumberIndex), gameInfo, columProbabilisticMap);
                         symbolArr[row][colum] = symbolDo;
                         if (symbolDo.isWildSymbol()) {
-                            wildIndex[row][colum] = symbolDo;
+                            wildSymbolArr[row][colum] = symbolDo;
                         }
                     }
                     randomNumberIndex++;
@@ -193,24 +192,6 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         }
 
         return wheels;
-    }
-
-    private SymbolDo randomNonScatterSymbol(Integer randomNumber, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
-        Integer tempRandomNumber = randomNumber;
-        while (true) {
-            SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, tempRandomNumber);
-            SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
-            if (!symbolDo.isScatterSymbol()) {
-                return symbolDo;
-            }
-            // 如果非第一次则更新Random值(小概率)
-            tempRandomNumber = randomService.randomInt(1, 10000);
-        }
-    }
-
-    private SymbolDo randomNormalSymbol(Integer random, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
-        SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, random);
-        return gameInfo.getSymbolById(symbol.getId());
     }
 
     public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay) {

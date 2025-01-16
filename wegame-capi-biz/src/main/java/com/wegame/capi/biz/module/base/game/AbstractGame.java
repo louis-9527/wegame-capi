@@ -7,6 +7,7 @@ import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
@@ -76,5 +77,23 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
             }
         }
         throw new BusinessException(ErrorCode.ERR_INTER);
+    }
+
+    public SymbolDo randomNonScatterSymbol(Integer randomNumber, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
+        Integer tempRandomNumber = randomNumber;
+        while (true) {
+            SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, tempRandomNumber);
+            SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
+            if (!symbolDo.isScatterSymbol()) {
+                return symbolDo;
+            }
+            // 如果非第一次则更新Random值(小概率)
+            tempRandomNumber = randomService.randomInt(1, 10000);
+        }
+    }
+
+    public SymbolDo randomNormalSymbol(Integer randomNumber, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
+        SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, randomNumber);
+        return gameInfo.getSymbolById(symbol.getId());
     }
 }
