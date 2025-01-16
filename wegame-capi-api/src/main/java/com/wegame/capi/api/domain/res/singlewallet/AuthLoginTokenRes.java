@@ -1,4 +1,4 @@
-package com.wegame.capi.api.domain.res;
+package com.wegame.capi.api.domain.res.singlewallet;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

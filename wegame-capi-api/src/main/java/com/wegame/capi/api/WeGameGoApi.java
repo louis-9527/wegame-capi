@@ -28,7 +28,7 @@ public class WeGameGoApi extends BaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().success(), ErrorCode.ERR_INTER);
+            AssertUtil.assertTrue(responseEntity.getBody().isSuccess(), ErrorCode.ERR_INTER);
             return responseEntity.getBody().getData();
         } catch (Exception e) {
             log.error("WeGameGoApi#minMaxRandom err, errMsg: {}, req: {}", e.getMessage(), req, e);
@@ -43,7 +43,7 @@ public class WeGameGoApi extends BaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().success(), ErrorCode.ERR_INTER);
+            AssertUtil.assertTrue(responseEntity.getBody().isSuccess(), ErrorCode.ERR_INTER);
             return responseEntity.getBody().getData();
         } catch (Exception e) {
             log.error("WeGameGoApi#multiMinMaxRandom err, errMsg: {}, req: {}", e.getMessage(), req, e);

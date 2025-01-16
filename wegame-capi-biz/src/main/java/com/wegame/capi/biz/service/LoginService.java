@@ -4,7 +4,7 @@ import cn.hutool.crypto.SecureUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.SingleWalletApi;
-import com.wegame.capi.api.domain.res.AuthLoginTokenRes;
+import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
 import com.wegame.capi.biz.domain.UserLoginDo;

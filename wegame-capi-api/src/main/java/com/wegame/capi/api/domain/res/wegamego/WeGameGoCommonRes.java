@@ -17,11 +17,12 @@ import java.util.Objects;
 @AllArgsConstructor
 public class WeGameGoCommonRes<T> implements Serializable {
     private static final long serialVersionUID = 4567899887668567L;
-    private int code;
+    private static final Integer SUC_CODE = 1;
+    private Integer code;
     private String message;
     private T data;
 
-    public boolean success() {
-        return Objects.nonNull(data) && code == 1;
+    public boolean isSuccess() {
+        return Objects.nonNull(data) && Objects.equals(code, SUC_CODE);
     }
 }

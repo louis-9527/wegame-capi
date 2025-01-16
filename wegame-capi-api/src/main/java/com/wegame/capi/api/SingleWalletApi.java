@@ -4,7 +4,7 @@ import com.wegame.capi.api.domain.req.singlewallet.GetAuthLoginTokenReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
-import com.wegame.capi.api.domain.res.AuthLoginTokenRes;
+import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
