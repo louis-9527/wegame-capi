@@ -8,6 +8,8 @@ import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 
 @Slf4j
 @Component("mariaMakilingNormalBetStrategy")
@@ -31,16 +34,16 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
 
     @Override
     public void freeSpinsAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo recordDetail, Long totalRewardAmount) {
-        if (recordDetail.isLastFreeSpins(betDo.getBetDetail().getFreeSpinsId())) {
-            this.notifyRewardHandle(betDo.getGameType(), recordDetail.freeSpinCount(), totalRewardAmount);
+        if (Objects.equals(betDo.getBetSubType(), BetSubTypeEnum.FREE_SPINS_NORMAL_BET) && recordDetail.isLastFreeSpins(betDo.getBetDetail().getFreeSpinsId())) {
+            updateRewardNotifyInfo(betDo.getGameType(), recordDetail.freeSpinCount(), totalRewardAmount);
         }
     }
 
-    void notifyRewardHandle(GameTypeEnum gameType, long freeSpinsCount, long totalRewardAmount) {
+    void updateRewardNotifyInfo(GameTypeEnum gameType, long freeSpinsCount, long totalRewardAmount) {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-            RewardNotifyInfoDo notifyInfoDo = RewardNotifyInfoDo.builder()
+            RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
                     .gameId(GameTypeEnum.MARIA_MAKILING.getId())
                     .gameName(GameTypeEnum.MARIA_MAKILING.getName())
                     .userId(Long.valueOf(userInfo.getId()))
@@ -55,7 +58,7 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
-            redisTemplate.execute(script, Collections.singletonList(key), notifyInfoDo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
+            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
         } catch (Exception e) {
             log.error("[MariaMakilingNonBuyFreeSpinsBetStrategy-notifyRewardHandle] error", e);
         }
