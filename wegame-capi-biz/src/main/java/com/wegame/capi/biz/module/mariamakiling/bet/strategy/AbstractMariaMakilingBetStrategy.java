@@ -131,7 +131,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     }
 
     private MariaMakilingGameRecordDo playGame(BetDo<MariaMakilingBetDo> betDo) {
-        List<MariaMakilingGameRecordDo> gameRecords = this.getGame().play(GamePlayDo.builder()
+        List<MariaMakilingGameRecordDo> gameRecords = getGame().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
