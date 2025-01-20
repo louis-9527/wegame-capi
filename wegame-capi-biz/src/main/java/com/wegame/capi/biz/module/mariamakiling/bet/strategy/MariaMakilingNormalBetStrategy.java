@@ -38,6 +38,8 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
 
     void updateRewardNotifyInfo(GameTypeEnum gameType, long freeSpinsCount, long totalRewardAmount) {
         try {
+            // todo 测试日志,后面删除
+            log.info("MariaMakilingNormalBetStrategy-updateRewardNotifyInfo触发:{},{}", freeSpinsCount, totalRewardAmount);
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()

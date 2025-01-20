@@ -1,4 +1,4 @@
-package com.wegame.capi.test.biz.module.bet;
+package com.wegame.capi.test.biz.module.mariamakiling.bet;
 
 import com.wegame.capi.test.BaseTest;
 import com.wegame.capi.application.controller.UserController;
