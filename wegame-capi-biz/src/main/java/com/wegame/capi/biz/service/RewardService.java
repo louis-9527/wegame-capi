@@ -19,16 +19,14 @@ import java.util.stream.Collectors;
 public class RewardService {
 
     @Autowired
-    RedisTemplate<String, Object> redisTemplate;
+    RedisTemplate redisTemplate;
 
     public RewardInfoDo get() {
         RewardInfoDo rewardInfoDo = new RewardInfoDo();
         String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, UserInfoContext.getUserInfo().getGameId());
-        List<Object> messageList = redisTemplate.opsForList().range(key, 0, -1);
+        List<RewardNotifyInfoDo> messageList = (List<RewardNotifyInfoDo>) redisTemplate.opsForList().range(key, 0, -1);
         if (CollectionUtils.isNotEmpty(messageList)) {
-            List<RewardNotifyInfoDo> rewardNotifyInfoList = JSON.parseArray(FastJsonUtils.toJSONString(messageList), RewardNotifyInfoDo.class);
-            rewardInfoDo.setRewardMessageList(CollectionUtils.isEmpty(rewardNotifyInfoList) ?
-                    Collections.emptyList() : rewardNotifyInfoList.stream().map(RewardNotifyInfoDo::getRewardContent).collect(Collectors.toList()));
+            rewardInfoDo.setRewardMessageList(messageList.stream().map(RewardNotifyInfoDo::getRewardContent).collect(Collectors.toList()));
         }
         return rewardInfoDo;
     }
