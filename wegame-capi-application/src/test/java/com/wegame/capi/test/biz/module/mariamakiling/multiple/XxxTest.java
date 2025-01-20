@@ -1,4 +1,4 @@
-package com.wegame.capi.test.biz.module.odds;
+package com.wegame.capi.test.biz.module.mariamakiling.multiple;
 
 import com.wegame.capi.test.BaseTest;
 import com.wegame.capi.application.controller.UserController;

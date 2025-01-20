@@ -1,4 +1,4 @@
-package com.wegame.capi.test.biz.module.reward;
+package com.wegame.capi.test.biz.module.mariamakiling.reward;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.utils.DateUtil;
