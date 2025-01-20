@@ -1,4 +1,5 @@
 package com.wegame.capi.common.utils;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -65,8 +66,8 @@ public class SecureRandomUtil {
      * 批量生成介于 min 和 max 之间的加密安全随机整数 [min, max] 区间
      */
     public static List<Integer> randomIntInRangeList(Integer min, Integer max, Integer number) {
-        if (min <= 0) {
-            throw new IllegalArgumentException("min is <= 0");
+        if (min < 0) {
+            throw new IllegalArgumentException("min is < 0");
         }
         if (max <= 0) {
             throw new IllegalArgumentException("max is <= 0");
@@ -87,8 +88,8 @@ public class SecureRandomUtil {
      * 生成 n 个不重复的随机整数 [min, max] 区间
      */
     public static Set<Integer> generateUniqueRandomNumbers(Integer min, Integer max, Integer number) {
-        if (min <= 0) {
-            throw new IllegalArgumentException("min is <= 0");
+        if (min < 0) {
+            throw new IllegalArgumentException("min is < 0");
         }
         if (max <= 0) {
             throw new IllegalArgumentException("max is <= 0");
