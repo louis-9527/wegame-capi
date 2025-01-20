@@ -3,6 +3,8 @@ package com.wegame.capi.biz.service;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.WeGameGoApi;
+import com.wegame.capi.api.domain.req.wegamego.MinMaxRandomReq;
+import com.wegame.capi.biz.builder.req.MultiMinMaxRandomReqBuilder;
 import com.wegame.capi.common.utils.SecureRandomUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +26,7 @@ public class RandomService {
      */
     public int randomInt(int min, int max) {
         AssertUtil.assertTrue(min < max, ErrorCode.ERR_INTER);
-        return SecureRandomUtil.randomIntInRange(min, max);
+        return weGameGoApi.minMaxRandom(MinMaxRandomReq.builder().min(min).max(max).build());
     }
 
     /**
@@ -35,6 +37,7 @@ public class RandomService {
      * @return
      */
     public List<Integer> randomIntList(int min, int max, int count) {
-        return SecureRandomUtil.randomIntInRangeList(min, max, count);
+        return weGameGoApi.multiMinMaxRandom(MultiMinMaxRandomReqBuilder.build(min, max, count));
+
     }
 }
