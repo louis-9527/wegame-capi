@@ -13,11 +13,11 @@ server:
   tomcat:
     uri-encoding: UTF-8
     connection-timeout: 3000
-    max-connections: 1000000
+    max-connections: 10000000
     keep-alive-timeout: 3000
     accept-count: 100
     threads:
-      max: 30000
+      max: 300000
       min-spare: 20
   servlet:
     context-path: /capi/game
