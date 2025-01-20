@@ -13,6 +13,8 @@ db.bet_record.createIndex(
    }
 )
 
-// 索引
+// 索引-c端查询需要
 db.maria_makiling_bet_record.createIndex({userId:1,createTime:-1})
+// b端查询需要
+db.maria_makiling_bet_record.createIndex({gameId:1,createTime:-1})
 

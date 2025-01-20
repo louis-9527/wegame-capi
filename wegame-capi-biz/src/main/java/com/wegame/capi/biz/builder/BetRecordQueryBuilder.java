@@ -16,20 +16,31 @@ public class BetRecordQueryBuilder {
 
     public static Query buildMongodbQuery(BetRecordQuery recordQuery) {
         Query query = new Query(buildMongodbCriteria(recordQuery));
-        if (Objects.nonNull(recordQuery.getLimit())){
+        if (Objects.nonNull(recordQuery.getLimit())) {
             query.limit(recordQuery.getLimit());
         }
 
-        if (Objects.nonNull(recordQuery.getLastCreateTime())){
+        if (Objects.nonNull(recordQuery.getLastCreateTime())) {
             query.addCriteria(Criteria.where("createTime").lt(recordQuery.getLastCreateTime()));
         }
 
-//        if (Objects.nonNull(recordQuery.getOffset()) && Objects.nonNull(recordQuery.getLimit())) {
-//            query.skip(recordQuery.getOffset()).limit(recordQuery.getLimit());
-//        }
         if (StringUtils.isNotEmpty(recordQuery.getOrderByClause())) {
             query.with(Sort.by(Sort.Direction.DESC, recordQuery.getOrderByClause()));
         }
+        return query;
+    }
+
+    public static Query buildMongodbQueryForPage(BetRecordQuery recordQuery) {
+        Query query = buildMongodbQuery(recordQuery);
+        // 指定需要查询的字段
+        query.fields().include("id");
+        query.fields().include("userId");
+        query.fields().include("playerName");
+        query.fields().include("betAmount");
+        query.fields().include("payAmount");
+        query.fields().include("payOutAmount");
+        query.fields().include("status");
+        query.fields().include("createTime");
         return query;
     }
 

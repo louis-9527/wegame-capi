@@ -89,6 +89,18 @@ public class BetRecordService {
     }
 
     /**
+     * 分页查询列表
+     *
+     * @param query 查询参数
+     * @return List<BetRecordDo> 游戏记录列表
+     */
+    public List<BetRecordDo> listForPage(BetRecordQuery query, GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        List<BetRecordPo> recordPoList = mongoTemplate.find(BetRecordQueryBuilder.buildMongodbQueryForPage(query), BetRecordPo.class, gameType.getCollectionName());
+        return BetRecordConverter.poToDoList(recordPoList);
+    }
+
+    /**
      * 数量统计
      *
      * @param query 查询参数
