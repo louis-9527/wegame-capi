@@ -133,16 +133,6 @@ knife4j:
     title: 接口文档
     description: "接口文档"
     version: v1.0.0
-### aws s3
-#amazon:
-#  aws:
-#    access-key-id: AKIAW3MEDX6WK5QMNG5N
-#    access-key-secret: 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
-#  s3:
-#    endpoint: https://qatlivsports.s3.ap-east-1.amazonaws.com
-#    region: ap-east-1
-#    bucket: qatlivsports
-#    upload-path: ChengDuQaImage/qa/
 ## api
 api:
   sport:

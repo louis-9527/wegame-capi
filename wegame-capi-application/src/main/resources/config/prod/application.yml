@@ -130,16 +130,6 @@ knife4j:
     title: 接口文档
     description: ""
     version: v1.0.0
-### aws s3
-#amazon:
-#  aws:
-#    access-key-id: AKIAW3MEDX6WK5QMNG5N
-#    access-key-secret: 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
-#  s3:
-#    endpoint: https://s3-prod-livsports.s3.ap-east-1.amazonaws.com
-#    region: ap-east-1
-#    bucket: s3-prod-livsports
-#    upload-path: ChengDuProdImage/prod/
 ## api
 api:
   sport:
