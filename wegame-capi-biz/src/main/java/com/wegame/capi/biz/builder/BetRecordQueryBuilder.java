@@ -7,6 +7,7 @@ import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Field;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
@@ -33,14 +34,15 @@ public class BetRecordQueryBuilder {
     public static Query buildMongodbQueryForPage(BetRecordQuery recordQuery) {
         Query query = buildMongodbQuery(recordQuery);
         // 指定需要查询的字段
-        query.fields().include("id");
-        query.fields().include("userId");
-        query.fields().include("playerName");
-        query.fields().include("betAmount");
-        query.fields().include("payAmount");
-        query.fields().include("payOutAmount");
-        query.fields().include("status");
-        query.fields().include("createTime");
+        Field fields = query.fields();
+        fields.include("id");
+        fields.include("userId");
+        fields.include("playerName");
+        fields.include("betAmount");
+        fields.include("payAmount");
+        fields.include("payOutAmount");
+        fields.include("status");
+        fields.include("createTime");
         return query;
     }
 
