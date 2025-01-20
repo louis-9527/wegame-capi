@@ -48,8 +48,8 @@ public class SecureRandomUtil {
      * 生成介于 min 和 max 之间的加密安全随机整数 [min, max] 区间
      */
     public static Integer randomIntInRange(Integer min, Integer max) {
-        if (min <= 0) {
-            throw new IllegalArgumentException("min is <= 0");
+        if (min < 0) {
+            throw new IllegalArgumentException("min is < 0");
         }
         if (max <= 0) {
             throw new IllegalArgumentException("max is <= 0");
