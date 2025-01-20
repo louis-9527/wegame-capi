@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service;
 
+import cn.hutool.core.date.StopWatch;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
@@ -42,7 +43,12 @@ public class BetRecordService {
      * @return 主键id
      */
     public Long add(BetRecordDo betRecordDo, GameTypeEnum gameType) {
+        log.info("BetRecordService#add betRecordDo:{}", betRecordDo);
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         BetRecordPo po = mongoTemplate.insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD), gameType.getCollectionName());
+        stopWatch.stop();
+        log.info("BetRecordService#add cost time:{}", stopWatch.getLastTaskTimeMillis());
         return po.getId();
     }
 
@@ -55,11 +61,15 @@ public class BetRecordService {
     @CacheEvict(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #betRecordDo.id")
     public boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         log.info("BetRecordService#update betRecordDo:{}", betRecordDo);
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is empty");
         UpdateResult result = mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(betRecordDo.getId())),
                 BetRecordQueryBuilder.buildMongoUpdate(betRecordDo),
                 BetRecordPo.class, gameType.getCollectionName());
+        stopWatch.stop();
+        log.info("BetRecordService#update cost time:{}", stopWatch.getLastTaskTimeMillis());
         return Objects.nonNull(result) && result.getModifiedCount() > 0;
     }
 

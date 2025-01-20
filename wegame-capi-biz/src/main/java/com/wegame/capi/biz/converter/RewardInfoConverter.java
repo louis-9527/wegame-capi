@@ -13,7 +13,6 @@ public class RewardInfoConverter {
         }
         return RewardInfoVo.builder()
                 .rewardMessageList(rewardInfoDo.getRewardMessageList())
-                .userCreditChange(rewardInfoDo.getUserCreditChange())
                 .build();
     }
 }
