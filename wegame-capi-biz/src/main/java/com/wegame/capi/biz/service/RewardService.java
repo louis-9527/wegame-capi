@@ -22,7 +22,7 @@ public class RewardService {
     @Autowired
     RedisTemplate redisTemplate;
 
-    @Cacheable(value = CacheConstants.REWARD_INFO, unless = "false")
+    @Cacheable(value = CacheConstants.REWARD_INFO)
     public RewardInfoDo get() {
         log.info("get reward info");
         RewardInfoDo rewardInfoDo = new RewardInfoDo();
