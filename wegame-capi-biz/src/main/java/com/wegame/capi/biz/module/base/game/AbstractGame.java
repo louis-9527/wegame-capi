@@ -11,6 +11,7 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.SymbolEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -55,7 +56,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
         Map<String, Integer> map = new HashMap<>();
         probabilisticConfigMap.entrySet().forEach(item -> {
-            int val = (item.getValue().get(cellNo).multiply(new BigDecimal(100))).intValue();
+            int val = (item.getValue().get(cellNo).multiply(new BigDecimal(Constants.CONST_10000))).intValue();
             if (val > 0) {
                 map.put(item.getKey(), val);
             }
@@ -63,7 +64,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         Integer sum = map.values()
                 .stream()
                 .reduce(0, Integer::sum);
-        AssertUtil.assertTrue(sum == 10000, ErrorCode.ERR_INTER, "Symbol config error,cellNo:" + cellNo);
+        AssertUtil.assertTrue(sum == Constants.CONST_1000000, ErrorCode.ERR_INTER, "Symbol config error,cellNo:" + cellNo);
         return map;
     }
 
@@ -88,7 +89,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
                 return symbolDo;
             }
             // 如果非第一次则更新Random值(小概率)
-            tempRandomNumber = randomService.randomInt(1, 10000);
+            tempRandomNumber = randomService.randomInt(1, Constants.CONST_1000000);
         }
     }
 
