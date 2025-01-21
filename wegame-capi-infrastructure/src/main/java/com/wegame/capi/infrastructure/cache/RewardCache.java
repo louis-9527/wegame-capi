@@ -1,6 +1,6 @@
 package com.wegame.capi.infrastructure.cache;
 
-import com.wegame.base.cache.AbstractMultiCache;
+import com.wegame.base.cache.AbstractLocalCache;
 import com.wegame.base.enums.CommonCacheEnvEnum;
 import org.springframework.stereotype.Component;
 
@@ -11,10 +11,10 @@ import static com.wegame.base.CacheConstants.REWARD_INFO;
  * 中大奖缓存
  */
 @Component(REWARD_INFO)
-public class RewardCache extends AbstractMultiCache {
+public class RewardCache extends AbstractLocalCache {
 
     public RewardCache() {
-        super(CommonCacheEnvEnum.REWARD_INFO.cacheKeyPrefixName(), 180, 60, 10);
+        super(CommonCacheEnvEnum.REWARD_INFO.cacheKeyPrefixName(), 60, 10);
     }
 
     @Override
