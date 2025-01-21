@@ -43,7 +43,6 @@ public class BetRecordService {
      * @return 主键id
      */
     public Long add(BetRecordDo betRecordDo, GameTypeEnum gameType) {
-        log.info("BetRecordService#add betRecordDo:{}", betRecordDo);
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         BetRecordPo po = mongoTemplate.insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD), gameType.getCollectionName());
@@ -60,7 +59,6 @@ public class BetRecordService {
      */
     @CacheEvict(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #betRecordDo.id")
     public boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
-        log.info("BetRecordService#update betRecordDo:{}", betRecordDo);
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
