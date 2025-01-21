@@ -57,7 +57,7 @@ public class RestTemplateAspect {
         Object response = joinPoint.proceed();
         long end = System.currentTimeMillis();
 
-        log.info("URL: {}; Request: {}; Response: {}; Cost Time: {}ms", url, FastJsonUtils.toJSONString(req), FastJsonUtils.toJSONString(response), (end - start));
+        log.info("URL: {}; Request: {}; Response: {}; Cost Time: {}ms", url, req, response, (end - start));
         return response;
     }
 }

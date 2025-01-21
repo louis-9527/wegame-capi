@@ -3,7 +3,6 @@ package com.wegame.capi.infrastructure.aspect;
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.OptRequest;
-import com.wegame.base.utils.FastJsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -76,12 +75,16 @@ public class ControllerAspect {
                         .collect(Collectors.toList());
             }
 
-            log.info("{}#{}, req={}, res={}, cost times: {} ms",
+            log.info("{}#{}, cost times: {} ms",
                     signature.getDeclaringTypeName(),
                     signature.getName(),
-                    FastJsonUtils.toJSONString(req),
-                    FastJsonUtils.toJSONString(result),
                     System.currentTimeMillis() - startTime);
+            //            log.info("{}#{}, req={}, res={}, cost times: {} ms",
+            //                    signature.getDeclaringTypeName(),
+            //                    signature.getName(),
+            //                    FastJsonUtils.toJSONString(req),
+            //                    FastJsonUtils.toJSONString(result),
+            //                    System.currentTimeMillis() - startTime);
         } catch (Throwable e) {
             log.error("ControllerAspect.statistic error: {}", e.getMessage(), e);
         }
