@@ -5,6 +5,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfoContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class RewardService {
 
@@ -22,6 +24,7 @@ public class RewardService {
 
     @Cacheable(value = CacheConstants.REWARD_INFO, unless = "false")
     public RewardInfoDo get() {
+        log.info("get reward info");
         RewardInfoDo rewardInfoDo = new RewardInfoDo();
         String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, UserInfoContext.getUserInfo().getGameId());
         List<RewardNotifyInfoDo> messageList = (List<RewardNotifyInfoDo>) redisTemplate.opsForList().range(key, 0, -1);
