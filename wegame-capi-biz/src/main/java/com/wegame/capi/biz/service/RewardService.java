@@ -20,7 +20,7 @@ public class RewardService {
     @Autowired
     RedisTemplate redisTemplate;
 
-    @Cacheable(value = CacheConstants.REWARD_INFO)
+    @Cacheable(value = CacheConstants.REWARD_INFO, unless = "false")
     public RewardInfoDo get() {
         RewardInfoDo rewardInfoDo = new RewardInfoDo();
         String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, UserInfoContext.getUserInfo().getGameId());
