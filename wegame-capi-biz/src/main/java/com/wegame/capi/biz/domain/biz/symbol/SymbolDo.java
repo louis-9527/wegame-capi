@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.common.enums.SymbolRuleTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.AllArgsConstructor;
@@ -39,14 +40,17 @@ public class SymbolDo implements Serializable {
      */
     private SymbolRuleDo symbolRule;
 
+    @JsonIgnore
     public boolean isCommonSymbol() {
         return Objects.equals(symbolType, SymbolTypeEnum.COMMON);
     }
 
+    @JsonIgnore
     public boolean isScatterSymbol() {
         return Objects.equals(symbolType, SymbolTypeEnum.SCATTER);
     }
 
+    @JsonIgnore
     public boolean isWildSymbol() {
         return Objects.equals(symbolType, SymbolTypeEnum.WILD);
     }

@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.reward.line;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
@@ -64,6 +65,7 @@ public class RewardLineDetailDo implements Serializable {
      */
     private List<RewardSymbolDo> rewardSymbolList;
 
+    @JsonIgnore
     public void print() {
         System.out.println("投注金额：" + betAmount);
         System.out.println("中奖金额：" + rewardAmount);
