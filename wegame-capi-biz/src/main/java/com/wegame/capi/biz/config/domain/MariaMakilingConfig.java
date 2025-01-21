@@ -99,7 +99,7 @@ public class MariaMakilingConfig {
             Integer columNo = columIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.commonPlayWheelProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(100))).intValue();
+                int val = (item.getValue().get(columNo).multiply(new BigDecimal(10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
                 }
@@ -107,7 +107,7 @@ public class MariaMakilingConfig {
             Integer sumProbabilistic = map.values()
                     .stream()
                     .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, 10000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, 1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
         }
 
         ////
@@ -120,7 +120,7 @@ public class MariaMakilingConfig {
             Integer columNo = columIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.freePlayWheelProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(100))).intValue();
+                int val = (item.getValue().get(columNo).multiply(new BigDecimal(10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
                 }
@@ -128,7 +128,7 @@ public class MariaMakilingConfig {
             Integer sumProbabilistic = map.values()
                     .stream()
                     .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, 10000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, 1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columNo:" + columNo);
         }
     }
 }
