@@ -14,7 +14,7 @@ import static com.wegame.base.CacheConstants.REWARD_INFO;
 public class RewardCache extends AbstractLocalCache {
 
     public RewardCache() {
-        super(CommonCacheEnvEnum.REWARD_INFO.cacheKeyPrefixName(), 60, 10);
+        super(CommonCacheEnvEnum.REWARD_INFO.cacheKeyPrefixName(), 10, 10);
     }
 
     @Override

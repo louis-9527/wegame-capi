@@ -13,9 +13,9 @@ server:
   tomcat:
     uri-encoding: UTF-8
     connection-timeout: 3000
-    max-connections: 20000
-    keep-alive-timeout: 6000
-    accept-count: 100
+    max-connections: 30000
+    keep-alive-timeout: 3000
+    accept-count: 10000
     threads:
       max: 40000
       min-spare: 200
