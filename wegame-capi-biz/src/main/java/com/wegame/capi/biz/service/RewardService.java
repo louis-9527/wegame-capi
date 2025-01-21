@@ -1,17 +1,16 @@
 package com.wegame.capi.biz.service;
 
-import com.alibaba.fastjson.JSON;
-import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.base.CacheConstants;
 import com.wegame.capi.biz.domain.biz.reward.RewardInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfoContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +20,7 @@ public class RewardService {
     @Autowired
     RedisTemplate redisTemplate;
 
+    @Cacheable(value = CacheConstants.REWARD_INFO)
     public RewardInfoDo get() {
         RewardInfoDo rewardInfoDo = new RewardInfoDo();
         String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, UserInfoContext.getUserInfo().getGameId());
