@@ -21,6 +21,8 @@ import java.util.*;
 
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
+import static com.wegame.capi.common.Constants.CONST_10000;
+import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
@@ -85,7 +87,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     private WheelDo generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 生成整盘随机数(row*column)
-        List<Integer> randomNumberList = randomService.randomIntList(1, 1000000, gameInfo.getRow() * gameInfo.getColumn());
+        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
         int randomNumberindex = 0;
         for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
             // 一列只能包含一个scatter
@@ -162,7 +164,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         // 生成轮盘总和
         List<WheelDo> wheels = new ArrayList<>();
         // 生成整盘随机数(row*column)
-        List<Integer> randomNumberList = randomService.randomIntList(1, 1000000, wheelNumber * gameInfo.getRow() * gameInfo.getColumn());
+        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, wheelNumber * gameInfo.getRow() * gameInfo.getColumn());
         int randomNumberIndex = 0;
         for (int number = 1; number <= wheelNumber; number++) {
             SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
