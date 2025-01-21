@@ -48,6 +48,7 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) {
         try {
+            log.info("start Application after env: {}", env);
             if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
                 return;
             }
