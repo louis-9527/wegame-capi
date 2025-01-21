@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * 玩游戏记录模型
+ * MariaMakiling游戏记录
  */
 @Data
 @SuperBuilder
@@ -65,8 +65,8 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return MariaMakilingBetResultVo.builder()
-                    .rewardType(rewardResult.getRewardType() == null ? null : rewardResult.getRewardType().getCode())
-                    .rewardSubType(rewardResult.getRewardSubType() == null ? null : rewardResult.getRewardSubType().getCode())
+                    .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
+                    .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
@@ -74,8 +74,8 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .build();
         } else {
             return MariaMakilingBetResultVo.builder()
-                    .rewardType(rewardResult.getRewardType() == null ? null : rewardResult.getRewardType().getCode())
-                    .rewardSubType(rewardResult.getRewardSubType() == null ? null : rewardResult.getRewardSubType().getCode())
+                    .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
+                    .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
