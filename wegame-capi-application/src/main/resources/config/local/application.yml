@@ -100,11 +100,6 @@ spring:
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: false
-#        wegame_business_db:
-#          url: jdbc:mysql://localhost:3306/wegame_business_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-#          username: root
-#          password: rootroot
-#          type: com.alibaba.druid.pool.DruidDataSource
   data:
     mongodb:
       uri: mongodb://localhost:27017/wegame_mdb

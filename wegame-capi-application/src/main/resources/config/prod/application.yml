@@ -91,30 +91,6 @@ spring:
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: false
-#        wegame_backend_db:
-#          url: jdbc:mysql://prod-livsport-platform-mysql-hk.cluster-civqsqtwpkon.ap-east-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-#          username: PRODlivsportService
-#          password: ENC(btnvxesLqpbM1OZ9JU3QJEVNoTOFUgCw/dwDJamvjXfBdkak5c2Q1iNj1doaVdCEDnkKqAdJOVfzcA7ZoOr0Lg==)
-#          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-#          type: com.alibaba.druid.pool.DruidDataSource
-#          druid:
-#            initial-size: 10
-#            min-idle: 10
-#            max-active: 500
-#            max-wait: 1000
-#            time-between-eviction-runs-millis: 6000
-#            min-evictable-idle-time-millis: 30000
-#            validation-query: SELECT 1 FROM DUAL
-#            test-while-idle: true
-#            test-on-borrow: false
-#            test-on-return: false
-#            pool-prepared-statements: false
-#        wegame_business_db:
-#          url: jdbc:mysql://dev-nba-backend-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_business_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-#          username: root
-#          password: ENC(DHb76s+Gg5rikLGRiZVPz0E+iAwmb+SfJw0Vy2DJI5lMd9rLRK8GWiB/8z78PJ7HEaFZ5mF2LSlXR3gxerZskA==)
-#          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-#          type: com.alibaba.druid.pool.DruidDataSource
   data:
     mongodb:
       uri: mongodb+srv://PRODlivsportService:XGN1EWlf18QTrstzi2@livsport-platform-prod-pri.g8mny.mongodb.net/livsport-platform?retryWrites=true&w=majority

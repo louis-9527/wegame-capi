@@ -13,12 +13,12 @@ server:
   tomcat:
     uri-encoding: UTF-8
     connection-timeout: 3000
-    max-connections: 2000000
-    keep-alive-timeout: 3000
+    max-connections: 20000
+    keep-alive-timeout: 6000
     accept-count: 100
     threads:
-      max: 300000
-      min-spare: 20
+      max: 40000
+      min-spare: 200
   servlet:
     context-path: /capi/game
     encoding:
@@ -93,31 +93,6 @@ spring:
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: false
-#        wegame_backend_db:
-#          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-#          username: QATmakilingService
-#          password: ENC(Lm5nLGO2RTUPqHi/nkBU31uk6Zn/vV6GevM9jwwx4Bfck539re9GPagkh6bBi1t/lgexud3+wkye7Gz8qXTqhg==)
-#          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-#          driver-class-name: com.mysql.jdbc.Driver
-#          type: com.alibaba.druid.pool.DruidDataSource
-#          druid:
-#            initial-size: 10
-#            min-idle: 10
-#            max-active: 500
-#            max-wait: 1000
-#            time-between-eviction-runs-millis: 6000
-#            min-evictable-idle-time-millis: 30000
-#            validation-query: SELECT 1 FROM DUAL
-#            test-while-idle: true
-#            test-on-borrow: false
-#            test-on-return: false
-#            pool-prepared-statements: false
-#        wegame_business_db:
-#          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_business_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-#          username: QATmakilingService
-#          password: ENC(Lm5nLGO2RTUPqHi/nkBU31uk6Zn/vV6GevM9jwwx4Bfck539re9GPagkh6bBi1t/lgexud3+wkye7Gz8qXTqhg==)
-#          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-#          type: com.alibaba.druid.pool.DruidDataSource
   data:
     mongodb:
       uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS
