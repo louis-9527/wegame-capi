@@ -3,6 +3,7 @@ package com.wegame.capi.biz.domain.biz.game;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 import com.wegame.capi.client.domain.vo.IndexVo;
@@ -85,11 +86,8 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                             .filter(o -> CollectionUtils.isNotEmpty(o.getRewardSymbolList()))
                             .map(detail -> detail.getRewardSymbolList()
                                     .stream()
-                                    .map(rewardSymbol -> IndexVo.builder()
-                                            .rowIndex(rewardSymbol.getIndex().getRowIndex())
-                                            .columIndex(rewardSymbol.getIndex().getColumIndex())
-                                            .build()
-                                    ).collect(Collectors.toList())
+                                    .map(rewardSymbol -> IndexFactory.buildVo(rewardSymbol.getIndex()))
+                                    .collect(Collectors.toList())
                             ).flatMap(List::stream)
                             .collect(Collectors.toSet()))
                     .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineDetailList())

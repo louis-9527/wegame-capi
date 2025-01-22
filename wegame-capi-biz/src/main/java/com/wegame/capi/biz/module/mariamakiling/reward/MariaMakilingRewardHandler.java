@@ -150,7 +150,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     if (canPutIn(treeMap, currentSymbol, currentColum)) {
                         RewardSymbolDo symbolIndex = RewardSymbolDo.builder()
                                 .symbol(currentSymbol)
-                                .index(IndexFactory.build(currentRow, currentColum))
+                                .index(IndexFactory.buildDo(currentRow, currentColum))
                                 .build();
                         if (Objects.isNull(treeMap.get(currentColum))) {
                             List<RewardSymbolDo> list = new ArrayList<>();
