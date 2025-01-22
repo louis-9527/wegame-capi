@@ -1,6 +1,10 @@
 FROM alpine:3.18
-ENV TZ=Asia/Singapore
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+
+RUN apk add --no-cache tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime && \
+    echo "Asia/Kuala_Lumpur" > /etc/timezone
+
 ADD . /opt/wegame-capi
 ARG version=8.412.08.1
 # Please note that the THIRD-PARTY-LICENSE could be out of date if the base image has been updated recently.
