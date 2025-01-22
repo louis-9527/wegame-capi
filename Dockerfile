@@ -1,6 +1,5 @@
 FROM alpine:3.18
-ENV TZ=Asia/Singapore
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 ADD . /opt/wegame-capi
 ARG version=8.412.08.1
 # Please note that the THIRD-PARTY-LICENSE could be out of date if the base image has been updated recently.
@@ -15,6 +14,10 @@ RUN wget -O /THIRD-PARTY-LICENSES-20200824.tar.gz https://corretto.aws/downloads
     echo "https://apk.corretto.aws" >> /etc/apk/repositories && \
     apk add --no-cache amazon-corretto-8=$version-r0 && \
     rm -rf /usr/lib/jvm/java-8-amazon-corretto/lib/src.zip
+
+RUN apk add --no-cache tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime && \
+    echo "Asia/Kuala_Lumpur" > /etc/timezone
 
 ENV LANG C.UTF-8
 
