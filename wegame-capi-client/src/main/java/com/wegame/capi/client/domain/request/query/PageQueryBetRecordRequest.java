@@ -33,7 +33,7 @@ public class PageQueryBetRecordRequest extends PageQueryRequest implements Valid
     private Long startCreateTime;
     @ApiModelProperty(value = "结束创建/投注时间", required = false)
     private Long endCreateTime;
-    @ApiModelProperty(value = "上一页最后一条数据的createTime", required = false)
-    private Long lastCreateTime;
+    @ApiModelProperty(value = "上一页最后一条数据的Id", required = false)
+    private Long lastId;
 }
 

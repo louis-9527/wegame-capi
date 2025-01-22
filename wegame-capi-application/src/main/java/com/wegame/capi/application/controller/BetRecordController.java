@@ -20,9 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Objects;
-
 /**
  * 投注记录模块
  *
@@ -46,8 +43,6 @@ public class BetRecordController {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         request.setUserId(userInfo.getId());
         BetRecordQuery query = BetRecordConverter.requestToQuery(request, "createTime");
-        query.setLimit(request.getPageSize());
-        query.setLastCreateTime(request.getLastCreateTime());
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
                 BetRecordConverter.doToVoList(betRecordService.listForPage(query, GameTypeEnum.valueOfId(userInfo.getGameId()))),
