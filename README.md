@@ -52,3 +52,8 @@ http://localhost:9000/capi/doc.html
 
 测试环境接口文档地址：
 http://client.sportslive.com.ph:9000/capi/doc.html
+
+
+
+线上请求链路：
+客户端 -> cloudfront - > load balancer -> apisix (网关) -> 应用程序pods
