@@ -1,5 +1,6 @@
 FROM alpine:3.18
-
+ENV TZ=Asia/Singapore
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ADD . /opt/wegame-capi
 ARG version=8.412.08.1
 # Please note that the THIRD-PARTY-LICENSE could be out of date if the base image has been updated recently.
