@@ -50,8 +50,8 @@ public class BetRecordQuery extends BetRecordPo implements Serializable {
     ///////////////  above auto generated ///////////////
 
     /**
-     * 上一夜最后一条的创建时间
+     * 上一夜最后一条的Id
      */
-    private Long lastCreateTime;
+    private Long lastId;
 }
 

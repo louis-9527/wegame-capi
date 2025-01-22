@@ -21,8 +21,8 @@ public class BetRecordQueryBuilder {
             query.limit(recordQuery.getLimit());
         }
 
-        if (Objects.nonNull(recordQuery.getLastCreateTime())) {
-            query.addCriteria(Criteria.where("createTime").lt(recordQuery.getLastCreateTime()));
+        if (Objects.nonNull(recordQuery.getLastId())) {
+            query.addCriteria(Criteria.where("id").lt(recordQuery.getLastId()));
         }
 
         if (StringUtils.isNotEmpty(recordQuery.getOrderByClause())) {
