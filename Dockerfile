@@ -1,6 +1,5 @@
 FROM alpine:3.18
 
-
 RUN apk add --no-cache tzdata && \
     ln -sf /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime && \
     echo "Asia/Kuala_Lumpur" > /etc/timezone
