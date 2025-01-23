@@ -11,8 +11,6 @@ import static com.wegame.capi.common.enums.SymbolEnum.*;
 
 public class MalakasGameHelper {
 
-    // todo
-
     public static final SymbolDo MALAKAS_Symbol1001 = SymbolDo.builder()
             .id(Symbol1001.getId())
             .name(Symbol1001.getName())
