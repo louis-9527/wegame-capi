@@ -45,18 +45,18 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
          */
         long fiveMinutesAgo = System.currentTimeMillis() - 5 * 60 * 1000;
         int pageNo = 1;
-        Long lastCreateTime = null;
+        Long lastId = null;
         List<BetRecordDo> recordList;
         do {
             recordList = betRecordService.list(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
                     .endCreateTime(fiveMinutesAgo)
                     .limit(DEFAULT_PAGE_SIZE)
                     .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
-                    .lastCreateTime(lastCreateTime)
+                    .lastId(lastId)
                     .build(), this.getGameType());
 
             if (CollectionUtil.isNotEmpty(recordList)) {
-                lastCreateTime = recordList.get(recordList.size() - 1).getCreateTime();
+                lastId = recordList.get(recordList.size() - 1).getId();
             }
             Optional.ofNullable(recordList)
                     .orElse(Collections.emptyList())
