@@ -7,8 +7,6 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.SymbolRuleTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 
-import java.math.BigDecimal;
-
 import static com.wegame.capi.common.enums.SymbolEnum.*;
 
 public class MalakasGameHelper {
@@ -45,33 +43,33 @@ public class MalakasGameHelper {
             .symbolType(SymbolTypeEnum.COMMON)
             .symbolRule(SymbolDo.SymbolRuleDo.builder().symbolRuleType(SymbolRuleTypeEnum.COMMON).value(null).build())
             .build();
-    private static final SymbolDo MALAKAS_Symbol2001 = SymbolDo.builder()
-            .id(Symbol2001.getId())
-            .name(Symbol2001.getName())
+    private static final SymbolDo MALAKAS_Symbol1006 = SymbolDo.builder()
+            .id(Symbol1006.getId())
+            .name(Symbol1006.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .symbolRule(SymbolDo.SymbolRuleDo.builder().symbolRuleType(SymbolRuleTypeEnum.COMMON).value(null).build())
             .build();
-    private static final SymbolDo MALAKAS_Symbol2002 = SymbolDo.builder()
-            .id(Symbol2002.getId())
-            .name(Symbol2002.getName())
+    private static final SymbolDo MALAKAS_Symbol1007 = SymbolDo.builder()
+            .id(Symbol1007.getId())
+            .name(Symbol1007.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .symbolRule(SymbolDo.SymbolRuleDo.builder().symbolRuleType(SymbolRuleTypeEnum.COMMON).value(null).build())
             .build();
-    private static final SymbolDo MALAKAS_Symbol2003 = SymbolDo.builder()
-            .id(Symbol2003.getId())
-            .name(Symbol2003.getName())
+    private static final SymbolDo MALAKAS_Symbol1008 = SymbolDo.builder()
+            .id(Symbol1008.getId())
+            .name(Symbol1008.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .symbolRule(SymbolDo.SymbolRuleDo.builder().symbolRuleType(SymbolRuleTypeEnum.COMMON).value(null).build())
             .build();
-    private static final SymbolDo MALAKAS_Symbol2004 = SymbolDo.builder()
-            .id(Symbol2004.getId())
-            .name(Symbol2004.getName())
+    private static final SymbolDo MALAKAS_Symbol1009 = SymbolDo.builder()
+            .id(Symbol1009.getId())
+            .name(Symbol1009.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .symbolRule(SymbolDo.SymbolRuleDo.builder().symbolRuleType(SymbolRuleTypeEnum.COMMON).value(null).build())
             .build();
-    private static final SymbolDo MALAKAS_Symbol2005 = SymbolDo.builder()
-            .id(Symbol2005.getId())
-            .name(Symbol2005.getName())
+    private static final SymbolDo MALAKAS_Symbol1010 = SymbolDo.builder()
+            .id(Symbol1010.getId())
+            .name(Symbol1010.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .symbolRule(SymbolDo.SymbolRuleDo.builder().symbolRuleType(SymbolRuleTypeEnum.COMMON).value(null).build())
             .build();
@@ -93,19 +91,19 @@ public class MalakasGameHelper {
     public static final GameInfoDo MALAKAS_GAME_INFO = GameInfoDo.builder()
             .id(GameTypeEnum.MALAKAS.getId())
             .gameType(GameTypeEnum.MALAKAS)
-            .row(3)
-            .column(5)
+            .row(6)
+            .column(6)
             .symbolMap(new ImmutableMap.Builder<String, SymbolDo>()
                     .put(MALAKAS_Symbol1001.getId(), MALAKAS_Symbol1001)
                     .put(MALAKAS_Symbol1002.getId(), MALAKAS_Symbol1002)
                     .put(MALAKAS_Symbol1003.getId(), MALAKAS_Symbol1003)
                     .put(MALAKAS_Symbol1004.getId(), MALAKAS_Symbol1004)
                     .put(MALAKAS_Symbol1005.getId(), MALAKAS_Symbol1005)
-                    .put(MALAKAS_Symbol2001.getId(), MALAKAS_Symbol2001)
-                    .put(MALAKAS_Symbol2002.getId(), MALAKAS_Symbol2002)
-                    .put(MALAKAS_Symbol2003.getId(), MALAKAS_Symbol2003)
-                    .put(MALAKAS_Symbol2004.getId(), MALAKAS_Symbol2004)
-                    .put(MALAKAS_Symbol2005.getId(), MALAKAS_Symbol2005)
+                    .put(MALAKAS_Symbol1006.getId(), MALAKAS_Symbol1006)
+                    .put(MALAKAS_Symbol1007.getId(), MALAKAS_Symbol1007)
+                    .put(MALAKAS_Symbol1008.getId(), MALAKAS_Symbol1008)
+                    .put(MALAKAS_Symbol1009.getId(), MALAKAS_Symbol1009)
+                    .put(MALAKAS_Symbol1010.getId(), MALAKAS_Symbol1010)
                     .put(MALAKAS_SCATTER.getId(), MALAKAS_SCATTER)
                     .put(MALAKAS_Wild.getId(), MALAKAS_Wild)
                     .build())
