@@ -56,4 +56,4 @@ http://client.sportslive.com.ph:9000/capi/doc.html
 
 
 线上请求链路：
-客户端 -> cloudfront - > load balancer -> apisix (网关) -> 应用程序pods
+压测机 -> cloudfront - > load balancer -> apisix (网关) -> 应用程序pods
