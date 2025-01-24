@@ -3,7 +3,6 @@ package com.wegame.capi.biz.module.malakas.game;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
-import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
@@ -21,7 +20,6 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
-import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.*;
@@ -240,7 +238,7 @@ public class MalakasGame extends AbstractGame<MariaMakilingGameRecordDo> {
     private Integer getWheelNumber() {
         int randomNumber = randomService.randomInt(1, 100);
         int startVal = 0;
-        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(malakasConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
+        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(malakasConfig.getProbabilisticConfig().getFreeWheelScatterProbabilisticConfig().entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
                 return entry.getKey();
             } else {
