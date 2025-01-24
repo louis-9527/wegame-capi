@@ -100,14 +100,14 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         MalakasSymbolDo[][] symbolArr = copySymbolArr(preWheel.getSymbolArr());
         // 消除：中奖元素
         symbolArr = removeRewardSymbol(symbolArr, rewardResult);
-        // todo
         // 重建：元素数组（非空元素按列下落处理）
         symbolArr = rebuildSymbolArr(symbolArr, gameInfo);
-
         // 生产：缺失元素
-
-
-        return null;
+        // todo 填补剩余元素
+        return WheelDo.<MalakasSymbolDo>builder()
+                .index(preWheel.getIndex() + 1)
+                .symbolArr(symbolArr)
+                .build();
     }
 
     /**
