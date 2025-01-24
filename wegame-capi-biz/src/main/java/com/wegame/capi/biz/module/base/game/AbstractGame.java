@@ -33,24 +33,11 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
     @Autowired
     public RandomService randomService;
 
-    public abstract RewardHandler getRewardHandler();
-
-    public abstract List<WheelDo> generate(GamePlayDo gamePlay);
-
-    public abstract R buildGameRecord(WheelDo wheel, RewardResultDo rewardResult);
-
-    public List<R> play(GamePlayDo gamePlay) {
-        // 获取-游戏基础信息
-        GameInfoDo gameInfo = getGameInfo();
-        // 生成-游戏滚轮列表
-        List<WheelDo> wheelList = generate(gamePlay);
-        // 组装&返回-游戏记录列表
-        return Optional.ofNullable(wheelList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(wheel -> buildGameRecord(wheel, getRewardHandler().handle(build(gameInfo, gamePlay, wheel))))
-                .collect(Collectors.toList());
-    }
+    //    public abstract RewardHandler getRewardHandler();
+    //
+    //    public abstract List<WheelDo> generate(GamePlayDo gamePlay);
+    //
+    //    public abstract R buildGameRecord(WheelDo wheel, RewardResultDo rewardResult);
 
     public Map<String, Integer> buildColumProbabilisticMap(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
