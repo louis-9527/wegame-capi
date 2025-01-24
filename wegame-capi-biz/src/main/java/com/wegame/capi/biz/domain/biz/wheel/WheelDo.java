@@ -31,7 +31,6 @@ public class WheelDo<T extends SymbolDo> implements Serializable {
      */
     private T[][] symbolArr;
 
-
     public void print() {
         log.info("index:{}", index, symbolArr);
         log.info("symbolArr: ");

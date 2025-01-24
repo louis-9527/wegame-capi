@@ -9,6 +9,9 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
+import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
+import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -18,6 +21,7 @@ import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -56,26 +60,117 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
 
     @Override
     public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
+        // todo 购买投注
+        // 正常投注
+        return normalPlay(gamePlay);
+    }
+
+    public List<MalakasGameRecordDo> normalPlay(GamePlayDo gamePlay) {
         List<MalakasGameRecordDo> ret = new ArrayList<>();
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
-        // todo 购买投注
-        // 正常投注场景
         Long totalRewardAmount = 0L;
-        RewardResultDo<MalakasSymbolDo> rewardResult = null;
-        do {
-            // 生成-游戏滚轮列表
-            WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(gameInfo, getWheelProbabilisticConfig(gamePlay));
-            // 组装&返回-游戏记录列表
+        // 生成-游戏滚轮
+        WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(gameInfo, getWheelProbabilisticConfig(gamePlay));
+        // 组装&返回-游戏记录列表
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel));
+        MalakasGameRecordDo record = buildGameRecord(wheel, rewardResult);
+        if (Objects.nonNull(record)) {
+            ret.add(record);
+            totalRewardAmount += rewardResult.getTotalRewardAmount();
+        }
+        while (canContinuePlay(rewardResult, totalRewardAmount)) {
+            wheel = generateNormalWheelFromPreWheel(gameInfo, wheel, getWheelProbabilisticConfig(gamePlay), rewardResult);
             rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel));
-            MalakasGameRecordDo record = buildGameRecord(wheel, rewardResult);
-            if (Objects.nonNull(record)) {
-                ret.add(record);
+            MalakasGameRecordDo malakasGameRecord = buildGameRecord(wheel, rewardResult);
+            if (Objects.nonNull(malakasGameRecord)) {
+                ret.add(malakasGameRecord);
                 totalRewardAmount += rewardResult.getTotalRewardAmount();
             }
-        } while (canContinuePlay(rewardResult, totalRewardAmount));
+        }
         // 返回-游戏记录列表
         return ret;
+    }
+
+    private WheelDo<MalakasSymbolDo> generateNormalWheelFromPreWheel(GameInfoDo gameInfo,
+                                                                     WheelDo<MalakasSymbolDo> preWheel,
+                                                                     Map<String, List<BigDecimal>> wheelProbabilisticConfig,
+                                                                     RewardResultDo<MalakasSymbolDo> rewardResult) {
+        // 复制：元素数组
+        MalakasSymbolDo[][] symbolArr = copySymbolArr(preWheel.getSymbolArr());
+        // 消除：中奖元素
+        symbolArr = removeRewardSymbol(symbolArr, rewardResult);
+        // todo
+        // 重建：元素数组（非空元素按列下落处理）
+        symbolArr = rebuildSymbolArr(symbolArr, gameInfo);
+
+        // 生产：缺失元素
+
+
+        return null;
+    }
+
+    /**
+     * 重建元素数组：（非空元素按列下落处理）
+     * @param symbolArr
+     * @return
+     */
+    private MalakasSymbolDo[][] rebuildSymbolArr(MalakasSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
+        // 处理第一行：按行处理(剩余元素左移，第一列元素&最后一列元素为空)
+        int currentColum = 1;
+        for(int colum = 1; colum < gameInfoDo.getColumn() - 1; colum ++) {
+            if (Objects.nonNull(symbolArr[ONE_ROW_INDEX][colum])) {
+                MalakasSymbolDo temp = symbolArr[ONE_ROW_INDEX][colum];
+                symbolArr[ONE_ROW_INDEX][currentColum] = temp;
+                if (!Objects.equals(currentColum, colum)) {
+                    symbolArr[ONE_ROW_INDEX][colum] = null;
+                }
+            }
+        }
+        // 处理非第一行：按列处理
+        for(int row = gameInfoDo.getRow() - 1; row > 0; row --) {
+            // todo
+            //            if (Objects.nonNull(symbolArr[ONE_ROW_INDEX][colum])) {
+            //                MalakasSymbolDo temp = symbolArr[ONE_ROW_INDEX][colum];
+            //                symbolArr[ONE_ROW_INDEX][currentColum] = temp;
+            //                if (!Objects.equals(currentColum, colum)) {
+            //                    symbolArr[ONE_ROW_INDEX][colum] = null;
+            //                }
+            //            }
+        }
+        return symbolArr;
+    }
+
+    private MalakasSymbolDo[][] removeRewardSymbol(MalakasSymbolDo[][] symbolArr, RewardResultDo<MalakasSymbolDo> rewardResult) {
+        for (RewardLineDetailDo<MalakasSymbolDo> rewardLineDetail : CollectionUtils.emptyIfNull(rewardResult.getRewardLineDetailList())) {
+            for (RewardSymbolDo<MalakasSymbolDo> rewardSymbol : CollectionUtils.emptyIfNull(rewardLineDetail.getRewardSymbolList())) {
+                IndexDo indexDo = rewardSymbol.getIndex();
+                if (Objects.equals(indexDo.getRowIndex(), ONE_ROW_INDEX)) {
+                    // 第一行元素：直接消除
+                    symbolArr[indexDo.getRowIndex()][indexDo.getColumIndex()] = null;
+                } else {
+                    // 非第一行元素：按照元素大小进行消除
+                    int columSpanSiz = rewardSymbol.getSymbol().getSymbolSize().getColumSpan();
+                    for (int columSpan = 0; columSpan < columSpanSiz; columSpan++) {
+                        symbolArr[indexDo.getRowIndex() + columSpan][indexDo.getColumIndex()] = null;
+                    }
+                }
+
+            }
+        }
+        return symbolArr;
+    }
+
+    public MalakasSymbolDo[][] copySymbolArr(MalakasSymbolDo[][] symbolArr) {
+        int row = symbolArr.length;
+        int col = symbolArr[0].length;
+        MalakasSymbolDo[][] newSymbolArr = new MalakasSymbolDo[row][col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                newSymbolArr[i][j] = symbolArr[i][j].copy();
+            }
+        }
+        return newSymbolArr;
     }
 
     /**
@@ -84,8 +179,16 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<MalakasSymbolDo> generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo<MalakasSymbolDo> generateNormalWheel(GameInfoDo
+                                                                 gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+        //        // 占位元素
+        //        MalakasSymbolDo MALAKAS_SYMBOL_PLACEHOLDER = MalakasSymbolDo.builder()
+        //                .id(Symbol1000.getId())
+        //                .name(Symbol1000.getName())
+        //                .symbolType(SymbolTypeEnum.COMMON)
+        //                .symbolRule(null)
+        //                .build();
         // 第一行第一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
         // 第一行最后一列： 不生成元素,使用占位元素
@@ -109,6 +212,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
                     SymbolSizeEnum symbolSize = generateSymbolSize(colum, row, gameInfo);
                     placeHolderSymbolHandle(symbolArr, row, colum, symbolSize);
+                    // todo 生产元素金边
                     MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbolDo(symbolDo, symbolSize);
                     symbolArr[row][colum] = malakasSymbolDo;
                 } else {
@@ -116,6 +220,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     SymbolDo symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
                     SymbolSizeEnum symbolSize = generateSymbolSize(colum, row, gameInfo);
                     placeHolderSymbolHandle(symbolArr, row, colum, symbolSize);
+                    // todo 生产元素金边
                     MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbolDo(symbolDo, symbolSize);
                     symbolArr[row][colum] = malakasSymbolDo;
                     if (symbolDo.isScatterSymbol()) {
@@ -126,6 +231,9 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 randomNumberindex++;
             }
         }
+        //        // 清空：占位元素
+        //        MALAKAS_SYMBOL_PLACEHOLDER = null;
+        // 返回：滚轮
         return WheelDo.<MalakasSymbolDo>builder()
                 .index(WHEEL_DEFAULT_INDEX)
                 .symbolArr(symbolArr)
@@ -162,7 +270,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     }
 
 
-    public Map<String, Integer> buildColumSymboleSizeProbabilisticMap(int currentColumNo, int maxColumSpan, Map<String, List<BigDecimal>> sizeProbabilisticConfigMap) {
+    public Map<String, Integer> buildColumSymboleSizeProbabilisticMap(int currentColumNo, int maxColumSpan, Map<
+            String, List<BigDecimal>> sizeProbabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(sizeProbabilisticConfigMap), ErrorCode.ERR_INTER);
         Map<String, Integer> map = new HashMap<>();
         sizeProbabilisticConfigMap.entrySet().forEach(item -> {
@@ -211,7 +320,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         }
     }
 
-    private MalakasGameRecordDo buildGameRecord(WheelDo<MalakasSymbolDo> wheel, RewardResultDo<MalakasSymbolDo> rewardResult) {
+    private MalakasGameRecordDo buildGameRecord
+            (WheelDo<MalakasSymbolDo> wheel, RewardResultDo<MalakasSymbolDo> rewardResult) {
         return MalakasGameRecordDo.builder()
                 .index(wheel.getIndex())
                 .wheel(wheel)
