@@ -34,7 +34,7 @@ public class MalakasBetResultVo implements Serializable {
     @ApiModelProperty("中奖元素坐标集合")
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
-    private List<MariaMakilingRewardLineVo> rewardLineList;
+    private List<MalakasRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识,0:否,1:是")
     private Integer freeSpinFlag;
     @ApiModelProperty("免费轮Id列表")
@@ -46,7 +46,7 @@ public class MalakasBetResultVo implements Serializable {
     @AllArgsConstructor
     @ApiModel("MariaMakiling中奖线详情")
     @EqualsAndHashCode(callSuper = false)
-    public static class MariaMakilingRewardLineVo implements Serializable {
+    public static class MalakasRewardLineVo implements Serializable {
         private static final long serialVersionUID = 6487808344235380369L;
         @ApiModelProperty("中奖线元素Id: 中奖线第一个中奖元素id")
         private String symbolId;
