@@ -15,10 +15,10 @@ import org.apache.commons.lang3.StringUtils;
 public enum SymbolEnum {
 
     Symbol1001("1001", "Symbol1001"),
-    Symbol1002("1002", "Symbol1001"),
-    Symbol1003("1003", "Symbol1001"),
-    Symbol1004("1004", "Symbol1001"),
-    Symbol1005("1005", "Symbol1001"),
+    Symbol1002("1002", "Symbol1002"),
+    Symbol1003("1003", "Symbol1003"),
+    Symbol1004("1004", "Symbol1004"),
+    Symbol1005("1005", "Symbol1005"),
     Symbol1006("1006", "Symbol1006"),
     Symbol1007("1007", "Symbol1007"),
     Symbol1008("1008", "Symbol1008"),
