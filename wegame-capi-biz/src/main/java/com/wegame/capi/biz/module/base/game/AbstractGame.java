@@ -5,11 +5,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
-import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.SymbolEnum;
@@ -18,10 +14,9 @@ import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 抽象游戏
@@ -32,12 +27,6 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
 
     @Autowired
     public RandomService randomService;
-
-    //    public abstract RewardHandler getRewardHandler();
-    //
-    //    public abstract List<WheelDo> generate(GamePlayDo gamePlay);
-    //
-    //    public abstract R buildGameRecord(WheelDo wheel, RewardResultDo rewardResult);
 
     public Map<String, Integer> buildColumProbabilisticMap(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
