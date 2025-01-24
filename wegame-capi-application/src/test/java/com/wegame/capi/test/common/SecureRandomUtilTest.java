@@ -9,6 +9,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class SecureRandomUtilTest {
+
     @Test
     public void testRandomInt() {
         int max = 10;

@@ -36,7 +36,7 @@ import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
 @Component("mariaMakilingRewardHandler")
-public class MariaMakilingRewardHandler extends AbstractRewardHandler {
+public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> {
 
     // ONE_COLUM_INDEX,THREE_COLUM_INDEX,FIVE_COLUM_INDEX顺序不可更改
     private static final List<Integer> SCATTER_COLUM_INDEX_LIST = Arrays.asList(
@@ -58,17 +58,17 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
     @Autowired
     BetRecordService betRecordService;
 
-    public RewardResultDo handle(RewardHandleDo rewardHandle) {
+    public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
         long current = System.currentTimeMillis();
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
-        List<RewardLineDo> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
+        List<RewardLineDo<SymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算倍率
         BigDecimal totalMultiple = mariaMakilingMultipleCalculateStrategy.calculateMultiple(rewardHandle.getGameType(), rewardHandle.getWheel());
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
-            return RewardResultDo.builder()
+            return RewardResultDo.<SymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardType(RewardTypeEnum.NONE)
                     .rewardSubType(RewardSubTypeEnum.NONE)
@@ -83,8 +83,8 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         // 中奖总金额
         long totalRewardAmount = 0L;
         // 中奖坐标列表
-        List<RewardLineDetailDo> rewardLineDetailList = Lists.newArrayList();
-        for (RewardLineDo rewardLine : CollectionUtils.emptyIfNull(rewardLineList)) {
+        List<RewardLineDetailDo<SymbolDo>> rewardLineDetailList = Lists.newArrayList();
+        for (RewardLineDo<SymbolDo> rewardLine : CollectionUtils.emptyIfNull(rewardLineList)) {
             // 计算赔率
             BigDecimal odds = mariaMakilingOddsCalculateStrategy.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
             // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
@@ -92,7 +92,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
             // 中奖线明细列表
-            rewardLineDetailList.add(RewardLineDetailDo.builder()
+            rewardLineDetailList.add(RewardLineDetailDo.<SymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardAmount(lineRewardAmount.longValue())
                     .odds(odds)
@@ -105,7 +105,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     .build());
         }
         // 5.构建中奖结果
-        RewardResultDo rewardResult = RewardResultDo.builder()
+        RewardResultDo<SymbolDo> rewardResult = RewardResultDo.<SymbolDo>builder()
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())
@@ -119,10 +119,10 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         return rewardResult;
     }
 
-    private List<RewardLineDo> calcRewardLineList(GameInfoDo gameInfo, WheelDo wheel) {
+    private List<RewardLineDo<SymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<SymbolDo> wheel) {
         SymbolDo[][] symbolArr = wheel.getSymbolArr();
         // Map<第一列元素, TreeMap<列序号，满足规则的元素列表>
-        Map<SymbolDo, TreeMap<Integer, List<RewardSymbolDo>>> map = new HashMap<>();
+        Map<SymbolDo, TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>>> map = new HashMap<>();
         // 目标元素集合targetSymbolSet
         Set<SymbolDo> targetSymbolSet = new HashSet<>();
         // 1、处理第一列
@@ -146,14 +146,14 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     if (!isMatchTargetSymbol(currentSymbol, targetSymbol)) {
                         continue;
                     }
-                    TreeMap<Integer, List<RewardSymbolDo>> treeMap = map.get(targetSymbol);
+                    TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>> treeMap = map.get(targetSymbol);
                     if (canPutIn(treeMap, currentSymbol, currentColum)) {
-                        RewardSymbolDo symbolIndex = RewardSymbolDo.builder()
+                        RewardSymbolDo<SymbolDo> symbolIndex = RewardSymbolDo.<SymbolDo>builder()
                                 .symbol(currentSymbol)
                                 .index(IndexFactory.buildDo(currentRow, currentColum))
                                 .build();
                         if (Objects.isNull(treeMap.get(currentColum))) {
-                            List<RewardSymbolDo> list = new ArrayList<>();
+                            List<RewardSymbolDo<SymbolDo>> list = new ArrayList<>();
                             list.add(symbolIndex);
                             treeMap.put(currentColum, list);
                         } else {
@@ -164,12 +164,12 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
             }
         }
         // 3、统计中奖线
-        List<RewardLineDo> list = buildRewardLineList(map);
+        List<RewardLineDo<SymbolDo>> list = buildRewardLineList(map);
         // 4、返回中奖线列表
         return list;
     }
 
-    private boolean canPutIn(TreeMap<Integer, List<RewardSymbolDo>> treeMap, SymbolDo currentSymbol, Integer currentColum) {
+    private boolean canPutIn(TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>> treeMap, SymbolDo currentSymbol, Integer currentColum) {
         // 第一列必处理
         if (Objects.equals(currentColum, ONE_COLUM_INDEX)) {
             return true;
@@ -184,13 +184,13 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
         }
     }
 
-    private List<RewardLineDo> buildRewardLineList(Map<SymbolDo, TreeMap<Integer, List<RewardSymbolDo>>> map) {
-        List<RewardLineDo> list = new ArrayList<>();
-        for (Map.Entry<SymbolDo, TreeMap<Integer, List<RewardSymbolDo>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+    private List<RewardLineDo<SymbolDo>> buildRewardLineList(Map<SymbolDo, TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>>> map) {
+        List<RewardLineDo<SymbolDo>> list = new ArrayList<>();
+        for (Map.Entry<SymbolDo, TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (MapUtils.isEmpty(entry.getValue())) {
                 continue;
             }
-            TreeMap<Integer, List<RewardSymbolDo>> columMap = entry.getValue();
+            TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>> columMap = entry.getValue();
             if (columMap.size() < RewardLineTypeEnum.THREE.getNo()) {
                 continue;
             }
@@ -198,7 +198,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                     .stream()
                     .map(item -> item.size())
                     .reduce(1, (a, b) -> a * b);
-            list.add(RewardLineDo.builder()
+            list.add(RewardLineDo.<SymbolDo>builder()
                     .rewardSymbol(entry.getKey())
                     .rewardLineType(RewardLineTypeEnum.valueOfNo(columMap.size()))
                     .rewardLineSubType(entry.getKey().isScatterSymbol() ? RewardLineSubTypeEnum.SCATTER : RewardLineSubTypeEnum.COMMON)
@@ -220,7 +220,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler {
                 || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
     }
 
-    private void validate(RewardHandleDo rewardHandle) {
+    private void validate(RewardHandleDo<SymbolDo> rewardHandle) {
         AssertUtil.assertNotNull(rewardHandle, ErrorCode.ERR_PARAM, "rewardHandle is null");
         AssertUtil.assertNotNull(rewardHandle.getGameType(), ErrorCode.ERR_INTER, "not support gameType");
         AssertUtil.assertNotNull(rewardHandle.getBetType(), ErrorCode.ERR_PARAM, "not support betType");

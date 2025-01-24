@@ -26,7 +26,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RewardLineDetailDo implements Serializable {
+public class RewardLineDetailDo<T extends SymbolDo> implements Serializable {
     private static final long serialVersionUID = -2876565534848L;
     /**
      * 投注金额
@@ -59,11 +59,11 @@ public class RewardLineDetailDo implements Serializable {
     /**
      * 中奖元素:第一个元素
      */
-    private SymbolDo rewardSymbol;
+    private T rewardSymbol;
     /**
      * 中奖线的中奖元素列表
      */
-    private List<RewardSymbolDo> rewardSymbolList;
+    private List<RewardSymbolDo<T>> rewardSymbolList;
 
     @JsonIgnore
     public void print() {

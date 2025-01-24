@@ -5,5 +5,4 @@ import org.springframework.stereotype.Component;
 @Component("mariaMakilingBuyBetStrategy")
 public class MariaMakilingBuyBetStrategy extends AbstractMariaMakilingBetStrategy {
 
-
 }

@@ -2,6 +2,7 @@ package com.wegame.capi.biz.domain.biz.reward;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RewardResultDo implements Serializable {
+public class RewardResultDo<T extends SymbolDo> implements Serializable {
     private static final long serialVersionUID = -2262432373454848L;
     /**
      * 投注金额
@@ -55,7 +56,7 @@ public class RewardResultDo implements Serializable {
     /**
      * 中奖线列表
      */
-    private List<RewardLineDetailDo> rewardLineDetailList;
+    private List<RewardLineDetailDo<T>> rewardLineDetailList;
 
     @JsonIgnore
     public void print() {

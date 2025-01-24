@@ -20,7 +20,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class WheelDo implements Serializable {
+public class WheelDo<T extends SymbolDo> implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 滚轮-序号
@@ -29,19 +29,8 @@ public class WheelDo implements Serializable {
     /**
      * 滚轮-元素二维数组
      */
-    private SymbolDo[][] symbolArr;
+    private T[][] symbolArr;
 
-    public WheelDo copy() {
-        int row = symbolArr.length;
-        int col = symbolArr[0].length;
-        SymbolDo[][] newSymbolArr = new SymbolDo[row][col];
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < col; j++) {
-                newSymbolArr[i][j] = symbolArr[i][j];
-            }
-        }
-        return new WheelDo(index, newSymbolArr);
-    }
 
     public void print() {
         log.info("index:{}", index, symbolArr);

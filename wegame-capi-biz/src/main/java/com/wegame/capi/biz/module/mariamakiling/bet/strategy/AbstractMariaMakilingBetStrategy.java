@@ -22,7 +22,8 @@ import java.util.stream.Collectors;
 /**
  * MariaMakiling类游戏投注抽象接口
  */
-public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
+public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo>
+        implements MariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
 
     @Autowired
     MariaMakilingGame mariaMakilingGame;

@@ -36,14 +36,14 @@ public class MariaMakilingRewardHandlerTest extends BaseTest {
                 .gameType(GameTypeEnum.MARIA_MAKILING)
                 .betType(BetTypeEnum.NORMAL_BET)
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
-                .wheel(WheelDo.builder()
+                .wheel(WheelDo.<SymbolDo>builder()
                         .index(1000)
                         .symbolArr(this.buildSymbolArr9())
                         .build())
                 .betAmount(200L)
                 .build();
         long startTime = DateUtil.getCurrentMilli();
-        RewardResultDo rewardResult = mariaMakilingRewardHandler.handle(rewardHandle);
+        RewardResultDo<SymbolDo> rewardResult = mariaMakilingRewardHandler.handle(rewardHandle);
         long endTime = DateUtil.getCurrentMilli();
         Assert.notNull(rewardResult);
         rewardResult.print();
@@ -62,14 +62,14 @@ public class MariaMakilingRewardHandlerTest extends BaseTest {
                 .gameType(GameTypeEnum.MARIA_MAKILING)
                 .betType(BetTypeEnum.NORMAL_BET)
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
-                .wheel(WheelDo.builder()
+                .wheel(WheelDo.<SymbolDo>builder()
                         .index(1000)
                         .symbolArr(this.buildSymbolArr9())
                         .build())
                 .betAmount(200L)
                 .build();
         long startTime = DateUtil.getCurrentMilli();
-        RewardResultDo rewardResult = mariaMakilingRewardHandler.handle(rewardHandle);
+        RewardResultDo<SymbolDo> rewardResult = mariaMakilingRewardHandler.handle(rewardHandle);
         long endTime = DateUtil.getCurrentMilli();
         Assert.notNull(rewardResult);
         rewardResult.print();
