@@ -17,8 +17,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Service
-public abstract class AbstractRewardHandler<T extends SymbolDo>
-        implements RewardHandler<T> {
+public abstract class AbstractRewardHandler<T extends SymbolDo> implements RewardHandler<T> {
 
     /**
      * 计算中奖线中奖金额
