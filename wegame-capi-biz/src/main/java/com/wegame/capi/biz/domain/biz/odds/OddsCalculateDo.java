@@ -23,7 +23,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class OddsCalculateDo implements Serializable {
+public class OddsCalculateDo<T extends SymbolDo> implements Serializable {
     private static final long serialVersionUID = -2098745454848L;
     /**
      * 游戏类型
@@ -44,5 +44,5 @@ public class OddsCalculateDo implements Serializable {
     /**
      * 元素
      */
-    private SymbolDo symbol;
+    private T symbol;
 }

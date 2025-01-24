@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.base.reward;
 
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,7 +17,8 @@ import java.util.Objects;
  */
 @Slf4j
 @Service
-public abstract class AbstractRewardHandler implements RewardHandler {
+public abstract class AbstractRewardHandler<T extends SymbolDo>
+        implements RewardHandler<T> {
 
     /**
      * 计算中奖线中奖金额
@@ -72,7 +74,7 @@ public abstract class AbstractRewardHandler implements RewardHandler {
         }
     }
 
-    public boolean hasRewardScatter(List<RewardLineDo> rewardLineList) {
+    public boolean hasRewardScatter(List<RewardLineDo<T>> rewardLineList) {
         return CollectionUtils.isNotEmpty(rewardLineList) && rewardLineList.stream().anyMatch(r -> r.isScatterReward());
     }
 }

@@ -4,6 +4,7 @@ import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 import com.wegame.capi.client.domain.vo.IndexVo;
@@ -39,11 +40,11 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
     /**
      * 滚轮
      */
-    private WheelDo wheel;
+    private WheelDo<SymbolDo> wheel;
     /**
      * 中奖结果
      */
-    private RewardResultDo rewardResult;
+    private RewardResultDo<SymbolDo> rewardResult;
     /**
      * 免费轮id列表
      */

@@ -2,10 +2,12 @@ package com.wegame.capi.biz.module.mariamakiling.game;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -20,7 +22,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -48,19 +49,22 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
+        List<MariaMakilingGameRecordDo> ret = new ArrayList<>();
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
         // 生成-游戏滚轮列表
-        List<WheelDo> wheelList = generate(gamePlay);
+        List<WheelDo<SymbolDo>> wheelList = generate(gamePlay);
         // 组装&返回-游戏记录列表
-        return Optional.ofNullable(wheelList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(wheel -> buildGameRecord(wheel, mariaMakilingRewardHandler.handle(build(gameInfo, gamePlay, wheel))))
-                .collect(Collectors.toList());
+        for (WheelDo<SymbolDo> wheel : CollectionUtils.emptyIfNull(wheelList)) {
+            MariaMakilingGameRecordDo record = buildGameRecord(wheel, mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel)));
+            if (Objects.nonNull(record)) {
+                ret.add(record);
+            }
+        }
+        return ret;
     }
 
-    private List<WheelDo> generate(GamePlayDo gamePlay) {
+    private List<WheelDo<SymbolDo>> generate(GamePlayDo gamePlay) {
         GameInfoDo gameInfo = getGameInfo();
         Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
         if (gamePlay.isFreeSpinsFlag()) {
@@ -78,7 +82,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         }
     }
 
-    private MariaMakilingGameRecordDo buildGameRecord(WheelDo wheel, RewardResultDo rewardResult) {
+    private static MariaMakilingGameRecordDo buildGameRecord(WheelDo<SymbolDo> wheel, RewardResultDo<SymbolDo> rewardResult) {
         return MariaMakilingGameRecordDo.builder()
                 .index(wheel.getIndex())
                 .wheel(wheel)
@@ -92,7 +96,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo<SymbolDo> generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
@@ -116,7 +120,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 randomNumberindex++;
             }
         }
-        return WheelDo.builder()
+        return WheelDo.<SymbolDo>builder()
                 .index(WHEEL_DEFAULT_INDEX)
                 .symbolArr(symbolArr)
                 .build();
@@ -128,8 +132,8 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo generateFreeSpinsWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
-        WheelDo wheelDo = generateNormalWheel(gameInfo, probabilisticConfig);
+    private WheelDo<SymbolDo> generateFreeSpinsWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+        WheelDo<SymbolDo> wheelDo = generateNormalWheel(gameInfo, probabilisticConfig);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
         // 生成整盘随机数(SCATTER_COLUM_INDEX_LIST.size())个
         List<Integer> randomNumberList = randomService.randomIntList(0, gameInfo.getRow() - 1, SCATTER_COLUM_INDEX_LIST.size());
@@ -150,7 +154,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 symbolArr[randomRow][colum] = MARIA_MAKILING_SCATTER;
             }
         }
-        return WheelDo.builder()
+        return WheelDo.<SymbolDo>builder()
                 .index(WHEEL_DEFAULT_INDEX)
                 .symbolArr(symbolArr)
                 .build();
@@ -164,13 +168,13 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮列表
      */
-    private List<WheelDo> generateMultiWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         // 保存全局wild
         SymbolDo[][] wildSymbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 免费次数
         int wheelNumber = getWheelNumber();
         // 生成轮盘总和
-        List<WheelDo> wheels = new ArrayList<>();
+        List<WheelDo<SymbolDo>> wheels = new ArrayList<>();
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, wheelNumber * gameInfo.getRow() * gameInfo.getColumn());
         int randomNumberIndex = 0;
@@ -194,7 +198,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                     randomNumberIndex++;
                 }
             }
-            WheelDo wheelDo = WheelDo.builder()
+            WheelDo<SymbolDo> wheelDo = WheelDo.<SymbolDo>builder()
                     .index(number)
                     .symbolArr(symbolArr)
                     .build();

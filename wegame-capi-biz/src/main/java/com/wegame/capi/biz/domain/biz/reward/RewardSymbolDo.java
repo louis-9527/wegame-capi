@@ -18,12 +18,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RewardSymbolDo implements Serializable {
+public class RewardSymbolDo<T extends SymbolDo> implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 元素
      */
-    private SymbolDo symbol;
+    private T symbol;
     /**
      * 坐标
      */

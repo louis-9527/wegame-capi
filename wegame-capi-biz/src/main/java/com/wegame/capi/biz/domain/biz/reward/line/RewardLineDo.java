@@ -24,7 +24,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class RewardLineDo implements Serializable {
+public class RewardLineDo<T extends SymbolDo> implements Serializable {
     private static final long serialVersionUID = -2878827643634848L;
     /**
      * 中奖线类型
@@ -41,11 +41,11 @@ public class RewardLineDo implements Serializable {
     /**
      * 中奖元素
      */
-    private SymbolDo rewardSymbol;
+    private T rewardSymbol;
     /**
      * 中奖线的中奖元素列表
      */
-    private List<RewardSymbolDo> rewardSymbolList;
+    private List<RewardSymbolDo<T>> rewardSymbolList;
 
     public boolean isCommonReward() {
         return Objects.equals(rewardLineSubType, RewardLineSubTypeEnum.COMMON);
