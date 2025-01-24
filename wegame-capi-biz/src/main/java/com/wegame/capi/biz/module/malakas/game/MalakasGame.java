@@ -5,6 +5,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
@@ -46,6 +47,12 @@ public class MalakasGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
+        // 购买投注
+        // 生产滚轮
+        // 判断滚轮中奖结果
+        // 构建游戏记录
+        // 是否继续
+
         return Collections.emptyList();
     }
 
@@ -62,20 +69,10 @@ public class MalakasGame extends AbstractGame<MariaMakilingGameRecordDo> {
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
-        //        if (gamePlay.isFreeSpinsFlag()) {
-        //            return generateMultiWheel(gameInfo, probabilisticConfig);
-        //        } else {
-        //
-        //        }
+
     }
 
-    public MariaMakilingGameRecordDo buildGameRecord(WheelDo wheel, RewardResultDo rewardResult) {
-        return MariaMakilingGameRecordDo.builder()
-                .index(wheel.getIndex())
-                .wheel(wheel)
-                .rewardResult(rewardResult)
-                .build();
-    }
+
 
     /**
      * 正常滚轮生成：生成逻辑无任何限制
@@ -223,5 +220,13 @@ public class MalakasGame extends AbstractGame<MariaMakilingGameRecordDo> {
             }
         }
         throw new BusinessException(ErrorCode.ERR_INTER);
+    }
+
+    private MalakasGameRecordDo buildGameRecord(WheelDo wheel, RewardResultDo rewardResult) {
+        return MalakasGameRecordDo.builder()
+                .index(wheel.getIndex())
+                .wheel(wheel)
+                .rewardResult(rewardResult)
+                .build();
     }
 }
