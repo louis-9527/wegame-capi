@@ -116,7 +116,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
      * @return
      */
     private MalakasSymbolDo[][] rebuildSymbolArr(MalakasSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
-        // 处理第一行：按行处理(剩余元素左移，第一列元素&最后一列元素为空)
+        // 处理第一行：按行处理(非空元素左移，第一列元素&最后一列元素为空)
         int currentColum = 1;
         for(int colum = 1; colum < gameInfoDo.getColumn() - 1; colum ++) {
             if (Objects.nonNull(symbolArr[ONE_ROW_INDEX][colum])) {
@@ -127,16 +127,18 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 }
             }
         }
-        // 处理非第一行：按列处理
-        for(int row = gameInfoDo.getRow() - 1; row > 0; row --) {
-            // todo
-            //            if (Objects.nonNull(symbolArr[ONE_ROW_INDEX][colum])) {
-            //                MalakasSymbolDo temp = symbolArr[ONE_ROW_INDEX][colum];
-            //                symbolArr[ONE_ROW_INDEX][currentColum] = temp;
-            //                if (!Objects.equals(currentColum, colum)) {
-            //                    symbolArr[ONE_ROW_INDEX][colum] = null;
-            //                }
-            //            }
+        // 处理非第一行：按列处理（非空元素下移）
+        for (int colum = ONE_COLUM_INDEX; colum < gameInfoDo.getColumn(); colum ++) {
+            int currentRow = gameInfoDo.getRow() - 1;
+            for (int row = gameInfoDo.getRow() - 1; row > 0; row--) {
+                if (Objects.nonNull(symbolArr[row][colum])) {
+                    MalakasSymbolDo temp = symbolArr[row][colum];
+                    symbolArr[currentRow][colum] = temp;
+                    if (!Objects.equals(currentRow, row)) {
+                        symbolArr[currentRow][colum] = null;
+                    }
+                }
+            }
         }
         return symbolArr;
     }
