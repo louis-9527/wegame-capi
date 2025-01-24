@@ -9,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.SymbolEnum;
+import com.wegame.capi.common.enums.SymbolSizeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,5 +73,17 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
     public SymbolDo randomNormalSymbol(Integer randomNumber, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
         SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, randomNumber);
         return gameInfo.getSymbolById(symbol.getId());
+    }
+
+    public SymbolSizeEnum randomSymbolSize(Map<String, Integer> map, int randomNumber) {
+        int startVal = 0;
+        for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+                return SymbolSizeEnum.valueOfCode(entry.getKey());
+            } else {
+                startVal += entry.getValue();
+            }
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER);
     }
 }
