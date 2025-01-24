@@ -29,13 +29,13 @@ public class MalakasSymbolDo extends SymbolDo {
      */
     private SymbolSizeEnum symbolSize;
 
-    public static MalakasSymbolDo buildFromSymbolDo(SymbolDo symbolDo) {
+    public static MalakasSymbolDo buildFromSymbolDo(SymbolDo symbolDo, SymbolSizeEnum symbolSize) {
         return MalakasSymbolDo.builder()
                 .id(symbolDo.getId())
                 .name(symbolDo.getName())
                 .symbolType(symbolDo.getSymbolType())
                 .symbolRule(symbolDo.getSymbolRule())
-                .symbolSize(null)
+                .symbolSize(symbolSize)
                 .build();
     }
 }
