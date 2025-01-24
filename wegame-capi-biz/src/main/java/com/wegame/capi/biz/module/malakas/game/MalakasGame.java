@@ -28,27 +28,6 @@ import static com.wegame.capi.common.constants.GameConstants.*;
 @Component
 public class MalakasGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
-//    // todo
-//    @Override
-//    public RewardHandler getRewardHandler() {
-//        return null;
-//    }
-//
-//    @Override
-//    public List<WheelDo> generate(GamePlayDo gamePlay) {
-//        return Collections.emptyList();
-//    }
-//
-//    @Override
-//    public MariaMakilingGameRecordDo buildGameRecord(WheelDo wheel, RewardResultDo rewardResult) {
-//        return null;
-//    }
-//
-//    @Override
-//    public GameInfoDo getGameInfo() {
-//        return null;
-//    }
-
     // ONE_COLUM_INDEX,THREE_COLUM_INDEX,FIVE_COLUM_INDEX顺序不可更改
     private static final List<Integer> SCATTER_COLUM_INDEX_LIST = Arrays.asList(
             ONE_COLUM_INDEX,
@@ -66,11 +45,10 @@ public class MalakasGame extends AbstractGame<MariaMakilingGameRecordDo> {
     }
 
     @Override
-    public RewardHandler getRewardHandler() {
-        return malakasRewardHandler;
+    public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
+        return Collections.emptyList();
     }
 
-    @Override
     public List<WheelDo> generate(GamePlayDo gamePlay) {
         GameInfoDo gameInfo = getGameInfo();
         Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
@@ -91,7 +69,6 @@ public class MalakasGame extends AbstractGame<MariaMakilingGameRecordDo> {
         //        }
     }
 
-    @Override
     public MariaMakilingGameRecordDo buildGameRecord(WheelDo wheel, RewardResultDo rewardResult) {
         return MariaMakilingGameRecordDo.builder()
                 .index(wheel.getIndex())
