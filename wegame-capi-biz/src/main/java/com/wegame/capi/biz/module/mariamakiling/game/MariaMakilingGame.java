@@ -18,10 +18,11 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
-import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
@@ -46,12 +47,20 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     }
 
     @Override
-    public RewardHandler getRewardHandler() {
-        return mariaMakilingRewardHandler;
+    public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
+        // 获取-游戏基础信息
+        GameInfoDo gameInfo = getGameInfo();
+        // 生成-游戏滚轮列表
+        List<WheelDo> wheelList = generate(gamePlay);
+        // 组装&返回-游戏记录列表
+        return Optional.ofNullable(wheelList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(wheel -> buildGameRecord(wheel, mariaMakilingRewardHandler.handle(build(gameInfo, gamePlay, wheel))))
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public List<WheelDo> generate(GamePlayDo gamePlay) {
+    private List<WheelDo> generate(GamePlayDo gamePlay) {
         GameInfoDo gameInfo = getGameInfo();
         Map<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay);
         if (gamePlay.isFreeSpinsFlag()) {
@@ -69,8 +78,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         }
     }
 
-    @Override
-    public MariaMakilingGameRecordDo buildGameRecord(WheelDo wheel, RewardResultDo rewardResult) {
+    private MariaMakilingGameRecordDo buildGameRecord(WheelDo wheel, RewardResultDo rewardResult) {
         return MariaMakilingGameRecordDo.builder()
                 .index(wheel.getIndex())
                 .wheel(wheel)
