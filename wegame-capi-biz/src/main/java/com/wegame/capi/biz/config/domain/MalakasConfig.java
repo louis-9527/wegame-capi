@@ -63,9 +63,21 @@ public class MalakasConfig {
          */
         private Map<String, List<BigDecimal>> freePlayWheelProbabilisticConfig;
         /**
-         * 免费轮获得次数概率配置
+         * 免费轮获得Scatter个数概率配置
          */
-        private Map<Integer, Integer> freeWheelTimesProbabilisticConfig;
+        private Map<Integer, Integer> freeWheelScatterProbabilisticConfig;
+        /**
+         * Scatter个数对应的免费轮次数
+         */
+        private Map<Integer, Integer> scatterFreeSpinsTimesConfig;
+        /**
+         * 元素大小概率 S M L XL
+         */
+        private Map<String, List<BigDecimal>> symbolSizeProbabilisticConfig;
+        /**
+         * 每一轮出现金边概率
+         */
+        private List<BigDecimal> wildProbabilisticConfig;
     }
 
     public void validate() {
@@ -87,9 +99,9 @@ public class MalakasConfig {
         Assert.notNull(probabilisticConfig, "probabilisticConfig is null");
         Assert.notNull(probabilisticConfig.commonPlayWheelProbabilisticConfig, "probabilisticConfig is null");
         Assert.notNull(probabilisticConfig.freePlayWheelProbabilisticConfig, "probabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.freeWheelTimesProbabilisticConfig, "probabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.freeWheelScatterProbabilisticConfig, "probabilisticConfig is null");
         // 校验-免费轮次数概率配置
-        int sum = probabilisticConfig.freeWheelTimesProbabilisticConfig.values()
+        int sum = probabilisticConfig.freeWheelScatterProbabilisticConfig.values()
                 .stream()
                 .reduce(0, Integer::sum);
         AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
