@@ -34,6 +34,11 @@
         <dependencies>
             <dependency>
                 <groupId>com.wegame</groupId>
+                <artifactId>wegame-base</artifactId>
+                <version>${wegame-base.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.wegame</groupId>
                 <artifactId>wegame-capi-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -78,7 +83,6 @@
         <dependency>
             <groupId>com.wegame</groupId>
             <artifactId>wegame-base</artifactId>
-            <version>${wegame-base.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
