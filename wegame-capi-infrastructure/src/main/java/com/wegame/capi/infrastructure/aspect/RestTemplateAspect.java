@@ -40,16 +40,16 @@ public class RestTemplateAspect {
     @Around("execution(* org.springframework.web.client.RestTemplate.exchange(..))")
     public Object logRestCall(ProceedingJoinPoint joinPoint) throws Throwable {
         String url = "?";
-        String req = "?";
+        RequestEntity<?> argEntity = null;
         Object[] args = joinPoint.getArgs();
         if (args != null && args.length > 0) {
             if (args[0] instanceof String) {
                 url = (String) args[0];
             }
             if (args[0] instanceof RequestEntity) {
-                RequestEntity<?> argEntity = (RequestEntity<?>) args[0];
+                argEntity = (RequestEntity<?>) args[0];
                 url = argEntity.getUrl().toString();
-                req = FastJsonUtils.toJSONString(argEntity.getBody());
+                //                req = FastJsonUtils.toJSONString(argEntity.getBody());
             }
         }
 
@@ -57,7 +57,7 @@ public class RestTemplateAspect {
         Object response = joinPoint.proceed();
         long end = System.currentTimeMillis();
 
-        log.info("URL: {}; Request: {}; Response: {}; Cost Time: {}ms", url, req, response, (end - start));
+        log.info("URL: {}; Request: {}; Response: {}; Cost Time: {}ms", url, argEntity, response, (end - start));
         return response;
     }
 }
