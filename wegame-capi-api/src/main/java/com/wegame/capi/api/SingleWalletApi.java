@@ -20,6 +20,8 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
 
@@ -35,7 +37,9 @@ public class SingleWalletApi extends BaseApi {
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
         try {
             assembleSingleSignature(req);
-            RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST, URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            headers.add("Connection", "keep-alive");
+            RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
             ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -54,7 +58,9 @@ public class SingleWalletApi extends BaseApi {
         try {
             // 参数签名
             assembleSingleSignature(req);
-            RequestEntity<GetCreditReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            headers.add("Connection", "keep-alive");
+            RequestEntity<GetCreditReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(GET_CREDIT_URL_FORMAT, singleDomain)));
             ResponseEntity<CommonRes<GetCreditRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<GetCreditRes>>() {
@@ -80,7 +86,9 @@ public class SingleWalletApi extends BaseApi {
         try {
             // 参数签名
             assembleSingleSignature(req);
-            RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            headers.add("Connection", "keep-alive");
+            RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(BET_WITH_PAYOUT_URL_FORMAT, singleDomain)));
             ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
@@ -108,7 +116,9 @@ public class SingleWalletApi extends BaseApi {
         try {
             // 参数签名
             assembleSingleSignature(req);
-            RequestEntity<BetStatusReq> requestEntity = new RequestEntity<>(req, HttpMethod.POST,
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            headers.add("Connection", "keep-alive");
+            RequestEntity<BetStatusReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(BET_STATUS_URL_FORMAT, singleDomain)));
             ResponseEntity<CommonRes<BetStatusRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<BetStatusRes>>() {
