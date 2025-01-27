@@ -117,7 +117,7 @@ api:
   sport:
     singleDomain: https://sw-http-main-apisix.igo8.me/
     # 是否调用
-    invoke: false
+    invoke: true
     cp:
       platformId: 50
       channelId: 1050
