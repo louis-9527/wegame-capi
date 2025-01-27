@@ -97,27 +97,9 @@ spring:
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: false
-#        wegame_backend_db:
-#          url: jdbc:mysql://172.31.27.141:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-#          username: root
-#          password: ENC(YNkAqtiSqYCkHLUlQcUkJwinsDrTnnxC/q5p2JRLGozqSGKFeap13wRM9BiqQYFXpRtIEWfKVZug+LSFFvd3JQ==)
-#          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-#          type: com.alibaba.druid.pool.DruidDataSource
-#          druid:
-#            initial-size: 10
-#            min-idle: 10
-#            max-active: 500
-#            max-wait: 1000
-#            time-between-eviction-runs-millis: 6000
-#            min-evictable-idle-time-millis: 30000
-#            validation-query: SELECT 1 FROM DUAL
-#            test-while-idle: true
-#            test-on-borrow: false
-#            test-on-return: false
-#            pool-prepared-statements: false
   data:
     mongodb:
-      uri: mongodb://172.31.27.141:27017/wegame_mdb
+      uri: mongodb://172.31.27.141:27017/wegame_mdb&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
 ## fastjson
 fastjson:
   parser:
