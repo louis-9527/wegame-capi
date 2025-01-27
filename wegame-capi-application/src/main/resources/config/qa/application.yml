@@ -2,10 +2,10 @@ appid: com.wegame.capi
 ## log
 logging:
   level:
-    org.springframework.web: info
-    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+#    org.springframework.web: info
+#    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: info
-    org.apache.ibatis: info
+#    org.apache.ibatis: info
 ## server
 server:
   port: 9500

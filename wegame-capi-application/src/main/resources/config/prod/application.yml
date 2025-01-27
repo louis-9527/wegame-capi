@@ -2,9 +2,9 @@ appid: com.wegame.capi
 ## log
 logging:
   level:
-    org.springframework.web: info
+#    org.springframework.web: info
     com.wegame: info
-    org.apache.ibatis: info
+#    org.apache.ibatis: info
 ## server
 server:
   port: 9500
