@@ -65,7 +65,7 @@ public class BetRecordService {
         AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
         AssertUtil.assertNotNull(betRecordDo.getPlayerId(), ErrorCode.ERR_PARAM, "request param \'playerId\' is null");
         Criteria criteria = new Criteria();
-        criteria.and("id").is(betRecordDo.getId());
+        criteria.and("_id").is(betRecordDo.getId());
         criteria.and("playerId").is(betRecordDo.getPlayerId());
         Query query = new Query(criteria);
         UpdateResult result = mongoTemplate.updateFirst(query,
@@ -80,13 +80,17 @@ public class BetRecordService {
      * 查询：根据主键id查询
      *
      * @param id 主键id
+     * @param playerId 玩家id
      * @return BetRecordDo 投注记录
      */
-    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #id")
-    public <T> BetRecordDo<T> get(Long id, GameTypeEnum gameType) {
-        // todo 加playerId @jayni
+    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName + '_' + #playerId + '_'  + #id")
+    public <T> BetRecordDo<T> get(Long id, String playerId, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        BetRecordPo betRecordPo = mongoTemplate.findById(id, BetRecordPo.class, gameType.getCollectionName());
+        Criteria criteria = new Criteria();
+        criteria.and("_id").is(id);
+        criteria.and("playerId").is(playerId);
+        Query query = new Query(criteria);
+        BetRecordPo betRecordPo = mongoTemplate.findOne(query, BetRecordPo.class, gameType.getCollectionName());
         return BetRecordConverter.poToDo(betRecordPo);
     }
 

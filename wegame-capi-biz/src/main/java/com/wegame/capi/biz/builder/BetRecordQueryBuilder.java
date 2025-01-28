@@ -22,7 +22,7 @@ public class BetRecordQueryBuilder {
         }
 
         if (Objects.nonNull(recordQuery.getLastId())) {
-            query.addCriteria(Criteria.where("id").lt(recordQuery.getLastId()));
+            query.addCriteria(Criteria.where("_id").lt(recordQuery.getLastId()));
         }
 
         if (StringUtils.isNotEmpty(recordQuery.getOrderByClause())) {
@@ -35,8 +35,9 @@ public class BetRecordQueryBuilder {
         Query query = buildMongodbQuery(recordQuery);
         // 指定需要查询的字段
         Field fields = query.fields();
-        fields.include("id");
+        fields.include("_id");
         fields.include("userId");
+        fields.include("playerId");
         fields.include("playerName");
         fields.include("betAmount");
         fields.include("payAmount");
@@ -49,7 +50,7 @@ public class BetRecordQueryBuilder {
     public static Criteria buildMongodbCriteria(BetRecordQuery recordQuery) {
         Criteria criteria = new Criteria();
         if (Objects.nonNull(recordQuery.getId())) {
-            criteria.and("id").is(recordQuery.getId());
+            criteria.and("_id").is(recordQuery.getId());
         }
         if (Objects.nonNull(recordQuery.getPlayerId())) {
             criteria.and("playerId").is(recordQuery.getPlayerId());
