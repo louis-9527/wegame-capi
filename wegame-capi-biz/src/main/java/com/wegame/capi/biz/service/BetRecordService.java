@@ -62,7 +62,8 @@ public class BetRecordService {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is empty");
+        AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
+        AssertUtil.assertNotNull(betRecordDo.getPlayerId(), ErrorCode.ERR_PARAM, "request param \'playerId\' is null");
         Criteria criteria = new Criteria();
         criteria.and("id").is(betRecordDo.getId());
         criteria.and("playerId").is(betRecordDo.getPlayerId());
@@ -83,6 +84,7 @@ public class BetRecordService {
      */
     @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #id")
     public <T> BetRecordDo<T> get(Long id, GameTypeEnum gameType) {
+        // todo 加playerId @jayni
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         BetRecordPo betRecordPo = mongoTemplate.findById(id, BetRecordPo.class, gameType.getCollectionName());
         return BetRecordConverter.poToDo(betRecordPo);
