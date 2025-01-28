@@ -20,6 +20,8 @@ public class ThreadPoolConfig {
 
     public static final String defaultThreadPoolExecutor = "defaultThreadPoolExecutor";
 
+    public static final String updateBetRecordThreadPoolExecutor = "updateBetRecordThreadPoolExecutor";
+
     /**
      * 默认模块-线程池
      *
@@ -33,6 +35,24 @@ public class ThreadPoolConfig {
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue(1000),
                 new CustomizableThreadFactory("default-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        return executor;
+    }
+
+    /**
+     * 投注模块-线程池
+     *
+     * @return
+     */
+    @Bean(updateBetRecordThreadPoolExecutor)
+    public ThreadPoolExecutor updateBetRecordThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
+                5000,
+                60L,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue(10000),
+                new CustomizableThreadFactory("update-bet-record-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
         return executor;

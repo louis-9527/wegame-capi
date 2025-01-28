@@ -19,10 +19,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.updateBetRecordThreadPoolExecutor;
 
 /**
  * 投注记录服务
@@ -57,6 +60,7 @@ public class BetRecordService {
      * @param betRecordDo 投注记录
      * @return true/false
      */
+    @Async(updateBetRecordThreadPoolExecutor)
     @CacheEvict(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #betRecordDo.id")
     public boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         StopWatch stopWatch = new StopWatch();
