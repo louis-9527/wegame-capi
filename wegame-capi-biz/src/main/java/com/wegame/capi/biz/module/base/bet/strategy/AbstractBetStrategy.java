@@ -50,6 +50,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
         // 更新记录
         BetRecordDo updateRecord = BetRecordDo.builder()
                 .id(betRecordDo.getId())
+                .playerId(betRecordDo.getPlayerId())
                 .betId(betId)
                 .status(betWithPayoutRes.getBetStatus().getCode())
                 .build();
