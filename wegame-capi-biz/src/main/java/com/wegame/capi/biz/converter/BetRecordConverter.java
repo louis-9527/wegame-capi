@@ -10,8 +10,8 @@ import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.dao.mapper.domain.user.BetRecordPo;
-import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
+import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
+import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 
 import java.util.*;
 import java.util.stream.Collectors;
