@@ -94,11 +94,7 @@ spring:
             pool-prepared-statements: false
   data:
     mongodb:
-      uri: mongodb+srv://UatLIVsportService:kNAETaSO0bHAn1s13d@livsport-platform-uat-pri.saa4q.mongodb.net/livsport-platform?retryWrites=true&w=majority&readPreference=secondaryPreferred
-      connection-timeout: 3000  # 连接超时时间（毫秒）
-      socket-timeout: 500     # 数据传输超时时间（毫秒）
-      min-pool-size: 500          # 最小连接池大小
-      max-pool-size: 10000       # 最大连接池大小
+      uri: mongodb+srv://UatLIVsportService:kNAETaSO0bHAn1s13d@livsport-platform-uat-pri.saa4q.mongodb.net/livsport-platform?retryWrites=true&w=majority&maxPoolSize=500&minPoolSize=20&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
 ## fastjson
 fastjson:
   parser:
