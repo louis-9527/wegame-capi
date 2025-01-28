@@ -62,7 +62,7 @@ public class BetRecordService {
      */
     @Async(updateBetRecordThreadPoolExecutor)
     @CacheEvict(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #betRecordDo.id")
-    public Boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
+    public void asyncUpdate(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
@@ -77,7 +77,7 @@ public class BetRecordService {
                 BetRecordPo.class, gameType.getCollectionName());
         stopWatch.stop();
         log.info("BetRecordService#update cost time:{}", stopWatch.getLastTaskTimeMillis());
-        return Objects.nonNull(result) && result.getModifiedCount() > 0;
+        // return Objects.nonNull(result) && result.getModifiedCount() > 0;
     }
 
     /**

@@ -55,7 +55,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
                 .status(betWithPayoutRes.getBetStatus().getCode())
                 .build();
         // 异步更新
-        betRecordService.update(updateRecord, getGame().getGameInfo().getGameType());
+        betRecordService.asyncUpdate(updateRecord, getGame().getGameInfo().getGameType());
         return AmountUtil.toLong(betWithPayoutRes.getCredit());
     }
 
