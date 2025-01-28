@@ -62,7 +62,7 @@ public class BetRecordService {
      */
     @Async(updateBetRecordThreadPoolExecutor)
     @CacheEvict(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #betRecordDo.id")
-    public boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
+    public Boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
