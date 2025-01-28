@@ -141,7 +141,6 @@ public class BetRecordConverter {
     public static BetRecordQuery requestToQuery(PageQueryBetRecordRequest request, String orderClause) {
         BetRecordQuery query = new BetRecordQuery();
         query.setId(Optional.ofNullable(request.getId()).map(Long::valueOf).orElse(null));
-        query.setUserId(Long.valueOf(request.getUserId()));
         query.setPlayerId(request.getPlayerId());
         query.setStartCreateTime(request.getStartCreateTime());
         query.setEndCreateTime(request.getEndCreateTime());

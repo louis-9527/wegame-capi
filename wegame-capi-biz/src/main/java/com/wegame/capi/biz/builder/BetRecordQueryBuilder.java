@@ -48,12 +48,8 @@ public class BetRecordQueryBuilder {
 
     public static Criteria buildMongodbCriteria(BetRecordQuery recordQuery) {
         Criteria criteria = new Criteria();
-
         if (Objects.nonNull(recordQuery.getId())) {
             criteria.and("id").is(recordQuery.getId());
-        }
-        if (Objects.nonNull(recordQuery.getUserId())) {
-            criteria.and("userId").is(recordQuery.getUserId());
         }
         if (Objects.nonNull(recordQuery.getPlayerId())) {
             criteria.and("playerId").is(recordQuery.getPlayerId());

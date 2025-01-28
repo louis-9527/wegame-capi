@@ -41,7 +41,7 @@ public class BetRecordController {
         request.validate();
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        request.setUserId(userInfo.getId());
+        request.setPlayerId(userInfo.getPlayerId());
         BetRecordQuery query = BetRecordConverter.requestToQuery(request, "createTime");
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
