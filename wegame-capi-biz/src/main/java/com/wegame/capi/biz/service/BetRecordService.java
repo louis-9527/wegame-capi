@@ -63,7 +63,11 @@ public class BetRecordService {
         stopWatch.start();
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is empty");
-        UpdateResult result = mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(betRecordDo.getId())),
+        Criteria criteria = new Criteria();
+        criteria.and("id").is(betRecordDo.getId());
+        criteria.and("playerId").is(betRecordDo.getPlayerId());
+        Query query = new Query(criteria);
+        UpdateResult result = mongoTemplate.updateFirst(query,
                 BetRecordQueryBuilder.buildMongoUpdate(betRecordDo),
                 BetRecordPo.class, gameType.getCollectionName());
         stopWatch.stop();
