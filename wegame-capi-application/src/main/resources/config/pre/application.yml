@@ -96,7 +96,7 @@ spring:
     mongodb:
       uri: mongodb+srv://UatLIVsportService:kNAETaSO0bHAn1s13d@livsport-platform-uat-pri.saa4q.mongodb.net/livsport-platform?retryWrites=true&w=majority&maxPoolSize=500&minPoolSize=20&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
 pulscar:
-  url: pulsar://localhost:6650
+  url: pulsar://pulsar.makillingslot.info
 ## fastjson
 fastjson:
   parser:
