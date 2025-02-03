@@ -3,7 +3,6 @@ appid: com.wegame.capi
 logging:
   level:
     com.wegame: info
-    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 ## server
 server:
   port: 9500
