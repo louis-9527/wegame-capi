@@ -89,15 +89,14 @@ public class BetRecordService {
      */
     @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName + '_' + #playerId + '_'  + #id")
     public <T> BetRecordDo<T> get(Long id, String playerId, GameTypeEnum gameType) {
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+        long startTime = System.currentTimeMillis();
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         criteria.and("playerId").is(playerId);
         Query query = new Query(criteria);
         BetRecordPo betRecordPo = mongoTemplate.findOne(query, BetRecordPo.class, gameType.getCollectionName());
-        log.info("BetRecordService#get cost time:{}", stopWatch.getLastTaskTimeMillis());
+        log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
         return BetRecordConverter.poToDo(betRecordPo);
     }
 
