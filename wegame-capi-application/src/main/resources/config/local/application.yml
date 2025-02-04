@@ -104,7 +104,7 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/wegame_mdb&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
 pulscar:
-  url: pulsar://pulsar.makillingslot.info
+  url: pulsar://16.162.139.203:6650
 ## fastjson
 fastjson:
   parser:
@@ -135,7 +135,7 @@ api:
       privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
   go:
     wegameGoDomain: https://dev-client.sportslive.com.ph/go/game
-#    wegameGoDomain: http://localhost:9800/go/game
+    #    wegameGoDomain: http://localhost:9800/go/game
     secretString: cvFz78Gsxtwtpp2Wol6RcHBhRY5wdGEOcdUUhUzGzDDdzzWl94FDrFJKX3Z7nyBm
 #lark
 lark:
