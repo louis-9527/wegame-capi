@@ -19,7 +19,7 @@ public class BetRecordCache extends AbstractLocalCache {
     public BetRecordCache() {
         super(CommonCacheEnvEnum.BET_RECORD.cacheKeyPrefixName(),
                 30,
-                10000000L);
+                100000L);
     }
 
 
