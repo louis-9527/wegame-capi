@@ -17,7 +17,7 @@ public class BetRecordCache extends AbstractMultiCache {
 
 
     public BetRecordCache() {
-        super(BET_RECORD.cacheKeyPrefixName(), 60, 15, 10000L);
+        super(BET_RECORD.cacheKeyPrefixName(), 30, 15, 10000L);
     }
 
     @Override
