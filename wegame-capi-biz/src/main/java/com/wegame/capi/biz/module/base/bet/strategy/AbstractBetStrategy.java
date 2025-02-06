@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.id.IdGeneratorHelper;
+import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -23,16 +23,16 @@ import org.springframework.stereotype.Component;
 public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements BetStrategy<T, R> {
 
     @Autowired
-    public IdGeneratorHelper idGeneratorHelper;
+    BetRecordService betRecordService;
     @Autowired
-    public BetRecordService betRecordService;
+    SingleWalletService singleWalletService;
     @Autowired
-    private SingleWalletService singleWalletService;
+    SnowflakeIdGenerator snowflakeIdGenerator;
 
     public abstract Game getGame();
 
     public long generateRecordId() {
-        return idGeneratorHelper.nextId();
+        return snowflakeIdGenerator.nextId();
     }
 
     /**
@@ -58,5 +58,4 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
         betRecordService.asyncUpdate(updateRecord, getGame().getGameInfo().getGameType());
         return AmountUtil.toLong(betWithPayoutRes.getCredit());
     }
-
 }
