@@ -3,10 +3,7 @@ package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.wegame.capi.common.deserializer.EnumDeserializerInterface;
-import com.wegame.capi.common.deserializer.SymbolTypeEnumDeserializer;
 import lombok.ToString;
 
 /**
@@ -16,7 +13,6 @@ import lombok.ToString;
  */
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-//@JsonDeserialize(using = SymbolTypeEnumDeserializer.class)
 public enum SymbolTypeEnum implements EnumDeserializerInterface<SymbolTypeEnum> {
 
     COMMON("COMMON", "普通元素"),
