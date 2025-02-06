@@ -8,7 +8,7 @@ import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 
-import com.wegame.capi.biz.listerner.PulsarProducer;
+import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;

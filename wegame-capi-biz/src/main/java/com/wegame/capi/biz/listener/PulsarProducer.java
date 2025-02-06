@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.listerner;
+package com.wegame.capi.biz.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;

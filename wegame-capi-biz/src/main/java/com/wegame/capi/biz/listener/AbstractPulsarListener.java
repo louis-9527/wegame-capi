@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -70,14 +71,14 @@ public abstract class AbstractPulsarListener {
     protected abstract List<MessageId> processMessages(Messages<byte[]> messages);
 
 
-//    @PreDestroy
-//    public void close() {
-//        try {
-//            if (consumer != null) {
-//                consumer.close();
-//            }
-//        } catch (PulsarClientException e) {
-//            log.error("Error closing Pulsar consumer", e);
-//        }
-//    }
+    @PreDestroy
+    public void close() {
+        try {
+            if (consumer != null) {
+                consumer.close();
+            }
+        } catch (PulsarClientException e) {
+            log.error("Error closing Pulsar consumer", e);
+        }
+    }
 }
