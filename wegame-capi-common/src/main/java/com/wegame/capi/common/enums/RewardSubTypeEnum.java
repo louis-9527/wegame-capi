@@ -1,17 +1,14 @@
 package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wegame.capi.common.deserializer.EnumDeserializerInterface;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Objects;
-
 @Getter
 @AllArgsConstructor
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum RewardSubTypeEnum implements EnumDeserializerInterface<RewardSubTypeEnum> {
+@JsonFormat(shape = JsonFormat.Shape.STRING)
+public enum RewardSubTypeEnum {
 
     NONE("none", "未中奖"),
     OTHER("other", "其他"),
@@ -37,15 +34,5 @@ public enum RewardSubTypeEnum implements EnumDeserializerInterface<RewardSubType
             }
         }
         return null;
-    }
-
-    @Override
-    public String jsonValue() {
-        return code;
-    }
-
-    @Override
-    public RewardSubTypeEnum jsonCreator(String jsonValue) {
-        return valueOfCode(jsonValue);
     }
 }

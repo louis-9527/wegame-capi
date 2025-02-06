@@ -14,7 +14,7 @@ import java.util.Objects;
  * @author apple
  */
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum BetSubTypeEnum {
 
     NORMAL_BET("NORMAL_BET", "正常投注", BetTypeEnum.NORMAL_BET),

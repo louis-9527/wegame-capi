@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 @AllArgsConstructor
 @Getter
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeEnum {
 
     MARIA_MAKILING("zhumeng001", "MariaMakiling", "maria_makiling_bet_record");

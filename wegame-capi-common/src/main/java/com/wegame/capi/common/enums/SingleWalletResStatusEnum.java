@@ -10,8 +10,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-@AllArgsConstructor
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum SingleWalletResStatusEnum {
     SUCCESS(200, "success"),
     DUPLICATE_REFERENCE_ID(4001, "duplicate reference id"),
@@ -41,6 +40,11 @@ public enum SingleWalletResStatusEnum {
 
     private final Integer code;
     private final String desc;
+
+    SingleWalletResStatusEnum(int code, String desc) {
+        this.code = code;
+        this.desc = desc;
+    }
 
     public static SingleWalletResStatusEnum valueOfCode(int code) {
         for (SingleWalletResStatusEnum item : SingleWalletResStatusEnum.values()) {

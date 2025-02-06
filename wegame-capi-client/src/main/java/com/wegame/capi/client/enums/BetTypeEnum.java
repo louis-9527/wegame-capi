@@ -10,7 +10,7 @@ import lombok.ToString;
  * @author apple
  */
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum BetTypeEnum {
 
     NORMAL_BET("NORMAL_BET", "正常投注"),

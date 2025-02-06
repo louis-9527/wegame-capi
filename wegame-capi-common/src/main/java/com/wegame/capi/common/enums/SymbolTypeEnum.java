@@ -3,7 +3,6 @@ package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wegame.capi.common.deserializer.EnumDeserializerInterface;
 import lombok.ToString;
 
 /**
@@ -12,8 +11,8 @@ import lombok.ToString;
  * @author apple
  */
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum SymbolTypeEnum implements EnumDeserializerInterface<SymbolTypeEnum> {
+@JsonFormat(shape = JsonFormat.Shape.STRING)
+public enum SymbolTypeEnum {
 
     COMMON("COMMON", "普通元素"),
     WILD("WILD", "WILD元素"),
@@ -35,19 +34,9 @@ public enum SymbolTypeEnum implements EnumDeserializerInterface<SymbolTypeEnum> 
      * @param code code值
      * @param desc 描述信息
      */
-    private SymbolTypeEnum(String code, String desc) {
+    SymbolTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
-    }
-
-    @Override
-    public String jsonValue(){
-        return code;
-    }
-
-    @Override
-    public SymbolTypeEnum jsonCreator(String code) {
-        return valueOfCode(code);
     }
 
     @JsonCreator

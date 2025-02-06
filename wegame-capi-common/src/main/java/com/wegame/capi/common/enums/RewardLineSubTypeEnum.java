@@ -2,7 +2,7 @@ package com.wegame.capi.common.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wegame.capi.common.deserializer.EnumDeserializerInterface;
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -11,8 +11,9 @@ import lombok.ToString;
  * @author apple
  */
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum RewardLineSubTypeEnum implements EnumDeserializerInterface<RewardLineSubTypeEnum> {
+@Getter
+@JsonFormat(shape = JsonFormat.Shape.STRING)
+public enum RewardLineSubTypeEnum {
 
     COMMON("COMMON", "普通"),
     SCATTER("SCATTER", "SCATTER"),
@@ -55,15 +56,5 @@ public enum RewardLineSubTypeEnum implements EnumDeserializerInterface<RewardLin
 
     public String getDesc() {
         return desc;
-    }
-
-    @Override
-    public String jsonValue() {
-        return code;
-    }
-
-    @Override
-    public RewardLineSubTypeEnum jsonCreator(String jsonValue) {
-        return valueOfCode(jsonValue);
     }
 }

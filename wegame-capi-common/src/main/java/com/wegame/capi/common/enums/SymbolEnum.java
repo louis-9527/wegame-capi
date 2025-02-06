@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author apple
  */
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum SymbolEnum {
 
     Symbol1001("1001", "Symbol1001"),
@@ -52,7 +52,7 @@ public enum SymbolEnum {
      * @param id   id
      * @param name 名称
      */
-    private SymbolEnum(String id, String name) {
+    SymbolEnum(String id, String name) {
         this.id = id;
         this.name = name;
     }
