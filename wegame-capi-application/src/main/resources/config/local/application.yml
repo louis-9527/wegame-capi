@@ -6,6 +6,7 @@ logging:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: trace
     org.apache.ibatis: trace
+    org.mongodb: error
 #    com.alibaba.nacos: info
 #    com.alibaba.cloud.nacos: DEBUG
 ## server

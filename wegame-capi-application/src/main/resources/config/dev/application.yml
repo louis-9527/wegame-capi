@@ -3,6 +3,7 @@ appid: com.wegame.capi
 logging:
   level:
     com.wegame: info
+    org.mongodb: error
 #    org.springframework.web: trace
 #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 #    com.wegame: trace
