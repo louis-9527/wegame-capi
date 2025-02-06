@@ -106,13 +106,9 @@ public class BetRecordService {
         BulkWriteResult execute;
         try {
             // 需要排除掉库中不存在的id
-            Set<Long> existIdSet = this.listExistIdList(allIdList, gameType);
-            if (CollectionUtil.isEmpty(existIdSet)) {
-                return BetRecordBatchResultDo.builder().build();
-            }
-            HashSet<Long> allIdSet = Sets.newHashSet(allIdList);
-            if (existIdSet.size() != allIdSet.size()) {
-                normalFailIdList.addAll(Sets.difference(allIdSet, existIdSet));
+            normalFailIdList = this.listNotExistIdList(allIdList, gameType);
+            if (normalFailIdList.size() == allIdList.size()) {
+                return BetRecordBatchResultDo.builder().successCount(0L).normalFailIdList(normalFailIdList).build();
             }
 
             BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, gameType.getCollectionName());
@@ -248,9 +244,19 @@ public class BetRecordService {
         }
     }
 
-    private Set<Long> listExistIdList(List<Long> allIdList, GameTypeEnum gameType) {
+    private List<Long> listNotExistIdList(List<Long> allIdList, GameTypeEnum gameType) {
         List<Long> existIdList = mongoTemplate.findDistinct(new Query(Criteria.where("_id").in(allIdList)), "_id", gameType.getCollectionName(), Long.class);
-        return Sets.newHashSet(existIdList);
+        if (CollectionUtil.isEmpty(existIdList)) {
+            return allIdList;
+        }
+
+        List<Long> normalFailIdList = Lists.newArrayList();
+        HashSet<Long> allIdSet = Sets.newHashSet(allIdList);
+        HashSet<Long> existIdSet = Sets.newHashSet(existIdList);
+        if (existIdSet.size() != allIdSet.size()) {
+            normalFailIdList.addAll(Sets.difference(allIdSet, existIdSet));
+        }
+        return normalFailIdList;
     }
 
     private BetRecordBatchResultDo buildBatchAddResultDo(BulkWriteResult result) {
