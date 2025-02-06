@@ -5,6 +5,7 @@ logging:
 #    org.springframework.web: info
 #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: info
+    org.mongodb: error
 #    org.apache.ibatis: info
 ## server
 server:

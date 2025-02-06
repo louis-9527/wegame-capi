@@ -1,8 +1,8 @@
 package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.id.IdGeneratorHelper;
 import com.wegame.base.mq.MQMessage;
+import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -29,18 +29,18 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
 
     private static final int RETRY_TIMES = 3;
     @Autowired
-    public IdGeneratorHelper idGeneratorHelper;
-    @Autowired
     public BetRecordService betRecordService;
     @Autowired
-    private SingleWalletService singleWalletService;
+    public SingleWalletService singleWalletService;
+    @Autowired
+    public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     private PulsarProducer pulsarProducer;
 
     public abstract Game getGame();
 
     public long generateRecordId() {
-        return idGeneratorHelper.nextId();
+        return snowflakeIdGenerator.nextId();
     }
 
     /**

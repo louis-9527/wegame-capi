@@ -3,6 +3,7 @@ appid: com.wegame.capi
 logging:
   level:
     com.wegame: info
+    org.mongodb: error
 ## server
 server:
   port: 9500
