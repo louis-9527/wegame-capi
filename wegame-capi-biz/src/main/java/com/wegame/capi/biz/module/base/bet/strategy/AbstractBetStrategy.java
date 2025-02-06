@@ -23,11 +23,11 @@ import org.springframework.stereotype.Component;
 public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements BetStrategy<T, R> {
 
     @Autowired
-    BetRecordService betRecordService;
+    public BetRecordService betRecordService;
     @Autowired
-    SingleWalletService singleWalletService;
+    public SingleWalletService singleWalletService;
     @Autowired
-    SnowflakeIdGenerator snowflakeIdGenerator;
+    public SnowflakeIdGenerator snowflakeIdGenerator;
 
     public abstract Game getGame();
 
