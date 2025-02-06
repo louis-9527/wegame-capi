@@ -2,7 +2,7 @@ package com.wegame.capi.biz.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.wegame.base.rocketmq.MQMessage;
+import com.wegame.base.mq.MQMessage;
 import com.wegame.capi.biz.domain.biz.BetRecordBatchResultDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
