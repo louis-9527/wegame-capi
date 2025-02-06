@@ -3,8 +3,7 @@ package com.wegame.capi.biz.listener;
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.base.rocketmq.MQMessage;
-import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +36,7 @@ public class PulsarProducer {
         int times = 0;
         do {
             messageId = this.sendMessage(gameType, mqMessage);
-            times ++;
+            times++;
         } while (Objects.isNull(messageId) || times < tryTimes);
         long endTime = System.currentTimeMillis();
         log.info("sendMessage cost {} ms", endTime - startTime);
