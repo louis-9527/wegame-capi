@@ -28,9 +28,7 @@ public class IdConfig {
         do {
             Long tempMachineId = redisTemplate.opsForValue().increment(SnowflakeIdGenerator.REDIS_MACHINE_ID_KEY, 1);
             if (tempMachineId != null && tempMachineId > 0 && tempMachineId < SnowflakeIdGenerator.MAX_MACHINE_ID) {
-                machineId = tempMachineId;
-            } else if (machineId >= SnowflakeIdGenerator.MAX_MACHINE_ID) {
-                redisTemplate.opsForValue().set(SnowflakeIdGenerator.REDIS_MACHINE_ID_KEY, 1);
+                machineId = tempMachineId % 1024;
             }
         } while (machineId == null);
         log.info("IdConfig, ip: {}, machineId: {}", IpUtil.getLocalIp(), machineId);
