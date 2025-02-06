@@ -22,9 +22,9 @@ import java.util.List;
 public class BetRecordBatchResultDo implements Serializable {
     private static final long serialVersionUID = -35434547343525888L;
     /**
-     * 成功标识
+     * 成功条数
      */
-    private boolean success;
+    private Long successCount;
     /**
      * 重复的key id list
      */
