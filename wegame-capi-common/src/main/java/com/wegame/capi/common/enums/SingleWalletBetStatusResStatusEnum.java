@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @AllArgsConstructor
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum SingleWalletBetStatusResStatusEnum {
     RECEIVED_BET_REQUEST(1, "received bet request"),
     COMPLETED_BET_REQUEST(2, "completed bet request"),

@@ -52,8 +52,12 @@ public class RestTemplateAspect {
             response = joinPoint.proceed();
             return response;
         }  finally {
-            long end = System.currentTimeMillis();
-            log.info("invoke third, Request: {}; Response: {}; cost time: {}ms", argEntity, response, (end - start));
+            long costTime = System.currentTimeMillis() - start;
+            if (costTime > 50L) {
+                log.info("invoke third, Request: {}; Response: {}; cost time more than 50: {}ms", argEntity, response, costTime);
+            } else {
+                log.info("invoke third, Request: {}; Response: {}; cost time: {}ms", argEntity, response, costTime);
+            }
         }
     }
 }

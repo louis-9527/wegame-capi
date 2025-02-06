@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author apple
  */
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum SymbolSizeEnum {
 
     S("S", "小"),
@@ -35,10 +35,10 @@ public enum SymbolSizeEnum {
     /**
      * 私有构造方法.
      *
-     * @param id   id
+     * @param code code
      * @param name 名称
      */
-    private SymbolSizeEnum(String code, String name) {
+    SymbolSizeEnum(String code, String name) {
         this.code = code;
         this.name = name;
     }
