@@ -1,5 +1,6 @@
 package com.wegame.capi.common.enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wegame.capi.common.deserializer.EnumDeserializerInterface;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -16,7 +17,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum RewardTypeEnum {
+public enum RewardTypeEnum implements EnumDeserializerInterface<RewardTypeEnum> {
     NONE("NONE", "未中奖"),
     SINGLE("SINGLE", "单奖励"),
     MULTIPLE("MULTIPLE", "多奖励"),
@@ -51,4 +52,13 @@ public enum RewardTypeEnum {
         }
     }
 
+    @Override
+    public String jsonValue() {
+        return code;
+    }
+
+    @Override
+    public RewardTypeEnum jsonCreator(String jsonValue) {
+        return valueOfCode(jsonValue);
+    }
 }

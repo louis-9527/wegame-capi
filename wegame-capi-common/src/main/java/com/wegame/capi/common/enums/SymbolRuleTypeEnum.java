@@ -2,6 +2,7 @@ package com.wegame.capi.common.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wegame.capi.common.deserializer.EnumDeserializerInterface;
 import lombok.ToString;
 
 /**
@@ -11,7 +12,7 @@ import lombok.ToString;
  */
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum SymbolRuleTypeEnum {
+public enum SymbolRuleTypeEnum implements EnumDeserializerInterface<SymbolRuleTypeEnum> {
 
     COMMON("COMMON", "普通"),
     MULTIPLE("MULTIPLE", "倍数"),
@@ -54,5 +55,15 @@ public enum SymbolRuleTypeEnum {
 
     public String getDesc() {
         return desc;
+    }
+
+    @Override
+    public String jsonValue() {
+        return code;
+    }
+
+    @Override
+    public SymbolRuleTypeEnum jsonCreator(String jsonValue) {
+        return valueOfCode(jsonValue);
     }
 }

@@ -2,6 +2,7 @@ package com.wegame.capi.common.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wegame.capi.common.deserializer.EnumDeserializerInterface;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,11 +15,11 @@ import java.util.Objects;
  */
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum RewardLineTypeEnum {
+public enum RewardLineTypeEnum implements EnumDeserializerInterface<RewardLineTypeEnum> {
 
-    THREE(3,"THREE", "三连", OddsTypeEnum.THREE),
-    FOUR(4,"FOUR", "四连", OddsTypeEnum.FOUR),
-    FIVE(5,"FIVE", "五连", OddsTypeEnum.FIVE),
+    THREE(3, "THREE", "三连", OddsTypeEnum.THREE),
+    FOUR(4, "FOUR", "四连", OddsTypeEnum.FOUR),
+    FIVE(5, "FIVE", "五连", OddsTypeEnum.FIVE),
 
     ;
 
@@ -80,5 +81,15 @@ public enum RewardLineTypeEnum {
 
     public OddsTypeEnum getOddsType() {
         return oddsType;
+    }
+
+    @Override
+    public String jsonValue() {
+        return code;
+    }
+
+    @Override
+    public RewardLineTypeEnum jsonCreator(String jsonValue) {
+        return valueOfCode(jsonValue);
     }
 }
