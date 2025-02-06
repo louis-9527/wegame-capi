@@ -64,9 +64,9 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             try {
                 BetRecordBatchOptResultDo updateResultDo = betRecordService.batchUpdate(betUpdateRecordList, GameTypeEnum.MARIA_MAKILING);
                 // 移除处理失败的key
-                List<Long> normalFailIdList = updateResultDo.getFailIdList();
-                if (CollectionUtils.isNotEmpty(normalFailIdList)) {
-                    for (Long id : normalFailIdList) {
+                List<Long> failIdList = updateResultDo.getFailIdList();
+                if (CollectionUtils.isNotEmpty(failIdList)) {
+                    for (Long id : failIdList) {
                         messageIdMap.remove(id);
                     }
                 }
