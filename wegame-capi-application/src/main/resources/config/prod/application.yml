@@ -127,6 +127,11 @@ api:
   go:
     wegameGoDomain: https://XXXXXXXXX/go/game
     secretString: snJJW3uTpZbJ5YUJ7Q6420Qmu951PZa8TWwacj7S4dQzLzbsB6ZMU1pze6xY0t9Z
+pulsar:
+  ## service-url: pulsar://16.162.139.203:6650
+  service-url: pulsar://pulsar.makillingslot.info:6650
+  tenant: MariaMakiling
+  namespaces: prod
 #lark
 lark:
   robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
