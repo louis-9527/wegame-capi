@@ -83,11 +83,11 @@ public class BetRecordService {
             log.info("batchAdd result:{}", FastJsonUtils.toJSONString(execute));
         } catch (Exception e) {
             log.error("batchAdd exception", e);
-            return buildExceptionResultDo(betRecordDoList, Lists.newArrayList(), e, OptEnum.ADD);
+            return this.buildExceptionResultDo(betRecordDoList, Lists.newArrayList(), e, OptEnum.ADD);
         }
         stopWatch.stop();
         log.info("BetRecordService#batchAdd cost time:{}", stopWatch.getLastTaskTimeMillis());
-        return buildBatchAddResultDo(execute);
+        return this.buildBatchAddResultDo(execute);
     }
 
     /**
