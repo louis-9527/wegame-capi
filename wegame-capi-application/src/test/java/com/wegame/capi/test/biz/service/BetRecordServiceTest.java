@@ -49,7 +49,6 @@
 //        BetRecordBatchResultDo betRecordBatchResultDo = betRecordService.batchAdd(betRecordDoList, GameTypeEnum.MARIA_MAKILING);
 //        log.info("test_batchAdd result:{}", FastJsonUtils.toJSONString(betRecordBatchResultDo));
 //        Assert.assertNotNull(betRecordBatchResultDo);
-//        Assert.assertTrue(betRecordBatchResultDo.isSuccess());
 //        Assert.assertTrue(CollectionUtil.isEmpty(betRecordBatchResultDo.getNormalFailIdList()));
 //    }
 //
@@ -66,7 +65,6 @@
 //        BetRecordBatchResultDo betRecordBatchResultDo = betRecordService.batchAdd(betRecordDoList, GameTypeEnum.MARIA_MAKILING);
 //        log.info("test_batchAdd_partSuc result:{}", FastJsonUtils.toJSONString(betRecordBatchResultDo));
 //        Assert.assertNotNull(betRecordBatchResultDo);
-//        Assert.assertTrue(betRecordBatchResultDo.isSuccess());
 //        Assert.assertTrue(CollectionUtil.isNotEmpty(betRecordBatchResultDo.getDupKeyIdList()));
 //    }
 //
@@ -79,7 +77,6 @@
 //        });
 //        BetRecordBatchResultDo betRecordBatchResultDo = betRecordService.batchUpdate(betRecordDoList, GameTypeEnum.MARIA_MAKILING);
 //        Assert.assertNotNull(betRecordBatchResultDo);
-//        Assert.assertTrue(betRecordBatchResultDo.isSuccess());
 //        Assert.assertTrue(CollectionUtil.isEmpty(betRecordBatchResultDo.getNormalFailIdList()));
 //    }
 //
@@ -95,7 +92,6 @@
 //        betRecordDoList.get(betRecordDoList.size() - 1).setId(idGeneratorHelper.nextId());
 //        BetRecordBatchResultDo betRecordBatchResultDo = betRecordService.batchUpdate(betRecordDoList, GameTypeEnum.MARIA_MAKILING);
 //        Assert.assertNotNull(betRecordBatchResultDo);
-//        Assert.assertTrue(betRecordBatchResultDo.isSuccess());
 //        Assert.assertTrue(CollectionUtil.isNotEmpty(betRecordBatchResultDo.getNormalFailIdList()));
 //    }
 //

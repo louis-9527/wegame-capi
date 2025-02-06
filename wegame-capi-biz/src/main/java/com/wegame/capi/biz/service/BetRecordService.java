@@ -4,11 +4,8 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.StopWatch;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.mongodb.MongoBulkWriteException;
 import com.mongodb.bulk.BulkWriteError;
 import com.mongodb.bulk.BulkWriteResult;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.InsertManyOptions;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
@@ -23,7 +20,6 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -76,22 +72,22 @@ public class BetRecordService {
     public BetRecordBatchResultDo batchAdd(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
+        AssertUtil.assertNotEmpty(betRecordDoList, ErrorCode.ERR_PARAM, "betRecordDoList is empty");
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        BulkWriteResult execute;
         try {
             BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, gameType.getCollectionName());
             List<BetRecordPo> betRecordPos = BetRecordConverter.doToPoList(betRecordDoList, OptEnum.ADD);
             bulkOps.insert(betRecordPos);
-            bulkOps.execute();
-        } catch (BulkOperationException boe) {
-            return buildExceptionResultDo(betRecordDoList, boe);
+            execute = bulkOps.execute();
+            log.info("batchAdd result:{}", FastJsonUtils.toJSONString(execute));
         } catch (Exception e) {
-            log.error("batchAdd error", e);
-            return BetRecordBatchResultDo.builder()
-                    .normalFailIdList(betRecordDoList.stream().map(BetRecordDo::getId)
-                            .collect(Collectors.toList())).build();
+            log.error("batchAdd exception", e);
+            return this.buildExceptionResultDo(betRecordDoList, Lists.newArrayList(), e, OptEnum.ADD);
         }
         stopWatch.stop();
         log.info("BetRecordService#batchAdd cost time:{}", stopWatch.getLastTaskTimeMillis());
-        return BetRecordBatchResultDo.builder().success(true).build();
+        return this.buildBatchAddResultDo(execute);
     }
 
     /**
@@ -103,18 +99,16 @@ public class BetRecordService {
     public BetRecordBatchResultDo batchUpdate(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        List<Long> dupKeyIdList = Lists.newArrayList();
+        AssertUtil.assertNotEmpty(betRecordDoList, ErrorCode.ERR_PARAM, "betRecordDoList is empty");
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         List<Long> normalFailIdList = Lists.newArrayList();
-        List<Long> allIdList = betRecordDoList.stream().map(BetRecordDo::getId).collect(Collectors.toList());
+        List<Long> allIdList = betRecordDoList.stream().map(BetRecordDo::getId).filter(Objects::nonNull).collect(Collectors.toList());
+        BulkWriteResult execute;
         try {
             // 需要排除掉库中不存在的id
-            Set<Long> existIdSet = this.listExistIdList(allIdList, gameType);
-            if (CollectionUtil.isEmpty(existIdSet)) {
-                return BetRecordBatchResultDo.builder().success(true).build();
-            }
-            HashSet<Long> allIdSet = Sets.newHashSet(allIdList);
-            if (existIdSet.size() != allIdSet.size()) {
-                normalFailIdList.addAll(Sets.difference(allIdSet, existIdSet));
+            normalFailIdList = this.listNotExistIdList(allIdList, gameType);
+            if (normalFailIdList.size() == allIdList.size()) {
+                return BetRecordBatchResultDo.builder().successCount(0L).normalFailIdList(normalFailIdList).build();
             }
 
             BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, gameType.getCollectionName());
@@ -125,22 +119,15 @@ public class BetRecordService {
                 Query query = new Query(criteria);
                 bulkOps.updateOne(query, BetRecordQueryBuilder.buildMongoUpdate(betRecordDo));
             });
-            BulkWriteResult execute = bulkOps.execute();
+            execute = bulkOps.execute();
             log.info("batchUpdate result:{}", FastJsonUtils.toJSONString(execute));
-        } catch (BulkOperationException boe) {
-            return this.buildExceptionResultDo(betRecordDoList, boe);
         } catch (Exception e) {
             log.error("batchUpdate error", e);
-            return BetRecordBatchResultDo.builder()
-                    .normalFailIdList(allIdList).build();
+            return this.buildExceptionResultDo(betRecordDoList, normalFailIdList, e, OptEnum.UPDATE);
         }
         stopWatch.stop();
         log.info("BetRecordService#batchUpdate cost time:{}", stopWatch.getLastTaskTimeMillis());
-        return BetRecordBatchResultDo.builder()
-                .success(true)
-                .normalFailIdList(normalFailIdList)
-                .dupKeyIdList(dupKeyIdList)
-                .build();
+        return this.buildBatchUpdateResultDo(execute, normalFailIdList);
     }
 
     /**
@@ -225,31 +212,63 @@ public class BetRecordService {
     }
 
     ///////////////  above auto generated ///////////////
-    private BetRecordBatchResultDo buildExceptionResultDo(List<BetRecordDo> betRecordDoList, BulkOperationException boe) {
-        List<Long> dupKeyIdList = Lists.newArrayList();
-        List<Long> normalFailIdList = Lists.newArrayList();
-        for (BulkWriteError error : boe.getErrors()) {
-            // 获取每个错误对应的文档索引
-            int index = error.getIndex();
-            BetRecordDo betRecordDo = betRecordDoList.get(index);
-            Long id = betRecordDo.getId();
-            // 11000是MongoDB中唯一索引冲突的错误码
-            if (error.getCode() == 11000) {
-                // 主键冲突
-                dupKeyIdList.add(id);
-            } else {
-                normalFailIdList.add(id);
+
+    private BetRecordBatchResultDo buildExceptionResultDo(List<BetRecordDo> betRecordDoList, List<Long> normalFailIdList, Exception e, OptEnum optEnum) {
+        if (e instanceof BulkOperationException) {
+            BulkOperationException boe = (BulkOperationException) e;
+            List<Long> dupKeyIdList = Lists.newArrayList();
+            for (BulkWriteError error : boe.getErrors()) {
+                // 获取每个错误对应的文档索引
+                int index = error.getIndex();
+                BetRecordDo betRecordDo = betRecordDoList.get(index);
+                Long id = betRecordDo.getId();
+                // 11000是MongoDB中唯一索引冲突的错误码
+                if (error.getCode() == 11000) {
+                    // 主键冲突
+                    dupKeyIdList.add(id);
+                } else {
+                    normalFailIdList.add(id);
+                }
             }
+            return BetRecordBatchResultDo.builder()
+                    .dupKeyIdList(dupKeyIdList)
+                    .normalFailIdList(normalFailIdList)
+                    .successCount(OptEnum.ADD.equals(optEnum) ? (long) boe.getResult().getInsertedCount() : (long) boe.getResult().getMatchedCount())
+                    .build();
+        } else {
+            return BetRecordBatchResultDo.builder()
+                    .normalFailIdList(betRecordDoList.stream().map(BetRecordDo::getId)
+                            .collect(Collectors.toList()))
+                    .successCount(0L)
+                    .build();
         }
-        return BetRecordBatchResultDo.builder()
-                .dupKeyIdList(dupKeyIdList)
-                .normalFailIdList(normalFailIdList).build();
     }
 
-    private Set<Long> listExistIdList(List<Long> allIdList, GameTypeEnum gameType) {
+    private List<Long> listNotExistIdList(List<Long> allIdList, GameTypeEnum gameType) {
         List<Long> existIdList = mongoTemplate.findDistinct(new Query(Criteria.where("_id").in(allIdList)), "_id", gameType.getCollectionName(), Long.class);
-        return Sets.newHashSet(existIdList);
+        if (CollectionUtil.isEmpty(existIdList)) {
+            return allIdList;
+        }
+
+        List<Long> normalFailIdList = Lists.newArrayList();
+        HashSet<Long> allIdSet = Sets.newHashSet(allIdList);
+        HashSet<Long> existIdSet = Sets.newHashSet(existIdList);
+        if (existIdSet.size() != allIdSet.size()) {
+            normalFailIdList.addAll(Sets.difference(allIdSet, existIdSet));
+        }
+        return normalFailIdList;
     }
 
+    private BetRecordBatchResultDo buildBatchAddResultDo(BulkWriteResult result) {
+        return BetRecordBatchResultDo.builder()
+                .successCount((long) result.getInsertedCount())
+                .build();
+    }
 
+    private BetRecordBatchResultDo buildBatchUpdateResultDo(BulkWriteResult result, List<Long> normalFailIdList) {
+        return BetRecordBatchResultDo.builder()
+                .successCount((long) result.getMatchedCount())
+                .normalFailIdList(normalFailIdList)
+                .build();
+    }
 }
