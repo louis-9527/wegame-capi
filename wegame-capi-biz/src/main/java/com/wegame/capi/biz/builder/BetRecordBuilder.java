@@ -1,5 +1,9 @@
 package com.wegame.capi.biz.builder;
 
+import com.wegame.base.context.Operator;
+import com.wegame.base.context.OperatorContext;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.common.context.UserInfoContext;
@@ -8,6 +12,9 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 public class BetRecordBuilder {
 
     public static <T> BetRecordDo build(Long betRecordId, BetDo betDo, Long betAmount, Long payAmount, Long payOutAmount, T detail) {
+
+        Operator operator = OperatorContext.getOperator();
+        AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         return BetRecordDo.builder()
                 .id(betRecordId)
                 .pId(UserInfoContext.getUserInfo().getPId())
@@ -24,6 +31,8 @@ public class BetRecordBuilder {
                 .payOutAmount(payOutAmount)
                 .status(BetStatusEnum.ING.getCode())
                 .detail(detail)
+                .creator(operator.getName())
+                .updater(operator.getName())
                 .build();
     }
 

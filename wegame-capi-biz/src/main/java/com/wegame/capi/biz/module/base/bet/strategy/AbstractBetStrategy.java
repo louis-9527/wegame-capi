@@ -2,13 +2,16 @@ package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.IdGeneratorHelper;
+import com.wegame.base.rocketmq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
+import com.wegame.capi.biz.service.PulsarService;
 import com.wegame.capi.biz.service.SingleWalletService;
+import com.wegame.capi.client.enums.BetOperationTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +31,8 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
     public BetRecordService betRecordService;
     @Autowired
     private SingleWalletService singleWalletService;
+    @Autowired
+    private PulsarService pulsarService;
 
     public abstract Game getGame();
 
@@ -57,6 +62,35 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
         // 异步更新
         betRecordService.asyncUpdate(updateRecord, getGame().getGameInfo().getGameType());
         return AmountUtil.toLong(betWithPayoutRes.getCredit());
+    }
+
+    /**
+     * 保存投注记录并投注派彩
+     *
+     * @param betRecordDo
+     * @return 用户余额
+     */
+    public Long saveBetRecordAndBetWithPayoutAsync(BetRecordDo betRecordDo, Boolean containFree) {
+        if (containFree) {
+           return this.saveBetRecordAndBetWithPayout(betRecordDo);
+        } else {
+            //发送异步消息
+            pulsarService.sendMessage(String.valueOf(betRecordDo.getId()), BetOperationTypeEnum.ADD, betRecordDo);
+            //调用单钱包
+            BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
+            // 判断返回结果
+            String betId = betWithPayoutRes.getBetId();
+            // 更新记录
+            BetRecordDo updateRecord = BetRecordDo.builder()
+                    .id(betRecordDo.getId())
+                    .playerId(betRecordDo.getPlayerId())
+                    .betId(betId)
+                    .status(betWithPayoutRes.getBetStatus().getCode())
+                    .build();
+            // 异步更新
+            pulsarService.sendMessage(String.valueOf(betRecordDo.getId()), BetOperationTypeEnum.UPDATE, updateRecord);
+            return AmountUtil.toLong(betWithPayoutRes.getCredit());
+        }
     }
 
 }

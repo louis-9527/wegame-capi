@@ -13,15 +13,15 @@ import java.util.Objects;
 @Component
 public class PulscarProducer {
 
-
-    @Autowired
-    Producer<String> mariamakilingProducer;
-
-    public boolean send(GameTypeEnum gameType, Object message) throws PulsarClientException {
-        // 根据gameType选择producer
-        // 发送消息
-        MessageId messageId = mariamakilingProducer.send(FastJsonUtils.toJSONString(message));
-        return Objects.nonNull(messageId);
-    }
+//
+//    @Autowired
+//    Producer<String> mariamakilingProducer;
+//
+//    public boolean send(GameTypeEnum gameType, Object message) throws PulsarClientException {
+//        // 根据gameType选择producer
+//        // 发送消息
+//        MessageId messageId = mariamakilingProducer.send(FastJsonUtils.toJSONString(message));
+//        return Objects.nonNull(messageId);
+//    }
 
 }

@@ -11,12 +11,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
-public class PulscarConfig {
+public class PulsarConfig {
 
-    @Value("${pulscar.url}")
+    @Value("${pulsar.service-url}")
     private String pulsarUrl;
 
-    @Bean
+    @Bean(destroyMethod = "close")
     public PulsarClient pulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(pulsarUrl)

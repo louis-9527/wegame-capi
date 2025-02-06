@@ -56,8 +56,8 @@ public class BetRecordConverter {
         if (Objects.isNull(betRecordDo)) {
             return null;
         }
-        Operator operator = OperatorContext.getOperator();
-        AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
+//        Operator operator = OperatorContext.getOperator();
+//        AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         BetRecordPo po = new BetRecordPo();
         po.setId(betRecordDo.getId());
         po.setPId(betRecordDo.getPId());
@@ -78,12 +78,12 @@ public class BetRecordConverter {
         po.setDetail(betRecordDo.getDetail());
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
-            po.setCreator(operator.getName());
+            po.setCreator(betRecordDo.getCreator());
             po.setCreateTime(DateUtil.getCurrentMilli());
-            po.setUpdater(operator.getName());
+            po.setUpdater(betRecordDo.getUpdater());
             po.setUpdateTime(currentMilli);
         } else {
-            po.setUpdater(operator.getName());
+            po.setUpdater(betRecordDo.getUpdater());
             po.setUpdateTime(DateUtil.getCurrentMilli());
             po.setId(betRecordDo.getId());
         }
