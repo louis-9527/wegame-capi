@@ -6,7 +6,7 @@ import com.wegame.base.rocketmq.MQMessage;
 import com.wegame.capi.biz.domain.biz.BetRecordBatchResultDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
-import com.wegame.capi.client.enums.BetOperationTypeEnum;
+import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,7 +24,6 @@ import java.util.Map;
 @Component
 public class MariaMakilingMessageListener extends AbstractPulsarListener {
 
-
     @Autowired
     private BetRecordService betRecordService;
 
@@ -32,7 +31,6 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
     protected List<MessageId> processMessages(Messages<byte[]> messages) {
         List<BetRecordDo> betAddRecordList = new ArrayList<>();
         List<BetRecordDo> betUpdateRecordList = new ArrayList<>();
-
         Map<Long, MessageId> messageIdMap = new HashMap<>(messages.size());
         messages.forEach(tt -> {
             String message = new String(tt.getData());
@@ -40,9 +38,9 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             });
             BetRecordDo body = betRecordDoMQMessage.getBody();
             messageIdMap.put(body.getId(), tt.getMessageId());
-            if (betRecordDoMQMessage.getType().equals(BetOperationTypeEnum.ADD.getCode())) {
+            if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 betAddRecordList.add(body);
-            } else if (betRecordDoMQMessage.getType().equals(BetOperationTypeEnum.UPDATE.getCode())) {
+            } else if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.UPDATE.getCode())) {
                 betUpdateRecordList.add(body);
             }
         });
@@ -57,14 +55,12 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                         messageIdMap.remove(id);
                     }
                 }
-
             } catch (Exception e) {
                 log.error("betRecordService.batchAdd error:", e);
             }
         }
         // 批量修改
         if (CollectionUtils.isNotEmpty(betUpdateRecordList)) {
-
             try {
                 BetRecordBatchResultDo updateResultDo = betRecordService.batchUpdate(betUpdateRecordList, GameTypeEnum.MARIA_MAKILING);
                 // 移除处理失败的key

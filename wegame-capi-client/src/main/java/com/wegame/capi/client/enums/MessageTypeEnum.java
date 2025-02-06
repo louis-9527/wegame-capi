@@ -1,16 +1,22 @@
 package com.wegame.capi.client.enums;
 
-public enum BetOperationTypeEnum {
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.ToString;
+
+@ToString
+@JsonFormat(shape = JsonFormat.Shape.STRING)
+public enum MessageTypeEnum {
 
     ADD("ADD", "新增"),
     UPDATE("UPDATE", "修改"),
 
     ;
 
-    private BetOperationTypeEnum(String code, String desc) {
+    MessageTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
+
     /**
      * 枚举码.
      */

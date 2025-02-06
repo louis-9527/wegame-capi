@@ -12,7 +12,7 @@ import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;
-import com.wegame.capi.client.enums.BetOperationTypeEnum;
+import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -75,11 +75,10 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
         if (containFree) {
             return this.saveBetRecordAndBetWithPayout(betRecordDo);
         } else {
-            //发送异步消息
-            MQMessage<BetRecordDo> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), BetOperationTypeEnum.ADD.getCode(), betRecordDo);
-
+            // 发送消息(新增)
+            MQMessage<BetRecordDo> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
             pulsarProducer.sendMessage(this.getGame().getGameInfo().getGameType(), addMqMessage);
-            //调用单钱包
+            // 调用单钱包
             BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
             // 判断返回结果
             String betId = betWithPayoutRes.getBetId();
@@ -90,11 +89,10 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
                     .betId(betId)
                     .status(betWithPayoutRes.getBetStatus().getCode())
                     .build();
-            // 异步更新
-            MQMessage<BetRecordDo> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), BetOperationTypeEnum.UPDATE.getCode(), updateRecord);
+            // 发送消息(更新)
+            MQMessage<BetRecordDo> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
             pulsarProducer.sendMessage(this.getGame().getGameInfo().getGameType(), updateMqMessage);
             return AmountUtil.toLong(betWithPayoutRes.getCredit());
         }
     }
-
 }

@@ -15,13 +15,11 @@ import java.util.concurrent.TimeUnit;
 @Service
 public abstract class AbstractPulsarListener {
     @Autowired
-    private PulsarClient pulsarClient;
-
+    PulsarClient pulsarClient;
     @Value("${pulsar.tenant}")
-    private String tenant;
-
+    String tenant;
     @Value("${pulsar.namespaces}")
-    private String namespace;
+    String namespace;
 
     private Consumer<byte[]> consumer;
 
@@ -38,7 +36,6 @@ public abstract class AbstractPulsarListener {
                             .timeout(500, TimeUnit.MILLISECONDS)
                             .build())
                     .subscribe();
-
             new Thread(this::consumeMessages).start();
             log.info("✅ Pulsar consumer started for topic: {}", fullTopic);
         } catch (PulsarClientException e) {

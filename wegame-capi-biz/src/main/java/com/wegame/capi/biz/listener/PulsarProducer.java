@@ -4,37 +4,52 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.rocketmq.MQMessage;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
 public class PulsarProducer {
-    @Value("${pulsar.tenant}")
-    private String tenant;
-
-    @Value("${pulsar.namespaces}")
-    private String namespace;
-    @Autowired
-    private PulsarClient pulsarClient;
 
     private final ConcurrentHashMap<String, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
 
-    public <T> void sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
+    @Value("${pulsar.tenant}")
+    String tenant;
+    @Value("${pulsar.namespaces}")
+    String namespace;
+    @Autowired
+    PulsarClient pulsarClient;
+
+    public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage, int tryTimes) {
+        long startTime = System.currentTimeMillis();
+
+        MessageId messageId = null;
+        int times = 0;
+        do {
+            messageId = this.sendMessage(gameType, mqMessage);
+            times ++;
+        } while (Objects.isNull(messageId) || times < tryTimes);
+        long endTime = System.currentTimeMillis();
+        log.info("sendMessage cost {} ms", endTime - startTime);
+        return messageId;
+    }
+
+    public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         String topicName = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "_topic");
         try {
-            Producer<byte[]> producer = producerCache.computeIfAbsent(topicName, this::createProducer);
-            producer.newMessage()
-                    .key(mqMessage.getMsgId()) // 关键点：设置 Key
+            return getProducer(topicName, gameType).newMessage()
+                    // 关键点：设置 Key
+                    .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
                     .send();
         } catch (PulsarClientException e) {
@@ -43,11 +58,20 @@ public class PulsarProducer {
         }
     }
 
-    private Producer<byte[]> createProducer(String topicName) {
+    private Producer<byte[]> getProducer(String topicName, GameTypeEnum gameType) {
+        Producer<byte[]> producer = producerCache.get(topicName);
+        if (Objects.isNull(producer)) {
+            producer = createProducer(topicName, gameType);
+            producerCache.put(topicName, producer);
+        }
+        return producer;
+    }
+
+    private Producer<byte[]> createProducer(String topicName, GameTypeEnum gameType) {
         try {
             return pulsarClient.newProducer(Schema.BYTES)
                     .topic(topicName)
-                    .producerName(GameTypeEnum.MARIA_MAKILING.getName())
+                    .producerName(gameType.getName())
                     .create();
         } catch (PulsarClientException e) {
             throw new RuntimeException("Failed to create Pulsar producer for topic error: " + topicName, e);
@@ -65,5 +89,4 @@ public class PulsarProducer {
         });
         producerCache.clear();
     }
-
 }

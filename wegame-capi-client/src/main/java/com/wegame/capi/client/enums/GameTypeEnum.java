@@ -34,7 +34,6 @@ public enum GameTypeEnum {
      */
     private final String collectionName;
 
-
     public static GameTypeEnum valueOfId(String id) {
         for (GameTypeEnum item : GameTypeEnum.values()) {
             if (StringUtils.equals(item.getId(), id)) {
