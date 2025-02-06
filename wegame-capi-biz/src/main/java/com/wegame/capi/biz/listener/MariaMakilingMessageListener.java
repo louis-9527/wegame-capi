@@ -3,7 +3,7 @@ package com.wegame.capi.biz.listener;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.mq.MQMessage;
-import com.wegame.capi.biz.domain.biz.BetRecordBatchResultDo;
+import com.wegame.capi.biz.domain.biz.BetRecordBatchOptResultDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
@@ -47,11 +47,11 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
         // 批量新增
         if (CollectionUtils.isNotEmpty(betAddRecordList)) {
             try {
-                BetRecordBatchResultDo addResultDo = betRecordService.batchAdd(betAddRecordList, GameTypeEnum.MARIA_MAKILING);
+                BetRecordBatchOptResultDo addResultDo = betRecordService.batchAdd(betAddRecordList, GameTypeEnum.MARIA_MAKILING);
                 // 移除处理失败的key
-                List<Long> normalFailIdList = addResultDo.getNormalFailIdList();
-                if (CollectionUtils.isNotEmpty(normalFailIdList)) {
-                    for (Long id : normalFailIdList) {
+                List<Long> failIdList = addResultDo.getFailIdList();
+                if (CollectionUtils.isNotEmpty(failIdList)) {
+                    for (Long id : failIdList) {
                         messageIdMap.remove(id);
                     }
                 }
@@ -62,9 +62,9 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
         // 批量修改
         if (CollectionUtils.isNotEmpty(betUpdateRecordList)) {
             try {
-                BetRecordBatchResultDo updateResultDo = betRecordService.batchUpdate(betUpdateRecordList, GameTypeEnum.MARIA_MAKILING);
+                BetRecordBatchOptResultDo updateResultDo = betRecordService.batchUpdate(betUpdateRecordList, GameTypeEnum.MARIA_MAKILING);
                 // 移除处理失败的key
-                List<Long> normalFailIdList = updateResultDo.getNormalFailIdList();
+                List<Long> normalFailIdList = updateResultDo.getFailIdList();
                 if (CollectionUtils.isNotEmpty(normalFailIdList)) {
                     for (Long id : normalFailIdList) {
                         messageIdMap.remove(id);

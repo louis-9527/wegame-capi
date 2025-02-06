@@ -19,20 +19,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetRecordBatchResultDo implements Serializable {
+public class BetRecordBatchOptResultDo implements Serializable {
     private static final long serialVersionUID = -35434547343525888L;
     /**
      * 成功条数
      */
-    private Long successCount;
+    private long successCount;
     /**
-     * 重复的key id list
+     * 重复Id列表
      */
-    private List<Long> dupKeyIdList;
-
+    private List<Long> duplicateKeyIdList;
     /**
-     * 一般操作失败id列表
+     * 失败id列表
      */
-    private List<Long> normalFailIdList;
+    private List<Long> failIdList;
 }
 
