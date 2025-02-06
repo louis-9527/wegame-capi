@@ -7,9 +7,10 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
+
+import com.wegame.capi.biz.listerner.PulsarProducer;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
-import com.wegame.capi.biz.service.PulsarService;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.BetOperationTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
@@ -32,7 +33,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
     @Autowired
     private SingleWalletService singleWalletService;
     @Autowired
-    private PulsarService pulsarService;
+    private PulsarProducer pulsarProducer;
 
     public abstract Game getGame();
 
@@ -72,10 +73,12 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
      */
     public Long saveBetRecordAndBetWithPayoutAsync(BetRecordDo betRecordDo, Boolean containFree) {
         if (containFree) {
-           return this.saveBetRecordAndBetWithPayout(betRecordDo);
+            return this.saveBetRecordAndBetWithPayout(betRecordDo);
         } else {
             //发送异步消息
-            pulsarService.sendMessage(String.valueOf(betRecordDo.getId()), BetOperationTypeEnum.ADD, betRecordDo);
+            MQMessage<BetRecordDo> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), BetOperationTypeEnum.ADD.getCode(), betRecordDo);
+
+            pulsarProducer.sendMessage(this.getGame().getGameInfo().getGameType(), addMqMessage);
             //调用单钱包
             BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
             // 判断返回结果
@@ -88,7 +91,8 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
                     .status(betWithPayoutRes.getBetStatus().getCode())
                     .build();
             // 异步更新
-            pulsarService.sendMessage(String.valueOf(betRecordDo.getId()), BetOperationTypeEnum.UPDATE, updateRecord);
+            MQMessage<BetRecordDo> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), BetOperationTypeEnum.UPDATE.getCode(), updateRecord);
+            pulsarProducer.sendMessage(this.getGame().getGameInfo().getGameType(), updateMqMessage);
             return AmountUtil.toLong(betWithPayoutRes.getCredit());
         }
     }
