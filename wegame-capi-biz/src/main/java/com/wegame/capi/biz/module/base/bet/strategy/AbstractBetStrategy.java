@@ -2,7 +2,7 @@ package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.IdGeneratorHelper;
-import com.wegame.base.rocketmq.MQMessage;
+import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -14,6 +14,7 @@ import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
+import org.apache.pulsar.client.api.MessageId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements BetStrategy<T, R> {
 
+    private static final int RETRY_TIMES = 3;
     @Autowired
     public IdGeneratorHelper idGeneratorHelper;
     @Autowired
@@ -77,7 +79,8 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
         } else {
             // 发送消息(新增)
             MQMessage<BetRecordDo> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
-            pulsarProducer.sendMessage(this.getGame().getGameInfo().getGameType(), addMqMessage);
+            MessageId addMessageId = pulsarProducer.sendMessage(getGame().getGameInfo().getGameType(), addMqMessage, RETRY_TIMES);
+            AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
             // 调用单钱包
             BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
             // 判断返回结果
@@ -91,7 +94,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
                     .build();
             // 发送消息(更新)
             MQMessage<BetRecordDo> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
-            pulsarProducer.sendMessage(this.getGame().getGameInfo().getGameType(), updateMqMessage);
+            pulsarProducer.sendMessage(getGame().getGameInfo().getGameType(), updateMqMessage, RETRY_TIMES);
             return AmountUtil.toLong(betWithPayoutRes.getCredit());
         }
     }

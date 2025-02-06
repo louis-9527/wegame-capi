@@ -31,13 +31,12 @@ public class PulsarProducer {
 
     public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage, int tryTimes) {
         long startTime = System.currentTimeMillis();
-
-        MessageId messageId = null;
+        MessageId messageId;
         int times = 0;
         do {
             messageId = this.sendMessage(gameType, mqMessage);
             times++;
-        } while (Objects.isNull(messageId) || times < tryTimes);
+        } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
         log.info("sendMessage cost {} ms", endTime - startTime);
         return messageId;
