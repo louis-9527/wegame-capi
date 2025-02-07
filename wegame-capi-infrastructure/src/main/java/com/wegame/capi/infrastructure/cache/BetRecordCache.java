@@ -17,7 +17,7 @@ import static com.wegame.base.enums.CommonCacheEnvEnum.BET_RECORD;
 public class BetRecordCache extends AbstractMultiCache {
 
     public BetRecordCache() {
-        super(BET_RECORD.cacheKeyPrefixName(), 60, 15, 1000L);
+        super(BET_RECORD.cacheKeyPrefixName(), 60, 15, 10000L);
     }
 
     @Override
