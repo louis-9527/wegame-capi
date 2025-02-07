@@ -16,6 +16,7 @@ public enum OddsTypeEnum {
     THREE("THREE", "三连赔率"),
     FOUR("FOUR", "四连赔率"),
     FIVE("FIVE", "五连赔率"),
+    SIX("SIX", "六连赔率"),
 
     ;
 

@@ -80,7 +80,7 @@ public enum BetSubTypeEnum {
     }
 
     public static Boolean isFreeSpins(String betSubType) {
-        List<String> freeCodeList =Arrays.asList(FREE_SPINS_NORMAL_BET.getCode(), FREE_SPINS_BUY_BET.getCode());
+        List<String> freeCodeList = Arrays.asList(FREE_SPINS_NORMAL_BET.getCode(), FREE_SPINS_BUY_BET.getCode());
         return freeCodeList.contains(betSubType);
     }
 }

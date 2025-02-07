@@ -26,6 +26,7 @@ public class BetService {
 
     private static final Map<GameTypeEnum, String> contextNameMap = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingBetContext")
+            .put(GameTypeEnum.MALAKAS, "malakasBetContext")
             .build();
 
     @Autowired
