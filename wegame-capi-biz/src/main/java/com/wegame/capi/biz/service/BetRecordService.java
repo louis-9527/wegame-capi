@@ -96,7 +96,13 @@ public class BetRecordService {
         criteria.and("playerId").is(playerId);
         Query query = new Query(criteria);
         BetRecordPo betRecordPo = mongoTemplate.findOne(query, BetRecordPo.class, gameType.getCollectionName());
-        log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
+        long endTime = System.currentTimeMillis();
+        long costTime = endTime - startTime;
+        if (costTime > 50L) {
+            log.info("BetRecordService#get cost time more than 50:{} ms", System.currentTimeMillis() - startTime);
+        } else {
+            log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
+        }
         return BetRecordConverter.poToDo(betRecordPo);
     }
 
