@@ -5,6 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.base.utils.IpUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -68,9 +70,10 @@ public class PulsarProducer {
 
     private Producer<byte[]> createProducer(String topicName, GameTypeEnum gameType) {
         try {
+            String producerName = gameType.getName() + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp();
             return pulsarClient.newProducer(Schema.BYTES)
                     .topic(topicName)
-                    .producerName(gameType.getName())
+                    .producerName(producerName)
                     .create();
         } catch (PulsarClientException e) {
             throw new RuntimeException("Failed to create Pulsar producer for topic error: " + topicName, e);
