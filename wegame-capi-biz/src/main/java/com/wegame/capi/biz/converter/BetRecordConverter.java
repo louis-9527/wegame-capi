@@ -79,12 +79,12 @@ public class BetRecordConverter {
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
             po.setCreator(betRecordDo.getCreator());
-            po.setCreateTime(DateUtil.getCurrentMilli());
+            po.setCreateTime(betRecordDo.getCreateTime() == null ? currentMilli : betRecordDo.getCreateTime());
             po.setUpdater(betRecordDo.getUpdater());
-            po.setUpdateTime(currentMilli);
+            po.setUpdateTime(betRecordDo.getUpdateTime() == null ? currentMilli : betRecordDo.getUpdateTime());
         } else {
             po.setUpdater(betRecordDo.getUpdater());
-            po.setUpdateTime(DateUtil.getCurrentMilli());
+            po.setUpdateTime(betRecordDo.getUpdateTime() == null ? DateUtil.getCurrentMilli() : betRecordDo.getUpdateTime());
             po.setId(betRecordDo.getId());
         }
         return po;

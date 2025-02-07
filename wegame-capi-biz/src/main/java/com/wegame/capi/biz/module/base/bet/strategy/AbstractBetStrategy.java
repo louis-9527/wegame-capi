@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
@@ -91,6 +92,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
                     .playerId(betRecordDo.getPlayerId())
                     .betId(betId)
                     .status(betWithPayoutRes.getBetStatus().getCode())
+                    .updateTime(DateUtil.getCurrentMilli())
                     .build();
             // 发送消息(更新)
             MQMessage<BetRecordDo> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
