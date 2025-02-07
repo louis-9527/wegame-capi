@@ -26,10 +26,18 @@ public class AbstractCacheAspect {
                     throwable);
             throw throwable;
         } finally {
-            log.info("AbstractCache，{}#{}，COST TIME：{} ms",
-                    signature.getDeclaringTypeName(),
-                    signature.getName(),
-                    (System.currentTimeMillis() - startTime));
+            long costTime = System.currentTimeMillis() - startTime;
+            if (costTime > 10L) {
+                log.info("AbstractCache，{}#{}，COST TIME MORE THAN 10：{} ms",
+                        signature.getDeclaringTypeName(),
+                        signature.getName(),
+                        (System.currentTimeMillis() - startTime));
+            } else {
+                log.info("AbstractCache，{}#{}，COST TIME：{} ms",
+                        signature.getDeclaringTypeName(),
+                        signature.getName(),
+                        (System.currentTimeMillis() - startTime));
+            }
         }
     }
 }
