@@ -126,7 +126,7 @@ api:
     secretString: xETPPpSvBtJ4CShtVQwme9ngrNixUfXHbi7UkXBJ7u8LxlJwwcNwNdJQgZUguTwa
 pulsar:
   ## service-url: pulsar://16.162.139.203:6650
-  service-url: pulsar://pulsar.makillingslot.info:6650
+  service-url: pulsar://pulsar.makillingslot.net:6650
   tenant: MariaMakiling
   namespaces: pre
 #lark
