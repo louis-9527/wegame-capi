@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AbstractCacheAspect {
 
-    @Around("execution(* com.wegame.base.cache.AbstractCache.*(..))")
+    @Around("execution(* com.wegame.base.cache.AbstractCache.get(..)) || execution(* com.wegame.base.cache.AbstractCache.put(..))")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Signature signature = joinPoint.getSignature();
