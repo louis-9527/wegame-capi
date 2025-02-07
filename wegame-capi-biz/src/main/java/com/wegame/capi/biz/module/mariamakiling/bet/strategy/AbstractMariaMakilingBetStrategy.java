@@ -122,7 +122,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                         .gameRecordList(list)
                         .build());
         // 保存投注记录并派奖
-        Long userCredit = saveBetRecordAndBetWithPayout(betRecord);
+        Long userCredit = saveBetRecordAndBetWithPayoutAsync(betRecord, gameRecord.hasRewardFreeSpins());
         // 组装返回结果
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betRecord.getId())

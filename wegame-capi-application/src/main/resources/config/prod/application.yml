@@ -95,6 +95,8 @@ spring:
   data:
     mongodb:
       uri: mongodb+srv://PRODlivsportService:XGN1EWlf18QTrstzi2@livsport-platform-prod-pri.g8mny.mongodb.net/livsport-platform?retryWrites=true&w=majority&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
+pulscar:
+  url: pulsar://pulsar.makillingslot.info
 ## fastjson
 fastjson:
   parser:
@@ -126,6 +128,11 @@ api:
   go:
     wegameGoDomain: https://XXXXXXXXX/go/game
     secretString: snJJW3uTpZbJ5YUJ7Q6420Qmu951PZa8TWwacj7S4dQzLzbsB6ZMU1pze6xY0t9Z
+pulsar:
+  ## service-url: pulsar://16.162.139.203:6650
+  service-url: pulsar://pulsar.makillingslot.net:6650
+  tenant: MariaMakiling
+  namespaces: prod
 #lark
 lark:
   robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

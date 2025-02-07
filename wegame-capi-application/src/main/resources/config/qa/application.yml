@@ -128,6 +128,11 @@ api:
   go:
     wegameGoDomain: http://wegame-go-svc.wegame-qat.svc.cluster.local:9800/go/game
     secretString: oYolXtz4KDiZPEh1rLS0a1gOLetpNad0kDjl4rzy3e3HMkQDHojagOjXEMeNYjsg
+pulsar:
+  ## service-url: pulsar://16.162.139.203:6650
+  service-url: pulsar://pulsar.makillingslot.net:6650
+  tenant: MariaMakiling
+  namespaces: qa
 #lark
 lark:
   robot: 1abf2d83-03ca-4073-84a2-6d79d804ca3a
