@@ -29,16 +29,16 @@ public class MalakasBetResultVo implements Serializable {
     private Long totalRewardAmount;
     @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
-    @ApiModelProperty("滚轮结果")
-    private String[][] spinsResult;
-    @ApiModelProperty("中奖元素坐标集合")
-    private Set<IndexVo> rewardSymbolIndexSet;
-    @ApiModelProperty("中奖线列表")
-    private List<MalakasRewardLineVo> rewardLineList;
+    @ApiModelProperty("滚轮结果(按列)")
+    private List<SpinsResultVo> spinsColResult;
+    @ApiModelProperty("滚轮结果第一行")
+    private List<SpinsResultVo> spinsRowOneResult;
+    @ApiModelProperty("中奖线列表,外层List代表消除次数,内层List代表中奖线列表")
+    private List<List<MalakasRewardLineVo>> rewardLineList;
     @ApiModelProperty("免费轮标识,0:否,1:是")
     private Integer freeSpinFlag;
-    @ApiModelProperty("免费轮Id列表")
-    private List<Integer> freeSpinIds;
+    @ApiModelProperty("免费轮Id列表,免费轮中触发免费轮用_分割")
+    private List<String> freeSpinIds;
 
     @Data
     @SuperBuilder
@@ -54,7 +54,7 @@ public class MalakasBetResultVo implements Serializable {
         private BigDecimal multiple;
         @ApiModelProperty("赔率")
         private BigDecimal odds;
-        @ApiModelProperty("中奖线类型：THREE（三连），FOUR（四连）FIVE（5连）")
+        @ApiModelProperty("中奖线类型：THREE（三连），FOUR（四连）FIVE（5连）SIX(6连)")
         private String rewardLineType;
         @ApiModelProperty("中奖线子类型：COMMON（普通），SCATTER（SCATTER）")
         private String rewardLineSubType;
@@ -65,5 +65,23 @@ public class MalakasBetResultVo implements Serializable {
         private Long rewardAmount;
         @ApiModelProperty("投注金额")
         private Long betAmount;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel("MariaMakiling中奖线详情")
+    @EqualsAndHashCode(callSuper = false)
+    public static class SpinsResultVo implements Serializable{
+        private static final long serialVersionUID = 3447556878793626303L;
+        @ApiModelProperty("元素Id")
+        private String symbolId;
+        @ApiModelProperty("元素大小:1:小型,2:中型,3:大型,4:超大型")
+        private Integer size;
+        @ApiModelProperty("是否金边(0:否,1:是)")
+        private Integer border;
+        @ApiModelProperty("消除论数(0:不消除,1:在第一次消除,2:第二次消除...)")
+        private Integer cleanSize;
     }
 }
