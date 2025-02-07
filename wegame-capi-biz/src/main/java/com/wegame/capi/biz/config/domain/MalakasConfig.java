@@ -75,7 +75,7 @@ public class MalakasConfig {
          */
         private Map<String, List<BigDecimal>> symbolSizeProbabilisticConfig;
         /**
-         * 每一轮出现金边概率
+         * 每个轮轴出现金边概率
          */
         private List<BigDecimal> wildProbabilisticConfig;
     }

@@ -7,9 +7,8 @@ import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.module.base.game.Game;
 import org.springframework.stereotype.Component;
 
-@Component("mariaMakilingBuyBetStrategy")
+@Component("malakasBuyBetStrategy")
 public class MalakasBuyBetStrategy extends AbstractMalakasBetStrategy {
-
 
     @Override
     public Game getGame() {
