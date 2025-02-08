@@ -61,22 +61,20 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MariaMak
 
     @Override
     public MariaMakilingBetResultVo toVo() {
-        // todo
-        return null;
-//        if (Objects.isNull(rewardResult)) {
-//            return MariaMakilingBetResultVo.builder()
-//                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
-//                    .build();
-//        } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
-//            return MariaMakilingBetResultVo.builder()
-//                    .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
-//                    .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
-//                    .totalRewardAmount(rewardResult.getTotalRewardAmount())
-//                    .totalRewardMultiple(rewardResult.getTotalMultiple())
-//                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
-//                    .freeSpinFlag(0)
-//                    .build();
-//        } else {
+        if (Objects.isNull(rewardResult)) {
+            return MariaMakilingBetResultVo.builder()
+                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .build();
+        } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
+            return MariaMakilingBetResultVo.builder()
+                    .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
+                    .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
+                    .totalRewardAmount(rewardResult.getTotalRewardAmount())
+                    .totalRewardMultiple(rewardResult.getTotalMultiple())
+                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .freeSpinFlag(0)
+                    .build();
+        } else {
 //            return MariaMakilingBetResultVo.builder()
 //                    .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
 //                    .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
@@ -110,7 +108,8 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MariaMak
 //                    .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
 //                    .freeSpinIds(freeSpinIds)
 //                    .build();
-//        }
+            return null;
+        }
     }
 }
 
