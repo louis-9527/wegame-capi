@@ -168,7 +168,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         if (Objects.equals(currentColum, ONE_COLUM_INDEX)) {
             return true;
         }
-        // 非scatter元素，判断上一列的列表是否为空
+        // 判断上一列的列表是否为空
         return CollectionUtils.isNotEmpty(treeMap.get(currentColum - 1));
     }
 
@@ -228,10 +228,6 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
             for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
                 // 校验：所有元素不能为空
                 AssertUtil.assertNotNull(symbolArr[row][colum], ErrorCode.ERR_PARAM, "all symbol can not be null");
-                // 校验：第一列 & 第六列 不能包含wild
-                if (Objects.equals(colum, ONE_COLUM_INDEX) || Objects.equals(colum, SIX_COLUM_INDEX)) {
-                    AssertUtil.assertTrue(!WILD_SYMBOL_MAP.containsKey(symbolArr[row][colum].getId()), ErrorCode.ERR_PARAM, "this first or six colum can not has wild");
-                }
             }
         }
     }
