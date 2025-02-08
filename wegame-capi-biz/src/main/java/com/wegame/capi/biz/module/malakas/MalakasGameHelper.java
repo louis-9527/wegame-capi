@@ -107,6 +107,7 @@ public class MalakasGameHelper {
     public static final GameInfoDo MALAKAS_GAME_INFO = GameInfoDo.builder()
             .id(GameTypeEnum.MALAKAS.getId())
             .gameType(GameTypeEnum.MALAKAS)
+            .name(GameTypeEnum.MALAKAS.getName())
             .row(6)
             .column(6)
             .symbolMap(new ImmutableMap.Builder<String, SymbolDo>()
