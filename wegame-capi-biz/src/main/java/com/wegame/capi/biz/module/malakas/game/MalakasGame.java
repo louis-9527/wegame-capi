@@ -242,7 +242,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         int randomNumberIndex = 0;
         int scatterNumberInWheel = 0;
         for (int colum = ONE_COLUM_INDEX; colum < gameInfo.getColumn(); colum++) {
-            // 一列只能包含一个scatter
+            // 一列只能包含两个scatter
             int scatterNumberInReel = 0;
             Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
