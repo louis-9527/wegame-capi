@@ -60,12 +60,7 @@ public class PulsarProducer {
     }
 
     private Producer<byte[]> getProducer(String topicName, GameTypeEnum gameType) {
-        Producer<byte[]> producer = producerCache.get(topicName);
-        if (Objects.isNull(producer)) {
-            producer = createProducer(topicName, gameType);
-            producerCache.put(topicName, producer);
-        }
-        return producer;
+        return producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
     }
 
     private Producer<byte[]> createProducer(String topicName, GameTypeEnum gameType) {
