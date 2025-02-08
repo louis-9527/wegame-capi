@@ -23,12 +23,12 @@ public abstract class AbstractPulsarListener {
 
     private Consumer<byte[]> consumer;
 
-    protected void initConsumer(GameTypeEnum getGameType) {
+    protected void initConsumer(GameTypeEnum gameType) {
         try {
-            String fullTopic = String.format("persistent://%s/%s/%s", tenant, namespace, getGameType.getName() + "_topic");
+            String fullTopic = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "_topic");
             consumer = pulsarClient.newConsumer()
                     .topic(fullTopic)
-                    .subscriptionName(getGameType.getName())
+                    .subscriptionName(gameType.getName())
                     .subscriptionType(SubscriptionType.Key_Shared) // 关键点：使用 Key_Shared 模式
                     .receiverQueueSize(200) // 增加内部缓存，提高吞吐量
                     .batchReceivePolicy(BatchReceivePolicy.builder()

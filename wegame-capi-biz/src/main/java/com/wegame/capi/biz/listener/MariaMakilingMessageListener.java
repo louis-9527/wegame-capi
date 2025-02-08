@@ -57,6 +57,9 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                 }
             } catch (Exception e) {
                 log.error("betRecordService.batchAdd error:", e);
+                for (BetRecordDo recordDo : betAddRecordList) {
+                    messageIdMap.remove(recordDo.getId());
+                }
             }
         }
         // 批量修改
@@ -72,6 +75,9 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                 }
             } catch (Exception e) {
                 log.error("betRecordService.batchUpdate error:", e);
+                for (BetRecordDo recordDo : betUpdateRecordList) {
+                    messageIdMap.remove(recordDo.getId());
+                }
             }
         }
         return new ArrayList<>(messageIdMap.values());
