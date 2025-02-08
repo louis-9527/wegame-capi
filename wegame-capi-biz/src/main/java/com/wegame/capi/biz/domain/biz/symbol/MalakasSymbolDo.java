@@ -32,7 +32,6 @@ public class MalakasSymbolDo extends SymbolDo {
      */
     private Integer symbolClearTimes;
 
-
     public MalakasSymbolDo copy() {
         return MalakasSymbolDo.builder()
                 .id(getId())
@@ -40,6 +39,8 @@ public class MalakasSymbolDo extends SymbolDo {
                 .symbolType(getSymbolType())
                 .symbolRule(getSymbolRule())
                 .symbolSize(getSymbolSize())
+                .symbolGoldBorder(isSymbolGoldBorder())
+                .symbolClearTimes(getSymbolClearTimes())
                 .build();
     }
 
