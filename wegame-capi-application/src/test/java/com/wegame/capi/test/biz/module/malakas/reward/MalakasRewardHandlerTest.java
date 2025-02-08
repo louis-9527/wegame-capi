@@ -45,16 +45,16 @@ public class MalakasRewardHandlerTest extends BaseTest {
                 .betAmount(200L)
                 .build();
         long startTime = DateUtil.getCurrentMilli();
-        RewardResultDo<SymbolDo> rewardResult = malakasRewardHandler.handle(rewardHandle);
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(rewardHandle);
         long endTime = DateUtil.getCurrentMilli();
         Assert.notNull(rewardResult);
         rewardResult.print();
-        Assert.isTrue(rewardResult.getRewardLineDetailList().size() == 2);
+        Assert.isTrue(rewardResult.getRewardLineDetailList().size() == 1);
         Assert.isTrue(  rewardResult.getRewardLineDetailList()
                 .stream()
                 .map(RewardLineDetailDo::getRewardLineCount)
-                .reduce(0, Integer::sum) == 9);
-        log.info("test_handle_1，耗时：{}", endTime - startTime);
+                .reduce(0, Integer::sum) == 32400);
+        log.info("test_handle_32400，耗时：{}", endTime - startTime);
     }
 
     /**
@@ -65,8 +65,8 @@ public class MalakasRewardHandlerTest extends BaseTest {
      * 4.投建含有跨行元素
      * @return
      */
-    private SymbolDo[][] buildSymbolArr32400() {
-        SymbolDo[][] symbolArr = new SymbolDo[3][5];
+    private MalakasSymbolDo[][] buildSymbolArr32400() {
+        MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[6][6];
         // 第一列
         symbolArr[0][0] = this.buildAPlaceHolderSymbol();
         symbolArr[1][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
@@ -76,54 +76,62 @@ public class MalakasRewardHandlerTest extends BaseTest {
         symbolArr[5][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
 
         // 第二列
-        symbolArr[0][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[1][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[2][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[3][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[4][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[5][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[0][1] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[1][1] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[2][1] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[3][1] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[4][1] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[5][1] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
 
         // 第三列
-        symbolArr[0][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[1][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[2][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[3][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[4][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[5][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[0][2] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[1][2] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[2][2] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[3][2] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[4][2] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[5][2] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
 
         // 第四列
-        symbolArr[0][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[1][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[2][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[3][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[4][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[5][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[0][3] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[1][3] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[2][3] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[3][3] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[4][3] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[5][3] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
 
         // 第五列
-        symbolArr[0][0] = this.buildAPlaceHolderSymbol();
-        symbolArr[1][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[2][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[3][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[4][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[5][0] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[0][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[1][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[2][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[3][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[4][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[5][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+
+        // 第六列
+        symbolArr[0][5] = this.buildAPlaceHolderSymbol();
+        symbolArr[1][5] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[2][5] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[3][5] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[4][5] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[5][5] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
         return symbolArr;
     }
 
-    private SymbolDo buildASymbol(SymbolEnum symbol, SymbolTypeEnum symbolType, SymbolRuleTypeEnum symbolRuleType, BigDecimal ruleValue) {
-        SymbolDo symbolDo = new SymbolDo();
+    private MalakasSymbolDo buildASymbol(SymbolEnum symbol, SymbolTypeEnum symbolType, SymbolRuleTypeEnum symbolRuleType, BigDecimal ruleValue) {
+        MalakasSymbolDo symbolDo = new MalakasSymbolDo();
         symbolDo.setId(symbol.getId());
         symbolDo.setName(symbol.getName());
         symbolDo.setSymbolType(symbolType);
-        symbolDo.setSymbolRule(SymbolDo.SymbolRuleDo.builder().symbolRuleType(symbolRuleType).value(ruleValue).build());
+        symbolDo.setSymbolRule(MalakasSymbolDo.SymbolRuleDo.builder().symbolRuleType(symbolRuleType).value(ruleValue).build());
         return symbolDo;
     }
 
-    private SymbolDo buildAPlaceHolderSymbol() {
+    private MalakasSymbolDo buildAPlaceHolderSymbol() {
         return MalakasSymbolDo.builder()
                 .id(Symbol1000.getId())
                 .name(Symbol1000.getName())
                 .symbolType(SymbolTypeEnum.COMMON)
-                .symbolRule(SymbolDo.SymbolRuleDo
+                .symbolRule(MalakasSymbolDo.SymbolRuleDo
                         .builder()
                         .symbolRuleType(SymbolRuleTypeEnum.COMMON)
                         .value(null)
