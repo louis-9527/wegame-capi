@@ -29,16 +29,14 @@ public class MalakasBetResultVo implements Serializable {
     private Long totalRewardAmount;
     @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
-    @ApiModelProperty("滚轮结果(按列)")
-    private List<SpinsResultVo> spinsColResult;
-    @ApiModelProperty("滚轮结果第一行")
-    private List<SpinsResultVo> spinsRowOneResult;
-    @ApiModelProperty("中奖线列表,外层List代表消除次数,内层List代表中奖线列表")
-    private List<List<MalakasRewardLineVo>> rewardLineList;
+    @ApiModelProperty("滚轮结果")
+    private SpinsResultVo[][] spinsColResult;
+    @ApiModelProperty("中奖线列表")
+    private List<MalakasRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识,0:否,1:是")
     private Integer freeSpinFlag;
-    @ApiModelProperty("免费轮Id列表,免费轮中触发免费轮用_分割")
-    private List<String> freeSpinIds;
+    @ApiModelProperty("免费轮Id列表")
+    private List<Integer> freeSpinIds;
 
     @Data
     @SuperBuilder
@@ -60,6 +58,8 @@ public class MalakasBetResultVo implements Serializable {
         private String rewardLineSubType;
         @ApiModelProperty("中奖线数量")
         private Integer rewardLineCount;
+        @ApiModelProperty("中奖元素坐标集合")
+        private Set<IndexVo> rewardSymbolIndexSet;
         @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (中奖线数量WAYS)*(1 + 倍率) = 中奖金额）； " +
                 "SCATTER中奖计算公式（投注金额 * 赔率 * （中奖线数量WAYS）= 中奖金额）")
         private Long rewardAmount;
@@ -71,7 +71,7 @@ public class MalakasBetResultVo implements Serializable {
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("MariaMakiling中奖线详情")
+    @ApiModel("滚轮")
     @EqualsAndHashCode(callSuper = false)
     public static class SpinsResultVo implements Serializable{
         private static final long serialVersionUID = 3447556878793626303L;
@@ -81,7 +81,6 @@ public class MalakasBetResultVo implements Serializable {
         private Integer size;
         @ApiModelProperty("是否金边(0:否,1:是)")
         private Integer border;
-        @ApiModelProperty("消除论数(0:不消除,1:在第一次消除,2:第二次消除...)")
-        private Integer cleanSize;
     }
+
 }
