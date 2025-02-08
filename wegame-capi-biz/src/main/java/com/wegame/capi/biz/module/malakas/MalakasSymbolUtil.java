@@ -3,12 +3,14 @@ package com.wegame.capi.biz.module.malakas;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -72,8 +74,8 @@ public class MalakasSymbolUtil {
      * **** 中奖元素参与多条中奖线，则只做一次消除<br/>
      * 1、scatter元素不做消除<br/>
      * 2、普通元素：<br/>
-     *    2.1 带金边，元素变成wild元素<br/>
-     *    2.2 不带金边，直接消除<br/>
+     * 2.1 带金边，元素变成wild元素<br/>
+     * 2.2 不带金边，直接消除<br/>
      * 3、wild元素：消除次数减1，若减一后消除次数为0，则消除。 否则不消除<br/>
      *
      * @param symbolArr
@@ -109,6 +111,7 @@ public class MalakasSymbolUtil {
 
     /**
      * 移除元素
+     *
      * @param symbolArr
      * @param rewardSymbol
      */
@@ -148,8 +151,21 @@ public class MalakasSymbolUtil {
     public static int getMaxRow(MalakasSymbolDo[][] symbolArr, int currentRow, int currentColum) {
         int maxRow = currentRow;
         while (maxRow < symbolArr.length - 1 && Objects.isNull(symbolArr[maxRow][currentColum])) {
-            maxRow ++;
+            maxRow++;
         }
         return maxRow;
+    }
+
+    public static void postPlaceholderSymbol(List<MalakasGameRecordDo> ret) {
+        for (MalakasGameRecordDo record : CollectionUtils.emptyIfNull(ret)) {
+            MalakasSymbolDo[][] symbolArr = record.getWheel().getSymbolArr();
+            for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+                for (int colum = ONE_COLUM_INDEX; colum < symbolArr[row].length; colum++) {
+                    if (Objects.equals(symbolArr[row][colum], MALAKAS_SYMBOL_PLACEHOLDER)) {
+                        symbolArr[row][colum] = null;
+                    }
+                }
+            }
+        }
     }
 }

@@ -29,6 +29,7 @@ import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 import static com.wegame.capi.biz.module.malakas.MalakasProbabilisticUtil.getWheelProbabilisticConfig;
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.copySymbolArr;
+import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.postPlaceholderSymbol;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.*;
@@ -93,9 +94,13 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 totalRewardAmount += rewardResult.getTotalRewardAmount();
             }
         }
+        // 统一处理占位元素：设置为空
+        postPlaceholderSymbol(ret);
         // 返回-游戏记录列表
         return ret;
     }
+
+
 
     private WheelDo<MalakasSymbolDo> generateNormalWheelFromPreWheel(GameInfoDo gameInfo,
                                                                      WheelDo<MalakasSymbolDo> preWheel,
