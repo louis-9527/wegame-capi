@@ -27,6 +27,10 @@ public class WheelDo<T extends SymbolDo> implements Serializable {
      */
     private Integer index;
     /**
+     * 滚轮-序号
+     */
+    private Integer parentIndex;
+    /**
      * 滚轮-元素二维数组
      */
     private T[][] symbolArr;
