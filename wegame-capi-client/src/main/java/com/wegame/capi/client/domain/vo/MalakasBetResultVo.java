@@ -30,7 +30,9 @@ public class MalakasBetResultVo implements Serializable {
     @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
     @ApiModelProperty("滚轮结果")
-    private SpinsResultVo[][] spinsColResult;
+    private MalakasSymbolVo[][] spinsResult;
+    @ApiModelProperty("中奖元素坐标集合")
+    private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
     private List<MalakasRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识,0:否,1:是")
@@ -42,7 +44,7 @@ public class MalakasBetResultVo implements Serializable {
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("MariaMakiling中奖线详情")
+    @ApiModel("Malakas中奖线详情")
     @EqualsAndHashCode(callSuper = false)
     public static class MalakasRewardLineVo implements Serializable {
         private static final long serialVersionUID = 6487808344235380369L;
@@ -58,8 +60,6 @@ public class MalakasBetResultVo implements Serializable {
         private String rewardLineSubType;
         @ApiModelProperty("中奖线数量")
         private Integer rewardLineCount;
-        @ApiModelProperty("中奖元素坐标集合")
-        private Set<IndexVo> rewardSymbolIndexSet;
         @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (中奖线数量WAYS)*(1 + 倍率) = 中奖金额）； " +
                 "SCATTER中奖计算公式（投注金额 * 赔率 * （中奖线数量WAYS）= 中奖金额）")
         private Long rewardAmount;
@@ -71,16 +71,18 @@ public class MalakasBetResultVo implements Serializable {
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel("滚轮")
+    @ApiModel("Malakas元素")
     @EqualsAndHashCode(callSuper = false)
-    public static class SpinsResultVo implements Serializable{
+    public static class MalakasSymbolVo implements Serializable{
         private static final long serialVersionUID = 3447556878793626303L;
         @ApiModelProperty("元素Id")
         private String symbolId;
-        @ApiModelProperty("元素大小:1:小型,2:中型,3:大型,4:超大型")
-        private Integer size;
-        @ApiModelProperty("是否金边(0:否,1:是)")
-        private Integer border;
+        @ApiModelProperty("元素大小:S小型,M中型,L大型,XL超大型")
+        private String symbolSize;
+        @ApiModelProperty("元素金边(false否,true是)")
+        private boolean symbolGoldBorder;
+        @ApiModelProperty("元素清除次数，仅支持Wild元素")
+        private Integer symbolClearTimes;
     }
 
 }
