@@ -102,6 +102,9 @@ public class MalakasGameHelper {
             .name(Symbol1000.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .symbolRule(MALAKAS_COMMON_SYMBOL_RULE)
+            .symbolSize(S)
+            .symbolGoldBorder(false)
+            .symbolRule(null)
             .build();
 
     public static final GameInfoDo MALAKAS_GAME_INFO = GameInfoDo.builder()

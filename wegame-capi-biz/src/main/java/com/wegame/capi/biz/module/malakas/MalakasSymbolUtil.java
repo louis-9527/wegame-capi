@@ -9,7 +9,9 @@ import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.common.enums.SymbolEnum;
+import com.wegame.capi.common.enums.SymbolRuleTypeEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,14 +26,19 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 public class MalakasSymbolUtil {
 
-
     public static MalakasSymbolDo[][] copySymbolArr(MalakasSymbolDo[][] symbolArr) {
         int row = symbolArr.length;
         int col = symbolArr[0].length;
         MalakasSymbolDo[][] newSymbolArr = new MalakasSymbolDo[row][col];
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
-                newSymbolArr[i][j] = symbolArr[i][j].copy();
+                if (Objects.isNull(symbolArr[i][j])) {
+                    newSymbolArr[i][j] = null;
+                } else if (Objects.equals(symbolArr[i][j], MALAKAS_SYMBOL_PLACEHOLDER)) {
+                    newSymbolArr[i][j] = MALAKAS_SYMBOL_PLACEHOLDER;
+                } else {
+                    newSymbolArr[i][j] = symbolArr[i][j].copy();
+                }
             }
         }
         return newSymbolArr;
@@ -81,7 +88,8 @@ public class MalakasSymbolUtil {
      * @param symbolArr
      * @param rewardResult
      */
-    public static void clearRewardSymbol(MalakasSymbolDo[][] symbolArr, RewardResultDo<MalakasSymbolDo> rewardResult) {
+    public static void clearRewardSymbol(MalakasSymbolDo[][]
+                                                 symbolArr, RewardResultDo<MalakasSymbolDo> rewardResult) {
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         AssertUtil.assertNotEmpty(rewardResult.getRewardLineDetailList(), ErrorCode.ERR_INTER);
         List<RewardSymbolDo<MalakasSymbolDo>> rewardSymbolList = rewardResult.getRewardLineDetailList()
@@ -110,10 +118,10 @@ public class MalakasSymbolUtil {
                             .id(SymbolEnum.Wild.getId())
                             .name(SymbolEnum.Wild.getName())
                             .symbolType(SymbolTypeEnum.WILD)
-                            .symbolRule(null)
+                            .symbolRule(SymbolDo.SymbolRuleDo.builder().symbolRuleType(SymbolRuleTypeEnum.COMMON).value(null).build())
                             .symbolSize(commonSymbol.getSymbolSize())
                             .symbolGoldBorder(false)
-                            .symbolClearTimes(SymbolSizeEnum.getClearTimes(commonSymbol.getSymbolSize()))
+                            .symbolClearTimes(SymbolSizeEnum.getSymbolClearTimes(commonSymbol.getSymbolSize()))
                             .build();
                     symbolArr[indexDo.getRowIndex()][indexDo.getColumIndex()] = wildSymbol;
                 } else {
@@ -130,7 +138,8 @@ public class MalakasSymbolUtil {
      * @param symbolArr
      * @param rewardSymbol
      */
-    public static void removeRewardSymbol(MalakasSymbolDo[][] symbolArr, RewardSymbolDo<MalakasSymbolDo> rewardSymbol) {
+    public static void removeRewardSymbol(MalakasSymbolDo[][]
+                                                  symbolArr, RewardSymbolDo<MalakasSymbolDo> rewardSymbol) {
         IndexDo indexDo = rewardSymbol.getIndex();
         if (Objects.equals(indexDo.getRowIndex(), ONE_ROW_INDEX)) {
             // 第一行元素：直接移除
@@ -144,7 +153,8 @@ public class MalakasSymbolUtil {
         }
     }
 
-    public static void handlePlaceholderSymbol(MalakasSymbolDo[][] symbolArr, int row, int colum, SymbolSizeEnum symbolSize) {
+    public static void handlePlaceholderSymbol(MalakasSymbolDo[][] symbolArr, int row, int colum, SymbolSizeEnum
+            symbolSize) {
         switch (symbolSize) {
             case S:
                 break;

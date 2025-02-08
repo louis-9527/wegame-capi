@@ -14,6 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum SymbolEnum {
 
+    /**
+     * 占位元素
+     */
     Symbol1000("1000", "Symbol1000"),
 
     Symbol1001("1001", "Symbol1001"),

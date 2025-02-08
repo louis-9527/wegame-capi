@@ -70,7 +70,7 @@ public enum SymbolSizeEnum {
         return columSpan;
     }
 
-    public static int getClearTimes(SymbolSizeEnum symbolSize) {
+    public static int getSymbolClearTimes(SymbolSizeEnum symbolSize) {
         switch (symbolSize) {
             case S:
                 return 1;
