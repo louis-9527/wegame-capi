@@ -5,6 +5,7 @@ import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
+import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
@@ -43,7 +44,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MariaMak
     /**
      * 滚轮
      */
-    private WheelDo wheel;
+    private WheelDo<MalakasSymbolDo> wheel;
     /**
      * 中奖结果
      */

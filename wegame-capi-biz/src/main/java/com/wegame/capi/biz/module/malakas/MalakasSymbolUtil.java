@@ -8,11 +8,13 @@ import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
+import com.wegame.capi.common.enums.SymbolSizeEnum;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
@@ -124,9 +126,28 @@ public class MalakasSymbolUtil {
         }
     }
 
+    public static void handlePlaceholderSymbol(MalakasSymbolDo[][] symbolArr, int row, int colum, SymbolSizeEnum symbolSize) {
+        switch (symbolSize) {
+            case S:
+                break;
+            case M:
+                symbolArr[row + 1][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
+                break;
+            case L:
+                symbolArr[row + 1][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 2][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
+                break;
+            case XL:
+                symbolArr[row + 1][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 2][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 3][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
+                break;
+        }
+    }
+
     public static int getMaxRow(MalakasSymbolDo[][] symbolArr, int currentRow, int currentColum) {
         int maxRow = currentRow;
-        while (maxRow <= symbolArr.length && Objects.isNull(symbolArr[maxRow][currentColum])) {
+        while (maxRow < symbolArr.length - 1 && Objects.isNull(symbolArr[maxRow][currentColum])) {
             maxRow ++;
         }
         return maxRow;
