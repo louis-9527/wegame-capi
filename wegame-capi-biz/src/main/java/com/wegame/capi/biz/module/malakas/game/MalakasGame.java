@@ -229,52 +229,6 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
         // 第一行最后一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
-        //        // 生成整盘随机数(row*column)
-        //        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
-        //        int randomNumberIndex = 0;
-        //        int scatterNumberInWheel = 0;
-        //        for (int colum = ONE_COLUM_INDEX; colum < gameInfo.getColumn(); colum++) {
-        //            // 一列只能包含一个scatter
-        //            int scatterNumberInReel = 0;
-        //            Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
-        //            for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
-        //                if (Objects.nonNull(symbolArr[row][colum]) && Objects.equals(symbolArr[row][colum], MALAKAS_SYMBOL_PLACEHOLDER)) {
-        //                    // 当前元素为占位元素， 则跳过
-        //                    continue;
-        //                }
-        //                Integer randomNumber = randomNumberList.get(randomNumberIndex);
-        //                if (scatterNumberInReel >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL || Objects.equals(row, ONE_ROW_INDEX)) {
-        //                    // 第一行 || 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
-        //                    // 生成非scatter
-        //                    SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
-        //                    SymbolSizeEnum symbolSize = generateSymbolSize(colum, row, gameInfo);
-        //                    placeholderSymbolHandle(symbolArr, row, colum, symbolSize);
-        //                    // 构建元素金边
-        //                    boolean symbolGoldBorder = buildSymbolGoldBorder(gameInfo, row, colum);
-        //                    MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
-        //                    symbolArr[row][colum] = malakasSymbolDo;
-        //                } else {
-        //                    // 随机生成
-        //                    SymbolDo symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
-        //                    SymbolSizeEnum symbolSize = generateSymbolSize(colum, row, gameInfo);
-        //                    placeholderSymbolHandle(symbolArr, row, colum, symbolSize);
-        //                    // 构建元素金边
-        //                    boolean symbolGoldBorder = buildSymbolGoldBorder(gameInfo, row, colum);
-        //                    MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
-        //                    symbolArr[row][colum] = malakasSymbolDo;
-        //                    if (symbolDo.isScatterSymbol()) {
-        //                        scatterNumberInReel++;
-        //                        scatterNumberInWheel++;
-        //                    }
-        //                }
-        //                randomNumberIndex++;
-        //            }
-        //        }
-        //        // 返回：滚轮
-        //        return WheelDo.<MalakasSymbolDo>builder()
-        //                .index(WHEEL_DEFAULT_INDEX)
-        //                .symbolArr(symbolArr)
-        //                .build();
         return generateCommonNormalWheel(gameInfo, symbolArr, probabilisticConfig, WHEEL_DEFAULT_INDEX, WHEEL_DEFAULT_INDEX);
     }
 
@@ -301,7 +255,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     // 第一行 || 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
                     // 生成非scatter
                     SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
-                    SymbolSizeEnum symbolSize = generateSymbolSize(colum, row, gameInfo);
+                    SymbolSizeEnum symbolSize = generateSymbolSize(row, getMaxRow(symbolArr, row, colum), colum, gameInfo);
                     placeholderSymbolHandle(symbolArr, row, colum, symbolSize);
                     // 构建元素金边
                     boolean symbolGoldBorder = buildSymbolGoldBorder(gameInfo, row, colum);
@@ -310,7 +264,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 } else {
                     // 随机生成
                     SymbolDo symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
-                    SymbolSizeEnum symbolSize = generateSymbolSize(colum, row, gameInfo);
+                    SymbolSizeEnum symbolSize = generateSymbolSize(row, getMaxRow(symbolArr, row, colum), colum, gameInfo);
                     placeholderSymbolHandle(symbolArr, row, colum, symbolSize);
                     // 构建元素金边
                     boolean symbolGoldBorder = buildSymbolGoldBorder(gameInfo, row, colum);
@@ -331,6 +285,14 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 .build();
     }
 
+    public int getMaxRow(MalakasSymbolDo[][] symbolArr, int currentRow, int currentColum) {
+        int maxRow = currentRow;
+        while (maxRow <= symbolArr.length && symbolArr[maxRow][currentColum] != null) {
+            maxRow ++;
+        }
+        return maxRow;
+    }
+
     private boolean canContinuePlay(RewardResultDo<MalakasSymbolDo> rewardResult, Long totalRewardAmount) {
         if (Objects.isNull(rewardResult)) {
             return false;
@@ -345,7 +307,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         return true;
     }
 
-    private SymbolSizeEnum generateSymbolSize(int currentRow, int currentColum, GameInfoDo gameInfo) {
+    private SymbolSizeEnum generateSymbolSize(int currentRow, int maxRow, int currentColum, GameInfoDo gameInfo) {
         if (Objects.equals(currentRow, ONE_ROW_INDEX)
                 || Objects.equals(currentColum, ONE_COLUM_INDEX)
                 || Objects.equals(currentColum, gameInfo.getColumn() - 1)) {
@@ -353,7 +315,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             return SymbolSizeEnum.S;
         }
         Map<String, List<BigDecimal>> symbolSizeProbabilisticConfig = malakasConfig.getProbabilisticConfig().getSymbolSizeProbabilisticConfig();
-        Map<String, Integer> map = buildColumSymboleSizeProbabilisticMap(currentColum, gameInfo.getRow() - currentRow, symbolSizeProbabilisticConfig);
+        Map<String, Integer> map = buildColumSymboleSizeProbabilisticMap(currentColum, maxRow - currentRow + 1, symbolSizeProbabilisticConfig);
         AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
         return randomSymbolSize(map, randomService.randomInt(1, map.values()
                 .stream()
@@ -361,7 +323,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     }
 
 
-    public Map<String, Integer> buildColumSymboleSizeProbabilisticMap(int currentColumNo, int maxColumSpan,
+    public Map<String, Integer> buildColumSymboleSizeProbabilisticMap(int currentColumNo,
+                                                                      int maxColumSpan,
                                                                       Map<String, List<BigDecimal>> sizeProbabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(sizeProbabilisticConfigMap), ErrorCode.ERR_INTER);
         Map<String, Integer> map = new HashMap<>();
