@@ -13,6 +13,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
+import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
@@ -36,7 +37,7 @@ import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
 @Component("malakasRewardHandler")
-public class MalakasRewardHandler extends AbstractRewardHandler {
+public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo> {
     private static final Map<String, SymbolEnum> WILD_SYMBOL_MAP = new ImmutableMap.Builder<String, SymbolEnum>()
             .put(SymbolEnum.Wild.getId(), SymbolEnum.Wild)
             .build();
@@ -48,12 +49,12 @@ public class MalakasRewardHandler extends AbstractRewardHandler {
     BetRecordService betRecordService;
 
     @Override
-    public RewardResultDo handle(RewardHandleDo rewardHandle) {
+    public RewardResultDo handle(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
         long current = System.currentTimeMillis();
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
-        List<RewardLineDo> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
+        List<RewardLineDo<MalakasSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算倍率
         BigDecimal totalMultiple = malakasMultipleCalculateStrategy.calculateMultiple(rewardHandle.getGameType(), rewardHandle.getWheel());
         if (CollectionUtil.isEmpty(rewardLineList)) {
@@ -109,15 +110,15 @@ public class MalakasRewardHandler extends AbstractRewardHandler {
         return rewardResult;
     }
 
-    private List<RewardLineDo> calcRewardLineList(GameInfoDo gameInfo, WheelDo wheel) {
-        SymbolDo[][] symbolArr = wheel.getSymbolArr();
+    private List<RewardLineDo<MalakasSymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<MalakasSymbolDo> wheel) {
+        MalakasSymbolDo[][] symbolArr = wheel.getSymbolArr();
         // Map<第一列元素, TreeMap<列序号，满足规则的元素列表>
-        Map<SymbolDo, TreeMap<Integer, List<RewardSymbolDo>>> map = new HashMap<>();
+        Map<MalakasSymbolDo, TreeMap<Integer, List<RewardSymbolDo<MalakasSymbolDo>>>> map = new HashMap<>();
         // 目标元素集合targetSymbolSet
-        Set<SymbolDo> targetSymbolSet = new HashSet<>();
+        Set<MalakasSymbolDo> targetSymbolSet = new HashSet<>();
         // 1、处理第一列
         for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
-            SymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
+            MalakasSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
             if (Objects.equals(targetSymbol, MALAKAS_SYMBOL_PLACEHOLDER)) {
                 continue;
             }
@@ -131,22 +132,22 @@ public class MalakasRewardHandler extends AbstractRewardHandler {
             Integer currentColum = colum;
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 Integer currentRow = row;
-                SymbolDo currentSymbol = symbolArr[row][currentColum];
+                MalakasSymbolDo currentSymbol = symbolArr[row][currentColum];
                 if (Objects.equals(currentSymbol, MALAKAS_SYMBOL_PLACEHOLDER)) {
                     continue;
                 }
-                for (SymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
+                for (MalakasSymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
                     if (!isMatchTargetSymbol(currentSymbol, targetSymbol)) {
                         continue;
                     }
-                    TreeMap<Integer, List<RewardSymbolDo>> treeMap = map.get(targetSymbol);
+                    TreeMap<Integer, List<RewardSymbolDo<MalakasSymbolDo>>> treeMap = map.get(targetSymbol);
                     if (canPutIn(treeMap, currentColum)) {
-                        RewardSymbolDo symbolIndex = RewardSymbolDo.builder()
+                        RewardSymbolDo<MalakasSymbolDo> symbolIndex = RewardSymbolDo.<MalakasSymbolDo>builder()
                                 .symbol(currentSymbol)
                                 .index(IndexFactory.buildDo(currentRow, currentColum))
                                 .build();
                         if (Objects.isNull(treeMap.get(currentColum))) {
-                            List<RewardSymbolDo> list = new ArrayList<>();
+                            List<RewardSymbolDo<MalakasSymbolDo>> list = new ArrayList<>();
                             list.add(symbolIndex);
                             treeMap.put(currentColum, list);
                         } else {
@@ -157,12 +158,12 @@ public class MalakasRewardHandler extends AbstractRewardHandler {
             }
         }
         // 3、统计中奖线
-        List<RewardLineDo> list = buildRewardLineList(map);
+        List<RewardLineDo<MalakasSymbolDo>> list = buildRewardLineList(map);
         // 4、返回中奖线列表
         return list;
     }
 
-    private boolean canPutIn(TreeMap<Integer, List<RewardSymbolDo>> treeMap, Integer currentColum) {
+    private boolean canPutIn(TreeMap<Integer, List<RewardSymbolDo<MalakasSymbolDo>>> treeMap, Integer currentColum) {
         // 第一列必处理
         if (Objects.equals(currentColum, ONE_COLUM_INDEX)) {
             return true;
@@ -171,13 +172,13 @@ public class MalakasRewardHandler extends AbstractRewardHandler {
         return CollectionUtils.isNotEmpty(treeMap.get(currentColum - 1));
     }
 
-    private List<RewardLineDo> buildRewardLineList(Map<SymbolDo, TreeMap<Integer, List<RewardSymbolDo>>> map) {
-        List<RewardLineDo> list = new ArrayList<>();
-        for (Map.Entry<SymbolDo, TreeMap<Integer, List<RewardSymbolDo>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+    private List<RewardLineDo<MalakasSymbolDo>> buildRewardLineList(Map<MalakasSymbolDo, TreeMap<Integer, List<RewardSymbolDo<MalakasSymbolDo>>>> map) {
+        List<RewardLineDo<MalakasSymbolDo>> list = new ArrayList<>();
+        for (Map.Entry<MalakasSymbolDo, TreeMap<Integer, List<RewardSymbolDo<MalakasSymbolDo>>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (MapUtils.isEmpty(entry.getValue())) {
                 continue;
             }
-            TreeMap<Integer, List<RewardSymbolDo>> columMap = entry.getValue();
+            TreeMap<Integer, List<RewardSymbolDo<MalakasSymbolDo>>> columMap = entry.getValue();
             if (columMap.size() < RewardLineTypeEnum.THREE.getNo()) {
                 continue;
             }
@@ -185,7 +186,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler {
                     .stream()
                     .map(item -> item.size())
                     .reduce(1, (a, b) -> a * b);
-            list.add(RewardLineDo.builder()
+            list.add(RewardLineDo.<MalakasSymbolDo>builder()
                     .rewardSymbol(entry.getKey())
                     .rewardLineType(RewardLineTypeEnum.valueOfNo(columMap.size()))
                     .rewardLineSubType(entry.getKey().isScatterSymbol() ? RewardLineSubTypeEnum.SCATTER : RewardLineSubTypeEnum.COMMON)
@@ -207,7 +208,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler {
                 || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
     }
 
-    private void validate(RewardHandleDo rewardHandle) {
+    private void validate(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
         AssertUtil.assertNotNull(rewardHandle, ErrorCode.ERR_PARAM, "rewardHandle is null");
         AssertUtil.assertNotNull(rewardHandle.getGameType(), ErrorCode.ERR_INTER, "not support gameType");
         AssertUtil.assertNotNull(rewardHandle.getBetType(), ErrorCode.ERR_PARAM, "not support betType");
