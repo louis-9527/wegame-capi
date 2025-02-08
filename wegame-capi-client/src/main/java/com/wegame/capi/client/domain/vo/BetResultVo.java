@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -30,7 +31,6 @@ public class BetResultVo implements Serializable {
     private Long credit;
     @ApiModelProperty("合计中奖总金额")
     private Long overallRewardAmount;
-    // todo 联调后修改类型 为 object @bruce
     @ApiModelProperty("结果明细")
-    private MariaMakilingBetResultVo resultDetail;
+    private List<MalakasBetResultVo> resultDetail;
 }

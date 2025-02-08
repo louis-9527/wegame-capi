@@ -17,8 +17,4 @@ public class MalakasBuyBetStrategy extends AbstractMalakasBetStrategy {
         return null;
     }
 
-    @Override
-    public BetResultDo<MalakasGameRecordDo> bet(BetDo<MalakasBetDo> betDo) {
-        return null;
-    }
 }
