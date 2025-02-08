@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"id"}, callSuper = false)
+@EqualsAndHashCode(of = {"id"}, callSuper = true)
 public class MalakasSymbolDo extends SymbolDo {
     private static final long serialVersionUID = -2266308277093710848L;
     /**

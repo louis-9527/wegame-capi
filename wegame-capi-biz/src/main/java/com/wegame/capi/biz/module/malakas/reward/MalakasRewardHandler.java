@@ -119,7 +119,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         // 1、处理第一列
         for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             MalakasSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
-            if (Objects.equals(targetSymbol.getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId())) {
+            if (Objects.equals(targetSymbol, MALAKAS_SYMBOL_PLACEHOLDER)) {
                 continue;
             }
             targetSymbolSet.add(targetSymbol);
@@ -133,7 +133,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 Integer currentRow = row;
                 MalakasSymbolDo currentSymbol = symbolArr[row][currentColum];
-                if (Objects.equals(currentSymbol.getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId())) {
+                if (Objects.equals(currentSymbol, MALAKAS_SYMBOL_PLACEHOLDER)) {
                     continue;
                 }
                 for (MalakasSymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
