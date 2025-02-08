@@ -81,7 +81,12 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             totalRewardAmount += rewardResult.getTotalRewardAmount();
         }
         while (canContinuePlay(rewardResult, totalRewardAmount)) {
-            wheel = generateNormalWheelFromPreWheel(gameInfo, wheel, getWheelProbabilisticConfig(gamePlay), rewardResult);
+            if (rewardResult.isHasRewardFreeSpin()) {
+                // todo fix 生产免费轮
+                wheel = generateNormalWheelFromPreWheel(gameInfo, wheel, getWheelProbabilisticConfig(gamePlay), rewardResult);
+            } else {
+                wheel = generateNormalWheelFromPreWheel(gameInfo, wheel, getWheelProbabilisticConfig(gamePlay), rewardResult);
+            }
             rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel));
             MalakasGameRecordDo malakasGameRecord = buildGameRecord(wheel, rewardResult);
             if (Objects.nonNull(malakasGameRecord)) {
@@ -104,7 +109,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         // 重建：元素数组（非空元素按列下落处理：第1-6Reel非空元素向下移动，第7Reel非空元素向左移动）
         symbolArr = rebuildSymbolArr(symbolArr, gameInfo);
         // 生产：缺失元素(填补剩余元素)
-        return generateCommonNormalWheel(gameInfo, symbolArr, probabilisticConfig, preWheel.getIndex() + 1);
+        return generateCommonNormalWheel(gameInfo, symbolArr, probabilisticConfig, preWheel.getIndex() + 1, WHEEL_DEFAULT_INDEX);
     }
 
     /**
@@ -270,13 +275,14 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         //                .index(WHEEL_DEFAULT_INDEX)
         //                .symbolArr(symbolArr)
         //                .build();
-        return generateCommonNormalWheel(gameInfo, symbolArr, probabilisticConfig, WHEEL_DEFAULT_INDEX);
+        return generateCommonNormalWheel(gameInfo, symbolArr, probabilisticConfig, WHEEL_DEFAULT_INDEX, WHEEL_DEFAULT_INDEX);
     }
 
     private WheelDo<MalakasSymbolDo> generateCommonNormalWheel(GameInfoDo gameInfo,
                                                                MalakasSymbolDo[][] symbolArr,
                                                                Map<String, List<BigDecimal>> probabilisticConfig,
-                                                               int wheelIndex) {
+                                                               int wheelIndex,
+                                                               int parentIndex) {
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
         int randomNumberIndex = 0;
