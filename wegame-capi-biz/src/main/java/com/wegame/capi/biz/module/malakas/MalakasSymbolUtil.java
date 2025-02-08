@@ -9,7 +9,9 @@ import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
+import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
+import com.wegame.capi.common.enums.SymbolTypeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
@@ -39,9 +41,8 @@ public class MalakasSymbolUtil {
      * 重建元素数组：（非空元素按行（第一行）左移，按列下移处理）
      *
      * @param symbolArr
-     * @return
      */
-    public static MalakasSymbolDo[][] rebuildSymbolArr(MalakasSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
+    public static void rebuildSymbolArr(MalakasSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
         // 处理第一行：按行处理(非空元素左移，第一列元素&最后一列元素为空)
         int currentColum = 1;
         for (int colum = 1; colum < gameInfoDo.getColumn() - 1; colum++) {
@@ -66,7 +67,6 @@ public class MalakasSymbolUtil {
                 }
             }
         }
-        return symbolArr;
     }
 
     /**
@@ -80,9 +80,8 @@ public class MalakasSymbolUtil {
      *
      * @param symbolArr
      * @param rewardResult
-     * @return
      */
-    public static MalakasSymbolDo[][] clearRewardSymbol(MalakasSymbolDo[][] symbolArr, RewardResultDo<MalakasSymbolDo> rewardResult) {
+    public static void clearRewardSymbol(MalakasSymbolDo[][] symbolArr, RewardResultDo<MalakasSymbolDo> rewardResult) {
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         AssertUtil.assertNotEmpty(rewardResult.getRewardLineDetailList(), ErrorCode.ERR_INTER);
         List<RewardSymbolDo<MalakasSymbolDo>> rewardSymbolList = rewardResult.getRewardLineDetailList()
@@ -102,11 +101,27 @@ public class MalakasSymbolUtil {
                     removeRewardSymbol(symbolArr, rewardSymbol);
                 }
             } else {
-                // 普通元素，直接移除
-                removeRewardSymbol(symbolArr, rewardSymbol);
+                // 普通元素消除
+                IndexDo indexDo = rewardSymbol.getIndex();
+                MalakasSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumIndex()];
+                if (commonSymbol.isSymbolGoldBorder()) {
+                    // 带金边普通元素，转换为Wild元素（元素大小转换为消除次数）
+                    MalakasSymbolDo wildSymbol = MalakasSymbolDo.builder()
+                            .id(SymbolEnum.Wild.getId())
+                            .name(SymbolEnum.Wild.getName())
+                            .symbolType(SymbolTypeEnum.WILD)
+                            .symbolRule(null)
+                            .symbolSize(commonSymbol.getSymbolSize())
+                            .symbolGoldBorder(false)
+                            .symbolClearTimes(SymbolSizeEnum.getClearTimes(commonSymbol.getSymbolSize()))
+                            .build();
+                    symbolArr[indexDo.getRowIndex()][indexDo.getColumIndex()] = wildSymbol;
+                } else {
+                    // 不带金边普通元素，直接移除
+                    removeRewardSymbol(symbolArr, rewardSymbol);
+                }
             }
         }
-        return symbolArr;
     }
 
     /**

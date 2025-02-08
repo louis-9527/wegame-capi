@@ -28,8 +28,7 @@ import java.util.*;
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 import static com.wegame.capi.biz.module.malakas.MalakasProbabilisticUtil.getWheelProbabilisticConfig;
-import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.copySymbolArr;
-import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.postPlaceholderSymbol;
+import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.*;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.*;
@@ -109,9 +108,9 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         // 复制：元素数组
         MalakasSymbolDo[][] symbolArr = copySymbolArr(preWheel.getSymbolArr());
         // 消除：中奖元素
-        symbolArr = MalakasSymbolUtil.clearRewardSymbol(symbolArr, rewardResult);
+        clearRewardSymbol(symbolArr, rewardResult);
         // 重建：元素数组（非空元素按列下落处理：第1-6Reel非空元素向下移动，第7Reel非空元素向左移动）
-        symbolArr = MalakasSymbolUtil.rebuildSymbolArr(symbolArr, gameInfo);
+        rebuildSymbolArr(symbolArr, gameInfo);
         // 生产：缺失元素(填补剩余元素)
         return generateCommonNormalWheel(gameInfo, symbolArr, probabilisticConfig, preWheel.getIndex() + 1, WHEEL_DEFAULT_INDEX);
     }

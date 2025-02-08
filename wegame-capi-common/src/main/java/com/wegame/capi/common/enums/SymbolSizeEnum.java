@@ -39,8 +39,8 @@ public enum SymbolSizeEnum {
     /**
      * 私有构造方法.
      *
-     * @param code code
-     * @param name 名称
+     * @param code      code
+     * @param name      名称
      * @param columSpan 跨行
      */
     private SymbolSizeEnum(String code, String name, int columSpan) {
@@ -68,5 +68,19 @@ public enum SymbolSizeEnum {
 
     public int getColumSpan() {
         return columSpan;
+    }
+
+    public static int getClearTimes(SymbolSizeEnum symbolSize) {
+        switch (symbolSize) {
+            case S:
+                return 1;
+            case M:
+                return 2;
+            case L:
+                return 3;
+            case XL:
+                return 4;
+        }
+        return 0;
     }
 }
