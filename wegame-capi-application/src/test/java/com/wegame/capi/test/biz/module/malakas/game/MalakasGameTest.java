@@ -26,6 +26,7 @@ public class MalakasGameTest extends BaseTest {
                 .gameType(GameTypeEnum.MARIA_MAKILING)
                 .betType(BetTypeEnum.NORMAL_BET)
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
+                .betAmount(100L)
                 .build();
         List<MalakasGameRecordDo> recordList = malakasGame.play(playDo);
     }
