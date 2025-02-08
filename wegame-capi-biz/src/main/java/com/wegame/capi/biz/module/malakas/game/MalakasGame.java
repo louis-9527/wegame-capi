@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.module.malakas.game;
 
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
@@ -59,12 +60,53 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
 
     @Override
     public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
-        // todo 购买投注
-        // 正常投注
-        return normalPlay(gamePlay);
+        switch (gamePlay.getBetType()) {
+            case NORMAL_BET:
+                // 正常投注
+                return normalPlay(gamePlay);
+            case BUY_BET:
+                // 购买投注
+                return buyPlay(gamePlay);
+            default:
+                throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
+        }
     }
 
     public List<MalakasGameRecordDo> normalPlay(GamePlayDo gamePlay) {
+        List<MalakasGameRecordDo> ret = new ArrayList<>();
+        // 获取-游戏基础信息
+        GameInfoDo gameInfo = getGameInfo();
+        Long totalRewardAmount = 0L;
+        // 生成-游戏滚轮
+        WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(gameInfo, getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig()));
+        // 组装&返回-游戏记录列表
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel));
+        AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
+        MalakasGameRecordDo record = buildGameRecord(wheel, rewardResult);
+        if (Objects.nonNull(record)) {
+            ret.add(record);
+            totalRewardAmount += rewardResult.getTotalRewardAmount();
+        }
+        while (canContinuePlay(rewardResult, totalRewardAmount)) {
+            if (rewardResult.isHasRewardFreeSpin()) {
+                wheel = generateNormalWheelFromPreWheel(gameInfo, wheel, getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig()), rewardResult);
+            } else {
+                wheel = generateNormalWheelFromPreWheel(gameInfo, wheel, getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig()), rewardResult);
+            }
+            rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel));
+            MalakasGameRecordDo malakasGameRecord = buildGameRecord(wheel, rewardResult);
+            if (Objects.nonNull(malakasGameRecord)) {
+                ret.add(malakasGameRecord);
+                totalRewardAmount += rewardResult.getTotalRewardAmount();
+            }
+        }
+        // 统一处理占位元素：设置为空
+        postPlaceholderSymbol(ret);
+        // 返回-游戏记录列表
+        return ret;
+    }
+
+    public List<MalakasGameRecordDo> buyPlay(GamePlayDo gamePlay) {
         List<MalakasGameRecordDo> ret = new ArrayList<>();
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
@@ -98,7 +140,6 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         // 返回-游戏记录列表
         return ret;
     }
-
 
 
     private WheelDo<MalakasSymbolDo> generateNormalWheelFromPreWheel(GameInfoDo gameInfo,
