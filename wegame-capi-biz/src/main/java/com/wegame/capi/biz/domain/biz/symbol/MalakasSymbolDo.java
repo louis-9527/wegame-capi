@@ -43,13 +43,15 @@ public class MalakasSymbolDo extends SymbolDo {
                 .build();
     }
 
-    public static MalakasSymbolDo buildFromSymbol(SymbolDo symbol, SymbolSizeEnum symbolSize) {
+    public static MalakasSymbolDo buildFromSymbol(SymbolDo symbol, SymbolSizeEnum symbolSize, boolean symbolGoldBorder) {
         return MalakasSymbolDo.builder()
                 .id(symbol.getId())
                 .name(symbol.getName())
                 .symbolType(symbol.getSymbolType())
                 .symbolRule(symbol.getSymbolRule())
                 .symbolSize(symbolSize)
+                .symbolGoldBorder(symbolGoldBorder)
+                .symbolClearTimes(0)
                 .build();
     }
 }
