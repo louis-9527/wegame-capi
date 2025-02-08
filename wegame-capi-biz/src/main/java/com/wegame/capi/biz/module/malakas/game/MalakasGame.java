@@ -174,6 +174,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         // 返回：滚轮
         return WheelDo.<MalakasSymbolDo>builder()
                 .index(wheelIndex)
+                .parentIndex(parentIndex)
                 .symbolArr(symbolArr)
                 .build();
     }
