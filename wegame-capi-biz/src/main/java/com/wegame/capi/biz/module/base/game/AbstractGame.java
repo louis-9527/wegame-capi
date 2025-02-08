@@ -65,7 +65,6 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
             if (!symbolDo.isScatterSymbol()) {
                 return symbolDo;
             }
-            // 如果非第一次则更新Random值(小概率)
             tempRandomNumber = randomService.randomInt(1, Constants.CONST_1000000);
         }
     }

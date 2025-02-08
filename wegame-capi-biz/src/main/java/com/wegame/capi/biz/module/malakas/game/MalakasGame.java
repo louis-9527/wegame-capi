@@ -197,7 +197,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
-        int randomNumberindex = 0;
+        int randomNumberIndex = 0;
         int scatterNumberInWheel = 0;
         for (int colum = ONE_COLUM_INDEX; colum < gameInfo.getColumn(); colum++) {
             // 一列只能包含一个scatter
@@ -208,29 +208,30 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     // 当前元素为占位元素， 则跳过
                     continue;
                 }
-                Integer randomNumber = randomNumberList.get(randomNumberindex);
-                if (scatterNumberInReel >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL) {
+                Integer randomNumber = randomNumberList.get(randomNumberIndex);
+                if (scatterNumberInReel >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL || Objects.equals(row, ONE_ROW_INDEX)) {
+                    // 第一行 || 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
                     // 生成非scatter
                     SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
                     SymbolSizeEnum symbolSize = generateSymbolSize(colum, row, gameInfo);
-                    placeHolderSymbolHandle(symbolArr, row, colum, symbolSize);
+                    placeholderSymbolHandle(symbolArr, row, colum, symbolSize);
                     // todo 生产元素金边
-                    MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbolDo(symbolDo, symbolSize);
+                    MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize);
                     symbolArr[row][colum] = malakasSymbolDo;
                 } else {
                     // 随机生成
                     SymbolDo symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
                     SymbolSizeEnum symbolSize = generateSymbolSize(colum, row, gameInfo);
-                    placeHolderSymbolHandle(symbolArr, row, colum, symbolSize);
+                    placeholderSymbolHandle(symbolArr, row, colum, symbolSize);
                     // todo 生产元素金边
-                    MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbolDo(symbolDo, symbolSize);
+                    MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize);
                     symbolArr[row][colum] = malakasSymbolDo;
                     if (symbolDo.isScatterSymbol()) {
                         scatterNumberInReel++;
                         scatterNumberInWheel++;
                     }
                 }
-                randomNumberindex++;
+                randomNumberIndex++;
             }
         }
         //        // 清空：占位元素
@@ -286,7 +287,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         return map;
     }
 
-    private void placeHolderSymbolHandle(MalakasSymbolDo[][] symbolArr, int row, int colum, SymbolSizeEnum symbolSize) {
+    private void placeholderSymbolHandle(MalakasSymbolDo[][] symbolArr, int row, int colum, SymbolSizeEnum symbolSize) {
         switch (symbolSize) {
             case S:
                 break;
