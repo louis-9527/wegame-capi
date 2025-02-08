@@ -1,18 +1,11 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wegame.capi.common.enums.SymbolRuleTypeEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
-import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Objects;
 
 /**
  * Malakas游戏元素
@@ -29,6 +22,16 @@ public class MalakasSymbolDo extends SymbolDo {
      */
     private SymbolSizeEnum symbolSize;
 
+    /**
+     * 元素金边
+     */
+    private boolean symbolGoldBorder;
+
+    /**
+     * 元素剩余消除次数（只有wild元素会有消除次数）
+     */
+    private Integer symbolClearTimes;
+
     public MalakasSymbolDo copy() {
         return MalakasSymbolDo.builder()
                 .id(getId())
@@ -36,16 +39,20 @@ public class MalakasSymbolDo extends SymbolDo {
                 .symbolType(getSymbolType())
                 .symbolRule(getSymbolRule())
                 .symbolSize(getSymbolSize())
+                .symbolGoldBorder(isSymbolGoldBorder())
+                .symbolClearTimes(getSymbolClearTimes())
                 .build();
     }
 
-    public static MalakasSymbolDo buildFromSymbolDo(SymbolDo symbolDo, SymbolSizeEnum symbolSize) {
+    public static MalakasSymbolDo buildFromSymbol(SymbolDo symbol, SymbolSizeEnum symbolSize, boolean symbolGoldBorder) {
         return MalakasSymbolDo.builder()
-                .id(symbolDo.getId())
-                .name(symbolDo.getName())
-                .symbolType(symbolDo.getSymbolType())
-                .symbolRule(symbolDo.getSymbolRule())
+                .id(symbol.getId())
+                .name(symbol.getName())
+                .symbolType(symbol.getSymbolType())
+                .symbolRule(symbol.getSymbolRule())
                 .symbolSize(symbolSize)
+                .symbolGoldBorder(symbolGoldBorder)
+                .symbolClearTimes(0)
                 .build();
     }
 }

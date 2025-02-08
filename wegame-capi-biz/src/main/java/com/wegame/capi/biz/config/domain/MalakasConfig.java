@@ -25,6 +25,8 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @AllArgsConstructor
 public class MalakasConfig {
 
+    private final static int REEL_NUMBERS = 7;
+
     /**
      * 赔率配置
      */
@@ -75,9 +77,9 @@ public class MalakasConfig {
          */
         private Map<String, List<BigDecimal>> symbolSizeProbabilisticConfig;
         /**
-         * 每个轮轴出现金边概率
+         * 每个reel出现金边概率: eg：5%
          */
-        private List<BigDecimal> wildProbabilisticConfig;
+        private List<BigDecimal> goldBoarderProbabilisticConfig;
     }
 
     public void validate() {
@@ -102,13 +104,13 @@ public class MalakasConfig {
         Assert.notNull(probabilisticConfig.freeWheelScatterProbabilisticConfig, "probabilisticConfig.freeWheelScatterProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.scatterFreeSpinsTimesConfig, "probabilisticConfig.scatterFreeSpinsTimesConfig is null");
         Assert.notNull(probabilisticConfig.symbolSizeProbabilisticConfig, "probabilisticConfig.symbolSizeProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.wildProbabilisticConfig, "probabilisticConfig.wildProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.goldBoarderProbabilisticConfig, "probabilisticConfig.goldBoarderProbabilisticConfig is null");
 
-        int colum = 7;
-        commonPlayWheelProbabilisticConfigValid(colum);
+        commonPlayWheelProbabilisticConfigValid(REEL_NUMBERS);
         freeWheelScatterProbabilisticConfigValid();
-        freePlayWheelProbabilisticConfigValid(colum);
-        symbolSizeProbabilisticConfigValid(colum);
+        freePlayWheelProbabilisticConfigValid(REEL_NUMBERS);
+        symbolSizeProbabilisticConfigValid(REEL_NUMBERS);
+        AssertUtil.assertTrue(Objects.equals(probabilisticConfig.getGoldBoarderProbabilisticConfig().size(), 7), ErrorCode.ERR_INTER, "probabilisticConfig.goldBoarderProbabilisticConfig size error");
     }
 
     private void commonPlayWheelProbabilisticConfigValid(int colum) {
@@ -152,6 +154,7 @@ public class MalakasConfig {
         int sum = probabilisticConfig.freeWheelScatterProbabilisticConfig.values().stream().reduce(0, Integer::sum);
         AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
     }
+
     private void symbolSizeProbabilisticConfigValid(int colum) {
         probabilisticConfig.symbolSizeProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.symbolSizeProbabilisticConfig key: " + key + " ERR");
