@@ -51,7 +51,7 @@ public class PulsarProducer {
 
     public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
-            log.info("sendMessage--:type:{},content:{}", mqMessage.getBody(), JSON.toJSONString(mqMessage));
+            log.info("sendMessage--:type:{},msgId:{}", mqMessage.getBody(), mqMessage.getMsgId());
             return producer.newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))

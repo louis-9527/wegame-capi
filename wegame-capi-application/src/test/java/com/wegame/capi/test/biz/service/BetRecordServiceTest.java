@@ -10,6 +10,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.interceptor.CacheInterceptor;
 
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
+
 @Slf4j
 public class BetRecordServiceTest extends BaseTest {
     @Autowired
@@ -28,5 +31,19 @@ public class BetRecordServiceTest extends BaseTest {
             BetRecordDo<MariaMakilingBetRecordDetailDo> igoslot0102 = betRecordService.get(1887458246424379392L, "slottest01", GameTypeEnum.MARIA_MAKILING);
         }
         System.out.println();
+    }
+
+    public static void main(String[] args) {
+        CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();
+        list.add("" + 0);
+        list.add("" + 1);
+        list.add("" + 2);
+        int num = 3;
+        while (!list.isEmpty()) {
+            String val = list.remove(0);
+            System.out.println("val: " + val);
+            boolean ret = list.add("" + num ++);
+            System.out.println("ret: " + ret);
+        }
     }
 }

@@ -34,10 +34,6 @@ import java.util.stream.Collectors;
 public class MalakasGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
-     * 序号: 默认1
-     */
-    private Integer index;
-    /**
      * id
      */
     private Long id;
@@ -45,6 +41,22 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MariaMak
      * parentId: 无，则为0
      */
     private Long parentId;
+    /**
+     * 批次id
+     */
+    private Long batchId;
+    /**
+     * 投注记录id
+     */
+    private Long betRecordId;
+    /**
+     * 玩家id
+     */
+    private String playerId;
+    /**
+     * 玩家名称
+     */
+    private String playerName;
     /**
      * 滚轮
      */
@@ -56,8 +68,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MariaMak
     /**
      * 免费轮id列表
      */
-    private List<Integer> freeSpinIds;
-
+    private List<Long> freeSpinGameRecordIds;
     /**
      * 是否中奖免费轮
      *

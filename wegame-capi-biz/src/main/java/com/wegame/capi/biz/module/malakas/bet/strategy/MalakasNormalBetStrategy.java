@@ -7,9 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -30,10 +28,6 @@ import java.util.Date;
 @Slf4j
 @Component("malakasNormalBetStrategy")
 public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
-    @Override
-    public Game getGame() {
-        return null;
-    }
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
@@ -53,8 +47,8 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
-                    .gameId(GameTypeEnum.MARIA_MAKILING.getId())
-                    .gameName(GameTypeEnum.MARIA_MAKILING.getName())
+                    .gameId(GameTypeEnum.MALAKAS.getId())
+                    .gameName(GameTypeEnum.MALAKAS.getName())
                     .userId(Long.valueOf(userInfo.getId()))
                     .userName(userInfo.getUserName())
                     .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_SPINS.name())

@@ -17,6 +17,7 @@ import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import org.apache.pulsar.client.api.MessageId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,6 +38,9 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     private PulsarProducer pulsarProducer;
+
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
 
     public abstract Game getGame();
 
