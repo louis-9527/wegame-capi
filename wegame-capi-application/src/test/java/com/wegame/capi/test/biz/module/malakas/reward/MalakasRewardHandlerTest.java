@@ -441,10 +441,10 @@ public class MalakasRewardHandlerTest extends BaseTest {
         // 第五列
         symbolArr[0][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
         symbolArr[1][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[2][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[2][4] = this.buildASymbol(SymbolEnum.Scatter, SymbolTypeEnum.SCATTER, SymbolRuleTypeEnum.COMMON, null);
         symbolArr[3][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
         symbolArr[4][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
-        symbolArr[5][4] = this.buildASymbol(SymbolEnum.Symbol1001, SymbolTypeEnum.COMMON, SymbolRuleTypeEnum.COMMON, null);
+        symbolArr[5][4] = this.buildASymbol(SymbolEnum.Scatter, SymbolTypeEnum.SCATTER, SymbolRuleTypeEnum.COMMON, null);
 
         // 第六列
         symbolArr[0][5] = this.buildAPlaceHolderSymbol();
