@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 
 /**
@@ -35,16 +36,21 @@ public class WheelDo<T extends SymbolDo> implements Serializable {
      */
     private T[][] symbolArr;
 
-    public void print() {
-        log.info("index:{}", index, symbolArr);
-        log.info("symbolArr: ");
-        for (int i = 0; i < symbolArr.length; i++) {
-            for (int j = 0; j < symbolArr[i].length; j++) {
-                System.out.print(symbolArr[i][j].getId() + " ");
-            }
-            System.out.println();
-        }
-    }
-
+    //    public void print() {
+    //        System.out.println("index: " + index);
+    //        System.out.println("parentIndex: " + parentIndex);
+    //        System.out.println("symbolArr: ");
+    //        for (int row = 0; row < symbolArr.length; row++) {
+    //            for (int colum = 0; colum < symbolArr[row].length; colum++) {
+    //                if (Objects.nonNull(symbolArr[row][colum])) {
+    //                    System.out.print(symbolArr[row][colum].getId() + " ");
+    //                } else {
+    //                    System.out.print("null ");
+    //                }
+    //            }
+    //            System.out.println();
+    //        }
+    //        System.out.println();
+    //    }
 }
 

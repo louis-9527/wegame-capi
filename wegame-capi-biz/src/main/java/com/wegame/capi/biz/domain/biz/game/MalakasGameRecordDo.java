@@ -38,9 +38,13 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MariaMak
      */
     private Integer index;
     /**
-     * 上一级序号: 默认0
+     * id
      */
-    private Integer parentIndex;
+    private Long id;
+    /**
+     * parentId: 无，则为0
+     */
+    private Long parentId;
     /**
      * 滚轮
      */
