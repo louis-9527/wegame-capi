@@ -103,7 +103,12 @@ spring:
             pool-prepared-statements: false
   data:
     mongodb:
-        uri: mongodb://localhost:27017/wegame_mdb?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
+#        uri: mongodb://localhost:27017/wegame_mdb?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
+        dynamic:
+          maria_makiling_mdb:
+            uri: mongodb://16.162.139.203:27017/maria_makiling_mdb?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
+          malakas_mdb:
+            uri: mongodb://16.162.139.203:27017/malakas_mdb?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
 ##      uri: mongodb://16.162.139.203:27017/wegame_mdb?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
 ## fastjson
 fastjson:
