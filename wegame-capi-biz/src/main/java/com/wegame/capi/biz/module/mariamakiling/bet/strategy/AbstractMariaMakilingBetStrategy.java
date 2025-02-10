@@ -10,12 +10,15 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+import com.wegame.capi.biz.manager.RecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
+import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -28,10 +31,19 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
 
     @Autowired
     MariaMakilingGame mariaMakilingGame;
+    @Autowired
+    RecordManager<MariaMakilingGameRecordDo> recordManager;
+    @Autowired
+    GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
     @Override
     public Game<MariaMakilingGameRecordDo> getGame() {
         return mariaMakilingGame;
+    }
+
+    @Override
+    public RecordManager<MariaMakilingGameRecordDo> getRecordManager() {
+        return recordManager;
     }
 
     @Override
@@ -57,27 +69,28 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // todo 从GameRecord查询 todo
-        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), userInfo.getPlayerId(), getGame().getGameInfo().getGameType());
-        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-        MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
-        AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotEmpty(betRecordDetailDo.getGameRecordList(), ErrorCode.ERR_PARAM);
-        List<MariaMakilingGameRecordDo> gameRecordList = betRecordDetailDo.getGameRecordList();
+        List<MariaMakilingGameRecordDo> gameRecordList = gameRecordService.list(GameRecordQuery.builder()
+                        .betRecordId(betDo.getBetDetail().getBetRecordId())
+                        .playerId(userInfo.getPlayerId())
+                        .orderByClause("_id")
+                        .build(),
+                getGame().getGameInfo().getGameType(),
+                MariaMakilingGameRecordDo.class);
         // 匹配-免费轮游戏记录
         MariaMakilingGameRecordDo gameRecord = gameRecordList
                 .stream()
-                .filter(item -> Objects.equals(item.getId(), betDetail.getFreeSpinsId()))
+                .filter(item -> Objects.equals(item.getId(), betDetail.getGameRecordId()))
                 .findFirst()
                 .orElse(null);
         // 统计-当前轮次及之前记录奖励金额之和
         Long overallRewardAmount = Optional.ofNullable(gameRecordList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .filter(item -> item.getRewardResult() != null && item.getId() <= betDetail.getFreeSpinsId())
+                .filter(item -> item.getRewardResult() != null && item.getId() <= betDetail.getGameRecordId())
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
         // 后处理-免费轮
-        freeSpinsAfterHandle(betDo, betRecordDetailDo, overallRewardAmount);
+        freeSpinsAfterHandle(betDo, MariaMakilingBetRecordDetailDo.builder().gameRecordList(gameRecordList).build(), overallRewardAmount);
         // 返回
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betDetail.getBetRecordId())

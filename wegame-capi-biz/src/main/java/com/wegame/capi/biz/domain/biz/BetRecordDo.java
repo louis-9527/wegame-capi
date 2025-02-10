@@ -5,6 +5,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * bet_record：投注记录
@@ -15,7 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetRecordDo implements Serializable {
+public class BetRecordDo<T> implements Serializable {
     private static final long serialVersionUID = -3514324297343525888L;
     /**
      * 主键ID
@@ -99,5 +100,9 @@ public class BetRecordDo implements Serializable {
     private Long updateTime;
 
     ///////////////  above auto generated ///////////////
+
+    private List<T> gameRecordList;
+
+    private T detail;
 }
 

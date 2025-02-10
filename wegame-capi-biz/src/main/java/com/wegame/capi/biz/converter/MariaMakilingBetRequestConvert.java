@@ -13,7 +13,7 @@ public class MariaMakilingBetRequestConvert<T, R> implements BetToDoConvert<Mari
                 .betAmount(betRequest.getBetAmount())
                 .payAmount(betRequest.getPayAmount())
                 .betRecordId(StringUtils.isEmpty(betRequest.getBetRecordId()) ? null : Long.valueOf(betRequest.getBetRecordId()))
-                .freeSpinsId(betRequest.getFreeSpinsId())
+                .gameRecordId(betRequest.getFreeSpinsId())
                 .build();
     }
 

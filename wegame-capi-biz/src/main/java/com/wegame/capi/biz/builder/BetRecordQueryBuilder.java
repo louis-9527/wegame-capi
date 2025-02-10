@@ -20,30 +20,14 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordQuery.getLimit())) {
             query.limit(recordQuery.getLimit());
         }
-
         if (Objects.nonNull(recordQuery.getLastId())) {
             query.addCriteria(Criteria.where("_id").lt(recordQuery.getLastId()));
         }
-
-        if (StringUtils.isNotEmpty(recordQuery.getOrderByClause())) {
+        if (Objects.isNull(recordQuery.getDirection())) {
             query.with(Sort.by(Sort.Direction.DESC, recordQuery.getOrderByClause()));
+        } else {
+            query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
         }
-        return query;
-    }
-
-    public static Query buildMongodbQueryForPage(BetRecordQuery recordQuery) {
-        Query query = buildMongodbQuery(recordQuery);
-        // 指定需要查询的字段
-        Field fields = query.fields();
-        fields.include("_id");
-        fields.include("userId");
-        fields.include("playerId");
-        fields.include("playerName");
-        fields.include("betAmount");
-        fields.include("payAmount");
-        fields.include("payOutAmount");
-        fields.include("status");
-        fields.include("createTime");
         return query;
     }
 
@@ -127,9 +111,6 @@ public class BetRecordQueryBuilder {
         }
         if (Objects.nonNull(recordDo.getStatus())) {
             update.set("status", recordDo.getStatus());
-        }
-        if (Objects.nonNull(recordDo.getDetail())) {
-            update.set("detail", recordDo.getDetail());
         }
         if (Objects.nonNull(recordDo.getUpdater())) {
             update.set("updater", recordDo.getUpdater());

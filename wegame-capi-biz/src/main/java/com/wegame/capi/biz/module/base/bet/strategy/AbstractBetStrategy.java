@@ -10,6 +10,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 
 import com.wegame.capi.biz.listener.PulsarProducer;
+import com.wegame.capi.biz.manager.RecordManager;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;
@@ -30,15 +31,15 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
 
     private static final int RETRY_TIMES = 3;
     @Autowired
-    public BetRecordService betRecordService;
-    @Autowired
     public SingleWalletService singleWalletService;
     @Autowired
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     private PulsarProducer pulsarProducer;
 
-    public abstract Game getGame();
+    public abstract Game<R> getGame();
+
+    public abstract RecordManager<R> getRecordManager();
 
     public long generateRecordId() {
         return snowflakeIdGenerator.nextId();
@@ -51,7 +52,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
      * @return 用户余额
      */
     public Long saveBetRecordAndBetWithPayout(BetRecordDo betRecordDo) {
-        Long betRecordId = betRecordService.add(betRecordDo, getGame().getGameInfo().getGameType());
+        Long betRecordId = getRecordManager().addRecord(betRecordDo, betRecordDo.getGameRecordList(), getGame().getGameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
         // 判断返回结果
@@ -64,7 +65,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
                 .status(betWithPayoutRes.getBetStatus().getCode())
                 .build();
         // 异步更新
-        betRecordService.asyncUpdate(updateRecord, getGame().getGameInfo().getGameType());
+        getRecordManager().asyncUpdateBetRecord(updateRecord, getGame().getGameInfo().getGameType());
         return AmountUtil.toLong(betWithPayoutRes.getCredit());
     }
 

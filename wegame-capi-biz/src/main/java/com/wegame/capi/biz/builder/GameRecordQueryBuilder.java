@@ -16,7 +16,11 @@ public class GameRecordQueryBuilder {
             query.limit(recordQuery.getLimit());
         }
         if (StringUtils.isNotEmpty(recordQuery.getOrderByClause())) {
-            query.with(Sort.by(Sort.Direction.DESC, recordQuery.getOrderByClause()));
+            if (Objects.isNull(recordQuery.getDirection())) {
+                query.with(Sort.by(Sort.Direction.DESC, recordQuery.getOrderByClause()));
+            } else {
+                query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
+            }
         }
         return query;
     }

@@ -33,11 +33,11 @@ public class BetRecordBuilder {
                 .payAmount(payAmount)
                 .payOutAmount(payOutAmount)
                 .status(BetStatusEnum.ING.getCode())
-                .detail(detail)
                 .creator(operator.getName())
                 .updater(operator.getName())
                 .createTime(currentMilli)
                 .updateTime(currentMilli)
+                .detail(detail)
                 .build();
     }
 

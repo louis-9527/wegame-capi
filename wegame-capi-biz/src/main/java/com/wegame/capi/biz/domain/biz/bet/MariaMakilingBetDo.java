@@ -27,9 +27,9 @@ public class MariaMakilingBetDo implements Validate ,Serializable {
      */
     private Long betRecordId;
     /**
-     * 免费轮记录id
+     * 免费轮游戏记录id
      */
-    private Integer freeSpinsId;
+    private Long gameRecordId;
     /**
      * 支付金额
      */

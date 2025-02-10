@@ -78,7 +78,7 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
                     .id(betRecordDo.getId())
                     .betId(betStatus.getLeft())
                     .status(BetStatusEnum.SUCCESS.getCode()).build();
-            betRecordService.asyncUpdate(updateRecord, this.getGameType());
+            betRecordService.update(updateRecord, this.getGameType());
             return;
         }
         if (BetStatusEnum.FAIL == betStatus.getRight()) {
@@ -87,7 +87,7 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
                     .id(betRecordDo.getId())
                     .betId(betStatus.getLeft())
                     .status(BetStatusEnum.FAIL.getCode()).build();
-            betRecordService.asyncUpdate(updateRecord, this.getGameType());
+            betRecordService.update(updateRecord, this.getGameType());
         }
     }
 

@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
@@ -62,18 +63,7 @@ public class GameRecordQuery implements Serializable {
      * 更新时间
      */
     private Long updateTime;
-    /**
-     * limit
-     */
-    private Integer limit;
-    /**
-     * offset
-     */
-    private Integer offset;
-    /**
-     * 排序语句
-     */
-    private String orderByClause;
+
     /**
      * 开始创建时间
      */
@@ -90,6 +80,24 @@ public class GameRecordQuery implements Serializable {
      * 结束更新时间
      */
     private Long endUpdateTime;
+
+
+    /**
+     * limit
+     */
+    private Integer limit;
+    /**
+     * offset
+     */
+    private Integer offset;
+    /**
+     * 排序语句
+     */
+    private String orderByClause;
+    /**
+     * 排序语句
+     */
+    private Sort.Direction direction;
 
     ///////////////  above auto generated ///////////////
 }

@@ -22,14 +22,12 @@ import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.BulkOperationException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -37,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.updateBetRecordThreadPoolExecutor;
 
 /**
  * 投注记录服务
@@ -100,9 +96,7 @@ public class BetRecordService {
      * @param betRecordDo 投注记录
      * @return true/false
      */
-    @Async(updateBetRecordThreadPoolExecutor)
-    @CacheEvict(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #betRecordDo.id")
-    public void asyncUpdate(BetRecordDo betRecordDo, GameTypeEnum gameType) {
+    public boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
@@ -116,7 +110,7 @@ public class BetRecordService {
                 BetRecordPo.class);
         long endTime = System.currentTimeMillis();
         log.info("BetRecordService#update cost time:{}ms", endTime - startTime);
-        AssertUtil.assertTrue(Objects.nonNull(result) && result.getModifiedCount() > 0, ErrorCode.ERR_INTER);
+        return Objects.nonNull(result) && result.getModifiedCount() > 0;
     }
 
     /**
@@ -220,7 +214,7 @@ public class BetRecordService {
      */
     public List<BetRecordDo> listForPage(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQueryForPage(query), BetRecordPo.class);
+        List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
         return BetRecordConverter.poToDoList(recordPoList);
     }
 

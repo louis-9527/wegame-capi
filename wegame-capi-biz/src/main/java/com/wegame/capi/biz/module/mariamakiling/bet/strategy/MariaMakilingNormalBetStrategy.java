@@ -34,7 +34,7 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
     @CacheEvict(value = CacheConstants.REWARD_INFO)
     @Override
     public void freeSpinsAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo recordDetail, Long totalRewardAmount) {
-        if (recordDetail.isLastFreeSpins(betDo.getBetDetail().getFreeSpinsId())) {
+        if (recordDetail.isLastFreeSpins(betDo.getBetDetail().getGameRecordId())) {
             updateRewardNotifyInfo(betDo.getGameType(), recordDetail.freeSpinCount(), totalRewardAmount);
         }
     }
