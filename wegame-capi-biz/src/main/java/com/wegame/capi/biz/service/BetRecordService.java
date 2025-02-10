@@ -133,6 +133,7 @@ public class BetRecordService {
             // 需要排除掉库中不存在的id  todo 是否可以不需要这部操作
             failIdList = listNotExistIdList(allIdList, gameType);
             if (failIdList.size() == allIdList.size()) {
+                log.warn("BetRecordService#batchUpdate failIdList:{}", failIdList);
                 return BetRecordBatchOptResultDo.builder().successCount(0L).failIdList(failIdList).build();
             }
 

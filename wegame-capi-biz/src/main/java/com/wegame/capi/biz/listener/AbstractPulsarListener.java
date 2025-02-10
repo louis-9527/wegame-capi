@@ -26,14 +26,20 @@ public abstract class AbstractPulsarListener {
     protected void initConsumer(GameTypeEnum gameType) {
         try {
             String fullTopic = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "_topic");
+            String deadLetterTopic = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "deadLetter" + "_topic");
             consumer = pulsarClient.newConsumer()
                     .topic(fullTopic)
                     .subscriptionName(gameType.getName())
                     .subscriptionType(SubscriptionType.Key_Shared) // 关键点：使用 Key_Shared 模式
                     .receiverQueueSize(1000) // 增加内部缓存，提高吞吐量
+                    .ackTimeout(60, TimeUnit.SECONDS)
                     .batchReceivePolicy(BatchReceivePolicy.builder()
                             .maxNumMessages(100)  // 批量最多100条
                             .timeout(5000, TimeUnit.MILLISECONDS)
+                            .build())
+                    .deadLetterPolicy(DeadLetterPolicy.builder()
+                            .maxRedeliverCount(20)  // **最多重试 3 次**
+                            .deadLetterTopic(deadLetterTopic) // **死信队列**
                             .build())
                     .subscribe();
             new Thread(this::consumeMessages).start();
