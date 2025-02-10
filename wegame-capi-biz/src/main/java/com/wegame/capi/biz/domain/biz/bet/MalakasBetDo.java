@@ -21,7 +21,7 @@ public class MalakasBetDo  {
     /**
      * 免费轮记录id
      */
-    private Integer freeSpinsId;
+    private Long freeSpinsId;
     /**
      * 支付金额
      */

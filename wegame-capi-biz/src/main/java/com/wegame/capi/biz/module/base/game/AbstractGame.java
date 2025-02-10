@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @param <R>
  */
-public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
+public abstract class AbstractGame<R> implements Game<R> {
 
     @Autowired
     public RandomService randomService;

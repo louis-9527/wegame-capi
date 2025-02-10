@@ -33,7 +33,25 @@ public class SymbolBuilder {
     }
 
 
-    public MalakasBetResultVo.MalakasSymbolVo[][] build(MalakasSymbolDo[][] symbolArr){
-
+    public static MalakasBetResultVo.MalakasSymbolVo[][] build(MalakasSymbolDo[][] symbolArr) {
+        int rows = symbolArr.length;
+        int cols = symbolArr[0].length;
+        MalakasBetResultVo.MalakasSymbolVo[][] integerArray = new MalakasBetResultVo.MalakasSymbolVo[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                MalakasSymbolDo malakasSymbolDo = symbolArr[i][j];
+                if (malakasSymbolDo == null) {
+                    integerArray[i][j] = null;
+                } else {
+                    MalakasBetResultVo.MalakasSymbolVo malakasSymbolVo = new MalakasBetResultVo.MalakasSymbolVo();
+                    malakasSymbolVo.setSymbolId(malakasSymbolDo.getId());
+                    malakasSymbolVo.setSymbolSize(malakasSymbolDo.getSymbolSize().getCode());
+                    malakasSymbolVo.setSymbolClearTimes(malakasSymbolDo.getSymbolClearTimes());
+                    malakasSymbolVo.setSymbolGoldBorder(malakasSymbolDo.isSymbolGoldBorder());
+                    integerArray[i][j] = malakasSymbolVo;
+                }
+            }
+        }
+        return integerArray;
     }
 }

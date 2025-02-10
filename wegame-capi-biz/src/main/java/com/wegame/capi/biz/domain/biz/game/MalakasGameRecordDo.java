@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasBetResultVo> {
+public class MalakasGameRecordDo implements Serializable{
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * id
@@ -65,11 +66,12 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
     /**
      * 中奖结果
      */
-    private RewardResultDo rewardResult;
+    private RewardResultDo<MalakasSymbolDo> rewardResult;
     /**
      * 免费轮id列表
      */
     private List<Long> freeSpinGameRecordIds;
+
     /**
      * 是否中奖免费轮
      *
@@ -80,67 +82,56 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
         return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin();
     }
 
-    @Override
+
     public MalakasBetResultVo toVo() {
-    if(Objects.isNull(rewardResult)){
-        MalakasSymbolDo[][] symbolArr = wheel.getSymbolArr();
-        MalakasBetResultVo.builder()
-                .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
-    }
-
-
         if (Objects.isNull(rewardResult)) {
-            return MariaMakilingBetResultVo.builder()
-                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
-                    .build();
+            return MalakasBetResultVo.builder().wheel(SymbolBuilder.build(wheel.getSymbolArr())).build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
-            return MariaMakilingBetResultVo.builder()
+            return MalakasBetResultVo.builder()
                     .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
-                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .freeSpinFlag(0)
                     .build();
         } else {
+            return MalakasBetResultVo.builder()
+                    .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
+                    .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
+                    .totalRewardAmount(rewardResult.getTotalRewardAmount())
+                    .totalRewardMultiple(rewardResult.getTotalMultiple())
+                    .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .rewardSymbolIndexSet(Optional.ofNullable(rewardResult.getRewardLineDetailList())
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .filter(o -> CollectionUtils.isNotEmpty(o.getRewardSymbolList()))
+                            .map(detail -> detail.getRewardSymbolList()
+                                    .stream()
+                                    .map(rewardSymbol -> IndexFactory.buildVo(rewardSymbol.getIndex()))
+                                    .collect(Collectors.toList())
+                            ).flatMap(List::stream)
+                            .collect(Collectors.toSet()))
 
-
-
-//            return MariaMakilingBetResultVo.builder()
-//                    .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
-//                    .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
-//                    .totalRewardAmount(rewardResult.getTotalRewardAmount())
-//                    .totalRewardMultiple(rewardResult.getTotalMultiple())
-//                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
-//                    .rewardSymbolIndexSet(Optional.ofNullable(rewardResult.getRewardLineDetailList())
-//                            .orElse(Collections.emptyList())
-//                            .stream()
-//                            .filter(o -> CollectionUtils.isNotEmpty(o.getRewardSymbolList()))
-//                            .map(detail -> detail.getRewardSymbolList()
-//                                    .stream()
-//                                    .map(rewardSymbol -> IndexFactory.buildVo(rewardSymbol.getIndex()))
-//                                    .collect(Collectors.toList())
-//                            ).flatMap(List::stream)
-//                            .collect(Collectors.toSet()))
-//                    .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineDetailList())
-//                            .orElse(Collections.emptyList())
-//                            .stream()
-//                            .map(subItem -> MariaMakilingBetResultVo.MariaMakilingRewardLineVo.builder()
-//                                    .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
-//                                    .multiple(subItem.getMultiple())
-//                                    .odds(subItem.getOdds())
-//                                    .rewardLineType(Objects.nonNull(subItem.getRewardLineType()) ? subItem.getRewardLineType().getCode() : "")
-//                                    .rewardLineSubType(Objects.nonNull(subItem.getRewardLineSubType()) ? subItem.getRewardLineSubType().getCode() : "")
-//                                    .rewardLineCount(subItem.getRewardLineCount())
-//                                    .betAmount(subItem.getBetAmount())
-//                                    .rewardAmount(subItem.getRewardAmount())
-//                                    .build()
-//                            ).collect(Collectors.toList()))
-//                    .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
-//                    .freeSpinIds(freeSpinIds)
-//                    .build();
-            return null;
+                    .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineDetailList())
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .map(subItem -> MalakasBetResultVo.MalakasRewardLineVo.builder()
+                                    .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
+                                    .multiple(subItem.getMultiple())
+                                    .odds(subItem.getOdds())
+                                    .rewardLineType(Objects.nonNull(subItem.getRewardLineType()) ? subItem.getRewardLineType().getCode() : "")
+                                    .rewardLineSubType(Objects.nonNull(subItem.getRewardLineSubType()) ? subItem.getRewardLineSubType().getCode() : "")
+                                    .rewardLineCount(subItem.getRewardLineCount())
+                                    .betAmount(subItem.getBetAmount())
+                                    .rewardAmount(subItem.getRewardAmount())
+                                    .build()
+                            ).collect(Collectors.toList()))
+                    .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
+                    .freeSpinIds(freeSpinGameRecordIds)
+                    .build();
         }
     }
+
 }
 
