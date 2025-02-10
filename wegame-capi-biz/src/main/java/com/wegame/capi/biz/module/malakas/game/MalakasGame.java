@@ -61,24 +61,23 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
 
     @Override
     public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
-        switch (gamePlay.getBetType()) {
-            case NORMAL_BET:
-                // 正常投注
-                return normalPlay(gamePlay);
-            case BUY_BET:
-                // 购买投注
-                return buyPlay(gamePlay);
-            default:
-                throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
-        }
-    }
-
-    public List<MalakasGameRecordDo> normalPlay(GamePlayDo gamePlay) {
         List<MalakasGameRecordDo> ret = new ArrayList<>();
         Long totalRewardAmount = 0L;
         // 生成-游戏滚轮
-        WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig()));
-        // 判奖-更加游戏滚轮和中奖线算法判断
+        WheelDo<MalakasSymbolDo> wheel;
+        switch (gamePlay.getBetType()) {
+            // 正常投注
+            case NORMAL_BET:
+                wheel = generateNormalWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig()));
+                break;
+            // 购买投注
+            case BUY_BET:
+                wheel = generateRewardFreeSpinsWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig()));
+                break;
+            default:
+                throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
+        }
+        // 判奖-根据游戏滚轮和中奖线算法判断
         RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
@@ -111,26 +110,6 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         } else if (preRewardResult.isHasRewardFreeSpin()) {
             // 命中免费轮， todo
         }
-    }
-
-    public List<MalakasGameRecordDo> buyPlay(GamePlayDo gamePlay) {
-        List<MalakasGameRecordDo> ret = new ArrayList<>();
-        Long totalRewardAmount = 0L;
-        // 生成-游戏滚轮
-        WheelDo<MalakasSymbolDo> wheel = generateRewardFreeSpinsWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig()));
-        // 判奖-更加游戏滚轮和中奖线算法判断
-        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel));
-        AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
-        // 组装-游戏记录
-        MalakasGameRecordDo record = buildGameRecord(wheel, rewardResult);
-        ret.add(record);
-        totalRewardAmount += rewardResult.getTotalRewardAmount();
-        // loop play
-        loopPlayOnPreWheel(gamePlay, ret, totalRewardAmount, wheel, rewardResult);
-        // 占位元素-将占位元素设置为空
-        postPlaceholderSymbol(ret);
-        // 返回-游戏记录列表
-        return ret;
     }
 
     private WheelDo<MalakasSymbolDo> generateNormalWheelFromPreWheel(GameInfoDo gameInfo,
@@ -204,7 +183,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                         .symbolRuleType(SymbolRuleTypeEnum.COMMON)
                         .value(null)
                         .build());
-                num ++;
+                num++;
             }
         }
         return wheel;
