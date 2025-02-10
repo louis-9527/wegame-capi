@@ -73,8 +73,8 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .totalRewardAmount(0L)
                     .totalMultiple(totalMultiple)
                     .hasRewardFreeSpin(false)
+                    .rewardFreeSpinTimes(0)
                     .rewardLineDetailList(null)
-                    .rewardFreeSpinTimes(null)
                     .build();
         }
 
