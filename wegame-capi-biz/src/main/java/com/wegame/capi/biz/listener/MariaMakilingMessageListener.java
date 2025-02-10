@@ -51,6 +51,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                 // 移除处理失败的key
                 List<Long> failIdList = addResultDo.getFailIdList();
                 if (CollectionUtils.isNotEmpty(failIdList)) {
+                    log.warn("processMessages failIdList:{},{}",failIdList,MessageTypeEnum.ADD.getCode());
                     for (Long id : failIdList) {
                         messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + id);
                     }
@@ -58,6 +59,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             } catch (Exception e) {
                 log.error("betRecordService.batchAdd error:", e);
                 for (BetRecordDo recordDo : betAddRecordList) {
+                    log.warn("processMessages recordDo:{},{}",recordDo.getId(),MessageTypeEnum.ADD.getCode());
                     messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + recordDo.getId());
 
                 }
@@ -70,6 +72,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                 // 移除处理失败的key
                 List<Long> failIdList = updateResultDo.getFailIdList();
                 if (CollectionUtils.isNotEmpty(failIdList)) {
+                    log.warn("processMessages failIdList:{},{}",failIdList,MessageTypeEnum.UPDATE.getCode());
                     for (Long id : failIdList) {
                         messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + id);
                     }
@@ -77,6 +80,8 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             } catch (Exception e) {
                 log.error("betRecordService.batchUpdate error:", e);
                 for (BetRecordDo recordDo : betUpdateRecordList) {
+                    log.warn("processMessages failIdList:{},{}",recordDo,MessageTypeEnum.UPDATE.getCode());
+
                     messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + recordDo.getId());
 
                 }
