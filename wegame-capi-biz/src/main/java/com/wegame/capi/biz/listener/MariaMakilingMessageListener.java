@@ -37,6 +37,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             MQMessage<BetRecordDo> betRecordDoMQMessage = JSON.parseObject(message, new TypeReference<MQMessage<BetRecordDo>>() {
             });
             BetRecordDo body = betRecordDoMQMessage.getBody();
+            log.info("MariaMakilingMessageListener,type:{},msgId:{},status:{}", betRecordDoMQMessage.getType(), betRecordDoMQMessage.getMsgId(), body.getStatus());
             messageIdMap.put(betRecordDoMQMessage.getType() + "_" + body.getId(), tt.getMessageId());
             if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 betAddRecordList.add(body);
@@ -51,7 +52,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                 // 移除处理失败的key
                 List<Long> failIdList = addResultDo.getFailIdList();
                 if (CollectionUtils.isNotEmpty(failIdList)) {
-                    log.warn("processMessages failIdList:{},{}",failIdList,MessageTypeEnum.ADD.getCode());
+                    log.warn("processMessages remove failIdList:{},{}", failIdList, MessageTypeEnum.ADD.getCode());
                     for (Long id : failIdList) {
                         messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + id);
                     }
@@ -59,7 +60,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             } catch (Exception e) {
                 log.error("betRecordService.batchAdd error:", e);
                 for (BetRecordDo recordDo : betAddRecordList) {
-                    log.warn("processMessages recordDo:{},{}",recordDo.getId(),MessageTypeEnum.ADD.getCode());
+                    log.warn("processMessages remove recordDo:{},{}", recordDo.getId(), MessageTypeEnum.ADD.getCode());
                     messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + recordDo.getId());
 
                 }
@@ -72,7 +73,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                 // 移除处理失败的key
                 List<Long> failIdList = updateResultDo.getFailIdList();
                 if (CollectionUtils.isNotEmpty(failIdList)) {
-                    log.warn("processMessages failIdList:{},{}",failIdList,MessageTypeEnum.UPDATE.getCode());
+                    log.warn("processMessages remove failIdList:{},{}", failIdList, MessageTypeEnum.UPDATE.getCode());
                     for (Long id : failIdList) {
                         messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + id);
                     }
@@ -80,7 +81,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             } catch (Exception e) {
                 log.error("betRecordService.batchUpdate error:", e);
                 for (BetRecordDo recordDo : betUpdateRecordList) {
-                    log.warn("processMessages failIdList:{},{}",recordDo,MessageTypeEnum.UPDATE.getCode());
+                    log.warn("processMessages remove failIdList:{},{}", recordDo, MessageTypeEnum.UPDATE.getCode());
 
                     messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + recordDo.getId());
 
