@@ -16,11 +16,11 @@ import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.module.malakas.MalakasProbabilisticUtil;
 import com.wegame.capi.biz.module.malakas.MalakasSymbolUtil;
-import com.wegame.capi.common.enums.RewardTypeEnum;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
+import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -117,7 +117,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         List<MalakasGameRecordDo> ret = new ArrayList<>();
         Long totalRewardAmount = 0L;
         // 生成-游戏滚轮
-        WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig()));
+        WheelDo<MalakasSymbolDo> wheel = generateRewardFreeSpinsWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig()));
         // 判奖-更加游戏滚轮和中奖线算法判断
         RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
@@ -158,7 +158,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     }
 
     /**
-     * 正常滚轮生成：生成逻辑无任何限制
+     * 生成正常滚轮：生成逻辑无任何限制
      *
      * @param gameInfo 游戏信息
      * @return 滚轮
@@ -173,7 +173,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     }
 
     /**
-     * 生成中奖免费轮滚轮
+     * 生成中奖免费轮滚轮: 需要满足4-6个Scatter
      *
      * @param gameInfo 游戏信息
      * @return 滚轮
@@ -185,6 +185,28 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         // 第一行最后一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
         WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(gameInfo, symbolArr, probabilisticConfig, WHEEL_DEFAULT_INDEX, WHEEL_DEFAULT_INDEX);
+        int scatterSymbolCount = countIndexSymbol(wheel.getSymbolArr(), SymbolEnum.Scatter);
+        int randomCount = randomService.randomInt(4, 6);
+        int needAddCount = randomCount - scatterSymbolCount;
+        int num = 0;
+        while (num < needAddCount) {
+            int row = randomService.randomInt(0, gameInfo.getRow() - 1);
+            int column = randomService.randomInt(0, gameInfo.getColumn() - 1);
+            if (Objects.equals(wheel.getSymbolArr()[row][column], MALAKAS_SYMBOL_PLACEHOLDER)
+                    || StringUtils.equals(wheel.getSymbolArr()[row][column].getId(), SymbolEnum.Scatter.getId())) {
+                // 为占位元素或者scatter元素，则继续
+                // do nothing;
+            } else {
+                wheel.getSymbolArr()[row][column].setId(SymbolEnum.Scatter.getId());
+                wheel.getSymbolArr()[row][column].setName(SymbolEnum.Scatter.getName());
+                wheel.getSymbolArr()[row][column].setSymbolType(SymbolTypeEnum.SCATTER);
+                wheel.getSymbolArr()[row][column].setSymbolRule(SymbolDo.SymbolRuleDo.builder()
+                        .symbolRuleType(SymbolRuleTypeEnum.COMMON)
+                        .value(null)
+                        .build());
+                num ++;
+            }
+        }
         return wheel;
     }
 

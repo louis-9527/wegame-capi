@@ -15,6 +15,7 @@ import com.wegame.capi.common.enums.SymbolRuleTypeEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -189,6 +190,18 @@ public class MalakasSymbolUtil {
             maxRow++;
         }
         return maxRow;
+    }
+
+    public static int countIndexSymbol(MalakasSymbolDo[][] symbolArr, SymbolEnum symbol) {
+        int count = 0;
+        for (int row = 0; row < symbolArr.length; row++) {
+            for (int col = 0; col < symbolArr[row].length; col++) {
+                if (StringUtils.equals(symbolArr[row][col].getId(), symbol.getId())){
+                    count ++;
+                }
+            }
+        }
+        return count;
     }
 
     public static void postPlaceholderSymbol(List<MalakasGameRecordDo> ret) {
