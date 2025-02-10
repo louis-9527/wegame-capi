@@ -7,10 +7,12 @@ import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.MessageTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,8 @@ public class PulsarProducer {
     String namespace;
     @Autowired
     PulsarClient pulsarClient;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     private Producer<byte[]> producer;
 
@@ -51,7 +55,10 @@ public class PulsarProducer {
 
     public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
-            log.info("sendMessage--:type:{},msgId:{}", mqMessage.getBody(), mqMessage.getMsgId());
+            log.info("sendMessage--:type:{},msgId:{}", mqMessage.getType(), mqMessage.getMsgId());
+            if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
+                redisTemplate.opsForValue().increment("zhumeng001_send_msg_count", 1);
+            }
             return producer.newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))

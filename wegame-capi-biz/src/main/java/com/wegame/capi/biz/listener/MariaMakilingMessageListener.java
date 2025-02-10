@@ -82,7 +82,6 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                 log.error("betRecordService.batchUpdate error:", e);
                 for (BetRecordDo recordDo : betUpdateRecordList) {
                     log.warn("processMessages remove failIdList:{},{}", recordDo, MessageTypeEnum.UPDATE.getCode());
-
                     messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + recordDo.getId());
 
                 }
