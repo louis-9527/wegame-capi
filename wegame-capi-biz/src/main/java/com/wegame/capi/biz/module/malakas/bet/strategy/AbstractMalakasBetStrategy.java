@@ -5,7 +5,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
-import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
@@ -107,7 +106,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 list.addAll(gameRecordList);
             }
             // 构建投注记录
-            BetRecordDo<MariaMakilingBetRecordDetailDo> betRecord = BetRecordBuilder.build(generateRecordId(),
+            BetRecordDo<MalakasBetRecordDetailDo> betRecord = BetRecordBuilder.build(generateRecordId(),
                     betDo,
                     betDo.getBetDetail().getBetAmount(),
                     betDo.getBetDetail().getPayAmount(),

@@ -35,6 +35,10 @@ public class MalakasConfig {
      * 概率配置
      */
     private ProbabilisticConfig probabilisticConfig;
+    /**
+     * Scatter个数对应的免费轮次数
+     */
+    private Map<Integer, Integer> scatterFreeSpinsTimesConfig;
 
 
     @Data
@@ -69,10 +73,6 @@ public class MalakasConfig {
          */
         private Map<Integer, Integer> freeWheelScatterProbabilisticConfig;
         /**
-         * Scatter个数对应的免费轮次数
-         */
-        private Map<Integer, Integer> scatterFreeSpinsTimesConfig;
-        /**
          * 元素大小概率 S M L XL
          */
         private Map<String, List<BigDecimal>> symbolSizeProbabilisticConfig;
@@ -85,6 +85,7 @@ public class MalakasConfig {
     public void validate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
+        scatterFreeSpinsTimesConfigValidate();
     }
 
     private void oddsConfigValidate() {
@@ -102,7 +103,6 @@ public class MalakasConfig {
         Assert.notNull(probabilisticConfig.commonPlayWheelProbabilisticConfig, "probabilisticConfig is null");
         Assert.notNull(probabilisticConfig.freePlayWheelProbabilisticConfig, "probabilisticConfig.freePlayWheelProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.freeWheelScatterProbabilisticConfig, "probabilisticConfig.freeWheelScatterProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.scatterFreeSpinsTimesConfig, "probabilisticConfig.scatterFreeSpinsTimesConfig is null");
         Assert.notNull(probabilisticConfig.symbolSizeProbabilisticConfig, "probabilisticConfig.symbolSizeProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.goldBoarderProbabilisticConfig, "probabilisticConfig.goldBoarderProbabilisticConfig is null");
 
@@ -112,7 +112,9 @@ public class MalakasConfig {
         symbolSizeProbabilisticConfigValid(REEL_NUMBERS);
         AssertUtil.assertTrue(Objects.equals(probabilisticConfig.getGoldBoarderProbabilisticConfig().size(), 7), ErrorCode.ERR_INTER, "probabilisticConfig.goldBoarderProbabilisticConfig size error");
     }
-
+    private void scatterFreeSpinsTimesConfigValidate() {
+        Assert.notNull(scatterFreeSpinsTimesConfig, "scatterFreeSpinsTimesConfig is null");
+    }
     private void commonPlayWheelProbabilisticConfigValid(int colum) {
         probabilisticConfig.commonPlayWheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
