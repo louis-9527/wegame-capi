@@ -28,14 +28,14 @@ public class MalakasBetRecordDetailDo {
 
     public boolean isLastFreeSpins(int freeSpinsId) {
         MalakasGameRecordDo recordDo = CollectionUtils.isEmpty(gameRecordList) ? null : gameRecordList.get(gameRecordList.size() - 1);
-        return Objects.isNull(recordDo) ? false : Objects.equals(recordDo.getIndex(), freeSpinsId);
+        return Objects.isNull(recordDo) ? false : Objects.equals(recordDo.getId(), freeSpinsId);
     }
 
     public long freeSpinCount() {
         return Optional.ofNullable(gameRecordList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .filter(item -> item.getIndex() > 0)
+                .filter(item -> item.getId() > 0)
                 .count();
     }
 }
