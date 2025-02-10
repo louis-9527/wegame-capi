@@ -19,6 +19,7 @@ import javax.annotation.PreDestroy;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -77,6 +78,11 @@ public class PulsarProducer {
             return pulsarClient.newProducer(Schema.BYTES)
                     .topic(topicName)
                     .producerName(producerName)
+                    .enableBatching(true) // 开启批量发送
+                    .batchingMaxMessages(200) // 每批最大 500 条消息
+                    .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
+                    .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
+                    .compressionType(CompressionType.LZ4) // 使用 LZ4 压缩，减少带宽占用
                     .create();
         } catch (PulsarClientException e) {
             throw new RuntimeException("Failed to create Pulsar producer for topic error: " + topicName, e);
