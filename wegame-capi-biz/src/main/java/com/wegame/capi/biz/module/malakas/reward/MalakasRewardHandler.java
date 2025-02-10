@@ -42,6 +42,9 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
     private static final Map<String, SymbolEnum> WILD_SYMBOL_MAP = new ImmutableMap.Builder<String, SymbolEnum>()
             .put(SymbolEnum.Wild.getId(), SymbolEnum.Wild)
             .build();
+
+    private static final Integer MIN_SCATTER_COUNT_FOR_FREE_SPIN = 4;
+
     @Autowired
     OddsCalculateStrategy malakasOddsCalculateStrategy;
     @Autowired
@@ -102,7 +105,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
-                .hasRewardFreeSpin(hasRewardScatter(rewardLineList))
+                .hasRewardFreeSpin(scatterCount(rewardHandle) >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                 .rewardLineDetailList(rewardLineDetailList)
                 .totalMultiple(totalMultiple)
                 .build();
