@@ -13,8 +13,7 @@ import lombok.ToString;
  */
 @ToString
 @Getter
-@AllArgsConstructor
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum NotifyRewardTypeEnum {
 
     NORMAL_FREE_SPINS,

@@ -2,6 +2,7 @@ package com.wegame.capi.common.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -10,7 +11,8 @@ import lombok.ToString;
  * @author apple
  */
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@Getter
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum RewardLineSubTypeEnum {
 
     COMMON("COMMON", "普通"),

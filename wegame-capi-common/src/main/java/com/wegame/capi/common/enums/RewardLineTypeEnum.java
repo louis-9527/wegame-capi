@@ -2,6 +2,7 @@ package com.wegame.capi.common.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +14,8 @@ import java.util.Objects;
  * @author apple
  */
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@Getter
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum RewardLineTypeEnum {
 
     THREE(3,"THREE", "三连", OddsTypeEnum.THREE),

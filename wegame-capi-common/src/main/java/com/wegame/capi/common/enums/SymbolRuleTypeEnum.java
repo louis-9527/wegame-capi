@@ -10,7 +10,7 @@ import lombok.ToString;
  * @author apple
  */
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum SymbolRuleTypeEnum {
 
     COMMON("COMMON", "普通"),
@@ -34,7 +34,7 @@ public enum SymbolRuleTypeEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private SymbolRuleTypeEnum(String code, String desc) {
+    SymbolRuleTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }

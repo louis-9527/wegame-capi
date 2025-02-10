@@ -5,11 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Objects;
-
 @Getter
 @AllArgsConstructor
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum RewardSubTypeEnum {
 
     NONE("none", "未中奖"),
@@ -37,5 +35,4 @@ public enum RewardSubTypeEnum {
         }
         return null;
     }
-
 }

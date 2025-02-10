@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 @AllArgsConstructor
 @Getter
 @ToString
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeEnum {
 
     MARIA_MAKILING("zhumeng001",
@@ -40,7 +40,6 @@ public enum GameTypeEnum {
      * mongo 集合名称.
      */
     private final String collectionName;
-
 
     public static GameTypeEnum valueOfId(String id) {
         for (GameTypeEnum item : GameTypeEnum.values()) {

@@ -1,10 +1,9 @@
-package com.wegame.capi.dao.mapper.domain.user;
+package com.wegame.capi.dao.mapper.domain.business;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 游戏记录查询模型

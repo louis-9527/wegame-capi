@@ -9,7 +9,7 @@ import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
-import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
+import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -78,7 +78,7 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
                     .id(betRecordDo.getId())
                     .betId(betStatus.getLeft())
                     .status(BetStatusEnum.SUCCESS.getCode()).build();
-            betRecordService.update(updateRecord, this.getGameType());
+            betRecordService.asyncUpdate(updateRecord, this.getGameType());
             return;
         }
         if (BetStatusEnum.FAIL == betStatus.getRight()) {
@@ -87,7 +87,7 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
                     .id(betRecordDo.getId())
                     .betId(betStatus.getLeft())
                     .status(BetStatusEnum.FAIL.getCode()).build();
-            betRecordService.update(updateRecord, this.getGameType());
+            betRecordService.asyncUpdate(updateRecord, this.getGameType());
         }
     }
 
