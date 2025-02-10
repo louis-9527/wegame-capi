@@ -95,21 +95,25 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
      * @return
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
-        List<MariaMakilingGameRecordDo> list = new ArrayList<>();
-        MariaMakilingGameRecordDo gameRecord = playGame(betDo);
-        list.add(gameRecord);
-        // 判断-是否中免费轮
-        if (gameRecord.hasRewardFreeSpins()) {
-            // 执行免费轮投注
-            List<MariaMakilingGameRecordDo> gameRecordList = freeSpinsPlayGame(betDo);
-            // 组装-免费轮IDS
-            gameRecord.setFreeSpinIds(Optional.ofNullable(gameRecordList)
-                    .orElse(Collections.emptyList())
-                    .stream()
-                    .map(MariaMakilingGameRecordDo::getIndex)
-                    .collect(Collectors.toList()));
-            list.addAll(gameRecordList);
-        }
+        List<MariaMakilingGameRecordDo> list = getGame().play(GamePlayDo.builder()
+                .gameType(betDo.getGameType())
+                .betType(betDo.getBetType())
+                .betSubType(betDo.getBetSubType())
+                .betAmount(betDo.getBetDetail().getBetAmount())
+                .build());
+        AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
+        //        // 判断-是否中免费轮
+        //        if (gameRecord.hasRewardFreeSpins()) {
+        //            // 执行免费轮投注
+        //            List<MariaMakilingGameRecordDo> gameRecordList = freeSpinsPlayGame(betDo);
+        //            // 组装-免费轮IDS
+        //            gameRecord.setFreeSpinIds(Optional.ofNullable(gameRecordList)
+        //                    .orElse(Collections.emptyList())
+        //                    .stream()
+        //                    .map(MariaMakilingGameRecordDo::getIndex)
+        //                    .collect(Collectors.toList()));
+        //            list.addAll(gameRecordList);
+        //        }
         // 构建投注记录
         BetRecordDo<MariaMakilingBetRecordDetailDo> betRecord = BetRecordBuilder.build(generateRecordId(),
                 betDo,
@@ -121,6 +125,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                 MariaMakilingBetRecordDetailDo.builder()
                         .gameRecordList(list)
                         .build());
+        MariaMakilingGameRecordDo gameRecord = list.get(0);
         // 保存投注记录并派奖
         Long userCredit = saveBetRecordAndBetWithPayoutAsync(betRecord, gameRecord.hasRewardFreeSpins());
         // 组装返回结果
@@ -133,35 +138,6 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                 .overallRewardAmount(Objects.nonNull(gameRecord.getRewardResult()) ? gameRecord.getRewardResult().getTotalRewardAmount() : 0L)
                 .resultDetail(gameRecord)
                 .build();
-    }
-
-    private MariaMakilingGameRecordDo playGame(BetDo<MariaMakilingBetDo> betDo) {
-        List<MariaMakilingGameRecordDo> gameRecords = getGame().play(GamePlayDo.builder()
-                .gameType(betDo.getGameType())
-                .betType(betDo.getBetType())
-                .betSubType(betDo.getBetSubType())
-                .betAmount(betDo.getBetDetail().getBetAmount())
-                .freeSpinsFlag(false)
-                .build());
-        AssertUtil.assertNotEmpty(gameRecords, ErrorCode.ERR_INTER);
-        AssertUtil.assertTrue(gameRecords.size() == 1, ErrorCode.ERR_INTER);
-        return gameRecords.get(0);
-    }
-
-    /**
-     * 免费轮
-     *
-     * @param betDo
-     * @return
-     */
-    private List<MariaMakilingGameRecordDo> freeSpinsPlayGame(BetDo<MariaMakilingBetDo> betDo) {
-        return getGame().play(GamePlayDo.builder()
-                .gameType(betDo.getGameType())
-                .betType(betDo.getBetType())
-                .betSubType(BetSubTypeEnum.valueOfFreeSpinsBetSubType(betDo.getBetType()))
-                .betAmount(betDo.getBetDetail().getBetAmount())
-                .freeSpinsFlag(true)
-                .build());
     }
 
 
