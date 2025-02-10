@@ -107,7 +107,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 list.addAll(gameRecordList);
             }
             // 构建投注记录
-            BetRecordDo<MariaMakilingBetRecordDetailDo> betRecord = BetRecordBuilder.build(generateRecordId(),
+            BetRecordDo<MalakasBetRecordDetailDo> betRecord = BetRecordBuilder.build(generateRecordId(),
                     betDo,
                     betDo.getBetDetail().getBetAmount(),
                     betDo.getBetDetail().getPayAmount(),
