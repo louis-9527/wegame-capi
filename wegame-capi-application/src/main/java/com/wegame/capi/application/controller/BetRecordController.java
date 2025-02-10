@@ -57,6 +57,7 @@ public class BetRecordController {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         BetRecordDo betRecordDo = betRecordService.getSimpleWithCache(Long.valueOf(id), userInfo.getPlayerId(), GameTypeEnum.valueOfId(userInfo.getGameId()));
-        return CommonResponse.build(BetRecordConverter.doToVo(betRecordDo, false));
+        // 获取 gameList
+        return CommonResponse.build(BetRecordConverter.doToVo(betRecordDo));
     }
 }
