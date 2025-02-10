@@ -29,8 +29,8 @@ public class MalakasBetResultVo implements Serializable {
     private Long totalRewardAmount;
     @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
-    @ApiModelProperty("滚轮结果")
-    private MalakasSymbolVo[][] spinsResult;
+    @ApiModelProperty("滚轮")
+    private MalakasSymbolVo[][] wheel;
     @ApiModelProperty("中奖元素坐标集合")
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
