@@ -7,6 +7,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.client.domain.vo.MalakasBetResultVo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MalakasGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo> {
+public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasBetResultVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 序号: 默认1
@@ -65,7 +66,14 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MariaMak
     }
 
     @Override
-    public MariaMakilingBetResultVo toVo() {
+    public MalakasBetResultVo toVo() {
+    if(Objects.isNull(rewardResult)){
+        MalakasSymbolDo[][] symbolArr = wheel.getSymbolArr();
+        MalakasBetResultVo.builder()
+                .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+    }
+
+
         if (Objects.isNull(rewardResult)) {
             return MariaMakilingBetResultVo.builder()
                     .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
@@ -80,6 +88,9 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MariaMak
                     .freeSpinFlag(0)
                     .build();
         } else {
+
+
+
 //            return MariaMakilingBetResultVo.builder()
 //                    .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
 //                    .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())

@@ -1,6 +1,8 @@
 package com.wegame.capi.biz.builder;
 
+import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.client.domain.vo.MalakasBetResultVo;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -28,5 +30,10 @@ public class SymbolBuilder {
             }
         }
         return integerArray;
+    }
+
+
+    public MalakasBetResultVo.MalakasSymbolVo[][] build(MalakasSymbolDo[][] symbolArr){
+
     }
 }
