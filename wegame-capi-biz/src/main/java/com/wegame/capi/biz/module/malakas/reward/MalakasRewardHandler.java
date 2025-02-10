@@ -105,6 +105,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         }
         // 5.构建中奖结果
         int scatterCount = scatterCount(rewardHandle);
+        Integer freeSpinsTimes = malakasConfig.getScatterFreeSpinsTimesConfig().get(scatterCount);
         RewardResultDo rewardResult = RewardResultDo.builder()
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
@@ -112,7 +113,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 .totalRewardAmount(totalRewardAmount)
                 .hasRewardFreeSpin(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                 .rewardLineDetailList(rewardLineDetailList)
-                .rewardFreeSpinTimes(malakasConfig.getScatterFreeSpinsTimesConfig().get(scatterCount))
+                .rewardFreeSpinTimes(Objects.isNull(freeSpinsTimes)? 0 : freeSpinsTimes)
                 .totalMultiple(totalMultiple)
                 .build();
         // 6.返回中奖信息
