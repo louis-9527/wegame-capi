@@ -51,7 +51,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
          */
         private BetResultDo<MalakasGameRecordDo> betForFreeSpins(BetDo<MalakasBetDo> betDo) {
             MalakasBetDo betDetail = betDo.getBetDetail();
-            BetRecordDo<MalakasBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), getGame().getGameInfo().getGameType());
+            BetRecordDo<MalakasBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), null, getGame().getGameInfo().getGameType());
             AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
             MalakasBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
             AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);
