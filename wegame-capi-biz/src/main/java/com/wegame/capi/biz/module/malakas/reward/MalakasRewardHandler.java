@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
+import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
@@ -51,6 +52,8 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
     MultipleCalculateStrategy malakasMultipleCalculateStrategy;
     @Autowired
     BetRecordService betRecordService;
+    @Autowired
+    MalakasConfig malakasConfig;
 
     @Override
     public RewardResultDo handle(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
@@ -71,6 +74,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .totalMultiple(totalMultiple)
                     .hasRewardFreeSpin(false)
                     .rewardLineDetailList(null)
+                    .rewardFreeSpinTimes(null)
                     .build();
         }
 
@@ -100,13 +104,15 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .build());
         }
         // 5.构建中奖结果
+        int scatterCount = scatterCount(rewardHandle);
         RewardResultDo rewardResult = RewardResultDo.builder()
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
-                .hasRewardFreeSpin(scatterCount(rewardHandle) >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
+                .hasRewardFreeSpin(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                 .rewardLineDetailList(rewardLineDetailList)
+                .rewardFreeSpinTimes(malakasConfig.getScatterFreeSpinsTimesConfig().get(scatterCount))
                 .totalMultiple(totalMultiple)
                 .build();
         // 6.返回中奖信息

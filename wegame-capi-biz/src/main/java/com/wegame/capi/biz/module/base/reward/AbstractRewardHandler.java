@@ -80,9 +80,10 @@ public abstract class AbstractRewardHandler<T extends SymbolDo> implements Rewar
         return CollectionUtils.isNotEmpty(rewardLineList) && rewardLineList.stream().anyMatch(r -> r.isScatterReward());
     }
 
-    public long scatterCount(RewardHandleDo<T> rewardHandle) {
+    public Integer scatterCount(RewardHandleDo<T> rewardHandle) {
         WheelDo<T> wheel = rewardHandle.getWheel();
-        return Arrays.stream(wheel.getSymbolArr()).flatMap(Arrays::stream).filter(Objects::nonNull).filter(SymbolDo::isScatterSymbol).count();
+        long count = Arrays.stream(wheel.getSymbolArr()).flatMap(Arrays::stream).filter(Objects::nonNull).filter(SymbolDo::isScatterSymbol).count();
+        return (int) count;
     }
 
 }
