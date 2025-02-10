@@ -1,17 +1,11 @@
 package com.wegame.capi.infrastructure.config;
 
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * @author apple
@@ -23,29 +17,26 @@ public class MongodbTemplateConfig {
 
     @Value("${spring.data.mongodb.dynamic.maria_makiling_mdb.uri}")
     String mariaMakilingMdbUri;
-    @Value("${spring.data.mongodb.dynamic.malakas_mdb.uri}")
-    String malakasMdbUri;
-
-    //    @Bean
-    //    public MongoClient mariaMakilingMongoClient() {
-    //        return MongoClients.create(mariaMakilingMdbUri);
-    //    }
+    //    @Value("${spring.data.mongodb.dynamic.malakas_mdb.uri}")
+    //    String malakasMdbUri;
 
     /**
      * bean格式，游戏名称小写 + MongoTemplate
+     *
      * @return
      */
-    @Bean
+    @Bean("mariamakilingMongoTemplate")
     public MongoTemplate mariamakilingMongoTemplate() {
         return new MongoTemplate(MongoClients.create(mariaMakilingMdbUri), "maria_makiling_mdb");
     }
 
-    /**
-     * bean格式，游戏名称小写 + MongoTemplate
-     * @return
-     */
-    @Bean
-    public MongoTemplate malakasMongoTemplate() {
-        return new MongoTemplate(MongoClients.create(malakasMdbUri), "malakas_mdb");
-    }
+    //    /**
+    //     * bean格式，游戏名称小写 + MongoTemplate
+    //     *
+    //     * @return
+    //     */
+    //    @Bean("malakasMongoTemplate")
+    //    public MongoTemplate malakasMongoTemplate() {
+    //        return new MongoTemplate(MongoClients.create(malakasMdbUri), "malakas_mdb");
+    //    }
 }

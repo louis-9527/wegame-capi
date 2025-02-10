@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetRecordDo<T> implements Serializable {
+public class BetRecordDo implements Serializable {
     private static final long serialVersionUID = -3514324297343525888L;
     /**
      * 主键ID
@@ -99,10 +99,5 @@ public class BetRecordDo<T> implements Serializable {
     private Long updateTime;
 
     ///////////////  above auto generated ///////////////
-
-    /**
-     * 游戏记录明细
-     */
-    private T detail;
 }
 

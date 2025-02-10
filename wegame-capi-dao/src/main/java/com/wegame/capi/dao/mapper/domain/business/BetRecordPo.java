@@ -85,10 +85,6 @@ public class BetRecordPo implements Serializable {
      */
     private Integer status;
     /**
-     * 游戏记录明细json
-     */
-    private Object detail;
-    /**
      * 创建人
      */
     private String creator;
