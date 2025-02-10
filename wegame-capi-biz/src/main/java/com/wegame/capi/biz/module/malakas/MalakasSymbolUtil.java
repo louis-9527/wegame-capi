@@ -15,6 +15,7 @@ import com.wegame.capi.common.enums.SymbolRuleTypeEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -50,27 +51,37 @@ public class MalakasSymbolUtil {
      * @param symbolArr
      */
     public static void rebuildSymbolArr(MalakasSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
-        // 处理第一行：按行处理(非空元素左移，第一列元素&最后一列元素为空)
+        // 处理第一行：按行[1,row-1]处理(非空元素左移，第一列元素&最后一列元素为空)
         int currentColum = 1;
         for (int colum = 1; colum < gameInfoDo.getColumn() - 1; colum++) {
             if (Objects.nonNull(symbolArr[ONE_ROW_INDEX][colum])) {
-                MalakasSymbolDo temp = symbolArr[ONE_ROW_INDEX][colum];
-                symbolArr[ONE_ROW_INDEX][currentColum] = temp;
-                if (!Objects.equals(currentColum, colum)) {
+                if (Objects.equals(currentColum, colum)) {
+                    // 不做移动
+                    // do nothing
+                } else {
+                    // 移动
+                    MalakasSymbolDo temp = symbolArr[ONE_ROW_INDEX][colum];
+                    symbolArr[ONE_ROW_INDEX][currentColum] = temp;
                     symbolArr[ONE_ROW_INDEX][colum] = null;
                 }
+                currentColum++;
             }
         }
-        // 处理非第一行：按列处理（非空元素下移）
+        // 处理非第一行：按列处理（从第二行开始，非空元素下移）
         for (int colum = ONE_COLUM_INDEX; colum < gameInfoDo.getColumn(); colum++) {
             int currentRow = gameInfoDo.getRow() - 1;
-            for (int row = gameInfoDo.getRow() - 1; row > 0; row--) {
+            for (int row = gameInfoDo.getRow() - 1; row > ONE_ROW_INDEX; row--) {
                 if (Objects.nonNull(symbolArr[row][colum])) {
-                    MalakasSymbolDo temp = symbolArr[row][colum];
-                    symbolArr[currentRow][colum] = temp;
-                    if (!Objects.equals(currentRow, row)) {
-                        symbolArr[currentRow][colum] = null;
+                    if (Objects.equals(currentRow, row)) {
+                        // 不做移动
+                        // do nothing
+                    } else {
+                        // 移动
+                        MalakasSymbolDo temp = symbolArr[row][colum];
+                        symbolArr[currentRow][colum] = temp;
+                        symbolArr[row][colum] = null;
                     }
+                    currentRow --;
                 }
             }
         }
@@ -181,6 +192,18 @@ public class MalakasSymbolUtil {
         return maxRow;
     }
 
+    public static int countIndexSymbol(MalakasSymbolDo[][] symbolArr, SymbolEnum symbol) {
+        int count = 0;
+        for (int row = 0; row < symbolArr.length; row++) {
+            for (int col = 0; col < symbolArr[row].length; col++) {
+                if (StringUtils.equals(symbolArr[row][col].getId(), symbol.getId())){
+                    count ++;
+                }
+            }
+        }
+        return count;
+    }
+
     public static void postPlaceholderSymbol(List<MalakasGameRecordDo> ret) {
         for (MalakasGameRecordDo record : CollectionUtils.emptyIfNull(ret)) {
             MalakasSymbolDo[][] symbolArr = record.getWheel().getSymbolArr();
@@ -192,5 +215,20 @@ public class MalakasSymbolUtil {
                 }
             }
         }
+    }
+
+    public static void print(MalakasSymbolDo[][] symbolArr, String scene) {
+        System.out.println("symbolArr: " + scene);
+        for (int row = 0; row < symbolArr.length; row++) {
+            for (int colum = 0; colum < symbolArr[row].length; colum++) {
+                if (Objects.nonNull(symbolArr[row][colum])) {
+                    System.out.print(symbolArr[row][colum].getId() +  " " + symbolArr[row][colum].getSymbolSize().getColumSpan() + " ");
+                } else {
+                    System.out.print("null   ");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 }

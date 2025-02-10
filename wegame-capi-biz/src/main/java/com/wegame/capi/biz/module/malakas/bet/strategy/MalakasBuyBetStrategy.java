@@ -12,9 +12,4 @@ import org.springframework.stereotype.Component;
 @Component("malakasBuyBetStrategy")
 public class MalakasBuyBetStrategy extends AbstractMalakasBetStrategy {
 
-    @Override
-    public Game getGame() {
-        return null;
-    }
-
 }

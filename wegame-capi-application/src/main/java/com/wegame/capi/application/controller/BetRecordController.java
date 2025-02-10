@@ -13,7 +13,7 @@ import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
-import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
+import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ public class BetRecordController {
         request.validate();
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        request.setUserId(userInfo.getId());
+        request.setPlayerId(userInfo.getPlayerId());
         BetRecordQuery query = BetRecordConverter.requestToQuery(request, "createTime");
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
@@ -56,7 +56,7 @@ public class BetRecordController {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id), GameTypeEnum.valueOfId(userInfo.getGameId()));
+        BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id), userInfo.getPlayerId(), GameTypeEnum.valueOfId(userInfo.getGameId()));
         return CommonResponse.build(BetRecordConverter.doToVo(betRecordDo, false));
     }
 }

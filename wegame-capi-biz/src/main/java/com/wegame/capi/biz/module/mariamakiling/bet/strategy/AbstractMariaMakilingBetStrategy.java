@@ -14,6 +14,8 @@ import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.common.context.UserInfoContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -52,7 +54,9 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
         MariaMakilingBetDo betDetail = betDo.getBetDetail();
-        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), getGame().getGameInfo().getGameType());
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), userInfo.getPlayerId(), getGame().getGameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
         AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);
@@ -118,7 +122,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                         .gameRecordList(list)
                         .build());
         // 保存投注记录并派奖
-        Long userCredit = saveBetRecordAndBetWithPayout(betRecord);
+        Long userCredit = saveBetRecordAndBetWithPayoutAsync(betRecord, gameRecord.hasRewardFreeSpins());
         // 组装返回结果
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betRecord.getId())

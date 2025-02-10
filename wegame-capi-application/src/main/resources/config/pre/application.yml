@@ -2,10 +2,8 @@ appid: com.wegame.capi
 ## log
 logging:
   level:
-    org.springframework.web: info
-    org.springframework.data.mongodb.core.MongoTemplate: info
     com.wegame: info
-    org.apache.ibatis: info
+    org.mongodb: error
 ## server
 server:
   port: 9500
@@ -56,7 +54,7 @@ spring:
     timeout: 500
     cluster:
       nodes:
-        - uat-livsport-platform-redis-hk.k4h6cn.clustercfg.ape1.cache.amazonaws.com:6379
+        - uat-makiling-redis-sg.uj7p2w.clustercfg.apse1.cache.amazonaws.com:6379
       max-redirects: 5
     lettuce:
       pool:
@@ -75,9 +73,9 @@ spring:
       strict: true
       datasource:
         wegame_user_db:
-          url: jdbc:mysql://uat-livsport-platform-mysql-hk.cluster-cmi9oiggthxz.ap-east-1.rds.amazonaws.com:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: UatLIVsportService
-          password: ENC(SpzzeeST5vkzJoXPIvuyLajSN/0gK/UpYfkGN9k2iOQfJbLTEHIVYOb74+b3w69iUt2mzOLfyJ3/eGGFyIn5SQ==)
+          url: jdbc:mysql://uat-makiling-mysql-sg.cluster-cfyzf55cbcc5.ap-southeast-1.rds.amazonaws.com:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: uatMakilingSERvice
+          password: ENC(in249zpTqyECI+UDsxVp14KxYKHbiKh0JCMgG4Ekpx+vIeHfwMmplUU2GUDP7vLSPAxVnJuKwM/yUfxIfvHzHw==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
@@ -94,7 +92,7 @@ spring:
             pool-prepared-statements: false
   data:
     mongodb:
-      uri: mongodb+srv://UatLIVsportService:kNAETaSO0bHAn1s13d@livsport-platform-uat-pri.saa4q.mongodb.net/livsport-platform?retryWrites=true&w=majority&readPreference=secondaryPreferred
+      uri: mongodb+srv://uatMakilingSERvice:vImchf4Zpgx20OJD@makiling-uat-pri.ac9hy.mongodb.net/makiling?retryWrites=true&w=majority
 ## fastjson
 fastjson:
   parser:
@@ -126,6 +124,11 @@ api:
   go:
     wegameGoDomain: http://wegame-go-svc.wegame-uat.svc.cluster.local:9800/go/game
     secretString: xETPPpSvBtJ4CShtVQwme9ngrNixUfXHbi7UkXBJ7u8LxlJwwcNwNdJQgZUguTwa
+pulsar:
+  ## service-url: pulsar://16.162.139.203:6650
+  service-url: pulsar://pulsar.makillingslot.net:6650
+  tenant: MariaMakiling
+  namespaces: pre
 #lark
 lark:
   robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

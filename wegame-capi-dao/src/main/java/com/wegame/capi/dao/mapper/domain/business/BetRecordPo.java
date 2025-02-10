@@ -1,13 +1,11 @@
-package com.wegame.capi.dao.mapper.domain.user;
+package com.wegame.capi.dao.mapper.domain.business;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * game_record：投注记录
@@ -24,7 +22,7 @@ public class BetRecordPo implements Serializable {
      * 主键ID
      */
     @Id
-    @Field("id")
+    @Field("_id")
     private Long id;
     /**
      * 平台id

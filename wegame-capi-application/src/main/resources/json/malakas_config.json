@@ -271,11 +271,6 @@
             "5": "30",
             "6": "20"
         },
-        "scatterFreeSpinsTimesConfig": {
-            "4": "8",
-            "5": "10",
-            "6": "12"
-        },
         "symbolSizeProbabilisticConfig": {
             "S": [
                 "100.00",
@@ -323,5 +318,10 @@
             "0.00",
             "5.00"
         ]
+    },
+    "scatterFreeSpinsTimesConfig": {
+        "4": "8",
+        "5": "10",
+        "6": "12"
     }
 }

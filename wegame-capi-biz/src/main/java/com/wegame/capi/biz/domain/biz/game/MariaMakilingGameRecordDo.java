@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.game;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
@@ -55,6 +56,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      *
      * @return
      */
+    @JsonIgnore
     public boolean hasRewardFreeSpins() {
         return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin();
     }

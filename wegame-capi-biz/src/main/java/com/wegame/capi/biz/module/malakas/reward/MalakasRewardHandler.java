@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
+import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
@@ -42,12 +43,17 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
     private static final Map<String, SymbolEnum> WILD_SYMBOL_MAP = new ImmutableMap.Builder<String, SymbolEnum>()
             .put(SymbolEnum.Wild.getId(), SymbolEnum.Wild)
             .build();
+
+    private static final Integer MIN_SCATTER_COUNT_FOR_FREE_SPIN = 4;
+
     @Autowired
     OddsCalculateStrategy malakasOddsCalculateStrategy;
     @Autowired
     MultipleCalculateStrategy malakasMultipleCalculateStrategy;
     @Autowired
     BetRecordService betRecordService;
+    @Autowired
+    MalakasConfig malakasConfig;
 
     @Override
     public RewardResultDo handle(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
@@ -67,6 +73,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .totalRewardAmount(0L)
                     .totalMultiple(totalMultiple)
                     .hasRewardFreeSpin(false)
+                    .rewardFreeSpinTimes(0)
                     .rewardLineDetailList(null)
                     .build();
         }
@@ -97,13 +104,15 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .build());
         }
         // 5.构建中奖结果
+        int scatterCount = scatterCount(rewardHandle);
         RewardResultDo rewardResult = RewardResultDo.builder()
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
-                .hasRewardFreeSpin(hasRewardScatter(rewardLineList))
+                .hasRewardFreeSpin(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                 .rewardLineDetailList(rewardLineDetailList)
+                .rewardFreeSpinTimes(malakasConfig.getScatterFreeSpinsTimesConfig().get(scatterCount))
                 .totalMultiple(totalMultiple)
                 .build();
         // 6.返回中奖信息

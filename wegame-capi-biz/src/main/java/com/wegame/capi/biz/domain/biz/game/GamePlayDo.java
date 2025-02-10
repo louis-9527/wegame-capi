@@ -38,6 +38,10 @@ public class GamePlayDo implements Serializable {
      */
     private Long betAmount;
     /**
+     * 投注记录id
+     */
+    private Long betRecordId;
+    /**
      * 免费轮次标识：是则生产10-15次滚轮结果
      */
     private boolean freeSpinsFlag = false;

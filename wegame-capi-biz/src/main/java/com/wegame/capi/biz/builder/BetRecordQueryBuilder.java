@@ -3,7 +3,7 @@ package com.wegame.capi.biz.builder;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.dao.mapper.domain.user.BetRecordQuery;
+import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,7 +22,7 @@ public class BetRecordQueryBuilder {
         }
 
         if (Objects.nonNull(recordQuery.getLastId())) {
-            query.addCriteria(Criteria.where("id").lt(recordQuery.getLastId()));
+            query.addCriteria(Criteria.where("_id").lt(recordQuery.getLastId()));
         }
 
         if (StringUtils.isNotEmpty(recordQuery.getOrderByClause())) {
@@ -35,8 +35,9 @@ public class BetRecordQueryBuilder {
         Query query = buildMongodbQuery(recordQuery);
         // 指定需要查询的字段
         Field fields = query.fields();
-        fields.include("id");
+        fields.include("_id");
         fields.include("userId");
+        fields.include("playerId");
         fields.include("playerName");
         fields.include("betAmount");
         fields.include("payAmount");
@@ -48,12 +49,8 @@ public class BetRecordQueryBuilder {
 
     public static Criteria buildMongodbCriteria(BetRecordQuery recordQuery) {
         Criteria criteria = new Criteria();
-
         if (Objects.nonNull(recordQuery.getId())) {
-            criteria.and("id").is(recordQuery.getId());
-        }
-        if (Objects.nonNull(recordQuery.getUserId())) {
-            criteria.and("userId").is(recordQuery.getUserId());
+            criteria.and("_id").is(recordQuery.getId());
         }
         if (Objects.nonNull(recordQuery.getPlayerId())) {
             criteria.and("playerId").is(recordQuery.getPlayerId());

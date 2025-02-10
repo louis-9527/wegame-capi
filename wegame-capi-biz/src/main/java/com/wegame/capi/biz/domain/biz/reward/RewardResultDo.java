@@ -54,6 +54,10 @@ public class RewardResultDo<T extends SymbolDo> implements Serializable {
      */
     private boolean hasRewardFreeSpin;
     /**
+     * 获得免费轮次数
+     */
+    private int rewardFreeSpinTimes;
+    /**
      * 中奖线列表
      */
     private List<RewardLineDetailDo<T>> rewardLineDetailList;

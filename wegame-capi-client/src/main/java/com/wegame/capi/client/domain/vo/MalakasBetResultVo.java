@@ -29,8 +29,8 @@ public class MalakasBetResultVo implements Serializable {
     private Long totalRewardAmount;
     @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
-    @ApiModelProperty("滚轮结果")
-    private MalakasSymbolVo[][] spinsResult;
+    @ApiModelProperty("滚轮")
+    private MalakasSymbolVo[][] wheel;
     @ApiModelProperty("中奖元素坐标集合")
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
@@ -54,14 +54,13 @@ public class MalakasBetResultVo implements Serializable {
         private BigDecimal multiple;
         @ApiModelProperty("赔率")
         private BigDecimal odds;
-        @ApiModelProperty("中奖线类型：THREE（三连），FOUR（四连）FIVE（5连）SIX(6连)")
+        @ApiModelProperty("中奖线类型：THREE（三连），FOUR（四连），FIVE（5连），SIX(6连)")
         private String rewardLineType;
         @ApiModelProperty("中奖线子类型：COMMON（普通），SCATTER（SCATTER）")
         private String rewardLineSubType;
         @ApiModelProperty("中奖线数量")
         private Integer rewardLineCount;
-        @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (中奖线数量WAYS)*(1 + 倍率) = 中奖金额）； " +
-                "SCATTER中奖计算公式（投注金额 * 赔率 * （中奖线数量WAYS）= 中奖金额）")
+        @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (中奖线数量WAYS)*(1 + 倍率) = 中奖金额）；")
         private Long rewardAmount;
         @ApiModelProperty("投注金额")
         private Long betAmount;

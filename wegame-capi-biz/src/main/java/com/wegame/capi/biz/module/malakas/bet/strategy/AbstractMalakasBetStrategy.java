@@ -10,10 +10,13 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
+import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.malakas.game.MalakasGame;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.common.context.UserInfoContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -51,60 +54,63 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
          */
         private BetResultDo<MalakasGameRecordDo> betForFreeSpins(BetDo<MalakasBetDo> betDo) {
             MalakasBetDo betDetail = betDo.getBetDetail();
-            BetRecordDo<MalakasBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), getGame().getGameInfo().getGameType());
+            UserInfo userInfo = UserInfoContext.getUserInfo();
+            BetRecordDo<MalakasBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), userInfo.getPlayerId(), getGame().getGameInfo().getGameType());
             AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
             MalakasBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
             AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);
             AssertUtil.assertNotEmpty(betRecordDetailDo.getGameRecordList(), ErrorCode.ERR_PARAM);
             List<MalakasGameRecordDo> gameRecordList = betRecordDetailDo.getGameRecordList();
-            // 匹配-免费轮游戏记录
-            MalakasGameRecordDo gameRecord = gameRecordList
-                    .stream()
-                    .filter(item -> Objects.equals(item.getIndex(), betDetail.getFreeSpinsId()))
-                    .findFirst()
-                    .orElse(null);
-            // 统计-当前轮次及之前记录奖励金额之和
-            Long overallRewardAmount = Optional.ofNullable(gameRecordList)
-                    .orElse(Collections.emptyList())
-                    .stream()
-                    .filter(item -> item.getRewardResult() != null && item.getIndex() <= betDetail.getFreeSpinsId())
-                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                    .sum();
+            //            // 匹配-免费轮游戏记录 todo fix
+            //            MalakasGameRecordDo gameRecord = gameRecordList
+            //                    .stream()
+            //                    .filter(item -> Objects.equals(item.getIndex(), betDetail.getFreeSpinsId()))
+            //                    .findFirst()
+            //                    .orElse(null);
+            //            // 统计-当前轮次及之前记录奖励金额之和
+            //            Long overallRewardAmount = Optional.ofNullable(gameRecordList)
+            //                    .orElse(Collections.emptyList())
+            //                    .stream()
+            //                    .filter(item -> item.getRewardResult() != null && item.getIndex() <= betDetail.getFreeSpinsId())
+            //                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+            //                    .sum();
             // 后处理-免费轮
-            freeSpinsAfterHandle(betDo, betRecordDetailDo, overallRewardAmount);
+            //            freeSpinsAfterHandle(betDo, betRecordDetailDo, overallRewardAmount);
             // 返回
             return BetResultDo.<MalakasGameRecordDo>builder()
                     .betRecordId(betDetail.getBetRecordId())
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .overallRewardAmount(overallRewardAmount)
-                    .resultDetail(gameRecord)
+                    .overallRewardAmount(0L) // todo fix
+                    .resultDetail(null) // todo fix
                     .build();
         }
 
         /**
          * 非免费轮投注
-         *
-         * @param betDo
-         * @return
          */
         private BetResultDo<MalakasGameRecordDo> betForNonFreeSpins(BetDo<MalakasBetDo> betDo) {
-            List<MalakasGameRecordDo> list = new ArrayList<>();
-            MalakasGameRecordDo gameRecord = playGame(betDo);
-            list.add(gameRecord);
+            List<MalakasGameRecordDo> list = getGame().play(GamePlayDo.builder()
+                    .gameType(betDo.getGameType())
+                    .betType(betDo.getBetType())
+                    .betSubType(betDo.getBetSubType())
+                    .betAmount(betDo.getBetDetail().getBetAmount())
+                    .freeSpinsFlag(false) // todo fix
+                    .build());
+            AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
             // 判断-是否中免费轮
-            if (gameRecord.hasRewardFreeSpins()) {
-                // 执行免费轮投注
-                List<MalakasGameRecordDo> gameRecordList = freeSpinsPlayGame(betDo);
-                // 组装-免费轮IDS
-                gameRecord.setFreeSpinIds(Optional.ofNullable(gameRecordList)
-                        .orElse(Collections.emptyList())
-                        .stream()
-                        .map(MalakasGameRecordDo::getIndex)
-                        .collect(Collectors.toList()));
-                list.addAll(gameRecordList);
-            }
+            //            if (gameRecord.hasRewardFreeSpins()) {
+            //                // 执行免费轮投注
+            //                List<MalakasGameRecordDo> gameRecordList = freeSpinsPlayGame(betDo);
+            //                // 组装-免费轮IDS
+            //                gameRecord.setFreeSpinIds(Optional.ofNullable(gameRecordList)
+            //                        .orElse(Collections.emptyList())
+            //                        .stream()
+            //                        .map(MalakasGameRecordDo::getIndex)
+            //                        .collect(Collectors.toList()));
+            //                list.addAll(gameRecordList);
+            //            }
             // 构建投注记录
             BetRecordDo<MalakasBetRecordDetailDo> betRecord = BetRecordBuilder.build(generateRecordId(),
                     betDo,
@@ -125,22 +131,9 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
                     .credit(userCredit)
-                    .overallRewardAmount(Objects.nonNull(gameRecord.getRewardResult()) ? gameRecord.getRewardResult().getTotalRewardAmount() : 0L)
-                    .resultDetail(gameRecord)
+                    .overallRewardAmount(null) // todo
+                    .resultDetail(null) // todo
                     .build();
-        }
-
-        private MalakasGameRecordDo playGame(BetDo<MalakasBetDo> betDo) {
-            List<MalakasGameRecordDo> gameRecords = getGame().play(GamePlayDo.builder()
-                    .gameType(betDo.getGameType())
-                    .betType(betDo.getBetType())
-                    .betSubType(betDo.getBetSubType())
-                    .betAmount(betDo.getBetDetail().getBetAmount())
-                    .freeSpinsFlag(false)
-                    .build());
-            AssertUtil.assertNotEmpty(gameRecords, ErrorCode.ERR_INTER);
-            AssertUtil.assertTrue(gameRecords.size() == 1, ErrorCode.ERR_INTER);
-            return gameRecords.get(0);
         }
 
         /**

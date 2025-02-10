@@ -1,7 +1,15 @@
 package com.wegame.capi.common.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.util.Objects;
 
+@ToString
+@Getter
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum BetStatusEnum {
 
     ING(0, "进行中"),
