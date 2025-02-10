@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Objects;
 import java.util.UUID;
@@ -23,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class PulsarProducer {
 
-    private final ConcurrentHashMap<String, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
+    // private final ConcurrentHashMap<String, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
 
     @Value("${pulsar.tenant}")
     String tenant;
@@ -31,6 +32,8 @@ public class PulsarProducer {
     String namespace;
     @Autowired
     PulsarClient pulsarClient;
+
+    private Producer<byte[]> producer;
 
     public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage, int tryTimes) {
         long startTime = System.currentTimeMillis();
@@ -46,22 +49,27 @@ public class PulsarProducer {
     }
 
     public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
-        String topicName = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "_topic");
         try {
-            return getProducer(topicName, gameType).newMessage()
-                    // 关键点：设置 Key
+            log.info("sendMessage--:type:{},content:{}", mqMessage.getBody(), JSON.toJSONString(mqMessage));
+            return producer.newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
                     .send();
+//
+//            return getProducer(topicName, gameType).newMessage()
+//                    // 关键点：设置 Key
+//                    .key(mqMessage.getMsgId())
+//                    .value(JSON.toJSONBytes(mqMessage))
+//                    .send();
         } catch (PulsarClientException e) {
             log.error("mariamakilingProducer send fail, msg={}", FastJsonUtils.toJSONString(mqMessage));
             throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
         }
     }
-
-    private Producer<byte[]> getProducer(String topicName, GameTypeEnum gameType) {
-        return producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
-    }
+//
+//    private Producer<byte[]> getProducer(String topicName, GameTypeEnum gameType) {
+//        return producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
+//    }
 
     private Producer<byte[]> createProducer(String topicName, GameTypeEnum gameType) {
         try {
@@ -75,15 +83,28 @@ public class PulsarProducer {
         }
     }
 
+    @PostConstruct
+    public void init() {
+        GameTypeEnum gameType = GameTypeEnum.MARIA_MAKILING;
+        String topicName = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "_topic");
+        producer = this.createProducer(topicName, gameType);
+        // producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
+    }
+
     @PreDestroy
     public void shutdown() {
-        producerCache.forEach((key, value) -> {
-            try {
-                value.close();
-            } catch (PulsarClientException e) {
-                log.error("Failed to close Pulsar producer for topic error, topic={}", key, e);
-            }
-        });
-        producerCache.clear();
+        try {
+            producer.close();
+        } catch (Exception e) {
+            log.error("Failed to close Pulsar producer for topic error", e);
+        }
+//        producerCache.forEach((key, value) -> {
+//            try {
+//                value.close();
+//            } catch (PulsarClientException e) {
+//                log.error("Failed to close Pulsar producer for topic error, topic={}", key, e);
+//            }
+//        });
+//        producerCache.clear();
     }
 }

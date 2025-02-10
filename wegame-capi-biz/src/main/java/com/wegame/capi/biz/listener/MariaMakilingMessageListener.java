@@ -31,13 +31,13 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
     protected List<MessageId> processMessages(Messages<byte[]> messages) {
         List<BetRecordDo> betAddRecordList = new ArrayList<>();
         List<BetRecordDo> betUpdateRecordList = new ArrayList<>();
-        Map<Long, MessageId> messageIdMap = new HashMap<>(messages.size());
+        Map<String, MessageId> messageIdMap = new HashMap<>(messages.size());
         messages.forEach(tt -> {
             String message = new String(tt.getData());
             MQMessage<BetRecordDo> betRecordDoMQMessage = JSON.parseObject(message, new TypeReference<MQMessage<BetRecordDo>>() {
             });
             BetRecordDo body = betRecordDoMQMessage.getBody();
-            messageIdMap.put(body.getId(), tt.getMessageId());
+            messageIdMap.put(betRecordDoMQMessage.getType() + "_" + body.getId(), tt.getMessageId());
             if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 betAddRecordList.add(body);
             } else if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.UPDATE.getCode())) {
@@ -52,7 +52,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                 List<Long> failIdList = addResultDo.getFailIdList();
                 if (CollectionUtils.isNotEmpty(failIdList)) {
                     for (Long id : failIdList) {
-                        messageIdMap.remove(id);
+                        messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + id);
                     }
                 }
             } catch (Exception e) {
@@ -70,7 +70,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                 List<Long> failIdList = updateResultDo.getFailIdList();
                 if (CollectionUtils.isNotEmpty(failIdList)) {
                     for (Long id : failIdList) {
-                        messageIdMap.remove(id);
+                        messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + id);
                     }
                 }
             } catch (Exception e) {
