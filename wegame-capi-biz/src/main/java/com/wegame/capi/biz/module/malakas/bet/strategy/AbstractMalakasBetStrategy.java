@@ -14,6 +14,8 @@ import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.malakas.game.MalakasGame;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.common.context.UserInfoContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -51,7 +53,9 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
          */
         private BetResultDo<MalakasGameRecordDo> betForFreeSpins(BetDo<MalakasBetDo> betDo) {
             MalakasBetDo betDetail = betDo.getBetDetail();
-            BetRecordDo<MalakasBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), getGame().getGameInfo().getGameType());
+            UserInfo userInfo = UserInfoContext.getUserInfo();
+            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+            BetRecordDo<MalakasBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), userInfo.getPlayerId(), getGame().getGameInfo().getGameType());
             AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
             MalakasBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
             AssertUtil.assertNotNull(betRecordDetailDo, ErrorCode.ERR_PARAM);
