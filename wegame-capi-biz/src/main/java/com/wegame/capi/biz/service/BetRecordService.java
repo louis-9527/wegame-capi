@@ -172,6 +172,26 @@ public class BetRecordService {
      * @return BetRecordDo 投注记录
      */
     @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName + '_' + #playerId + '_'  + #id")
+    public <T> BetRecordDo<T> getSimpleWithCache(Long id, String playerId, GameTypeEnum gameType) {
+        long startTime = System.currentTimeMillis();
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        Criteria criteria = new Criteria();
+        criteria.and("_id").is(id);
+        criteria.and("playerId").is(playerId);
+        Query query = new Query(criteria);
+        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(query, BetRecordPo.class, gameType.getCollectionName());
+        log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
+        return BetRecordConverter.poToDo(betRecordPo);
+    }
+
+    /**
+     * 查询：根据主键id查询
+     *
+     * @param id       主键id
+     * @param playerId 玩家id
+     * @return BetRecordDo 投注记录
+     */
+    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName + '_' + #playerId + '_'  + #id")
     public <T> BetRecordDo<T> get(Long id, String playerId, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);

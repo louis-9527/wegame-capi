@@ -38,7 +38,7 @@ public class MariaMakilingBetResultVo implements Serializable {
     @ApiModelProperty("免费轮标识,0:否,1:是")
     private Integer freeSpinFlag;
     @ApiModelProperty("免费轮Id列表")
-    private List<Integer> freeSpinIds;
+    private List<String> freeSpinIds;
 
     @Data
     @SuperBuilder

@@ -8,7 +8,6 @@ import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
-import com.wegame.capi.client.domain.vo.IndexVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,9 +34,29 @@ import java.util.stream.Collectors;
 public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
-     * 序号: 默认1
+     * id
      */
-    private Integer index;
+    private Long id;
+    /**
+     * parentId: 无，则为0
+     */
+    private Long parentId;
+    /**
+     * 批次id
+     */
+    private Long batchId;
+    /**
+     * 投注记录id
+     */
+    private Long betRecordId;
+    /**
+     * 玩家id
+     */
+    private String playerId;
+    /**
+     * 玩家名称
+     */
+    private String playerName;
     /**
      * 滚轮
      */
@@ -49,7 +68,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
     /**
      * 免费轮id列表
      */
-    private List<Integer> freeSpinIds;
+    private List<Long> freeSpinGameRecordIds;
 
     /**
      * 是否中奖免费轮
@@ -108,7 +127,11 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                                     .build()
                             ).collect(Collectors.toList()))
                     .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
-                    .freeSpinIds(freeSpinIds)
+                    .freeSpinIds(Optional.ofNullable(freeSpinGameRecordIds)
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.toList()))
                     .build();
         }
     }

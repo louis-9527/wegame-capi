@@ -23,17 +23,13 @@ import java.io.Serializable;
 public class WheelDo<T extends SymbolDo> implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
-     * 滚轮-序号
-     */
-    private Integer index;
-    /**
      * 滚轮-元素二维数组
      */
     private T[][] symbolArr;
 
 
     public void print() {
-        log.info("index:{}", index, symbolArr);
+        log.info("index:{}", symbolArr);
         log.info("symbolArr: ");
         for (int i = 0; i < symbolArr.length; i++) {
             for (int j = 0; j < symbolArr[i].length; j++) {

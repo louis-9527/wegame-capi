@@ -27,14 +27,14 @@ public class MariaMakilingBetRecordDetailDo {
 
     public boolean isLastFreeSpins(int freeSpinsId) {
         MariaMakilingGameRecordDo recordDo = CollectionUtils.isEmpty(gameRecordList) ? null : gameRecordList.get(gameRecordList.size() - 1);
-        return Objects.isNull(recordDo) ? false : Objects.equals(recordDo.getIndex(), freeSpinsId);
+        return Objects.isNull(recordDo) ? false : Objects.equals(recordDo.getId(), freeSpinsId);
     }
 
     public long freeSpinCount() {
         return Optional.ofNullable(gameRecordList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .filter(item -> item.getIndex() > 0)
+                .filter(item -> item.getId() > 0)
                 .count();
     }
 }

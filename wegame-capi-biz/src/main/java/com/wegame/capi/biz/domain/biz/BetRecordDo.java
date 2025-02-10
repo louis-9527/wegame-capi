@@ -82,10 +82,6 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Integer status;
     /**
-     * 游戏记录明细
-     */
-    private T detail;
-    /**
      * 创建人
      */
     private String creator;
@@ -103,5 +99,10 @@ public class BetRecordDo<T> implements Serializable {
     private Long updateTime;
 
     ///////////////  above auto generated ///////////////
+
+    /**
+     * 游戏记录明细
+     */
+    private T detail;
 }
 

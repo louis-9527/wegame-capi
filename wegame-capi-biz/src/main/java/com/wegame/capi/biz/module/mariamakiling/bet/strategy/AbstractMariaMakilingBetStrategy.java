@@ -19,7 +19,6 @@ import com.wegame.capi.common.context.UserInfoContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * MariaMakiling类游戏投注抽象接口
@@ -53,9 +52,11 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
      * @return
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
+        // todo
         MariaMakilingBetDo betDetail = betDo.getBetDetail();
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        // todo 从GameRecord查询 todo
         BetRecordDo<MariaMakilingBetRecordDetailDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), userInfo.getPlayerId(), getGame().getGameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         MariaMakilingBetRecordDetailDo betRecordDetailDo = betRecordDo.getDetail();
@@ -65,14 +66,14 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         // 匹配-免费轮游戏记录
         MariaMakilingGameRecordDo gameRecord = gameRecordList
                 .stream()
-                .filter(item -> Objects.equals(item.getIndex(), betDetail.getFreeSpinsId()))
+                .filter(item -> Objects.equals(item.getId(), betDetail.getFreeSpinsId()))
                 .findFirst()
                 .orElse(null);
         // 统计-当前轮次及之前记录奖励金额之和
         Long overallRewardAmount = Optional.ofNullable(gameRecordList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .filter(item -> item.getRewardResult() != null && item.getIndex() <= betDetail.getFreeSpinsId())
+                .filter(item -> item.getRewardResult() != null && item.getId() <= betDetail.getFreeSpinsId())
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
         // 后处理-免费轮
