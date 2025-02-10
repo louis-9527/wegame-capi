@@ -2,6 +2,7 @@ package com.wegame.capi.test.biz.module.malakas.game;//package com.wegame.capi.t
 
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
+import com.wegame.capi.biz.module.malakas.MalakasSymbolUtil;
 import com.wegame.capi.biz.module.malakas.game.MalakasGame;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -28,6 +29,14 @@ public class MalakasGameTest extends BaseTest {
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
                 .betAmount(100L)
                 .build();
-        List<MalakasGameRecordDo> recordList = malakasGame.play(playDo);
+        for (int i = 0; i < 100; i++) {
+            List<MalakasGameRecordDo> recordList = malakasGame.play(playDo);
+            if (recordList.size() > 1) {
+                recordList.forEach(item -> {
+                    MalakasSymbolUtil.print(item.getWheel().getSymbolArr(), "test");
+                });
+            }
+            System.out.println("end");
+        }
     }
 }
