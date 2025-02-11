@@ -20,6 +20,7 @@ import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
@@ -73,6 +74,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                         .playerId(userInfo.getPlayerId())
                         .orderByClause("_id")
                         .direction(Sort.Direction.ASC)
+                        .cacheKey(String.format("%s_%s", betDo.getBetDetail().getBetRecordId(), userInfo.getPlayerId()))
                         .build(),
                 getGame().getGameInfo().getGameType());
         log.info("gameRecordList: {}", FastJsonUtils.toJSONString(gameRecordList));
