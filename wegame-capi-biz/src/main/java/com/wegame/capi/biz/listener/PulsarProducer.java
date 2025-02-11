@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.mq.MQMessage;
-import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
@@ -15,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -33,19 +30,17 @@ public class PulsarProducer {
     String env;
     @Value("${spring.application.name}")
     String name;
-
     @Autowired
     PulsarClient pulsarClient;
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    RedisTemplate<String, Object> redisTemplate;
 
-
-    public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum,MQMessage<T> mqMessage, int tryTimes) {
+    public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage, int tryTimes) {
         long startTime = System.currentTimeMillis();
         MessageId messageId;
         int times = 0;
         do {
-            messageId = this.sendMessage(gameTypeEnum,mqMessage);
+            messageId = this.sendMessage(gameTypeEnum, mqMessage);
             times++;
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
@@ -53,32 +48,32 @@ public class PulsarProducer {
         return messageId;
     }
 
-    public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum,MQMessage<T> mqMessage) {
+    public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage) {
         try {
             log.info("sendMessage--:type:{},msgId:{}", mqMessage.getType(), mqMessage.getMsgId());
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 redisTemplate.opsForValue().increment("zhumeng001_send_msg_count", 1);
             }
-           return producerCache.get(gameTypeEnum.getId())
+            return producerCache.get(gameTypeEnum.getId())
                     .newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
                     .send();
-//
-//            return getProducer(topicName, gameType).newMessage()
-//                    // 关键点：设置 Key
-//                    .key(mqMessage.getMsgId())
-//                    .value(JSON.toJSONBytes(mqMessage))
-//                    .send();
+                    //
+                    //            return getProducer(topicName, gameType).newMessage()
+                    //                    // 关键点：设置 Key
+                    //                    .key(mqMessage.getMsgId())
+                    //                    .value(JSON.toJSONBytes(mqMessage))
+                    //                    .send();
         } catch (PulsarClientException e) {
             log.error("mariamakilingProducer send fail, msgId={}", mqMessage.getMsgId(), e);
             throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
         }
     }
-//
-//    private Producer<byte[]> getProducer(String topicName, GameTypeEnum gameType) {
-//        return producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
-//    }
+    //
+    //    private Producer<byte[]> getProducer(String topicName, GameTypeEnum gameType) {
+    //        return producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
+    //    }
 
     private Producer<byte[]> createProducer(String topicName, String gameName) {
         try {
@@ -101,8 +96,8 @@ public class PulsarProducer {
     public void init() {
         for (GameTypeEnum item : GameTypeEnum.values()) {
             String topicName = String.format("persistent://%s/%s/%s", name + "_" + item.getName(), env, item.getName() + "_topic");
-            Producer<byte[]>  producer = this.createProducer(topicName, item.getName());
-            producerCache.put(item.getId(),producer);
+            Producer<byte[]> producer = this.createProducer(topicName, item.getName());
+            producerCache.put(item.getId(), producer);
         }
     }
 
