@@ -90,6 +90,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         MariaMakilingGameRecordDo record = buildGameRecord(snowflakeIdGenerator.nextId(),
                 GAME_RECORD_DEFAULT_PARENT_ID,
                 gamePlay.getBetRecordId(),
+                0L,
                 firstWheel,
                 rewardResult,
                 freeSpinGameRecordIds);
@@ -105,6 +106,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 MariaMakilingGameRecordDo gameRecord = buildGameRecord(gameRecordId,
                         GAME_RECORD_DEFAULT_PARENT_ID,
                         record.getBetRecordId(),
+                        record.getId(),
                         item,
                         mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, item)),
                         null);
@@ -252,6 +254,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     private static MariaMakilingGameRecordDo buildGameRecord(Long id,
                                                              Long parentId,
                                                              Long betRecordId,
+                                                             Long batchId,
                                                              WheelDo<SymbolDo> wheel,
                                                              RewardResultDo<SymbolDo> rewardResult,
                                                              List<Long> freeSpinGameRecordIds) {
@@ -260,8 +263,8 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         return MariaMakilingGameRecordDo.builder()
                 .id(id)
                 .parentId(parentId)
-                .batchId(parentId)
                 .betRecordId(betRecordId)
+                .batchId(batchId)
                 .playerId(userInfo.getPlayerId())
                 .playerName(userInfo.getPlayerName())
                 .index(wheel.getIndex())

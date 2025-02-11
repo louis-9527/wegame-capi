@@ -103,15 +103,17 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
      * 非免费轮投注
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
+        long betRecordId = generateRecordId();
         List<MariaMakilingGameRecordDo> list = getGame().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
                 .betAmount(betDo.getBetDetail().getBetAmount())
+                .betRecordId(betRecordId)
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
-        BetRecordDo<MariaMakilingGameRecordDo> betRecord = BetRecordBuilder.build(generateRecordId(),
+        BetRecordDo<MariaMakilingGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
