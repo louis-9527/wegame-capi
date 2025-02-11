@@ -51,24 +51,24 @@ public class SymbolDo implements Serializable {
         return Objects.equals(symbolType, SymbolTypeEnum.WILD);
     }
 
-    /**
-     * 元素规则
-     */
-    @Data
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @EqualsAndHashCode(callSuper = false)
-    public static class SymbolRuleDo implements Serializable {
-        private static final long serialVersionUID = 1L;
-        /**
-         * 规则类型
-         */
-        private SymbolRuleTypeEnum symbolRuleType;
-        /**
-         * 值
-         */
-        private BigDecimal value;
-    }
+    //    /**
+    //     * 元素规则
+    //     */
+    //    @Data
+    //    @SuperBuilder
+    //    @NoArgsConstructor
+    //    @AllArgsConstructor
+    //    @EqualsAndHashCode(callSuper = false)
+    //    public static class SymbolRuleDo implements Serializable {
+    //        private static final long serialVersionUID = 1L;
+    //        /**
+    //         * 规则类型
+    //         */
+    //        private SymbolRuleTypeEnum symbolRuleType;
+    //        /**
+    //         * 值
+    //         */
+    //        private BigDecimal value;
+    //    }
 }
 

@@ -16,16 +16,16 @@ public class MongodbTransactionConfig {
 
     @Autowired
     MongoTemplate mariamakilingMongoTemplate;
-    //    @Autowired
-    //    MongoTemplate malakasMongoTemplate;
+    @Autowired
+    MongoTemplate malakasMongoTemplate;
 
     @Bean(name = "mariamakilingTransactionManager")
     public MongoTransactionManager mariamakilingTransactionManager() {
         return new MongoTransactionManager(mariamakilingMongoTemplate.getMongoDbFactory());
     }
 
-    //    @Bean(name = "malakasTransactionManager")
-    //    public MongoTransactionManager malakasTransactionManager() {
-    //        return new MongoTransactionManager(malakasMongoTemplate.getMongoDatabaseFactory());
-    //    }
+    @Bean(name = "malakasTransactionManager")
+    public MongoTransactionManager malakasTransactionManager() {
+        return new MongoTransactionManager(malakasMongoTemplate.getMongoDatabaseFactory());
+    }
 }

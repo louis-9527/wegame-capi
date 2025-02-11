@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.MalakasBetResultVo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
@@ -17,6 +18,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -33,11 +37,14 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MalakasGameRecordDo implements Serializable{
+@Document(collection = "game_record")
+public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasBetResultVo, BetRecordVo.MalakasGameRecordVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * id
      */
+    @Id
+    @Field("_id")
     private Long id;
     /**
      * parentId: 无，则为0
@@ -83,7 +90,8 @@ public class MalakasGameRecordDo implements Serializable{
     }
 
 
-    public MalakasBetResultVo toVo() {
+    @Override
+    public MalakasBetResultVo toResultVo() {
         if (Objects.isNull(rewardResult)) {
             return MalakasBetResultVo.builder().wheel(SymbolBuilder.build(wheel.getSymbolArr())).build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
@@ -133,5 +141,10 @@ public class MalakasGameRecordDo implements Serializable{
         }
     }
 
+    @Override
+    public BetRecordVo.MalakasGameRecordVo toRecordVo() {
+        // todo @maidong
+        return null;
+    }
 }
 

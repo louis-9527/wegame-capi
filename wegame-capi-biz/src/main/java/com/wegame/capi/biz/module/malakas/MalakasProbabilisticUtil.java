@@ -34,8 +34,8 @@ public class MalakasProbabilisticUtil {
     }
 
 
-    public static Map<String, List<BigDecimal>> getWheelProbabilisticConfig(GamePlayDo gamePlay, MalakasConfig.ProbabilisticConfig probabilisticConfig) {
-        if (gamePlay.isFreeSpinsFlag()) {
+    public static Map<String, List<BigDecimal>> getWheelProbabilisticConfig(GamePlayDo gamePlay, MalakasConfig.ProbabilisticConfig probabilisticConfig, boolean freePlay) {
+        if (freePlay) {
             return probabilisticConfig.getFreePlayWheelProbabilisticConfig();
         } else {
             switch (gamePlay.getBetSubType()) {

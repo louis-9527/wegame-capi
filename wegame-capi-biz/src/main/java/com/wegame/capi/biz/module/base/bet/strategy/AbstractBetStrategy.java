@@ -37,7 +37,7 @@ public abstract class AbstractBetStrategy<BD, RD extends ToVoConverter> implemen
 
     public abstract Game<RD> getGame();
 
-    public abstract AbstractRecordManager<RD> getRecordManager();
+    public abstract AbstractRecordManager getRecordManager();
 
     public long generateRecordId() {
         return snowflakeIdGenerator.nextId();
@@ -46,7 +46,7 @@ public abstract class AbstractBetStrategy<BD, RD extends ToVoConverter> implemen
     /**
      * 保存投注记录并投注派彩
      */
-    public Long saveBetRecordAndBetWithPayoutAsync(BetRecordDo<RD> betRecordDo, Boolean syncOpt) {
+    public Long saveBetRecordAndBetWithPayout(BetRecordDo<RD> betRecordDo, Boolean syncOpt) {
         if (syncOpt) {
             return syncSaveBetRecordAndBetWithPayout(betRecordDo);
         } else {

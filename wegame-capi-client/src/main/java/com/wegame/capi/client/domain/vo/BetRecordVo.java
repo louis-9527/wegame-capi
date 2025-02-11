@@ -67,5 +67,27 @@ public class BetRecordVo implements Validate, Serializable {
         @ApiModelProperty("倍率")
         private BigDecimal multiple;
     }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel("Malakas游戏记录")
+    @EqualsAndHashCode(callSuper = false)
+    public static class MalakasGameRecordVo implements Validate, Serializable {
+        private static final long serialVersionUID = -5835715678741184L;
+        @ApiModelProperty("游戏记录id")
+        private String id;
+        @ApiModelProperty("序号：0为Main，大于0为Free")
+        private Integer index;
+        @ApiModelProperty("投注金额")
+        private Long betAmount;
+        @ApiModelProperty("中奖金额")
+        private Long rewardAmount;
+        @ApiModelProperty("滚轮结果")
+        private MalakasBetResultVo.MalakasSymbolVo[][] wheel;
+        @ApiModelProperty("倍率")
+        private BigDecimal multiple;
+    }
 }
 

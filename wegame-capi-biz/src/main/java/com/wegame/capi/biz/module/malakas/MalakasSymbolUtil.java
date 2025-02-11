@@ -9,9 +9,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.common.enums.SymbolEnum;
-import com.wegame.capi.common.enums.SymbolRuleTypeEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import org.apache.commons.collections4.CollectionUtils;
@@ -81,7 +79,7 @@ public class MalakasSymbolUtil {
                         symbolArr[currentRow][colum] = temp;
                         symbolArr[row][colum] = null;
                     }
-                    currentRow --;
+                    currentRow--;
                 }
             }
         }
@@ -129,7 +127,6 @@ public class MalakasSymbolUtil {
                             .id(SymbolEnum.Wild.getId())
                             .name(SymbolEnum.Wild.getName())
                             .symbolType(SymbolTypeEnum.WILD)
-                            .symbolRule(SymbolDo.SymbolRuleDo.builder().symbolRuleType(SymbolRuleTypeEnum.COMMON).value(null).build())
                             .symbolSize(commonSymbol.getSymbolSize())
                             .symbolGoldBorder(false)
                             .symbolClearTimes(SymbolSizeEnum.getSymbolClearTimes(commonSymbol.getSymbolSize()))
@@ -196,8 +193,8 @@ public class MalakasSymbolUtil {
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
-                if (StringUtils.equals(symbolArr[row][col].getId(), symbol.getId())){
-                    count ++;
+                if (StringUtils.equals(symbolArr[row][col].getId(), symbol.getId())) {
+                    count++;
                 }
             }
         }
@@ -222,7 +219,7 @@ public class MalakasSymbolUtil {
         for (int row = 0; row < symbolArr.length; row++) {
             for (int colum = 0; colum < symbolArr[row].length; colum++) {
                 if (Objects.nonNull(symbolArr[row][colum])) {
-                    System.out.print(symbolArr[row][colum].getId() +  " " + symbolArr[row][colum].getSymbolSize().getColumSpan() + " ");
+                    System.out.print(symbolArr[row][colum].getId() + " " + symbolArr[row][colum].getSymbolSize().getColumSpan() + " ");
                 } else {
                     System.out.print("null   ");
                 }

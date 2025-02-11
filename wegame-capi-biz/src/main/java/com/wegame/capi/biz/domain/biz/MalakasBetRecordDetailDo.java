@@ -7,6 +7,7 @@ import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
+import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.MalakasBetResultDetailVo;
 import com.wegame.capi.client.domain.vo.MalakasBetResultVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MalakasBetRecordDetailDo implements ToVoConverter<MalakasBetResultDetailVo> {
+public class MalakasBetRecordDetailDo implements ToVoConverter<MalakasBetResultDetailVo, BetRecordVo.MalakasGameRecordVo> {
 
     /**
      * 游戏记录列表
@@ -46,12 +47,17 @@ public class MalakasBetRecordDetailDo implements ToVoConverter<MalakasBetResultD
     }
 
     @Override
-    public MalakasBetResultDetailVo toVo() {
+    public MalakasBetResultDetailVo toResultVo() {
         List<MalakasBetResultVo> betResultVos = new ArrayList<>();
         gameRecordList.forEach(tt -> {
             betResultVos.add(toVo(tt));
         });
         return MalakasBetResultDetailVo.builder().resultList(betResultVos).build();
+    }
+
+    @Override
+    public BetRecordVo.MalakasGameRecordVo toRecordVo() {
+        return null;
     }
 
 
