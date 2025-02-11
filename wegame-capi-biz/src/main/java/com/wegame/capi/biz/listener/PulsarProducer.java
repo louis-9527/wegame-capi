@@ -4,13 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.mq.MQMessage;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.MessageTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -24,24 +27,26 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 public class PulsarProducer {
+    private final ConcurrentHashMap<String, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
 
-    // private final ConcurrentHashMap<String, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
+    @Value("${spring.application.env}")
+    String env;
+    @Value("${spring.application.name}")
+    String name;
 
-    @Value("${pulsar.tenant}")
-    String tenant;
-    @Value("${pulsar.namespaces}")
-    String namespace;
     @Autowired
     PulsarClient pulsarClient;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     private Producer<byte[]> producer;
 
-    public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage, int tryTimes) {
+    public <T> MessageId sendMessage(MQMessage<T> mqMessage, int tryTimes) {
         long startTime = System.currentTimeMillis();
         MessageId messageId;
         int times = 0;
         do {
-            messageId = this.sendMessage(gameType, mqMessage);
+            messageId = this.sendMessage(mqMessage);
             times++;
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
@@ -49,9 +54,12 @@ public class PulsarProducer {
         return messageId;
     }
 
-    public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
+    public <T> MessageId sendMessage(MQMessage<T> mqMessage) {
         try {
-            log.info("sendMessage--:type:{},msgId:{}", mqMessage.getBody(), mqMessage.getMsgId());
+            log.info("sendMessage--:type:{},msgId:{}", mqMessage.getType(), mqMessage.getMsgId());
+            if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
+                redisTemplate.opsForValue().increment("zhumeng001_send_msg_count", 1);
+            }
             return producer.newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
@@ -63,7 +71,7 @@ public class PulsarProducer {
 //                    .value(JSON.toJSONBytes(mqMessage))
 //                    .send();
         } catch (PulsarClientException e) {
-            log.error("mariamakilingProducer send fail, msg={}", FastJsonUtils.toJSONString(mqMessage));
+            log.error("mariamakilingProducer send fail, msgId={}", mqMessage.getMsgId(), e);
             throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
         }
     }
@@ -72,16 +80,16 @@ public class PulsarProducer {
 //        return producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
 //    }
 
-    private Producer<byte[]> createProducer(String topicName, GameTypeEnum gameType) {
+    private Producer<byte[]> createProducer(String topicName, String gameName) {
         try {
-            String producerName = gameType.getName() + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp();
+            String producerName = name + "_" + gameName + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp();
             return pulsarClient.newProducer(Schema.BYTES)
                     .topic(topicName)
                     .producerName(producerName)
                     .enableBatching(true) // 开启批量发送
                     .batchingMaxMessages(200) // 每批最大 200 条消息
                     .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
-                    .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
+                    //.sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                     .compressionType(CompressionType.LZ4) // 使用 LZ4 压缩，减少带宽占用
                     .create();
         } catch (PulsarClientException e) {
@@ -91,10 +99,10 @@ public class PulsarProducer {
 
     @PostConstruct
     public void init() {
-        GameTypeEnum gameType = GameTypeEnum.MARIA_MAKILING;
-        String topicName = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "_topic");
-        producer = this.createProducer(topicName, gameType);
-        // producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
+        for (GameTypeEnum item : GameTypeEnum.values()) {
+            String topicName = String.format("persistent://%s/%s/%s", name + "_" + item.getName(), env, item.getName() + "_topic");
+            producer = this.createProducer(topicName, item.getName());
+        }
     }
 
     @PreDestroy

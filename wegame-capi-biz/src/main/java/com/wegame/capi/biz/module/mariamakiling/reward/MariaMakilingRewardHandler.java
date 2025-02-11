@@ -115,7 +115,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
                 .totalMultiple(totalMultiple)
                 .build();
         // 6.返回中奖信息
-        log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
+       // log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
         return rewardResult;
     }
 
