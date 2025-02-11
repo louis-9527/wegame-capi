@@ -71,7 +71,7 @@ public class BetRecordController {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        GameTypeEnum gameType = GameTypeEnum.valueOf(userInfo.getGameId());
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         BetRecordDo betRecordDo = betRecordService.getWithCache(Long.valueOf(id), userInfo.getPlayerId(), gameType);
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
