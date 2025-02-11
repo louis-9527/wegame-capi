@@ -17,6 +17,8 @@ public class MongodbTemplateConfig {
 
     @Value("${spring.data.mongodb.dynamic.maria_makiling_mdb.uri}")
     String mariaMakilingMdbUri;
+    @Value("${spring.data.mongodb.dynamic.maria_makiling_mdb.db}")
+    String mariaMakilingMdbDb;
     //    @Value("${spring.data.mongodb.dynamic.malakas_mdb.uri}")
     //    String malakasMdbUri;
 
@@ -27,7 +29,7 @@ public class MongodbTemplateConfig {
      */
     @Bean("mariamakilingMongoTemplate")
     public MongoTemplate mariamakilingMongoTemplate() {
-        return new MongoTemplate(MongoClients.create(mariaMakilingMdbUri), "maria_makiling_mdb");
+        return new MongoTemplate(MongoClients.create(mariaMakilingMdbUri), mariaMakilingMdbDb);
     }
 
     //    /**
