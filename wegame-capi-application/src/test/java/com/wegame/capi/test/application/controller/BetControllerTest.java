@@ -11,10 +11,10 @@ import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
+//import org.junit.jupiter.api.BeforeAll;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.TestInstance;
+//import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wegame.capi.biz.service.BetService;
@@ -24,6 +24,9 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.test.BaseTest;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -31,8 +34,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 
 @Slf4j
-@ExtendWith(SpringExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//@ExtendWith(SpringExtension.class)
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BetControllerTest extends BaseTest {
     @Autowired
     BetService betService;
@@ -48,6 +51,12 @@ public class BetControllerTest extends BaseTest {
 
     @Test
     public void normal_bet_test() {
+        UserInfoContext.setUserInfo(UserInfo.builder()
+                .id("10000")
+                .userName("system")
+                .build());
+        OperatorContext.setOperator(Operator.builder().name("system").userId(10000L).playerId("10000").build());
+
         BetRequest betRequest = new BetRequest();
         betRequest.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
         betRequest.setBetType(BetTypeEnum.NORMAL_BET.getCode());
@@ -68,6 +77,12 @@ public class BetControllerTest extends BaseTest {
 
     @Test
     public void buy_bet_test() {
+        UserInfoContext.setUserInfo(UserInfo.builder()
+                .id("10000")
+                .userName("system")
+                .build());
+        OperatorContext.setOperator(Operator.builder().name("system").userId(10000L).playerId("10000").build());
+
         BetRequest betRequest = new BetRequest();
         betRequest.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
         betRequest.setBetType(BetTypeEnum.BUY_BET.getCode());
