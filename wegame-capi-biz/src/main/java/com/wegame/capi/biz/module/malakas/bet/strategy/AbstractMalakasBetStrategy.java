@@ -99,7 +99,8 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
 
         Long batchId = list.get(0).getBatchId();
         // 过来所有batchId 相同的数据
-        List<MalakasGameRecordDo> filterList = list.stream().filter(tt -> batchId.longValue() == tt.getBatchId()).collect(Collectors.toList());
+//        List<MalakasGameRecordDo> filterList = list.stream().filter(tt -> batchId.longValue() == tt.getBatchId()).collect(Collectors.toList());
+        List<MalakasGameRecordDo> filterList = list.stream().collect(Collectors.toList());
         // 构建投注记录
 //
 //        long totalRewardAmount = 0L;

@@ -58,6 +58,8 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
     @Override
     public RewardResultDo handle(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
         long current = System.currentTimeMillis();
+        int scatterCount = scatterCount(rewardHandle);
+        Integer freeSpinsTimes = malakasConfig.getScatterFreeSpinsTimesConfig().get(scatterCount);
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
@@ -72,9 +74,9 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
                     .totalMultiple(totalMultiple)
-                    .hasRewardFreeSpin(false)
-                    .rewardFreeSpinTimes(0)
+                    .hasRewardFreeSpin(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                     .rewardLineDetailList(null)
+                    .rewardFreeSpinTimes(Objects.isNull(freeSpinsTimes) ? 0 : freeSpinsTimes)
                     .build();
         }
 
@@ -104,8 +106,6 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .build());
         }
         // 5.构建中奖结果
-        int scatterCount = scatterCount(rewardHandle);
-        Integer freeSpinsTimes = malakasConfig.getScatterFreeSpinsTimesConfig().get(scatterCount);
         RewardResultDo rewardResult = RewardResultDo.builder()
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
@@ -113,7 +113,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 .totalRewardAmount(totalRewardAmount)
                 .hasRewardFreeSpin(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                 .rewardLineDetailList(rewardLineDetailList)
-                .rewardFreeSpinTimes(Objects.isNull(freeSpinsTimes)? 0 : freeSpinsTimes)
+                .rewardFreeSpinTimes(Objects.isNull(freeSpinsTimes) ? 0 : freeSpinsTimes)
                 .totalMultiple(totalMultiple)
                 .build();
         // 6.返回中奖信息
