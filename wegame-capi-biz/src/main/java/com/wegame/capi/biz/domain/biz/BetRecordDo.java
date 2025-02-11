@@ -102,7 +102,5 @@ public class BetRecordDo<T> implements Serializable {
     ///////////////  above auto generated ///////////////
 
     private List<T> gameRecordList;
-
-    private T detail;
 }
 

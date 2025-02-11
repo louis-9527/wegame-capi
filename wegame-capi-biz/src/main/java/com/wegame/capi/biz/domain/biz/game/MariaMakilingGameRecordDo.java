@@ -73,7 +73,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
     /**
      * 免费轮id列表
      */
-    private List<Long> freeSpinGameRecordIds;
+    private List<Long> gameRecordIds;
 
     /**
      * 是否中奖免费轮
@@ -132,7 +132,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                                     .build()
                             ).collect(Collectors.toList()))
                     .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
-                    .freeSpinIds(Optional.ofNullable(freeSpinGameRecordIds)
+                    .freeSpinIds(Optional.ofNullable(gameRecordIds)
                             .orElse(Collections.emptyList())
                             .stream()
                             .map(String::valueOf)

@@ -41,6 +41,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             ONE_COLUM_INDEX,
             THREE_COLUM_INDEX,
             FIVE_COLUM_INDEX);
+    private static final Integer DEFAULT_WHEEL_INDEX = 0;
     private static final Long GAME_RECORD_DEFAULT_PARENT_ID = 0L;
 
     @Autowired
@@ -112,27 +113,6 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         return ret;
     }
 
-    private static MariaMakilingGameRecordDo buildGameRecord(Long id,
-                                                             Long parentId,
-                                                             Long betRecordId,
-                                                             WheelDo<SymbolDo> wheel,
-                                                             RewardResultDo<SymbolDo> rewardResult,
-                                                             List<Long> freeSpinGameRecordIds) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        return MariaMakilingGameRecordDo.builder()
-                .id(id)
-                .parentId(parentId)
-                .batchId(parentId)
-                .betRecordId(betRecordId)
-                .playerId(userInfo.getPlayerId())
-                .playerName(userInfo.getPlayerName())
-                .wheel(wheel)
-                .rewardResult(rewardResult)
-                .freeSpinGameRecordIds(freeSpinGameRecordIds)
-                .build();
-    }
-
     /**
      * 正常滚轮生成：生成逻辑无任何限制
      *
@@ -163,7 +143,9 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 randomNumberindex++;
             }
         }
-        return WheelDo.<SymbolDo>builder().symbolArr(symbolArr).build();
+        return WheelDo.<SymbolDo>builder()
+                .index(DEFAULT_WHEEL_INDEX)
+                .symbolArr(symbolArr).build();
     }
 
     /**
@@ -195,6 +177,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             }
         }
         return WheelDo.<SymbolDo>builder()
+                .index(DEFAULT_WHEEL_INDEX)
                 .symbolArr(symbolArr)
                 .build();
     }
@@ -220,7 +203,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, wheelNumber * gameInfo.getRow() * gameInfo.getColumn());
         int randomNumberIndex = 0;
-        for (Long number = 1L; number <= wheelNumber; number++) {
+        for (Integer number = 1; number <= wheelNumber; number++) {
             SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
             for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
                 // 当前列元素概率
@@ -240,9 +223,11 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                     randomNumberIndex++;
                 }
             }
-            wheels.add(WheelDo.<SymbolDo>builder().symbolArr(symbolArr).build());
+            wheels.add(WheelDo.<SymbolDo>builder()
+                    .index(number)
+                    .symbolArr(symbolArr)
+                    .build());
         }
-
         return wheels;
     }
 
@@ -261,6 +246,28 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                     throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
             }
         }
+    }
+
+    private static MariaMakilingGameRecordDo buildGameRecord(Long id,
+                                                             Long parentId,
+                                                             Long betRecordId,
+                                                             WheelDo<SymbolDo> wheel,
+                                                             RewardResultDo<SymbolDo> rewardResult,
+                                                             List<Long> freeSpinGameRecordIds) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
+        return MariaMakilingGameRecordDo.builder()
+                .id(id)
+                .parentId(parentId)
+                .batchId(parentId)
+                .betRecordId(betRecordId)
+                .playerId(userInfo.getPlayerId())
+                .playerName(userInfo.getPlayerName())
+                .index(wheel.getIndex())
+                .wheel(wheel)
+                .rewardResult(rewardResult)
+                .gameRecordIds(freeSpinGameRecordIds)
+                .build();
     }
 
     private Integer getWheelNumber() {

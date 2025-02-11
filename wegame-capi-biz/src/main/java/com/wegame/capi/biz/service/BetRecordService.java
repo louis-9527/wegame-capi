@@ -161,7 +161,7 @@ public class BetRecordService {
      * @param playerId 玩家id
      * @return BetRecordDo 投注记录
      */
-    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName + '_' + #playerId + '_'  + #id")
+    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #playerId + '_'  + #id")
     public BetRecordDo getWithCache(Long id, String playerId, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
@@ -181,7 +181,6 @@ public class BetRecordService {
      * @param playerId 玩家id
      * @return BetRecordDo 投注记录
      */
-    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName + '_' + #playerId + '_'  + #id")
     public BetRecordDo get(Long id, String playerId, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);

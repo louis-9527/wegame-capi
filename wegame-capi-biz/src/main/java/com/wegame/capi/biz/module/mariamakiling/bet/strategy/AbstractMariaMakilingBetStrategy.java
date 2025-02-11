@@ -11,6 +11,7 @@ import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
+import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
@@ -32,7 +33,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     @Autowired
     MariaMakilingGame mariaMakilingGame;
     @Autowired
-    AbstractRecordManager<MariaMakilingGameRecordDo> recordManager;
+    MariaMakilingRecordManager mariaMakilingRecordManager;
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
@@ -43,7 +44,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
 
     @Override
     public AbstractRecordManager<MariaMakilingGameRecordDo> getRecordManager() {
-        return recordManager;
+        return mariaMakilingRecordManager;
     }
 
     @Override
@@ -90,7 +91,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
         // 后处理-免费轮
-        freeSpinsAfterHandle(betDo, MariaMakilingBetRecordDetailDo.builder().gameRecordList(gameRecordList).build(), overallRewardAmount);
+        freeSpinsAfterHandle(betDo, gameRecordList, overallRewardAmount);
         // 返回
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betDetail.getBetRecordId())
@@ -116,29 +117,15 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                 .betAmount(betDo.getBetDetail().getBetAmount())
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-        //        // 判断-是否中免费轮
-        //        if (gameRecord.hasRewardFreeSpins()) {
-        //            // 执行免费轮投注
-        //            List<MariaMakilingGameRecordDo> gameRecordList = freeSpinsPlayGame(betDo);
-        //            // 组装-免费轮IDS
-        //            gameRecord.setFreeSpinIds(Optional.ofNullable(gameRecordList)
-        //                    .orElse(Collections.emptyList())
-        //                    .stream()
-        //                    .map(MariaMakilingGameRecordDo::getIndex)
-        //                    .collect(Collectors.toList()));
-        //            list.addAll(gameRecordList);
-        //        }
         // 构建投注记录
-        BetRecordDo<MariaMakilingBetRecordDetailDo> betRecord = BetRecordBuilder.build(generateRecordId(),
+        BetRecordDo<MariaMakilingGameRecordDo> betRecord = BetRecordBuilder.build(generateRecordId(),
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                list.stream().filter(item -> item.getRewardResult() != null)
+                list.stream().filter(item -> Objects.nonNull(item.getRewardResult()))
                         .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                         .sum(),
-                MariaMakilingBetRecordDetailDo.builder()
-                        .gameRecordList(list)
-                        .build());
+                list);
         MariaMakilingGameRecordDo gameRecord = list.get(0);
         // 保存投注记录并派奖
         Long userCredit = saveBetRecordAndBetWithPayoutAsync(betRecord, gameRecord.hasRewardFreeSpins());
@@ -155,7 +142,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     }
 
 
-    public void freeSpinsAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo recordDetail, Long totalRewardAmount) {
+    public void freeSpinsAfterHandle(BetDo<MariaMakilingBetDo> betDo, List<MariaMakilingGameRecordDo> gameRecordList, Long totalRewardAmount) {
         // do nothing
     }
 

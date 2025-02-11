@@ -7,7 +7,7 @@ import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -20,14 +20,14 @@ public abstract class AbstractRecordManager<T extends ToVoConverter> {
     @Autowired
     BetRecordService betRecordService;
 
-    public abstract Long add(BetRecordDo betRecord, List<T> gameRecordList, GameTypeEnum gameType);
+    public abstract Long add(BetRecordDo<T> betRecord, GameTypeEnum gameType);
 
     public Long addBetRecord(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         return betRecordService.add(betRecordDo, gameType);
     }
 
     @Async(updateBetRecordThreadPoolExecutor)
-    @CacheEvict(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName +'-'+ #betRecordDo.id")
+    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #betRecordDo.playerId + '_'  + #betRecordDo.id")
     public void asyncUpdateBetRecord(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         betRecordService.update(betRecordDo, gameType);
     }
