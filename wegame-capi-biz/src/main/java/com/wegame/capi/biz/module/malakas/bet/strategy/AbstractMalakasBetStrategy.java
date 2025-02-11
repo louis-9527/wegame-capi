@@ -19,7 +19,9 @@ import com.wegame.capi.biz.module.mariamakiling.bet.strategy.MariaMakilingBetStr
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
 /**
  * Malakas游戏投注抽象接口
  */
-public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<MalakasBetDo, MalakasBetRecordDetailDo>
+public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<MalakasGameRecordDo, MalakasBetDo, MalakasBetRecordDetailDo>
         implements MariaMakilingBetStrategy<MalakasBetDo, MalakasBetRecordDetailDo> {
 
     @Autowired
@@ -37,12 +39,12 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
     MalakasRecordManager malakasRecordManager;
 
     @Override
-    public Game getGame() {
+    public Game<MalakasGameRecordDo> getGame() {
         return malakasGame;
     }
 
     @Override
-    public AbstractRecordManager getRecordManager() {
+    public AbstractRecordManager<MalakasGameRecordDo> getRecordManager() {
         return malakasRecordManager;
     }
 
@@ -72,20 +74,22 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         Long batchId = list.get(0).getBatchId();
         // 过来所有batchId 相同的数据
-        List<MalakasGameRecordDo> filterList = list.stream().filter(tt -> batchId.longValue() == tt.getBatchId()).collect(Collectors.toList());
+        List<MalakasGameRecordDo> firstBatchList = list.stream()
+                .filter(tt -> Objects.equals(batchId.longValue(), tt.getBatchId()))
+                .collect(Collectors.toList());
         MalakasBetRecordDetailDo resultDetail = MalakasBetRecordDetailDo.builder()
-                .gameRecordList(filterList)
+                .gameRecordList(firstBatchList)
                 .build();
         BetRecordDo<MalakasGameRecordDo> betRecord = BetRecordBuilder.build(generateRecordId(),
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                filterList.stream().filter(item -> item.getRewardResult() != null)
+                firstBatchList.stream().filter(item -> item.getRewardResult() != null)
                         .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                         .sum(),
                 list);
         // 保存投注记录并派奖
-        Long userCredit = saveBetRecordAndBetWithPayout(betRecord);
+        Long userCredit = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
         // 组装返回结果
         return BetResultDo.<MalakasBetRecordDetailDo>builder()
                 .betRecordId(betRecord.getId())
@@ -107,47 +111,40 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
     private BetResultDo<MalakasBetRecordDetailDo> betForFreeSpins(BetDo<MalakasBetDo> betDo) {
         MalakasBetDo betDetail = betDo.getBetDetail();
         UserInfo userInfo = UserInfoContext.getUserInfo();
-
-        BetRecordDo<MalakasGameRecordDo> betRecordDo = betRecordService.get(betDetail.getBetRecordId(), userInfo.getPlayerId(), getGame().getGameInfo().getGameType());
-        AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
-
-        List<MalakasGameRecordDo> gameRecordList = betRecordDo.getGameRecordList();
+        List<MalakasGameRecordDo> gameRecordList = getRecordManager().listGameRecord(
+                GameRecordQuery.builder()
+                        .batchId(betDo.getBetDetail().getBetRecordId())
+                        .playerId(userInfo.getPlayerId())
+                        .orderByClause("_id")
+                        .direction(Sort.Direction.ASC)
+                        .build(), getGame().getGameInfo().getGameType());
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
         // 匹配-免费轮游戏记录
-        List<MalakasGameRecordDo> gameRecord = gameRecordList
-                .stream()
-                .filter(item -> Objects.equals(item.getBatchId(), betDetail.getFreeSpinsId()))
-                .collect(Collectors.toList());
+        //        List<MalakasGameRecordDo> gameRecord = gameRecordList
+        //                .stream()
+        //                .filter(item -> Objects.equals(item.getBatchId(), betDetail.getFreeSpinsId()))
+        //                .collect(Collectors.toList());
         return BetResultDo.<MalakasBetRecordDetailDo>builder()
                 .betRecordId(betDetail.getBetRecordId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
-                .overallRewardAmount(gameRecord.stream().filter(item -> item.getRewardResult() != null)
+                .overallRewardAmount(gameRecordList.stream().filter(item -> item.getRewardResult() != null)
                         .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                         .sum())
-                .resultDetail(MalakasBetRecordDetailDo.builder().gameRecordList(gameRecord).build())
+                .resultDetail(MalakasBetRecordDetailDo.builder()
+                        .gameRecordList(gameRecordList)
+                        .build())
                 .build();
-    }
-
-
-    /**
-     * 免费轮
-     *
-     * @param betDo
-     * @return
-     */
-    private List<MalakasGameRecordDo> freeSpinsPlayGame(BetDo<MalakasBetDo> betDo) {
-        return getGame().play(GamePlayDo.builder()
-                .gameType(betDo.getGameType())
-                .betType(betDo.getBetType())
-                .betSubType(BetSubTypeEnum.valueOfFreeSpinsBetSubType(betDo.getBetType()))
-                .betAmount(betDo.getBetDetail().getBetAmount())
-                .build());
     }
 
     public void freeSpinsAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo recordDetail, Long totalRewardAmount) {
         // do nothing
+    }
+
+    private boolean hasRewardFreeWheel(List<MalakasGameRecordDo> firstBatchList) {
+        MalakasGameRecordDo gameRecord = firstBatchList.stream().filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeSpin()).findFirst().orElse(null);
+        return Objects.nonNull(gameRecord);
     }
 
 }
