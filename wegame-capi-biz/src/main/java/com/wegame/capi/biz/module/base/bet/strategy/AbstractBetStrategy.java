@@ -46,7 +46,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
     /**
      * 保存投注记录并投注派彩
      */
-    public Long saveBetRecordAndBetWithPayout(BetRecordDo<RD> betRecordDo, Boolean syncOpt) {
+    public Long saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
         if (syncOpt) {
             return syncSaveBetRecordAndBetWithPayout(betRecordDo);
         } else {
