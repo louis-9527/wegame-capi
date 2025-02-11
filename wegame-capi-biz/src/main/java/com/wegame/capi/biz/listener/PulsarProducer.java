@@ -39,14 +39,13 @@ public class PulsarProducer {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    private Producer<byte[]> producer;
 
-    public <T> MessageId sendMessage(MQMessage<T> mqMessage, int tryTimes) {
+    public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum,MQMessage<T> mqMessage, int tryTimes) {
         long startTime = System.currentTimeMillis();
         MessageId messageId;
         int times = 0;
         do {
-            messageId = this.sendMessage(mqMessage);
+            messageId = this.sendMessage(gameTypeEnum,mqMessage);
             times++;
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
@@ -54,13 +53,14 @@ public class PulsarProducer {
         return messageId;
     }
 
-    public <T> MessageId sendMessage(MQMessage<T> mqMessage) {
+    public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum,MQMessage<T> mqMessage) {
         try {
             log.info("sendMessage--:type:{},msgId:{}", mqMessage.getType(), mqMessage.getMsgId());
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 redisTemplate.opsForValue().increment("zhumeng001_send_msg_count", 1);
             }
-            return producer.newMessage()
+           return producerCache.get(gameTypeEnum.getId())
+                    .newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
                     .send();
@@ -101,24 +101,20 @@ public class PulsarProducer {
     public void init() {
         for (GameTypeEnum item : GameTypeEnum.values()) {
             String topicName = String.format("persistent://%s/%s/%s", name + "_" + item.getName(), env, item.getName() + "_topic");
-            producer = this.createProducer(topicName, item.getName());
+            Producer<byte[]>  producer = this.createProducer(topicName, item.getName());
+            producerCache.put(item.getId(),producer);
         }
     }
 
     @PreDestroy
     public void shutdown() {
-        try {
-            producer.close();
-        } catch (Exception e) {
-            log.error("Failed to close Pulsar producer for topic error", e);
-        }
-//        producerCache.forEach((key, value) -> {
-//            try {
-//                value.close();
-//            } catch (PulsarClientException e) {
-//                log.error("Failed to close Pulsar producer for topic error, topic={}", key, e);
-//            }
-//        });
-//        producerCache.clear();
+        producerCache.forEach((key, value) -> {
+            try {
+                value.close();
+            } catch (PulsarClientException e) {
+                log.error("Failed to close Pulsar producer for topic error, topic={}", key, e);
+            }
+        });
+        producerCache.clear();
     }
 }
