@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.capi.biz.domain.biz.BetRecordBatchOptResultDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -34,9 +35,9 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
         Map<String, MessageId> messageIdMap = new HashMap<>(messages.size());
         messages.forEach(tt -> {
             String message = new String(tt.getData());
-            MQMessage<BetRecordDo> betRecordDoMQMessage = JSON.parseObject(message, new TypeReference<MQMessage<BetRecordDo>>() {
+            MQMessage<BetRecordDo<MariaMakilingBetRecordDetailDo>> betRecordDoMQMessage = JSON.parseObject(message, new TypeReference<MQMessage<BetRecordDo<MariaMakilingBetRecordDetailDo>>>() {
             });
-            BetRecordDo body = betRecordDoMQMessage.getBody();
+            BetRecordDo<MariaMakilingBetRecordDetailDo> body = betRecordDoMQMessage.getBody();
             log.info("MariaMakilingMessageListener,type:{},msgId:{},status:{}", betRecordDoMQMessage.getType(), betRecordDoMQMessage.getMsgId(), body.getStatus());
             messageIdMap.put(betRecordDoMQMessage.getType() + "_" + body.getId(), tt.getMessageId());
             if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
