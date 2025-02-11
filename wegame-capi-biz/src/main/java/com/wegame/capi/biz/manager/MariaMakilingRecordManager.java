@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager;
 
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -10,6 +11,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,8 +58,8 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
         return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
     }
 
-    // todo cache GameRecord list
     @Override
+    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #query.playerId + '_'  + #query.id")
     public List<MariaMakilingGameRecordDo> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType) {
         return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
     }
