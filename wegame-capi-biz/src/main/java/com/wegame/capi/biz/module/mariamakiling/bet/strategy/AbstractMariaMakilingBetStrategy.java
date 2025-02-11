@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * MariaMakiling类游戏投注抽象接口
  */
-public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo>
+public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrategy<MariaMakilingGameRecordDo, MariaMakilingBetDo, MariaMakilingGameRecordDo>
         implements MariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
 
     @Autowired
