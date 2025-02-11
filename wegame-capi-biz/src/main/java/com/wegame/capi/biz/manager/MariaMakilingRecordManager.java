@@ -59,7 +59,7 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     }
 
     @Override
-    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #query.playerId + '_'  + #query.id")
+    @Cacheable(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #query.playerId + '_'  + #query.id")
     public List<MariaMakilingGameRecordDo> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType) {
         return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
     }
