@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.mq.MQMessage;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -40,12 +41,12 @@ public class PulsarProducer {
 
     private Producer<byte[]> producer;
 
-    public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage, int tryTimes) {
+    public <T> MessageId sendMessage(MQMessage<T> mqMessage, int tryTimes) {
         long startTime = System.currentTimeMillis();
         MessageId messageId;
         int times = 0;
         do {
-            messageId = this.sendMessage(gameType, mqMessage);
+            messageId = this.sendMessage(mqMessage);
             times++;
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
@@ -53,7 +54,7 @@ public class PulsarProducer {
         return messageId;
     }
 
-    public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
+    public <T> MessageId sendMessage(MQMessage<T> mqMessage) {
         try {
             log.info("sendMessage--:type:{},msgId:{}", mqMessage.getType(), mqMessage.getMsgId());
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
@@ -70,7 +71,7 @@ public class PulsarProducer {
 //                    .value(JSON.toJSONBytes(mqMessage))
 //                    .send();
         } catch (PulsarClientException e) {
-            log.error("mariamakilingProducer send fail, msg={}", FastJsonUtils.toJSONString(mqMessage));
+            log.error("mariamakilingProducer send fail, msgId={}", mqMessage.getMsgId(), e);
             throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
         }
     }
@@ -88,7 +89,7 @@ public class PulsarProducer {
                     .enableBatching(true) // 开启批量发送
                     .batchingMaxMessages(200) // 每批最大 200 条消息
                     .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
-                    .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
+                    //.sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                     .compressionType(CompressionType.LZ4) // 使用 LZ4 压缩，减少带宽占用
                     .create();
         } catch (PulsarClientException e) {
@@ -98,10 +99,10 @@ public class PulsarProducer {
 
     @PostConstruct
     public void init() {
-        GameTypeEnum gameType = GameTypeEnum.MARIA_MAKILING;
+        GameTypeEnum gameType = GameTypeEnum.valueOfName(tenant);
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         String topicName = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "_topic");
         producer = this.createProducer(topicName, gameType);
-        // producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
     }
 
     @PreDestroy

@@ -130,7 +130,7 @@ public class BetRecordService {
         List<Long> allIdList = betRecordDoList.stream().map(BetRecordDo::getId).filter(Objects::nonNull).collect(Collectors.toList());
         BulkWriteResult bulkWriteResult;
         try {
-            // 需要排除掉库中不存在的id  todo 是否可以不需要这部操作
+            // 需要排除掉库中不存在的id  todo 后置
             failIdList = listNotExistIdList(allIdList, gameType);
             if (failIdList.size() == allIdList.size()) {
                 log.warn("BetRecordService#batchUpdate failIdList:{}", failIdList);

@@ -90,7 +90,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
             redisTemplate.opsForValue().increment("zhumeng001_send_msg_not_containFree_all", 1);
 
             MQMessage<BetRecordDo> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
-            MessageId addMessageId = pulsarProducer.sendMessage(getGame().getGameInfo().getGameType(), addMqMessage, RETRY_TIMES);
+            MessageId addMessageId = pulsarProducer.sendMessage(addMqMessage, RETRY_TIMES);
             AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
             // 调用单钱包
             BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
@@ -106,7 +106,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
                     .build();
             // 发送消息(更新)
             MQMessage<BetRecordDo> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
-            pulsarProducer.sendMessage(getGame().getGameInfo().getGameType(), updateMqMessage, RETRY_TIMES);
+            pulsarProducer.sendMessage(updateMqMessage, RETRY_TIMES);
             return AmountUtil.toLong(betWithPayoutRes.getCredit());
         }
     }

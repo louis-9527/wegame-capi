@@ -26,7 +26,7 @@ public abstract class AbstractPulsarListener {
     protected void initConsumer(GameTypeEnum gameType) {
         try {
             String fullTopic = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "_topic");
-          //  String deadLetterTopic = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "deadLetter" + "_topic");
+            String deadLetterTopic = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "deadLetter" + "_topic");
             consumer = pulsarClient.newConsumer()
                     .topic(fullTopic)
                     .subscriptionName(gameType.getName())
@@ -39,7 +39,7 @@ public abstract class AbstractPulsarListener {
                             .build())
                     .deadLetterPolicy(DeadLetterPolicy.builder()
                             .maxRedeliverCount(10)  // **最多重试 10 次**
-                           // .deadLetterTopic(deadLetterTopic) // **死信队列**
+                            .deadLetterTopic(deadLetterTopic) // **死信队列**
                             .build())
                    // .keySharedPolicy(KeySharedPolicy.stickyHashRange())
                     .subscribe();
