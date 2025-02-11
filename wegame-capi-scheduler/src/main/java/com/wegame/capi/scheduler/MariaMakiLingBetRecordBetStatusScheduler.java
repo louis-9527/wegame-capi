@@ -66,31 +66,32 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
     }
 
     private void handle(Long betRecordId) {
-        // todo 加锁
-        BetRecordDo betRecordDo = betRecordService.getById(betRecordId, this.getGameType());
-        if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
-            return;
-        }
-        //获取当前订单状态
-        BetStatusReq betStatusReq = BetWithPayoutReqBuilder.buildStatusReq(betRecordDo);
-        Pair<String, BetStatusEnum> betStatus = singleWalletService.getBetStatus(betStatusReq);
-        if (BetStatusEnum.SUCCESS == betStatus.getRight()) {
-            // 更新记录
-            BetRecordDo updateRecord = BetRecordDo.builder()
-                    .id(betRecordDo.getId())
-                    .betId(betStatus.getLeft())
-                    .status(BetStatusEnum.SUCCESS.getCode()).build();
-            betRecordService.update(updateRecord, this.getGameType());
-            return;
-        }
-        if (BetStatusEnum.FAIL == betStatus.getRight()) {
-            // 更新记录
-            BetRecordDo updateRecord = BetRecordDo.builder()
-                    .id(betRecordDo.getId())
-                    .betId(betStatus.getLeft())
-                    .status(BetStatusEnum.FAIL.getCode()).build();
-            betRecordService.update(updateRecord, this.getGameType());
-        }
+        scheduleWithLock(LockNameUtil.getBetRecordIdSchedulerLockName(this.getGameType(), betRecordId), () -> {
+            BetRecordDo betRecordDo = betRecordService.getById(betRecordId, this.getGameType());
+            if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
+                return;
+            }
+            //获取当前订单状态
+            BetStatusReq betStatusReq = BetWithPayoutReqBuilder.buildStatusReq(betRecordDo);
+            Pair<String, BetStatusEnum> betStatus = singleWalletService.getBetStatus(betStatusReq);
+            if (BetStatusEnum.SUCCESS == betStatus.getRight()) {
+                // 更新记录
+                BetRecordDo updateRecord = BetRecordDo.builder()
+                        .id(betRecordDo.getId())
+                        .betId(betStatus.getLeft())
+                        .status(BetStatusEnum.SUCCESS.getCode()).build();
+                betRecordService.update(updateRecord, this.getGameType());
+                return;
+            }
+            if (BetStatusEnum.FAIL == betStatus.getRight()) {
+                // 更新记录
+                BetRecordDo updateRecord = BetRecordDo.builder()
+                        .id(betRecordDo.getId())
+                        .betId(betStatus.getLeft())
+                        .status(BetStatusEnum.FAIL.getCode()).build();
+                betRecordService.update(updateRecord, this.getGameType());
+            }
+        });
     }
 
     @Override
