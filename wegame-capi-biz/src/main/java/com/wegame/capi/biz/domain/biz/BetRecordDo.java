@@ -100,7 +100,6 @@ public class BetRecordDo<T> implements Serializable {
     private Long updateTime;
 
     ///////////////  above auto generated ///////////////
-
     private List<T> gameRecordList;
 }
 

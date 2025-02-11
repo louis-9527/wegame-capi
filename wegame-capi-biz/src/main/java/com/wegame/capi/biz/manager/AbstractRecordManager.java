@@ -22,6 +22,8 @@ public abstract class AbstractRecordManager<T extends ToVoConverter> {
 
     public abstract Long add(BetRecordDo<T> betRecord, GameTypeEnum gameType);
 
+    public abstract boolean batchAdd(List<BetRecordDo<T>> betRecordList, GameTypeEnum gameType);
+
     public Long addBetRecord(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         return betRecordService.add(betRecordDo, gameType);
     }

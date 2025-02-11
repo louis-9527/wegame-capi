@@ -63,6 +63,20 @@ public class BetRecordService {
         return po.getId();
     }
 
+    public boolean batchInsert(List<BetRecordDo> betRecordList, GameTypeEnum gameType) {
+        if (CollectionUtil.isEmpty(betRecordList)) {
+            return false;
+        }
+        long startTime = System.currentTimeMillis();
+        AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM, "betRecordList is empty");
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        List<BetRecordPo> poList = BetRecordConverter.doToPoList(betRecordList, OptEnum.ADD);
+        getMongoTemplate(gameType).insertAll(poList);
+        long endTime = System.currentTimeMillis();
+        log.info("BetRecordService#batchInsert cost time:{}ms", endTime - startTime);
+        return true;
+    }
+
     /**
      * 批量新增
      *
