@@ -26,7 +26,7 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
-    @Transactional(transactionManager = "mariamakilingTransactionManager")
+//    @Transactional(transactionManager = "mariamakilingTransactionManager") todo fix
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
         List<MariaMakilingGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
@@ -39,7 +39,7 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
         return betRecord.getId();
     }
 
-    @Transactional(transactionManager = "mariamakilingTransactionManager")
+//    @Transactional(transactionManager = "mariamakilingTransactionManager") todo fix
     @Override
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
