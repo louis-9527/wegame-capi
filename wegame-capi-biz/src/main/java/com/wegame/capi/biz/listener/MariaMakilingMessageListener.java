@@ -59,6 +59,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
         batchAdd(addRecordList, messageIdMap);
         // 批量修改
         batchUpdate(updateRecordList, messageIdMap);
+
         log.info("afterHandle messageIdMap: {}", messageIdMap);
         return new ArrayList<>(messageIdMap.values());
     }
