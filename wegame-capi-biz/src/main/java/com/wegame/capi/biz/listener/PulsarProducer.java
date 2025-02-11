@@ -27,13 +27,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 public class PulsarProducer {
+    private final ConcurrentHashMap<String, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
 
-    // private final ConcurrentHashMap<String, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
+    @Value("${spring.application.env}")
+    String env;
+    @Value("${spring.application.name}")
+    String name;
 
-    @Value("${pulsar.tenant}")
-    String tenant;
-    @Value("${pulsar.namespaces}")
-    String namespace;
     @Autowired
     PulsarClient pulsarClient;
     @Autowired
@@ -80,9 +80,9 @@ public class PulsarProducer {
 //        return producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
 //    }
 
-    private Producer<byte[]> createProducer(String topicName, GameTypeEnum gameType) {
+    private Producer<byte[]> createProducer(String topicName, String gameName) {
         try {
-            String producerName = gameType.getName() + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp();
+            String producerName = name + "_" + gameName + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp();
             return pulsarClient.newProducer(Schema.BYTES)
                     .topic(topicName)
                     .producerName(producerName)
@@ -99,10 +99,10 @@ public class PulsarProducer {
 
     @PostConstruct
     public void init() {
-        GameTypeEnum gameType = GameTypeEnum.valueOfName(tenant);
-        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
-        String topicName = String.format("persistent://%s/%s/%s", tenant, namespace, gameType.getName() + "_topic");
-        producer = this.createProducer(topicName, gameType);
+        for (GameTypeEnum item : GameTypeEnum.values()) {
+            String topicName = String.format("persistent://%s/%s/%s", name + "_" + item.getName(), env, item.getName() + "_topic");
+            producer = this.createProducer(topicName, item.getName());
+        }
     }
 
     @PreDestroy
