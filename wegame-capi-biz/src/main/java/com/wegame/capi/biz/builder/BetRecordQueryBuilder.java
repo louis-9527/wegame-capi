@@ -23,10 +23,12 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordQuery.getLastId())) {
             query.addCriteria(Criteria.where("_id").lt(recordQuery.getLastId()));
         }
-        if (Objects.isNull(recordQuery.getDirection())) {
-            query.with(Sort.by(Sort.Direction.DESC, recordQuery.getOrderByClause()));
-        } else {
-            query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
+        if (StringUtils.isNotBlank(recordQuery.getOrderByClause())) {
+            if (Objects.isNull(recordQuery.getDirection())) {
+                query.with(Sort.by(Sort.Direction.DESC, recordQuery.getOrderByClause()));
+            } else {
+                query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
+            }
         }
         return query;
     }
