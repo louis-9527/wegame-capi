@@ -26,8 +26,10 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
     private Long payAmount;
     @ApiModelProperty(value = "投注记录ID, 获得免费轮的投注记录的投注id，非必填", required = false)
     private String betRecordId;
-    @ApiModelProperty(value = "免费轮ID, 非必填", required = false)
-    private Integer freeSpinsId;
+    @ApiModelProperty(value = "免费轮游戏记录ID, 非必填", required = false)
+    private String gameRecordId;
+    //    private Integer freeSpinsId;
+
 
     @Override
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
@@ -41,7 +43,7 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
                 AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
-                AssertUtil.assertNotNull(freeSpinsId, ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
@@ -53,7 +55,7 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
                 AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
-                AssertUtil.assertNotNull(freeSpinsId, ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }

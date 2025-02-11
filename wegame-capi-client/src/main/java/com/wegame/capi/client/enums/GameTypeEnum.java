@@ -17,12 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeEnum {
 
-    MARIA_MAKILING("zhumeng001",
-            "MariaMakiling",
-            "maria_makiling_bet_record"),
-    MALAKAS("zhumeng002",
-            "Malakas",
-            "malakas_bet_record"),
+    MARIA_MAKILING("zhumeng001", "MariaMakiling"),
+    MALAKAS("zhumeng002", "Malakas")
 
             ;
 
@@ -35,11 +31,6 @@ public enum GameTypeEnum {
      * 描述信息.
      */
     private final String name;
-
-    /**
-     * mongo 集合名称.
-     */
-    private final String collectionName;
 
     public static GameTypeEnum valueOfId(String id) {
         for (GameTypeEnum item : GameTypeEnum.values()) {

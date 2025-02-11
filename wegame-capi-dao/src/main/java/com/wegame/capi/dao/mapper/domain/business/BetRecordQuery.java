@@ -2,6 +2,7 @@ package com.wegame.capi.dao.mapper.domain.business;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.domain.Sort;
 
 import java.io.Serializable;
 
@@ -29,6 +30,10 @@ public class BetRecordQuery extends BetRecordPo implements Serializable {
      * 排序语句
      */
     private String orderByClause;
+    /**
+     * 排序语句
+     */
+    private Sort.Direction direction;
     /**
      * 开始创建时间
      */

@@ -147,7 +147,6 @@ public class MariaMakilingRewardHandlerTest extends BaseTest {
         symbolDo.setId(symbol.getId());
         symbolDo.setName(symbol.getName());
         symbolDo.setSymbolType(symbolType);
-        symbolDo.setSymbolRule(SymbolDo.SymbolRuleDo.builder().symbolRuleType(symbolRuleType).value(ruleValue).build());
         return symbolDo;
     }
 }

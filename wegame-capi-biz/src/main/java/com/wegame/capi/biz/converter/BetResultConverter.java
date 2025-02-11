@@ -5,7 +5,9 @@ import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.domain.vo.MalakasBetResultDetailVo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * BetResultConverter
@@ -26,7 +28,7 @@ public class BetResultConverter {
                 .credit(betResultDo.getCredit())
                 .overallRewardAmount(betResultDo.getOverallRewardAmount())
                 .resultDetail(Objects.nonNull(betResultDo.getResultDetail())
-                        ? (MalakasBetResultDetailVo)betResultDo.getResultDetail().toVo() // todo fix
+                        ? (MariaMakilingBetResultVo)betResultDo.getResultDetail().toResultVo() // todo fix
                         : null)
                 .build();
     }
