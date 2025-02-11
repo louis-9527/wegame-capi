@@ -29,7 +29,7 @@ public abstract class AbstractOddsCalculateStrategy<T extends SymbolDo>
 
     @Override
     public BigDecimal calculateOdds(OddsCalculateDo<T> oddsCalculate) {
-        long current = System.currentTimeMillis();
+     //   long current = System.currentTimeMillis();
         AssertUtil.assertNotNull(oddsCalculate, ErrorCode.ERR_INTER, "oddsCalculate is required");
         Map<String, Map<String, BigDecimal>> oddsMap = getOddsConfig(oddsCalculate);
         if (MapUtils.isEmpty(oddsMap)) {
@@ -41,7 +41,7 @@ public abstract class AbstractOddsCalculateStrategy<T extends SymbolDo>
         }
         BigDecimal odds = map.get(oddsCalculate.getOddsType().getCode());
         BigDecimal val = Objects.isNull(odds) ? (BigDecimal.ZERO) : odds;
-        log.info("odds cost time: {} ms", System.currentTimeMillis() - current);
+      //  log.info("odds cost time: {} ms", System.currentTimeMillis() - current);
         return val;
     }
 }

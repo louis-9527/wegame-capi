@@ -14,10 +14,14 @@ import static com.wegame.base.enums.CommonCacheEnvEnum.BET_RECORD;
  * 投注记录缓存
  */
 @Component(CacheConstants.BET_RECORD)
-public class BetRecordCache extends AbstractMultiCache {
+public class BetRecordCache extends AbstractCache {
+
+    //    public BetRecordCache() {
+    //        super(BET_RECORD.cacheKeyPrefixName(), 60, 15, 10000L);
+    //    }
 
     public BetRecordCache() {
-        super(BET_RECORD.cacheKeyPrefixName(), 60, 15, 1000L);
+        super(BET_RECORD.cacheKeyPrefixName(), 60);
     }
 
     @Override

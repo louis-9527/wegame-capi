@@ -47,7 +47,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             MQMessage<BetRecordDo<MariaMakilingGameRecordDo>> betRecordDoMQMessage = JSON.parseObject(message, new TypeReference<MQMessage<BetRecordDo<MariaMakilingGameRecordDo>>>() {
             });
             BetRecordDo<MariaMakilingGameRecordDo> body = betRecordDoMQMessage.getBody();
-            messageIdMap.put(body.getId(), tt.getMessageId());
+            messageIdMap.put(betRecordDoMQMessage.getType() + "_" + body.getId(), tt.getMessageId());
             if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 addRecordList.add(body);
             } else if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.UPDATE.getCode())) {

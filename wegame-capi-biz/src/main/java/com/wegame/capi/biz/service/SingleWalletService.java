@@ -41,10 +41,11 @@ public class SingleWalletService {
     SingleWalletApi singleWalletApi;
 
     public BetSingleWalletResultDo betWithPayout(BetRecordDo betRecordDo) {
-        BetWithPayoutReq betWithPayoutReq = BetWithPayoutReqBuilder.buildReq(betRecordDo);
         if (!singleWalletApi.invoke) {
             return BetSingleWalletResultDo.builder().betStatus(BetStatusEnum.SUCCESS).betId(String.valueOf(RandomUtils.nextInt())).build();
         }
+        BetWithPayoutReq betWithPayoutReq = BetWithPayoutReqBuilder.buildReq(betRecordDo);
+
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = singleWalletApi.betWithPayout(betWithPayoutReq);
         // 成功或者重复的refId都当作成功处理
         if (commonRes.isSuc()) {

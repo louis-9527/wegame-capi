@@ -12,13 +12,13 @@ import com.wegame.capi.common.utils.AmountUtil;
 import java.util.Date;
 
 public class BetWithPayoutReqBuilder {
-    public static BetWithPayoutReq buildReq(BetRecordDo betRecordDo){
+    public static BetWithPayoutReq buildReq(BetRecordDo betRecordDo) {
         return BetWithPayoutReq.builder()
                 .pId(betRecordDo.getPId())
                 .channelId(betRecordDo.getChannelId())
                 .playerName(betRecordDo.getPlayerName())
                 .refId(betRecordDo.getBetSerialNo())
-                .createTime(DateUtil.toUTC(new Date()))
+                .createTime(DateUtil.toUTC(new Date(betRecordDo.getCreateTime())))
                 .betAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()))
                 .payoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()))
                 .betDetails(BetWithPayoutReq.BetDetails.builder()
@@ -32,7 +32,7 @@ public class BetWithPayoutReqBuilder {
                 .build();
     }
 
-    public static BetSingleWalletResultDo buildRes(SingleWalletBetWithPayoutRes payoutRes){
+    public static BetSingleWalletResultDo buildRes(SingleWalletBetWithPayoutRes payoutRes) {
         return BetSingleWalletResultDo.builder()
                 .betId(payoutRes.getBetId())
                 .refId(payoutRes.getRefId())
@@ -40,14 +40,14 @@ public class BetWithPayoutReqBuilder {
                 .build();
     }
 
-    public static BetStatusReq buildStatusReq(BetRecordDo betRecordDo){
+    public static BetStatusReq buildStatusReq(BetRecordDo betRecordDo) {
         return BetStatusReq.builder()
                 .pId(betRecordDo.getPId())
                 .channelId(betRecordDo.getChannelId())
                 .playerName(betRecordDo.getPlayerName())
                 .refId(betRecordDo.getBetSerialNo())
                 .betType(2)
-                .wagersDate(betRecordDo.getCreateTime()/1000)
+                .wagersDate(betRecordDo.getCreateTime() / 1000)
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
     }

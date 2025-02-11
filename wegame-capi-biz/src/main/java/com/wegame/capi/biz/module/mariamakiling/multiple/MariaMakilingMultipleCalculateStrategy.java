@@ -31,7 +31,7 @@ public class MariaMakilingMultipleCalculateStrategy extends AbstractMultipleCalc
 
     @Override
     public BigDecimal calculateMultiple(GameTypeEnum gameType, WheelDo<SymbolDo> wheel) {
-        long current = System.currentTimeMillis();
+     //   long current = System.currentTimeMillis();
         BigDecimal multiple = new BigDecimal(0);
         for (SymbolDo[] row : wheel.getSymbolArr()) {
             for (SymbolDo element : row) {
@@ -45,7 +45,7 @@ public class MariaMakilingMultipleCalculateStrategy extends AbstractMultipleCalc
                 }
             }
         }
-        log.info("multiple cost time: {} ms", System.currentTimeMillis() - current);
+       // log.info("multiple cost time: {} ms", System.currentTimeMillis() - current);
         return multiple;
     }
 }
