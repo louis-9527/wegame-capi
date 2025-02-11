@@ -16,6 +16,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -32,11 +36,14 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@Document(collection = "game_record")
 public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo, BetRecordVo.MariaMakilingGameRecordVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * id
      */
+    @Id
+    @Field("_id")
     private Long id;
     /**
      * parentId: 无，则为0
@@ -80,11 +87,13 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      *
      * @return
      */
+    @Transient
     @JsonIgnore
     public boolean hasRewardFreeSpins() {
         return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin();
     }
 
+    @Transient
     @Override
     public MariaMakilingBetResultVo toResultVo() {
         if (Objects.isNull(rewardResult)) {
@@ -141,9 +150,11 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
         }
     }
 
+    @Transient
     @Override
     public BetRecordVo.MariaMakilingGameRecordVo toRecordVo() {
         return BetRecordVo.MariaMakilingGameRecordVo.builder()
+                .id(String.valueOf(id))
                 .index(index)
                 .betAmount(Objects.nonNull(rewardResult) ? rewardResult.getBetAmount() : null)
                 .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)

@@ -107,14 +107,13 @@ public class BetControllerTest extends BaseTest {
         BetResultVo data = build.getData();
         String betRecordId = data.getBetRecordId();
         MariaMakilingBetResultVo resultDetail = data.getResultDetail();
-        List<Integer> freeSpinIds = resultDetail.getFreeSpinIds();
-
-        for (Integer freeId : freeSpinIds) {
-            this.buy_free_bet_freeId(betRecordId,freeId);
+        List<String> gameRecordIds = resultDetail.getGameRecordIds();
+        for (String gameRecordId : gameRecordIds) {
+            this.buy_free_bet_freeId(betRecordId, gameRecordId);
         }
     }
 
-    private void buy_free_bet_freeId(String recordId,Integer freeId){
+    private void buy_free_bet_freeId(String recordId, String freeId){
         BetRequest betRequest = new BetRequest();
         betRequest.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
         betRequest.setBetType(BetTypeEnum.BUY_BET.getCode());
@@ -123,7 +122,7 @@ public class BetControllerTest extends BaseTest {
         MariaMakilingBetRequest betDetail = new MariaMakilingBetRequest();
         betDetail.setBetAmount(100L);
         betDetail.setBetRecordId(recordId);
-        betDetail.setFreeSpinsId(freeId);
+        betDetail.setGameRecordId(freeId);
         betRequest.setBetDetail(betDetail);
 
         BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));

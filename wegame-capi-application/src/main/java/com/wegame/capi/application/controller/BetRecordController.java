@@ -48,7 +48,7 @@ public class BetRecordController {
     @Autowired
     BetRecordService betRecordService;
     @Autowired
-    Map<String, AbstractRecordManager<? extends ToVoConverter>> recordManagerMap;
+    Map<String, AbstractRecordManager> recordManagerMap;
 
     @LoginRequired
     @ApiOperation(value = "分页查询", httpMethod = "POST")
@@ -74,20 +74,17 @@ public class BetRecordController {
         GameTypeEnum gameType = GameTypeEnum.valueOf(userInfo.getGameId());
         BetRecordDo betRecordDo = betRecordService.getWithCache(Long.valueOf(id), userInfo.getPlayerId(), gameType);
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
-        betRecordVo.setGameRecordList(Optional.ofNullable(getRecordManager(gameType).listGameRecord(GameRecordQuery.builder()
+        AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
+        betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(GameRecordQuery.builder()
                         .betRecordId(betRecordDo.getId())
                         .orderByClause("_id")
                         .direction(Sort.Direction.ASC)
-                        .build(), GameTypeEnum.valueOf(userInfo.getGameId())))
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(ToVoConverter::toRecordVo)
-                .collect(Collectors.toList()));
+                        .build(), GameTypeEnum.valueOf(userInfo.getGameId())));
         return CommonResponse.build(betRecordVo);
     }
 
-    private AbstractRecordManager<? extends ToVoConverter> getRecordManager(GameTypeEnum gameType) {
-        AbstractRecordManager<? extends ToVoConverter> recordManager = recordManagerMap.get(RECORD_MANAGER_MAP.get(gameType));
+    private AbstractRecordManager getRecordManager(GameTypeEnum gameType) {
+        AbstractRecordManager recordManager = recordManagerMap.get(RECORD_MANAGER_MAP.get(gameType));
         AssertUtil.assertNotNull(recordManager, ErrorCode.ERR_INTER);
         return recordManager;
     }

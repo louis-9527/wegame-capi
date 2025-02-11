@@ -12,8 +12,8 @@ public class MariaMakilingBetRequestConvert<T, R> implements BetToDoConvert<Mari
         return MariaMakilingBetDo.builder()
                 .betAmount(betRequest.getBetAmount())
                 .payAmount(betRequest.getPayAmount())
-                .betRecordId(StringUtils.isEmpty(betRequest.getBetRecordId()) ? null : Long.valueOf(betRequest.getBetRecordId()))
-                .gameRecordId(betRequest.getFreeSpinsId())
+                .betRecordId(StringUtils.isNotEmpty(betRequest.getBetRecordId()) ? Long.valueOf(betRequest.getBetRecordId()) : null)
+                .gameRecordId(StringUtils.isNotEmpty(betRequest.getGameRecordId()) ? Long.valueOf(betRequest.getGameRecordId()) : null)
                 .build();
     }
 

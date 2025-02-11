@@ -5,6 +5,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
+import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component("mariaMakilingRecordManager")
 public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakilingGameRecordDo> {
@@ -42,5 +45,14 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Override
     public List<MariaMakilingGameRecordDo> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType) {
         return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+    }
+
+    @Override
+    public List<BetRecordVo.MariaMakilingGameRecordVo> listGameRecordVo(GameRecordQuery query, GameTypeEnum gameType) {
+        List<MariaMakilingGameRecordDo> list = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+        return Optional.ofNullable(list).orElse(Collections.emptyList())
+                .stream()
+                .map(MariaMakilingGameRecordDo::toRecordVo)
+                .collect(Collectors.toList());
     }
 }
