@@ -162,7 +162,7 @@ public class BetRecordService {
      * @return BetRecordDo 投注记录
      */
     @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.collectionName + '_' + #playerId + '_'  + #id")
-    public BetRecordDo getSimpleWithCache(Long id, String playerId, GameTypeEnum gameType) {
+    public BetRecordDo getWithCache(Long id, String playerId, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         Criteria criteria = new Criteria();
@@ -207,18 +207,6 @@ public class BetRecordService {
     }
 
     /**
-     * 分页查询列表
-     *
-     * @param query 查询参数
-     * @return List<BetRecordDo> 游戏记录列表
-     */
-    public List<BetRecordDo> listForPage(BetRecordQuery query, GameTypeEnum gameType) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
-        return BetRecordConverter.poToDoList(recordPoList);
-    }
-
-    /**
      * 数量统计
      *
      * @param query 查询参数
@@ -227,6 +215,12 @@ public class BetRecordService {
     public long count(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         return getMongoTemplate(gameType).count(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
+    }
+
+    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
+        MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
+        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
+        return template;
     }
 
     ///////////////  above auto generated ///////////////
@@ -274,11 +268,5 @@ public class BetRecordService {
                     .successCount(0L)
                     .build();
         }
-    }
-
-    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
-        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-        return template;
     }
 }

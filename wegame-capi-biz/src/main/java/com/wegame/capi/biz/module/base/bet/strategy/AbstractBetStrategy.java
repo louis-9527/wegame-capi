@@ -10,9 +10,8 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 
 import com.wegame.capi.biz.listener.PulsarProducer;
-import com.wegame.capi.biz.manager.RecordManager;
+import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.module.base.game.Game;
-import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
@@ -39,7 +38,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
 
     public abstract Game<R> getGame();
 
-    public abstract RecordManager<R> getRecordManager();
+    public abstract AbstractRecordManager<R> getRecordManager();
 
     public long generateRecordId() {
         return snowflakeIdGenerator.nextId();
@@ -52,7 +51,7 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
      * @return 用户余额
      */
     public Long saveBetRecordAndBetWithPayout(BetRecordDo betRecordDo) {
-        Long betRecordId = getRecordManager().addRecord(betRecordDo, betRecordDo.getGameRecordList(), getGame().getGameInfo().getGameType());
+        Long betRecordId = getRecordManager().add(betRecordDo, betRecordDo.getGameRecordList(), getGame().getGameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
         // 判断返回结果

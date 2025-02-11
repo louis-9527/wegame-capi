@@ -1,5 +1,6 @@
 package com.wegame.capi.application.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
@@ -7,18 +8,24 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
+import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
+import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 投注记录模块
@@ -31,8 +38,13 @@ import org.springframework.web.bind.annotation.*;
 @Api(value = "投注记录模块", tags = {"投注记录模块"})
 public class BetRecordController {
 
+    public static final Map<GameTypeEnum, Class<?>> CLAZZ_MAP = new ImmutableMap.Builder<GameTypeEnum, Class<?>>()
+            .put(GameTypeEnum.MARIA_MAKILING, MariaMakilingGameRecordDo.class)
+            .build();
     @Autowired
     BetRecordService betRecordService;
+    @Autowired
+    GameRecordService gameRecordService;
 
     @LoginRequired
     @ApiOperation(value = "分页查询", httpMethod = "POST")
@@ -41,11 +53,10 @@ public class BetRecordController {
         request.validate();
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        request.setPlayerId(userInfo.getPlayerId());
         BetRecordQuery query = BetRecordConverter.requestToQuery(request, "createTime");
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                BetRecordConverter.doToVoList(betRecordService.listForPage(query, GameTypeEnum.valueOfId(userInfo.getGameId()))),
+                BetRecordConverter.doToVoList(betRecordService.list(query, GameTypeEnum.valueOfId(userInfo.getGameId()))),
                 0L));
     }
 
@@ -56,8 +67,9 @@ public class BetRecordController {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        BetRecordDo betRecordDo = betRecordService.getSimpleWithCache(Long.valueOf(id), userInfo.getPlayerId(), GameTypeEnum.valueOfId(userInfo.getGameId()));
-        // 获取 gameList
+        GameTypeEnum gameType = GameTypeEnum.valueOf(userInfo.getGameId());
+        BetRecordDo betRecordDo = betRecordService.getWithCache(Long.valueOf(id), userInfo.getPlayerId(), gameType);
+        //        betRecordDo.setGameRecordList(gameRecordService.list(GameRecordQuery.builder().build(), GameTypeEnum.valueOf(userInfo.getGameId()), CLAZZ_MAP.get(gameType)));
         return CommonResponse.build(BetRecordConverter.doToVo(betRecordDo));
     }
 }

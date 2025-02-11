@@ -10,7 +10,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
-import com.wegame.capi.biz.manager.RecordManager;
+import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
@@ -32,7 +32,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     @Autowired
     MariaMakilingGame mariaMakilingGame;
     @Autowired
-    RecordManager<MariaMakilingGameRecordDo> recordManager;
+    AbstractRecordManager<MariaMakilingGameRecordDo> recordManager;
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
@@ -42,7 +42,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     }
 
     @Override
-    public RecordManager<MariaMakilingGameRecordDo> getRecordManager() {
+    public AbstractRecordManager<MariaMakilingGameRecordDo> getRecordManager() {
         return recordManager;
     }
 

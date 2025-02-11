@@ -58,6 +58,10 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      */
     private String playerName;
     /**
+     * 序号
+     */
+    private Integer index;
+    /**
      * 滚轮
      */
     private WheelDo<SymbolDo> wheel;

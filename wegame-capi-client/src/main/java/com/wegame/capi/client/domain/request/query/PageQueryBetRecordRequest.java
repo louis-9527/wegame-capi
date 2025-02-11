@@ -25,8 +25,6 @@ public class PageQueryBetRecordRequest extends PageQueryRequest implements Valid
     private static final long serialVersionUID = -8029880166975261696L;
     @ApiModelProperty(value = "投注记录id", required = false)
     private String id;
-    @ApiModelProperty(value = "玩家id", required = false)
-    private String playerId;
     @ApiModelProperty(value = "开始创建/投注时间", required = false)
     private Long startCreateTime;
     @ApiModelProperty(value = "结束创建/投注时间", required = false)
