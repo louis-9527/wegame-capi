@@ -15,14 +15,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class MongodbTransactionConfig {
 
     @Autowired
-    MongoTemplate mongoTemplate;
-    //    @Autowired
-    //    MongoTemplate malakasMongoTemplate;
+    MongoTemplate malakasMongoTemplate;
 
-//    @Bean(name = "mariamakilingTransactionManager")
-//    public MongoTransactionManager mariamakilingTransactionManager() {
-//        return new MongoTransactionManager(mongoTemplate.getMongoDbFactory());
-//    }
+    @Bean(name = "mariamakilingTransactionManager")
+    public MongoTransactionManager mariamakilingTransactionManager() {
+        return new MongoTransactionManager(malakasMongoTemplate.getMongoDbFactory());
+    }
 
     //    @Bean(name = "malakasTransactionManager")
     //    public MongoTransactionManager malakasTransactionManager() {

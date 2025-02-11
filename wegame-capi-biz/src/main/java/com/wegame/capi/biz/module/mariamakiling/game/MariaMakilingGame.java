@@ -84,6 +84,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             int tempNumber = 0;
             while (tempNumber < wheelNumber) {
                 freeSpinGameRecordIds.add(snowflakeIdGenerator.nextId());
+                tempNumber++;
             }
         }
         MariaMakilingGameRecordDo record = buildGameRecord(snowflakeIdGenerator.nextId(),

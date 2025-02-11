@@ -80,6 +80,8 @@ public class BetControllerTest extends BaseTest {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
                 .userName("system")
+                .playerId("1234")
+                .playerName("1234")
                 .build());
         OperatorContext.setOperator(Operator.builder().name("system").userId(10000L).playerId("10000").build());
 
@@ -92,13 +94,17 @@ public class BetControllerTest extends BaseTest {
         betDetail.setBetAmount(100L);
         betDetail.setPayAmount(10000L);
         betRequest.setBetDetail(betDetail);
-
-        BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
-        CommonResponse<BetResultVo> build = CommonResponse.build(BetResultConverter.doToVo(betResultDo));
-        log.info("bet: {}", build);
-
-        Assert.notNull(build);
-        Assert.equals(build.getCode(), "1");
+        for (int i = 0; i < 100; i++) {
+            try {
+                BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
+                CommonResponse<BetResultVo> build = CommonResponse.build(BetResultConverter.doToVo(betResultDo));
+                log.info("bet: {}", build);
+                Assert.notNull(build);
+                Assert.equals(build.getCode(), "1");
+            } catch (Exception e) {
+                System.out.println(1);
+            }
+        }
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager;
 
+import com.google.common.collect.Lists;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -26,12 +27,14 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
-//    @Transactional(transactionManager = "mariamakilingTransactionManager") todo fix
+    @Transactional(transactionManager = "mariamakilingTransactionManager")
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
         List<MariaMakilingGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            boolean ret = gameRecordService.batchInsert(gameRecordList, gameType);
-            AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
+            for (List<MariaMakilingGameRecordDo> gameRecordListItem : Lists.partition(gameRecordList, 100)) {
+                boolean ret = gameRecordService.batchInsert(gameRecordListItem, gameType);
+                AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
+            }
         }
         betRecord.setGameRecordList(null);
         Long id = betRecordService.add(betRecord, gameType);
@@ -39,7 +42,7 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
         return betRecord.getId();
     }
 
-//    @Transactional(transactionManager = "mariamakilingTransactionManager") todo fix
+    @Transactional(transactionManager = "mariamakilingTransactionManager")
     @Override
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);

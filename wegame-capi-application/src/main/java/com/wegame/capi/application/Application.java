@@ -32,8 +32,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan(value = {"com.wegame.capi.dao.*"})
 @SpringBootApplication(scanBasePackages = {"com.wegame.*"}, exclude = {
         RedissonAutoConfiguration.class,
-        SessionAutoConfiguration.class})
-//        MongoAutoConfiguration.class})
+        SessionAutoConfiguration.class,
+        MongoAutoConfiguration.class})
 public class Application implements CommandLineRunner {
     @Value("${spring.application.name}")
     private String appName;

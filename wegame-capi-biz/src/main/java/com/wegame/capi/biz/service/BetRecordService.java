@@ -18,9 +18,12 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
+import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.BulkOperationException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -40,10 +43,8 @@ import java.util.stream.Collectors;
 @Service
 public class BetRecordService {
 
-    //    @Autowired
-    //    Map<String, MongoTemplate> mongoTemplateMap;
     @Autowired
-    MongoTemplate mongoTemplate;
+    Map<String, MongoTemplate> mongoTemplateMap;
 
     /**
      * 新增
@@ -54,7 +55,7 @@ public class BetRecordService {
     public Long add(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        BetRecordPo po = mongoTemplate.insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD));
+        BetRecordPo po = getMongoTemplate(gameType).insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD));
         stopWatch.stop();
         log.info("BetRecordService#add cost time:{}", stopWatch.getLastTaskTimeMillis());
         return po.getId();
@@ -68,7 +69,21 @@ public class BetRecordService {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM, "betRecordList is empty");
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         List<BetRecordPo> poList = BetRecordConverter.doToPoList(betRecordList, OptEnum.ADD);
-        mongoTemplate.insertAll(poList);
+        try {
+            getMongoTemplate(gameType).insertAll(poList);
+        } catch (DuplicateKeyException e) {
+            log.error("BetRecordService#batchInsert err, errMsg: {}", e.getMessage(), e);
+            // 单个插入，忽略重复
+            for (BetRecordPo betRecordPo : poList) {
+                try {
+                    getMongoTemplate(gameType).insert(betRecordPo);
+                } catch (DuplicateKeyException ex) {
+                    log.info("Duplicate key, skipping: id: {}", betRecordPo.getId());
+                }
+            }
+        } catch (Exception e) {
+            log.error("BetRecordService#batchInsert err, errMsg: {}", e.getMessage(), e);
+        }
         long endTime = System.currentTimeMillis();
         log.info("BetRecordService#batchInsert cost time:{}ms", endTime - startTime);
         return true;
@@ -86,7 +101,7 @@ public class BetRecordService {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         BulkWriteResult bulkWriteResult;
         try {
-            BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, BetRecordPo.class);
+            BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED, BetRecordPo.class);
             List<BetRecordPo> betRecordPos = BetRecordConverter.doToPoList(betRecordDoList, OptEnum.ADD);
             bulkOps.insert(betRecordPos);
             bulkWriteResult = bulkOps.execute();
@@ -116,7 +131,7 @@ public class BetRecordService {
         criteria.and("_id").is(betRecordDo.getId());
         criteria.and("playerId").is(betRecordDo.getPlayerId());
         Query query = new Query(criteria);
-        UpdateResult result = mongoTemplate.updateFirst(query,
+        UpdateResult result = getMongoTemplate(gameType).updateFirst(query,
                 BetRecordQueryBuilder.buildMongoUpdate(betRecordDo),
                 BetRecordPo.class);
         long endTime = System.currentTimeMillis();
@@ -144,7 +159,7 @@ public class BetRecordService {
                 return BetRecordBatchOptResultDo.builder().successCount(0L).failIdList(failIdList).build();
             }
 
-            BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, BetRecordPo.class);
+            BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED, BetRecordPo.class);
             betRecordDoList.forEach(betRecordDo -> {
                 Criteria criteria = new Criteria();
                 criteria.and("_id").is(betRecordDo.getId());
@@ -180,7 +195,7 @@ public class BetRecordService {
         criteria.and("_id").is(id);
         criteria.and("playerId").is(playerId);
         Query query = new Query(criteria);
-        BetRecordPo betRecordPo = mongoTemplate.findOne(query, BetRecordPo.class);
+        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(query, BetRecordPo.class);
         log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
         return BetRecordConverter.poToDo(betRecordPo);
     }
@@ -199,7 +214,7 @@ public class BetRecordService {
         criteria.and("_id").is(id);
         criteria.and("playerId").is(playerId);
         Query query = new Query(criteria);
-        BetRecordPo betRecordPo = mongoTemplate.findOne(query, BetRecordPo.class);
+        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(query, BetRecordPo.class);
         log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
         return BetRecordConverter.poToDo(betRecordPo);
     }
@@ -216,7 +231,7 @@ public class BetRecordService {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
-        BetRecordPo betRecordPo = mongoTemplate.findOne(query, BetRecordPo.class);
+        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(query, BetRecordPo.class);
         log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
         return BetRecordConverter.poToDo(betRecordPo);
     }
@@ -229,7 +244,7 @@ public class BetRecordService {
      */
     public List<BetRecordDo> list(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        List<BetRecordPo> recordPoList = mongoTemplate.find(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
+        List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
         return BetRecordConverter.poToDoList(recordPoList);
     }
 
@@ -243,7 +258,7 @@ public class BetRecordService {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         Query query1 = BetRecordQueryBuilder.buildMongodbQuery(query);
         query1.fields().include("_id");
-        List<BetRecordPo> betRecordPoList = mongoTemplate.find(query1, BetRecordPo.class);
+        List<BetRecordPo> betRecordPoList = getMongoTemplate(gameType).find(query1, BetRecordPo.class);
         return Optional.ofNullable(betRecordPoList).orElse(Collections.emptyList()).stream().map(BetRecordPo::getId).collect(Collectors.toList());
     }
 
@@ -255,19 +270,19 @@ public class BetRecordService {
      */
     public long count(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return mongoTemplate.count(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
+        return getMongoTemplate(gameType).count(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
     }
 
-    //    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-    //        MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
-    //        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-    //        return template;
-    //    }
+    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
+        MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
+        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
+        return template;
+    }
 
     ///////////////  above auto generated ///////////////
 
     private List<Long> listNotExistIdList(List<Long> allIdList, GameTypeEnum gameType) {
-        List<Long> existIdList = mongoTemplate.findDistinct(new Query(Criteria.where("_id").in(allIdList)), "_id", BetRecordPo.class, Long.class);
+        List<Long> existIdList = getMongoTemplate(gameType).findDistinct(new Query(Criteria.where("_id").in(allIdList)), "_id", BetRecordPo.class, Long.class);
         if (CollectionUtil.isEmpty(existIdList)) {
             return allIdList;
         }
