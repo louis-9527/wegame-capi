@@ -35,10 +35,6 @@ public class SymbolDo implements Serializable {
      * 元素类型：普通元素/特殊元素
      */
     private SymbolTypeEnum symbolType;
-    /**
-     * 元素规则：倍数（目前只支持）
-     */
-    private SymbolRuleDo symbolRule;
 
     @JsonIgnore
     public boolean isCommonSymbol() {

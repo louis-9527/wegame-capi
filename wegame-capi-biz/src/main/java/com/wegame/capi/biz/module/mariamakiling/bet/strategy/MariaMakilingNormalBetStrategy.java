@@ -8,6 +8,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
+import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
@@ -15,14 +16,14 @@ import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
 @Slf4j
 @Component("mariaMakilingNormalBetStrategy")
@@ -33,9 +34,9 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
 
     @CacheEvict(value = CacheConstants.REWARD_INFO)
     @Override
-    public void freeSpinsAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo recordDetail, Long totalRewardAmount) {
-        if (recordDetail.isLastFreeSpins(betDo.getBetDetail().getFreeSpinsId())) {
-            updateRewardNotifyInfo(betDo.getGameType(), recordDetail.freeSpinCount(), totalRewardAmount);
+    public void freeSpinsAfterHandle(BetDo<MariaMakilingBetDo> betDo, List<MariaMakilingGameRecordDo> gameRecordList, Long totalRewardAmount) {
+        if (isLastFreeSpins(gameRecordList, betDo.getBetDetail().getGameRecordId())) {
+            updateRewardNotifyInfo(betDo.getGameType(), freeSpinCount(gameRecordList), totalRewardAmount);
         }
     }
 
@@ -64,5 +65,18 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
         } catch (Exception e) {
             log.error("[MariaMakilingNonBuyFreeSpinsBetStrategy-notifyRewardHandle] error", e);
         }
+    }
+
+    private boolean isLastFreeSpins(List<MariaMakilingGameRecordDo> gameRecordList, long freeSpinsGameRecordId) {
+        MariaMakilingGameRecordDo recordDo = CollectionUtils.isEmpty(gameRecordList) ? null : gameRecordList.get(gameRecordList.size() - 1);
+        return Objects.isNull(recordDo) ? false : Objects.equals(recordDo.getId(), freeSpinsGameRecordId);
+    }
+
+    private long freeSpinCount(List<MariaMakilingGameRecordDo> gameRecordList) {
+        return Optional.ofNullable(gameRecordList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(item -> item.getId() > 0)
+                .count();
     }
 }

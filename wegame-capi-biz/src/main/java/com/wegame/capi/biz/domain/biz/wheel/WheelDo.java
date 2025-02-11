@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 
 /**
@@ -24,7 +23,7 @@ import java.util.Objects;
 public class WheelDo<T extends SymbolDo> implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
-     * 滚轮-序号
+     * 序号
      */
     private Integer index;
     /**

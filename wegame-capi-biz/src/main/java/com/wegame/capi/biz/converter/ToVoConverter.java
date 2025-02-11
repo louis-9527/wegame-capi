@@ -1,7 +1,9 @@
 package com.wegame.capi.biz.converter;
 
-public interface ToVoConverter<T> {
+public interface ToVoConverter<T, R> {
 
-    T toVo();
+    T toResultVo();
+
+    R toRecordVo();
 }
 

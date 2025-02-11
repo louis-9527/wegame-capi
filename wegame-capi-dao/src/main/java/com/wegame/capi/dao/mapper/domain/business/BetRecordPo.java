@@ -3,12 +3,13 @@ package com.wegame.capi.dao.mapper.domain.business;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
 /**
- * game_record：投注记录
+ * bet_record：投注记录
  * @author genereate
  */
 @Data
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@Document(collection = "bet_record")
 public class BetRecordPo implements Serializable {
     private static final long serialVersionUID = -633389003068449792L;
     /**
@@ -84,10 +86,6 @@ public class BetRecordPo implements Serializable {
      * 状态 0进行中 1已完结 2无效
      */
     private Integer status;
-    /**
-     * 游戏记录明细json
-     */
-    private Object detail;
     /**
      * 创建人
      */
