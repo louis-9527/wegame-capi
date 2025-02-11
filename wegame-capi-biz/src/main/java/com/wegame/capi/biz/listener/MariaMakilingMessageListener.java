@@ -41,7 +41,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
     protected List<MessageId> processMessages(Messages<byte[]> messages) {
         List<BetRecordDo<MariaMakilingGameRecordDo>> addRecordList = new ArrayList<>();
         List<BetRecordDo> updateRecordList = new ArrayList<>();
-        Map<Long, MessageId> messageIdMap = new HashMap<>(messages.size());
+        Map<String, MessageId> messageIdMap = new HashMap<>(messages.size());
         messages.forEach(tt -> {
             String message = new String(tt.getData());
             MQMessage<BetRecordDo<MariaMakilingGameRecordDo>> betRecordDoMQMessage = JSON.parseObject(message, new TypeReference<MQMessage<BetRecordDo<MariaMakilingGameRecordDo>>>() {
@@ -64,7 +64,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
         return new ArrayList<>(messageIdMap.values());
     }
 
-    private void batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> recordList, Map<Long, MessageId> messageIdMap) {
+    private void batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> recordList, Map<String, MessageId> messageIdMap) {
         if (CollectionUtils.isEmpty(recordList)) {
             return;
         }
@@ -73,12 +73,12 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             // 移除处理失败的key
             if (!ret) {
                 for (BetRecordDo record : recordList) {
-                    messageIdMap.remove(record.getId());
+                    messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + record.getId());
                 }
             }
         } catch (Exception e) {
             for (BetRecordDo record : recordList) {
-                messageIdMap.remove(record.getId());
+                messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + record.getId());
             }
             log.error("MariaMakilingMessageListener.batchAdd error: {}", e.getMessage(), e);
         }
@@ -94,12 +94,12 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             List<Long> failIdList = updateResultDo.getFailIdList();
             if (CollectionUtils.isNotEmpty(failIdList)) {
                 for (Long id : failIdList) {
-                    messageIdMap.remove(id);
+                    messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + id);
                 }
             }
         } catch (Exception e) {
             for (BetRecordDo record : recordList) {
-                messageIdMap.remove(record.getId());
+                messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + record.getId());
             }
             log.error("MariaMakilingMessageListener.batchUpdate error: {}", e.getMessage(), e);
         }
