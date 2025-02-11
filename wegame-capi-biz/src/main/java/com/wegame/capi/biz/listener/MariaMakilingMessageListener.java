@@ -84,7 +84,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
         }
     }
 
-    private void batchUpdate(List<BetRecordDo> recordList, Map<Long, MessageId> messageIdMap) {
+    private void batchUpdate(List<BetRecordDo> recordList, Map<String, MessageId> messageIdMap) {
         if (CollectionUtils.isEmpty(recordList)) {
             return;
         }
