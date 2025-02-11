@@ -4,13 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.MalakasBetResultVo;
-import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -75,9 +73,9 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
      */
     private RewardResultDo<MalakasSymbolDo> rewardResult;
     /**
-     * 免费轮id列表
+     * 免费轮游戏记录id列表
      */
-    private List<Long> freeSpinGameRecordIds;
+    private List<Long> gameRecordIds;
 
     /**
      * 是否中奖免费轮
@@ -136,7 +134,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                                     .build()
                             ).collect(Collectors.toList()))
                     .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
-                    .freeSpinIds(freeSpinGameRecordIds)
+                    .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .build();
         }
     }

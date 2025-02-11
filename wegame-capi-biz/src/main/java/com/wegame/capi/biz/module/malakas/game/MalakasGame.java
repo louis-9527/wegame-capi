@@ -113,7 +113,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             totalRewardAmount += rewardResult.getTotalRewardAmount();
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeSpinList);
         } else if (preGameRecord.getRewardResult().isHasRewardFreeSpin()) {
-            Optional.ofNullable(preGameRecord.getFreeSpinGameRecordIds())
+            Optional.ofNullable(preGameRecord.getGameRecordIds())
                     .orElse(Collections.emptyList())
                     .forEach(item -> {
                         freeSpinList.add(FreeSpinsHandleDo.builder()
@@ -341,7 +341,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 .playerName(userInfo.getPlayerName())
                 .wheel(wheel)
                 .rewardResult(rewardResult)
-                .freeSpinGameRecordIds(freeSpinGameRecordIds)
+                .gameRecordIds(freeSpinGameRecordIds)
                 .build();
     }
 

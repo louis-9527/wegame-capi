@@ -21,6 +21,6 @@ public class MalakasBetRequest  implements BetRequestValidate, Serializable {
     private Long payAmount;
     @ApiModelProperty(value = "投注记录ID, 获得免费轮的投注记录的投注id，非必填", required = false)
     private String betRecordId;
-    @ApiModelProperty(value = "免费轮ID, 非必填", required = false)
-    private String freeSpinsId;
+    @ApiModelProperty(value = "免费轮游戏记录ID, 非必填", required = false)
+    private String gameRecordId;
 }

@@ -3,7 +3,6 @@ package com.wegame.capi.biz.domain.biz;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
@@ -107,7 +106,7 @@ public class MalakasBetRecordDetailDo implements ToVoConverter<MalakasBetResultD
                                     .build()
                             ).collect(Collectors.toList()))
                     .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
-                    .freeSpinIds(gameRecord.getFreeSpinGameRecordIds())
+                    .gameRecordIds(Optional.ofNullable(gameRecord.getGameRecordIds()).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .build();
         }
     }
