@@ -89,7 +89,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
     public MariaMakilingBetResultVo toResultVo() {
         if (Objects.isNull(rewardResult)) {
             return MariaMakilingBetResultVo.builder()
-                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return MariaMakilingBetResultVo.builder()
@@ -97,7 +97,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
-                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .freeSpinFlag(0)
                     .build();
         } else {
@@ -106,7 +106,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
-                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .rewardSymbolIndexSet(Optional.ofNullable(rewardResult.getRewardLineDetailList())
                             .orElse(Collections.emptyList())
                             .stream()
@@ -132,7 +132,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                                     .build()
                             ).collect(Collectors.toList()))
                     .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
-                    .freeSpinIds(Optional.ofNullable(gameRecordIds)
+                    .gameRecordIds(Optional.ofNullable(gameRecordIds)
                             .orElse(Collections.emptyList())
                             .stream()
                             .map(String::valueOf)

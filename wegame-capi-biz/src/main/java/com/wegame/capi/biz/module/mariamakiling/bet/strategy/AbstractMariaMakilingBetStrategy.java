@@ -4,7 +4,6 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
@@ -15,14 +14,17 @@ import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
-import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * MariaMakiling类游戏投注抽象接口
@@ -34,8 +36,6 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     MariaMakilingGame mariaMakilingGame;
     @Autowired
     MariaMakilingRecordManager mariaMakilingRecordManager;
-    @Autowired
-    GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
     @Override
     public Game<MariaMakilingGameRecordDo> getGame() {
@@ -49,40 +49,36 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
 
     @Override
     public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo<MariaMakilingBetDo> betDo) {
-        if (BetSubTypeEnum.isFreeSpins(betDo.getBetSubType().getCode())) {
-            // 免费轮投注
-            return betForFreeSpins(betDo);
-        } else {
+        if (!BetSubTypeEnum.isFreeSpins(betDo.getBetSubType().getCode())) {
             // 非免费轮投注
             return betForNonFreeSpins(betDo);
+        } else {
+            // 免费轮投注, 走查询
+            return betForFreeSpins(betDo);
         }
     }
 
     /**
      * 免费轮投注
-     *
-     * @param betDo
-     * @return
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
-        // todo
         MariaMakilingBetDo betDetail = betDo.getBetDetail();
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        // todo 从GameRecord查询 todo
-        List<MariaMakilingGameRecordDo> gameRecordList = gameRecordService.list(GameRecordQuery.builder()
+        List<MariaMakilingGameRecordDo> gameRecordList = mariaMakilingRecordManager.listGameRecordWithCache(GameRecordQuery.builder()
                         .betRecordId(betDo.getBetDetail().getBetRecordId())
                         .playerId(userInfo.getPlayerId())
                         .orderByClause("_id")
+                        .direction(Sort.Direction.ASC)
                         .build(),
-                getGame().getGameInfo().getGameType(),
-                MariaMakilingGameRecordDo.class);
+                getGame().getGameInfo().getGameType());
         // 匹配-免费轮游戏记录
         MariaMakilingGameRecordDo gameRecord = gameRecordList
                 .stream()
                 .filter(item -> Objects.equals(item.getId(), betDetail.getGameRecordId()))
                 .findFirst()
                 .orElse(null);
+        AssertUtil.assertNotNull(gameRecord, ErrorCode.ERR_PARAM);
         // 统计-当前轮次及之前记录奖励金额之和
         Long overallRewardAmount = Optional.ofNullable(gameRecordList)
                 .orElse(Collections.emptyList())
@@ -105,9 +101,6 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
 
     /**
      * 非免费轮投注
-     *
-     * @param betDo
-     * @return
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
         List<MariaMakilingGameRecordDo> list = getGame().play(GamePlayDo.builder()

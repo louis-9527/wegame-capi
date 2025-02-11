@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component("mariaMakilingRecordManager")
@@ -37,5 +38,9 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
         return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
     }
 
-
+    // todo cache GameRecord list
+    @Override
+    public List<MariaMakilingGameRecordDo> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType) {
+        return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+    }
 }
