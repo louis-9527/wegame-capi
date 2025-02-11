@@ -46,26 +46,28 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
         long fiveMinutesAgo = System.currentTimeMillis() - 5 * 60 * 1000;
         int pageNo = 1;
         Long lastId = null;
-        List<BetRecordDo> recordList;
+        List<Long> recordIdList;
         do {
-            recordList = betRecordService.list(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
+            recordIdList = betRecordService.listId(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
                     .endCreateTime(fiveMinutesAgo)
                     .limit(DEFAULT_PAGE_SIZE)
                     .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
                     .lastId(lastId)
                     .build(), this.getGameType());
 
-            if (CollectionUtil.isNotEmpty(recordList)) {
-                lastId = recordList.get(recordList.size() - 1).getId();
+            if (CollectionUtil.isNotEmpty(recordIdList)) {
+                lastId = recordIdList.get(recordIdList.size() - 1);
             }
-            Optional.ofNullable(recordList)
+            Optional.ofNullable(recordIdList)
                     .orElse(Collections.emptyList())
                     .forEach(this::handle);
             pageNo++;
-        } while (CollectionUtils.isNotEmpty(recordList));
+        } while (CollectionUtils.isNotEmpty(recordIdList));
     }
 
-    private void handle(BetRecordDo betRecordDo) {
+    private void handle(Long betRecordId) {
+        // todo 加锁
+        BetRecordDo betRecordDo = betRecordService.getById(betRecordId, this.getGameType());
         if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
             return;
         }

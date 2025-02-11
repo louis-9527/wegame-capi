@@ -208,6 +208,23 @@ public class BetRecordService {
     }
 
     /**
+     * 查询：根据主键id查询
+     *
+     * @param id       主键id
+     * @return BetRecordDo 投注记录
+     */
+    public BetRecordDo getById(Long id, GameTypeEnum gameType) {
+        long startTime = System.currentTimeMillis();
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        Criteria criteria = new Criteria();
+        criteria.and("_id").is(id);
+        Query query = new Query(criteria);
+        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(query, BetRecordPo.class);
+        log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
+        return BetRecordConverter.poToDo(betRecordPo);
+    }
+
+    /**
      * 查询列表
      *
      * @param query 查询参数
@@ -217,6 +234,18 @@ public class BetRecordService {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query), BetRecordPo.class);
         return BetRecordConverter.poToDoList(recordPoList);
+    }
+
+    /**
+     * 查询Id列表
+     * @param query 查询参数
+     * @return List<Long> 游戏记录Id列表
+     */
+    public List<Long> listId(BetRecordQuery query, GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        Query query1 = BetRecordQueryBuilder.buildMongodbQuery(query);
+        query1.fields().include("_id");
+        return getMongoTemplate(gameType).find(query1, Long.class);
     }
 
     /**
