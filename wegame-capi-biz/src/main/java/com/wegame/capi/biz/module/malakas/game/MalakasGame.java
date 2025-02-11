@@ -327,7 +327,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         List<Long> freeSpinGameRecordIds = new ArrayList<>();
         // 未中奖中奖线（最后一次滚轮） && 中奖免费轮
-        if (CollectionUtils.isEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin()) {
+//        if (CollectionUtils.isEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin()) {
+        if (rewardResult.isHasRewardFreeSpin()) {
             int times = rewardResult.getRewardFreeSpinTimes();
             int tempTimes = 0;
             while (tempTimes < times) {
