@@ -40,8 +40,6 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     private PulsarProducer pulsarProducer;
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
 
 
     public abstract Game getGame();
@@ -81,14 +79,11 @@ public abstract class AbstractBetStrategy<T, R extends ToVoConverter> implements
      * @return 用户余额
      */
     public Long saveBetRecordAndBetWithPayoutAsync(BetRecordDo betRecordDo, Boolean containFree) {
-        redisTemplate.opsForValue().increment("zhumeng001_send_msg_count_all", 1);
 
         if (containFree) {
             return this.saveBetRecordAndBetWithPayout(betRecordDo);
         } else {
             // 发送消息(新增)
-            redisTemplate.opsForValue().increment("zhumeng001_send_msg_not_containFree_all", 1);
-
             MQMessage<BetRecordDo> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
             MessageId addMessageId = pulsarProducer.sendMessage(this.getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
             AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);

@@ -32,8 +32,6 @@ public class PulsarProducer {
     String name;
     @Autowired
     PulsarClient pulsarClient;
-    @Autowired
-    RedisTemplate<String, Object> redisTemplate;
 
     public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage, int tryTimes) {
         long startTime = System.currentTimeMillis();
@@ -51,9 +49,6 @@ public class PulsarProducer {
     public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage) {
         try {
             log.info("sendMessage--:type:{},msgId:{}", mqMessage.getType(), mqMessage.getMsgId());
-            if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
-                redisTemplate.opsForValue().increment("zhumeng001_send_msg_count", 1);
-            }
             return producerCache.get(gameTypeEnum.getId())
                     .newMessage()
                     .key(mqMessage.getMsgId())
