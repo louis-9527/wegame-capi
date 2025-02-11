@@ -43,20 +43,8 @@ public class BetRecordVo implements Validate, Serializable {
     @ApiModelProperty("创建时间")
     private Long createTime;
     // todo fix 联调后 修改类型为 Object
-    @ApiModelProperty("详情")
-    private MariaMakilingBetRecordDetailVo detail;
-
-    @Data
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ApiModel("MariaMakiling投注记录详情")
-    @EqualsAndHashCode(callSuper = false)
-    public static class MariaMakilingBetRecordDetailVo implements Validate, Serializable {
-        private static final long serialVersionUID = -5835715678741184L;
-        @ApiModelProperty("游戏记录列表")
-        private List<MariaMakilingGameRecordVo> gameRecordList;
-    }
+    @ApiModelProperty("游戏记录列表")
+    private List<Object> gameRecordList;
 
     @Data
     @SuperBuilder

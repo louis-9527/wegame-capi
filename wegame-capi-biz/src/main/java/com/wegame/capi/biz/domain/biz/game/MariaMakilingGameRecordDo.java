@@ -7,6 +7,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo> {
+public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo, BetRecordVo.MariaMakilingGameRecordVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * id
@@ -85,7 +86,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
     }
 
     @Override
-    public MariaMakilingBetResultVo toVo() {
+    public MariaMakilingBetResultVo toResultVo() {
         if (Objects.isNull(rewardResult)) {
             return MariaMakilingBetResultVo.builder()
                     .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
@@ -138,6 +139,16 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                             .collect(Collectors.toList()))
                     .build();
         }
+    }
+
+    @Override
+    public BetRecordVo.MariaMakilingGameRecordVo toRecordVo() {
+        return BetRecordVo.MariaMakilingGameRecordVo.builder()
+                .index(index)
+                .betAmount(Objects.nonNull(rewardResult) ? rewardResult.getBetAmount() : null)
+                .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
+                .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
+                .build();
     }
 }
 

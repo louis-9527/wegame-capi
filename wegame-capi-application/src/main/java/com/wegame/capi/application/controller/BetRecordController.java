@@ -7,10 +7,10 @@ import com.wegame.base.domain.PageInfoVo;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.BetRecordConverter;
+import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.service.BetRecordService;
-import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -22,10 +22,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 投注记录模块
@@ -38,13 +41,14 @@ import java.util.Map;
 @Api(value = "投注记录模块", tags = {"投注记录模块"})
 public class BetRecordController {
 
-    public static final Map<GameTypeEnum, Class<?>> CLAZZ_MAP = new ImmutableMap.Builder<GameTypeEnum, Class<?>>()
-            .put(GameTypeEnum.MARIA_MAKILING, MariaMakilingGameRecordDo.class)
+    public static final Map<GameTypeEnum, String> RECORD_MANAGER_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
+            .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingRecordManager")
             .build();
+
     @Autowired
     BetRecordService betRecordService;
     @Autowired
-    GameRecordService gameRecordService;
+    Map<String, AbstractRecordManager<? extends ToVoConverter>> recordManagerMap;
 
     @LoginRequired
     @ApiOperation(value = "分页查询", httpMethod = "POST")
@@ -69,7 +73,22 @@ public class BetRecordController {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GameTypeEnum gameType = GameTypeEnum.valueOf(userInfo.getGameId());
         BetRecordDo betRecordDo = betRecordService.getWithCache(Long.valueOf(id), userInfo.getPlayerId(), gameType);
-        //        betRecordDo.setGameRecordList(gameRecordService.list(GameRecordQuery.builder().build(), GameTypeEnum.valueOf(userInfo.getGameId()), CLAZZ_MAP.get(gameType)));
-        return CommonResponse.build(BetRecordConverter.doToVo(betRecordDo));
+        BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
+        betRecordVo.setGameRecordList(Optional.ofNullable(getRecordManager(gameType).listGameRecord(GameRecordQuery.builder()
+                        .betRecordId(betRecordDo.getId())
+                        .orderByClause("_id")
+                        .direction(Sort.Direction.ASC)
+                        .build(), GameTypeEnum.valueOf(userInfo.getGameId())))
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(ToVoConverter::toRecordVo)
+                .collect(Collectors.toList()));
+        return CommonResponse.build(betRecordVo);
+    }
+
+    private AbstractRecordManager<? extends ToVoConverter> getRecordManager(GameTypeEnum gameType) {
+        AbstractRecordManager<? extends ToVoConverter> recordManager = recordManagerMap.get(RECORD_MANAGER_MAP.get(gameType));
+        AssertUtil.assertNotNull(recordManager, ErrorCode.ERR_INTER);
+        return recordManager;
     }
 }
