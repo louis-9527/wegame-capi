@@ -513,7 +513,6 @@ public class MalakasRewardHandlerTest extends BaseTest {
         symbolDo.setId(symbol.getId());
         symbolDo.setName(symbol.getName());
         symbolDo.setSymbolType(symbolType);
-        symbolDo.setSymbolRule(MalakasSymbolDo.SymbolRuleDo.builder().symbolRuleType(symbolRuleType).value(ruleValue).build());
         return symbolDo;
     }
 
@@ -523,7 +522,6 @@ public class MalakasRewardHandlerTest extends BaseTest {
         symbolDo.setName(symbol.getName());
         symbolDo.setSymbolType(symbolType);
         symbolDo.setSymbolSize(symbolSizeEnum);
-        symbolDo.setSymbolRule(MalakasSymbolDo.SymbolRuleDo.builder().symbolRuleType(symbolRuleType).value(ruleValue).build());
         return symbolDo;
     }
 
@@ -532,11 +530,6 @@ public class MalakasRewardHandlerTest extends BaseTest {
                 .id(Symbol1000.getId())
                 .name(Symbol1000.getName())
                 .symbolType(SymbolTypeEnum.COMMON)
-                .symbolRule(MalakasSymbolDo.SymbolRuleDo
-                        .builder()
-                        .symbolRuleType(SymbolRuleTypeEnum.COMMON)
-                        .value(null)
-                        .build())
                 .build();
     }
 }
