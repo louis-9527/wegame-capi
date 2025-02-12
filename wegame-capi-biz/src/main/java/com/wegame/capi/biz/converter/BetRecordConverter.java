@@ -10,6 +10,7 @@ import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import org.springframework.data.domain.Sort;
@@ -136,6 +137,7 @@ public class BetRecordConverter {
         BetRecordQuery query = new BetRecordQuery();
         query.setId(Optional.ofNullable(request.getId()).map(Long::valueOf).orElse(null));
         query.setPlayerId(userInfo.getPlayerId());
+        query.setStatus(BetStatusEnum.SUCCESS.getCode());
         query.setStartCreateTime(request.getStartCreateTime());
         query.setEndCreateTime(request.getEndCreateTime());
         query.setOrderByClause(orderClause);
