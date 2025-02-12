@@ -6,6 +6,8 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,6 +19,7 @@ import java.util.Objects;
  */
 @Slf4j
 @Configuration
+@ConditionalOnBean(RedisTemplate.class)
 public class IdConfig {
 
     @Autowired
@@ -29,6 +32,7 @@ public class IdConfig {
     }
 
     private Long getMachineId() {
+        AssertUtil.assertNotNull(redisTemplate, ErrorCode.ERR_INTER, "redisTemplate is required");
         int maxRetry = 100;
         int tempRetry = 0;
         Long machineId = null;
