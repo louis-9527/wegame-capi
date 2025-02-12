@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.module.malakas.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -35,28 +34,25 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SCATTER;
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
-import static com.wegame.capi.common.constants.GameConstants.*;
+import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
+import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
 @Component("malakasRewardHandler")
 public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo> {
-    private static final Map<String, SymbolEnum> WILD_SYMBOL_MAP = new ImmutableMap.Builder<String, SymbolEnum>()
-            .put(SymbolEnum.Wild.getId(), SymbolEnum.Wild)
-            .build();
-
     private static final Integer MIN_SCATTER_COUNT_FOR_FREE_SPIN = 4;
 
     @Autowired
-    OddsCalculateStrategy malakasOddsCalculateStrategy;
+    OddsCalculateStrategy<MalakasSymbolDo> malakasOddsCalculateStrategy;
     @Autowired
-    MultipleCalculateStrategy malakasMultipleCalculateStrategy;
+    MultipleCalculateStrategy<MalakasSymbolDo> malakasMultipleCalculateStrategy;
     @Autowired
     BetRecordService betRecordService;
     @Autowired
     MalakasConfig malakasConfig;
 
     @Override
-    public RewardResultDo handle(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
+    public RewardResultDo<MalakasSymbolDo> handle(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
         long current = System.currentTimeMillis();
         int scatterCount = scatterCount(rewardHandle);
         Integer freeSpinsTimes = malakasConfig.getScatterFreeSpinsTimesConfig().get(scatterCount);
@@ -68,7 +64,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         BigDecimal totalMultiple = malakasMultipleCalculateStrategy.calculateMultiple(rewardHandle);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
-            return RewardResultDo.builder()
+            return RewardResultDo.<MalakasSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardType(RewardTypeEnum.NONE)
                     .rewardSubType(RewardSubTypeEnum.NONE)
@@ -84,8 +80,8 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         // 中奖总金额
         long totalRewardAmount = 0L;
         // 中奖坐标列表
-        List<RewardLineDetailDo<SymbolDo>> rewardLineDetailList = Lists.newArrayList();
-        for (RewardLineDo rewardLine : CollectionUtils.emptyIfNull(rewardLineList)) {
+        List<RewardLineDetailDo<MalakasSymbolDo>> rewardLineDetailList = Lists.newArrayList();
+        for (RewardLineDo<MalakasSymbolDo> rewardLine : CollectionUtils.emptyIfNull(rewardLineList)) {
             // 计算赔率
             BigDecimal odds = malakasOddsCalculateStrategy.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
             // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
@@ -93,7 +89,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
             // 中奖线明细列表
-            rewardLineDetailList.add(RewardLineDetailDo.builder()
+            rewardLineDetailList.add(RewardLineDetailDo.<MalakasSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardAmount(lineRewardAmount.longValue())
                     .odds(odds)
@@ -106,7 +102,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .build());
         }
         // 5.构建中奖结果
-        RewardResultDo rewardResult = RewardResultDo.builder()
+        RewardResultDo<MalakasSymbolDo> rewardResult = RewardResultDo.<MalakasSymbolDo>builder()
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())

@@ -97,8 +97,7 @@ public class MalakasSymbolUtil {
      * @param symbolArr
      * @param rewardResult
      */
-    public static void clearRewardSymbol(MalakasSymbolDo[][]
-                                                 symbolArr, RewardResultDo<MalakasSymbolDo> rewardResult) {
+    public static void clearRewardSymbol(MalakasSymbolDo[][] symbolArr, RewardResultDo<MalakasSymbolDo> rewardResult) {
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         AssertUtil.assertNotEmpty(rewardResult.getRewardLineDetailList(), ErrorCode.ERR_INTER);
         List<RewardSymbolDo<MalakasSymbolDo>> rewardSymbolList = rewardResult.getRewardLineDetailList()
@@ -154,15 +153,14 @@ public class MalakasSymbolUtil {
             symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = null;
         } else {
             // 非第一行元素：按照元素大小进行移除
-            int columSpanSiz = rewardSymbol.getSymbol().getSymbolSize().getColumSpan();
+            int columSpanSiz = rewardSymbol.getSymbol().getSymbolSize().getColumnSpan();
             for (int columSpan = 0; columSpan < columSpanSiz; columSpan++) {
                 symbolArr[indexDo.getRowIndex() + columSpan][indexDo.getColumnIndex()] = null;
             }
         }
     }
 
-    public static void handlePlaceholderSymbol(MalakasSymbolDo[][] symbolArr, int row, int column, SymbolSizeEnum
-            symbolSize) {
+    public static void handlePlaceholderSymbol(MalakasSymbolDo[][] symbolArr, int row, int column, SymbolSizeEnum symbolSize) {
         switch (symbolSize) {
             case S:
                 break;
@@ -219,7 +217,7 @@ public class MalakasSymbolUtil {
         for (int row = 0; row < symbolArr.length; row++) {
             for (int column = 0; column < symbolArr[row].length; column++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
-                    System.out.print(symbolArr[row][column].getId() + " " + symbolArr[row][column].getSymbolSize().getColumSpan() + " ");
+                    System.out.print(symbolArr[row][column].getId() + " " + symbolArr[row][column].getSymbolSize().getColumnSpan() + " ");
                 } else {
                     System.out.print("null   ");
                 }

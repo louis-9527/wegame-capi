@@ -66,7 +66,7 @@ public enum SymbolSizeEnum {
         return name;
     }
 
-    public int getColumSpan() {
+    public int getColumnSpan() {
         return columSpan;
     }
 

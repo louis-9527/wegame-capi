@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 中奖do
@@ -50,4 +51,12 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
      * 滚轮
      */
     private WheelDo<T> wheel;
+    /**
+     * 是否购买投注第一回合
+     */
+    private Boolean buyBetFirst;
+    /**
+     * 前一回合的总倍数
+     */
+    private BigDecimal preTotalMultiple;
 }

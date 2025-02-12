@@ -16,23 +16,21 @@ import java.util.Map;
 
 public class MalakasProbabilisticUtil {
 
-
-    public static Map<String, Integer> buildColumSymboleSizeProbabilisticMap(int currentColumNo,
-                                                                      int maxColumSpan,
-                                                                      MalakasConfig.ProbabilisticConfig probabilisticConfig) {
+    public static Map<String, Integer> buildColumSymboleSizeProbabilisticMap(int currentColumnNo,
+                                                                             int maxColumnSpan,
+                                                                             MalakasConfig.ProbabilisticConfig probabilisticConfig) {
         Map<String, List<BigDecimal>> sizeProbabilisticConfigMap = probabilisticConfig.getSymbolSizeProbabilisticConfig();
         AssertUtil.assertTrue(MapUtils.isNotEmpty(sizeProbabilisticConfigMap), ErrorCode.ERR_INTER);
         Map<String, Integer> map = new HashMap<>();
-        sizeProbabilisticConfigMap.entrySet().forEach(item -> {
-            SymbolSizeEnum symbolSize = SymbolSizeEnum.valueOfCode(item.getKey());
-            int val = (item.getValue().get(currentColumNo).multiply(new BigDecimal(Constants.CONST_10000))).intValue();
-            if (val > 0 && maxColumSpan >= symbolSize.getColumSpan()) {
-                map.put(item.getKey(), val);
+        sizeProbabilisticConfigMap.forEach((key, value) -> {
+            SymbolSizeEnum symbolSize = SymbolSizeEnum.valueOfCode(key);
+            int val = (value.get(currentColumnNo).multiply(new BigDecimal(Constants.CONST_10000))).intValue();
+            if (val > 0 && maxColumnSpan >= symbolSize.getColumnSpan()) {
+                map.put(key, val);
             }
         });
         return map;
     }
-
 
     public static Map<String, List<BigDecimal>> getWheelProbabilisticConfig(GamePlayDo gamePlay, MalakasConfig.ProbabilisticConfig probabilisticConfig, boolean freePlay) {
         if (freePlay) {
