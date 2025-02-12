@@ -2,6 +2,7 @@ package com.wegame.capi.client.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import java.util.Objects;
  *
  * @author apple
  */
+@Getter
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum BetSubTypeEnum {
@@ -65,18 +67,6 @@ public enum BetSubTypeEnum {
             }
         }
         return null;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public BetTypeEnum getBetType() {
-        return betType;
     }
 
     public static Boolean isFreeSpins(String betSubType) {
