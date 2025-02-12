@@ -18,11 +18,6 @@ public class MalakasMultipleCalculateStrategy extends AbstractMultipleCalculateS
 
     @Override
     public BigDecimal calculateMultiple(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
-        if (Objects.equals(NORMAL_BET, rewardHandle.getBetSubType())) {
-            return BigDecimal.ZERO;
-        } else if (Objects.equals(FREE_SPINS_BUY_BET, rewardHandle.getBetSubType()) && BooleanUtils.isTrue(rewardHandle.getBuyBetFirst())) {
-            return BigDecimal.ZERO;
-        }
         return BigDecimal.ZERO;
     }
 }
