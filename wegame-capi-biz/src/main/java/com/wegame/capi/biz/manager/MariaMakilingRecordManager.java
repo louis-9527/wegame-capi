@@ -30,6 +30,8 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
 
     @Transactional(transactionManager = "mariamakilingTransactionManager")
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
+        Long id = betRecordService.add(betRecord, gameType);
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<MariaMakilingGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
             for (List<MariaMakilingGameRecordDo> gameRecordListItem : Lists.partition(gameRecordList, 100)) {
@@ -37,9 +39,6 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
             }
         }
-        betRecord.setGameRecordList(null);
-        Long id = betRecordService.add(betRecord, gameType);
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         return betRecord.getId();
     }
 
@@ -47,6 +46,14 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Override
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
+        List<BetRecordDo> recordList = betRecordList.stream()
+                .map(item -> {
+                    item.setGameRecordList(null);
+                    return item;
+                })
+                .collect(Collectors.toList());
+        boolean ret = betRecordService.batchInsert(recordList, gameType);
+        AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         List<MariaMakilingGameRecordDo> gameRecordList = betRecordList.stream()
                 .filter(item -> CollectionUtils.isNotEmpty(item.getGameRecordList()))
                 .map(BetRecordDo::getGameRecordList)
@@ -55,13 +62,7 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
             gameRecordService.batchInsert(gameRecordList, gameType);
         }
-        List<BetRecordDo> recordList = betRecordList.stream()
-                .map(item -> {
-                    item.setGameRecordList(null);
-                    return item;
-                })
-                .collect(Collectors.toList());
-        betRecordService.batchInsert(recordList, gameType);
+
         return true;
     }
 
