@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -29,7 +30,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableCaching
 @EnableTransactionManagement
 @MapperScan(value = {"com.wegame.capi.dao.*"})
-@SpringBootApplication(scanBasePackages = {"com.wegame.*"}, exclude = {RedissonAutoConfiguration.class, SessionAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"com.wegame.*"}, exclude = {
+        RedissonAutoConfiguration.class,
+        SessionAutoConfiguration.class,
+        MongoAutoConfiguration.class})
 public class Application implements CommandLineRunner {
     @Value("${spring.application.name}")
     private String appName;

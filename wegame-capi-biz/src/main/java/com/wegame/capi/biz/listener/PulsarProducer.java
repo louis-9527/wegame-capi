@@ -25,13 +25,35 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class PulsarProducer {
     private final ConcurrentHashMap<String, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
-
     @Value("${spring.application.env}")
     String env;
     @Value("${spring.application.name}")
     String name;
     @Autowired
     PulsarClient pulsarClient;
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
+
+    @PostConstruct
+    public void init() {
+        for (GameTypeEnum item : GameTypeEnum.values()) {
+            String topicName = String.format("persistent://%s/%s/%s", name + "_" + item.getName(), env, item.getName() + "_topic");
+            Producer<byte[]> producer = this.createProducer(topicName, item.getName());
+            producerCache.put(item.getId(), producer);
+        }
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        producerCache.forEach((key, value) -> {
+            try {
+                value.close();
+            } catch (PulsarClientException e) {
+                log.error("Failed to close Pulsar producer for topic error, topic={}", key, e);
+            }
+        });
+        producerCache.clear();
+    }
 
     public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage, int tryTimes) {
         long startTime = System.currentTimeMillis();
@@ -49,17 +71,20 @@ public class PulsarProducer {
     public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage) {
         try {
             log.info("sendMessage--:type:{},msgId:{}", mqMessage.getType(), mqMessage.getMsgId());
+            if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
+                redisTemplate.opsForValue().increment("zhumeng001_send_msg_count", 1);
+            }
             return producerCache.get(gameTypeEnum.getId())
                     .newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
                     .send();
-                    //
-                    //            return getProducer(topicName, gameType).newMessage()
-                    //                    // 关键点：设置 Key
-                    //                    .key(mqMessage.getMsgId())
-                    //                    .value(JSON.toJSONBytes(mqMessage))
-                    //                    .send();
+            //
+            //            return getProducer(topicName, gameType).newMessage()
+            //                    // 关键点：设置 Key
+            //                    .key(mqMessage.getMsgId())
+            //                    .value(JSON.toJSONBytes(mqMessage))
+            //                    .send();
         } catch (PulsarClientException e) {
             log.error("mariamakilingProducer send fail, msgId={}", mqMessage.getMsgId(), e);
             throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
@@ -85,26 +110,5 @@ public class PulsarProducer {
         } catch (PulsarClientException e) {
             throw new RuntimeException("Failed to create Pulsar producer for topic error: " + topicName, e);
         }
-    }
-
-    @PostConstruct
-    public void init() {
-        for (GameTypeEnum item : GameTypeEnum.values()) {
-            String topicName = String.format("persistent://%s/%s/%s", name + "_" + item.getName(), env, item.getName() + "_topic");
-            Producer<byte[]> producer = this.createProducer(topicName, item.getName());
-            producerCache.put(item.getId(), producer);
-        }
-    }
-
-    @PreDestroy
-    public void shutdown() {
-        producerCache.forEach((key, value) -> {
-            try {
-                value.close();
-            } catch (PulsarClientException e) {
-                log.error("Failed to close Pulsar producer for topic error, topic={}", key, e);
-            }
-        });
-        producerCache.clear();
     }
 }

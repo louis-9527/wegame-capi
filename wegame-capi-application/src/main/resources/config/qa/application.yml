@@ -2,8 +2,8 @@ appid: com.wegame.capi
 ## log
 logging:
   level:
-#    org.springframework.web: info
-#    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    #    org.springframework.web: info
+    #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: info
     org.mongodb: error
 #    org.apache.ibatis: info
@@ -96,7 +96,10 @@ spring:
             pool-prepared-statements: false
   data:
     mongodb:
-      uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
+      dynamic:
+        maria_makiling_mdb:
+          uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred&retryWrites=false
+          db: makiling
 ## fastjson
 fastjson:
   parser:

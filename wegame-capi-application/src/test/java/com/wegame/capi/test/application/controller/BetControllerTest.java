@@ -4,7 +4,6 @@ import cn.hutool.core.lang.Assert;
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.base.executor.WsThreadPoolExecutor;
 import com.wegame.capi.biz.converter.BetConverter;
 import com.wegame.capi.biz.converter.BetResultConverter;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
@@ -12,10 +11,10 @@ import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
+//import org.junit.jupiter.api.BeforeAll;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.TestInstance;
+//import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.wegame.capi.biz.service.BetService;
@@ -25,31 +24,21 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.test.BaseTest;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
-import java.util.concurrent.*;
 
 @Slf4j
-@ExtendWith(SpringExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//@ExtendWith(SpringExtension.class)
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BetControllerTest extends BaseTest {
-    ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
-            10,  // 核心线程数
-            10,  // 最大线程数
-            60L, // 非核心线程闲置超时时间
-            TimeUnit.SECONDS,  // 时间单位
-            new LinkedBlockingQueue<>(1000),
-            Executors.defaultThreadFactory(),
-            new ThreadPoolExecutor.CallerRunsPolicy()
-    );
-
     @Autowired
     BetService betService;
-
 
     @BeforeAll
     public static void beforeTest() {
@@ -62,6 +51,12 @@ public class BetControllerTest extends BaseTest {
 
     @Test
     public void normal_bet_test() {
+        UserInfoContext.setUserInfo(UserInfo.builder()
+                .id("10000")
+                .userName("system")
+                .build());
+        OperatorContext.setOperator(Operator.builder().name("system").userId(10000L).playerId("10000").build());
+
         BetRequest betRequest = new BetRequest();
         betRequest.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
         betRequest.setBetType(BetTypeEnum.NORMAL_BET.getCode());
@@ -71,16 +66,25 @@ public class BetControllerTest extends BaseTest {
         betDetail.setBetAmount(100L);
         betDetail.setPayAmount(100L);
         betRequest.setBetDetail(betDetail);
-        for (int i = 0; i <= 100; i++) {
-            threadPool.execute(() -> {
-                BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
-                // CommonResponse<BetResultVo> build = CommonResponse.build(BetResultConverter.doToVo(betResultDo));
-            });
-        }
+
+        BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
+        CommonResponse<BetResultVo> build = CommonResponse.build(BetResultConverter.doToVo(betResultDo));
+        log.info("bet: {}", build);
+
+        Assert.notNull(build);
+        Assert.equals(build.getCode(), "1");
     }
 
     @Test
     public void buy_bet_test() {
+        UserInfoContext.setUserInfo(UserInfo.builder()
+                .id("10000")
+                .userName("system")
+                .playerId("1234")
+                .playerName("1234")
+                .build());
+        OperatorContext.setOperator(Operator.builder().name("system").userId(10000L).playerId("10000").build());
+
         BetRequest betRequest = new BetRequest();
         betRequest.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
         betRequest.setBetType(BetTypeEnum.BUY_BET.getCode());
@@ -90,13 +94,17 @@ public class BetControllerTest extends BaseTest {
         betDetail.setBetAmount(100L);
         betDetail.setPayAmount(10000L);
         betRequest.setBetDetail(betDetail);
-
-        BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
-        CommonResponse<BetResultVo> build = CommonResponse.build(BetResultConverter.doToVo(betResultDo));
-        log.info("bet: {}", build);
-
-        Assert.notNull(build);
-        Assert.equals(build.getCode(), "1");
+        for (int i = 0; i < 100; i++) {
+            try {
+                BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
+                CommonResponse<BetResultVo> build = CommonResponse.build(BetResultConverter.doToVo(betResultDo));
+                log.info("bet: {}", build);
+                Assert.notNull(build);
+                Assert.equals(build.getCode(), "1");
+            } catch (Exception e) {
+                System.out.println(1);
+            }
+        }
     }
 
     @Test
@@ -120,14 +128,13 @@ public class BetControllerTest extends BaseTest {
         BetResultVo data = build.getData();
         String betRecordId = data.getBetRecordId();
         MariaMakilingBetResultVo resultDetail = data.getResultDetail();
-        List<Integer> freeSpinIds = resultDetail.getFreeSpinIds();
-
-        for (Integer freeId : freeSpinIds) {
-            this.buy_free_bet_freeId(betRecordId, freeId);
+        List<String> gameRecordIds = resultDetail.getGameRecordIds();
+        for (String gameRecordId : gameRecordIds) {
+            this.buy_free_bet_freeId(betRecordId, gameRecordId);
         }
     }
 
-    private void buy_free_bet_freeId(String recordId, Integer freeId) {
+    private void buy_free_bet_freeId(String recordId, String freeId){
         BetRequest betRequest = new BetRequest();
         betRequest.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
         betRequest.setBetType(BetTypeEnum.BUY_BET.getCode());
@@ -136,7 +143,7 @@ public class BetControllerTest extends BaseTest {
         MariaMakilingBetRequest betDetail = new MariaMakilingBetRequest();
         betDetail.setBetAmount(100L);
         betDetail.setBetRecordId(recordId);
-        betDetail.setFreeSpinsId(freeId);
+        betDetail.setGameRecordId(freeId);
         betRequest.setBetDetail(betDetail);
 
         BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));

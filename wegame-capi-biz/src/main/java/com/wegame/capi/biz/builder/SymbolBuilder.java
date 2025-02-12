@@ -13,12 +13,10 @@ public class SymbolBuilder {
                 || Objects.isNull(symbolArr[0])) {
             return null;
         }
-//        return Arrays.stream(symbolArr)
-//                .map(innerArr -> Arrays.stream(innerArr)
-//                        .map(item -> Objects.isNull(item) ? null : item.getId()))
-//                .toArray(String[][]::new);
-
-        // todo delete
+        //        return Arrays.stream(symbolArr)
+        //                .map(innerArr -> Arrays.stream(innerArr)
+        //                        .map(item -> Objects.isNull(item) ? null : item.getId()))
+        //                .toArray(String[][]::new);
         int rows = symbolArr.length;
         int cols = symbolArr[0].length;
         String[][] integerArray = new String[rows][cols];

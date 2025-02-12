@@ -1,7 +1,5 @@
 package com.wegame.capi.biz.converter;
 
-import com.wegame.base.context.Operator;
-import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
@@ -10,8 +8,11 @@ import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
+import org.springframework.data.domain.Sort;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,7 +45,6 @@ public class BetRecordConverter {
         betRecordDo.setPayOutAmount(po.getPayOutAmount());
         betRecordDo.setMarketFlag(po.getMarketFlag());
         betRecordDo.setStatus(po.getStatus());
-        betRecordDo.setDetail(po.getDetail());
         betRecordDo.setCreator(po.getCreator());
         betRecordDo.setCreateTime(po.getCreateTime());
         betRecordDo.setUpdater(po.getUpdater());
@@ -56,8 +56,6 @@ public class BetRecordConverter {
         if (Objects.isNull(betRecordDo)) {
             return null;
         }
-//        Operator operator = OperatorContext.getOperator();
-//        AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         BetRecordPo po = new BetRecordPo();
         po.setId(betRecordDo.getId());
         po.setPId(betRecordDo.getPId());
@@ -75,7 +73,6 @@ public class BetRecordConverter {
         po.setPayOutAmount(betRecordDo.getPayOutAmount());
         po.setMarketFlag(betRecordDo.getMarketFlag());
         po.setStatus(betRecordDo.getStatus());
-        po.setDetail(betRecordDo.getDetail());
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
             po.setCreator(betRecordDo.getCreator());
@@ -90,7 +87,7 @@ public class BetRecordConverter {
         return po;
     }
 
-    public static BetRecordVo doToVo(BetRecordDo betRecordDo, boolean orNotBuildDetail) {
+    public static BetRecordVo doToVo(BetRecordDo betRecordDo) {
         if (Objects.isNull(betRecordDo)) {
             return null;
         }
@@ -103,11 +100,6 @@ public class BetRecordConverter {
         vo.setPayOutAmount(betRecordDo.getPayOutAmount());
         vo.setStatus(betRecordDo.getStatus());
         vo.setCreateTime(betRecordDo.getCreateTime());
-        if (!orNotBuildDetail && Objects.nonNull(betRecordDo.getDetail())) {
-            if (betRecordDo.getDetail() instanceof MariaMakilingBetRecordDetailDo) {
-                vo.setDetail(MariaMakilingBetRecordDetailConverter.doToVo((MariaMakilingBetRecordDetailDo) betRecordDo.getDetail()));
-            }
-        }
         return vo;
     }
 
@@ -133,20 +125,23 @@ public class BetRecordConverter {
         return Optional.ofNullable(doList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(record -> BetRecordConverter.doToVo(record, true))
+                .map(record -> BetRecordConverter.doToVo(record))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     public static BetRecordQuery requestToQuery(PageQueryBetRecordRequest request, String orderClause) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         BetRecordQuery query = new BetRecordQuery();
         query.setId(Optional.ofNullable(request.getId()).map(Long::valueOf).orElse(null));
-        query.setPlayerId(request.getPlayerId());
+        query.setPlayerId(userInfo.getPlayerId());
         query.setStartCreateTime(request.getStartCreateTime());
         query.setEndCreateTime(request.getEndCreateTime());
         query.setOrderByClause(orderClause);
         query.setLimit(request.getPageSize());
         query.setLastId(request.getLastId());
+        query.setDirection(Sort.Direction.DESC);
         return query;
     }
 

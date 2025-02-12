@@ -7,8 +7,8 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
-import com.wegame.capi.client.domain.vo.IndexVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +16,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -32,10 +36,37 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo> {
+@Document(collection = "game_record")
+public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo, BetRecordVo.MariaMakilingGameRecordVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
-     * 序号: 默认1
+     * id
+     */
+    @Id
+    @Field("_id")
+    private Long id;
+    /**
+     * parentId: 无，则为0
+     */
+    private Long parentId;
+    /**
+     * 批次id
+     */
+    private Long batchId;
+    /**
+     * 投注记录id
+     */
+    private Long betRecordId;
+    /**
+     * 玩家id
+     */
+    private String playerId;
+    /**
+     * 玩家名称
+     */
+    private String playerName;
+    /**
+     * 序号
      */
     private Integer index;
     /**
@@ -49,23 +80,25 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
     /**
      * 免费轮id列表
      */
-    private List<Integer> freeSpinIds;
+    private List<Long> gameRecordIds;
 
     /**
      * 是否中奖免费轮
      *
      * @return
      */
+    @Transient
     @JsonIgnore
     public boolean hasRewardFreeSpins() {
         return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin();
     }
 
+    @Transient
     @Override
-    public MariaMakilingBetResultVo toVo() {
+    public MariaMakilingBetResultVo toResultVo() {
         if (Objects.isNull(rewardResult)) {
             return MariaMakilingBetResultVo.builder()
-                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return MariaMakilingBetResultVo.builder()
@@ -73,7 +106,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
-                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .freeSpinFlag(0)
                     .build();
         } else {
@@ -82,7 +115,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
-                    .spinsResult(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .rewardSymbolIndexSet(Optional.ofNullable(rewardResult.getRewardLineDetailList())
                             .orElse(Collections.emptyList())
                             .stream()
@@ -108,9 +141,26 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                                     .build()
                             ).collect(Collectors.toList()))
                     .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
-                    .freeSpinIds(freeSpinIds)
+                    .gameRecordIds(Optional.ofNullable(gameRecordIds)
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .map(String::valueOf)
+                            .collect(Collectors.toList()))
                     .build();
         }
+    }
+
+    @Transient
+    @Override
+    public BetRecordVo.MariaMakilingGameRecordVo toRecordVo() {
+        return BetRecordVo.MariaMakilingGameRecordVo.builder()
+                .id(String.valueOf(id))
+                .index(index)
+                .betAmount(Objects.nonNull(rewardResult) ? rewardResult.getBetAmount() : null)
+                .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
+                .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
+                .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
+                .build();
     }
 }
 

@@ -5,6 +5,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * bet_record：投注记录
@@ -82,10 +83,6 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Integer status;
     /**
-     * 游戏记录明细
-     */
-    private T detail;
-    /**
      * 创建人
      */
     private String creator;
@@ -103,5 +100,6 @@ public class BetRecordDo<T> implements Serializable {
     private Long updateTime;
 
     ///////////////  above auto generated ///////////////
+    private List<T> gameRecordList;
 }
 
