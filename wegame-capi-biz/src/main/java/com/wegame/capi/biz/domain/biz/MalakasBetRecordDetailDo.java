@@ -48,9 +48,7 @@ public class MalakasBetRecordDetailDo implements ToVoConverter<MalakasBetResultD
     @Override
     public MalakasBetResultDetailVo toResultVo() {
         List<MalakasBetResultVo> betResultVos = new ArrayList<>();
-        gameRecordList.forEach(tt -> {
-            betResultVos.add(toVo(tt));
-        });
+        gameRecordList.forEach(tt -> betResultVos.add(toVo(tt)));
         return MalakasBetResultDetailVo.builder().resultList(betResultVos).build();
     }
 
@@ -72,6 +70,7 @@ public class MalakasBetRecordDetailDo implements ToVoConverter<MalakasBetResultD
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .wheel(SymbolBuilder.build(gameRecord.getWheel().getSymbolArr()))
                     .freeSpinFlag(0)
+                    .gameRecordIds(Optional.ofNullable(gameRecord.getGameRecordIds()).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .build();
         } else {
             return MalakasBetResultVo.builder()

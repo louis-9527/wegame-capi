@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.malakas.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
@@ -20,6 +21,7 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 /**
  * Malakas游戏投注抽象接口
  */
+@Slf4j
 public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<MalakasGameRecordDo, MalakasBetDo, MalakasBetRecordDetailDo>
         implements MariaMakilingBetStrategy<MalakasBetDo, MalakasBetRecordDetailDo> {
 
@@ -72,10 +75,11 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .betRecordId(betRecordId)
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
+        log.info("Malakas投注结果：{}", FastJsonUtils.toJSONString(list));
         Long batchId = list.get(0).getBatchId();
-        // 过来所有batchId 相同的数据
+        // 过来所有batchId相同的数据
         List<MalakasGameRecordDo> firstBatchList = list.stream()
-                .filter(tt -> Objects.equals(batchId.longValue(), tt.getBatchId()))
+                .filter(item -> Objects.equals(batchId, item.getBatchId()))
                 .collect(Collectors.toList());
         MalakasBetRecordDetailDo resultDetail = MalakasBetRecordDetailDo.builder()
                 .gameRecordList(firstBatchList)

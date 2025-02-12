@@ -86,7 +86,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
-        MalakasGameRecordDo gameRecord = buildGameRecord(snowflakeIdGenerator.nextId(), RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), wheel, rewardResult);
+        long id = snowflakeIdGenerator.nextId();
+        MalakasGameRecordDo gameRecord = buildGameRecord(id, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), id, wheel, rewardResult);
         ret.add(gameRecord);
         totalRewardAmount += rewardResult.getTotalRewardAmount();
         // loop play
@@ -108,7 +109,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false),
                     preGameRecord);
             RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel));
-            MalakasGameRecordDo gameRecord = buildGameRecord(snowflakeIdGenerator.nextId(), preGameRecord.getId(), gamePlay.getBetRecordId(), wheel, rewardResult);
+            long id = snowflakeIdGenerator.nextId();
+            MalakasGameRecordDo gameRecord = buildGameRecord(id, preGameRecord.getId(), gamePlay.getBetRecordId(), id, wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount += rewardResult.getTotalRewardAmount();
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeSpinList);
@@ -133,7 +135,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel));
             AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
             // 组装-游戏记录
-            MalakasGameRecordDo gameRecord = buildGameRecord(freeSpin.getId(), freeSpin.getParentId(), gamePlay.getBetRecordId(), wheel, rewardResult);
+            MalakasGameRecordDo gameRecord = buildGameRecord(freeSpin.getId(), freeSpin.getParentId(), gamePlay.getBetRecordId(), freeSpin.getId(), wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount += rewardResult.getTotalRewardAmount();
             // loop play
@@ -317,6 +319,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     private MalakasGameRecordDo buildGameRecord(Long id,
                                                 Long parentId,
                                                 Long betRecordId,
+                                                Long batchId,
                                                 WheelDo<MalakasSymbolDo> wheel,
                                                 RewardResultDo<MalakasSymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
@@ -335,8 +338,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         return MalakasGameRecordDo.builder()
                 .id(id)
                 .parentId(parentId)
-                .batchId(parentId)
                 .betRecordId(betRecordId)
+                .batchId(batchId)
                 .playerId(userInfo.getPlayerId())
                 .playerName(userInfo.getPlayerName())
                 .wheel(wheel)
