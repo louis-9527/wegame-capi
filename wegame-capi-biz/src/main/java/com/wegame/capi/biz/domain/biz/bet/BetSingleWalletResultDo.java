@@ -17,4 +17,5 @@ public class BetSingleWalletResultDo {
     private String refId;
     private BigDecimal credit;
     private BetStatusEnum betStatus;
+    private String reason;
 }
