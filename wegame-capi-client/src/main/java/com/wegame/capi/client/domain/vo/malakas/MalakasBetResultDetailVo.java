@@ -1,4 +1,4 @@
-package com.wegame.capi.client.domain.vo;
+package com.wegame.capi.client.domain.vo.malakas;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @SuperBuilder

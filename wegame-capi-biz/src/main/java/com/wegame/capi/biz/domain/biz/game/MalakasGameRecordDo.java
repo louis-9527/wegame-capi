@@ -8,7 +8,9 @@ import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
-import com.wegame.capi.client.domain.vo.MalakasBetResultVo;
+import com.wegame.capi.client.domain.vo.malakas.MalakasBetResultVo;
+import com.wegame.capi.client.domain.vo.malakas.MalakasGameRecordVo;
+import com.wegame.capi.client.domain.vo.malakas.MalakasRewardLineVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,12 +37,9 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@Document(collection = "game_record")
-public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasBetResultVo, BetRecordVo.MalakasGameRecordVo> {
+@Document(collection = "malakas_game_record")
+public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasBetResultVo, MalakasGameRecordVo> {
     private static final long serialVersionUID = -2266308277093710848L;
-    /**
-     * id
-     */
     @Id
     @Field("_id")
     private Long id;
@@ -91,7 +90,9 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
     @Override
     public MalakasBetResultVo toResultVo() {
         if (Objects.isNull(rewardResult)) {
-            return MalakasBetResultVo.builder().wheel(SymbolBuilder.build(wheel.getSymbolArr())).build();
+            return MalakasBetResultVo.builder()
+                    .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return MalakasBetResultVo.builder()
                     .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
@@ -118,11 +119,10 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                                     .collect(Collectors.toList())
                             ).flatMap(List::stream)
                             .collect(Collectors.toSet()))
-
                     .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineDetailList())
                             .orElse(Collections.emptyList())
                             .stream()
-                            .map(subItem -> MalakasBetResultVo.MalakasRewardLineVo.builder()
+                            .map(subItem -> MalakasRewardLineVo.builder()
                                     .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
                                     .multiple(subItem.getMultiple())
                                     .odds(subItem.getOdds())
@@ -140,7 +140,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
     }
 
     @Override
-    public BetRecordVo.MalakasGameRecordVo toRecordVo() {
+    public MalakasGameRecordVo toRecordVo() {
         // todo @maidong
         return null;
     }

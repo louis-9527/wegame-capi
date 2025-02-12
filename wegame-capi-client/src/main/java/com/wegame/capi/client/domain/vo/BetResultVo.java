@@ -1,6 +1,6 @@
 package com.wegame.capi.client.domain.vo;
 
-import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
+import com.wegame.capi.client.domain.vo.malakas.MalakasBetResultDetailVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 @SuperBuilder

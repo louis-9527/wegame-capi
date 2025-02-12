@@ -2,9 +2,8 @@ package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.client.domain.vo.MalakasBetResultVo;
+import com.wegame.capi.client.domain.vo.malakas.MalakasSymbolVo;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class SymbolBuilder {
@@ -15,10 +14,6 @@ public class SymbolBuilder {
                 || Objects.isNull(symbolArr[0])) {
             return null;
         }
-        //        return Arrays.stream(symbolArr)
-        //                .map(innerArr -> Arrays.stream(innerArr)
-        //                        .map(item -> Objects.isNull(item) ? null : item.getId()))
-        //                .toArray(String[][]::new);
         int rows = symbolArr.length;
         int cols = symbolArr[0].length;
         String[][] integerArray = new String[rows][cols];
@@ -31,23 +26,19 @@ public class SymbolBuilder {
     }
 
 
-    public static MalakasBetResultVo.MalakasSymbolVo[][] build(MalakasSymbolDo[][] symbolArr) {
+    public static MalakasSymbolVo[][] build(MalakasSymbolDo[][] symbolArr) {
         int rows = symbolArr.length;
         int cols = symbolArr[0].length;
-        MalakasBetResultVo.MalakasSymbolVo[][] integerArray = new MalakasBetResultVo.MalakasSymbolVo[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                MalakasSymbolDo malakasSymbolDo = symbolArr[i][j];
-                if (malakasSymbolDo == null) {
-                    integerArray[i][j] = null;
-                } else {
-                    MalakasBetResultVo.MalakasSymbolVo malakasSymbolVo = new MalakasBetResultVo.MalakasSymbolVo();
-                    malakasSymbolVo.setSymbolId(malakasSymbolDo.getId());
-                    malakasSymbolVo.setSymbolSize(malakasSymbolDo.getSymbolSize().getCode());
-                    malakasSymbolVo.setSymbolClearTimes(malakasSymbolDo.getSymbolClearTimes());
-                    malakasSymbolVo.setSymbolGoldBorder(malakasSymbolDo.isSymbolGoldBorder());
-                    integerArray[i][j] = malakasSymbolVo;
-                }
+        MalakasSymbolVo[][] integerArray = new MalakasSymbolVo[rows][cols];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                MalakasSymbolDo malakasSymbol = symbolArr[row][col];
+                integerArray[row][col] = Objects.isNull(malakasSymbol) ? null : MalakasSymbolVo.builder()
+                        .symbolId(malakasSymbol.getId())
+                        .symbolSize(malakasSymbol.getSymbolSize().getCode())
+                        .symbolClearTimes(malakasSymbol.getSymbolClearTimes())
+                        .symbolGoldBorder(malakasSymbol.isSymbolGoldBorder())
+                        .build();
             }
         }
         return integerArray;
