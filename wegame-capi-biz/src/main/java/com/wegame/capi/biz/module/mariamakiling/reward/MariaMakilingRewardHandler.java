@@ -65,7 +65,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
         // 2、计算中奖线
         List<RewardLineDo<SymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算倍率
-        BigDecimal totalMultiple = mariaMakilingMultipleCalculateStrategy.calculateMultiple(rewardHandle.getGameType(), rewardHandle.getWheel());
+        BigDecimal totalMultiple = mariaMakilingMultipleCalculateStrategy.calculateMultiple(rewardHandle);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
             return RewardResultDo.<SymbolDo>builder()

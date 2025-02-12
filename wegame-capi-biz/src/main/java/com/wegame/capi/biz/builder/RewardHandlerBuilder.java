@@ -9,9 +9,11 @@ import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 
+import java.math.BigDecimal;
+
 public class RewardHandlerBuilder {
 
-    public static <T extends SymbolDo> RewardHandleDo<T> build(GameInfoDo gameInfo, GamePlayDo gamePlay, WheelDo<T> wheel) {
+    public static <T extends SymbolDo> RewardHandleDo<T> build(GameInfoDo gameInfo, GamePlayDo gamePlay, WheelDo<T> wheel, BigDecimal currentMultiple) {
         AssertUtil.assertNotNull(gameInfo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(gamePlay, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
@@ -22,6 +24,7 @@ public class RewardHandlerBuilder {
                 .betSubType(gamePlay.getBetSubType())
                 .betAmount(gamePlay.getBetAmount())
                 .wheel(wheel)
+                .currentMultiple(currentMultiple)
                 .build();
     }
 
