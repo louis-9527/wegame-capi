@@ -14,14 +14,14 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public abstract class AbstractPulsarListener {
-    @Autowired
-    PulsarClient pulsarClient;
+
     @Value("${spring.application.env}")
     String env;
     @Value("${spring.application.name}")
     String name;
+    @Autowired
+    PulsarClient pulsarClient;
     private Consumer<byte[]> consumer;
-
     private Consumer<byte[]> dlqConsumer;
 
     protected void initConsumer(GameTypeEnum gameType) {
@@ -54,14 +54,13 @@ public abstract class AbstractPulsarListener {
                     .subscriptionType(SubscriptionType.Shared)
                     .messageListener((consumer, msg) -> {
                         String message = new String(msg.getData());
-                        log.warn("Message moved to DLQ: {}", message);
+                        log.warn("Message moved to DLQ, consumerName: {}", consumer.getConsumerName());
                         try {
                             consumer.acknowledge(msg);
                         } catch (Exception e) {
                             log.error("Message moved acknowledge error:", e);
                         }
-                    })
-                    .subscribe();
+                    }).subscribe();
         } catch (PulsarClientException e) {
             log.error("Failed to initialize Pulsar consumer", e);
             throw new RuntimeException("Failed to initialize Pulsar consumer", e);
