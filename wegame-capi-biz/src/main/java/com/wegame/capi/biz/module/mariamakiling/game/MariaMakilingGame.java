@@ -63,6 +63,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         GameInfoDo gameInfo = getGameInfo();
         WheelDo<SymbolDo> firstWheel;
         long firstGameRecordId = snowflakeIdGenerator.nextId();
+        log.info("generateGameRecord id:{}", firstGameRecordId);
         // 根据投注类型：生成游戏滚轮
         switch (gamePlay.getBetType()) {
             case NORMAL_BET:
@@ -84,7 +85,9 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             int wheelNumber = getWheelNumber();
             int tempNumber = 0;
             while (tempNumber < wheelNumber) {
-                freeSpinGameRecordIds.add(snowflakeIdGenerator.nextId());
+                long gameRecordId = snowflakeIdGenerator.nextId();
+                log.info("freeWheel generateGameRecord id:{}", gameRecordId);
+                freeSpinGameRecordIds.add(gameRecordId);
                 tempNumber++;
             }
         }

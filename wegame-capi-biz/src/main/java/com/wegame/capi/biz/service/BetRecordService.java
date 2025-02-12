@@ -56,6 +56,7 @@ public class BetRecordService {
         BetRecordPo po = getMongoTemplate(gameType).insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD),
                 gameType.getBetRecordCollectionName());
         long endTime = System.currentTimeMillis();
+        log.info("addBetRecord id:{}", betRecordDo.getId());
         log.info("BetRecordService#add cost time:{}", endTime - startTime);
         return po.getId();
     }
@@ -67,7 +68,10 @@ public class BetRecordService {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         List<BetRecordPo> poList = BetRecordConverter.doToPoList(betRecordList, OptEnum.ADD);
         BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED, BetRecordPo.class);
-        poList.forEach(item -> bulkOps.insert(item));
+        poList.forEach(item -> {
+            log.info("addBetRecord id:{}", item.getId());
+            bulkOps.insert(item);
+        });
         try {
             bulkOps.execute();
         } catch (BulkOperationException e) {

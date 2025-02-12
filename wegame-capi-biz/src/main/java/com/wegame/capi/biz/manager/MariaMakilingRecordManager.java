@@ -10,6 +10,7 @@ import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component("mariaMakilingRecordManager")
 public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakilingGameRecordDo> {
 
@@ -38,6 +40,9 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 if (CollectionUtils.isEmpty(gameRecordListItem)) {
                     continue;
                 }
+                gameRecordListItem.forEach(item -> {
+                    log.info("addGameRecord id:{}", item.getId());
+                });
                 boolean ret = gameRecordService.batchInsert(gameRecordListItem, gameType, MariaMakilingGameRecordDo.class);
                 AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
             }
@@ -67,6 +72,9 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 if (CollectionUtils.isEmpty(gameRecordListItem)) {
                     continue;
                 }
+                gameRecordListItem.forEach(item -> {
+                    log.info("addGameRecord id:{}", item.getId());
+                });
                 boolean insertRet = gameRecordService.batchInsert(gameRecordListItem, gameType, MariaMakilingGameRecordDo.class);
                 AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
             }
