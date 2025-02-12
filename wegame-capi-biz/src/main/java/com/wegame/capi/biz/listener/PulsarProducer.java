@@ -17,6 +17,7 @@ import javax.annotation.PreDestroy;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -50,22 +51,29 @@ public class PulsarProducer {
         producerCache.clear();
     }
 
-    public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage, int tryTimes) {
+    public <T> MessageId syncSendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage, int tryTimes) {
         long startTime = System.currentTimeMillis();
         MessageId messageId;
         int times = 0;
         do {
-            messageId = this.sendMessage(gameTypeEnum, mqMessage);
+            messageId = this.asyncSendMessage(gameTypeEnum, mqMessage);
             times++;
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
-        log.info("sendMessage cost {} ms", endTime - startTime);
+        long duration = endTime - startTime;
+        if (duration <= 10) {
+            log.info("sendMessage cost time less 10, {} ms", endTime - startTime);
+        } else if (duration > 10 && duration <= 20) {
+            log.info("sendMessage cost time(10-20], {} ms", endTime - startTime);
+        } else if (duration > 20) {
+            log.info("sendMessage cost time more than 20, {} ms", endTime - startTime);
+        }
         return messageId;
     }
 
-    public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
+    public <T> MessageId syncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
-            log.info("{}Producer sendMessage--:type:{},msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
+            log.info("{}Producer syncSendMessage type:{},msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
             return producerCache.get(gameType)
                     .newMessage()
                     .key(mqMessage.getMsgId())
@@ -74,6 +82,22 @@ public class PulsarProducer {
         } catch (PulsarClientException e) {
             log.error("{}Producer send fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
             throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
+        }
+    }
+
+    public <T> MessageId asyncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
+        try {
+            log.info("{}Producer asyncSendMessage msgType:{}, msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
+            return producerCache.get(gameType)
+                    .newMessage()
+                    .key(mqMessage.getMsgId())
+                    .value(JSON.toJSONBytes(mqMessage))
+                    .sendAsync().get();
+        } catch (ExecutionException e) {
+            log.error("{}Producer send fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
+            throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

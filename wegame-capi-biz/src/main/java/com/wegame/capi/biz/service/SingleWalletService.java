@@ -4,12 +4,12 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.SingleWalletApi;
-import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
+import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.res.CommonRes;
-import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
 import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
+import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 import com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder;
 import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.Random;
 
 
 /**
@@ -54,14 +53,21 @@ public class SingleWalletService {
             betSingleWalletResult.setBetStatus(BetStatusEnum.SUCCESS);
             return betSingleWalletResult;
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
+            log.error("betWithPayout, duplicate reference id. betRecordDo: {}, commonRes: {}", betRecordDo, commonRes);
+            throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             // 获取返回状态
-            return this.queryBetDetail(betRecordDo);
-        } else {
+            // return this.queryBetDetail(betRecordDo);
+        }
+        //        else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INSUFFICIENT_CREDIT.getCode())) {
+        //            throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, commonRes.getStatus());
+        //        }
+        else {
+            // todo fix 其他错误码如何错误
             // 获取余额
-            GetCreditRes creditRes = singleWalletApi.getCredit(GetCreditReqBuilder.build());
+            // GetCreditRes creditRes = singleWalletApi.getCredit(GetCreditReqBuilder.build());
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.FAIL)
-                    .credit(creditRes.getCredit())
+                    .reason(commonRes.getMessage())
                     .build();
         }
     }

@@ -62,6 +62,8 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
         WheelDo<SymbolDo> firstWheel;
+        long firstGameRecordId = snowflakeIdGenerator.nextId();
+        log.info("generateGameRecord id:{}", firstGameRecordId);
         // 根据投注类型：生成游戏滚轮
         switch (gamePlay.getBetType()) {
             case NORMAL_BET:
@@ -74,7 +76,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
         AssertUtil.assertNotNull(firstWheel, ErrorCode.ERR_INTER);
-        RewardResultDo<SymbolDo> rewardResult = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel));
+        RewardResultDo<SymbolDo> rewardResult = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel, BigDecimal.ZERO));
         // 判断-是否命中免费轮
         List<Long> freeSpinGameRecordIds = null;
         if (rewardResult.isHasRewardFreeSpin()) {
@@ -83,11 +85,13 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             int wheelNumber = getWheelNumber();
             int tempNumber = 0;
             while (tempNumber < wheelNumber) {
-                freeSpinGameRecordIds.add(snowflakeIdGenerator.nextId());
+                long gameRecordId = snowflakeIdGenerator.nextId();
+                log.info("freeWheel generateGameRecord id:{}", gameRecordId);
+                freeSpinGameRecordIds.add(gameRecordId);
                 tempNumber++;
             }
         }
-        MariaMakilingGameRecordDo record = buildGameRecord(snowflakeIdGenerator.nextId(),
+        MariaMakilingGameRecordDo record = buildGameRecord(firstGameRecordId,
                 GAME_RECORD_DEFAULT_PARENT_ID,
                 gamePlay.getBetRecordId(),
                 0L,
@@ -108,7 +112,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                         record.getBetRecordId(),
                         record.getId(),
                         item,
-                        mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, item)),
+                        mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, item, BigDecimal.ZERO)),
                         null);
                 ret.add(gameRecord);
             }

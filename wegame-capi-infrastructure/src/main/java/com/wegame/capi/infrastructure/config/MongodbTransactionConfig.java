@@ -1,11 +1,14 @@
 package com.wegame.capi.infrastructure.config;
 
+import com.mongodb.TransactionOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author apple
@@ -21,7 +24,12 @@ public class MongodbTransactionConfig {
 
     @Bean(name = "mariamakilingTransactionManager")
     public MongoTransactionManager mariamakilingTransactionManager() {
-        return new MongoTransactionManager(mariamakilingMongoTemplate.getMongoDbFactory());
+        MongoTransactionManager manager = new MongoTransactionManager(malakasMongoTemplate.getMongoDbFactory());
+        TransactionOptions options = TransactionOptions.builder()
+                .maxCommitTime(10L, TimeUnit.SECONDS)
+                .build();
+        manager.setOptions(options);
+        return manager;
     }
 
     @Bean(name = "malakasTransactionManager")

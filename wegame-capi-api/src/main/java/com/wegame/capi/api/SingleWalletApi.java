@@ -81,7 +81,7 @@ public class SingleWalletApi extends BaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    //    @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public CommonRes<SingleWalletBetWithPayoutRes> betWithPayout(BetWithPayoutReq req) {
         try {
             // 参数签名

@@ -48,19 +48,18 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             });
             BetRecordDo<MariaMakilingGameRecordDo> body = betRecordDoMQMessage.getBody();
             messageIdMap.put(betRecordDoMQMessage.getType() + "_" + body.getId(), tt.getMessageId());
+            // todo delete log
+            log.info("processMessages, msgType:{}, msgId:{}", betRecordDoMQMessage.getType(), betRecordDoMQMessage.getMsgId());
             if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 addRecordList.add(body);
             } else if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.UPDATE.getCode())) {
                 updateRecordList.add(body);
             }
         });
-        log.info("beforeHandle messageIdMap: {}", messageIdMap);
         // 批量新增
         batchAdd(addRecordList, messageIdMap);
         // 批量修改
         batchUpdate(updateRecordList, messageIdMap);
-
-        log.info("afterHandle messageIdMap: {}", messageIdMap);
         return new ArrayList<>(messageIdMap.values());
     }
 

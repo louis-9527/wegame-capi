@@ -51,4 +51,8 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
      * 滚轮
      */
     private WheelDo<T> wheel;
+    /**
+     * 当前倍率
+     */
+    private BigDecimal currentMultiple;
 }

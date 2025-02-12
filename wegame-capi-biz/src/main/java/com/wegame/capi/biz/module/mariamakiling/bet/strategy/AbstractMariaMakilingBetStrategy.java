@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * MariaMakiling类游戏投注抽象接口
@@ -77,7 +78,10 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                         .cacheKey(String.format("%s_%s", betDo.getBetDetail().getBetRecordId(), userInfo.getPlayerId()))
                         .build(),
                 getGame().getGameInfo().getGameType());
-        log.info("gameRecordList: {}", FastJsonUtils.toJSONString(gameRecordList));
+        gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()
+                .filter(Objects::nonNull)
+                .filter(item -> Objects.nonNull(item.getBatchId()) && item.getId() != 0)
+                .collect(Collectors.toList());
         // 匹配-免费轮游戏记录
         MariaMakilingGameRecordDo gameRecord = gameRecordList
                 .stream()
