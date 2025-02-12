@@ -14,6 +14,6 @@ public class MalakasMultipleCalculateStrategy extends AbstractMultipleCalculateS
 
     @Override
     public BigDecimal calculateMultiple(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
-        return null;
+        return BigDecimal.ZERO;
     }
 }
