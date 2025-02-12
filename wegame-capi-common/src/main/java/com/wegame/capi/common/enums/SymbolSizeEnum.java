@@ -33,7 +33,7 @@ public enum SymbolSizeEnum {
     /**
      * 元素跨行
      */
-    private final int columSpan;
+    private final int rowSpan;
 
 
     /**
@@ -41,12 +41,12 @@ public enum SymbolSizeEnum {
      *
      * @param code      code
      * @param name      名称
-     * @param columSpan 跨行
+     * @param rowSpan 跨行
      */
-    SymbolSizeEnum(String code, String name, int columSpan) {
+    SymbolSizeEnum(String code, String name, int rowSpan) {
         this.code = code;
         this.name = name;
-        this.columSpan = columSpan;
+        this.rowSpan = rowSpan;
     }
 
     public static SymbolSizeEnum valueOfCode(String code) {
@@ -66,8 +66,8 @@ public enum SymbolSizeEnum {
         return name;
     }
 
-    public int getColumnSpan() {
-        return columSpan;
+    public int getRowSpan() {
+        return rowSpan;
     }
 
     public static int getSymbolClearTimes(SymbolSizeEnum symbolSize) {

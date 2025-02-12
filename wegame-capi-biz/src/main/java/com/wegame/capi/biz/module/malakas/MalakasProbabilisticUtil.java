@@ -25,7 +25,7 @@ public class MalakasProbabilisticUtil {
         sizeProbabilisticConfigMap.forEach((key, value) -> {
             SymbolSizeEnum symbolSize = SymbolSizeEnum.valueOfCode(key);
             int val = (value.get(currentColumnNo).multiply(new BigDecimal(Constants.CONST_10000))).intValue();
-            if (val > 0 && maxColumnSpan >= symbolSize.getColumnSpan()) {
+            if (val > 0 && maxColumnSpan >= symbolSize.getRowSpan()) {
                 map.put(key, val);
             }
         });

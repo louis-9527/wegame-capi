@@ -153,7 +153,7 @@ public class MalakasSymbolUtil {
             symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = null;
         } else {
             // 非第一行元素：按照元素大小进行移除
-            int columSpanSiz = rewardSymbol.getSymbol().getSymbolSize().getColumnSpan();
+            int columSpanSiz = rewardSymbol.getSymbol().getSymbolSize().getRowSpan();
             for (int columSpan = 0; columSpan < columSpanSiz; columSpan++) {
                 symbolArr[indexDo.getRowIndex() + columSpan][indexDo.getColumnIndex()] = null;
             }
@@ -181,7 +181,7 @@ public class MalakasSymbolUtil {
 
     public static int getMaxRow(MalakasSymbolDo[][] symbolArr, int currentRow, int currentColum) {
         int maxRow = currentRow;
-        while (maxRow < symbolArr.length - 1 && Objects.isNull(symbolArr[maxRow][currentColum])) {
+        while (maxRow < symbolArr.length - 1 && Objects.isNull(symbolArr[maxRow + 1][currentColum])) {
             maxRow++;
         }
         return maxRow;
@@ -217,7 +217,7 @@ public class MalakasSymbolUtil {
         for (int row = 0; row < symbolArr.length; row++) {
             for (int column = 0; column < symbolArr[row].length; column++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
-                    System.out.print(symbolArr[row][column].getId() + " " + symbolArr[row][column].getSymbolSize().getColumnSpan() + " ");
+                    System.out.print(symbolArr[row][column].getId() + " " + symbolArr[row][column].getSymbolSize().getRowSpan() + " ");
                 } else {
                     System.out.print("null   ");
                 }
