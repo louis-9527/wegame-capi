@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.Objects;
+
 /**
  * @author apple
  */
@@ -20,17 +22,22 @@ public class IdConfig {
 
     @Bean
     SnowflakeIdGenerator snowflakeIdGenerator() {
+        log.info("start config snowflakeIdGenerator, ip: {}", IpUtil.getLocalIp());
         return new SnowflakeIdGenerator(getMachineId());
     }
 
     private Long getMachineId() {
+        int maxRetry = 100;
+        int tempRetry = 0;
         Long machineId = null;
         do {
             Long tempMachineId = redisTemplate.opsForValue().increment(SnowflakeIdGenerator.REDIS_MACHINE_ID_KEY, 1);
+            log.info("IdConfig, get MachineId, ip: {}, machineId: {}", IpUtil.getLocalIp(), machineId);
             if (tempMachineId != null && tempMachineId > 0 && tempMachineId < SnowflakeIdGenerator.MAX_MACHINE_ID) {
                 machineId = tempMachineId % 1024;
             }
-        } while (machineId == null);
+            tempRetry ++;
+        } while (Objects.isNull(machineId) && tempRetry < maxRetry);
         log.info("IdConfig, ip: {}, machineId: {}", IpUtil.getLocalIp(), machineId);
         return machineId;
     }
