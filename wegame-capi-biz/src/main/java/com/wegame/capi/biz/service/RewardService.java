@@ -3,6 +3,7 @@ package com.wegame.capi.biz.service;
 import com.wegame.base.CacheConstants;
 import com.wegame.capi.biz.domain.biz.reward.RewardInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfoContext;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,11 @@ public class RewardService {
     @Autowired
     RedisTemplate redisTemplate;
 
-    @Cacheable(value = CacheConstants.REWARD_INFO)
-    public RewardInfoDo get() {
+    @Cacheable(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id")
+    public RewardInfoDo get(GameTypeEnum gameType) {
         log.info("get reward info");
         RewardInfoDo rewardInfoDo = new RewardInfoDo();
-        String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, UserInfoContext.getUserInfo().getGameId());
+        String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
         List<RewardNotifyInfoDo> messageList = (List<RewardNotifyInfoDo>) redisTemplate.opsForList().range(key, 0, -1);
         if (CollectionUtils.isNotEmpty(messageList)) {
             rewardInfoDo.setRewardMessageList(messageList.stream().map(RewardNotifyInfoDo::getRewardContent).collect(Collectors.toList()));

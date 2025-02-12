@@ -57,10 +57,12 @@ public class BetRecordController {
         request.validate();
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         BetRecordQuery query = BetRecordConverter.requestToQuery(request, "createTime");
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                BetRecordConverter.doToVoList(betRecordService.list(query, GameTypeEnum.valueOfId(userInfo.getGameId()))),
+                BetRecordConverter.doToVoList(betRecordService.list(query, gameType)),
                 0L));
     }
 
@@ -72,6 +74,7 @@ public class BetRecordController {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         BetRecordDo betRecordDo = betRecordService.getWithCache(Long.valueOf(id), userInfo.getPlayerId(), gameType);
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);

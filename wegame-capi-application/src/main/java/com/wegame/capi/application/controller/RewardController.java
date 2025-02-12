@@ -2,9 +2,14 @@ package com.wegame.capi.application.controller;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.RewardInfoConverter;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.domain.vo.RewardInfoVo;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.common.context.UserInfoContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +34,10 @@ public class RewardController {
     @ApiOperation(value = "查询大奖信息", httpMethod = "GET")
     @GetMapping("/get")
     public CommonResponse<RewardInfoVo> get() {
-        return CommonResponse.build(RewardInfoConverter.doToVo(rewardService.get()));
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        return CommonResponse.build(RewardInfoConverter.doToVo(rewardService.get(gameType)));
     }
 }
