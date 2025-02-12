@@ -27,6 +27,8 @@ public class IdConfig {
     }
 
     private Long getMachineId() {
+        int maxRetry = 100;
+        int tempRetry = 0;
         Long machineId = null;
         do {
             Long tempMachineId = redisTemplate.opsForValue().increment(SnowflakeIdGenerator.REDIS_MACHINE_ID_KEY, 1);
@@ -34,7 +36,8 @@ public class IdConfig {
             if (tempMachineId != null && tempMachineId > 0 && tempMachineId < SnowflakeIdGenerator.MAX_MACHINE_ID) {
                 machineId = tempMachineId % 1024;
             }
-        } while (Objects.isNull(machineId));
+            tempRetry ++;
+        } while (Objects.isNull(machineId) && tempRetry < maxRetry);
         log.info("IdConfig, ip: {}, machineId: {}", IpUtil.getLocalIp(), machineId);
         return machineId;
     }
