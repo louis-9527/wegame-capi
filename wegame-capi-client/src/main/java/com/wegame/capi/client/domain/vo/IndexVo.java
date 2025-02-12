@@ -19,5 +19,5 @@ public class IndexVo {
     /**
      * 列号
      */
-    private int columIndex;
+    private int columnIndex;
 }

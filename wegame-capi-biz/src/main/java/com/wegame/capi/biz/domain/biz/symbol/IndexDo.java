@@ -22,6 +22,6 @@ public class IndexDo implements Serializable {
     /**
      * 列号
      */
-    private int columIndex;
+    private int columnIndex;
 }
 

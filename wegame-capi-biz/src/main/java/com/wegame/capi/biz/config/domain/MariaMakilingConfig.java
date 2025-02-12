@@ -98,11 +98,11 @@ public class MariaMakilingConfig {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
             AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < column; columIndex++) {
-            Integer columNo = columIndex;
+        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
+            Integer columnNo = columnIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.commonPlayWheelProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
                 }
@@ -110,7 +110,7 @@ public class MariaMakilingConfig {
             Integer sumProbabilistic = map.values()
                     .stream()
                     .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columnNo:" + columnNo);
         }
 
         ////
@@ -119,11 +119,11 @@ public class MariaMakilingConfig {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
             AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < column; columIndex++) {
-            Integer columNo = columIndex;
+        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
+            Integer columnNo = columnIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.freePlayWheelProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
                 }
@@ -131,7 +131,7 @@ public class MariaMakilingConfig {
             Integer sumProbabilistic = map.values()
                     .stream()
                     .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columnNo:" + columnNo);
         }
     }
 }

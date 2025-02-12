@@ -24,7 +24,7 @@ public class IndexFactory {
         } else {
             IndexDo symbolIndexDo = IndexDo.builder()
                     .rowIndex(rowIndex)
-                    .columIndex(columIndex)
+                    .columnIndex(columIndex)
                     .build();
             INDEX_DO_MAP.put(buildKey(rowIndex, columIndex), symbolIndexDo);
             return symbolIndexDo;
@@ -34,16 +34,16 @@ public class IndexFactory {
     public static IndexVo buildVo(IndexDo indexDo) {
         AssertUtil.assertNotNull(indexDo, ErrorCode.ERR_PARAM, "indexDo must not be null");
         AssertUtil.assertTrue(indexDo.getRowIndex() >= 0, ErrorCode.ERR_PARAM, "rowIndex must be greater than or equal 0");
-        AssertUtil.assertTrue(indexDo.getColumIndex() >= 0, ErrorCode.ERR_PARAM, "columIndex must be greater than or equal 0");
-        IndexVo existIndexVo = INDEX_VO_MAP.get(buildKey(indexDo.getRowIndex(), indexDo.getColumIndex()));
+        AssertUtil.assertTrue(indexDo.getColumnIndex() >= 0, ErrorCode.ERR_PARAM, "columIndex must be greater than or equal 0");
+        IndexVo existIndexVo = INDEX_VO_MAP.get(buildKey(indexDo.getRowIndex(), indexDo.getColumnIndex()));
         if (Objects.nonNull(existIndexVo)) {
             return existIndexVo;
         } else {
             IndexVo indexVo = IndexVo.builder()
                     .rowIndex(indexDo.getRowIndex())
-                    .columIndex(indexDo.getColumIndex())
+                    .columnIndex(indexDo.getColumnIndex())
                     .build();
-            INDEX_VO_MAP.put(buildKey(indexDo.getRowIndex(), indexDo.getColumIndex()), indexVo);
+            INDEX_VO_MAP.put(buildKey(indexDo.getRowIndex(), indexDo.getColumnIndex()), indexVo);
             return indexVo;
         }
     }

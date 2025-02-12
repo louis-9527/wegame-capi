@@ -120,7 +120,7 @@ public class MalakasSymbolUtil {
             } else {
                 // 普通元素消除
                 IndexDo indexDo = rewardSymbol.getIndex();
-                MalakasSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumIndex()];
+                MalakasSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
                 if (commonSymbol.isSymbolGoldBorder()) {
                     // 带金边普通元素，转换为Wild元素（元素大小转换为消除次数）
                     MalakasSymbolDo wildSymbol = MalakasSymbolDo.builder()
@@ -131,7 +131,7 @@ public class MalakasSymbolUtil {
                             .symbolGoldBorder(false)
                             .symbolClearTimes(SymbolSizeEnum.getSymbolClearTimes(commonSymbol.getSymbolSize()))
                             .build();
-                    symbolArr[indexDo.getRowIndex()][indexDo.getColumIndex()] = wildSymbol;
+                    symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = wildSymbol;
                 } else {
                     // 不带金边普通元素，直接移除
                     removeRewardSymbol(symbolArr, rewardSymbol);
@@ -151,12 +151,12 @@ public class MalakasSymbolUtil {
         IndexDo indexDo = rewardSymbol.getIndex();
         if (Objects.equals(indexDo.getRowIndex(), ONE_ROW_INDEX)) {
             // 第一行元素：直接移除
-            symbolArr[indexDo.getRowIndex()][indexDo.getColumIndex()] = null;
+            symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = null;
         } else {
             // 非第一行元素：按照元素大小进行移除
             int columSpanSiz = rewardSymbol.getSymbol().getSymbolSize().getColumSpan();
             for (int columSpan = 0; columSpan < columSpanSiz; columSpan++) {
-                symbolArr[indexDo.getRowIndex() + columSpan][indexDo.getColumIndex()] = null;
+                symbolArr[indexDo.getRowIndex() + columSpan][indexDo.getColumnIndex()] = null;
             }
         }
     }

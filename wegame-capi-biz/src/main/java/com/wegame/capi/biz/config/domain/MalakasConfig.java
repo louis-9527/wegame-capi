@@ -120,17 +120,17 @@ public class MalakasConfig {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
             AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < column; columIndex++) {
-            int columNo = columIndex;
+        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
+            int columnNo = columnIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.commonPlayWheelProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
                 }
             });
             Integer sumProbabilistic = map.values().stream().reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columnNo:" + columnNo);
         }
     }
     private void freePlayWheelProbabilisticConfigValid(int column) {
@@ -138,17 +138,17 @@ public class MalakasConfig {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig key: " + key + " ERR");
             AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < column; columIndex++) {
-            int columNo = columIndex;
+        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
+            int columnNo = columnIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.freePlayWheelProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
                 }
             });
             Integer sumProbabilistic = map.values().stream().reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columnNo:" + columnNo);
         }
     }
     private void freeWheelScatterProbabilisticConfigValid() {
@@ -162,17 +162,17 @@ public class MalakasConfig {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.symbolSizeProbabilisticConfig key: " + key + " ERR");
             AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.symbolSizeProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < column; columIndex++) {
-            int columNo = columIndex;
+        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
+            int columnNo = columnIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.symbolSizeProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
                 }
             });
             Integer sumProbabilistic = map.values().stream().reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.symbolSizeProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.symbolSizeProbabilisticConfig ERR, columnNo:" + columnNo);
         }
     }
 }
