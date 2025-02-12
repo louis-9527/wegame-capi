@@ -15,11 +15,14 @@ public class PulsarConfig {
 
     @Value("${pulsar.service-url}")
     private String pulsarUrl;
+    @Value("${pulsar.listener-threads}")
+    private Integer listenerThreads;
 
     @Bean(destroyMethod = "close")
     public PulsarClient pulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(pulsarUrl)
+                .listenerThreads(listenerThreads)
                 .build();
     }
 }

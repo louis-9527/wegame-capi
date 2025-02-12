@@ -60,7 +60,14 @@ public class PulsarProducer {
             times++;
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
-        log.info("sendMessage cost {} ms", endTime - startTime);
+        long duration = endTime - startTime;
+        if (duration <= 10) {
+            log.info("sendMessage cost time less 10, {} ms", endTime - startTime);
+        } else if (duration > 10 && duration <= 20) {
+            log.info("sendMessage cost time(10-20], {} ms", endTime - startTime);
+        } else if (duration > 20) {
+            log.info("sendMessage cost time more than 20, {} ms", endTime - startTime);
+        }
         return messageId;
     }
 
