@@ -75,7 +75,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
     public Long asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
-        MessageId addMessageId = pulsarProducer.sendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
+        MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
         AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
         // 调用单钱包
         BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
@@ -91,7 +91,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
                 .build();
         // 发送消息(更新)
         MQMessage<BetRecordDo<R>> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
-        pulsarProducer.sendMessage(getGame().getGameInfo().getGameType(),updateMqMessage, RETRY_TIMES);
+        pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),updateMqMessage, RETRY_TIMES);
         return AmountUtil.toLong(betWithPayoutRes.getCredit());
     }
 }
