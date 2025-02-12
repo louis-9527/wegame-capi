@@ -67,7 +67,9 @@ public class BetRecordService {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM, "betRecordList is empty");
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         List<BetRecordPo> poList = BetRecordConverter.doToPoList(betRecordList, OptEnum.ADD);
-        BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED, BetRecordPo.class);
+        BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
+                BetRecordPo.class,
+                gameType.getBetRecordCollectionName());
         poList.forEach(item -> {
             log.info("addBetRecord id:{}", item.getId());
             bulkOps.insert(item);
