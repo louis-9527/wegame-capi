@@ -127,20 +127,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                                     .collect(Collectors.toList())
                             ).flatMap(List::stream)
                             .collect(Collectors.toSet()))
-                    .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineDetailList())
-                            .orElse(Collections.emptyList())
-                            .stream()
-                            .map(subItem -> MariaMakilingRewardLineVo.builder()
-                                    .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
-                                    .multiple(subItem.getMultiple())
-                                    .odds(subItem.getOdds())
-                                    .rewardLineType(Objects.nonNull(subItem.getRewardLineType()) ? subItem.getRewardLineType().getCode() : "")
-                                    .rewardLineSubType(Objects.nonNull(subItem.getRewardLineSubType()) ? subItem.getRewardLineSubType().getCode() : "")
-                                    .rewardLineCount(subItem.getRewardLineCount())
-                                    .betAmount(subItem.getBetAmount())
-                                    .rewardAmount(subItem.getRewardAmount())
-                                    .build()
-                            ).collect(Collectors.toList()))
+                    .rewardLineList(buildRewardLineList())
                     .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
                     .gameRecordIds(Optional.ofNullable(gameRecordIds)
                             .orElse(Collections.emptyList())
@@ -161,7 +148,25 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                 .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
                 .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
+                .rewardLineList(buildRewardLineList())
                 .build();
+    }
+
+    private List<MariaMakilingRewardLineVo> buildRewardLineList() {
+        return Optional.ofNullable(rewardResult.getRewardLineDetailList())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(subItem -> MariaMakilingRewardLineVo.builder()
+                        .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
+                        .multiple(subItem.getMultiple())
+                        .odds(subItem.getOdds())
+                        .rewardLineType(Objects.nonNull(subItem.getRewardLineType()) ? subItem.getRewardLineType().getCode() : "")
+                        .rewardLineSubType(Objects.nonNull(subItem.getRewardLineSubType()) ? subItem.getRewardLineSubType().getCode() : "")
+                        .rewardLineCount(subItem.getRewardLineCount())
+                        .betAmount(subItem.getBetAmount())
+                        .rewardAmount(subItem.getRewardAmount())
+                        .build()
+                ).collect(Collectors.toList());
     }
 }
 
