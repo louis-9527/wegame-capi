@@ -79,7 +79,7 @@ public class BetRecordController {
                         .betRecordId(betRecordDo.getId())
                         .orderByClause("_id")
                         .direction(Sort.Direction.ASC)
-                        .build(), GameTypeEnum.valueOf(userInfo.getGameId())));
+                        .build(), GameTypeEnum.valueOfId(userInfo.getGameId())));
         return CommonResponse.build(betRecordVo);
     }
 
