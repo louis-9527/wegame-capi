@@ -159,6 +159,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                 .betAmount(Objects.nonNull(rewardResult) ? rewardResult.getBetAmount() : null)
                 .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
+                .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                 .build();
     }
 }
