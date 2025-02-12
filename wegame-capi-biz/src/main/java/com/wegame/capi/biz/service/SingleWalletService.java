@@ -54,6 +54,7 @@ public class SingleWalletService {
             betSingleWalletResult.setBetStatus(BetStatusEnum.SUCCESS);
             return betSingleWalletResult;
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
+            log.error("betWithPayout, duplicate reference id. betRecordDo: {}, commonRes: {}", betRecordDo, commonRes);
             // 获取返回状态
             return this.queryBetDetail(betRecordDo);
         } else {
