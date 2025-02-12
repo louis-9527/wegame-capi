@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.vo;
 
+import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

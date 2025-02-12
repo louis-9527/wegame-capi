@@ -46,49 +46,52 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
         long fiveMinutesAgo = System.currentTimeMillis() - 5 * 60 * 1000;
         int pageNo = 1;
         Long lastId = null;
-        List<BetRecordDo> recordList;
+        List<Long> recordIdList;
         do {
-            recordList = betRecordService.list(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
+            recordIdList = betRecordService.listId(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
                     .endCreateTime(fiveMinutesAgo)
                     .limit(DEFAULT_PAGE_SIZE)
                     .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
                     .lastId(lastId)
                     .build(), this.getGameType());
 
-            if (CollectionUtil.isNotEmpty(recordList)) {
-                lastId = recordList.get(recordList.size() - 1).getId();
+            if (CollectionUtil.isNotEmpty(recordIdList)) {
+                lastId = recordIdList.get(recordIdList.size() - 1);
             }
-            Optional.ofNullable(recordList)
+            Optional.ofNullable(recordIdList)
                     .orElse(Collections.emptyList())
                     .forEach(this::handle);
             pageNo++;
-        } while (CollectionUtils.isNotEmpty(recordList));
+        } while (CollectionUtils.isNotEmpty(recordIdList));
     }
 
-    private void handle(BetRecordDo betRecordDo) {
-        if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
-            return;
-        }
-        //获取当前订单状态
-        BetStatusReq betStatusReq = BetWithPayoutReqBuilder.buildStatusReq(betRecordDo);
-        Pair<String, BetStatusEnum> betStatus = singleWalletService.getBetStatus(betStatusReq);
-        if (BetStatusEnum.SUCCESS == betStatus.getRight()) {
-            // 更新记录
-            BetRecordDo updateRecord = BetRecordDo.builder()
-                    .id(betRecordDo.getId())
-                    .betId(betStatus.getLeft())
-                    .status(BetStatusEnum.SUCCESS.getCode()).build();
-            betRecordService.update(updateRecord, this.getGameType());
-            return;
-        }
-        if (BetStatusEnum.FAIL == betStatus.getRight()) {
-            // 更新记录
-            BetRecordDo updateRecord = BetRecordDo.builder()
-                    .id(betRecordDo.getId())
-                    .betId(betStatus.getLeft())
-                    .status(BetStatusEnum.FAIL.getCode()).build();
-            betRecordService.update(updateRecord, this.getGameType());
-        }
+    private void handle(Long betRecordId) {
+        scheduleWithLock(LockNameUtil.getBetRecordIdSchedulerLockName(this.getGameType(), betRecordId), () -> {
+            BetRecordDo betRecordDo = betRecordService.getById(betRecordId, this.getGameType());
+            if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
+                return;
+            }
+            //获取当前订单状态
+            BetStatusReq betStatusReq = BetWithPayoutReqBuilder.buildStatusReq(betRecordDo);
+            Pair<String, BetStatusEnum> betStatus = singleWalletService.getBetStatus(betStatusReq);
+            if (BetStatusEnum.SUCCESS == betStatus.getRight()) {
+                // 更新记录
+                BetRecordDo updateRecord = BetRecordDo.builder()
+                        .id(betRecordDo.getId())
+                        .betId(betStatus.getLeft())
+                        .status(BetStatusEnum.SUCCESS.getCode()).build();
+                betRecordService.update(updateRecord, this.getGameType());
+                return;
+            }
+            if (BetStatusEnum.FAIL == betStatus.getRight()) {
+                // 更新记录
+                BetRecordDo updateRecord = BetRecordDo.builder()
+                        .id(betRecordDo.getId())
+                        .betId(betStatus.getLeft())
+                        .status(BetStatusEnum.FAIL.getCode()).build();
+                betRecordService.update(updateRecord, this.getGameType());
+            }
+        });
     }
 
     @Override

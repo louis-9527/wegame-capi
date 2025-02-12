@@ -32,14 +32,14 @@ public abstract class AbstractPulsarListener {
                     .topic(fullTopic)
                     .subscriptionName(name + "_" + gameType.getName())
                     .subscriptionType(SubscriptionType.Key_Shared) // 关键点：使用 Key_Shared 模式
-                    .receiverQueueSize(200) // 增加内部缓存，提高吞吐量
+                    .receiverQueueSize(500) // 增加内部缓存，提高吞吐量
                     .ackTimeout(30, TimeUnit.SECONDS)
                     .batchReceivePolicy(BatchReceivePolicy.builder()
                             .maxNumMessages(100)  // 批量最多100条
                             .timeout(1000, TimeUnit.MILLISECONDS)
                             .build())
                     .deadLetterPolicy(DeadLetterPolicy.builder()
-                            .maxRedeliverCount(10)  // **最多重试 10 次**
+                            .maxRedeliverCount(15)  // **最多重试 10 次**
                             .deadLetterTopic(deadLetterTopic) // **死信队列**
                             .build())
                     // .keySharedPolicy(KeySharedPolicy.stickyHashRange())
@@ -53,7 +53,8 @@ public abstract class AbstractPulsarListener {
                     .subscriptionName(name + "_" + gameType.getName() + "_deadLetter")
                     .subscriptionType(SubscriptionType.Shared)
                     .messageListener((consumer, msg) -> {
-                        log.warn("Message moved to DLQ: {}", msg.getValue());
+                        String message = new String(msg.getData());
+                        log.warn("Message moved to DLQ: {}", message);
                         try {
                             consumer.acknowledge(msg);
                         } catch (Exception e) {

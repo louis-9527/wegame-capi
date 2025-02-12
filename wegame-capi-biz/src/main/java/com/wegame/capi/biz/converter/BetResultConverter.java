@@ -5,9 +5,7 @@ import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.domain.vo.MalakasBetResultDetailVo;
 import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * BetResultConverter

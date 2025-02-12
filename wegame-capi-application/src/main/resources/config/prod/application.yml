@@ -96,7 +96,7 @@ spring:
     mongodb:
       dynamic:
         maria_makiling_mdb:
-          uri: mongodb+srv://PRODlivsportService:XGN1EWlf18QTrstzi2@livsport-platform-prod-pri.g8mny.mongodb.net/livsport-platform?retryWrites=true&w=majority&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
+          uri: mongodb+srv://PRODlivsportService:XGN1EWlf18QTrstzi2@livsport-platform-prod-pri.g8mny.mongodb.net/livsport-platform?retryWrites=false&w=majority&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred&retryWrites=false
 pulscar:
   url: pulsar://pulsar.makillingslot.info
 ## fastjson

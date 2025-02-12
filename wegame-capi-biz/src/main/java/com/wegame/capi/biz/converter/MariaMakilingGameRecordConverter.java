@@ -4,6 +4,7 @@ import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
+import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public class MariaMakilingGameRecordConverter {
 
-    public static List<BetRecordVo.MariaMakilingGameRecordVo> doToVoList(List<MariaMakilingGameRecordDo> gameRecordList) {
+    public static List<MariaMakilingGameRecordVo> doToVoList(List<MariaMakilingGameRecordDo> gameRecordList) {
         return Optional.ofNullable(gameRecordList)
                 .orElse(Collections.emptyList())
                 .stream()
@@ -28,11 +29,11 @@ public class MariaMakilingGameRecordConverter {
                 .collect(Collectors.toList());
     }
 
-    public static BetRecordVo.MariaMakilingGameRecordVo doToVo(MariaMakilingGameRecordDo gameRecordDo) {
+    public static MariaMakilingGameRecordVo doToVo(MariaMakilingGameRecordDo gameRecordDo) {
         if (Objects.isNull(gameRecordDo)) {
             return null;
         }
-        return BetRecordVo.MariaMakilingGameRecordVo.builder()
+        return MariaMakilingGameRecordVo.builder()
                 .index(gameRecordDo.getIndex())
                 .betAmount(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getBetAmount).orElse(0L))
                 .rewardAmount(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getTotalRewardAmount).orElse(0L))

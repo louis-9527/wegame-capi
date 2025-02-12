@@ -13,6 +13,7 @@ import java.util.Date;
 
 public class BetWithPayoutReqBuilder {
     public static BetWithPayoutReq buildReq(BetRecordDo betRecordDo) {
+        long uctSecond = DateUtil.toUCTSecond(betRecordDo.getCreateTime());
         return BetWithPayoutReq.builder()
                 .pId(betRecordDo.getPId())
                 .channelId(betRecordDo.getChannelId())
@@ -24,8 +25,8 @@ public class BetWithPayoutReqBuilder {
                 .betDetails(BetWithPayoutReq.BetDetails.builder()
                         .gameId(betRecordDo.getGameId())
                         .roundNo(betRecordDo.getBetSerialNo())
-                        .wagersDate(DateUtil.getCurrentTimestamp())
-                        .settlementDate(DateUtil.getCurrentTimestamp())
+                        .wagersDate(uctSecond)
+                        .settlementDate(uctSecond)
                         .isFreeRound(BetSubTypeEnum.isFreeSpins(betRecordDo.getBetSubType()))
                         .jackpotDetails(new BetWithPayoutReq.BetDetails.JackpotDetails())
                         .build())
@@ -50,5 +51,10 @@ public class BetWithPayoutReqBuilder {
                 .wagersDate(betRecordDo.getCreateTime() / 1000)
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
+    }
+
+    public static void main(String[] args) {
+        long date = DateUtil.getCurrentMilli();
+        System.out.println(date);
     }
 }

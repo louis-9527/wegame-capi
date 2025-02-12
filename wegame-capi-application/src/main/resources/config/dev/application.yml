@@ -102,7 +102,7 @@ spring:
     mongodb:
       dynamic:
         maria_makiling_mdb:
-          uri: mongodb://172.31.27.141:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
+          uri: mongodb://172.31.27.141:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
           db: makiling
         malakas_mdb:
           uri: mongodb://172.31.27.141:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib

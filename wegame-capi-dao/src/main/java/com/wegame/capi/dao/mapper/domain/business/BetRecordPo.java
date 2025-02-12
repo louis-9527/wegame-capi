@@ -1,15 +1,18 @@
 package com.wegame.capi.dao.mapper.domain.business;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
 /**
  * bet_record：投注记录
+ *
  * @author genereate
  */
 @Data
@@ -17,7 +20,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@Document(collection = "bet_record")
 public class BetRecordPo implements Serializable {
     private static final long serialVersionUID = -633389003068449792L;
     /**
@@ -103,6 +105,6 @@ public class BetRecordPo implements Serializable {
      */
     private Long updateTime;
 
-   ///////////////  above auto generated ///////////////
+    ///////////////  above auto generated ///////////////
 }
 

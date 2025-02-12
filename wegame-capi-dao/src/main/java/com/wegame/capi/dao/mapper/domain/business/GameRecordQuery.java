@@ -100,5 +100,10 @@ public class GameRecordQuery implements Serializable {
     private Sort.Direction direction;
 
     ///////////////  above auto generated ///////////////
+
+    /**
+     * 缓存key
+     */
+    private String cacheKey;
 }
 

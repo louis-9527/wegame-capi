@@ -10,6 +10,7 @@ import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,19 @@ public class GameRecordService<T> {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM, "gameRecordList is empty");
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
-        getMongoTemplate(gameType).insertAll(gameRecordList);
+        try {
+            getMongoTemplate(gameType).insertAll(gameRecordList);
+        } catch (DuplicateKeyException e) {
+            log.error("GameRecordService#batchInsert err, errMsg: {}", e.getMessage(), e);
+            // 单个插入，忽略重复
+            for (T t : gameRecordList) {
+                try {
+                    getMongoTemplate(gameType).insert(t);
+                } catch (DuplicateKeyException ex) {
+                    log.info("Duplicate key, skipping: gameRecord: {}", t);
+                }
+            }
+        }
         long endTime = System.currentTimeMillis();
         log.info("GameRecordService#batchInsert cost time:{}ms", endTime - startTime);
         return true;

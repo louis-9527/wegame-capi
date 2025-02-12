@@ -1,14 +1,18 @@
+----------------------------
+ Collection structure for mariamakiling_bet_record
+----------------------------
+db.getCollection("mariamakiling_mariamakiling_bet_record").drop();
+db.createCollection("mariamakiling_bet_record");
+// 索引mariamakiling_bet_record-c端查询需要-新
+db.mariamakiling_bet_record.createIndex({createTime:-1, status:1, _id:1})
+db.mariamakiling_bet_record.createIndex({createTime:-1, playerId:1,_id:1})
 
-// ----------------------------
-// Collection structure for bet_record
-// ----------------------------
-db.getCollection("maria_makiling_bet_record").drop();
-db.createCollection("maria_makiling_bet_record");
+----------------------------
+ Collection structure for mariamakiling_game_record
+----------------------------
+db.getCollection("mariamakiling_game_record").drop();
+db.createCollection("mariamakiling_game_record");
 
-分片策略：表：bet_record  字段：userId
-
-// 索引-c端查询需要
-db.maria_makiling_bet_record.createIndex({createTime:-1, playerId:1, _id:1})
-// 索引-b端查询需要
-// db.maria_makiling_bet_record.createIndex({createTime:-1,playerId:1});
+// 索引game_record-c端查询需要-新
+db.mariamakiling_game_record.createIndex({betRecordId:1,batchId:1})
 

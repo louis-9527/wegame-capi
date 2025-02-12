@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.mariamakiling.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -18,6 +19,8 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
@@ -29,6 +32,7 @@ import java.util.Optional;
 /**
  * MariaMakiling类游戏投注抽象接口
  */
+@Slf4j
 public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrategy<MariaMakilingGameRecordDo, MariaMakilingBetDo, MariaMakilingGameRecordDo>
         implements MariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
 
@@ -70,8 +74,10 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                         .playerId(userInfo.getPlayerId())
                         .orderByClause("_id")
                         .direction(Sort.Direction.ASC)
+                        .cacheKey(String.format("%s_%s", betDo.getBetDetail().getBetRecordId(), userInfo.getPlayerId()))
                         .build(),
                 getGame().getGameInfo().getGameType());
+        log.info("gameRecordList: {}", FastJsonUtils.toJSONString(gameRecordList));
         // 匹配-免费轮游戏记录
         MariaMakilingGameRecordDo gameRecord = gameRecordList
                 .stream()
@@ -103,15 +109,17 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
      * 非免费轮投注
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
+        long betRecordId = generateRecordId();
         List<MariaMakilingGameRecordDo> list = getGame().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
                 .betAmount(betDo.getBetDetail().getBetAmount())
+                .betRecordId(betRecordId)
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
-        BetRecordDo<MariaMakilingGameRecordDo> betRecord = BetRecordBuilder.build(generateRecordId(),
+        BetRecordDo<MariaMakilingGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
