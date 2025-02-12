@@ -51,33 +51,33 @@ public class MalakasSymbolUtil {
     public static void rebuildSymbolArr(MalakasSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
         // 处理第一行：按行[1,row-1]处理(非空元素左移，第一列元素&最后一列元素为空)
         int currentColum = 1;
-        for (int colum = 1; colum < gameInfoDo.getColumn() - 1; colum++) {
-            if (Objects.nonNull(symbolArr[ONE_ROW_INDEX][colum])) {
-                if (Objects.equals(currentColum, colum)) {
+        for (int column = 1; column < gameInfoDo.getColumn() - 1; column++) {
+            if (Objects.nonNull(symbolArr[ONE_ROW_INDEX][column])) {
+                if (Objects.equals(currentColum, column)) {
                     // 不做移动
                     // do nothing
                 } else {
                     // 移动
-                    MalakasSymbolDo temp = symbolArr[ONE_ROW_INDEX][colum];
+                    MalakasSymbolDo temp = symbolArr[ONE_ROW_INDEX][column];
                     symbolArr[ONE_ROW_INDEX][currentColum] = temp;
-                    symbolArr[ONE_ROW_INDEX][colum] = null;
+                    symbolArr[ONE_ROW_INDEX][column] = null;
                 }
                 currentColum++;
             }
         }
         // 处理非第一行：按列处理（从第二行开始，非空元素下移）
-        for (int colum = ONE_COLUM_INDEX; colum < gameInfoDo.getColumn(); colum++) {
+        for (int column = ONE_COLUM_INDEX; column < gameInfoDo.getColumn(); column++) {
             int currentRow = gameInfoDo.getRow() - 1;
             for (int row = gameInfoDo.getRow() - 1; row > ONE_ROW_INDEX; row--) {
-                if (Objects.nonNull(symbolArr[row][colum])) {
+                if (Objects.nonNull(symbolArr[row][column])) {
                     if (Objects.equals(currentRow, row)) {
                         // 不做移动
                         // do nothing
                     } else {
                         // 移动
-                        MalakasSymbolDo temp = symbolArr[row][colum];
-                        symbolArr[currentRow][colum] = temp;
-                        symbolArr[row][colum] = null;
+                        MalakasSymbolDo temp = symbolArr[row][column];
+                        symbolArr[currentRow][column] = temp;
+                        symbolArr[row][column] = null;
                     }
                     currentRow--;
                 }
@@ -161,22 +161,22 @@ public class MalakasSymbolUtil {
         }
     }
 
-    public static void handlePlaceholderSymbol(MalakasSymbolDo[][] symbolArr, int row, int colum, SymbolSizeEnum
+    public static void handlePlaceholderSymbol(MalakasSymbolDo[][] symbolArr, int row, int column, SymbolSizeEnum
             symbolSize) {
         switch (symbolSize) {
             case S:
                 break;
             case M:
-                symbolArr[row + 1][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 1][column] = MALAKAS_SYMBOL_PLACEHOLDER;
                 break;
             case L:
-                symbolArr[row + 1][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
-                symbolArr[row + 2][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 1][column] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 2][column] = MALAKAS_SYMBOL_PLACEHOLDER;
                 break;
             case XL:
-                symbolArr[row + 1][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
-                symbolArr[row + 2][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
-                symbolArr[row + 3][colum] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 1][column] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 2][column] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 3][column] = MALAKAS_SYMBOL_PLACEHOLDER;
                 break;
         }
     }
@@ -205,9 +205,9 @@ public class MalakasSymbolUtil {
         for (MalakasGameRecordDo record : CollectionUtils.emptyIfNull(ret)) {
             MalakasSymbolDo[][] symbolArr = record.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
-                for (int colum = ONE_COLUM_INDEX; colum < symbolArr[row].length; colum++) {
-                    if (Objects.equals(symbolArr[row][colum], MALAKAS_SYMBOL_PLACEHOLDER)) {
-                        symbolArr[row][colum] = null;
+                for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
+                    if (Objects.equals(symbolArr[row][column], MALAKAS_SYMBOL_PLACEHOLDER)) {
+                        symbolArr[row][column] = null;
                     }
                 }
             }
@@ -217,9 +217,9 @@ public class MalakasSymbolUtil {
     public static void print(MalakasSymbolDo[][] symbolArr, String scene) {
         System.out.println("symbolArr: " + scene);
         for (int row = 0; row < symbolArr.length; row++) {
-            for (int colum = 0; colum < symbolArr[row].length; colum++) {
-                if (Objects.nonNull(symbolArr[row][colum])) {
-                    System.out.print(symbolArr[row][colum].getId() + " " + symbolArr[row][colum].getSymbolSize().getColumSpan() + " ");
+            for (int column = 0; column < symbolArr[row].length; column++) {
+                if (Objects.nonNull(symbolArr[row][column])) {
+                    System.out.print(symbolArr[row][column].getId() + " " + symbolArr[row][column].getSymbolSize().getColumSpan() + " ");
                 } else {
                     System.out.print("null   ");
                 }

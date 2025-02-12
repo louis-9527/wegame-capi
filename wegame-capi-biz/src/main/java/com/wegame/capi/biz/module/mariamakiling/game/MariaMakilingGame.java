@@ -127,20 +127,20 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
         int randomNumberindex = 0;
-        for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+        for (int column = 0; column < gameInfo.getColumn(); column++) {
             // 一列只能包含一个scatter
             boolean hasScatter = false;
-            Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
+            Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, probabilisticConfig);
             for (int row = 0; row < gameInfo.getRow(); row++) {
                 Integer random = randomNumberList.get(randomNumberindex);
                 if (hasScatter) {
                     // 生成非scatter
                     SymbolDo symbolDo = randomNonScatterSymbol(random, gameInfo, columProbabilisticMap);
-                    symbolArr[row][colum] = symbolDo;
+                    symbolArr[row][column] = symbolDo;
                 } else {
                     // 随机生成
                     SymbolDo symbolDo = randomNormalSymbol(random, gameInfo, columProbabilisticMap);
-                    symbolArr[row][colum] = symbolDo;
+                    symbolArr[row][column] = symbolDo;
                     hasScatter = symbolDo.isScatterSymbol();
                 }
                 randomNumberindex++;
@@ -164,10 +164,10 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         List<Integer> randomNumberList = randomService.randomIntList(0, gameInfo.getRow() - 1, SCATTER_COLUM_INDEX_LIST.size());
         int randomNumberIndex = 0;
         // 检查1，3，5列是否有Scatter，如果不存在，则1，3，5列各自随机一行的的元素设置为scatter
-        for (Integer colum : SCATTER_COLUM_INDEX_LIST) {
+        for (Integer column : SCATTER_COLUM_INDEX_LIST) {
             boolean hasScatter = false;
             for (int i = 0; i < gameInfo.getRow(); i++) {
-                SymbolDo symbol = symbolArr[i][colum];
+                SymbolDo symbol = symbolArr[i][column];
                 if (symbol.isScatterSymbol()) {
                     hasScatter = true;
                     break;
@@ -176,7 +176,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             if (!hasScatter) {
                 // 生成一个0到行之间的随机整数
                 int randomRow = randomNumberList.get(randomNumberIndex++);
-                symbolArr[randomRow][colum] = MARIA_MAKILING_SCATTER;
+                symbolArr[randomRow][column] = MARIA_MAKILING_SCATTER;
             }
         }
         return WheelDo.<SymbolDo>builder()
@@ -208,19 +208,19 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         int randomNumberIndex = 0;
         for (Integer number = 1; number <= wheelNumber; number++) {
             SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-            for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+            for (int column = 0; column < gameInfo.getColumn(); column++) {
                 // 当前列元素概率
-                Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
+                Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, probabilisticConfig);
                 for (int row = 0; row < gameInfo.getRow(); row++) {
-                    if (wildSymbolArr[row][colum] != null) {
+                    if (wildSymbolArr[row][column] != null) {
                         // 当前坐标对应元素为wild
-                        symbolArr[row][colum] = wildSymbolArr[row][colum];
+                        symbolArr[row][column] = wildSymbolArr[row][column];
                     } else {
                         // 当前坐标对应元素为wild，重新生成元素（非Scatter元素）
                         SymbolDo symbolDo = randomNonScatterSymbol(randomNumberList.get(randomNumberIndex), gameInfo, columProbabilisticMap);
-                        symbolArr[row][colum] = symbolDo;
+                        symbolArr[row][column] = symbolDo;
                         if (symbolDo.isWildSymbol()) {
-                            wildSymbolArr[row][colum] = symbolDo;
+                            wildSymbolArr[row][column] = symbolDo;
                         }
                     }
                     randomNumberIndex++;

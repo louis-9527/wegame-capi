@@ -44,9 +44,9 @@ public class WheelDo<T extends SymbolDo> implements Serializable {
     //        System.out.println("parentIndex: " + parentIndex);
     //        System.out.println("symbolArr: ");
     //        for (int row = 0; row < symbolArr.length; row++) {
-    //            for (int colum = 0; colum < symbolArr[row].length; colum++) {
-    //                if (Objects.nonNull(symbolArr[row][colum])) {
-    //                    System.out.print(symbolArr[row][colum].getId() + " ");
+    //            for (int column = 0; column < symbolArr[row].length; column++) {
+    //                if (Objects.nonNull(symbolArr[row][column])) {
+    //                    System.out.print(symbolArr[row][column].getId() + " ");
     //                } else {
     //                    System.out.print("null ");
     //                }

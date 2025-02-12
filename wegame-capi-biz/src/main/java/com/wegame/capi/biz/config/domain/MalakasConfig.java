@@ -115,12 +115,12 @@ public class MalakasConfig {
     private void scatterFreeSpinsTimesConfigValidate() {
         Assert.notNull(scatterFreeSpinsTimesConfig, "scatterFreeSpinsTimesConfig is null");
     }
-    private void commonPlayWheelProbabilisticConfigValid(int colum) {
+    private void commonPlayWheelProbabilisticConfigValid(int column) {
         probabilisticConfig.commonPlayWheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < colum; columIndex++) {
+        for (int columIndex = 0; columIndex < column; columIndex++) {
             int columNo = columIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.commonPlayWheelProbabilisticConfig.entrySet().forEach(item -> {
@@ -133,12 +133,12 @@ public class MalakasConfig {
             AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
         }
     }
-    private void freePlayWheelProbabilisticConfigValid(int colum) {
+    private void freePlayWheelProbabilisticConfigValid(int column) {
         probabilisticConfig.freePlayWheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig: " + key + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < colum; columIndex++) {
+        for (int columIndex = 0; columIndex < column; columIndex++) {
             int columNo = columIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.freePlayWheelProbabilisticConfig.entrySet().forEach(item -> {
@@ -157,12 +157,12 @@ public class MalakasConfig {
         AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
     }
 
-    private void symbolSizeProbabilisticConfigValid(int colum) {
+    private void symbolSizeProbabilisticConfigValid(int column) {
         probabilisticConfig.symbolSizeProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.symbolSizeProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "probabilisticConfig.symbolSizeProbabilisticConfig: " + key + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.symbolSizeProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < colum; columIndex++) {
+        for (int columIndex = 0; columIndex < column; columIndex++) {
             int columNo = columIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.symbolSizeProbabilisticConfig.entrySet().forEach(item -> {

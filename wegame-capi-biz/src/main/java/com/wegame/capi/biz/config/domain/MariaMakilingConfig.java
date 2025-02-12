@@ -93,12 +93,12 @@ public class MariaMakilingConfig {
                 .stream()
                 .reduce(0, Integer::sum);
         AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
-        int colum = 5;
+        int column = 5;
         probabilisticConfig.commonPlayWheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < colum; columIndex++) {
+        for (int columIndex = 0; columIndex < column; columIndex++) {
             Integer columNo = columIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.commonPlayWheelProbabilisticConfig.entrySet().forEach(item -> {
@@ -117,9 +117,9 @@ public class MariaMakilingConfig {
 
         probabilisticConfig.freePlayWheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig: " + key + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < colum; columIndex++) {
+        for (int columIndex = 0; columIndex < column; columIndex++) {
             Integer columNo = columIndex;
             Map<String, Integer> map = new HashMap<>();
             probabilisticConfig.freePlayWheelProbabilisticConfig.entrySet().forEach(item -> {
