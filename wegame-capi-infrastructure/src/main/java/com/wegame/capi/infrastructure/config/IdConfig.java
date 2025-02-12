@@ -19,19 +19,17 @@ import java.util.Objects;
  */
 @Slf4j
 @Configuration
-@ConditionalOnBean(RedisTemplate.class)
 public class IdConfig {
 
-    @Autowired
-    RedisTemplate redisTemplate;
 
     @Bean
-    SnowflakeIdGenerator snowflakeIdGenerator() {
+    //    @ConditionalOnBean(RedisTemplate.class)
+    SnowflakeIdGenerator snowflakeIdGenerator(@Autowired RedisTemplate redisTemplate) {
         log.info("start config snowflakeIdGenerator, ip: {}", IpUtil.getLocalIp());
-        return new SnowflakeIdGenerator(getMachineId());
+        return new SnowflakeIdGenerator(getMachineId(redisTemplate));
     }
 
-    private Long getMachineId() {
+    private Long getMachineId(RedisTemplate redisTemplate) {
         AssertUtil.assertNotNull(redisTemplate, ErrorCode.ERR_INTER, "redisTemplate is required");
         int maxRetry = 100;
         int tempRetry = 0;
