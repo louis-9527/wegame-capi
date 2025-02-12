@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 public class PulsarProducer {
-    private final ConcurrentHashMap<String, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<GameTypeEnum, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
     @Value("${spring.application.env}")
     String env;
     @Value("${spring.application.name}")
@@ -32,10 +32,9 @@ public class PulsarProducer {
 
     @PostConstruct
     public void init() {
-        for (GameTypeEnum item : GameTypeEnum.values()) {
-            String topicName = String.format("persistent://%s/%s/%s", name + "_" + item.getName(), env, item.getName() + "_topic");
-            Producer<byte[]> producer = this.createProducer(topicName, item.getName());
-            producerCache.put(item.getId(), producer);
+        for (GameTypeEnum gameType : GameTypeEnum.values()) {
+            String topicName = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env, gameType.getName() + "_topic");
+            producerCache.put(gameType, createProducer(topicName, gameType.getName()));
         }
     }
 
@@ -67,7 +66,7 @@ public class PulsarProducer {
     public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
             log.info("{}Producer sendMessage--:type:{},msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
-            return producerCache.get(gameType.getId())
+            return producerCache.get(gameType)
                     .newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
