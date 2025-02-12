@@ -36,7 +36,7 @@ public class IdConfig {
         Long machineId = null;
         do {
             Long tempMachineId = redisTemplate.opsForValue().increment(SnowflakeIdGenerator.REDIS_MACHINE_ID_KEY, 1);
-            log.info("IdConfig, get MachineId, ip: {}, machineId: {}", IpUtil.getLocalIp(), machineId);
+            log.info("IdConfig, get MachineId, ip: {}, machineId: {}", IpUtil.getLocalIp(), tempMachineId);
             if (tempMachineId != null) {
                 machineId = tempMachineId;
             } else {
