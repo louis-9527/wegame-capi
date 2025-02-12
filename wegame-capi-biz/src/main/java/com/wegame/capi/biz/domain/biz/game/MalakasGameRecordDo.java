@@ -7,7 +7,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.client.domain.vo.BetRecordVo;
+import com.wegame.capi.client.domain.vo.IndexVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasBetResultVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasGameRecordVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasRewardLineVo;
@@ -23,10 +23,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -86,7 +83,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
         return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin();
     }
 
-
+    @JsonIgnore
     @Override
     public MalakasBetResultVo toResultVo() {
         if (Objects.isNull(rewardResult)) {
@@ -109,40 +106,58 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
-                    .rewardSymbolIndexSet(Optional.ofNullable(rewardResult.getRewardLineDetailList())
-                            .orElse(Collections.emptyList())
-                            .stream()
-                            .filter(o -> CollectionUtils.isNotEmpty(o.getRewardSymbolList()))
-                            .map(detail -> detail.getRewardSymbolList()
-                                    .stream()
-                                    .map(rewardSymbol -> IndexFactory.buildVo(rewardSymbol.getIndex()))
-                                    .collect(Collectors.toList())
-                            ).flatMap(List::stream)
-                            .collect(Collectors.toSet()))
-                    .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineDetailList())
-                            .orElse(Collections.emptyList())
-                            .stream()
-                            .map(subItem -> MalakasRewardLineVo.builder()
-                                    .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
-                                    .multiple(subItem.getMultiple())
-                                    .odds(subItem.getOdds())
-                                    .rewardLineType(Objects.nonNull(subItem.getRewardLineType()) ? subItem.getRewardLineType().getCode() : "")
-                                    .rewardLineSubType(Objects.nonNull(subItem.getRewardLineSubType()) ? subItem.getRewardLineSubType().getCode() : "")
-                                    .rewardLineCount(subItem.getRewardLineCount())
-                                    .betAmount(subItem.getBetAmount())
-                                    .rewardAmount(subItem.getRewardAmount())
-                                    .build()
-                            ).collect(Collectors.toList()))
+                    .rewardSymbolIndexSet(buildRewardSymbolIndexSet())
+                    .rewardLineList(buildRewardLineList())
                     .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .build();
         }
     }
 
+    @JsonIgnore
     @Override
     public MalakasGameRecordVo toRecordVo() {
-        // todo @maidong
-        return null;
+        return MalakasGameRecordVo.builder()
+                .id(String.valueOf(id))
+                .index(wheel.getIndex())
+                .betAmount(Objects.nonNull(rewardResult) ? rewardResult.getBetAmount() : null)
+                .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
+                .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
+                .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
+                .rewardLineList(buildRewardLineList())
+                .build();
+    }
+
+    @JsonIgnore
+    private Set<IndexVo> buildRewardSymbolIndexSet() {
+        return Optional.ofNullable(rewardResult.getRewardLineDetailList())
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(o -> CollectionUtils.isNotEmpty(o.getRewardSymbolList()))
+                .map(detail -> detail.getRewardSymbolList()
+                        .stream()
+                        .map(rewardSymbol -> IndexFactory.buildVo(rewardSymbol.getIndex()))
+                        .collect(Collectors.toList())
+                ).flatMap(List::stream)
+                .collect(Collectors.toSet());
+    }
+
+    @JsonIgnore
+    private List<MalakasRewardLineVo> buildRewardLineList() {
+        return Optional.ofNullable(rewardResult.getRewardLineDetailList())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(subItem -> MalakasRewardLineVo.builder()
+                        .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
+                        .multiple(subItem.getMultiple())
+                        .odds(subItem.getOdds())
+                        .rewardLineType(Objects.nonNull(subItem.getRewardLineType()) ? subItem.getRewardLineType().getCode() : "")
+                        .rewardLineSubType(Objects.nonNull(subItem.getRewardLineSubType()) ? subItem.getRewardLineSubType().getCode() : "")
+                        .rewardLineCount(subItem.getRewardLineCount())
+                        .betAmount(subItem.getBetAmount())
+                        .rewardAmount(subItem.getRewardAmount())
+                        .build()
+                ).collect(Collectors.toList());
     }
 }
 

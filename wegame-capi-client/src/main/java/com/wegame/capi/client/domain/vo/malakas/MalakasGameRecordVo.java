@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -32,4 +33,6 @@ public class MalakasGameRecordVo implements Validate, Serializable {
     private MalakasSymbolVo[][] wheel;
     @ApiModelProperty("倍率")
     private BigDecimal multiple;
+    @ApiModelProperty("中奖线列表")
+    private List<MalakasRewardLineVo> rewardLineList;
 }
