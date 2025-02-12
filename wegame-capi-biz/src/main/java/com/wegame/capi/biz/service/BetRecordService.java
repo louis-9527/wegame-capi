@@ -61,61 +61,55 @@ public class BetRecordService {
     }
 
     public boolean batchInsert(List<BetRecordDo> betRecordList, GameTypeEnum gameType) {
-        if (CollectionUtil.isEmpty(betRecordList)) {
-            return false;
-        }
         long startTime = System.currentTimeMillis();
+        AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_INTER);
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM, "betRecordList is empty");
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         List<BetRecordPo> poList = BetRecordConverter.doToPoList(betRecordList, OptEnum.ADD);
+        BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED, BetRecordPo.class);
+        poList.forEach(item -> bulkOps.insert(item));
         try {
-            getMongoTemplate(gameType).insert(poList, gameType.getBetRecordCollectionName());
-        } catch (DuplicateKeyException e) {
-            log.error("BetRecordService#batchInsert err, errMsg: {}", e.getMessage(), e);
-            // 单个插入，忽略重复
-            for (BetRecordPo betRecordPo : poList) {
-                try {
-                    getMongoTemplate(gameType).insert(betRecordPo, gameType.getBetRecordCollectionName());
-                } catch (DuplicateKeyException ex) {
-                    log.info("Duplicate key, skipping: id: {}", betRecordPo.getId());
-                }
-            }
+            bulkOps.execute();
+        } catch (BulkOperationException e) {
+            // todo fix
+            log.error("BetRecordService#batchInsert err, BulkOperationException: {}", e.getMessage(), e);
         } catch (Exception e) {
-            log.error("BetRecordService#batchInsert err, errMsg: {}", e.getMessage(), e);
+            log.error("BetRecordService#batchInsert err, Exception: {}", e.getMessage(), e);
+            throw e;
         }
         long endTime = System.currentTimeMillis();
         log.info("BetRecordService#batchInsert cost time:{}ms", endTime - startTime);
         return true;
     }
 
-    /**
-     * 批量新增
-     *
-     * @param betRecordDoList 投注记录
-     * @return 主键id
-     */
-    public BetRecordBatchOptResultDo batchAdd(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
-        long startTime = System.currentTimeMillis();
-        AssertUtil.assertNotEmpty(betRecordDoList, ErrorCode.ERR_PARAM, "betRecordDoList is empty");
-        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
-        BulkWriteResult bulkWriteResult;
-        try {
-            BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
-                    BetRecordPo.class,
-                    gameType.getBetRecordCollectionName());
-            List<BetRecordPo> betRecordPos = BetRecordConverter.doToPoList(betRecordDoList, OptEnum.ADD);
-            bulkOps.insert(betRecordPos);
-            bulkWriteResult = bulkOps.execute();
-        } catch (Exception e) {
-            log.error("BetRecordService#batchAdd exception", e);
-            return buildExceptionResultDo(betRecordDoList, Lists.newArrayList(), e, OptEnum.ADD);
-        }
-        long endTime = System.currentTimeMillis();
-        log.info("BetRecordService#batchAdd cost time:{}ms", endTime - startTime);
-        return BetRecordBatchOptResultDo.builder()
-                .successCount(bulkWriteResult.getInsertedCount())
-                .build();
-    }
+    //    /**
+    //     * 批量新增
+    //     *
+    //     * @param betRecordDoList 投注记录
+    //     * @return 主键id
+    //     */
+    //    public BetRecordBatchOptResultDo batchAdd(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
+    //        long startTime = System.currentTimeMillis();
+    //        AssertUtil.assertNotEmpty(betRecordDoList, ErrorCode.ERR_PARAM, "betRecordDoList is empty");
+    //        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+    //        BulkWriteResult bulkWriteResult;
+    //        try {
+    //            BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
+    //                    BetRecordPo.class,
+    //                    gameType.getBetRecordCollectionName());
+    //            List<BetRecordPo> betRecordPos = BetRecordConverter.doToPoList(betRecordDoList, OptEnum.ADD);
+    //            bulkOps.insert(betRecordPos);
+    //            bulkWriteResult = bulkOps.execute();
+    //        } catch (Exception e) {
+    //            log.error("BetRecordService#batchAdd exception", e);
+    //            return buildExceptionResultDo(betRecordDoList, Lists.newArrayList(), e, OptEnum.ADD);
+    //        }
+    //        long endTime = System.currentTimeMillis();
+    //        log.info("BetRecordService#batchAdd cost time:{}ms", endTime - startTime);
+    //        return BetRecordBatchOptResultDo.builder()
+    //                .successCount(bulkWriteResult.getInsertedCount())
+    //                .build();
+    //    }
 
     /**
      * 修改
@@ -166,7 +160,6 @@ public class BetRecordService {
             betRecordDoList.forEach(betRecordDo -> {
                 Criteria criteria = new Criteria();
                 criteria.and("_id").is(betRecordDo.getId());
-                criteria.and("playerId").is(betRecordDo.getPlayerId());
                 Query query = new Query(criteria);
                 bulkOps.updateOne(query, BetRecordQueryBuilder.buildMongoUpdate(betRecordDo));
             });

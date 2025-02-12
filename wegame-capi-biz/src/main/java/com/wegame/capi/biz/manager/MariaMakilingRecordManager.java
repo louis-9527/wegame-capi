@@ -7,7 +7,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
-import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
@@ -25,6 +24,7 @@ import java.util.stream.Collectors;
 @Component("mariaMakilingRecordManager")
 public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakilingGameRecordDo> {
 
+    private static final int BATCH_SIZE = 100;
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
@@ -34,8 +34,11 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<MariaMakilingGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            for (List<MariaMakilingGameRecordDo> gameRecordListItem : Lists.partition(gameRecordList, 100)) {
-                boolean ret = gameRecordService.batchInsert(gameRecordListItem, gameType);
+            for (List<MariaMakilingGameRecordDo> gameRecordListItem : Lists.partition(gameRecordList, BATCH_SIZE)) {
+                if (CollectionUtils.isEmpty(gameRecordListItem)) {
+                    continue;
+                }
+                boolean ret = gameRecordService.batchInsert(gameRecordListItem, gameType, MariaMakilingGameRecordDo.class);
                 AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
             }
         }
@@ -60,9 +63,14 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            gameRecordService.batchInsert(gameRecordList, gameType);
+            for (List<MariaMakilingGameRecordDo> gameRecordListItem : Lists.partition(gameRecordList, BATCH_SIZE)) {
+                if (CollectionUtils.isEmpty(gameRecordListItem)) {
+                    continue;
+                }
+                boolean insertRet = gameRecordService.batchInsert(gameRecordListItem, gameType, MariaMakilingGameRecordDo.class);
+                AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
+            }
         }
-
         return true;
     }
 
