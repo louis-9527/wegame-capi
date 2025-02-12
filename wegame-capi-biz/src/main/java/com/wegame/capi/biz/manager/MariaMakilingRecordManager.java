@@ -7,7 +7,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
-import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
@@ -25,21 +24,24 @@ import java.util.stream.Collectors;
 @Component("mariaMakilingRecordManager")
 public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakilingGameRecordDo> {
 
+    private static final int BATCH_SIZE = 100;
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
     @Transactional(transactionManager = "mariamakilingTransactionManager")
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
+        Long id = betRecordService.add(betRecord, gameType);
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<MariaMakilingGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            for (List<MariaMakilingGameRecordDo> gameRecordListItem : Lists.partition(gameRecordList, 100)) {
-                boolean ret = gameRecordService.batchInsert(gameRecordListItem, gameType);
+            for (List<MariaMakilingGameRecordDo> gameRecordListItem : Lists.partition(gameRecordList, BATCH_SIZE)) {
+                if (CollectionUtils.isEmpty(gameRecordListItem)) {
+                    continue;
+                }
+                boolean ret = gameRecordService.batchInsert(gameRecordListItem, gameType, MariaMakilingGameRecordDo.class);
                 AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
             }
         }
-        betRecord.setGameRecordList(null);
-        Long id = betRecordService.add(betRecord, gameType);
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         return betRecord.getId();
     }
 
@@ -47,21 +49,28 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Override
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
-        List<MariaMakilingGameRecordDo> gameRecordList = betRecordList.stream()
-                .filter(item -> CollectionUtils.isNotEmpty(item.getGameRecordList()))
-                .map(BetRecordDo::getGameRecordList)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            gameRecordService.batchInsert(gameRecordList, gameType);
-        }
         List<BetRecordDo> recordList = betRecordList.stream()
                 .map(item -> {
                     item.setGameRecordList(null);
                     return item;
                 })
                 .collect(Collectors.toList());
-        betRecordService.batchInsert(recordList, gameType);
+        boolean ret = betRecordService.batchInsert(recordList, gameType);
+        AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
+        List<MariaMakilingGameRecordDo> gameRecordList = betRecordList.stream()
+                .filter(item -> CollectionUtils.isNotEmpty(item.getGameRecordList()))
+                .map(BetRecordDo::getGameRecordList)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(gameRecordList)) {
+            for (List<MariaMakilingGameRecordDo> gameRecordListItem : Lists.partition(gameRecordList, BATCH_SIZE)) {
+                if (CollectionUtils.isEmpty(gameRecordListItem)) {
+                    continue;
+                }
+                boolean insertRet = gameRecordService.batchInsert(gameRecordListItem, gameType, MariaMakilingGameRecordDo.class);
+                AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
+            }
+        }
         return true;
     }
 

@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.mongodb.BulkOperationException;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
@@ -29,34 +31,21 @@ public class GameRecordService<T> {
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
-    /**
-     * 批量新增
-     *
-     * @param gameRecordList 投注记录
-     * @return 主键id
-     */
-    public boolean batchInsert(List<T> gameRecordList, GameTypeEnum gameType) {
-        if (CollectionUtil.isEmpty(gameRecordList)) {
-            return false;
-        }
-        long startTime = System.currentTimeMillis();
-        AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM, "gameRecordList is empty");
-        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+    public boolean batchInsert(List<T> gameRecordList, GameTypeEnum gameType, Class<T> tClass) {
+        AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(tClass, ErrorCode.ERR_INTER);
+        BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass);
+        gameRecordList.forEach(item -> bulkOps.insert(item));
         try {
-            getMongoTemplate(gameType).insertAll(gameRecordList);
-        } catch (DuplicateKeyException e) {
-            log.error("GameRecordService#batchInsert err, errMsg: {}", e.getMessage(), e);
-            // 单个插入，忽略重复
-            for (T t : gameRecordList) {
-                try {
-                    getMongoTemplate(gameType).insert(t);
-                } catch (DuplicateKeyException ex) {
-                    log.info("Duplicate key, skipping: gameRecord: {}", t);
-                }
-            }
+            bulkOps.execute();
+        } catch (BulkOperationException e) {
+            // todo fix
+            log.error("GameRecordService#batchInsert err, BulkOperationException: {}", e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("GameRecordService#batchInsert err, Exception: {}", e.getMessage(), e);
+            throw e;
         }
-        long endTime = System.currentTimeMillis();
-        log.info("GameRecordService#batchInsert cost time:{}ms", endTime - startTime);
         return true;
     }
 
