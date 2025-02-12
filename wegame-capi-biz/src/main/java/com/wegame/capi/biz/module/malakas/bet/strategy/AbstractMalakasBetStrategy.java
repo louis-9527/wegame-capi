@@ -143,6 +143,10 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .build();
     }
 
+    public void freeSpinsAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo recordDetail, Long totalRewardAmount) {
+        // do nothing
+    }
+
     private boolean hasRewardFreeWheel(List<MalakasGameRecordDo> firstBatchList) {
         MalakasGameRecordDo gameRecord = firstBatchList.stream().filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeSpin()).findFirst().orElse(null);
         return Objects.nonNull(gameRecord);
