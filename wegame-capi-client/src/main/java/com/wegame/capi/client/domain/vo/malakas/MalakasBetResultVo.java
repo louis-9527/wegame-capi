@@ -40,7 +40,4 @@ public class MalakasBetResultVo implements Serializable {
     private Integer freeSpinFlag;
     @ApiModelProperty("免费轮游戏记录Id列表")
     private List<String> gameRecordIds;
-
-
-
 }
