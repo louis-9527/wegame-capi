@@ -15,6 +15,7 @@ public class PulsarConfig {
 
     @Value("${pulsar.service-url}")
     private String pulsarUrl;
+
     @Value("${pulsar.listener-threads}")
     private Integer listenerThreads;
 
