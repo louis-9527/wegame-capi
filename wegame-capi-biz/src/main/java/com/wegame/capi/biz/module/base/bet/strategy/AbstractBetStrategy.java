@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
@@ -13,10 +14,13 @@ import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import org.apache.pulsar.client.api.MessageId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * 抽象投注策略<br>
@@ -57,19 +61,24 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
     private Long syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         Long betRecordId = getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
-        BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
+        BetSingleWalletResultDo betSingleWalletResultDo = singleWalletService.betWithPayout(betRecordDo);
         // 判断返回结果
-        String betId = betWithPayoutRes.getBetId();
-        // 更新记录
-        BetRecordDo<R> updateRecord = BetRecordDo.<R>builder()
-                .id(betRecordDo.getId())
-                .playerId(betRecordDo.getPlayerId())
-                .betId(betId)
-                .status(betWithPayoutRes.getBetStatus().getCode())
-                .build();
-        // 异步更新
-        getRecordManager().asyncUpdateBetRecord(updateRecord, getGame().getGameInfo().getGameType());
-        return AmountUtil.toLong(betWithPayoutRes.getCredit());
+        String betId = betSingleWalletResultDo.getBetId();
+        if (Objects.equals(betSingleWalletResultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
+            // todo fix 严重逻辑问题
+            // 更新记录
+            BetRecordDo<R> updateRecord = BetRecordDo.<R>builder()
+                    .id(betRecordDo.getId())
+                    .playerId(betRecordDo.getPlayerId())
+                    .betId(betId)
+                    .status(betSingleWalletResultDo.getBetStatus().getCode())
+                    .build();
+            // 异步更新
+            getRecordManager().asyncUpdateBetRecord(updateRecord, getGame().getGameInfo().getGameType());
+            return AmountUtil.toLong(betSingleWalletResultDo.getCredit());
+        } else {
+            throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResultDo.getReason());
+        }
     }
 
     public Long asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
@@ -78,20 +87,24 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
         AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
         // 调用单钱包
-        BetSingleWalletResultDo betWithPayoutRes = singleWalletService.betWithPayout(betRecordDo);
+        BetSingleWalletResultDo betSingleWalletResultDo = singleWalletService.betWithPayout(betRecordDo);
         // 判断返回结果
-        String betId = betWithPayoutRes.getBetId();
-        // 更新记录
-        BetRecordDo<R> updateRecord = BetRecordDo.<R>builder()
-                .id(betRecordDo.getId())
-                .playerId(betRecordDo.getPlayerId())
-                .betId(betId)
-                .status(betWithPayoutRes.getBetStatus().getCode())
-                .updateTime(DateUtil.getCurrentMilli())
-                .build();
-        // 发送消息(更新)
-        MQMessage<BetRecordDo<R>> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
-        pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),updateMqMessage, RETRY_TIMES);
-        return AmountUtil.toLong(betWithPayoutRes.getCredit());
+        String betId = betSingleWalletResultDo.getBetId();
+        if (Objects.equals(betSingleWalletResultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
+            // 更新记录
+            BetRecordDo<R> updateRecord = BetRecordDo.<R>builder()
+                    .id(betRecordDo.getId())
+                    .playerId(betRecordDo.getPlayerId())
+                    .betId(betId)
+                    .status(betSingleWalletResultDo.getBetStatus().getCode())
+                    .updateTime(DateUtil.getCurrentMilli())
+                    .build();
+            // 发送消息(更新)
+            MQMessage<BetRecordDo<R>> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
+            pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(), updateMqMessage, RETRY_TIMES);
+            return AmountUtil.toLong(betSingleWalletResultDo.getCredit());
+        } else {
+            throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResultDo.getReason());
+        }
     }
 }
