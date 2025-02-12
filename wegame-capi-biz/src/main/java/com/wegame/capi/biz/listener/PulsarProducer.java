@@ -6,12 +6,10 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.MessageTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -31,8 +29,6 @@ public class PulsarProducer {
     String name;
     @Autowired
     PulsarClient pulsarClient;
-    @Autowired
-    RedisTemplate<String, Object> redisTemplate;
 
     @PostConstruct
     public void init() {
@@ -68,32 +64,19 @@ public class PulsarProducer {
         return messageId;
     }
 
-    public <T> MessageId sendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage) {
+    public <T> MessageId sendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
-            log.info("sendMessage--:type:{},msgId:{}", mqMessage.getType(), mqMessage.getMsgId());
-            if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
-                redisTemplate.opsForValue().increment("zhumeng001_send_msg_count", 1);
-            }
-            return producerCache.get(gameTypeEnum.getId())
+            log.info("{}Producer sendMessage--:type:{},msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
+            return producerCache.get(gameType.getId())
                     .newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
                     .send();
-            //
-            //            return getProducer(topicName, gameType).newMessage()
-            //                    // 关键点：设置 Key
-            //                    .key(mqMessage.getMsgId())
-            //                    .value(JSON.toJSONBytes(mqMessage))
-            //                    .send();
         } catch (PulsarClientException e) {
-            log.error("mariamakilingProducer send fail, msgId={}", mqMessage.getMsgId(), e);
+            log.error("{}Producer send fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
             throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
         }
     }
-    //
-    //    private Producer<byte[]> getProducer(String topicName, GameTypeEnum gameType) {
-    //        return producerCache.computeIfAbsent(topicName, k -> this.createProducer(topicName, gameType));
-    //    }
 
     private Producer<byte[]> createProducer(String topicName, String gameName) {
         try {
