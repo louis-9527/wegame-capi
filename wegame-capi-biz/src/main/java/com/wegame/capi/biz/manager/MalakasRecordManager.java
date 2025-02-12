@@ -7,6 +7,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
+import com.wegame.capi.client.domain.vo.malakas.MalakasGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,7 +27,7 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
     @Autowired
     GameRecordService<MalakasGameRecordDo> gameRecordService;
 
-    @Transactional(transactionManager = "mariamakilingTransactionManager")
+//    @Transactional(transactionManager = "mariamakilingTransactionManager") todo fix
     public Long add(BetRecordDo<MalakasGameRecordDo> betRecord, GameTypeEnum gameType) {
         Long id = betRecordService.add(betRecord, gameType);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
@@ -38,7 +39,7 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
         return betRecord.getId();
     }
 
-    @Transactional(transactionManager = "mariamakilingTransactionManager")
+//    @Transactional(transactionManager = "mariamakilingTransactionManager")  todo fix
     @Override
     public boolean batchAdd(List<BetRecordDo<MalakasGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
@@ -68,7 +69,7 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
     }
 
     @Override
-    public List<BetRecordVo.MalakasGameRecordVo> listGameRecordVo(GameRecordQuery query, GameTypeEnum gameType) {
+    public List<MalakasGameRecordVo> listGameRecordVo(GameRecordQuery query, GameTypeEnum gameType) {
         List<MalakasGameRecordDo> list = gameRecordService.list(query, gameType, MalakasGameRecordDo.class);
         return Optional.ofNullable(list).orElse(Collections.emptyList())
                 .stream()
