@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 中奖do
@@ -50,4 +51,8 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
      * 滚轮
      */
     private WheelDo<T> wheel;
+    /**
+     * 当前倍率
+     */
+    private BigDecimal currentMultiple;
 }
