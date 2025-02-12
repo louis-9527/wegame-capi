@@ -54,7 +54,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
     @Override
     public BetResultDo<MalakasBetRecordDetailDo> bet(BetDo<MalakasBetDo> betDo) {
         if (!BetSubTypeEnum.isFreeSpins(betDo.getBetSubType().getCode())) {
-            // 非免费轮投注
+            // 非免费轮投注(正常投注、购买投注)
             return betForNonFreeSpins(betDo);
         } else {
             // 免费轮投注
@@ -63,7 +63,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
     }
 
     /**
-     * 非免费轮投注
+     * 非免费轮投注(正常投注、购买投注)
      */
     private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeSpins(BetDo<MalakasBetDo> betDo) {
         long betRecordId = generateRecordId();
@@ -77,7 +77,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         log.info("Malakas投注结果：{}", FastJsonUtils.toJSONString(list));
         Long batchId = list.get(0).getBatchId();
-        // 过来所有batchId相同的数据
+        // 过滤所有batchId相同的数据
         List<MalakasGameRecordDo> firstBatchList = list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
                 .collect(Collectors.toList());
@@ -88,7 +88,8 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                firstBatchList.stream().filter(item -> item.getRewardResult() != null)
+                firstBatchList.stream()
+                        .filter(item -> item.getRewardResult() != null)
                         .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                         .sum(),
                 list);
@@ -142,13 +143,8 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .build();
     }
 
-    public void freeSpinsAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo recordDetail, Long totalRewardAmount) {
-        // do nothing
-    }
-
     private boolean hasRewardFreeWheel(List<MalakasGameRecordDo> firstBatchList) {
         MalakasGameRecordDo gameRecord = firstBatchList.stream().filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeSpin()).findFirst().orElse(null);
         return Objects.nonNull(gameRecord);
     }
-
 }
