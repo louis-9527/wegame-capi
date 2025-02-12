@@ -1,6 +1,8 @@
 package com.wegame.capi.infrastructure.config;
 
+import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.SnowflakeIdGenerator;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.IpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ public class IdConfig {
             tempRetry ++;
         } while (Objects.isNull(machineId) && tempRetry < maxRetry);
         log.info("IdConfig, ip: {}, machineId: {}", IpUtil.getLocalIp(), machineId);
+        AssertUtil.assertNotNull(machineId, ErrorCode.ERR_INTER);
         return machineId;
     }
 }
