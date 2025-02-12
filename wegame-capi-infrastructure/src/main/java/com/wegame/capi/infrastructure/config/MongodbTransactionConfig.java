@@ -24,7 +24,7 @@ public class MongodbTransactionConfig {
 
     @Bean(name = "mariamakilingTransactionManager")
     public MongoTransactionManager mariamakilingTransactionManager() {
-        MongoTransactionManager manager = new MongoTransactionManager(malakasMongoTemplate.getMongoDbFactory());
+        MongoTransactionManager manager = new MongoTransactionManager(mariamakilingMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(10L, TimeUnit.SECONDS)
                 .build();
@@ -34,6 +34,11 @@ public class MongodbTransactionConfig {
 
     @Bean(name = "malakasTransactionManager")
     public MongoTransactionManager malakasTransactionManager() {
-        return new MongoTransactionManager(malakasMongoTemplate.getMongoDatabaseFactory());
+        MongoTransactionManager manager = new MongoTransactionManager(malakasMongoTemplate.getMongoDbFactory());
+        TransactionOptions options = TransactionOptions.builder()
+                .maxCommitTime(10L, TimeUnit.SECONDS)
+                .build();
+        manager.setOptions(options);
+        return manager;
     }
 }
