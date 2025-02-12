@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
+import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import org.apache.commons.collections4.CollectionUtils;
@@ -77,7 +78,7 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     }
 
     @Override
-    public List<BetRecordVo.MariaMakilingGameRecordVo> listGameRecordVo(GameRecordQuery query, GameTypeEnum gameType) {
+    public List<MariaMakilingGameRecordVo> listGameRecordVo(GameRecordQuery query, GameTypeEnum gameType) {
         List<MariaMakilingGameRecordDo> list = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
         return Optional.ofNullable(list).orElse(Collections.emptyList())
                 .stream()

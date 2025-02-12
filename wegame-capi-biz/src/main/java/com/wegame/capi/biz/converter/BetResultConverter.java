@@ -2,11 +2,9 @@ package com.wegame.capi.biz.converter;
 
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.client.domain.vo.BetResultVo;
-import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
+import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * BetResultConverter

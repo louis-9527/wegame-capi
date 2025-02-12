@@ -7,8 +7,9 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.client.domain.vo.BetRecordVo;
-import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
+import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
+import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
+import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingRewardLineVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "game_record")
-public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo, BetRecordVo.MariaMakilingGameRecordVo> {
+public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo, MariaMakilingGameRecordVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * id
@@ -129,7 +130,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .rewardLineList(Optional.ofNullable(rewardResult.getRewardLineDetailList())
                             .orElse(Collections.emptyList())
                             .stream()
-                            .map(subItem -> MariaMakilingBetResultVo.MariaMakilingRewardLineVo.builder()
+                            .map(subItem -> MariaMakilingRewardLineVo.builder()
                                     .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
                                     .multiple(subItem.getMultiple())
                                     .odds(subItem.getOdds())
@@ -152,8 +153,8 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
 
     @Transient
     @Override
-    public BetRecordVo.MariaMakilingGameRecordVo toRecordVo() {
-        return BetRecordVo.MariaMakilingGameRecordVo.builder()
+    public MariaMakilingGameRecordVo toRecordVo() {
+        return MariaMakilingGameRecordVo.builder()
                 .id(String.valueOf(id))
                 .index(index)
                 .betAmount(Objects.nonNull(rewardResult) ? rewardResult.getBetAmount() : null)

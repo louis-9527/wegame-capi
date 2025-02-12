@@ -8,7 +8,7 @@ import com.wegame.capi.biz.converter.BetConverter;
 import com.wegame.capi.biz.converter.BetResultConverter;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.client.domain.vo.BetResultVo;
-import com.wegame.capi.client.domain.vo.MariaMakilingBetResultVo;
+import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 //import org.junit.jupiter.api.BeforeAll;
@@ -27,9 +27,6 @@ import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
