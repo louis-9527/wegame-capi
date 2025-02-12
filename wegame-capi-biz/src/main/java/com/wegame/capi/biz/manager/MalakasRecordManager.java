@@ -5,6 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
+import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasGameRecordVo;
@@ -33,7 +34,7 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            boolean ret = gameRecordService.batchInsert(gameRecordList, gameType);
+            boolean ret = gameRecordService.batchInsert(gameRecordList, gameType, MalakasGameRecordDo.class);
             AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         }
         return betRecord.getId();
@@ -46,7 +47,7 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
         List<MalakasGameRecordDo> gameRecordList = betRecordList.stream()
                 .map(BetRecordDo::getGameRecordList).flatMap(List::stream)
                 .collect(Collectors.toList());
-        gameRecordService.batchInsert(gameRecordList, gameType);
+        gameRecordService.batchInsert(gameRecordList, gameType, MalakasGameRecordDo.class);
         List<BetRecordDo> recordList = betRecordList.stream()
                 .map(item -> {
                     item.setGameRecordList(null);
