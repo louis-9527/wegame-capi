@@ -32,5 +32,5 @@ public class BetResultVo implements Serializable {
     @ApiModelProperty("合计中奖总金额")
     private Long overallRewardAmount;
     @ApiModelProperty("结果明细")
-    private MalakasBetResultDetailVo resultDetail;
+    private Object resultDetail;
 }

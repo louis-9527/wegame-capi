@@ -25,7 +25,7 @@ public class BetResultConverter {
                 .credit(betResultDo.getCredit())
                 .overallRewardAmount(betResultDo.getOverallRewardAmount())
                 .resultDetail(Objects.nonNull(betResultDo.getResultDetail())
-                        ? (MalakasBetResultDetailVo) betResultDo.getResultDetail().toResultVo() // todo fix
+                        ? betResultDo.getResultDetail().toResultVo() // todo fix
                         : null)
                 .build();
     }
