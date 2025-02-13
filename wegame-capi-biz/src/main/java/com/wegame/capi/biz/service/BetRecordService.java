@@ -273,6 +273,14 @@ public class BetRecordService {
         return Optional.ofNullable(betRecordPoList).orElse(Collections.emptyList()).stream().map(BetRecordPo::getId).collect(Collectors.toList());
     }
 
+    public List<Long> listNotExistIdList(List<Long> idList, GameTypeEnum gameType) {
+        return getMongoTemplate(gameType).findDistinct(new Query(Criteria.where("_id").nin(idList)),
+                "_id",
+                gameType.getBetRecordCollectionName(),
+                BetRecordPo.class,
+                Long.class);
+    }
+
     /**
      * 数量统计
      *
@@ -293,25 +301,6 @@ public class BetRecordService {
     }
 
     ///////////////  above auto generated ///////////////
-
-    private List<Long> listNotExistIdList(List<Long> allIdList, GameTypeEnum gameType) {
-        List<Long> existIdList = getMongoTemplate(gameType).findDistinct(new Query(Criteria.where("_id").in(allIdList)),
-                "_id",
-                gameType.getBetRecordCollectionName(),
-                BetRecordPo.class,
-                Long.class);
-        if (CollectionUtil.isEmpty(existIdList)) {
-            return allIdList;
-        }
-
-        List<Long> normalFailIdList = Lists.newArrayList();
-        HashSet<Long> allIdSet = Sets.newHashSet(allIdList);
-        HashSet<Long> existIdSet = Sets.newHashSet(existIdList);
-        if (existIdSet.size() != allIdSet.size()) {
-            normalFailIdList.addAll(Sets.difference(allIdSet, existIdSet));
-        }
-        return normalFailIdList;
-    }
 
     private BetRecordBatchOptResultDo buildExceptionResultDo(List<BetRecordDo> betRecordDoList, List<Long> normalFailIdList, Exception e, OptEnum optEnum) {
         if (e instanceof BulkOperationException) {
