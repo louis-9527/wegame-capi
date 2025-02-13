@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"rowIndex", "columuIndex"}, callSuper = false)
+@EqualsAndHashCode(of = {"rowIndex", "columnIndex"}, callSuper = false)
 public class IndexVo {
     /**
      * 行号
