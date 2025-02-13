@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
+import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.base.multiple.AbstractMultipleCalculateStrategy;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,7 +31,7 @@ public class MariaMakilingMultipleCalculateStrategy extends AbstractMultipleCalc
             .build();
 
     @Override
-    public BigDecimal calculateMultiple(RewardHandleDo<SymbolDo> rewardHandle) {
+    public BigDecimal calculateMultiple(RewardHandleDo<SymbolDo> rewardHandle, List<RewardLineDo<SymbolDo>> rewardLineList) {
         BigDecimal multiple = new BigDecimal(0);
         for (SymbolDo[] row : rewardHandle.getWheel().getSymbolArr()) {
             for (SymbolDo element : row) {
