@@ -108,7 +108,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             WheelDo<MalakasSymbolDo> wheel = generateNormalWheelFromPreWheel(getGameInfo(),
                     getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false),
                     preGameRecord);
-            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, null));
+            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
             long id = snowflakeIdGenerator.nextId();
             MalakasGameRecordDo gameRecord = buildGameRecord(id, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
             ret.add(gameRecord);
