@@ -2,7 +2,6 @@ package com.wegame.capi.biz.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.wegame.base.domain.OptType;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.capi.biz.domain.biz.BetRecordBatchOptResultDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -17,17 +16,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -37,8 +30,6 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
     BetRecordService betRecordService;
     @Autowired
     MariaMakilingRecordManager mariaMakilingRecordManager;
-    @Autowired
-    ThreadPoolExecutor betRecordThreadPoolExecutor;
 
     @PostConstruct
     public void init() {
@@ -55,12 +46,12 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             MQMessage<BetRecordDo<MariaMakilingGameRecordDo>> betRecordDoMQMessage = JSON.parseObject(message, new TypeReference<MQMessage<BetRecordDo<MariaMakilingGameRecordDo>>>() {
             });
             BetRecordDo<MariaMakilingGameRecordDo> body = betRecordDoMQMessage.getBody();
+            // todo delete log
             log.info("processMessages, msgType:{}, msgId:{}", betRecordDoMQMessage.getType(), betRecordDoMQMessage.getMsgId());
             if (tt.getRedeliveryCount() > 0 && StringUtils.equals(betRecordDoMQMessage.getType(), MessageTypeEnum.ADD.getCode())) {
                 log.info("processMessages, msgType:{}, msgId:{}, retryTimes: {}", betRecordDoMQMessage.getType(), betRecordDoMQMessage.getMsgId(), tt.getRedeliveryCount());
             }
             messageIdMap.put(betRecordDoMQMessage.getType() + "_" + body.getId(), tt.getMessageId());
-            // todo delete log
             if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 addRecordList.add(body);
             } else if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.UPDATE.getCode())) {
@@ -77,6 +68,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
 
     /**
      * 优先批量处理，批量处理失败后改为单条处理
+     *
      * @param recordList
      * @param messageIdMap
      */
@@ -99,30 +91,47 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                     mariaMakilingRecordManager.add(betRecordDo, GameTypeEnum.MARIA_MAKILING);
                 } catch (Exception ep) {
                     messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + betRecordDo.getId());
-                    log.error("MariaMakilingMessageListener.batchAdd.add , betRecord: {}, errMsg: {}", betRecordDo, ep.getMessage(), ep);
+                    log.error("MariaMakilingMessageListener.batchAdd.add , betRecordId: {}, errMsg: {}", betRecordDo.getId(), ep.getMessage(), ep);
                 }
             }
         }
     }
 
+    /**
+     * 批量更新：
+     * 优先批量更新，批量更新失败后单挑更新
+     * @param recordList
+     * @param messageIdMap
+     */
     private void batchUpdate(List<BetRecordDo> recordList, Map<String, MessageId> messageIdMap) {
         if (CollectionUtils.isEmpty(recordList)) {
             return;
         }
         try {
-            BetRecordBatchOptResultDo updateResultDo = betRecordService.batchUpdate(recordList, GameTypeEnum.MARIA_MAKILING);
+            boolean ret = betRecordService.batchUpdate(recordList, GameTypeEnum.MARIA_MAKILING);
             // 移除处理失败的key
-            List<Long> failIdList = updateResultDo.getFailIdList();
-            if (CollectionUtils.isNotEmpty(failIdList)) {
-                for (Long id : failIdList) {
-                    messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + id);
+            if (!ret) {
+                for (BetRecordDo record : recordList) {
+                    messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + record.getId());
                 }
             }
+            List<Long> nonExistIdList = betRecordService.listNotExistIdList(recordList.stream().map(BetRecordDo::getId).collect(Collectors.toList()), GameTypeEnum.MARIA_MAKILING);
+            Optional.ofNullable(nonExistIdList)
+                    .orElse(Collections.emptyList())
+                    .forEach(id -> messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + id));
         } catch (Exception e) {
-            for (BetRecordDo record : recordList) {
-                messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + record.getId());
+            log.error("MariaMakilingMessageListener.batchUpdate err, errMsg: {}", e.getMessage(), e);
+            for (BetRecordDo<MariaMakilingGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
+                try {
+                    boolean ret = betRecordService.update(betRecordDo, GameTypeEnum.MARIA_MAKILING);
+                    if (!ret) {
+                        messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + betRecordDo.getId());
+                    }
+                } catch (Exception ep) {
+                    messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + betRecordDo.getId());
+                    log.error("MariaMakilingMessageListener.batchUpdate.update , betRecordId: {}, errMsg: {}", betRecordDo.getId(), ep.getMessage(), ep);
+                }
             }
-            log.error("MariaMakilingMessageListener.batchUpdate error: {}", e.getMessage(), e);
         }
     }
 }

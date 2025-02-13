@@ -2,7 +2,6 @@ package com.wegame.capi.biz.service;
 
 import com.google.common.collect.Lists;
 import com.mongodb.bulk.BulkWriteError;
-import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
@@ -136,39 +135,23 @@ public class BetRecordService {
      * @param betRecordDoList 投注记录
      * @return 主键id
      */
-    public BetRecordBatchOptResultDo batchUpdate(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
+    public boolean batchUpdate(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotEmpty(betRecordDoList, ErrorCode.ERR_PARAM, "betRecordDoList is empty");
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
-        List<Long> failIdList = Lists.newArrayList();
-        List<Long> allIdList = betRecordDoList.stream().map(BetRecordDo::getId).filter(Objects::nonNull).collect(Collectors.toList());
-        BulkWriteResult bulkWriteResult;
-        try {
-            // 需要排除掉库中不存在的id  todo 是否可以不需要这部操作
-            failIdList = listNotExistIdList(allIdList, gameType);
-            if (failIdList.size() == allIdList.size()) {
-                return BetRecordBatchOptResultDo.builder().successCount(0L).failIdList(failIdList).build();
-            }
-            BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
-                    BetRecordPo.class,
-                    gameType.getBetRecordCollectionName());
-            betRecordDoList.forEach(betRecordDo -> {
-                Criteria criteria = new Criteria();
-                criteria.and("_id").is(betRecordDo.getId());
-                Query query = new Query(criteria);
-                bulkOps.updateOne(query, BetRecordQueryBuilder.buildMongoUpdate(betRecordDo));
-            });
-            bulkWriteResult = bulkOps.execute();
-        } catch (Exception e) {
-            log.error("BetRecordService#batchUpdate error, errMsg: {}", e.getMessage(), e);
-            return buildExceptionResultDo(betRecordDoList, failIdList, e, OptEnum.UPDATE);
-        }
+        BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
+                BetRecordPo.class,
+                gameType.getBetRecordCollectionName());
+        betRecordDoList.forEach(betRecordDo -> {
+            Criteria criteria = new Criteria();
+            criteria.and("_id").is(betRecordDo.getId());
+            Query query = new Query(criteria);
+            bulkOps.updateOne(query, BetRecordQueryBuilder.buildMongoUpdate(betRecordDo));
+        });
+        bulkOps.execute();
         long endTime = System.currentTimeMillis();
         log.info("BetRecordService#batchUpdate cost time:{}ms", endTime - startTime);
-        return BetRecordBatchOptResultDo.builder()
-                .successCount(bulkWriteResult.getMatchedCount())
-                .failIdList(failIdList)
-                .build();
+        return true;
     }
 
     /**
