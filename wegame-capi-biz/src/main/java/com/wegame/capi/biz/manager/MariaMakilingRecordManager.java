@@ -28,6 +28,7 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
+    @Override
     @Transactional(transactionManager = "mariamakilingTransactionManager")
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
@@ -38,8 +39,8 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
         return betRecord.getId();
     }
 
-    @Transactional(transactionManager = "mariamakilingTransactionManager")
     @Override
+    @Transactional(transactionManager = "mariamakilingTransactionManager")
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());

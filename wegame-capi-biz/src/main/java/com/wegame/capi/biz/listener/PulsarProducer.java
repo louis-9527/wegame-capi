@@ -41,10 +41,10 @@ public class PulsarProducer {
             String topicName = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env, gameType.getName() + "_topic");
             List<Producer<byte[]>> producers = new ArrayList<>();
             int num = PRODUCER_NUM_CACHE.get(gameType);
-            int temp = 0;
-            while (temp < num) {
-                producers.add(createProducer(topicName, gameType.getName()));
-                temp++;
+            int tempNum = 0;
+            while (tempNum < num) {
+                producers.add(createProducer(topicName, gameType.getName(), tempNum));
+                tempNum++;
             }
             producerListCache.put(gameType, producers);
         }
@@ -120,24 +120,6 @@ public class PulsarProducer {
         return producerListCache.get(gameType).get(index);
     }
 
-    private Producer<byte[]> createProducer(String topicName, String gameName) {
-        try {
-            String producerName = name + "_" + gameName + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp();
-            return pulsarClient.newProducer(Schema.BYTES)
-                    .topic(topicName)
-                    .producerName(producerName)
-                    .enableBatching(true) // 开启批量发送
-                    .batchingMaxMessages(200) // 每批最大 200 条消息
-//                    .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
-                    //.sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
-                    .compressionType(CompressionType.LZ4) // 使用 LZ4 压缩，减少带宽占用
-                    .create();
-        } catch (PulsarClientException e) {
-            throw new RuntimeException("Failed to create Pulsar producer for topic error: " + topicName, e);
-        }
-    }
-
-
     private Producer<byte[]> createProducer(String topicName, String gameName, Integer index) {
         try {
             String producerName = name + "_" + gameName + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp() + "_" + index;
@@ -145,9 +127,9 @@ public class PulsarProducer {
                     .topic(topicName)
                     .producerName(producerName)
                     .enableBatching(true) // 开启批量发送
-                    .batchingMaxMessages(500) // 每批最大 200 条消息
-                    .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
-                    //.sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
+                    .batchingMaxMessages(20) // 每批最大 200 条消息
+                    // .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
+                    // .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                     .compressionType(CompressionType.LZ4) // 使用 LZ4 压缩，减少带宽占用
                     .create();
         } catch (PulsarClientException e) {
