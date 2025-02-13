@@ -1,8 +1,6 @@
 package com.wegame.capi.biz.service;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.mongodb.bulk.BulkWriteError;
 import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.result.UpdateResult;
@@ -73,15 +71,7 @@ public class BetRecordService {
             log.info("addBetRecord id:{}", item.getId());
             bulkOps.insert(item);
         });
-        try {
-            bulkOps.execute();
-        } catch (BulkOperationException e) {
-            // todo fix
-            log.error("BetRecordService#batchInsert err, BulkOperationException", e.getMessage(), e);
-        } catch (Exception e) {
-            log.error("BetRecordService#batchInsert err, Exception: {}", e.getMessage(), e);
-            //            throw e; todo fix
-        }
+        bulkOps.execute();
         long endTime = System.currentTimeMillis();
         log.info("BetRecordService#batchInsert cost time:{}ms", endTime - startTime);
         return true;
