@@ -42,15 +42,11 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Override
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
-        List<Long> idList = betRecordList.stream().map(BetRecordDo::getId).collect(Collectors.toList());
-        List<Long> notExistIdList = betRecordService.listNotExistIdList(idList, gameType);
-        List<BetRecordDo> notExistRecordList = betRecordList.stream()
-                .filter(item -> notExistIdList.contains(item.getId()))
-                .collect(Collectors.toList());
-        boolean ret = betRecordService.batchInsert(notExistRecordList, gameType);
+        List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
+        boolean ret = betRecordService.batchInsert(betRecordDos, gameType);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         List<MariaMakilingGameRecordDo> gameRecordList = betRecordList.stream()
-                .filter(item -> CollectionUtils.isNotEmpty(item.getGameRecordList()) && notExistIdList.contains(item.getId()))
+                .filter(item -> CollectionUtils.isNotEmpty(item.getGameRecordList()))
                 .map(BetRecordDo::getGameRecordList)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());

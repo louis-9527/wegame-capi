@@ -24,7 +24,7 @@ public class MongodbTransactionConfig {
     public MongoTransactionManager mariamakilingTransactionManager() {
         MongoTransactionManager manager = new MongoTransactionManager(malakasMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
-                .maxCommitTime(10L, TimeUnit.SECONDS)
+                .maxCommitTime(20L, TimeUnit.SECONDS)
                 .build();
         manager.setOptions(options);
         return manager;

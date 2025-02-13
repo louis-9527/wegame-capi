@@ -94,7 +94,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                     mariaMakilingRecordManager.add(betRecordDo, GameTypeEnum.MARIA_MAKILING);
                 } catch (Exception ep) {
                     messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + betRecordDo.getId());
-                    log.error("MariaMakilingMessageListener.batchAdd.add , betRecord: {}, errMsg: {}", betRecordDo, e.getMessage(), e);
+                    log.error("MariaMakilingMessageListener.batchAdd.add , betRecord: {}, errMsg: {}", betRecordDo, ep.getMessage(), ep);
                 }
             }
         }
