@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class PulsarProducer {
     private static final ConcurrentHashMap<GameTypeEnum, List<Producer<byte[]>>> producerListCache = new ConcurrentHashMap<>();
     private static final Map<GameTypeEnum, Integer> PRODUCER_NUM_CACHE = new ImmutableMap.Builder<GameTypeEnum, Integer>()
-            .put(GameTypeEnum.MARIA_MAKILING, 5)
+            .put(GameTypeEnum.MARIA_MAKILING, 20)
             .build();
     @Value("${spring.application.env}")
     String env;
@@ -69,7 +69,7 @@ public class PulsarProducer {
         MessageId messageId;
         int times = 0;
         do {
-            messageId = this.asyncSendMessage(gameTypeEnum, mqMessage);
+            messageId = this.syncSendMessage(gameTypeEnum, mqMessage);
             times++;
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
@@ -126,12 +126,17 @@ public class PulsarProducer {
             return pulsarClient.newProducer(Schema.BYTES)
                     .topic(topicName)
                     .producerName(producerName)
-                    .enableBatching(true) // 开启批量发送
-                    .batchingMaxMessages(20) // 每批最大 200 条消息
-                    .batchingMaxPublishDelay(5, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
-                    // .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
-                    .compressionType(CompressionType.LZ4) // 使用 LZ4 压缩，减少带宽占用
+                    .compressionType(CompressionType.LZ4)
                     .create();
+            //            return pulsarClient.newProducer(Schema.BYTES)
+            //                    .topic(topicName)
+            //                    .producerName(producerName)
+            //                    .enableBatching(true) // 开启批量发送
+            //                    .batchingMaxMessages(20) // 每批最大 200 条消息
+            //                    .batchingMaxPublishDelay(5, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
+            //                    // .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
+            //                    .compressionType(CompressionType.LZ4) // 使用 LZ4 压缩，减少带宽占用
+            //                    .create();
         } catch (PulsarClientException e) {
             throw new RuntimeException("Failed to create Pulsar producer for topic error: " + topicName, e);
         }
