@@ -8,7 +8,6 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
-import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
@@ -16,14 +15,14 @@ import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
 
 @Slf4j
 @Component("mariaMakilingNormalBetStrategy")
@@ -54,7 +53,7 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
                     .rewardContent(String.format(Constants.WEGAME_REWARD_NOTIFY_CONTENT_FORMAT,
                             DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
                             userInfo.getUserName(),
-                            NumberUtil.div(totalRewardAmount, 100),
+                            NumberUtil.decimalFormat("#,##0.00", NumberUtil.div(totalRewardAmount, 100)),
                             freeSpinsCount))
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
