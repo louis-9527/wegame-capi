@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -139,8 +140,10 @@ public class PulsarProducer {
             String producerName = name + "_" + gameName + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp();
             return pulsarClient.newProducer(Schema.BYTES)
                     .topic(topicName)
-                    .enableBatching(false)
-                    .producerName(producerName)
+                    .enableBatching(true) // 启用批量发送
+                    .batchingMaxMessages(10) // 每个批次最多包含 10 条消息
+                    .batchingMaxBytes(4 * 1024) // 每个批次最大 4 KB
+                    .batchingMaxPublishDelay(1, TimeUnit.MILLISECONDS) // 最大延迟 1 毫秒
                     .compressionType(CompressionType.LZ4)
                     .create();
             //            return pulsarClient.newProducer(Schema.BYTES)
