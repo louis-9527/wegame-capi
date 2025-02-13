@@ -34,16 +34,14 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
 
     @CacheEvict(value = CacheConstants.REWARD_INFO)
     @Override
-    public void freeSpinsAfterHandle(BetDo<MariaMakilingBetDo> betDo, List<MariaMakilingGameRecordDo> gameRecordList, Long totalRewardAmount) {
-        if (isLastFreeSpins(gameRecordList, betDo.getBetDetail().getGameRecordId())) {
-            updateRewardNotifyInfo(betDo.getGameType(), freeSpinCount(gameRecordList), totalRewardAmount);
+    public void freeWheelAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
+        if (detailDo.isLastFreeSpins(betDo.getBetDetail().getGameRecordId())) {
+            updateRewardNotifyInfo(betDo.getGameType(), detailDo.freeWheelCount(), totalRewardAmount);
         }
     }
 
     private void updateRewardNotifyInfo(GameTypeEnum gameType, long freeSpinsCount, long totalRewardAmount) {
         try {
-            // todo 测试日志,后面删除
-            log.info("MariaMakilingNormalBetStrategy-updateRewardNotifyInfo触发:{},{}", freeSpinsCount, totalRewardAmount);
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
@@ -65,18 +63,5 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
         } catch (Exception e) {
             log.error("[MariaMakilingNonBuyFreeSpinsBetStrategy-notifyRewardHandle] error", e);
         }
-    }
-
-    private boolean isLastFreeSpins(List<MariaMakilingGameRecordDo> gameRecordList, long freeSpinsGameRecordId) {
-        MariaMakilingGameRecordDo recordDo = CollectionUtils.isEmpty(gameRecordList) ? null : gameRecordList.get(gameRecordList.size() - 1);
-        return Objects.isNull(recordDo) ? false : Objects.equals(recordDo.getId(), freeSpinsGameRecordId);
-    }
-
-    private long freeSpinCount(List<MariaMakilingGameRecordDo> gameRecordList) {
-        return Optional.ofNullable(gameRecordList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .filter(item -> item.getId() > 0)
-                .count();
     }
 }

@@ -34,7 +34,9 @@ public class GameRecordService<T> {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(tClass, ErrorCode.ERR_INTER);
         BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass);
-        gameRecordList.forEach(item -> bulkOps.insert(item));
+        gameRecordList.forEach(item -> {
+            bulkOps.insert(item);
+        });
         try {
             bulkOps.execute();
         } catch (BulkOperationException e) {
@@ -42,7 +44,7 @@ public class GameRecordService<T> {
             log.error("GameRecordService#batchInsert err, BulkOperationException: {}", e.getMessage(), e);
         } catch (Exception e) {
             log.error("GameRecordService#batchInsert err, Exception: {}", e.getMessage(), e);
-            throw e;
+            //            throw e; todo fix
         }
         return true;
     }

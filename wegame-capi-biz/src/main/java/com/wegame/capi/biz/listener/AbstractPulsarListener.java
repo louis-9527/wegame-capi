@@ -1,8 +1,11 @@
 package com.wegame.capi.biz.listener;
 
+import cn.hutool.core.lang.UUID;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public abstract class AbstractPulsarListener {
-
     @Value("${spring.application.env}")
     String env;
     @Value("${spring.application.name}")
@@ -70,6 +72,7 @@ public abstract class AbstractPulsarListener {
     private void consumeMessages() {
         while (true) {
             try {
+                MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
                 Messages<byte[]> messages = consumer.batchReceive();
                 if (messages == null || messages.size() == 0) {
                     continue;
@@ -80,6 +83,8 @@ public abstract class AbstractPulsarListener {
                 }
             } catch (Exception e) {
                 log.error("Error consuming messages:", e);
+            } finally {
+                MDC.clear();
             }
         }
     }

@@ -62,15 +62,14 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
         WheelDo<SymbolDo> firstWheel;
-        long firstGameRecordId = snowflakeIdGenerator.nextId();
-        log.info("generateGameRecord id:{}", firstGameRecordId);
+        long firstGameRecordId = generateGameRecordId();
         // 根据投注类型：生成游戏滚轮
         switch (gamePlay.getBetType()) {
             case NORMAL_BET:
                 firstWheel = generateNormalWheel(gameInfo, getProbabilisticConfig(gamePlay, false));
                 break;
             case BUY_BET:
-                firstWheel = generateRewardFreeSpinsWheel(gameInfo, getProbabilisticConfig(gamePlay, false));
+                firstWheel = generateRewardFreeWheel(gameInfo, getProbabilisticConfig(gamePlay, false));
                 break;
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
@@ -78,18 +77,9 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         AssertUtil.assertNotNull(firstWheel, ErrorCode.ERR_INTER);
         RewardResultDo<SymbolDo> rewardResult = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel, BigDecimal.ZERO));
         // 判断-是否命中免费轮
-        List<Long> freeSpinGameRecordIds = null;
-        if (rewardResult.isHasRewardFreeSpin()) {
-            freeSpinGameRecordIds = new ArrayList<>();
-            // 免费次数
-            int wheelNumber = getWheelNumber();
-            int tempNumber = 0;
-            while (tempNumber < wheelNumber) {
-                long gameRecordId = snowflakeIdGenerator.nextId();
-                log.info("freeWheel generateGameRecord id:{}", gameRecordId);
-                freeSpinGameRecordIds.add(gameRecordId);
-                tempNumber++;
-            }
+        List<Long> freeWheelGameRecordIds = null;
+        if (rewardResult.isHasRewardFreeWheel()) {
+            freeWheelGameRecordIds = getGameRecordIdList(getWheelNumber());
         }
         MariaMakilingGameRecordDo record = buildGameRecord(firstGameRecordId,
                 GAME_RECORD_DEFAULT_PARENT_ID,
@@ -97,22 +87,22 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 0L,
                 firstWheel,
                 rewardResult,
-                freeSpinGameRecordIds);
+                freeWheelGameRecordIds);
         ret.add(record);
         // 判断是否命中免费轮
-        if (CollectionUtils.isNotEmpty(freeSpinGameRecordIds)) {
-            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true), freeSpinGameRecordIds);
-            AssertUtil.assertNotNull(wheelList.size() == freeSpinGameRecordIds.size(), ErrorCode.ERR_INTER);
+        if (CollectionUtils.isNotEmpty(freeWheelGameRecordIds)) {
+            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true), freeWheelGameRecordIds);
+            AssertUtil.assertNotNull(wheelList.size() == freeWheelGameRecordIds.size(), ErrorCode.ERR_INTER);
             // 组装&返回-游戏记录列表
             for (int index = 0; index < wheelList.size(); index++) {
-                WheelDo<SymbolDo> item = wheelList.get(index);
-                Long gameRecordId = freeSpinGameRecordIds.get(index);
+                WheelDo<SymbolDo> wheelDo = wheelList.get(index);
+                Long gameRecordId = freeWheelGameRecordIds.get(index);
                 MariaMakilingGameRecordDo gameRecord = buildGameRecord(gameRecordId,
                         GAME_RECORD_DEFAULT_PARENT_ID,
                         record.getBetRecordId(),
                         record.getId(),
-                        item,
-                        mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, item, BigDecimal.ZERO)),
+                        wheelDo,
+                        mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheelDo, BigDecimal.ZERO)),
                         null);
                 ret.add(gameRecord);
             }
@@ -161,7 +151,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<SymbolDo> generateRewardFreeSpinsWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo<SymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         WheelDo<SymbolDo> wheelDo = generateNormalWheel(gameInfo, probabilisticConfig);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
         // 生成整盘随机数(SCATTER_COLUM_INDEX_LIST.size())个
@@ -289,5 +279,23 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             }
         }
         throw new BusinessException(ErrorCode.ERR_INTER);
+    }
+
+    private long generateGameRecordId() {
+        long gameRecordId = snowflakeIdGenerator.nextId();
+        log.info("generateGameRecord id:{}", gameRecordId);
+        return gameRecordId;
+    }
+
+    private List<Long> getGameRecordIdList(int count) {
+        List gameRecordIdList = new ArrayList<>();
+        int temp = 0;
+        while (temp < count) {
+            long gameRecordId = snowflakeIdGenerator.nextId();
+            log.info("generateGameRecord id, free wheel:{}", gameRecordId);
+            gameRecordIdList.add(gameRecordId);
+            temp++;
+        }
+        return gameRecordIdList;
     }
 }

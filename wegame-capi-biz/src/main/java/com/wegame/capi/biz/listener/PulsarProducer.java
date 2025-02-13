@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 public class PulsarProducer {
+    // todo 优化， 多个生产者
     private final ConcurrentHashMap<GameTypeEnum, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
     @Value("${spring.application.env}")
     String env;
@@ -108,7 +109,7 @@ public class PulsarProducer {
                     .topic(topicName)
                     .producerName(producerName)
                     .enableBatching(true) // 开启批量发送
-                    .batchingMaxMessages(200) // 每批最大 200 条消息
+                    .batchingMaxMessages(500) // 每批最大 200 条消息
                     .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
                     //.sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                     .compressionType(CompressionType.LZ4) // 使用 LZ4 压缩，减少带宽占用
