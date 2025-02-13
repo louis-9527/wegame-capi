@@ -35,7 +35,7 @@ public abstract class AbstractPulsarListener {
                     .subscriptionName(name + "_" + gameType.getName())
                     .subscriptionType(SubscriptionType.Key_Shared) // 关键点：使用 Key_Shared 模式
                     .receiverQueueSize(2000) // 增加内部缓存，提高吞吐量
-                    .ackTimeout(300, TimeUnit.SECONDS)
+                    .ackTimeout(60, TimeUnit.SECONDS)
                     .batchReceivePolicy(BatchReceivePolicy.builder()
                             .maxNumMessages(200)  // 批量最多100条
                             .timeout(100, TimeUnit.MILLISECONDS)
