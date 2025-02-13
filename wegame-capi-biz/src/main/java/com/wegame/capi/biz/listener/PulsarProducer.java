@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class PulsarProducer {
     private static final ConcurrentHashMap<GameTypeEnum, List<Producer<byte[]>>> producerListCache = new ConcurrentHashMap<>();
     private static final Map<GameTypeEnum, Integer> PRODUCER_NUM_CACHE = new ImmutableMap.Builder<GameTypeEnum, Integer>()
-            .put(GameTypeEnum.MARIA_MAKILING, 100)
+            .put(GameTypeEnum.MARIA_MAKILING, 5)
             .build();
     @Value("${spring.application.env}")
     String env;
@@ -127,8 +127,8 @@ public class PulsarProducer {
                     .topic(topicName)
                     .producerName(producerName)
                     .enableBatching(true) // 开启批量发送
-                    .batchingMaxMessages(500) // 每批最大 200 条消息
-                    .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
+                    .batchingMaxMessages(200) // 每批最大 200 条消息
+//                    .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
                     //.sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                     .compressionType(CompressionType.LZ4) // 使用 LZ4 压缩，减少带宽占用
                     .create();

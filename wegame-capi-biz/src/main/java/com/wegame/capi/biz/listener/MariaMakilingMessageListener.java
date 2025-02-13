@@ -2,6 +2,7 @@ package com.wegame.capi.biz.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.wegame.base.domain.OptType;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.capi.biz.domain.biz.BetRecordBatchOptResultDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -12,6 +13,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +55,12 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
             MQMessage<BetRecordDo<MariaMakilingGameRecordDo>> betRecordDoMQMessage = JSON.parseObject(message, new TypeReference<MQMessage<BetRecordDo<MariaMakilingGameRecordDo>>>() {
             });
             BetRecordDo<MariaMakilingGameRecordDo> body = betRecordDoMQMessage.getBody();
+            log.info("processMessages, msgType:{}, msgId:{}", betRecordDoMQMessage.getType(), betRecordDoMQMessage.getMsgId());
+            if (tt.getRedeliveryCount() > 0 && StringUtils.equals(betRecordDoMQMessage.getType(), MessageTypeEnum.ADD.getCode())) {
+                log.info("processMessages, msgType:{}, msgId:{}, retryTimes: {}", betRecordDoMQMessage.getType(), betRecordDoMQMessage.getMsgId(), tt.getRedeliveryCount());
+            }
             messageIdMap.put(betRecordDoMQMessage.getType() + "_" + body.getId(), tt.getMessageId());
             // todo delete log
-            log.info("processMessages, msgType:{}, msgId:{}", betRecordDoMQMessage.getType(), betRecordDoMQMessage.getMsgId());
             if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 addRecordList.add(body);
             } else if (betRecordDoMQMessage.getType().equals(MessageTypeEnum.UPDATE.getCode())) {
