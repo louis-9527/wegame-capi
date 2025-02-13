@@ -61,7 +61,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         // 2、计算中奖线
         List<RewardLineDo<MalakasSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算倍率
-        BigDecimal totalMultiple = malakasMultipleCalculateStrategy.calculateMultiple(rewardHandle);
+        BigDecimal totalMultiple = malakasMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
             return RewardResultDo.<MalakasSymbolDo>builder()
@@ -69,7 +69,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .rewardType(RewardTypeEnum.NONE)
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
-                    .totalMultiple(BigDecimal.ZERO)
+                    .totalMultiple(null)
                     .hasRewardFreeSpin(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                     .rewardLineDetailList(null)
                     .rewardFreeSpinTimes(Objects.isNull(freeSpinsTimes) ? 0 : freeSpinsTimes)

@@ -1,23 +1,26 @@
 package com.wegame.capi.biz.module.malakas.multiple;
 
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
+import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.module.base.multiple.AbstractMultipleCalculateStrategy;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
-
-import static com.wegame.capi.client.enums.BetSubTypeEnum.*;
 
 @Slf4j
 @Component("malakasMultipleCalculateStrategy")
 public class MalakasMultipleCalculateStrategy extends AbstractMultipleCalculateStrategy<MalakasSymbolDo> {
 
     @Override
-    public BigDecimal calculateMultiple(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
+    public BigDecimal calculateMultiple(RewardHandleDo<MalakasSymbolDo> rewardHandle, List<RewardLineDo<MalakasSymbolDo>> rewardLineList) {
+        if (Objects.equals(rewardHandle.getBetSubType(), BetSubTypeEnum.BUY_BET)) {
+
+        }
         return BigDecimal.ZERO;
     }
 }
