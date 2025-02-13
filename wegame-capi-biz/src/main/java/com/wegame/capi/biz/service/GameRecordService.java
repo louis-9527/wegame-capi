@@ -41,7 +41,7 @@ public class GameRecordService<T> {
             bulkOps.execute();
         } catch (BulkOperationException e) {
             // todo fix
-            log.error("GameRecordService#batchInsert err, BulkOperationException: {}", e.getMessage(), e);
+            log.error("GameRecordService#batchInsert err, BulkOperationException", e.getMessage(), e);
         } catch (Exception e) {
             log.error("GameRecordService#batchInsert err, Exception: {}", e.getMessage(), e);
             //            throw e; todo fix

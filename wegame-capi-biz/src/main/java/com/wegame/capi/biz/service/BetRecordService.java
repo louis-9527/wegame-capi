@@ -77,7 +77,7 @@ public class BetRecordService {
             bulkOps.execute();
         } catch (BulkOperationException e) {
             // todo fix
-            log.error("BetRecordService#batchInsert err, BulkOperationException: {}", e.getMessage(), e);
+            log.error("BetRecordService#batchInsert err, BulkOperationException", e.getMessage(), e);
         } catch (Exception e) {
             log.error("BetRecordService#batchInsert err, Exception: {}", e.getMessage(), e);
             //            throw e; todo fix
