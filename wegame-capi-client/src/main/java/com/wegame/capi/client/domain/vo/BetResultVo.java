@@ -1,6 +1,5 @@
 package com.wegame.capi.client.domain.vo;
 
-import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -31,7 +30,6 @@ public class BetResultVo implements Serializable {
     private Long credit;
     @ApiModelProperty("合计中奖总金额")
     private Long overallRewardAmount;
-    // todo 联调后修改类型 为 object @bruce
     @ApiModelProperty("结果明细")
-    private MariaMakilingBetResultVo resultDetail;
+    private Object resultDetail;
 }
