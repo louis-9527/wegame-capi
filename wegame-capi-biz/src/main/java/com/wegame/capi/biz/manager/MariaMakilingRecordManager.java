@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Component("mariaMakilingRecordManager")
 public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakilingGameRecordDo> {
 
-    private static final int BATCH_SIZE = 100;
+    private static final int BATCH_SIZE = 1000;
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
