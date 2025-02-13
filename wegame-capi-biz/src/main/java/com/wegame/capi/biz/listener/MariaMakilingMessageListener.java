@@ -37,8 +37,6 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
     MariaMakilingRecordManager mariaMakilingRecordManager;
     @Autowired
     ThreadPoolExecutor betRecordThreadPoolExecutor;
-    @Autowired
-    RedisTemplate<String, Object> redisTemplate;
 
     @PostConstruct
     public void init() {
@@ -68,49 +66,38 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
         batchAdd(addRecordList, messageIdMap);
         // 批量修改
         batchUpdate(updateRecordList, messageIdMap);
+        //
         return new ArrayList<>(messageIdMap.values());
     }
 
+    /**
+     * 优先批量处理，批量处理失败后改为单条处理
+     * @param recordList
+     * @param messageIdMap
+     */
     private void batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> recordList, Map<String, MessageId> messageIdMap) {
-        //        if (CollectionUtils.isEmpty(recordList)) {
-        //            return;
-        //        }
-        //        try {
-        //            boolean ret = mariaMakilingRecordManager.batchAdd(recordList, GameTypeEnum.MARIA_MAKILING);
-        //            // 移除处理失败的key
-        //            if (!ret) {
-        //                for (BetRecordDo record : recordList) {
-        //                    messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + record.getId());
-        //                }
-        //            }
-        //        } catch (Exception e) {
-        //            for (BetRecordDo record : recordList) {
-        //                messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + record.getId());
-        //            }
-        //            log.error("MariaMakilingMessageListener.batchAdd error: {}", e.getMessage(), e);
-        //        }
-        // todo 处理并发能力
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
-        for (BetRecordDo<MariaMakilingGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
-            try {
-                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+        if (CollectionUtils.isEmpty(recordList)) {
+            return;
+        }
+        try {
+            boolean ret = mariaMakilingRecordManager.batchAdd(recordList, GameTypeEnum.MARIA_MAKILING);
+            // 移除处理失败的key
+            if (!ret) {
+                for (BetRecordDo record : recordList) {
+                    messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + record.getId());
+                }
+            }
+        } catch (Exception e) {
+            log.error("MariaMakilingMessageListener.batchAdd err, errMsg: {}", e.getMessage(), e);
+            for (BetRecordDo<MariaMakilingGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
+                try {
                     mariaMakilingRecordManager.add(betRecordDo, GameTypeEnum.MARIA_MAKILING);
-                }, betRecordThreadPoolExecutor);
-                futures.add(future);
-            } catch (Exception e) {
-                messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + betRecordDo.getId());
-                log.error("MariaMakilingMessageListener.batchAdd error: {}", e.getMessage(), e);
+                } catch (Exception ep) {
+                    messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + betRecordDo.getId());
+                    log.error("MariaMakilingMessageListener.batchAdd.add , betRecord: {}, errMsg: {}", betRecordDo, e.getMessage(), e);
+                }
             }
         }
-        futures.stream().forEach(future -> {
-            try {
-                future.get();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     private void batchUpdate(List<BetRecordDo> recordList, Map<String, MessageId> messageIdMap) {
