@@ -128,7 +128,7 @@ public class PulsarProducer {
                     .producerName(producerName)
                     .enableBatching(true) // 开启批量发送
                     .batchingMaxMessages(20) // 每批最大 200 条消息
-                    // .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
+                    .batchingMaxPublishDelay(5, TimeUnit.MILLISECONDS) // 10ms 内合并批量消息
                     // .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                     .compressionType(CompressionType.LZ4) // 使用 LZ4 压缩，减少带宽占用
                     .create();
