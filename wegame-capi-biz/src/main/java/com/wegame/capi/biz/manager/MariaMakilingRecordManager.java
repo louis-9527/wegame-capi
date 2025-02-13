@@ -29,21 +29,26 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
-    @Transactional(transactionManager = "mariamakilingTransactionManager")
+//    @Transactional(transactionManager = "mariamakilingTransactionManager") todo fix
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
         try {
             betRecordService.add(betRecord, gameType);
         } catch (DuplicateKeyException e) {
-            log.warn("MariaMakilingRecordManager#add Duplicate key: {}", betRecord.getGameRecordList(), e);
+            log.warn("MariaMakilingRecordManager#add Duplicate key: {}", betRecord.getId(), e);
             return betRecord.getId();
         }
         List<MariaMakilingGameRecordDo> gameRecordList = betRecord.getGameRecordList();
-        gameRecordList.forEach(item -> {
-            log.info("addGameRecord id:{}", item.getId());
-        });
-        boolean ret = gameRecordService.batchInsert(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
-        AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
+        try {
+            gameRecordList.forEach(item -> {
+                log.info("addGameRecord id:{}", item.getId());
+            });
+            boolean ret = gameRecordService.batchInsert(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
+            AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
+        } catch (Exception e) {
+            // todo fix
+            log.error("addGameRecord exception, gameRecordList: {}, errMsg: {}", gameRecordList, e.getMessage(), e);
+        }
         return betRecord.getId();
     }
 
