@@ -19,8 +19,10 @@ public class MalakasMultipleCalculateStrategy extends AbstractMultipleCalculateS
     @Override
     public BigDecimal calculateMultiple(RewardHandleDo<MalakasSymbolDo> rewardHandle, List<RewardLineDo<MalakasSymbolDo>> rewardLineList) {
         if (Objects.equals(rewardHandle.getBetSubType(), BetSubTypeEnum.BUY_BET)) {
-
+            return rewardHandle.getCurrentMultiple();
+        } else if (Objects.equals(rewardHandle.getBetSubType(), BetSubTypeEnum.BUY_BET) && rewardHandle.getWheel().getIndex() == 0) {
+            return rewardHandle.getCurrentMultiple();
         }
-        return BigDecimal.ZERO;
+        return Objects.isNull(rewardHandle.getCurrentMultiple()) ? BigDecimal.ONE : rewardHandle.getCurrentMultiple().add(BigDecimal.ONE);
     }
 }
