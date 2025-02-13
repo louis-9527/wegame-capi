@@ -16,18 +16,23 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
 public class PulsarProducer {
-    private static final ConcurrentHashMap<GameTypeEnum, List<Producer<byte[]>>> producerListCache = new ConcurrentHashMap<>();
-    private static final Map<GameTypeEnum, Integer> PRODUCER_NUM_CACHE = new ImmutableMap.Builder<GameTypeEnum, Integer>()
-            .put(GameTypeEnum.MARIA_MAKILING, 20)
-            .build();
+    //    private static final ConcurrentHashMap<GameTypeEnum, List<Producer<byte[]>>> producerListCache = new ConcurrentHashMap<>();
+    //    private static final Map<GameTypeEnum, Integer> PRODUCER_NUM_CACHE = new ImmutableMap.Builder<GameTypeEnum, Integer>()
+    //            .put(GameTypeEnum.MARIA_MAKILING, 20)
+    //            .build();
+
+    private final ConcurrentHashMap<GameTypeEnum, Producer<byte[]>> producerCache = new ConcurrentHashMap<>();
+
     @Value("${spring.application.env}")
     String env;
     @Value("${spring.application.name}")
@@ -39,29 +44,38 @@ public class PulsarProducer {
     public void init() {
         for (GameTypeEnum gameType : GameTypeEnum.values()) {
             String topicName = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env, gameType.getName() + "_topic");
-            List<Producer<byte[]>> producers = new ArrayList<>();
-            int num = PRODUCER_NUM_CACHE.get(gameType);
-            int tempNum = 0;
-            while (tempNum < num) {
-                producers.add(createProducer(topicName, gameType.getName(), tempNum));
-                tempNum++;
-            }
-            producerListCache.put(gameType, producers);
+            producerCache.put(gameType, createProducer(topicName, gameType.getName()));
+            //            List<Producer<byte[]>> producers = new ArrayList<>();
+            //            int num = PRODUCER_NUM_CACHE.get(gameType);
+            //            int tempNum = 0;
+            //            while (tempNum < num) {
+            //                producers.add(createProducer(topicName, gameType.getName(), tempNum));
+            //                tempNum++;
+            //            }
+            //            producerListCache.put(gameType, producers);
         }
     }
 
     @PreDestroy
     public void shutdown() {
-        producerListCache.forEach((key, value) -> {
-            for (Producer<byte[]> producer : value) {
-                try {
-                    producer.close();
-                } catch (Exception e) {
-                    log.error("Failed to close Pulsar producer for topic error, topic={}", key, e);
-                }
+        //        producerListCache.forEach((key, value) -> {
+        //            for (Producer<byte[]> producer : value) {
+        //                try {
+        //                    producer.close();
+        //                } catch (Exception e) {
+        //                    log.error("Failed to close Pulsar producer for topic error, topic={}", key, e);
+        //                }
+        //            }
+        //        });
+        //        producerListCache.clear();
+        producerCache.forEach((key, value) -> {
+            try {
+                value.close();
+            } catch (PulsarClientException e) {
+                log.error("Failed to close Pulsar producer for topic error, topic={}", key, e);
             }
         });
-        producerListCache.clear();
+        producerCache.clear();
     }
 
     public <T> MessageId syncSendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage, int tryTimes) {
@@ -69,7 +83,7 @@ public class PulsarProducer {
         MessageId messageId;
         int times = 0;
         do {
-            messageId = this.syncSendMessage(gameTypeEnum, mqMessage);
+            messageId = this.asyncSendMessage(gameTypeEnum, mqMessage);
             times++;
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
@@ -115,16 +129,17 @@ public class PulsarProducer {
     }
 
     Producer<byte[]> getProducer(GameTypeEnum gameType) {
-        int num = PRODUCER_NUM_CACHE.get(gameType);
-        int index = SecureRandomUtil.randomIntInRange(0, num - 1);
-        return producerListCache.get(gameType).get(index);
+        return producerCache.get(gameType);
+        //        int index = SecureRandomUtil.randomIntInRange(0, num - 1);
+        //        return producerListCache.get(gameType).get(index);
     }
 
-    private Producer<byte[]> createProducer(String topicName, String gameName, Integer index) {
+    private Producer<byte[]> createProducer(String topicName, String gameName) {
         try {
-            String producerName = name + "_" + gameName + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp() + "_" + index;
+            String producerName = name + "_" + gameName + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp();
             return pulsarClient.newProducer(Schema.BYTES)
                     .topic(topicName)
+                    .enableBatching(false)
                     .producerName(producerName)
                     .compressionType(CompressionType.LZ4)
                     .create();
