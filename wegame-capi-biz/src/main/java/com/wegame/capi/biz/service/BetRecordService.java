@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.BulkOperationException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -81,7 +80,7 @@ public class BetRecordService {
             log.error("BetRecordService#batchInsert err, BulkOperationException: {}", e.getMessage(), e);
         } catch (Exception e) {
             log.error("BetRecordService#batchInsert err, Exception: {}", e.getMessage(), e);
-            throw e;
+            //            throw e; todo fix
         }
         long endTime = System.currentTimeMillis();
         log.info("BetRecordService#batchInsert cost time:{}ms", endTime - startTime);
