@@ -9,7 +9,6 @@ import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.BulkOperationException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
@@ -37,15 +36,7 @@ public class GameRecordService<T> {
         gameRecordList.forEach(item -> {
             bulkOps.insert(item);
         });
-        try {
-            bulkOps.execute();
-        } catch (BulkOperationException e) {
-            // todo fix
-            log.error("GameRecordService#batchInsert err, BulkOperationException", e.getMessage(), e);
-        } catch (Exception e) {
-            log.error("GameRecordService#batchInsert err, Exception: {}", e.getMessage(), e);
-            //            throw e; todo fix
-        }
+        bulkOps.execute();
         return true;
     }
 

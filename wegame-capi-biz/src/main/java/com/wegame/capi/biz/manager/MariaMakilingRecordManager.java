@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,59 +28,40 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
-//    @Transactional(transactionManager = "mariamakilingTransactionManager") todo fix
+    @Transactional(transactionManager = "mariamakilingTransactionManager")
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
-        try {
-            betRecordService.add(betRecord, gameType);
-        } catch (DuplicateKeyException e) {
-            log.warn("MariaMakilingRecordManager#add Duplicate key: {}", betRecord.getId(), e);
-            return betRecord.getId();
-        }
-        List<MariaMakilingGameRecordDo> gameRecordList = betRecord.getGameRecordList();
-        try {
-            gameRecordList.forEach(item -> {
-                log.info("addGameRecord id:{}", item.getId());
-            });
-            boolean ret = gameRecordService.batchInsert(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
-            AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
-        } catch (Exception e) {
-            // todo fix
-            log.error("addGameRecord exception, gameRecordList: {}, errMsg: {}", gameRecordList, e.getMessage(), e);
-        }
+        Long betRecordId = betRecordService.add(betRecord, gameType);
+        AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
+        boolean ret = gameRecordService.batchInsert(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);
+        AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         return betRecord.getId();
     }
 
-    // @Transactional(transactionManager = "mariamakilingTransactionManager") todo fix
+    @Transactional(transactionManager = "mariamakilingTransactionManager")
     @Override
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
-        try {
-            AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
-            List<Long> idList = betRecordList.stream().map(BetRecordDo::getId).collect(Collectors.toList());
-            List<Long> notExistIdList = betRecordService.listNotExistIdList(idList, gameType);
-            List<BetRecordDo> notExistRecordList = betRecordList.stream()
-                    .filter(item -> notExistIdList.contains(item.getId()))
-                    .collect(Collectors.toList());
-            boolean ret = betRecordService.batchInsert(notExistRecordList, gameType);
-            AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
-            List<MariaMakilingGameRecordDo> gameRecordList = betRecordList.stream()
-                    .filter(item -> CollectionUtils.isNotEmpty(item.getGameRecordList()))
-                    .map(BetRecordDo::getGameRecordList)
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList());
-            if (CollectionUtils.isNotEmpty(gameRecordList)) {
-                gameRecordList.forEach(item -> {
-                    log.info("addGameRecord id:{}", item.getId());
-                });
-                boolean insertRet = gameRecordService.batchInsert(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
-                AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
-            }
-            return true;
-        } catch (Exception e) {
-            // todo fix
-            log.error("batchAdd error, errMsg: {}", e.getMessage(), e);
-            return true;
+        AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
+        List<Long> idList = betRecordList.stream().map(BetRecordDo::getId).collect(Collectors.toList());
+        List<Long> notExistIdList = betRecordService.listNotExistIdList(idList, gameType);
+        List<BetRecordDo> notExistRecordList = betRecordList.stream()
+                .filter(item -> notExistIdList.contains(item.getId()))
+                .collect(Collectors.toList());
+        boolean ret = betRecordService.batchInsert(notExistRecordList, gameType);
+        AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
+        List<MariaMakilingGameRecordDo> gameRecordList = betRecordList.stream()
+                .filter(item -> CollectionUtils.isNotEmpty(item.getGameRecordList()) && notExistIdList.contains(item.getId()))
+                .map(BetRecordDo::getGameRecordList)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(gameRecordList)) {
+            gameRecordList.forEach(item -> {
+                log.info("addGameRecord id:{}", item.getId());
+            });
+            boolean insertRet = gameRecordService.batchInsert(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
+            AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
         }
+        return true;
     }
 
     @Override
