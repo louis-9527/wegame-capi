@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +19,7 @@ public class ThreadPoolConfig {
 
     public static final String defaultThreadPoolExecutor = "defaultThreadPoolExecutor";
 
-    public static final String updateBetRecordThreadPoolExecutor = "updateBetRecordThreadPoolExecutor";
+    public static final String betRecordThreadPoolExecutor = "betRecordThreadPoolExecutor";
 
     /**
      * 默认模块-线程池
@@ -45,14 +44,14 @@ public class ThreadPoolConfig {
      *
      * @return
      */
-    @Bean(updateBetRecordThreadPoolExecutor)
-    public ThreadPoolExecutor updateBetRecordThreadPoolExecutor() {
+    @Bean(betRecordThreadPoolExecutor)
+    public ThreadPoolExecutor betRecordThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
                 5000,
                 60L,
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue(10000),
-                new CustomizableThreadFactory("update-bet-record-pool-"),
+                new CustomizableThreadFactory("bet-record-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
         return executor;

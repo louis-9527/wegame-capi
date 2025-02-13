@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
 @Component
@@ -31,6 +34,8 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
     BetRecordService betRecordService;
     @Autowired
     MariaMakilingRecordManager mariaMakilingRecordManager;
+    @Autowired
+    ThreadPoolExecutor betRecordThreadPoolExecutor;
 
     @PostConstruct
     public void init() {
@@ -64,23 +69,45 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
     }
 
     private void batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> recordList, Map<String, MessageId> messageIdMap) {
-        if (CollectionUtils.isEmpty(recordList)) {
-            return;
-        }
-        try {
-            boolean ret = mariaMakilingRecordManager.batchAdd(recordList, GameTypeEnum.MARIA_MAKILING);
-            // 移除处理失败的key
-            if (!ret) {
-                for (BetRecordDo record : recordList) {
-                    messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + record.getId());
-                }
+        //        if (CollectionUtils.isEmpty(recordList)) {
+        //            return;
+        //        }
+        //        try {
+        //            boolean ret = mariaMakilingRecordManager.batchAdd(recordList, GameTypeEnum.MARIA_MAKILING);
+        //            // 移除处理失败的key
+        //            if (!ret) {
+        //                for (BetRecordDo record : recordList) {
+        //                    messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + record.getId());
+        //                }
+        //            }
+        //        } catch (Exception e) {
+        //            for (BetRecordDo record : recordList) {
+        //                messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + record.getId());
+        //            }
+        //            log.error("MariaMakilingMessageListener.batchAdd error: {}", e.getMessage(), e);
+        //        }
+        // todo 处理并发能力
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        for (BetRecordDo<MariaMakilingGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
+            try {
+                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                    mariaMakilingRecordManager.add(betRecordDo, GameTypeEnum.MARIA_MAKILING);
+                }, betRecordThreadPoolExecutor);
+                futures.add(future);
+            } catch (Exception e) {
+                messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + betRecordDo.getId());
+                log.error("MariaMakilingMessageListener.batchAdd error: {}", e.getMessage(), e);
             }
-        } catch (Exception e) {
-            for (BetRecordDo record : recordList) {
-                messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + record.getId());
-            }
-            log.error("MariaMakilingMessageListener.batchAdd error: {}", e.getMessage(), e);
         }
+        futures.stream().forEach(future -> {
+            try {
+                future.get();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     private void batchUpdate(List<BetRecordDo> recordList, Map<String, MessageId> messageIdMap) {
