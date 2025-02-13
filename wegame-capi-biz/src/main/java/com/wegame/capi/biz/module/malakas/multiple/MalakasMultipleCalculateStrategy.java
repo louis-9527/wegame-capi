@@ -6,6 +6,7 @@ import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.module.base.multiple.AbstractMultipleCalculateStrategy;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -18,7 +19,9 @@ public class MalakasMultipleCalculateStrategy extends AbstractMultipleCalculateS
 
     @Override
     public BigDecimal calculateMultiple(RewardHandleDo<MalakasSymbolDo> rewardHandle, List<RewardLineDo<MalakasSymbolDo>> rewardLineList) {
-        if (Objects.equals(rewardHandle.getBetSubType(), BetSubTypeEnum.BUY_BET) && rewardHandle.getWheel().getIndex() > 0) {
+        if (Objects.equals(rewardHandle.getBetSubType(), BetSubTypeEnum.BUY_BET)
+                && rewardHandle.getWheel().getIndex() > 0
+                && CollectionUtils.isNotEmpty(rewardLineList)) {
             return Objects.isNull(rewardHandle.getCurrentMultiple()) ? BigDecimal.ONE : rewardHandle.getCurrentMultiple().add(BigDecimal.ONE);
         }
         return rewardHandle.getCurrentMultiple();
