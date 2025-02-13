@@ -73,6 +73,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
      * @param messageIdMap
      */
     private void batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> recordList, Map<String, MessageId> messageIdMap) {
+        long startTime = System.currentTimeMillis();
         if (CollectionUtils.isEmpty(recordList)) {
             return;
         }
@@ -95,6 +96,8 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                 }
             }
         }
+        long endTime = System.currentTimeMillis();
+        log.info("MariaMakilingMessageListener#batchAdd, cost: {} ms", endTime - startTime);
     }
 
     /**
@@ -104,6 +107,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
      * @param messageIdMap
      */
     private void batchUpdate(List<BetRecordDo> recordList, Map<String, MessageId> messageIdMap) {
+        long startTime = System.currentTimeMillis();
         if (CollectionUtils.isEmpty(recordList)) {
             return;
         }
@@ -132,6 +136,8 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
                     log.error("MariaMakilingMessageListener.batchUpdate.update , betRecordId: {}, errMsg: {}", betRecordDo.getId(), ep.getMessage(), ep);
                 }
             }
+            long endTime = System.currentTimeMillis();
+            log.info("MariaMakilingMessageListener#batchUpdate, cost: {} ms", endTime - startTime);
         }
     }
 }
