@@ -38,7 +38,7 @@ public abstract class AbstractPulsarListener {
                     .ackTimeout(60, TimeUnit.SECONDS)
                     .batchReceivePolicy(BatchReceivePolicy.builder()
                             .maxNumMessages(50)  // 批量最多100条
-                            .timeout(1000, TimeUnit.MILLISECONDS)
+                            .timeout(100, TimeUnit.MILLISECONDS)
                             .build())
                     .deadLetterPolicy(DeadLetterPolicy.builder()
                             .maxRedeliverCount(15)  // **最多重试 10 次**

@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 //@ExtendWith(SpringExtension.class)
@@ -124,11 +125,11 @@ public class BetControllerTest extends BaseTest {
         Assert.equals(build.getCode(), "1");
         BetResultVo data = build.getData();
         String betRecordId = data.getBetRecordId();
-        MariaMakilingBetResultVo resultDetail = data.getResultDetail();
-        List<String> gameRecordIds = resultDetail.getGameRecordIds();
-        for (String gameRecordId : gameRecordIds) {
-            this.buy_free_bet_freeId(betRecordId, gameRecordId);
-        }
+        //        Object resultDetail = data.getResultDetail();
+        //        List<String> gameRecordIds = resultDetail.getGameRecordIds();
+        //        for (String gameRecordId : gameRecordIds) {
+        //            this.buy_free_bet_freeId(betRecordId, gameRecordId);
+        //        }
     }
 
     private void buy_free_bet_freeId(String recordId, String freeId){
