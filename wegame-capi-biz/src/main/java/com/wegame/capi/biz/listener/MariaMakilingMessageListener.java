@@ -15,6 +15,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -36,6 +37,8 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
     MariaMakilingRecordManager mariaMakilingRecordManager;
     @Autowired
     ThreadPoolExecutor betRecordThreadPoolExecutor;
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
 
     @PostConstruct
     public void init() {
