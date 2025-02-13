@@ -49,19 +49,19 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
 
     @Override
     public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo<MariaMakilingBetDo> betDo) {
-        if (!BetSubTypeEnum.isFreeSpins(betDo.getBetSubType().getCode())) {
+        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
             // 非免费轮投注
-            return betForNonFreeSpins(betDo);
+            return betForNonFreeWheel(betDo);
         } else {
             // 免费轮投注, 走查询
-            return betForFreeSpins(betDo);
+            return betForFreeWheel(betDo);
         }
     }
 
     /**
      * 免费轮投注
      */
-    private BetResultDo<MariaMakilingGameRecordDo> betForFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
+    private BetResultDo<MariaMakilingGameRecordDo> betForFreeWheel(BetDo<MariaMakilingBetDo> betDo) {
         MariaMakilingBetDo betDetail = betDo.getBetDetail();
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
@@ -93,7 +93,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
         // 后处理-免费轮
-        freeSpinsAfterHandle(betDo,
+        freeWheelAfterHandle(betDo,
                 MariaMakilingBetRecordDetailDo.builder()
                         .gameRecordList(gameRecordList)
                         .build(),
@@ -112,8 +112,8 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     /**
      * 非免费轮投注
      */
-    private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeSpins(BetDo<MariaMakilingBetDo> betDo) {
-        long betRecordId = generateRecordId();
+    private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeWheel(BetDo<MariaMakilingBetDo> betDo) {
+        long betRecordId = generateBetRecordId();
         List<MariaMakilingGameRecordDo> list = getGame().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
@@ -147,7 +147,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
     }
 
 
-    public void freeSpinsAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
+    public void freeWheelAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
         // do nothing
     }
 

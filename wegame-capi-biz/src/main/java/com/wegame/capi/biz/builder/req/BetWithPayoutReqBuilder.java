@@ -27,7 +27,7 @@ public class BetWithPayoutReqBuilder {
                         .roundNo(betRecordDo.getBetSerialNo())
                         .wagersDate(uctSecond)
                         .settlementDate(uctSecond)
-                        .isFreeRound(BetSubTypeEnum.isFreeSpins(betRecordDo.getBetSubType()))
+                        .isFreeRound(BetSubTypeEnum.isFreeWheel(betRecordDo.getBetSubType()))
                         .jackpotDetails(new BetWithPayoutReq.BetDetails.JackpotDetails())
                         .build())
                 .build();

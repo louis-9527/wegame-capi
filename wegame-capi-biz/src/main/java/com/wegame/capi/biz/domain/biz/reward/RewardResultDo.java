@@ -52,7 +52,7 @@ public class RewardResultDo<T extends SymbolDo> implements Serializable {
     /**
      * 是否中了免费轮
      */
-    private boolean hasRewardFreeSpin;
+    private boolean hasRewardFreeWheel;
     /**
      * 中奖线列表
      */
@@ -66,7 +66,7 @@ public class RewardResultDo<T extends SymbolDo> implements Serializable {
         System.out.println("中奖总倍数：" + totalMultiple);
         System.out.println("中奖类型：" + rewardType.getDesc());
         System.out.println("中奖子类型：" + rewardSubType.getDesc());
-        System.out.println("命中免费轮：" + (hasRewardFreeSpin ? "否" : "是"));
+        System.out.println("命中免费轮：" + (hasRewardFreeWheel ? "否" : "是"));
         System.out.println("中奖明细： " + rewardLineDetailList.size() + "条中奖线");
         Optional.ofNullable(rewardLineDetailList)
                 .orElse(Collections.emptyList())
