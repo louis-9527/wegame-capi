@@ -12,11 +12,17 @@ import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.betRecordThreadPoolExecutor;
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.sendMessageThreadPoolExecutor;
 
 @Slf4j
 @Component
@@ -70,6 +76,26 @@ public class PulsarProducer {
         long endTime = System.currentTimeMillis();
         log.info("asyncSendMessage cost time, {} ms", endTime - startTime);
         return future;
+    }
+
+    @Async(sendMessageThreadPoolExecutor)
+    public <T> void asyncSendMessageThenRetry(GameTypeEnum gameType, MQMessage<T> mqMessage) {
+        log.info("{}Producer asyncSendMessageThenRetry msgType:{}, msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
+        CompletableFuture<MessageId> future = getProducer(gameType)
+                .newMessage()
+                .key(mqMessage.getMsgId())
+                .value(JSON.toJSONBytes(mqMessage))
+                .sendAsync();
+        //通过异步回调得知消息发送成功与否
+        future.whenComplete(((messageId, throwable) -> {
+            if( null != throwable ) {
+                log.warn("asyncSendMessageThenRetry msgId:{} fail, then retry", mqMessage.getMsgId(), throwable);
+                MessageId id = syncSendMessage(gameType, mqMessage, 100);
+                if (Objects.isNull(id)) {
+                    log.error("asyncSendMessageThenRetry then syncSendMessage send fail, msgId: {}", mqMessage.getMsgId());
+                }
+            }
+        }));
     }
 
     private Producer<byte[]> getProducer(GameTypeEnum gameType) {

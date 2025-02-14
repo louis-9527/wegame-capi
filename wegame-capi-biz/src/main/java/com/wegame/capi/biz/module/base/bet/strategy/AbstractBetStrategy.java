@@ -122,8 +122,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
                     .build();
             // 异步发送更新消息
             MQMessage<BetRecordDo<R>> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
-            // todo 添加失败重试机制
-            pulsarProducer.asyncSendMessage(getGame().getGameInfo().getGameType(), updateMqMessage);
+            pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(), updateMqMessage);
             long endTime = System.currentTimeMillis();
             log.info("asyncSaveBetRecordAndBetWithPayout cost time: {} ms", endTime - startTime);
             return AmountUtil.toLong(betSingleWalletResultDo.getCredit());
