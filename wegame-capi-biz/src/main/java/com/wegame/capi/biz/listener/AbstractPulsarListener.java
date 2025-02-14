@@ -28,8 +28,8 @@ public abstract class AbstractPulsarListener {
 
     protected void initConsumer(GameTypeEnum gameType) {
         try {
-            String fullTopic = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env+"_1", gameType.getName() + "_topic");
-            String deadLetterTopic = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env+"_1", gameType.getName() + "_deadLetter" + "_topic");
+            String fullTopic = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env, gameType.getName() + "_topic");
+            String deadLetterTopic = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env, gameType.getName() + "_deadLetter" + "_topic");
             consumer = pulsarClient.newConsumer()
                     .topic(fullTopic)
                     .subscriptionName(name + "_" + gameType.getName())
