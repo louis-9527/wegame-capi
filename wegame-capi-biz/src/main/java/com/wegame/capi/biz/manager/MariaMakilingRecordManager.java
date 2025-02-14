@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.manager;
 
-import com.google.common.collect.Lists;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -26,36 +25,26 @@ import java.util.stream.Collectors;
 @Component("mariaMakilingRecordManager")
 public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakilingGameRecordDo> {
 
-    private static final int BATCH_SIZE = 100;
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
+    @Override
     @Transactional(transactionManager = "mariamakilingTransactionManager")
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
-        Long id = betRecordService.add(betRecord, gameType);
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
-        List<MariaMakilingGameRecordDo> gameRecordList = betRecord.getGameRecordList();
-        if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            for (List<MariaMakilingGameRecordDo> gameRecordListItem : Lists.partition(gameRecordList, BATCH_SIZE)) {
-                if (CollectionUtils.isEmpty(gameRecordListItem)) {
-                    continue;
-                }
-                gameRecordListItem.forEach(item -> {
-                    log.info("addGameRecord id:{}", item.getId());
-                });
-                boolean ret = gameRecordService.batchInsert(gameRecordListItem, gameType, MariaMakilingGameRecordDo.class);
-                AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
-            }
-        }
+        AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
+        Long betRecordId = betRecordService.add(betRecord, gameType);
+        AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
+        boolean ret = gameRecordService.batchInsert(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);
+        AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         return betRecord.getId();
     }
 
-    @Transactional(transactionManager = "mariamakilingTransactionManager")
     @Override
+    @Transactional(transactionManager = "mariamakilingTransactionManager")
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
-        List<BetRecordDo> recordList = betRecordList.stream().collect(Collectors.toList());
-        boolean ret = betRecordService.batchInsert(recordList, gameType);
+        List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
+        boolean ret = betRecordService.batchInsert(betRecordDos, gameType);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         List<MariaMakilingGameRecordDo> gameRecordList = betRecordList.stream()
                 .filter(item -> CollectionUtils.isNotEmpty(item.getGameRecordList()))
@@ -63,16 +52,11 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            for (List<MariaMakilingGameRecordDo> gameRecordListItem : Lists.partition(gameRecordList, BATCH_SIZE)) {
-                if (CollectionUtils.isEmpty(gameRecordListItem)) {
-                    continue;
-                }
-                gameRecordListItem.forEach(item -> {
-                    log.info("addGameRecord id:{}", item.getId());
-                });
-                boolean insertRet = gameRecordService.batchInsert(gameRecordListItem, gameType, MariaMakilingGameRecordDo.class);
-                AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
-            }
+            gameRecordList.forEach(item -> {
+                log.info("addGameRecord id:{}", item.getId());
+            });
+            boolean insertRet = gameRecordService.batchInsert(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
+            AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
         }
         return true;
     }

@@ -1,10 +1,7 @@
 package com.wegame.capi.biz.service;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.mongodb.bulk.BulkWriteError;
-import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
@@ -22,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.BulkOperationException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -74,15 +70,7 @@ public class BetRecordService {
             log.info("addBetRecord id:{}", item.getId());
             bulkOps.insert(item);
         });
-        try {
-            bulkOps.execute();
-        } catch (BulkOperationException e) {
-            // todo fix
-            log.error("BetRecordService#batchInsert err, BulkOperationException: {}", e.getMessage(), e);
-        } catch (Exception e) {
-            log.error("BetRecordService#batchInsert err, Exception: {}", e.getMessage(), e);
-            throw e;
-        }
+        bulkOps.execute();
         long endTime = System.currentTimeMillis();
         log.info("BetRecordService#batchInsert cost time:{}ms", endTime - startTime);
         return true;
@@ -147,39 +135,23 @@ public class BetRecordService {
      * @param betRecordDoList 投注记录
      * @return 主键id
      */
-    public BetRecordBatchOptResultDo batchUpdate(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
+    public boolean batchUpdate(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotEmpty(betRecordDoList, ErrorCode.ERR_PARAM, "betRecordDoList is empty");
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
-        List<Long> failIdList = Lists.newArrayList();
-        List<Long> allIdList = betRecordDoList.stream().map(BetRecordDo::getId).filter(Objects::nonNull).collect(Collectors.toList());
-        BulkWriteResult bulkWriteResult;
-        try {
-            // 需要排除掉库中不存在的id  todo 是否可以不需要这部操作
-            failIdList = listNotExistIdList(allIdList, gameType);
-            if (failIdList.size() == allIdList.size()) {
-                return BetRecordBatchOptResultDo.builder().successCount(0L).failIdList(failIdList).build();
-            }
-            BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
-                    BetRecordPo.class,
-                    gameType.getBetRecordCollectionName());
-            betRecordDoList.forEach(betRecordDo -> {
-                Criteria criteria = new Criteria();
-                criteria.and("_id").is(betRecordDo.getId());
-                Query query = new Query(criteria);
-                bulkOps.updateOne(query, BetRecordQueryBuilder.buildMongoUpdate(betRecordDo));
-            });
-            bulkWriteResult = bulkOps.execute();
-        } catch (Exception e) {
-            log.error("BetRecordService#batchUpdate error, errMsg: {}", e.getMessage(), e);
-            return buildExceptionResultDo(betRecordDoList, failIdList, e, OptEnum.UPDATE);
-        }
+        BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
+                BetRecordPo.class,
+                gameType.getBetRecordCollectionName());
+        betRecordDoList.forEach(betRecordDo -> {
+            Criteria criteria = new Criteria();
+            criteria.and("_id").is(betRecordDo.getId());
+            Query query = new Query(criteria);
+            bulkOps.updateOne(query, BetRecordQueryBuilder.buildMongoUpdate(betRecordDo));
+        });
+        bulkOps.execute();
         long endTime = System.currentTimeMillis();
         log.info("BetRecordService#batchUpdate cost time:{}ms", endTime - startTime);
-        return BetRecordBatchOptResultDo.builder()
-                .successCount(bulkWriteResult.getMatchedCount())
-                .failIdList(failIdList)
-                .build();
+        return true;
     }
 
     /**
@@ -274,6 +246,14 @@ public class BetRecordService {
         return Optional.ofNullable(betRecordPoList).orElse(Collections.emptyList()).stream().map(BetRecordPo::getId).collect(Collectors.toList());
     }
 
+    public List<Long> listNotExistIdList(List<Long> idList, GameTypeEnum gameType) {
+        return getMongoTemplate(gameType).findDistinct(new Query(Criteria.where("_id").nin(idList)),
+                "_id",
+                gameType.getBetRecordCollectionName(),
+                BetRecordPo.class,
+                Long.class);
+    }
+
     /**
      * 数量统计
      *
@@ -294,25 +274,6 @@ public class BetRecordService {
     }
 
     ///////////////  above auto generated ///////////////
-
-    private List<Long> listNotExistIdList(List<Long> allIdList, GameTypeEnum gameType) {
-        List<Long> existIdList = getMongoTemplate(gameType).findDistinct(new Query(Criteria.where("_id").in(allIdList)),
-                "_id",
-                gameType.getBetRecordCollectionName(),
-                BetRecordPo.class,
-                Long.class);
-        if (CollectionUtil.isEmpty(existIdList)) {
-            return allIdList;
-        }
-
-        List<Long> normalFailIdList = Lists.newArrayList();
-        HashSet<Long> allIdSet = Sets.newHashSet(allIdList);
-        HashSet<Long> existIdSet = Sets.newHashSet(existIdList);
-        if (existIdSet.size() != allIdSet.size()) {
-            normalFailIdList.addAll(Sets.difference(allIdSet, existIdSet));
-        }
-        return normalFailIdList;
-    }
 
     private BetRecordBatchOptResultDo buildExceptionResultDo(List<BetRecordDo> betRecordDoList, List<Long> normalFailIdList, Exception e, OptEnum optEnum) {
         if (e instanceof BulkOperationException) {

@@ -91,7 +91,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
     @Transient
     @JsonIgnore
     public boolean hasRewardFreeSpins() {
-        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin();
+        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel();
     }
 
     @Transient
@@ -128,7 +128,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                             ).flatMap(List::stream)
                             .collect(Collectors.toSet()))
                     .rewardLineList(buildRewardLineList())
-                    .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
+                    .freeSpinFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
                     .gameRecordIds(Optional.ofNullable(gameRecordIds)
                             .orElse(Collections.emptyList())
                             .stream()

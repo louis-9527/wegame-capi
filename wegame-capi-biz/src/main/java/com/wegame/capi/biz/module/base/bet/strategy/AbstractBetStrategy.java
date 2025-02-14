@@ -16,6 +16,7 @@ import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.MessageId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ import java.util.Objects;
  * 1、获取具体游戏
  * 2、
  */
+@Slf4j
 @Component
 public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extends ToVoConverter> implements BetStrategy<BD, RD> {
 
@@ -43,8 +45,10 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
 
     public abstract AbstractRecordManager<R> getRecordManager();
 
-    public long generateRecordId() {
-        return snowflakeIdGenerator.nextId();
+    public long generateBetRecordId() {
+        long betRecordId = snowflakeIdGenerator.nextId();
+        log.info("generateBetRecordId: {}", betRecordId);
+        return betRecordId;
     }
 
     /**

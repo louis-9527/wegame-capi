@@ -99,7 +99,7 @@ spring:
           db: makiling
 pulsar:
   ## service-url: pulsar://16.162.139.203:6650
-  service-url: pulsar://pulsar.makillingslot.info:6650
+  service-url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
   listener-threads: 50
   tenant: MariaMakiling
   namespaces: sts

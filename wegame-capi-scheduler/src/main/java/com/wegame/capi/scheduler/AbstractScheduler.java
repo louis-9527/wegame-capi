@@ -3,6 +3,7 @@ package com.wegame.capi.scheduler;
 import cn.hutool.core.lang.UUID;
 import com.wegame.base.Constants;
 import com.wegame.base.context.OperatorContext;
+import com.wegame.base.exception.LockException;
 import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.ThreadMdcUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,8 @@ public abstract class AbstractScheduler {
                 MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
                 OperatorContext.setOperator(Constants.SYSTEM_OPERATOR);
                 runnable.run();
+            } catch (LockException e) {
+                log.warn("{} schedule task error, get lock fail, taskName: {}, lockName: {}", taskName(), lockName);
             } catch (Exception e) {
                 log.error("{} schedule task error, errMsg: {}", taskName(), e.getMessage(), e);
             } finally {

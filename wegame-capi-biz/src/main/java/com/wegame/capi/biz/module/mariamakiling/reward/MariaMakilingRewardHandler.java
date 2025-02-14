@@ -74,7 +74,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
                     .totalMultiple(totalMultiple)
-                    .hasRewardFreeSpin(false)
+                    .hasRewardFreeWheel(false)
                     .rewardLineDetailList(null)
                     .build();
         }
@@ -110,7 +110,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
-                .hasRewardFreeSpin(hasRewardScatter(rewardLineList))
+                .hasRewardFreeWheel(hasRewardScatter(rewardLineList))
                 .rewardLineDetailList(rewardLineDetailList)
                 .totalMultiple(totalMultiple)
                 .build();

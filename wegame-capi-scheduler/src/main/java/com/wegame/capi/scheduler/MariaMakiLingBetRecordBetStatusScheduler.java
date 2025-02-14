@@ -35,14 +35,17 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
 
     @Scheduled(cron = "0 0/5 * * * ?")
     public void schedule() {
+        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule start");
         scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(this.getGameType()), this);
+        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule end");
     }
 
+    /**
+     * 1.获取5分钟前,还在运行中的投注记录
+     */
     @Override
     public void run() {
-        /**
-         * 1.获取5分钟前,还在运行中的投注记录
-         */
+        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule run start");
         long fiveMinutesAgo = System.currentTimeMillis() - 5 * 60 * 1000;
         int pageNo = 1;
         Long lastId = null;
@@ -54,7 +57,6 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
                     .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
                     .lastId(lastId)
                     .build(), this.getGameType());
-
             if (CollectionUtil.isNotEmpty(recordIdList)) {
                 lastId = recordIdList.get(recordIdList.size() - 1);
             }
@@ -63,6 +65,7 @@ public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordB
                     .forEach(this::handle);
             pageNo++;
         } while (CollectionUtils.isNotEmpty(recordIdList));
+        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule run end");
     }
 
     private void handle(Long betRecordId) {

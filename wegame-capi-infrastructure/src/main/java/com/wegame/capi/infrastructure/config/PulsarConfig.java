@@ -23,7 +23,7 @@ public class PulsarConfig {
     public PulsarClient pulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(pulsarUrl)
-                //                .listenerThreads(listenerThreads)
+                .ioThreads(100)
                 .build();
     }
 }
