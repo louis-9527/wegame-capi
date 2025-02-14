@@ -3,6 +3,7 @@ package com.wegame.capi.biz.domain.biz.bet;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,6 +43,11 @@ public class BetResultDo<R extends ToVoConverter> implements Serializable {
      * 合计中奖总金额
      */
     private Long overallRewardAmount;
+
+    /**
+     * 总计派奖金额
+     */
+    private Long totalPayoutAmount;
     /**
      * 投注结果
      */
