@@ -66,7 +66,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
      * 非免费轮投注(正常投注、购买投注)
      */
     private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeSpins(BetDo<MalakasBetDo> betDo) {
-        long betRecordId = generateRecordId();
+        long betRecordId = generateBetRecordId();
         List<MalakasGameRecordDo> list = getGame().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
@@ -84,7 +84,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
         MalakasBetRecordDetailDo resultDetail = MalakasBetRecordDetailDo.builder()
                 .gameRecordList(firstBatchList)
                 .build();
-        BetRecordDo<MalakasGameRecordDo> betRecord = BetRecordBuilder.build(generateRecordId(),
+        BetRecordDo<MalakasGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
@@ -148,7 +148,10 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
     }
 
     private boolean hasRewardFreeWheel(List<MalakasGameRecordDo> firstBatchList) {
-        MalakasGameRecordDo gameRecord = firstBatchList.stream().filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeSpin()).findFirst().orElse(null);
+        MalakasGameRecordDo gameRecord = firstBatchList.stream()
+                .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeSpin())
+                .findFirst()
+                .orElse(null);
         return Objects.nonNull(gameRecord);
     }
 }
