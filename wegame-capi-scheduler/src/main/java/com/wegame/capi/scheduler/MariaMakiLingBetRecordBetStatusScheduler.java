@@ -1,6 +1,7 @@
 package com.wegame.capi.scheduler;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.wegame.base.exception.LockException;
 import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -27,78 +28,25 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-public class MariaMakiLingBetRecordBetStatusScheduler extends AbstractBetRecordBetStatusScheduler implements Runnable {
-    @Autowired
-    private BetRecordService betRecordService;
-    @Autowired
-    private SingleWalletService singleWalletService;
-
-    @Scheduled(cron = "0 0/5 * * * ?")
-    public void schedule() {
-        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule start");
-        scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(this.getGameType()), this);
-        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule end");
-    }
-
-    /**
-     * 1.获取5分钟前,还在运行中的投注记录
-     */
-    @Override
-    public void run() {
-        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule run start");
-        long fiveMinutesAgo = System.currentTimeMillis() - 5 * 60 * 1000;
-        int pageNo = 1;
-        Long lastId = null;
-        List<Long> recordIdList;
-        do {
-            recordIdList = betRecordService.listId(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
-                    .endCreateTime(fiveMinutesAgo)
-                    .limit(DEFAULT_PAGE_SIZE)
-                    .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
-                    .lastId(lastId)
-                    .build(), this.getGameType());
-            if (CollectionUtil.isNotEmpty(recordIdList)) {
-                lastId = recordIdList.get(recordIdList.size() - 1);
-            }
-            Optional.ofNullable(recordIdList)
-                    .orElse(Collections.emptyList())
-                    .forEach(this::handle);
-            pageNo++;
-        } while (CollectionUtils.isNotEmpty(recordIdList));
-        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule run end");
-    }
-
-    private void handle(Long betRecordId) {
-        scheduleWithLock(LockNameUtil.getBetRecordIdSchedulerLockName(this.getGameType(), betRecordId), () -> {
-            BetRecordDo betRecordDo = betRecordService.getById(betRecordId, this.getGameType());
-            if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
-                return;
-            }
-            //获取当前订单状态
-            BetStatusReq betStatusReq = BetWithPayoutReqBuilder.buildStatusReq(betRecordDo);
-            Pair<String, BetStatusEnum> betStatus = singleWalletService.getBetStatus(betStatusReq);
-            if (BetStatusEnum.SUCCESS == betStatus.getRight()) {
-                // 更新记录
-                BetRecordDo updateRecord = BetRecordDo.builder()
-                        .id(betRecordDo.getId())
-                        .betId(betStatus.getLeft())
-                        .status(BetStatusEnum.SUCCESS.getCode()).build();
-                betRecordService.update(updateRecord, this.getGameType());
-                return;
-            }
-            if (BetStatusEnum.FAIL == betStatus.getRight()) {
-                // 更新记录
-                BetRecordDo updateRecord = BetRecordDo.builder()
-                        .id(betRecordDo.getId())
-                        .betId(betStatus.getLeft())
-                        .status(BetStatusEnum.FAIL.getCode()).build();
-                betRecordService.update(updateRecord, this.getGameType());
-            }
-        });
-    }
+public class MariaMakiLingBetRecordBetStatusScheduler
+        extends AbstractBetRecordBetStatusScheduler
+        implements Runnable {
 
     @Override
     GameTypeEnum getGameType() {
         return GameTypeEnum.MARIA_MAKILING;
+    }
+
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void schedule() {
+        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule start");
+        try {
+            scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(this.getGameType()), this);
+        } catch (LockException e) {
+            log.info("get lock fail");
+        } catch (Exception e) {
+            log.error("MariaMakiLingBetRecordBetStatusScheduler#schedule failed", e);
+        }
+        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule end");
     }
 }
