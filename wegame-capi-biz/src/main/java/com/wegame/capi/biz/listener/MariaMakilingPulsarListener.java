@@ -19,7 +19,9 @@ import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -46,16 +48,17 @@ public class MariaMakilingPulsarListener implements Runnable {
     Consumer<byte[]> mariamakilingConsumer;
     ExecutorService executor;
 
-
     @PostConstruct
     public void init() {
         executor = new WsThreadPoolExecutor(corePoolSize,
                 maximumPoolSize,
                 0,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(100),
-                new ThreadPoolExecutor.AbortPolicy());
+                new ArrayBlockingQueue<>(1000),
+                new CustomizableThreadFactory("mariamakiling-consumber-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
         start = true;
+        run();
     }
 
     @PreDestroy
@@ -97,6 +100,7 @@ public class MariaMakilingPulsarListener implements Runnable {
         if (Objects.isNull(messages) || messages.size() == 0) {
             return;
         }
+        log.info("onConsumer messages size: {}", messages.size());
         List<BetRecordDo<MariaMakilingGameRecordDo>> addRecordList = new ArrayList<>();
         List<BetRecordDo> updateRecordList = new ArrayList<>();
         Map<Long, MessageId> addMessageIdMap = new HashMap<>(messages.size());
@@ -147,7 +151,7 @@ public class MariaMakilingPulsarListener implements Runnable {
             }
         }
         long endTime = System.currentTimeMillis();
-        log.info("MariaMakilingMessageListener#batchAdd, cost: {} ms", endTime - startTime);
+        log.info("MariaMakilingMessageListener#batchAdd, size:{}, cost: {} ms", recordList.size(), endTime - startTime);
     }
 
     /**
@@ -186,6 +190,6 @@ public class MariaMakilingPulsarListener implements Runnable {
             }
         }
         long endTime = System.currentTimeMillis();
-        log.info("MariaMakilingMessageListener#batchUpdate, cost: {} ms", endTime - startTime);
+        log.info("MariaMakilingMessageListener#batchUpdate, size:{} cost: {} ms", recordList.size(), endTime - startTime);
     }
 }
