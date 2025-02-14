@@ -62,6 +62,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
      * 免费轮投注
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForFreeWheel(BetDo<MariaMakilingBetDo> betDo) {
+        long startTime = System.currentTimeMillis();
         MariaMakilingBetDo betDetail = betDo.getBetDetail();
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
@@ -98,6 +99,13 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
                         .gameRecordList(gameRecordList)
                         .build(),
                 overallRewardAmount);
+        long endTime = System.currentTimeMillis();
+        long costTime = endTime - startTime;
+        if (costTime > 100L) {
+            log.info("betForFreeWheel cost time more than 100: {}", costTime);
+        } else {
+            log.info("betForFreeWheel cost time: {}", costTime);
+        }
         // 返回
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betDetail.getBetRecordId())
@@ -113,6 +121,7 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
      * 非免费轮投注
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeWheel(BetDo<MariaMakilingBetDo> betDo) {
+        long startTime = System.currentTimeMillis();
         long betRecordId = generateBetRecordId();
         List<MariaMakilingGameRecordDo> list = getGame().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
@@ -134,6 +143,13 @@ public abstract class AbstractMariaMakilingBetStrategy extends AbstractBetStrate
         MariaMakilingGameRecordDo gameRecord = list.get(0);
         // 保存投注记录并派奖
         Long userCredit = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        long endTime = System.currentTimeMillis();
+        long costTime = endTime - startTime;
+        if (costTime > 100L) {
+            log.info("betForNonFreeWheel cost time more than 100: {}", costTime);
+        } else {
+            log.info("betForNonFreeWheel cost time: {}", costTime);
+        }
         // 组装返回结果
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betRecord.getId())
