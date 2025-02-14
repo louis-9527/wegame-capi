@@ -6,7 +6,9 @@ import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.api.Consumer;
+import org.apache.pulsar.client.api.MessageId;
+import org.apache.pulsar.client.api.Messages;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,19 +20,16 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public abstract class AbstractPulsarListener{
+public abstract class AbstractPulsarListener {
+
     @Autowired
     Map<String, Consumer<byte[]>> consumerCache;
-
-
-
 
     public void consumerStart(GameTypeEnum gameType) {
         Consumer<byte[]> consumer = this.getConSumer(gameType);
         new Thread(() -> consumeMessages(consumer)).start();
         log.info("✅ Pulsar consumer started for topic: {}", consumer.getTopic());
     }
-
 
     private void consumeMessages(Consumer<byte[]> consumer) {
         while (true) {
@@ -51,6 +50,7 @@ public abstract class AbstractPulsarListener{
             }
         }
     }
+
     /**
      * 处理接收到的消息，子类必须实现
      *
@@ -62,8 +62,7 @@ public abstract class AbstractPulsarListener{
     @PostConstruct
     public abstract void init();
 
-
-    private Consumer<byte[]> getConSumer(GameTypeEnum gameType){
+    private Consumer<byte[]> getConSumer(GameTypeEnum gameType) {
         Consumer<byte[]> consumer = consumerCache.get(StringUtils.lowerCase(gameType.getName()) + "Consumer");
         AssertUtil.assertNotNull(consumer, ErrorCode.ERR_INTER);
         return consumer;
