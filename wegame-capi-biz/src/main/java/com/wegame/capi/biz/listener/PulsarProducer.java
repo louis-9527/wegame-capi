@@ -114,6 +114,7 @@ public class PulsarProducer {
                     .enableBatching(true) // 启用批量发送
                     .batchingMaxMessages(10) // 每个批次最多包含 10 条消息
                     .batchingMaxBytes(4 * 1024) // 每个批次最大 4 KB
+                    .batcherBuilder(BatcherBuilder.KEY_BASED)
                     .batchingMaxPublishDelay(1, TimeUnit.MILLISECONDS) // 最大延迟 1 毫秒
                     .compressionType(CompressionType.LZ4)
                     .create();
