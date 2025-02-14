@@ -47,8 +47,7 @@ public class PulsarProducer {
     public <T> MessageId syncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
             log.info("{}Producer syncSendMessage type:{},msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
-
-            return this.getProducer(gameType)
+            return getProducer(gameType)
                     .newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
