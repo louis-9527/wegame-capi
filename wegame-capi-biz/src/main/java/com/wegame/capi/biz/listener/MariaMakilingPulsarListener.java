@@ -1,78 +1,54 @@
 //package com.wegame.capi.biz.listener;
 //
 //import cn.hutool.core.lang.UUID;
+//import com.alibaba.fastjson.JSON;
+//import com.alibaba.fastjson.TypeReference;
 //import com.wegame.base.executor.WsThreadPoolExecutor;
+//import com.wegame.base.mq.MQMessage;
 //import com.wegame.base.utils.ThreadMdcUtil;
+//import com.wegame.capi.biz.domain.biz.BetRecordDo;
+//import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+//import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
+//import com.wegame.capi.biz.service.BetRecordService;
 //import com.wegame.capi.client.enums.GameTypeEnum;
+//import com.wegame.capi.client.enums.MessageTypeEnum;
 //import lombok.extern.slf4j.Slf4j;
-//import org.apache.pulsar.client.api.*;
+//import org.apache.commons.collections4.CollectionUtils;
+//import org.apache.commons.lang3.StringUtils;
+//import org.apache.pulsar.client.api.Consumer;
+//import org.apache.pulsar.client.api.MessageId;
+//import org.apache.pulsar.client.api.Messages;
 //import org.slf4j.MDC;
 //import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.stereotype.Component;
 //
 //import javax.annotation.PostConstruct;
 //import javax.annotation.PreDestroy;
+//import java.util.*;
 //import java.util.concurrent.ArrayBlockingQueue;
 //import java.util.concurrent.ExecutorService;
 //import java.util.concurrent.ThreadPoolExecutor;
 //import java.util.concurrent.TimeUnit;
+//import java.util.stream.Collectors;
 //
 //@Slf4j
 //@Component
 //public class MariaMakilingPulsarListener implements Runnable {
-//    //    //从配置文件中获取 serviceURL 接入地址、Token 密钥、Topic 全名和 Subscription 名称（均可从控制台复制）
-//    //    @Value("${tdmq.serviceUrl}")
-//    //    private String serviceUrl;
-//    //    @Value("${tdmq.token}")
-//    //    private String token;
-//    //    @Value("${tdmq.topic}")
-//    //    private String topic;
-//    //    @Value("${tdmq.subscription}")
-//    //    private String subscription;
-//    //    private PulsarClient pulsarClient;
-//    //    private Consumer<String> consumer;
-//
-//    private static final int corePoolSize = 10;
-//    private static final int maximumPoolSize = 10;
+//    private static final GameTypeEnum gameType = GameTypeEnum.MARIA_MAKILING;
+//    private static final int corePoolSize = 50;
+//    private static final int maximumPoolSize = 50;
 //    private volatile boolean start = false;
-//
-//    @Value("${spring.application.env}")
-//    String env;
-//    @Value("${spring.application.name}")
-//    String name;
 //    @Autowired
-//    PulsarClient pulsarClient;
-//    Consumer<byte[]> consumer;
+//    BetRecordService betRecordService;
+//    @Autowired
+//    MariaMakilingRecordManager mariaMakilingRecordManager;
+//    @Autowired
+//    Consumer<byte[]> mariamakilingConsumer;
 //    ExecutorService executor;
-//    GameTypeEnum gameType = GameTypeEnum.MARIA_MAKILING;
+//
 //
 //    @PostConstruct
 //    public void init() throws Exception {
-//        String fullTopic = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env, gameType.getName() + "_topic");
-//        String deadLetterTopic = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env, gameType.getName() + "_deadLetter" + "_topic");
-//        consumer = pulsarClient.newConsumer()
-//                .topic(fullTopic)
-//                .subscriptionName(name + "_" + gameType.getName())
-//                // 关键点：使用 Key_Shared 模式
-//                .subscriptionType(SubscriptionType.Key_Shared)
-//                .enableRetry(true)
-//                // 增加内部缓存，提高吞吐量
-//                .receiverQueueSize(2000)
-//                .ackTimeout(60, TimeUnit.SECONDS)
-//                .batchReceivePolicy(BatchReceivePolicy.builder()
-//                        // 批量最多100条
-//                        .maxNumMessages(200)
-//                        .timeout(100, TimeUnit.MILLISECONDS)
-//                        .build())
-//                .deadLetterPolicy(DeadLetterPolicy.builder()
-//                        // 最多重试 10 次
-//                        .maxRedeliverCount(15)  // **最多重试 10 次**
-//                        .deadLetterTopic(deadLetterTopic)
-//                        .build())
-//                .negativeAckRedeliveryDelay(1, TimeUnit.MINUTES)
-//                // .keySharedPolicy(KeySharedPolicy.stickyHashRange())
-//                .subscribe();
 //        executor = new WsThreadPoolExecutor(corePoolSize,
 //                maximumPoolSize,
 //                0,
@@ -85,11 +61,8 @@
 //    @PreDestroy
 //    public void destroy() throws Exception {
 //        start = false;
-//        if (consumer != null) {
-//            consumer.close();
-//        }
-//        if (pulsarClient != null) {
-//            pulsarClient.close();
+//        if (mariamakilingConsumer != null) {
+//            mariamakilingConsumer.close();
 //        }
 //        if (executor != null) {
 //            executor.shutdownNow();
@@ -104,30 +77,117 @@
 //                while (start) {
 //                    try {
 //                        MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
-//                        Messages<byte[]> messages = consumer.batchReceive();
+//                        Messages<byte[]> messages = mariamakilingConsumer.batchReceive();
 //                        if (messages == null || messages.size() == 0) {
 //                            continue;
 //                        }
-//                        onConsumer(message);
+//                        onConsumer(gameType, mariamakilingConsumer, messages);
 //                    } catch (Exception e) {
-//                        log.warn("tdmq consumer business error", e);
+//                        log.error("Error consuming messages, errMsg: {}", e.getMessage(), e);
+//                    } finally {
+//                        MDC.clear();
 //                    }
 //                }
 //            });
 //        }
-//        log.info("tdmq consumer stopped...");
+//        log.info("MariaMakilingPulsarListener stopped...");
 //    }
 //
-//    private void onConsumer(Message<String> message) {
-//        //        //业务逻辑,延时类操作
-//        //        try {
-//        //            System.out.println(Thread.currentThread().getName() + " - message receive: " + message.getValue());
-//        //            Thread.sleep(1000);//模拟业务逻辑处理
-//        //            consumer.acknowledge(message);
-//        //            log.info(Thread.currentThread().getName() + " - message processing succeed：" + message.getValue());
-//        //        } catch (Exception exception) {
-//        //            consumer.negativeAcknowledge(message);
-//        //            log.error(Thread.currentThread().getName() + " - message processing failed：" + message.getValue());
-//        //        }
+//    private void onConsumer(GameTypeEnum gameType, Consumer<byte[]> mariamakilingConsumer, Messages<byte[]> messages) {
+//        if (Objects.isNull(messages) || messages.size() == 0) {
+//            return;
+//        }
+//        List<BetRecordDo<MariaMakilingGameRecordDo>> addRecordList = new ArrayList<>();
+//        List<BetRecordDo> updateRecordList = new ArrayList<>();
+//        Map<String, MessageId> messageIdMap = new HashMap<>(messages.size());
+//        messages.forEach(message -> {
+//            MQMessage<BetRecordDo<MariaMakilingGameRecordDo>> mqMessage = JSON.parseObject(new String(message.getData()),
+//                    new TypeReference<MQMessage<BetRecordDo<MariaMakilingGameRecordDo>>>() {
+//                    });
+//            BetRecordDo<MariaMakilingGameRecordDo> body = mqMessage.getBody();
+//            if (message.getRedeliveryCount() > 0 && StringUtils.equals(mqMessage.getType(), MessageTypeEnum.ADD.getCode())) {
+//                log.info("processMessages, msgType:{}, msgId:{}, retryTimes: {}", mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount());
+//            }
+//            messageIdMap.put(mqMessage.getType() + "_" + body.getId(), message.getMessageId());
+//            if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
+//                addRecordList.add(body);
+//            } else if (mqMessage.getType().equals(MessageTypeEnum.UPDATE.getCode())) {
+//                updateRecordList.add(body);
+//            }
+//        });
+//        // 批量新增
+//        batchAdd(addRecordList, messageIdMap);
+//        // 批量修改
+//        batchUpdate(updateRecordList, messageIdMap);
+//    }
+//
+//    private void batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> recordList, Map<String, MessageId> messageIdMap) {
+//        long startTime = System.currentTimeMillis();
+//        if (CollectionUtils.isEmpty(recordList)) {
+//            return;
+//        }
+//        try {
+//            boolean ret = mariaMakilingRecordManager.batchAdd(recordList, GameTypeEnum.MARIA_MAKILING);
+//            // 移除处理失败的key
+//            if (!ret) {
+//                for (BetRecordDo record : recordList) {
+//                    messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + record.getId());
+//                }
+//            }
+//        } catch (Exception e) {
+//            log.error("MariaMakilingMessageListener.batchAdd err, errMsg: {}", e.getMessage(), e);
+//            for (BetRecordDo<MariaMakilingGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
+//                try {
+//                    mariaMakilingRecordManager.add(betRecordDo, GameTypeEnum.MARIA_MAKILING);
+//                } catch (Exception ep) {
+//                    messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + betRecordDo.getId());
+//                    log.error("MariaMakilingMessageListener.batchAdd.add , betRecordId: {}, errMsg: {}", betRecordDo.getId(), ep.getMessage(), ep);
+//                }
+//            }
+//        }
+//        long endTime = System.currentTimeMillis();
+//        log.info("MariaMakilingMessageListener#batchAdd, cost: {} ms", endTime - startTime);
+//    }
+//
+//    /**
+//     * 批量更新：
+//     * 优先批量更新，批量更新失败后单挑更新
+//     *
+//     * @param recordList
+//     * @param messageIdMap
+//     */
+//    private void batchUpdate(List<BetRecordDo> recordList, Map<String, MessageId> messageIdMap) {
+//        long startTime = System.currentTimeMillis();
+//        if (CollectionUtils.isEmpty(recordList)) {
+//            return;
+//        }
+//        try {
+//            boolean ret = betRecordService.batchUpdate(recordList, GameTypeEnum.MARIA_MAKILING);
+//            // 移除处理失败的key
+//            if (!ret) {
+//                for (BetRecordDo record : recordList) {
+//                    messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + record.getId());
+//                }
+//            }
+//            List<Long> nonExistIdList = betRecordService.listNotExistIdList(recordList.stream().map(BetRecordDo::getId).collect(Collectors.toList()), GameTypeEnum.MARIA_MAKILING);
+//            Optional.ofNullable(nonExistIdList)
+//                    .orElse(Collections.emptyList())
+//                    .forEach(id -> messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + id));
+//        } catch (Exception e) {
+//            log.error("MariaMakilingMessageListener.batchUpdate err, errMsg: {}", e.getMessage(), e);
+//            for (BetRecordDo<MariaMakilingGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
+//                try {
+//                    boolean ret = betRecordService.update(betRecordDo, GameTypeEnum.MARIA_MAKILING);
+//                    if (!ret) {
+//                        messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + betRecordDo.getId());
+//                    }
+//                } catch (Exception ep) {
+//                    messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + betRecordDo.getId());
+//                    log.error("MariaMakilingMessageListener.batchUpdate.update , betRecordId: {}, errMsg: {}", betRecordDo.getId(), ep.getMessage(), ep);
+//                }
+//            }
+//            long endTime = System.currentTimeMillis();
+//            log.info("MariaMakilingMessageListener#batchUpdate, cost: {} ms", endTime - startTime);
+//        }
 //    }
 //}

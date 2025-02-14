@@ -65,16 +65,21 @@ public class MariamakilingPulsarConfig {
         return mariaMakilingPulsarClient.newConsumer()
                 .topic(fullTopic)
                 .subscriptionName(mariaMakilingTenant)
-                .subscriptionType(SubscriptionType.Key_Shared) // 关键点：使用 Key_Shared 模式
-                .receiverQueueSize(200) // 增加内部缓存，提高吞吐量
-                .ackTimeout(30, TimeUnit.SECONDS)
+                // 关键点：使用 Key_Shared 模式, 集群消费
+                .subscriptionType(SubscriptionType.Key_Shared)
+                // 增加内部缓存，提高吞吐量
+                .receiverQueueSize(2000)
+                .ackTimeout(60, TimeUnit.SECONDS)
+                .negativeAckRedeliveryDelay(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(50)  // 批量最多100条
-                        .timeout(10, TimeUnit.MILLISECONDS)
+                        .maxNumMessages(200)  // 批量最多100条
+                        .timeout(100, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
-                        .maxRedeliverCount(10)  // **最多重试 10 次**
-                        .deadLetterTopic(deadLetterTopic) // **死信队列**
+                        // **最多重试 10 次**
+                        .maxRedeliverCount(15)
+                        // **死信队列**
+                        .deadLetterTopic(deadLetterTopic)
                         .build())
                 // .keySharedPolicy(KeySharedPolicy.stickyHashRange())
                 .subscribe();
