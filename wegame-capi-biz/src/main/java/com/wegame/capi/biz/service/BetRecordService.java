@@ -1,6 +1,8 @@
 package com.wegame.capi.biz.service;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.mongodb.bulk.BulkWriteError;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
@@ -246,12 +248,21 @@ public class BetRecordService {
         return Optional.ofNullable(betRecordPoList).orElse(Collections.emptyList()).stream().map(BetRecordPo::getId).collect(Collectors.toList());
     }
 
-    public List<Long> listNotExistIdList(List<Long> idList, GameTypeEnum gameType) {
-        return getMongoTemplate(gameType).findDistinct(new Query(Criteria.where("_id").nin(idList)),
-                "_id",
-                gameType.getBetRecordCollectionName(),
+    public Set<Long> listNotExistIdList(Set<Long> idList, GameTypeEnum gameType) {
+        if (CollectionUtil.isEmpty(idList)) {
+            return Collections.emptySet();
+        }
+        Query query = new Query(Criteria.where("_id").in(idList));
+        query.fields().include("_id");
+        List<BetRecordPo> betRecordPos = getMongoTemplate(gameType).find(query,
                 BetRecordPo.class,
-                Long.class);
+                gameType.getBetRecordCollectionName());
+
+        if (CollectionUtil.isEmpty(betRecordPos)) {
+            return idList;
+        }
+        Set<Long> existIdList = betRecordPos.stream().map(BetRecordPo::getId).collect(Collectors.toSet());
+        return Sets.difference(idList, existIdList);
     }
 
     /**
