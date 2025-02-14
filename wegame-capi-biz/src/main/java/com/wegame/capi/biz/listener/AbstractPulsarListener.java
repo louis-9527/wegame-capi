@@ -28,12 +28,13 @@ public abstract class AbstractPulsarListener {
 
     protected void initConsumer(GameTypeEnum gameType) {
         try {
-            String fullTopic = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env, gameType.getName() + "_topic");
-            String deadLetterTopic = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env, gameType.getName() + "_deadLetter" + "_topic");
+            String fullTopic = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env+"_1", gameType.getName() + "_topic");
+            String deadLetterTopic = String.format("persistent://%s/%s/%s", name + "_" + gameType.getName(), env+"_1", gameType.getName() + "_deadLetter" + "_topic");
             consumer = pulsarClient.newConsumer()
                     .topic(fullTopic)
                     .subscriptionName(name + "_" + gameType.getName())
                     .subscriptionType(SubscriptionType.Key_Shared) // 关键点：使用 Key_Shared 模式
+                    .enableRetry(true)
                     .receiverQueueSize(2000) // 增加内部缓存，提高吞吐量
                     .ackTimeout(60, TimeUnit.SECONDS)
                     .batchReceivePolicy(BatchReceivePolicy.builder()
@@ -44,6 +45,7 @@ public abstract class AbstractPulsarListener {
                             .maxRedeliverCount(15)  // **最多重试 10 次**
                             .deadLetterTopic(deadLetterTopic) // **死信队列**
                             .build())
+                    .negativeAckRedeliveryDelay(1, TimeUnit.MINUTES)
                     // .keySharedPolicy(KeySharedPolicy.stickyHashRange())
                     .subscribe();
             new Thread(this::consumeMessages).start();

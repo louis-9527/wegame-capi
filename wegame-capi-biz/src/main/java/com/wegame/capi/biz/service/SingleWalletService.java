@@ -53,21 +53,17 @@ public class SingleWalletService {
             betSingleWalletResult.setBetStatus(BetStatusEnum.SUCCESS);
             return betSingleWalletResult;
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
-            log.error("betWithPayout, duplicate reference id. betRecordDo: {}, commonRes: {}", betRecordDo, commonRes);
-            throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
-            // 获取返回状态
-            // return this.queryBetDetail(betRecordDo);
-        }
-        //        else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INSUFFICIENT_CREDIT.getCode())) {
-        //            throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, commonRes.getStatus());
-        //        }
-        else {
+            log.warn("betWithPayout, duplicate reference id. betRecordDo: {}, commonRes: {}", betRecordDo, commonRes);
+            return this.queryBetDetail(betRecordDo);
+        } else {
             // todo fix 其他错误码如何错误
             // 获取余额
             // GetCreditRes creditRes = singleWalletApi.getCredit(GetCreditReqBuilder.build());
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.FAIL)
-                    .reason(commonRes.getMessage())
+                    .reason(Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INSUFFICIENT_CREDIT.getCode())
+                            ? "Insufficient credit,  please recharge"
+                            : commonRes.getMessage())
                     .build();
         }
     }
