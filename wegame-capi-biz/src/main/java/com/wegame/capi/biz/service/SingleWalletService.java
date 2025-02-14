@@ -75,9 +75,11 @@ public class SingleWalletService {
         SingleWalletBetStatusResStatusEnum betStatus = SingleWalletBetStatusResStatusEnum.valueOfCode(betStatusRes.getCode());
         AssertUtil.assertNotNull(betStatus, ErrorCode.ERR_PARAM, "invalid bet status code");
         switch (betStatus) {
+            case RECEIVED_BET_REQUEST:
+            case COMPLETED_BET_REQUEST:
             case RECEIVED_PAYOUT_REQUEST:
                 return Pair.of(betStatusRes.getBetId(), BetStatusEnum.ING);
-            case COMPLETED_BET_REQUEST:
+            case COMPLETED_PAYOUT_REQUEST:
                 return Pair.of(betStatusRes.getBetId(), BetStatusEnum.SUCCESS);
             case DATA_NOT_FOUND:
                 return Pair.of(betStatusRes.getBetId(), BetStatusEnum.FAIL);
