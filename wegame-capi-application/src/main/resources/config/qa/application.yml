@@ -132,11 +132,13 @@ api:
     wegameGoDomain: http://wegame-go-svc.wegame-qat.svc.cluster.local:9800/go/game
     secretString: oYolXtz4KDiZPEh1rLS0a1gOLetpNad0kDjl4rzy3e3HMkQDHojagOjXEMeNYjsg
 pulsar:
-  ## service-url: pulsar://16.162.139.203:6650
-  service-url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
-  listener-threads: 100
-  tenant: MariaMakiling
-  namespaces: qa
+  dynamic:
+    maria_makiling:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_MariaMakiling
+      namespace: ${spring.application.env}
+      bet_topic: MariaMakiling_topic
+      bet_deadLetter_topic: MariaMakiling_deadLetter_topic
 #lark
 lark:
   robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
