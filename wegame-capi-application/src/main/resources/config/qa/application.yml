@@ -133,7 +133,7 @@ api:
     secretString: oYolXtz4KDiZPEh1rLS0a1gOLetpNad0kDjl4rzy3e3HMkQDHojagOjXEMeNYjsg
 pulsar:
   ## service-url: pulsar://16.162.139.203:6650
-  service-url: pulsar://pulsar.makillingslot.net:6650
+  service-url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
   listener-threads: 100
   tenant: MariaMakiling
   namespaces: qa

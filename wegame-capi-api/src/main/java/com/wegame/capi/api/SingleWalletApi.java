@@ -1,18 +1,18 @@
 package com.wegame.capi.api;
 
-import com.wegame.capi.api.domain.req.singlewallet.GetAuthLoginTokenReq;
-import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
-import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
-import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
-import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
-import com.wegame.capi.api.domain.res.CommonRes;
-import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
-import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
-import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
+import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
+import com.wegame.capi.api.domain.req.singlewallet.GetAuthLoginTokenReq;
+import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
+import com.wegame.capi.api.domain.res.CommonRes;
+import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
+import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
+import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
+import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -81,7 +81,7 @@ public class SingleWalletApi extends BaseApi {
         }
     }
 
-    //    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public CommonRes<SingleWalletBetWithPayoutRes> betWithPayout(BetWithPayoutReq req) {
         try {
             // 参数签名
@@ -111,7 +111,7 @@ public class SingleWalletApi extends BaseApi {
      * @param req req
      * @return response
      */
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    // @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public CommonRes<BetStatusRes> getBetStatus(BetStatusReq req) {
         try {
             // 参数签名
@@ -135,5 +135,4 @@ public class SingleWalletApi extends BaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
-
 }
