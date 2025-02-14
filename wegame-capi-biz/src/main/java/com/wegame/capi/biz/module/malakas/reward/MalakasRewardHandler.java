@@ -165,10 +165,8 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 }
             }
         }
-        // 3、统计中奖线
-        List<RewardLineDo<MalakasSymbolDo>> list = buildRewardLineList(map);
-        // 4、返回中奖线列表
-        return list;
+        // 3、统计返回中奖线列表
+        return buildRewardLineList(map);
     }
 
     private boolean canPutIn(TreeMap<Integer, List<RewardSymbolDo<MalakasSymbolDo>>> treeMap, Integer currentColum) {
@@ -192,7 +190,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
             }
             int totalLineCount = columMap.values()
                     .stream()
-                    .map(item -> item.size())
+                    .map(List::size)
                     .reduce(1, (a, b) -> a * b);
             list.add(RewardLineDo.<MalakasSymbolDo>builder()
                     .rewardSymbol(entry.getKey())
