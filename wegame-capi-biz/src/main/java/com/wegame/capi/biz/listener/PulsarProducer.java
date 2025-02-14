@@ -6,10 +6,11 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.api.MessageId;
+import org.apache.pulsar.client.api.Producer;
+import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -60,11 +61,15 @@ public class PulsarProducer {
 
     public <T> CompletableFuture<MessageId> asyncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         log.info("{}Producer asyncSendMessage msgType:{}, msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
-        return getProducer(gameType)
+        long startTime = System.currentTimeMillis();
+        CompletableFuture<MessageId> future = getProducer(gameType)
                 .newMessage()
                 .key(mqMessage.getMsgId())
                 .value(JSON.toJSONBytes(mqMessage))
                 .sendAsync();
+        long endTime = System.currentTimeMillis();
+        log.info("asyncSendMessage cost time, {} ms", endTime - startTime);
+        return future;
     }
 
     private Producer<byte[]> getProducer(GameTypeEnum gameType) {

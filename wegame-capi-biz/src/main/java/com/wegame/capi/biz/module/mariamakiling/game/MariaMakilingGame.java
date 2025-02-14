@@ -58,6 +58,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
+        long startTime = System.currentTimeMillis();
         List<MariaMakilingGameRecordDo> ret = new ArrayList<>();
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
@@ -106,6 +107,13 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                         null);
                 ret.add(gameRecord);
             }
+        }
+        long endTime = System.currentTimeMillis();
+        long costTime = endTime - startTime;
+        if (costTime > 10L) {
+            log.info("game play cost time more than 10: {}", costTime);
+        } else {
+            log.info("game play cost time: {}", costTime);
         }
         return ret;
     }
