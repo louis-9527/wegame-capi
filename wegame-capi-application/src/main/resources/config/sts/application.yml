@@ -12,7 +12,7 @@ server:
     uri-encoding: UTF-8
     connection-timeout: 3000
     max-connections: 30000
-    keep-alive-timeout: 3000
+    keep-alive-timeout: 60000
     accept-count: 10000
     threads:
       max: 40000
@@ -97,12 +97,6 @@ spring:
         maria_makiling_mdb:
           uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=20&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
           db: makiling
-pulsar:
-  ## service-url: pulsar://16.162.139.203:6650
-  service-url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
-  listener-threads: 50
-  tenant: MariaMakiling
-  namespaces: sts
 ## fastjson
 fastjson:
   parser:
@@ -134,6 +128,14 @@ api:
   go:
     wegameGoDomain: http://wegame-go-svc.wegame-stress.svc.cluster.local:9800/go/game
     secretString: NYjZX8sjmPKQq8N08DzqNQpQUJyxscdZ0AIafaIcZPVVayzPCHKEhdcfUOCEfdji
+pulsar:
+  dynamic:
+    maria_makiling:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_MariaMakiling
+      namespace: ${spring.application.env}
+      bet_topic: MariaMakiling_topic
+      bet_deadLetter_topic: MariaMakiling_deadLetter_topic
 #lark
 lark:
   robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

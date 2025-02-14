@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 抽象投注策略<br>
@@ -88,13 +89,24 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
     public Long asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
-        MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
-        AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
+        //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
+        //        AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
+        CompletableFuture<MessageId> future = pulsarProducer.asyncSendMessage(getGame().getGameInfo().getGameType(), addMqMessage);
         // 调用单钱包
         BetSingleWalletResultDo betSingleWalletResultDo = singleWalletService.betWithPayout(betRecordDo);
         // 判断返回结果
         String betId = betSingleWalletResultDo.getBetId();
         if (Objects.equals(betSingleWalletResultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
+            MessageId messageId;
+            try {
+                messageId = future.get();
+            } catch (Exception e) {
+                messageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(), addMqMessage, 30);
+            }
+            if (Objects.isNull(messageId)) {
+                // 新增消息发送失败，则转同步写db
+                getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
+            }
             // 更新记录
             BetRecordDo<R> updateRecord = BetRecordDo.<R>builder()
                     .id(betRecordDo.getId())
@@ -103,9 +115,10 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
                     .status(betSingleWalletResultDo.getBetStatus().getCode())
                     .updateTime(DateUtil.getCurrentMilli())
                     .build();
-            // 发送消息(更新)
+            // 异步发送更新消息
             MQMessage<BetRecordDo<R>> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
-            pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(), updateMqMessage, RETRY_TIMES);
+            // todo 添加失败重试机制
+            pulsarProducer.asyncSendMessage(getGame().getGameInfo().getGameType(), updateMqMessage);
             return AmountUtil.toLong(betSingleWalletResultDo.getCredit());
         } else {
             throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResultDo.getReason());

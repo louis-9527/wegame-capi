@@ -18,7 +18,6 @@ import org.apache.pulsar.client.api.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,10 +30,6 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
     @Autowired
     MariaMakilingRecordManager mariaMakilingRecordManager;
 
-    @PostConstruct
-    public void init() {
-        initConsumer(GameTypeEnum.MARIA_MAKILING);
-    }
 
     @Override
     protected List<MessageId> processMessages(Messages<byte[]> messages) {
@@ -42,6 +37,7 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
         List<BetRecordDo> updateRecordList = new ArrayList<>();
         Map<String, MessageId> messageIdMap = new HashMap<>(messages.size());
         messages.forEach(tt -> {
+
             String message = new String(tt.getData());
             MQMessage<BetRecordDo<MariaMakilingGameRecordDo>> betRecordDoMQMessage = JSON.parseObject(message, new TypeReference<MQMessage<BetRecordDo<MariaMakilingGameRecordDo>>>() {
             });
@@ -66,12 +62,12 @@ public class MariaMakilingMessageListener extends AbstractPulsarListener {
         return new ArrayList<>(messageIdMap.values());
     }
 
-    /**
-     * 优先批量处理，批量处理失败后改为单条处理
-     *
-     * @param recordList
-     * @param messageIdMap
-     */
+
+    @Override
+    public void init() {
+        super.consumerStart(GameTypeEnum.MARIA_MAKILING);
+    }
+
     private void batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> recordList, Map<String, MessageId> messageIdMap) {
         long startTime = System.currentTimeMillis();
         if (CollectionUtils.isEmpty(recordList)) {
