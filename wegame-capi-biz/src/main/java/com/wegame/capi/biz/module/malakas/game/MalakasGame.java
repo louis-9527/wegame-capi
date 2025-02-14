@@ -114,7 +114,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             ret.add(gameRecord);
             totalRewardAmount += rewardResult.getTotalRewardAmount();
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeSpinList);
-        } else if (preGameRecord.getRewardResult().isHasRewardFreeSpin()) {
+        } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
             Optional.ofNullable(preGameRecord.getGameRecordIds())
                     .orElse(Collections.emptyList())
                     .forEach(item -> {
@@ -326,8 +326,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         List<Long> freeSpinGameRecordIds = new ArrayList<>();
         // 未中奖中奖线（最后一次滚轮） && 中奖免费轮
-//        if (CollectionUtils.isEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin()) {
-        if (rewardResult.isHasRewardFreeSpin()) {
+//        if (CollectionUtils.isEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel()) {
+        if (rewardResult.isHasRewardFreeWheel()) {
             int times = rewardResult.getRewardFreeSpinTimes();
             int tempTimes = 0;
             while (tempTimes < times) {

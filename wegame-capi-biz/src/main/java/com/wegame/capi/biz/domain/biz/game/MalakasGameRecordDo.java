@@ -80,7 +80,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
      */
     @JsonIgnore
     public boolean hasRewardFreeSpins() {
-        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeSpin();
+        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel();
     }
 
     @JsonIgnore
@@ -108,7 +108,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .rewardSymbolIndexSet(buildRewardSymbolIndexSet())
                     .rewardLineList(buildRewardLineList())
-                    .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
+                    .freeSpinFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .build();
         }

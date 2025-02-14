@@ -105,7 +105,7 @@ public class MalakasBetRecordDetailDo implements ToVoConverter<MalakasBetResultD
     //                                    .rewardAmount(subItem.getRewardAmount())
     //                                    .build()
     //                            ).collect(Collectors.toList()))
-    //                    .freeSpinFlag(rewardResult.isHasRewardFreeSpin() ? 1 : 0)
+    //                    .freeSpinFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
     //                    .gameRecordIds(Optional.ofNullable(gameRecord.getGameRecordIds()).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
     //                    .build();
     //        }
