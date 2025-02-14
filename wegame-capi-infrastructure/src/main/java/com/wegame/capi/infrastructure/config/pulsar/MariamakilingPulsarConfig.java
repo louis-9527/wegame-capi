@@ -72,7 +72,7 @@ public class MariamakilingPulsarConfig {
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .negativeAckRedeliveryDelay(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(200)  // 批量最多100条
+                        .maxNumMessages(250)  // 批量最多100条
                         .timeout(100, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
