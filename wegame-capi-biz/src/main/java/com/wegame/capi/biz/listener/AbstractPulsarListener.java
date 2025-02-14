@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public abstract class AbstractPulsarListener {
-    
+
     @Autowired
     BetRecordService betRecordService;
     @Autowired
     MariaMakilingRecordManager mariaMakilingRecordManager;
-    
+
     public abstract Consumer<byte[]> getConsumer();
 
     public abstract GameTypeEnum getGameType();
@@ -108,12 +108,12 @@ public abstract class AbstractPulsarListener {
             boolean ret = betRecordService.batchUpdate(recordList, getGameType());
             if (ret) {
                 getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
+                List<Long> nonExistIdList = betRecordService.listNotExistIdList(recordList.stream().map(BetRecordDo::getId).collect(Collectors.toList()), gameType);
+                Optional.ofNullable(nonExistIdList)
+                        .orElse(Collections.emptyList())
+                        .forEach(id -> messageIdMap.remove(id));
+                getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
             }
-            // todo fix
-            //            List<Long> nonExistIdList = betRecordService.listNotExistIdList(recordList.stream().map(BetRecordDo::getId).collect(Collectors.toList()), gameType);
-            //            Optional.ofNullable(nonExistIdList)
-            //                    .orElse(Collections.emptyList())
-            //                    .forEach(id -> messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + id));
         } catch (Exception e) {
             log.error("MariaMakilingMessageListener.batchUpdate err, errMsg: {}", e.getMessage(), e);
             for (BetRecordDo<MariaMakilingGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {

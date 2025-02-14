@@ -247,11 +247,14 @@ public class BetRecordService {
     }
 
     public List<Long> listNotExistIdList(List<Long> idList, GameTypeEnum gameType) {
-        return getMongoTemplate(gameType).findDistinct(new Query(Criteria.where("_id").nin(idList)),
-                "_id",
-                gameType.getBetRecordCollectionName(),
-                BetRecordPo.class,
-                Long.class);
+        Query query = Query.query(Criteria.where("_id").in(idList));
+        List<Long> existingIdList = getMongoTemplate(gameType).find(query, BetRecordPo.class)
+                .stream()
+                .map(BetRecordPo::getId)
+                .collect(Collectors.toList());
+        return idList.stream()
+                .filter(id -> !existingIdList.contains(id))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -275,33 +278,33 @@ public class BetRecordService {
 
     ///////////////  above auto generated ///////////////
 
-    private BetRecordBatchOptResultDo buildExceptionResultDo(List<BetRecordDo> betRecordDoList, List<Long> normalFailIdList, Exception e, OptEnum optEnum) {
-        if (e instanceof BulkOperationException) {
-            BulkOperationException boe = (BulkOperationException) e;
-            List<Long> dupKeyIdList = Lists.newArrayList();
-            for (BulkWriteError error : boe.getErrors()) {
-                // 获取每个错误对应的文档索引
-                int index = error.getIndex();
-                BetRecordDo betRecordDo = betRecordDoList.get(index);
-                Long id = betRecordDo.getId();
-                // 11000是MongoDB中唯一索引冲突的错误码
-                if (error.getCode() == 11000) {
-                    // 主键冲突
-                    dupKeyIdList.add(id);
-                } else {
-                    normalFailIdList.add(id);
-                }
-            }
-            return BetRecordBatchOptResultDo.builder()
-                    .duplicateKeyIdList(dupKeyIdList)
-                    .failIdList(normalFailIdList)
-                    .successCount(OptEnum.ADD.equals(optEnum) ? (long) boe.getResult().getInsertedCount() : (long) boe.getResult().getMatchedCount())
-                    .build();
-        } else {
-            return BetRecordBatchOptResultDo.builder()
-                    .failIdList(betRecordDoList.stream().map(BetRecordDo::getId).collect(Collectors.toList()))
-                    .successCount(0L)
-                    .build();
-        }
-    }
+    //    private BetRecordBatchOptResultDo buildExceptionResultDo(List<BetRecordDo> betRecordDoList, List<Long> normalFailIdList, Exception e, OptEnum optEnum) {
+    //        if (e instanceof BulkOperationException) {
+    //            BulkOperationException boe = (BulkOperationException) e;
+    //            List<Long> dupKeyIdList = Lists.newArrayList();
+    //            for (BulkWriteError error : boe.getErrors()) {
+    //                // 获取每个错误对应的文档索引
+    //                int index = error.getIndex();
+    //                BetRecordDo betRecordDo = betRecordDoList.get(index);
+    //                Long id = betRecordDo.getId();
+    //                // 11000是MongoDB中唯一索引冲突的错误码
+    //                if (error.getCode() == 11000) {
+    //                    // 主键冲突
+    //                    dupKeyIdList.add(id);
+    //                } else {
+    //                    normalFailIdList.add(id);
+    //                }
+    //            }
+    //            return BetRecordBatchOptResultDo.builder()
+    //                    .duplicateKeyIdList(dupKeyIdList)
+    //                    .failIdList(normalFailIdList)
+    //                    .successCount(OptEnum.ADD.equals(optEnum) ? (long) boe.getResult().getInsertedCount() : (long) boe.getResult().getMatchedCount())
+    //                    .build();
+    //        } else {
+    //            return BetRecordBatchOptResultDo.builder()
+    //                    .failIdList(betRecordDoList.stream().map(BetRecordDo::getId).collect(Collectors.toList()))
+    //                    .successCount(0L)
+    //                    .build();
+    //        }
+    //    }
 }
