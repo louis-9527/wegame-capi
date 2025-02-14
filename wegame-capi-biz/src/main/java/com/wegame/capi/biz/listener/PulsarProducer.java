@@ -24,7 +24,6 @@ public class PulsarProducer {
     @Autowired
     Map<String, Producer<byte[]>> producerCache;
 
-
     public <T> MessageId syncSendMessage(GameTypeEnum gameTypeEnum, MQMessage<T> mqMessage, int tryTimes) {
         long startTime = System.currentTimeMillis();
         MessageId messageId;
@@ -68,7 +67,6 @@ public class PulsarProducer {
                 .value(JSON.toJSONBytes(mqMessage))
                 .sendAsync();
     }
-
 
     private Producer<byte[]> getProducer(GameTypeEnum gameType) {
         Producer<byte[]> producer = producerCache.get(StringUtils.lowerCase(gameType.getName()) + "Producer");
