@@ -75,8 +75,6 @@ public abstract class AbstractPulsarListener {
             if (ret) {
                 getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
             }
-            // help gc
-            messageIdMap.clear();
         } catch (Exception e) {
             log.error("MariaMakilingMessageListener.batchAdd err, errMsg: {}", e.getMessage(), e);
             for (BetRecordDo<MariaMakilingGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
@@ -90,9 +88,9 @@ public abstract class AbstractPulsarListener {
                 }
             }
         } finally {
-            // help gc
-            messageIdMap.clear();
-            recordList = null;
+            //            // help gc
+            //            messageIdMap.clear();
+            //            recordList = null;
         }
         long endTime = System.currentTimeMillis();
         log.info("MariaMakilingMessageListener#batchAdd, size:{}, cost: {} ms", recordList.size(), endTime - startTime);
@@ -136,9 +134,9 @@ public abstract class AbstractPulsarListener {
                 }
             }
         } finally {
-            // help gc
-            messageIdMap.clear();
-            recordList = null;
+            //            // help gc
+            //            messageIdMap.clear();
+            //            recordList = null;
         }
         long endTime = System.currentTimeMillis();
         log.info("MariaMakilingMessageListener#batchUpdate, size:{} cost: {} ms", recordList.size(), endTime - startTime);
