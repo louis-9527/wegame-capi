@@ -109,6 +109,9 @@ public abstract class AbstractPulsarListener {
             if (ret) {
                 getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
                 List<Long> nonExistIdList = betRecordService.listNotExistIdList(recordList.stream().map(BetRecordDo::getId).collect(Collectors.toList()), getGameType());
+                if (CollectionUtils.isEmpty(nonExistIdList)) {
+                    log.warn("batchUpdate nonExistIdList: {}", nonExistIdList);
+                }
                 Optional.ofNullable(nonExistIdList)
                         .orElse(Collections.emptyList())
                         .forEach(betRecordId -> messageIdMap.remove(betRecordId));

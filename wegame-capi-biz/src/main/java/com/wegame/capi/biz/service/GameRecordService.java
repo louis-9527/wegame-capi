@@ -28,7 +28,7 @@ public class GameRecordService<T> {
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
-    public boolean batchInsert(List<T> gameRecordList, GameTypeEnum gameType, Class<T> tClass) {
+    public boolean batchAdd(List<T> gameRecordList, GameTypeEnum gameType, Class<T> tClass) {
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(tClass, ErrorCode.ERR_INTER);
