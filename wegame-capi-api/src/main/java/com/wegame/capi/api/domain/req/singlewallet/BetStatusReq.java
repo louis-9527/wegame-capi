@@ -19,6 +19,7 @@ import lombok.experimental.SuperBuilder;
 public class BetStatusReq extends SingleWalletBaseReq {
     private static final long serialVersionUID = -63638322353418L;
 
+    public static final int BET_WITH_PAYOUT_BET_TYPE = 2;
     /**
      * 赌注的唯一ID
      * 必传：false
@@ -34,7 +35,6 @@ public class BetStatusReq extends SingleWalletBaseReq {
     /**
      * 1: Other Bet Types; 2: betWithPayout
      * 必传：true
-     * ???
      */
     private Integer betType;
 }

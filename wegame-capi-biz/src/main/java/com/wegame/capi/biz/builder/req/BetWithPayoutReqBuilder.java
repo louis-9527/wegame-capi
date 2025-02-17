@@ -11,7 +11,10 @@ import com.wegame.capi.common.utils.AmountUtil;
 
 import java.util.Date;
 
+import static com.wegame.capi.api.domain.req.singlewallet.BetStatusReq.BET_WITH_PAYOUT_BET_TYPE;
+
 public class BetWithPayoutReqBuilder {
+
     public static BetWithPayoutReq buildReq(BetRecordDo betRecordDo) {
         long uctSecond = DateUtil.toUCTSecond(betRecordDo.getCreateTime());
         return BetWithPayoutReq.builder()
@@ -33,28 +36,20 @@ public class BetWithPayoutReqBuilder {
                 .build();
     }
 
-    public static BetSingleWalletResultDo buildRes(SingleWalletBetWithPayoutRes payoutRes) {
-        return BetSingleWalletResultDo.builder()
-                .betId(payoutRes.getBetId())
-                .refId(payoutRes.getRefId())
-                .credit(payoutRes.getCredit())
-                .build();
-    }
+    //    public static BetStatusReq buildStatusReq(BetRecordDo betRecordDo) {
+    //        return BetStatusReq.builder()
+    //                .pId(betRecordDo.getPId())
+    //                .channelId(betRecordDo.getChannelId())
+    //                .playerName(betRecordDo.getPlayerName())
+    //                .refId(betRecordDo.getBetSerialNo())
+    //                .betType(BET_WITH_PAYOUT_BET_TYPE)
+    //                .wagersDate(betRecordDo.getCreateTime() / 1000)
+    //                .createTime(DateUtil.toUTC(new Date()))
+    //                .build();
+    //    }
 
-    public static BetStatusReq buildStatusReq(BetRecordDo betRecordDo) {
-        return BetStatusReq.builder()
-                .pId(betRecordDo.getPId())
-                .channelId(betRecordDo.getChannelId())
-                .playerName(betRecordDo.getPlayerName())
-                .refId(betRecordDo.getBetSerialNo())
-                .betType(2)
-                .wagersDate(betRecordDo.getCreateTime() / 1000)
-                .createTime(DateUtil.toUTC(new Date()))
-                .build();
-    }
-
-    public static void main(String[] args) {
-        long date = DateUtil.getCurrentMilli();
-        System.out.println(date);
-    }
+    //    public static void main(String[] args) {
+    //        long date = DateUtil.getCurrentMilli();
+    //        System.out.println(date);
+    //    }
 }
