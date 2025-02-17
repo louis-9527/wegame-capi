@@ -25,6 +25,7 @@ import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -126,7 +127,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         // 1、处理第一列
         for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             MalakasSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
-            if (Objects.equals(targetSymbol, MALAKAS_SYMBOL_PLACEHOLDER) || Objects.equals(targetSymbol, MALAKAS_SCATTER)) {
+            if (Objects.equals(targetSymbol, MALAKAS_SYMBOL_PLACEHOLDER) || StringUtils.equals(targetSymbol.getId(), MALAKAS_SCATTER.getId())) {
                 continue;
             }
 
@@ -209,7 +210,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
     }
 
     private boolean isMatchTargetSymbol(SymbolDo symbol, SymbolDo targetSymbol) {
-        return Objects.equals(symbol, targetSymbol)
+        return StringUtils.equals(symbol.getId(), targetSymbol.getId())
                 || Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.WILD)
                 || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
     }
