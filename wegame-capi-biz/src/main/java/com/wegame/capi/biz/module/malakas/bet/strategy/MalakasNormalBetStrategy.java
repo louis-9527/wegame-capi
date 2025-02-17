@@ -63,7 +63,7 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
         } catch (Exception e) {
-            log.error("[MalakasNonBuyFreeSpinsBetStrategy-notifyRewardHandle] error", e);
+            log.error("MalakasNonBuyFreeSpinsBetStrategy#notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }
     }
 }

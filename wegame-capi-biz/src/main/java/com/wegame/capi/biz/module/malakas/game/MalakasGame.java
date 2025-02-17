@@ -93,7 +93,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         // loop play
         CopyOnWriteArrayList<FreeWheelHandleDo> freeSpinList = new CopyOnWriteArrayList<>();
         loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeSpinList);
-        // 占位元素-将占位元素设置为空
+        // 占位元素-将占位元素设置为空: todo 优化 占位元素
         postPlaceholderSymbol(ret);
         // 返回-游戏记录列表
         return ret;

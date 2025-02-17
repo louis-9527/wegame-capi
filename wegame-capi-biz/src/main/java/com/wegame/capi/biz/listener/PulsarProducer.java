@@ -13,7 +13,6 @@ import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +20,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadPoolExecutor;
 
-import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.betRecordThreadPoolExecutor;
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.sendMessageThreadPoolExecutor;
 
 @Slf4j
@@ -35,7 +32,7 @@ public class PulsarProducer implements InitializingBean {
     Map<String, Producer<byte[]>> producerCache;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         Arrays.stream(GameTypeEnum.values()).forEach(gameType -> {
             Producer<byte[]> producer = producerCache.get(StringUtils.lowerCase(gameType.getName()) + PRODUCER);
             AssertUtil.assertNotNull(producer, ErrorCode.ERR_INTER);
@@ -99,7 +96,7 @@ public class PulsarProducer implements InitializingBean {
                 .sendAsync();
         //通过异步回调得知消息发送成功与否
         future.whenComplete(((messageId, throwable) -> {
-            if( null != throwable ) {
+            if (null != throwable) {
                 log.warn("asyncSendMessageThenRetry msgId:{} fail, then retry", mqMessage.getMsgId(), throwable);
                 MessageId id = syncSendMessage(gameType, mqMessage, 100);
                 if (Objects.isNull(id)) {
