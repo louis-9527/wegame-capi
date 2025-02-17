@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * 中奖模块
  */
@@ -33,11 +35,12 @@ public class RewardController {
     @LoginRequired
     @ApiOperation(value = "查询大奖信息", httpMethod = "GET")
     @GetMapping("/get")
-    public CommonResponse<RewardInfoVo> get() {
+    public CommonResponse<RewardInfoVo> get(HttpServletResponse response) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
         return CommonResponse.build(RewardInfoConverter.doToVo(rewardService.get(gameType)));
     }
 }

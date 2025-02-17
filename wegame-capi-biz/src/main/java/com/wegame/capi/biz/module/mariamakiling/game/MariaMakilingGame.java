@@ -48,8 +48,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
-    @Autowired
-    SnowflakeIdGenerator snowflakeIdGenerator;
+
 
     @Override
     public GameInfoDo getGameInfo() {
@@ -279,23 +278,5 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             }
         }
         throw new BusinessException(ErrorCode.ERR_INTER);
-    }
-
-    private long generateGameRecordId() {
-        long gameRecordId = snowflakeIdGenerator.nextId();
-        log.info("generateGameRecord id:{}", gameRecordId);
-        return gameRecordId;
-    }
-
-    private List<Long> getGameRecordIdList(int count) {
-        List gameRecordIdList = new ArrayList<>();
-        int temp = 0;
-        while (temp < count) {
-            long gameRecordId = snowflakeIdGenerator.nextId();
-            log.info("generateGameRecord id, free wheel:{}", gameRecordId);
-            gameRecordIdList.add(gameRecordId);
-            temp++;
-        }
-        return gameRecordIdList;
     }
 }

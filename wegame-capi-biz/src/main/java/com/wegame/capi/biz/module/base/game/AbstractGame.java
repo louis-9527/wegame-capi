@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.base.game;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
@@ -9,12 +10,14 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.SymbolEnum;
+import lombok.extern.slf4j.Slf4j;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,10 +27,31 @@ import java.util.Map;
  *
  * @param <R>
  */
-public abstract class AbstractGame<R> implements Game<R> {
+@Slf4j
+public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
 
     @Autowired
     public RandomService randomService;
+    @Autowired
+    public SnowflakeIdGenerator snowflakeIdGenerator;
+
+    public long generateGameRecordId() {
+        long gameRecordId = snowflakeIdGenerator.nextId();
+        log.info("generateGameRecord id:{}", gameRecordId);
+        return gameRecordId;
+    }
+
+    public List<Long> getGameRecordIdList(int count) {
+        List gameRecordIdList = new ArrayList<>();
+        int temp = 0;
+        while (temp < count) {
+            long gameRecordId = snowflakeIdGenerator.nextId();
+            log.info("generateGameRecord id, free wheel:{}", gameRecordId);
+            gameRecordIdList.add(gameRecordId);
+            temp++;
+        }
+        return gameRecordIdList;
+    }
 
     public Map<String, Integer> buildColumProbabilisticMap(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
