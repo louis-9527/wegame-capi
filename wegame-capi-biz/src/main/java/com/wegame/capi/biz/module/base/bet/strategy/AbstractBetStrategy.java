@@ -33,14 +33,12 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @Component
 public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extends ToVoConverter> implements BetStrategy<BD, RD> {
-
-    private static final int RETRY_TIMES = 3;
     @Autowired
     public SingleWalletService singleWalletService;
     @Autowired
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
-    private PulsarProducer pulsarProducer;
+    PulsarProducer pulsarProducer;
 
     public abstract Game<R> getGame();
 
@@ -70,7 +68,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         // 判断返回结果
         String betId = betSingleWalletResultDo.getBetId();
         if (Objects.equals(betSingleWalletResultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            // todo fix 严重逻辑问题
             // 更新记录
             BetRecordDo<R> updateRecord = BetRecordDo.<R>builder()
                     .id(betRecordDo.getId())
@@ -87,6 +84,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
     }
 
     public Long asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+        long startTime = System.currentTimeMillis();
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
         //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
@@ -99,11 +97,16 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         if (Objects.equals(betSingleWalletResultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             MessageId messageId;
             try {
+                long startTime2 = System.currentTimeMillis();
                 messageId = future.get();
+                long endTime2 = System.currentTimeMillis();
+                log.info("asyncSendMessage get cost time: {}", endTime2 - startTime2);
             } catch (Exception e) {
-                messageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(), addMqMessage, 30);
+                log.error("asyncSendMessage send fail, to syncSendMessage, betRecordId: {}", betRecordDo.getId());
+                messageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(), addMqMessage);
             }
             if (Objects.isNull(messageId)) {
+                log.error("syncSendMessage send fail, sync add data, betRecordId: {}", betRecordDo.getId());
                 // 新增消息发送失败，则转同步写db
                 getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
             }
@@ -117,8 +120,9 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
                     .build();
             // 异步发送更新消息
             MQMessage<BetRecordDo<R>> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
-            // todo 添加失败重试机制
-            pulsarProducer.asyncSendMessage(getGame().getGameInfo().getGameType(), updateMqMessage);
+            pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(), updateMqMessage);
+            long endTime = System.currentTimeMillis();
+            log.info("asyncSaveBetRecordAndBetWithPayout cost time: {} ms", endTime - startTime);
             return AmountUtil.toLong(betSingleWalletResultDo.getCredit());
         } else {
             throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResultDo.getReason());

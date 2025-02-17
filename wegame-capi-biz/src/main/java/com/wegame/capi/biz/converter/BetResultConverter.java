@@ -23,6 +23,7 @@ public class BetResultConverter {
                 .betSubType(betResultDo.getBetSubType().getCode())
                 .credit(betResultDo.getCredit())
                 .overallRewardAmount(betResultDo.getOverallRewardAmount())
+                .totalPayoutAmount(betResultDo.getTotalPayoutAmount())
                 .resultDetail(Objects.nonNull(betResultDo.getResultDetail())
                         ? betResultDo.getResultDetail().toResultVo()
                         : null)

@@ -23,13 +23,12 @@ public abstract class AbstractOddsCalculateStrategy<T extends SymbolDo>
      * key: 元素，val：{key: 赔率类型，val：赔率}
      *
      * @param oddsCalculateDo
-     * @return
+     * @return 赔率Map
      */
     public abstract Map<String, Map<String, BigDecimal>> getOddsConfig(OddsCalculateDo<T> oddsCalculateDo);
 
     @Override
     public BigDecimal calculateOdds(OddsCalculateDo<T> oddsCalculate) {
-     //   long current = System.currentTimeMillis();
         AssertUtil.assertNotNull(oddsCalculate, ErrorCode.ERR_INTER, "oddsCalculate is required");
         Map<String, Map<String, BigDecimal>> oddsMap = getOddsConfig(oddsCalculate);
         if (MapUtils.isEmpty(oddsMap)) {
@@ -40,8 +39,6 @@ public abstract class AbstractOddsCalculateStrategy<T extends SymbolDo>
             return BigDecimal.ZERO;
         }
         BigDecimal odds = map.get(oddsCalculate.getOddsType().getCode());
-        BigDecimal val = Objects.isNull(odds) ? (BigDecimal.ZERO) : odds;
-      //  log.info("odds cost time: {} ms", System.currentTimeMillis() - current);
-        return val;
+        return Objects.isNull(odds) ? (BigDecimal.ZERO) : odds;
     }
 }

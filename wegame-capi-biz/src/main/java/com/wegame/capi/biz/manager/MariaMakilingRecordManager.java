@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.mariamakilingTransactionManager;
+
 @Slf4j
 @Component("mariaMakilingRecordManager")
 public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakilingGameRecordDo> {
@@ -29,22 +31,22 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
     @Override
-    @Transactional(transactionManager = "mariamakilingTransactionManager")
+    @Transactional(transactionManager = mariamakilingTransactionManager)
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
         Long betRecordId = betRecordService.add(betRecord, gameType);
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
-        boolean ret = gameRecordService.batchInsert(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);
+        boolean ret = gameRecordService.batchAdd(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         return betRecord.getId();
     }
 
     @Override
-    @Transactional(transactionManager = "mariamakilingTransactionManager")
+    @Transactional(transactionManager = mariamakilingTransactionManager)
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
-        boolean ret = betRecordService.batchInsert(betRecordDos, gameType);
+        boolean ret = betRecordService.batchAdd(betRecordDos, gameType);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         List<MariaMakilingGameRecordDo> gameRecordList = betRecordList.stream()
                 .filter(item -> CollectionUtils.isNotEmpty(item.getGameRecordList()))
@@ -52,10 +54,11 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
+            // todo delete log
             gameRecordList.forEach(item -> {
                 log.info("addGameRecord id:{}", item.getId());
             });
-            boolean insertRet = gameRecordService.batchInsert(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
+            boolean insertRet = gameRecordService.batchAdd(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
             AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
         }
         return true;

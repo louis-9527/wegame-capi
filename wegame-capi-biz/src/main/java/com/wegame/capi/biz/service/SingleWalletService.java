@@ -56,7 +56,6 @@ public class SingleWalletService {
             log.warn("betWithPayout, duplicate reference id. betRecordDo: {}, commonRes: {}", betRecordDo, commonRes);
             return this.queryBetDetail(betRecordDo);
         } else {
-            // todo fix 其他错误码如何错误
             // 获取余额
             // GetCreditRes creditRes = singleWalletApi.getCredit(GetCreditReqBuilder.build());
             return BetSingleWalletResultDo.builder()
@@ -75,9 +74,11 @@ public class SingleWalletService {
         SingleWalletBetStatusResStatusEnum betStatus = SingleWalletBetStatusResStatusEnum.valueOfCode(betStatusRes.getCode());
         AssertUtil.assertNotNull(betStatus, ErrorCode.ERR_PARAM, "invalid bet status code");
         switch (betStatus) {
+            case RECEIVED_BET_REQUEST:
+            case COMPLETED_BET_REQUEST:
             case RECEIVED_PAYOUT_REQUEST:
                 return Pair.of(betStatusRes.getBetId(), BetStatusEnum.ING);
-            case COMPLETED_BET_REQUEST:
+            case COMPLETED_PAYOUT_REQUEST:
                 return Pair.of(betStatusRes.getBetId(), BetStatusEnum.SUCCESS);
             case DATA_NOT_FOUND:
                 return Pair.of(betStatusRes.getBetId(), BetStatusEnum.FAIL);

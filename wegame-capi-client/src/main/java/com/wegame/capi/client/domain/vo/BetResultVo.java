@@ -30,6 +30,8 @@ public class BetResultVo implements Serializable {
     private Long credit;
     @ApiModelProperty("合计中奖总金额")
     private Long overallRewardAmount;
+    @ApiModelProperty("总计派奖金额")
+    private Long totalPayoutAmount;
     @ApiModelProperty("结果明细")
     private Object resultDetail;
 }

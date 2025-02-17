@@ -17,12 +17,13 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class MongodbTransactionConfig {
 
+    public static final String mariamakilingTransactionManager = "mariamakilingTransactionManager";
     @Autowired
     MongoTemplate mariamakilingMongoTemplate;
     @Autowired
     MongoTemplate malakasMongoTemplate;
 
-    @Bean(name = "mariamakilingTransactionManager")
+    @Bean(name = mariamakilingTransactionManager)
     public MongoTransactionManager mariamakilingTransactionManager() {
         MongoTransactionManager manager = new MongoTransactionManager(mariamakilingMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()

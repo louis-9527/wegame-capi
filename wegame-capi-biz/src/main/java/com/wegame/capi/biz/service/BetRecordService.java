@@ -1,9 +1,5 @@
 package com.wegame.capi.biz.service;
 
-import cn.hutool.core.collection.CollectionUtil;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.mongodb.bulk.BulkWriteError;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
@@ -11,7 +7,6 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.converter.BetRecordConverter;
-import com.wegame.capi.biz.domain.biz.BetRecordBatchOptResultDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
@@ -21,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.mongodb.BulkOperationException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -59,7 +53,7 @@ public class BetRecordService {
         return po.getId();
     }
 
-    public boolean batchInsert(List<BetRecordDo> betRecordList, GameTypeEnum gameType) {
+    public boolean batchAdd(List<BetRecordDo> betRecordList, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_INTER);
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM, "betRecordList is empty");
@@ -69,6 +63,7 @@ public class BetRecordService {
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         poList.forEach(item -> {
+            // todo delete log
             log.info("addBetRecord id:{}", item.getId());
             bulkOps.insert(item);
         });
@@ -77,35 +72,6 @@ public class BetRecordService {
         log.info("BetRecordService#batchInsert cost time:{}ms", endTime - startTime);
         return true;
     }
-
-    //    /**
-    //     * 批量新增
-    //     *
-    //     * @param betRecordDoList 投注记录
-    //     * @return 主键id
-    //     */
-    //    public BetRecordBatchOptResultDo batchAdd(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
-    //        long startTime = System.currentTimeMillis();
-    //        AssertUtil.assertNotEmpty(betRecordDoList, ErrorCode.ERR_PARAM, "betRecordDoList is empty");
-    //        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
-    //        BulkWriteResult bulkWriteResult;
-    //        try {
-    //            BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
-    //                    BetRecordPo.class,
-    //                    gameType.getBetRecordCollectionName());
-    //            List<BetRecordPo> betRecordPos = BetRecordConverter.doToPoList(betRecordDoList, OptEnum.ADD);
-    //            bulkOps.insert(betRecordPos);
-    //            bulkWriteResult = bulkOps.execute();
-    //        } catch (Exception e) {
-    //            log.error("BetRecordService#batchAdd exception", e);
-    //            return buildExceptionResultDo(betRecordDoList, Lists.newArrayList(), e, OptEnum.ADD);
-    //        }
-    //        long endTime = System.currentTimeMillis();
-    //        log.info("BetRecordService#batchAdd cost time:{}ms", endTime - startTime);
-    //        return BetRecordBatchOptResultDo.builder()
-    //                .successCount(bulkWriteResult.getInsertedCount())
-    //                .build();
-    //    }
 
     /**
      * 修改
@@ -248,21 +214,15 @@ public class BetRecordService {
         return Optional.ofNullable(betRecordPoList).orElse(Collections.emptyList()).stream().map(BetRecordPo::getId).collect(Collectors.toList());
     }
 
-    public Set<Long> listNotExistIdList(Set<Long> idList, GameTypeEnum gameType) {
-        if (CollectionUtil.isEmpty(idList)) {
-            return Collections.emptySet();
-        }
-        Query query = new Query(Criteria.where("_id").in(idList));
-        query.fields().include("_id");
-        List<BetRecordPo> betRecordPos = getMongoTemplate(gameType).find(query,
-                BetRecordPo.class,
-                gameType.getBetRecordCollectionName());
-
-        if (CollectionUtil.isEmpty(betRecordPos)) {
-            return idList;
-        }
-        Set<Long> existIdList = betRecordPos.stream().map(BetRecordPo::getId).collect(Collectors.toSet());
-        return Sets.difference(idList, existIdList);
+    public List<Long> listNotExistIdList(List<Long> idList, GameTypeEnum gameType) {
+        Query query = Query.query(Criteria.where("_id").in(idList));
+        List<Long> existingIdList = getMongoTemplate(gameType).find(query, BetRecordPo.class)
+                .stream()
+                .map(BetRecordPo::getId)
+                .collect(Collectors.toList());
+        return idList.stream()
+                .filter(id -> !existingIdList.contains(id))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -286,33 +246,33 @@ public class BetRecordService {
 
     ///////////////  above auto generated ///////////////
 
-    private BetRecordBatchOptResultDo buildExceptionResultDo(List<BetRecordDo> betRecordDoList, List<Long> normalFailIdList, Exception e, OptEnum optEnum) {
-        if (e instanceof BulkOperationException) {
-            BulkOperationException boe = (BulkOperationException) e;
-            List<Long> dupKeyIdList = Lists.newArrayList();
-            for (BulkWriteError error : boe.getErrors()) {
-                // 获取每个错误对应的文档索引
-                int index = error.getIndex();
-                BetRecordDo betRecordDo = betRecordDoList.get(index);
-                Long id = betRecordDo.getId();
-                // 11000是MongoDB中唯一索引冲突的错误码
-                if (error.getCode() == 11000) {
-                    // 主键冲突
-                    dupKeyIdList.add(id);
-                } else {
-                    normalFailIdList.add(id);
-                }
-            }
-            return BetRecordBatchOptResultDo.builder()
-                    .duplicateKeyIdList(dupKeyIdList)
-                    .failIdList(normalFailIdList)
-                    .successCount(OptEnum.ADD.equals(optEnum) ? (long) boe.getResult().getInsertedCount() : (long) boe.getResult().getMatchedCount())
-                    .build();
-        } else {
-            return BetRecordBatchOptResultDo.builder()
-                    .failIdList(betRecordDoList.stream().map(BetRecordDo::getId).collect(Collectors.toList()))
-                    .successCount(0L)
-                    .build();
-        }
-    }
+    //    private BetRecordBatchOptResultDo buildExceptionResultDo(List<BetRecordDo> betRecordDoList, List<Long> normalFailIdList, Exception e, OptEnum optEnum) {
+    //        if (e instanceof BulkOperationException) {
+    //            BulkOperationException boe = (BulkOperationException) e;
+    //            List<Long> dupKeyIdList = Lists.newArrayList();
+    //            for (BulkWriteError error : boe.getErrors()) {
+    //                // 获取每个错误对应的文档索引
+    //                int index = error.getIndex();
+    //                BetRecordDo betRecordDo = betRecordDoList.get(index);
+    //                Long id = betRecordDo.getId();
+    //                // 11000是MongoDB中唯一索引冲突的错误码
+    //                if (error.getCode() == 11000) {
+    //                    // 主键冲突
+    //                    dupKeyIdList.add(id);
+    //                } else {
+    //                    normalFailIdList.add(id);
+    //                }
+    //            }
+    //            return BetRecordBatchOptResultDo.builder()
+    //                    .duplicateKeyIdList(dupKeyIdList)
+    //                    .failIdList(normalFailIdList)
+    //                    .successCount(OptEnum.ADD.equals(optEnum) ? (long) boe.getResult().getInsertedCount() : (long) boe.getResult().getMatchedCount())
+    //                    .build();
+    //        } else {
+    //            return BetRecordBatchOptResultDo.builder()
+    //                    .failIdList(betRecordDoList.stream().map(BetRecordDo::getId).collect(Collectors.toList()))
+    //                    .successCount(0L)
+    //                    .build();
+    //        }
+    //    }
 }

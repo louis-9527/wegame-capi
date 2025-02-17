@@ -26,7 +26,7 @@ public class GameRecordServiceTest extends BaseTest {
                     .playerId("123456")
                     .betRecordId(1887415334551220224L)
                     .build());
-            gameRecordService.batchInsert(gameRecordList, GameTypeEnum.MARIA_MAKILING, MariaMakilingGameRecordDo.class);
+            gameRecordService.batchAdd(gameRecordList, GameTypeEnum.MARIA_MAKILING, MariaMakilingGameRecordDo.class);
         }
     }
 }
