@@ -78,7 +78,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 break;
             // 购买投注
             case BUY_BET:
-                wheel = generateRewardFreeSpinsWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false));
+                wheel = generateRewardFreeWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false));
                 break;
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
@@ -196,7 +196,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<MalakasSymbolDo> generateRewardFreeSpinsWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo<MalakasSymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
         MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 第一行第一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
@@ -335,7 +335,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         // 未中奖中奖线（最后一次滚轮） && 中奖免费轮
 //        if (CollectionUtils.isEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel()) {
         if (rewardResult.isHasRewardFreeWheel()) {
-            int times = rewardResult.getRewardFreeSpinTimes();
+            int times = rewardResult.getRewardFreeWheelTimes();
             int tempTimes = 0;
             while (tempTimes < times) {
                 freeWheelGameRecordIds.add(snowflakeIdGenerator.nextId());

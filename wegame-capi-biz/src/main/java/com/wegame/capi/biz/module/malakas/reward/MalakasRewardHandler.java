@@ -72,7 +72,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .totalMultiple(null)
                     .hasRewardFreeWheel(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                     .rewardLineDetailList(null)
-                    .rewardFreeSpinTimes(Objects.isNull(freeSpinsTimes) ? 0 : freeSpinsTimes)
+                    .rewardFreeWheelTimes(Objects.isNull(freeSpinsTimes) ? 0 : freeSpinsTimes)
                     .build();
         }
 
@@ -109,7 +109,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 .totalRewardAmount(totalRewardAmount)
                 .hasRewardFreeWheel(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                 .rewardLineDetailList(rewardLineDetailList)
-                .rewardFreeSpinTimes(Objects.isNull(freeSpinsTimes) ? 0 : freeSpinsTimes)
+                .rewardFreeWheelTimes(Objects.isNull(freeSpinsTimes) ? 0 : freeSpinsTimes)
                 .totalMultiple(totalMultiple)
                 .build();
         // 6.返回中奖信息
