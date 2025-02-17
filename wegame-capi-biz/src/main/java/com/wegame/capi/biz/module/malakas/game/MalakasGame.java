@@ -70,6 +70,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         Long totalRewardAmount = 0L;
         // 生成-游戏滚轮
         WheelDo<MalakasSymbolDo> wheel;
+        long gameRecordId = generateGameRecordId();
         switch (gamePlay.getBetType()) {
             // 正常投注
             case NORMAL_BET:
@@ -86,13 +87,17 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ZERO));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
-        long id = snowflakeIdGenerator.nextId();
-        MalakasGameRecordDo gameRecord = buildGameRecord(id, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), id, wheel, rewardResult);
+        MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId,
+                RECORD_DEFAULT_PARENT_ID,
+                gamePlay.getBetRecordId(),
+                gameRecordId,
+                wheel,
+                rewardResult);
         ret.add(gameRecord);
         totalRewardAmount += rewardResult.getTotalRewardAmount();
         // loop play
-        CopyOnWriteArrayList<FreeWheelHandleDo> freeSpinList = new CopyOnWriteArrayList<>();
-        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeSpinList);
+        CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList = new CopyOnWriteArrayList<>();
+        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         // 占位元素-将占位元素设置为空: todo 优化 占位元素
         postPlaceholderSymbol(ret);
         // 返回-游戏记录列表
@@ -109,8 +114,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false),
                     preGameRecord);
             RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
-            long id = snowflakeIdGenerator.nextId();
-            MalakasGameRecordDo gameRecord = buildGameRecord(id, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
+            long gameRecordId = generateGameRecordId();
+            MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount += rewardResult.getTotalRewardAmount();
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
@@ -326,14 +331,14 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                                                 RewardResultDo<MalakasSymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        List<Long> freeSpinGameRecordIds = new ArrayList<>();
+        List<Long> freeWheelGameRecordIds = new ArrayList<>();
         // 未中奖中奖线（最后一次滚轮） && 中奖免费轮
 //        if (CollectionUtils.isEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel()) {
         if (rewardResult.isHasRewardFreeWheel()) {
             int times = rewardResult.getRewardFreeSpinTimes();
             int tempTimes = 0;
             while (tempTimes < times) {
-                freeSpinGameRecordIds.add(snowflakeIdGenerator.nextId());
+                freeWheelGameRecordIds.add(snowflakeIdGenerator.nextId());
                 tempTimes++;
             }
         }
@@ -346,7 +351,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 .playerName(userInfo.getPlayerName())
                 .wheel(wheel)
                 .rewardResult(rewardResult)
-                .gameRecordIds(freeSpinGameRecordIds)
+                .gameRecordIds(freeWheelGameRecordIds)
                 .build();
     }
 
