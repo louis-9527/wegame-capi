@@ -110,8 +110,8 @@ public class MalakasSymbolUtil {
             } else if (rewardSymbol.getSymbol().isWildSymbol()) {
                 // wild 元素
                 if (rewardSymbol.getSymbol().getSymbolClearTimes() > 1) {
-                    // 消除次数大于1，则不做消除
-                    // do nothing;
+                    // 消除次数大于1，则不做消除, 消除次数-1
+                    rewardSymbol.getSymbol().setSymbolClearTimes(rewardSymbol.getSymbol().getSymbolClearTimes() - 1);
                 } else {
                     // 消除次数小于1，则移除
                     removeRewardSymbol(symbolArr, rewardSymbol);
@@ -145,8 +145,7 @@ public class MalakasSymbolUtil {
      * @param symbolArr
      * @param rewardSymbol
      */
-    public static void removeRewardSymbol(MalakasSymbolDo[][]
-                                                  symbolArr, RewardSymbolDo<MalakasSymbolDo> rewardSymbol) {
+    public static void removeRewardSymbol(MalakasSymbolDo[][] symbolArr, RewardSymbolDo<MalakasSymbolDo> rewardSymbol) {
         IndexDo indexDo = rewardSymbol.getIndex();
         if (Objects.equals(indexDo.getRowIndex(), ONE_ROW_INDEX)) {
             // 第一行元素：直接移除
