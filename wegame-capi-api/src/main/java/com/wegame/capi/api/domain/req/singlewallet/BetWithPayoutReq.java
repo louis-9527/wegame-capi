@@ -2,10 +2,7 @@ package com.wegame.capi.api.domain.req.singlewallet;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.utils.DateUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
@@ -16,6 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class BetWithPayoutReq extends SingleWalletBaseReq {
     private static final long serialVersionUID = 2474046915423606033L;
 
