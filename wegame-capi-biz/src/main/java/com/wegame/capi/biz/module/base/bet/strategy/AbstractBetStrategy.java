@@ -32,7 +32,8 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 @Component
-public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extends ToVoConverter> implements BetStrategy<BD, RD> {
+public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extends ToVoConverter>
+        implements BetStrategy<BD, RD> {
     @Autowired
     public SingleWalletService singleWalletService;
     @Autowired
@@ -125,7 +126,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
                         .id(betRecordDo.getId())
                         .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)
                         .status(status.getCode())
-                        .updateTime(DateUtil.getCurrentMilli())
                         .build());
     }
 
@@ -134,7 +134,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
                 .id(betRecordDo.getId())
                 .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)
                 .status(status.getCode())
-                .updateTime(System.currentTimeMillis())
                 .build();
     }
 }
