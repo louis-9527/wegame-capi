@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum SingleWalletBetStatusResStatusEnum {
+public enum SingleWalletBetStatusEnum {
     RECEIVED_BET_REQUEST(1, "received bet request"),
     COMPLETED_BET_REQUEST(2, "completed bet request"),
     RECEIVED_PAYOUT_REQUEST(3, "received payout request"),
@@ -21,8 +21,8 @@ public enum SingleWalletBetStatusResStatusEnum {
     private final Integer code;
     private final String desc;
 
-    public static SingleWalletBetStatusResStatusEnum valueOfCode(int code) {
-        for (SingleWalletBetStatusResStatusEnum item : SingleWalletBetStatusResStatusEnum.values()) {
+    public static SingleWalletBetStatusEnum valueOfCode(int code) {
+        for (SingleWalletBetStatusEnum item : SingleWalletBetStatusEnum.values()) {
             if (item.getCode().equals(code)) {
                 return item;
             }

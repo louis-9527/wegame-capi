@@ -1,24 +1,29 @@
 package com.wegame.capi.scheduler;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
-import com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+import static com.wegame.capi.biz.builder.req.BetStatusReqBuilder.buildStatusReq;
+import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode;
 
 
 /**
@@ -64,30 +69,42 @@ public abstract class AbstractBetRecordBetStatusScheduler extends AbstractSchedu
     }
 
     public void handle(Long betRecordId) {
-        scheduleWithLock(LockNameUtil.getBetRecordIdSchedulerLockName(this.getGameType(), betRecordId), () -> {
-            BetRecordDo betRecordDo = betRecordService.getById(betRecordId, this.getGameType());
-            if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
-                return;
-            }
-            //获取当前订单状态
-            BetStatusReq betStatusReq = BetWithPayoutReqBuilder.buildStatusReq(betRecordDo);
-            Pair<String, BetStatusEnum> betStatus = singleWalletService.getBetStatus(betStatusReq);
-            if (BetStatusEnum.SUCCESS == betStatus.getRight()) {
-                // 更新记录
-                BetRecordDo updateRecord = BetRecordDo.builder()
-                        .id(betRecordDo.getId())
-                        .betId(betStatus.getLeft())
-                        .status(BetStatusEnum.SUCCESS.getCode()).build();
-                betRecordService.update(updateRecord, this.getGameType());
-                return;
-            }
-            if (BetStatusEnum.FAIL == betStatus.getRight()) {
-                // 更新记录
-                BetRecordDo updateRecord = BetRecordDo.builder()
-                        .id(betRecordDo.getId())
-                        .betId(betStatus.getLeft())
-                        .status(BetStatusEnum.FAIL.getCode()).build();
-                betRecordService.update(updateRecord, this.getGameType());
+        scheduleWithLock(LockNameUtil.getBetRecordIdSchedulerLockName(getGameType(), betRecordId), () -> {
+            try {
+                BetRecordDo betRecordDo = betRecordService.get(betRecordId, getGameType());
+                if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
+                    return;
+                }
+                log.info("handle in betting BetRecordDo, betRecordId: {}", betRecordDo.getId());
+                // 获取当前订单状态
+                BetStatusRes betStatusRes = singleWalletService.getBetStatus(buildStatusReq(betRecordDo));
+                AssertUtil.assertNotNull(betStatusRes, ErrorCode.ERR_INTER);
+                SingleWalletBetStatusEnum singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
+                AssertUtil.assertNotNull(singleWalletBetStatus, ErrorCode.ERR_PARAM, "invalid single wallet bet status code");
+                BetStatusEnum betStatus = BetStatusEnum.valueOfSingleWalletBetStatus(singleWalletBetStatus);
+                if (Objects.equals(BetStatusEnum.SUCCESS, betStatus)) {
+                    // 更新记录: 状态更新为成功
+                    betRecordService.update(BetRecordDo.builder()
+                            .id(betRecordDo.getId())
+                            .betId(betStatusRes.getBetId())
+                            .status(BetStatusEnum.SUCCESS.getCode())
+                            .build(), getGameType());
+                } else if (Objects.equals(BetStatusEnum.FAIL, betStatus)) {
+                    // 更新记录: 状态更新为失败
+                    betRecordService.update(BetRecordDo.builder()
+                                    .id(betRecordDo.getId())
+                                    .betId(betStatusRes.getBetId())
+                                    .status(BetStatusEnum.FAIL.getCode())
+                                    .build(),
+                            getGameType());
+                } else {
+                    log.error("AbstractBetRecordBetStatusScheduler#handle invalid betStatus: {}, betRecordId: {}, betStatusRes: {}",
+                            betStatus,
+                            betRecordId,
+                            betStatusRes);
+                }
+            } catch (Exception e) {
+                log.error("handle in betting BetRecordDo error, betRecordId: {}, errMsg: {}", betRecordId, e.getMessage(), e);
             }
         });
     }

@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service;
 
+import cn.hutool.core.lang.Opt;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
@@ -37,12 +38,6 @@ public class BetRecordService {
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
-    /**
-     * 新增
-     *
-     * @param betRecordDo 投注记录
-     * @return 主键id
-     */
     public Long add(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         BetRecordPo po = getMongoTemplate(gameType).insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD),
@@ -73,20 +68,12 @@ public class BetRecordService {
         return true;
     }
 
-    /**
-     * 修改
-     *
-     * @param betRecordDo 投注记录
-     * @return true/false
-     */
     public boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
-        AssertUtil.assertNotNull(betRecordDo.getPlayerId(), ErrorCode.ERR_PARAM, "request param \'playerId\' is null");
         Criteria criteria = new Criteria();
         criteria.and("_id").is(betRecordDo.getId());
-        criteria.and("playerId").is(betRecordDo.getPlayerId());
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(gameType).updateFirst(query,
                 BetRecordQueryBuilder.buildMongoUpdate(betRecordDo),
@@ -97,12 +84,6 @@ public class BetRecordService {
         return Objects.nonNull(result) && result.getModifiedCount() > 0;
     }
 
-    /**
-     * 批量新增
-     *
-     * @param betRecordDoList 投注记录
-     * @return 主键id
-     */
     public boolean batchUpdate(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotEmpty(betRecordDoList, ErrorCode.ERR_PARAM, "betRecordDoList is empty");
@@ -122,13 +103,18 @@ public class BetRecordService {
         return true;
     }
 
-    /**
-     * 查询：根据主键id查询
-     *
-     * @param id       主键id
-     * @param playerId 玩家id
-     * @return BetRecordDo 投注记录
-     */
+    public BetRecordDo get(Long id, GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        Criteria criteria = new Criteria();
+        criteria.and("_id").is(id);
+        Query query = new Query(criteria);
+        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(
+                query,
+                BetRecordPo.class,
+                gameType.getBetRecordCollectionName());
+        return BetRecordConverter.poToDo(betRecordPo);
+    }
+
     @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #playerId + '_'  + #id")
     public BetRecordDo getWithCache(Long id, String playerId, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
@@ -137,59 +123,14 @@ public class BetRecordService {
         criteria.and("_id").is(id);
         criteria.and("playerId").is(playerId);
         Query query = new Query(criteria);
-        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(query,
+        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(
+                query,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
         return BetRecordConverter.poToDo(betRecordPo);
     }
 
-    /**
-     * 查询：根据主键id查询
-     *
-     * @param id       主键id
-     * @param playerId 玩家id
-     * @return BetRecordDo 投注记录
-     */
-    public BetRecordDo get(Long id, String playerId, GameTypeEnum gameType) {
-        long startTime = System.currentTimeMillis();
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        Criteria criteria = new Criteria();
-        criteria.and("_id").is(id);
-        criteria.and("playerId").is(playerId);
-        Query query = new Query(criteria);
-        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(query,
-                BetRecordPo.class,
-                gameType.getBetRecordCollectionName());
-        log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
-        return BetRecordConverter.poToDo(betRecordPo);
-    }
-
-    /**
-     * 查询：根据主键id查询
-     *
-     * @param id 主键id
-     * @return BetRecordDo 投注记录
-     */
-    public BetRecordDo getById(Long id, GameTypeEnum gameType) {
-        long startTime = System.currentTimeMillis();
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        Criteria criteria = new Criteria();
-        criteria.and("_id").is(id);
-        Query query = new Query(criteria);
-        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(query,
-                BetRecordPo.class,
-                gameType.getBetRecordCollectionName());
-        log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
-        return BetRecordConverter.poToDo(betRecordPo);
-    }
-
-    /**
-     * 查询列表
-     *
-     * @param query 查询参数
-     * @return List<BetRecordDo> 游戏记录列表
-     */
     public List<BetRecordDo> list(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query),
@@ -198,17 +139,12 @@ public class BetRecordService {
         return BetRecordConverter.poToDoList(recordPoList);
     }
 
-    /**
-     * 查询Id列表
-     *
-     * @param query 查询参数
-     * @return List<Long> 游戏记录Id列表
-     */
     public List<Long> listId(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         Query recordQuery = BetRecordQueryBuilder.buildMongodbQuery(query);
         recordQuery.fields().include("_id");
-        List<BetRecordPo> betRecordPoList = getMongoTemplate(gameType).find(recordQuery,
+        List<BetRecordPo> betRecordPoList = getMongoTemplate(gameType).find(
+                recordQuery,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         return Optional.ofNullable(betRecordPoList).orElse(Collections.emptyList()).stream().map(BetRecordPo::getId).collect(Collectors.toList());
@@ -216,7 +152,8 @@ public class BetRecordService {
 
     public List<Long> listNotExistIdList(List<Long> idList, GameTypeEnum gameType) {
         Query query = Query.query(Criteria.where("_id").in(idList));
-        List<Long> existingIdList = getMongoTemplate(gameType).find(query, BetRecordPo.class)
+        List<BetRecordPo> poList = getMongoTemplate(gameType).find(query, BetRecordPo.class);
+        List<Long> existingIdList = Optional.ofNullable(poList).orElse(Collections.emptyList())
                 .stream()
                 .map(BetRecordPo::getId)
                 .collect(Collectors.toList());
@@ -225,12 +162,6 @@ public class BetRecordService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 数量统计
-     *
-     * @param query 查询参数
-     * @return 数量
-     */
     public long count(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         return getMongoTemplate(gameType).count(BetRecordQueryBuilder.buildMongodbQuery(query),
@@ -245,34 +176,4 @@ public class BetRecordService {
     }
 
     ///////////////  above auto generated ///////////////
-
-    //    private BetRecordBatchOptResultDo buildExceptionResultDo(List<BetRecordDo> betRecordDoList, List<Long> normalFailIdList, Exception e, OptEnum optEnum) {
-    //        if (e instanceof BulkOperationException) {
-    //            BulkOperationException boe = (BulkOperationException) e;
-    //            List<Long> dupKeyIdList = Lists.newArrayList();
-    //            for (BulkWriteError error : boe.getErrors()) {
-    //                // 获取每个错误对应的文档索引
-    //                int index = error.getIndex();
-    //                BetRecordDo betRecordDo = betRecordDoList.get(index);
-    //                Long id = betRecordDo.getId();
-    //                // 11000是MongoDB中唯一索引冲突的错误码
-    //                if (error.getCode() == 11000) {
-    //                    // 主键冲突
-    //                    dupKeyIdList.add(id);
-    //                } else {
-    //                    normalFailIdList.add(id);
-    //                }
-    //            }
-    //            return BetRecordBatchOptResultDo.builder()
-    //                    .duplicateKeyIdList(dupKeyIdList)
-    //                    .failIdList(normalFailIdList)
-    //                    .successCount(OptEnum.ADD.equals(optEnum) ? (long) boe.getResult().getInsertedCount() : (long) boe.getResult().getMatchedCount())
-    //                    .build();
-    //        } else {
-    //            return BetRecordBatchOptResultDo.builder()
-    //                    .failIdList(betRecordDoList.stream().map(BetRecordDo::getId).collect(Collectors.toList()))
-    //                    .successCount(0L)
-    //                    .build();
-    //        }
-    //    }
 }

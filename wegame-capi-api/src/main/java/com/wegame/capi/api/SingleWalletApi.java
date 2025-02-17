@@ -65,8 +65,6 @@ public class SingleWalletApi extends BaseApi {
             ResponseEntity<CommonRes<GetCreditRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<GetCreditRes>>() {
                     });
-            // todo delete log
-            log.info("getCredit err, req: {}, res: {}", req, responseEntity);
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
@@ -113,8 +111,7 @@ public class SingleWalletApi extends BaseApi {
      * @param req req
      * @return response
      */
-    // @Retryable(value = RetryException.class, exclude = BusinessException.class)
-    public CommonRes<BetStatusRes> getBetStatus(BetStatusReq req) {
+    public BetStatusRes getBetStatus(BetStatusReq req) {
         try {
             // 参数签名
             assembleSingleSignature(req);
@@ -128,7 +125,8 @@ public class SingleWalletApi extends BaseApi {
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
-            return responseEntity.getBody();
+            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
+            return responseEntity.getBody().getData();
         } catch (BusinessException be) {
             log.error("betStatus business err, req: {}, errMsg: {}", req, be.getMessage(), be);
             throw be;

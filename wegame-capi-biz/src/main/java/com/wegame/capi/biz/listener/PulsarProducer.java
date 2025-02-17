@@ -94,7 +94,7 @@ public class PulsarProducer implements InitializingBean {
                 .key(mqMessage.getMsgId())
                 .value(JSON.toJSONBytes(mqMessage))
                 .sendAsync();
-        //通过异步回调得知消息发送成功与否
+        // 通过异步回调得知消息发送成功与否
         future.whenComplete(((messageId, throwable) -> {
             if (null != throwable) {
                 log.warn("asyncSendMessageThenRetry msgId:{} fail, then retry", mqMessage.getMsgId(), throwable);
