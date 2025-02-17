@@ -32,13 +32,11 @@ public class LoginService {
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
         AuthLoginTokenRes authLoginTokenRes = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
         AssertUtil.assertNotNull(authLoginTokenRes, ErrorCode.ERR_MIDDLE_PLATFORM);
-
         String token = SecureUtil.md5(userLoginDo.getToken());
         response.addHeader(Constants._TOKEN_, token);
         UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
         Long userId = userService.insertOrUpdate(userDo);
         UserInfo userInfo = UserInfoBuilder.buildUserInfo(userLoginDo, userId, token);
-
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
         return userInfo;

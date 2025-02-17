@@ -54,6 +54,7 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
+            // todo delete log
             gameRecordList.forEach(item -> {
                 log.info("addGameRecord id:{}", item.getId());
             });

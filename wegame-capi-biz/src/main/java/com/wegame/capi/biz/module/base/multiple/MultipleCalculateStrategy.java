@@ -15,7 +15,7 @@ public interface MultipleCalculateStrategy<T extends SymbolDo> {
     /**
      * 计算赔率
      * @param rewardHandle
-     * @return
+     * @return 赔率
      */
     BigDecimal calculateMultiple(RewardHandleDo<T> rewardHandle, List<RewardLineDo<T>> rewardLineList);
 }

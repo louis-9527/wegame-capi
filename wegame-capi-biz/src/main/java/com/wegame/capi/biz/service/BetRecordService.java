@@ -63,6 +63,7 @@ public class BetRecordService {
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         poList.forEach(item -> {
+            // todo delete log
             log.info("addBetRecord id:{}", item.getId());
             bulkOps.insert(item);
         });

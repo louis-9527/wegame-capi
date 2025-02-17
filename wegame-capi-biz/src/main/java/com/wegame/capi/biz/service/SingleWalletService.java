@@ -56,7 +56,6 @@ public class SingleWalletService {
             log.warn("betWithPayout, duplicate reference id. betRecordDo: {}, commonRes: {}", betRecordDo, commonRes);
             return this.queryBetDetail(betRecordDo);
         } else {
-            // todo fix 其他错误码如何错误
             // 获取余额
             // GetCreditRes creditRes = singleWalletApi.getCredit(GetCreditReqBuilder.build());
             return BetSingleWalletResultDo.builder()

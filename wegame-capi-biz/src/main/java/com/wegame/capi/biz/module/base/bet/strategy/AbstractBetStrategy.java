@@ -33,14 +33,12 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @Component
 public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extends ToVoConverter> implements BetStrategy<BD, RD> {
-
-    private static final int RETRY_TIMES = 3;
     @Autowired
     public SingleWalletService singleWalletService;
     @Autowired
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
-    private PulsarProducer pulsarProducer;
+    PulsarProducer pulsarProducer;
 
     public abstract Game<R> getGame();
 
