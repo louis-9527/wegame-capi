@@ -25,8 +25,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class MariaMakilingPulsarListener extends AbstractPulsarListener implements Runnable {
     private static final GameTypeEnum gameType = GameTypeEnum.MARIA_MAKILING;
-    private static final int corePoolSize = 8;
-    private static final int maximumPoolSize = 8;
+    private static final int corePoolSize = 10;
+    private static final int maximumPoolSize = 10;
     private volatile boolean start = false;
     @Autowired
     BetRecordService betRecordService;
@@ -70,7 +70,6 @@ public class MariaMakilingPulsarListener extends AbstractPulsarListener implemen
                         MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
                         Messages<byte[]> messages = mariamakilingConsumer.batchReceive();
                         if (messages == null || messages.size() == 0) {
-                            // todo fix 阶梯睡眠时间
                             Thread.currentThread().sleep(1000);
                             continue;
                         }

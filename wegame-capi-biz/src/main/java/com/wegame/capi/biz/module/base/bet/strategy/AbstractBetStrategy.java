@@ -33,14 +33,12 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @Component
 public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extends ToVoConverter> implements BetStrategy<BD, RD> {
-
-    private static final int RETRY_TIMES = 3;
     @Autowired
     public SingleWalletService singleWalletService;
     @Autowired
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
-    private PulsarProducer pulsarProducer;
+    PulsarProducer pulsarProducer;
 
     public abstract Game<R> getGame();
 
@@ -122,8 +120,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
                     .build();
             // 异步发送更新消息
             MQMessage<BetRecordDo<R>> updateMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(), updateRecord);
-            // todo 添加失败重试机制
-            pulsarProducer.asyncSendMessage(getGame().getGameInfo().getGameType(), updateMqMessage);
+            pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(), updateMqMessage);
             long endTime = System.currentTimeMillis();
             log.info("asyncSaveBetRecordAndBetWithPayout cost time: {} ms", endTime - startTime);
             return AmountUtil.toLong(betSingleWalletResultDo.getCredit());

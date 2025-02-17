@@ -22,6 +22,8 @@ public class ThreadPoolConfig {
 
     public static final String betRecordThreadPoolExecutor = "betRecordThreadPoolExecutor";
 
+    public static final String sendMessageThreadPoolExecutor = "sendMessageThreadPoolExecutor";
+
     /**
      * 默认模块-线程池
      *
@@ -53,6 +55,20 @@ public class ThreadPoolConfig {
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue(10000),
                 new CustomizableThreadFactory("bet-record-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        return executor;
+    }
+
+
+    @Bean(sendMessageThreadPoolExecutor)
+    public ThreadPoolExecutor sendMessageThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                50,
+                60L,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue(10000),
+                new CustomizableThreadFactory("send-message-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
         return executor;

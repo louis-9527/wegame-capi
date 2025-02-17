@@ -23,6 +23,7 @@ public class RewardService {
     @Autowired
     RedisTemplate redisTemplate;
 
+    // todo 加缓存的意义 ？
     @Cacheable(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id")
     public RewardInfoDo get(GameTypeEnum gameType) {
         log.info("get reward info");
