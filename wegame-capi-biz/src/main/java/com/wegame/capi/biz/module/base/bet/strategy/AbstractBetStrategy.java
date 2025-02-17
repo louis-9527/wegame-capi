@@ -67,24 +67,13 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         BetSingleWalletResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
             // 异步更新：更新为->投注成功
-            getRecordManager().asyncUpdateBetRecord(
-                    BetRecordDo.<R>builder()
-                            .id(betRecordDo.getId())
-                            .betId(betSingleWalletResult.getBetId())
-                            .status(BetStatusEnum.SUCCESS.getCode())
-                            .updateTime(System.currentTimeMillis())
-                            .build(),
+            getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult),
                     getGame().getGameInfo().getGameType());
             return AmountUtil.toLong(betSingleWalletResult.getCredit());
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("syncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步更新：更新为->投注失败
-            getRecordManager().asyncUpdateBetRecord(
-                    BetRecordDo.<R>builder()
-                            .id(betRecordDo.getId())
-                            .status(BetStatusEnum.FAIL.getCode())
-                            .updateTime(System.currentTimeMillis())
-                            .build(),
+            getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult),
                     getGame().getGameInfo().getGameType());
             throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
         } else {
@@ -114,16 +103,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
                 getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
             }
             // 异步发送更新消息: 更新为投注成功
-            pulsarProducer.asyncSendMessageThenRetry(
-                    getGame().getGameInfo().getGameType(),
-                    MQMessage.buildMsg(String.valueOf(betRecordDo.getId()),
-                            MessageTypeEnum.UPDATE.getCode(),
-                            BetRecordDo.<R>builder()
-                                    .id(betRecordDo.getId())
-                                    .betId(betSingleWalletResult.getBetId())
-                                    .status(BetStatusEnum.SUCCESS.getCode())
-                                    .updateTime(DateUtil.getCurrentMilli())
-                                    .build()));
+            pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(),
+                    buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
             long endTime = System.currentTimeMillis();
             log.info("asyncSaveBetRecordAndBetWithPayout cost time: {} ms", endTime - startTime);
             return AmountUtil.toLong(betSingleWalletResult.getCredit());
@@ -131,16 +112,29 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
             log.warn("asyncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步发送更新消息: 更新为投注成功
             pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(),
-                    MQMessage.buildMsg(String.valueOf(betRecordDo.getId()),
-                            MessageTypeEnum.UPDATE.getCode(),
-                            BetRecordDo.<R>builder()
-                                    .id(betRecordDo.getId())
-                                    .status(BetStatusEnum.FAIL.getCode())
-                                    .updateTime(DateUtil.getCurrentMilli())
-                                    .build()));
+                    buildUpdateMessage(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult));
             throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
         } else {
             throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
         }
+    }
+
+    private MQMessage<BetRecordDo> buildUpdateMessage(BetRecordDo<R> betRecordDo, BetStatusEnum status, BetSingleWalletResultDo betSingleWalletResult) {
+        return MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(),
+                BetRecordDo.<R>builder()
+                        .id(betRecordDo.getId())
+                        .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)
+                        .status(status.getCode())
+                        .updateTime(DateUtil.getCurrentMilli())
+                        .build());
+    }
+
+    private BetRecordDo<R> buildUpdateRecord(BetRecordDo<R> betRecordDo, BetStatusEnum status, BetSingleWalletResultDo betSingleWalletResult) {
+        return BetRecordDo.<R>builder()
+                .id(betRecordDo.getId())
+                .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)
+                .status(status.getCode())
+                .updateTime(System.currentTimeMillis())
+                .build();
     }
 }

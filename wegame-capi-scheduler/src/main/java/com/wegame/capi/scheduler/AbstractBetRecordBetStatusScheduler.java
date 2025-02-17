@@ -3,9 +3,7 @@ package com.wegame.capi.scheduler;
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
-import com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.SingleWalletService;
@@ -16,7 +14,6 @@ import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -87,20 +84,19 @@ public abstract class AbstractBetRecordBetStatusScheduler extends AbstractSchedu
                 BetStatusEnum betStatus = BetStatusEnum.valueOfSingleWalletBetStatus(singleWalletBetStatus);
                 if (Objects.equals(BetStatusEnum.SUCCESS, betStatus)) {
                     // 更新记录: 状态更新为成功
-                    BetRecordDo updateRecord = BetRecordDo.builder()
+                    betRecordService.update(BetRecordDo.builder()
                             .id(betRecordDo.getId())
                             .betId(betStatusRes.getBetId())
                             .status(BetStatusEnum.SUCCESS.getCode())
-                            .build();
-                    betRecordService.update(updateRecord, getGameType());
+                            .build(), getGameType());
                 } else if (Objects.equals(BetStatusEnum.FAIL, betStatus)) {
                     // 更新记录: 状态更新为失败
-                    BetRecordDo updateRecord = BetRecordDo.builder()
-                            .id(betRecordDo.getId())
-                            .betId(betStatusRes.getBetId())
-                            .status(BetStatusEnum.FAIL.getCode())
-                            .build();
-                    betRecordService.update(updateRecord, this.getGameType());
+                    betRecordService.update(BetRecordDo.builder()
+                                    .id(betRecordDo.getId())
+                                    .betId(betStatusRes.getBetId())
+                                    .status(BetStatusEnum.FAIL.getCode())
+                                    .build(),
+                            getGameType());
                 } else {
                     log.error("AbstractBetRecordBetStatusScheduler#handle invalid betStatus: {}, betRecordId: {}, betStatusRes: {}",
                             betStatus,
