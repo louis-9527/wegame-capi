@@ -59,7 +59,6 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
     BetRecordService betRecordService;
 
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
-        long startTime = System.currentTimeMillis();
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
@@ -115,12 +114,6 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
                 .totalMultiple(totalMultiple)
                 .build();
         // 6.返回中奖信息
-        long costTime = System.currentTimeMillis() - startTime;
-        if (costTime > 10L) {
-            log.info("reward cost time more than 10: {} ms", costTime);
-        } else {
-            log.info("reward cost time: {} ms", costTime);
-        }
         return rewardResult;
     }
 
