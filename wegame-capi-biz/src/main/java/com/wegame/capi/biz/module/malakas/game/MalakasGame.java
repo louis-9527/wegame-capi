@@ -87,12 +87,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ZERO));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
-        MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId,
-                RECORD_DEFAULT_PARENT_ID,
-                gamePlay.getBetRecordId(),
-                gameRecordId,
-                wheel,
-                rewardResult);
+        MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
         ret.add(gameRecord);
         totalRewardAmount += rewardResult.getTotalRewardAmount();
         // loop play
