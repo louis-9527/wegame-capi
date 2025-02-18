@@ -279,7 +279,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return false;
         }
-        if (totalRewardAmount / rewardResult.getBetAmount() >= MAX_REWARD_MULTIPLE) {
+        if (totalRewardAmount >= MAX_REWARD_MULTIPLE * rewardResult.getBetAmount()) {
             log.warn("reach max reward multiple of {} bet. totalRewardAmount: {}, betAmount: {}", MAX_REWARD_MULTIPLE, totalRewardAmount, rewardResult.getBetAmount());
             return false;
         }
