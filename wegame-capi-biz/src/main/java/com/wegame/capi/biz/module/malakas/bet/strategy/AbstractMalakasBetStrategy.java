@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<MalakasGameRecordDo, MalakasBetDo, MalakasBetRecordDetailDo>
-        implements MariaMakilingBetStrategy<MalakasBetDo, MalakasBetRecordDetailDo> {
+        implements MalakasBetStrategy<MalakasBetDo, MalakasBetRecordDetailDo> {
 
     @Autowired
     MalakasGame malakasGame;
