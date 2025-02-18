@@ -108,26 +108,32 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                                         AtomicLong totalRewardAmount,
                                         MalakasGameRecordDo preGameRecord,
                                         CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList) {
-        if (canContinuePlayOnPreWheel(preGameRecord.getRewardResult(), totalRewardAmount)) {
-            WheelDo<MalakasSymbolDo> wheel = generateNormalWheelFromPreWheel(getGameInfo(),
-                    getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false),
-                    preGameRecord);
+        boolean continueFlag = canContinuePlayOnPreWheel(preGameRecord.getRewardResult(), totalRewardAmount);
+        if (continueFlag) {
+            WheelDo<MalakasSymbolDo> wheel = generateNormalWheelFromPreWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false), preGameRecord);
             RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
             long gameRecordId = generateGameRecordId();
             MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult, null);
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
-        } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
-            Optional.ofNullable(preGameRecord.getGameRecordIds())
-                    .orElse(Collections.emptyList())
-                    .forEach(item -> {
-                        freeWheelList.add(FreeWheelHandleDo.builder()
-                                .id(item)
-                                .parentId(preGameRecord.getId())
-                                .build());
-                    });
+        } else {
+            // 结算scatter（计算免费轮次数）
+            if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
+                int times = 2;//preGameRecord.getRewardResult().getRewardFreeWheelTimes();
+                int tempTimes = 0;
+                while (tempTimes < times) {
+                    freeWheelList.add(FreeWheelHandleDo.builder()
+                            .id(snowflakeIdGenerator.nextId())
+                            .parentId(preGameRecord.getId())
+                            .build());
+                    tempTimes++;
+                }
+            }
+        }
 
+        // 开始免费轮
+        if (!continueFlag && preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
             handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeWheelList);
         }
     }
