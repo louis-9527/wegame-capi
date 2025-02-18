@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.module.malakas.bet.strategy;
 
 import cn.hutool.core.util.NumberUtil;
-import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
@@ -9,7 +8,6 @@ import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
-import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
@@ -17,7 +15,6 @@ import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
@@ -32,7 +29,6 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
-    @CacheEvict(value = CacheConstants.REWARD_INFO)
     @Override
     public void freeSpinsAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo recordDetail, Long totalRewardAmount) {
         if (recordDetail.isLastFreeSpins(betDo.getBetDetail().getFreeSpinsId())) {
