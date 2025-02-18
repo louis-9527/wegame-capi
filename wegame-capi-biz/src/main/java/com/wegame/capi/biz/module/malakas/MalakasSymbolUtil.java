@@ -111,7 +111,9 @@ public class MalakasSymbolUtil {
                 // wild 元素
                 if (rewardSymbol.getSymbol().getSymbolClearTimes() > 1) {
                     // 消除次数大于1，则不做消除, 消除次数-1
-                    rewardSymbol.getSymbol().setSymbolClearTimes(rewardSymbol.getSymbol().getSymbolClearTimes() - 1);
+                    IndexDo indexDo = rewardSymbol.getIndex();
+                    MalakasSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
+                    commonSymbol.setSymbolClearTimes(rewardSymbol.getSymbol().getSymbolClearTimes() - 1);
                 } else {
                     // 消除次数小于1，则移除
                     removeRewardSymbol(symbolArr, rewardSymbol);
