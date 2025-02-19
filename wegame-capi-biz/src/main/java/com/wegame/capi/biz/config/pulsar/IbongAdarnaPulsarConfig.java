@@ -31,16 +31,16 @@ public class IbongAdarnaPulsarConfig {
     @Value("${pulsar.dynamic.ibong_adarna.bet_deadLetter_topic}")
     String ibongAdarnaBetDeadLetterTopic;
 
-    @Bean(name = "ibongAdarnaPulsarClient", destroyMethod = "close")
-    public PulsarClient ibongAdarnaPulsarClient() throws Exception {
+    @Bean(name = "ibongadarnaPulsarClient", destroyMethod = "close")
+    public PulsarClient ibongadarnaPulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(ibongAdarnaUrl)
                 .build();
     }
 
-    @Bean(name = "ibongAdarnaProducer", destroyMethod = "close")
-    public Producer<byte[]> ibongAdarnaProducer(@Autowired PulsarClient ibongAdarnaPulsarClient) throws PulsarClientException {
-        return ibongAdarnaPulsarClient.newProducer(Schema.BYTES)
+    @Bean(name = "ibongadarnaProducer", destroyMethod = "close")
+    public Producer<byte[]> ibongadarnaProducer(@Autowired PulsarClient ibongadarnaPulsarClient) throws PulsarClientException {
+        return ibongadarnaPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetTopic))
                 .producerName(ibongAdarnaTenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
                 // 开启批量发送
@@ -58,11 +58,11 @@ public class IbongAdarnaPulsarConfig {
     }
 
 
-    @Bean(name = "ibongAdarnaConsumer", destroyMethod = "close")
-    public Consumer<byte[]> ibongAdarnaConsumer(@Autowired PulsarClient ibongAdarnaPulsarClient) throws PulsarClientException {
+    @Bean(name = "ibongadarnaConsumer", destroyMethod = "close")
+    public Consumer<byte[]> ibongadarnaConsumer(@Autowired PulsarClient ibongadarnaPulsarClient) throws PulsarClientException {
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetDeadLetterTopic);
-        return ibongAdarnaPulsarClient.newConsumer()
+        return ibongadarnaPulsarClient.newConsumer()
                 .topic(fullTopic)
                 .subscriptionName(ibongAdarnaTenant)
                 // 关键点：使用 Key_Shared 模式, 集群消费
@@ -84,10 +84,10 @@ public class IbongAdarnaPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "ibongAdarnaDeadLetterConsumer", destroyMethod = "close")
-    public Consumer<byte[]> ibongAdarnaDeadLetterConsumer(@Autowired PulsarClient ibongAdarnaPulsarClient) throws PulsarClientException {
+    @Bean(name = "ibongadarnaDeadLetterConsumer", destroyMethod = "close")
+    public Consumer<byte[]> ibongadarnaDeadLetterConsumer(@Autowired PulsarClient ibongadarnaPulsarClient) throws PulsarClientException {
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetDeadLetterTopic);
-        return ibongAdarnaPulsarClient.newConsumer(Schema.BYTES)
+        return ibongadarnaPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
                 .subscriptionName(ibongAdarnaTenant + "_deadLetter")
                 .subscriptionType(SubscriptionType.Shared)
