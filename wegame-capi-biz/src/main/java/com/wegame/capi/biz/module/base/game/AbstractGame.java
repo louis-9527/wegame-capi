@@ -41,7 +41,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         return gameRecordId;
     }
 
-    public List<Long> getGameRecordIdList(int count) {
+    public List<Long> generateGameRecordIdList(int count) {
         List gameRecordIdList = new ArrayList<>();
         int temp = 0;
         while (temp < count) {

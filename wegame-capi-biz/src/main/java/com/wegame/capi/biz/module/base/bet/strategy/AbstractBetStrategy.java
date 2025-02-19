@@ -5,7 +5,6 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
@@ -124,7 +123,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
     }
 
     private MQMessage<BetRecordDo> buildUpdateMessage(BetRecordDo<R> betRecordDo, BetStatusEnum status, BetSingleWalletResultDo betSingleWalletResult) {
-        return MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.UPDATE.getCode(),
+        return MQMessage.buildMsg(String.valueOf(betRecordDo.getId()),
+                MessageTypeEnum.UPDATE.getCode(),
                 BetRecordDo.<R>builder()
                         .id(betRecordDo.getId())
                         .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)

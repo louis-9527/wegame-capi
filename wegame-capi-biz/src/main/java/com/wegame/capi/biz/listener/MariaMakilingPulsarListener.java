@@ -25,8 +25,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class MariaMakilingPulsarListener extends AbstractPulsarListener implements Runnable {
     private static final GameTypeEnum gameType = GameTypeEnum.MARIA_MAKILING;
-    private static final int corePoolSize = 10;
-    private static final int maximumPoolSize = 10;
+    private static final int corePoolSize = 1;
+    private static final int maximumPoolSize = 1;
     private volatile boolean start = false;
     @Autowired
     BetRecordService betRecordService;
