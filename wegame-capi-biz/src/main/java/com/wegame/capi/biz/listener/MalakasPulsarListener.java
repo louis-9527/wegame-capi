@@ -85,7 +85,7 @@ public class MalakasPulsarListener
 
     @Override
     public void run() {
-        log.info("MalakasPulsarListener started...");
+        log.info("MalakasPulsarListener start...");
         for (int i = 0; i < maximumPoolSize; i++) {
             executor.submit(() -> {
                 while (start) {
@@ -104,14 +104,14 @@ public class MalakasPulsarListener
                 }
             });
         }
-        log.info("MalakasPulsarListener stopped...");
+        log.info("MalakasPulsarListener end...");
     }
 
     private void onConsumer(Messages<byte[]> messages) {
         if (Objects.isNull(messages) || messages.size() == 0) {
             return;
         }
-        log.info("onConsumer messages size: {}", messages.size());
+        log.info("MalakasPulsarListener onConsumer messages size: {}", messages.size());
         List<BetRecordDo<MalakasGameRecordDo>> addRecordList = new ArrayList<>();
         List<BetRecordDo> updateRecordList = new ArrayList<>();
         Map<Long, MessageId> addMessageIdMap = new HashMap<>(messages.size());
@@ -121,8 +121,11 @@ public class MalakasPulsarListener
                     new TypeReference<MQMessage<BetRecordDo<MalakasGameRecordDo>>>() {
                     });
             BetRecordDo<MalakasGameRecordDo> body = mqMessage.getBody();
-            if (message.getRedeliveryCount() > 0 && StringUtils.equals(mqMessage.getType(), MessageTypeEnum.ADD.getCode())) {
-                log.info("processMessages, msgType:{}, msgId:{}, retryTimes: {}", mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount());
+            if (message.getRedeliveryCount() > 0) {
+                log.info("processMessages, msgType:{}, msgId:{}, retryTimes: {}",
+                        mqMessage.getType(),
+                        mqMessage.getMsgId(),
+                        message.getRedeliveryCount());
             }
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 addMessageIdMap.put(body.getId(), message.getMessageId());
@@ -149,19 +152,17 @@ public class MalakasPulsarListener
                 malakasConsumer.acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
             }
         } catch (Exception e) {
-            log.error("MalakasMessageListener.batchAdd err, errMsg: {}", e.getMessage(), e);
+            log.error("batchAdd err, errMsg: {}", e.getMessage(), e);
             for (BetRecordDo<MalakasGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
                 try {
                     malakasRecordManager.add(betRecordDo, gameType);
                     malakasConsumer.acknowledge(messageIdMap.get(betRecordDo.getId()));
-                    malakasConsumer.acknowledge(messageIdMap.get(betRecordDo.getId()));
                 } catch (Exception ep) {
-                    messageIdMap.remove(MessageTypeEnum.ADD.getCode() + "_" + betRecordDo.getId());
-                    log.error("MalakasMessageListener.batchAdd.add , betRecordId: {}, errMsg: {}", betRecordDo.getId(), ep.getMessage(), ep);
+                    log.error("add , betRecordId: {}, errMsg: {}", betRecordDo.getId(), ep.getMessage(), ep);
                 }
             }
         }
         long endTime = System.currentTimeMillis();
-        log.info("MalakasMessageListener#batchAdd, size:{}, cost: {} ms", recordList.size(), endTime - startTime);
+        log.info("batchAdd, size:{}, cost: {} ms", recordList.size(), endTime - startTime);
     }
 }
