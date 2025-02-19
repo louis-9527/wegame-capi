@@ -137,6 +137,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             if (canContinuePlayOnPreWheel(currentRecord.getRewardResult(), currentTotalReward)) {
                 handleCascadingPlay(gamePlay, ret, currentRecord, currentTotalReward, currentFreeWheelList, gameQueue);
             } else if (currentRecord.getRewardResult().isHasRewardFreeWheel()) {
+
                 Optional.ofNullable(currentRecord.getGameRecordIds())
                         .orElse(Collections.emptyList())
                         .forEach(item -> {
@@ -165,6 +166,9 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             if (CollectionUtils.isNotEmpty(freeWheelRecord.getRewardResult().getRewardLineDetailList())) {
                 processGameFlow(gamePlay, ret, totalRewardAmount, freeWheelRecord, freeWheelList);
             }
+
+            // 结算scatter
+
         }
     }
 

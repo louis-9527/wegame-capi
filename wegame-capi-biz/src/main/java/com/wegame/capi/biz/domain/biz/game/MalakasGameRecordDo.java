@@ -61,6 +61,10 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
      */
     private String playerName;
     /**
+     * 序号
+     */
+    private Integer index;
+    /**
      * 滚轮
      */
     private WheelDo<MalakasSymbolDo> wheel;
