@@ -123,7 +123,10 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             if (!reachMaxMultiple(gamePlay, totalRewardAmount)) {
                 Optional.ofNullable(preGameRecord.getGameRecordIds())
                         .orElse(Collections.emptyList())
-                        .forEach(gameRecordId -> freeWheelList.add(FreeWheelHandleDo.builder().id(gameRecordId).parentId(preGameRecord.getId()).build()));
+                        .forEach(gameRecordId -> freeWheelList.add(FreeWheelHandleDo.builder()
+                                .gameRecordId(gameRecordId)
+                                .parentGameRecordId(preGameRecord.getId())
+                                .build()));
             } else {
                 freeWheelList.clear();
                 preGameRecord.setGameRecordIds(null);
@@ -144,7 +147,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, totalMultiple));
             AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
             // 组装-游戏记录
-            MalakasGameRecordDo gameRecord = buildGameRecord(freeWheel.getId(), freeWheel.getParentId(), gamePlay.getBetRecordId(), freeWheel.getId(), wheel, rewardResult);
+            MalakasGameRecordDo gameRecord = buildGameRecord(freeWheel.getGameRecordId(), freeWheel.getParentGameRecordId(), gamePlay.getBetRecordId(), freeWheel.getGameRecordId(), wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             totalMultiple = rewardResult.getTotalMultiple();
@@ -355,8 +358,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     @Data
     @SuperBuilder
     private static class FreeWheelHandleDo {
-        private long id;
-        private long parentId;
+        private long gameRecordId;
+        private long parentGameRecordId;
     }
 }
 
