@@ -107,7 +107,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
         UserInfo userInfo = UserInfoContext.getUserInfo();
         List<MalakasGameRecordDo> gameRecordList = getRecordManager().listGameRecord(
                 GameRecordQuery.builder()
-                        .batchId(betDo.getBetDetail().getBetRecordId())
+                        .betRecordId(betDo.getBetDetail().getBetRecordId())
                         .playerId(userInfo.getPlayerId())
                         .orderByClause("_id")
                         .direction(Sort.Direction.ASC)
