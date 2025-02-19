@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.mariamakiling.game;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
@@ -78,7 +77,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         // 判断-是否命中免费轮
         List<Long> freeWheelGameRecordIds = null;
         if (rewardResult.isHasRewardFreeWheel()) {
-            freeWheelGameRecordIds = getGameRecordIdList(getWheelNumber());
+            freeWheelGameRecordIds = generateGameRecordIdList(getWheelNumber());
         }
         MariaMakilingGameRecordDo record = buildGameRecord(firstGameRecordId,
                 GAME_RECORD_DEFAULT_PARENT_ID,
