@@ -72,7 +72,21 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
         List<MalakasGameRecordDo> ret = new ArrayList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
-        // 生成-游戏滚轮
+
+        // 生成初始游戏记录
+        MalakasGameRecordDo initialRecord = generateInitialGameRecord(gamePlay);
+        ret.add(initialRecord);
+        totalRewardAmount.addAndGet(initialRecord.getRewardResult().getTotalRewardAmount());
+
+        // 处理后续游戏流程
+        processGameFlow(gamePlay, ret, totalRewardAmount, initialRecord, new CopyOnWriteArrayList<>());
+
+        postPlaceholderSymbol(ret);
+        return ret;
+    }
+
+    private MalakasGameRecordDo generateInitialGameRecord(GamePlayDo gamePlay) {
+        // 生成初始游戏滚轮
         WheelDo<MalakasSymbolDo> wheel;
         long gameRecordId = generateGameRecordId();
         switch (gamePlay.getBetType()) {
@@ -90,59 +104,126 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         // 判奖-根据游戏滚轮和中奖线算法判断
         RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ZERO));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
-        // 组装-游戏记录
-        MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
-        ret.add(gameRecord);
-        totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-        // loop play
-        CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList = new CopyOnWriteArrayList<>();
-        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
-        // 占位元素-将占位元素设置为空: todo 优化 占位元素
-        postPlaceholderSymbol(ret);
-        // 返回-游戏记录列表
-        return ret;
+        // 构建游戏记录
+        return buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
     }
 
-    public void loopPlayOnPreGameRecord(GamePlayDo gamePlay,
-                                        List<MalakasGameRecordDo> ret,
-                                        AtomicLong totalRewardAmount,
-                                        MalakasGameRecordDo preGameRecord,
-                                        CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList) {
-        if (canContinuePlayOnPreWheel(preGameRecord.getRewardResult(), totalRewardAmount)) {
-            WheelDo<MalakasSymbolDo> wheel = generateNormalWheelFromPreWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false), preGameRecord);
-            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
-            long gameRecordId = generateGameRecordId();
-            MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
-            ret.add(gameRecord);
-            totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
-        } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
-            Optional.ofNullable(preGameRecord.getGameRecordIds())
-                    .orElse(Collections.emptyList())
-                    .forEach(item -> {
-                        freeWheelList.add(FreeWheelHandleDo.builder()
-                                .id(item)
-                                .parentId(preGameRecord.getId())
-                                .build());
-                    });
-            handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeWheelList);
+    private void processGameFlow(GamePlayDo gamePlay,
+                                 List<MalakasGameRecordDo> ret,
+                                 AtomicLong totalRewardAmount,
+                                 MalakasGameRecordDo initialRecord,
+                                 CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList) {
+        Queue<GameState> gameQueue = new LinkedList<>();
+        gameQueue.offer(GameState.builder()
+                .gameRecord(initialRecord)
+                .totalRewardAmount(totalRewardAmount)
+                .freeWheelList(freeWheelList)
+                .build());
+
+        while (!gameQueue.isEmpty()) {
+            GameState currentState = gameQueue.poll();
+            MalakasGameRecordDo currentRecord = currentState.getGameRecord();
+            AtomicLong currentTotalReward = currentState.getTotalRewardAmount();
+            CopyOnWriteArrayList<FreeWheelHandleDo> currentFreeWheelList = currentState.getFreeWheelList();
+
+            // 检查是否达到最大倍数限制
+            if (currentTotalReward.get() >= MAX_REWARD_MULTIPLE * gamePlay.getBetAmount()) {
+                log.warn("reach max reward multiple of {} bet. totalRewardAmount: {}, betAmount: {}",
+                        MAX_REWARD_MULTIPLE, currentTotalReward.get(), gamePlay.getBetAmount());
+                currentFreeWheelList.clear();
+                return;
+            }
+
+            if (canContinuePlayOnPreWheel(currentRecord.getRewardResult(), currentTotalReward)) {
+                handleCascadingPlay(gamePlay, ret, currentRecord, currentTotalReward, currentFreeWheelList, gameQueue);
+            } else if (currentRecord.getRewardResult().isHasRewardFreeWheel()) {
+                Optional.ofNullable(currentRecord.getGameRecordIds())
+                        .orElse(Collections.emptyList())
+                        .forEach(item -> {
+                            currentFreeWheelList.add(FreeWheelHandleDo.builder()
+                                    .id(item)
+                                    .parentId(currentRecord.getId())
+                                    .build());
+                        });
+                handleFreeWheelGamePlay(gamePlay, ret, currentTotalReward, currentFreeWheelList);
+            }
         }
     }
 
-    private void handleFreeWheelGamePlay(GamePlayDo gamePlay, List<MalakasGameRecordDo> ret, AtomicLong totalRewardAmount, CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList) {
+    private void handleFreeWheelGamePlay(GamePlayDo gamePlay, List<MalakasGameRecordDo> ret,
+        AtomicLong totalRewardAmount, CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList) {
+
         while (!freeWheelList.isEmpty()) {
             FreeWheelHandleDo freeWheel = freeWheelList.remove(0);
-            WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), true));
-            // 判奖-根据游戏滚轮和中奖线算法判断
-            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ZERO));
-            AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
-            // 组装-游戏记录
-            MalakasGameRecordDo gameRecord = buildGameRecord(freeWheel.getId(), freeWheel.getParentId(), gamePlay.getBetRecordId(), freeWheel.getId(), wheel, rewardResult);
-            ret.add(gameRecord);
-            totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            // loop play
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
+
+            // 生成免费轮游戏记录
+            MalakasGameRecordDo freeWheelRecord = generateFreeWheelGameRecord(gamePlay, freeWheel);
+            ret.add(freeWheelRecord);
+            totalRewardAmount.addAndGet(freeWheelRecord.getRewardResult().getTotalRewardAmount());
+
+            // 如果有中奖，处理后续游戏流程
+            if (CollectionUtils.isNotEmpty(freeWheelRecord.getRewardResult().getRewardLineDetailList())) {
+                processGameFlow(gamePlay, ret, totalRewardAmount, freeWheelRecord, freeWheelList);
+            }
         }
+    }
+
+    private MalakasGameRecordDo generateFreeWheelGameRecord(GamePlayDo gamePlay, FreeWheelHandleDo freeWheel) {
+        WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(getGameInfo(),
+            getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), true));
+
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ZERO));
+        AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
+
+        return buildGameRecord(freeWheel.getId(), freeWheel.getParentId(), gamePlay.getBetRecordId(), freeWheel.getId(), wheel, rewardResult);
+    }
+
+    // 处理级联游戏逻辑
+    private void handleCascadingPlay(GamePlayDo gamePlay,
+                                     List<MalakasGameRecordDo> ret,
+                                     MalakasGameRecordDo currentRecord,
+                                     AtomicLong currentTotalReward,
+                                     CopyOnWriteArrayList<FreeWheelHandleDo> currentFreeWheelList,
+                                     Queue<GameState> gameQueue) {
+
+        // 生成新的滚轮和奖励
+        WheelDo<MalakasSymbolDo> newWheel = generateNormalWheelFromPreWheel(
+                getGameInfo(),
+                getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false),
+                currentRecord
+        );
+        RewardResultDo<MalakasSymbolDo> newRewardResult = malakasRewardHandler.handle(
+                RewardHandlerBuilder.build(getGameInfo(), gamePlay, newWheel,
+                        currentRecord.getRewardResult().getTotalMultiple())
+        );
+        // 生成新的游戏记录
+        long newGameRecordId = generateGameRecordId();
+        MalakasGameRecordDo newGameRecord = buildGameRecord(
+                newGameRecordId,
+                currentRecord.getId(),
+                gamePlay.getBetRecordId(),
+                currentRecord.getBatchId(),
+                newWheel,
+                newRewardResult
+        );
+        ret.add(newGameRecord);
+        // 中奖金额累加
+        currentTotalReward.addAndGet(newRewardResult.getTotalRewardAmount());
+        // 将新状态加入队列
+        gameQueue.offer(GameState.builder()
+                .gameRecord(newGameRecord)
+                .totalRewardAmount(currentTotalReward)
+                .freeWheelList(currentFreeWheelList)
+                .build());
+    }
+
+    // 生成游戏记录ID列表
+    public List<Long> generateGameRecordIdList(int times) {
+        List<Long> gameRecordIdList = new ArrayList<>();
+        for (int i = 0; i < times; i++) {
+            gameRecordIdList.add(snowflakeIdGenerator.nextId());
+        }
+        return gameRecordIdList;
     }
 
     private WheelDo<MalakasSymbolDo> generateNormalWheelFromPreWheel(GameInfoDo gameInfo,
@@ -348,5 +429,13 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     private static class FreeWheelHandleDo {
         private long id;
         private long parentId;
+    }
+
+    @Data
+    @SuperBuilder
+    private static class GameState {
+        private MalakasGameRecordDo gameRecord;
+        private AtomicLong totalRewardAmount;
+        private CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList;
     }
 }
