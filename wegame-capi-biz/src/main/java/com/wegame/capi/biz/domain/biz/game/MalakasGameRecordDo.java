@@ -98,6 +98,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .freeSpinFlag(0)
+                    .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .build();
         } else {
             return MalakasBetResultVo.builder()
