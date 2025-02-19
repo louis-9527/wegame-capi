@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.service;
 
 import cn.hutool.core.lang.Opt;
+import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
@@ -84,7 +85,7 @@ public class BetRecordService {
         return Objects.nonNull(result) && result.getModifiedCount() > 0;
     }
 
-    public boolean batchUpdate(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
+    public int batchUpdate(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
         long startTime = System.currentTimeMillis();
         AssertUtil.assertNotEmpty(betRecordDoList, ErrorCode.ERR_PARAM, "betRecordDoList is empty");
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
@@ -97,10 +98,11 @@ public class BetRecordService {
             Query query = new Query(criteria);
             bulkOps.updateOne(query, BetRecordQueryBuilder.buildMongoUpdate(betRecordDo));
         });
-        bulkOps.execute();
+        BulkWriteResult bulkWriteResult = bulkOps.execute();
+        int modifiedCount = bulkWriteResult.getModifiedCount();
         long endTime = System.currentTimeMillis();
         log.info("BetRecordService#batchUpdate cost time:{}ms", endTime - startTime);
-        return true;
+        return modifiedCount;
     }
 
     public BetRecordDo get(Long id, GameTypeEnum gameType) {

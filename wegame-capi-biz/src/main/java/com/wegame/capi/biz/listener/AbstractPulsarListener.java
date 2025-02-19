@@ -112,17 +112,31 @@ public abstract class AbstractPulsarListener {
             return;
         }
         try {
-            boolean ret = betRecordService.batchUpdate(recordList, getGameType());
-            if (ret) {
+            int sucCount = betRecordService.batchUpdate(recordList, getGameType());
+            if (sucCount == recordList.size()) {
+                getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
+            } else {
+                Map<Long, MessageId> failMessageIdMap = new HashMap<>();
+                List<BetRecordDo> failRecordList = new ArrayList<>();
                 List<Long> nonExistIdList = betRecordService.listNotExistIdList(recordList.stream().map(BetRecordDo::getId).collect(Collectors.toList()), getGameType());
                 if (CollectionUtils.isNotEmpty(nonExistIdList)) {
                     log.warn("batchUpdate nonExistIdList: {}", nonExistIdList);
                 }
                 Optional.ofNullable(nonExistIdList)
                         .orElse(Collections.emptyList())
-                        .forEach(nonExistBetRecordId -> messageIdMap.remove(nonExistBetRecordId));
+                        .forEach(nonExistBetRecordId -> {
+                            failMessageIdMap.put(nonExistBetRecordId, messageIdMap.get(nonExistBetRecordId));
+                            messageIdMap.remove(nonExistBetRecordId);
+                        });
+                failRecordList = recordList.stream()
+                        .filter(item -> nonExistIdList.contains(item.getId()))
+                        .collect(Collectors.toList());
                 if (MapUtils.isNotEmpty(messageIdMap)) {
                     getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
+                }
+                if (CollectionUtils.isNotEmpty(failRecordList) && MapUtils.isNotEmpty(failMessageIdMap)) {
+                    Thread.currentThread().sleep(1000);
+                    update(failRecordList, failMessageIdMap);
                 }
             }
         } catch (Exception e) {
