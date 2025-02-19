@@ -34,10 +34,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class MalakasPulsarListener implements Runnable {
+public class MalakasPulsarListener
+        extends AbstractPulsarListener
+        implements Runnable {
     private static final GameTypeEnum gameType = GameTypeEnum.MALAKAS;
-    private static final int corePoolSize = 50;
-    private static final int maximumPoolSize = 50;
+    private static final int corePoolSize = 1;
+    private static final int maximumPoolSize = 1;
     private volatile boolean start = false;
     @Autowired
     BetRecordService betRecordService;
@@ -46,6 +48,16 @@ public class MalakasPulsarListener implements Runnable {
     @Autowired
     Consumer<byte[]> malakasConsumer;
     ExecutorService executor;
+
+    @Override
+    public Consumer<byte[]> getConsumer() {
+        return malakasConsumer;
+    }
+
+    @Override
+    public GameTypeEnum getGameType() {
+        return gameType;
+    }
 
     @PostConstruct
     public void init() {
@@ -151,44 +163,5 @@ public class MalakasPulsarListener implements Runnable {
         }
         long endTime = System.currentTimeMillis();
         log.info("MalakasMessageListener#batchAdd, size:{}, cost: {} ms", recordList.size(), endTime - startTime);
-    }
-
-    /**
-     * 批量更新：
-     * 优先批量更新，批量更新失败后单挑更新
-     *
-     * @param recordList
-     * @param messageIdMap
-     */
-    private void batchUpdate(List<BetRecordDo> recordList, Map<Long, MessageId> messageIdMap) {
-        long startTime = System.currentTimeMillis();
-        if (CollectionUtils.isEmpty(recordList)) {
-            return;
-        }
-        try {
-            boolean ret = betRecordService.batchUpdate(recordList, gameType);
-            if (ret) {
-                malakasConsumer.acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
-            }
-            // todo fix
-            //            List<Long> nonExistIdList = betRecordService.listNotExistIdList(recordList.stream().map(BetRecordDo::getId).collect(Collectors.toList()), gameType);
-            //            Optional.ofNullable(nonExistIdList)
-            //                    .orElse(Collections.emptyList())
-            //                    .forEach(id -> messageIdMap.remove(MessageTypeEnum.UPDATE.getCode() + "_" + id));
-        } catch (Exception e) {
-            log.error("MalakasMessageListener.batchUpdate err, errMsg: {}", e.getMessage(), e);
-            for (BetRecordDo<MalakasGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
-                try {
-                    boolean ret = betRecordService.update(betRecordDo, gameType);
-                    if (ret) {
-                        malakasConsumer.acknowledge(messageIdMap.get(betRecordDo.getId()));
-                    }
-                } catch (Exception ep) {
-                    log.error("MalakasMessageListener.batchUpdate.update , betRecordId: {}, errMsg: {}", betRecordDo.getId(), ep.getMessage(), ep);
-                }
-            }
-        }
-        long endTime = System.currentTimeMillis();
-        log.info("MalakasMessageListener#batchUpdate, size:{} cost: {} ms", recordList.size(), endTime - startTime);
     }
 }

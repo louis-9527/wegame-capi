@@ -106,7 +106,7 @@ public abstract class AbstractPulsarListener {
      * @param recordList
      * @param messageIdMap
      */
-    private void batchUpdate(List<BetRecordDo> recordList, Map<Long, MessageId> messageIdMap) {
+    public void batchUpdate(List<BetRecordDo> recordList, Map<Long, MessageId> messageIdMap) {
         long startTime = System.currentTimeMillis();
         if (CollectionUtils.isEmpty(recordList)) {
             return;
