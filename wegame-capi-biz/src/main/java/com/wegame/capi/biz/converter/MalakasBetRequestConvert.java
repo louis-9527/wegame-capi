@@ -13,7 +13,7 @@ public class MalakasBetRequestConvert <T, R> implements BetToDoConvert<MalakasBe
                 .betAmount(betRequest.getBetAmount())
                 .payAmount(betRequest.getPayAmount())
                 .betRecordId(StringUtils.isEmpty(betRequest.getBetRecordId()) ? null : Long.valueOf(betRequest.getBetRecordId()))
-                .freeSpinsId(StringUtils.isEmpty(betRequest.getGameRecordId()) ? null : Long.valueOf(betRequest.getGameRecordId()))
+                .gameRecordId(StringUtils.isEmpty(betRequest.getGameRecordId()) ? null : Long.valueOf(betRequest.getGameRecordId()))
                 .build();
     }
 

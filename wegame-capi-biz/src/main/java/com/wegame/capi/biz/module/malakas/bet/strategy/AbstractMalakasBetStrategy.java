@@ -10,12 +10,12 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
+import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.manager.MalakasRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.malakas.game.MalakasGame;
-import com.wegame.capi.biz.module.mariamakiling.bet.strategy.MariaMakilingBetStrategy;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
@@ -24,8 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -109,10 +108,17 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 GameRecordQuery.builder()
                         .betRecordId(betDo.getBetDetail().getBetRecordId())
                         .playerId(userInfo.getPlayerId())
-                        .orderByClause("_id")
+                        .batchId(betDo.getBetDetail().getGameRecordId())
                         .direction(Sort.Direction.ASC)
                         .build(), getGame().getGameInfo().getGameType());
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
+        // 按照index升序排列
+        gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()
+                .filter(Objects::nonNull)
+                // todo 添加 index
+                .sorted(Comparator.comparingLong(MalakasGameRecordDo::getId))
+                .collect(Collectors.toList());
+
         return BetResultDo.<MalakasBetRecordDetailDo>builder()
                 .betRecordId(betDetail.getBetRecordId())
                 .gameId(betDo.getGameId())
