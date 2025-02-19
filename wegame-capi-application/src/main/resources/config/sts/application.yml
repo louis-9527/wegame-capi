@@ -112,7 +112,7 @@ knife4j:
 ## api
 api:
   sport:
-    singleDomain: https://sw-http-main-apisix-stress.igo8.me
+    singleDomain: http://sw-http-main-apisix-stress-v2.igo8.me
     # 是否调用
     invoke: true
     cp:

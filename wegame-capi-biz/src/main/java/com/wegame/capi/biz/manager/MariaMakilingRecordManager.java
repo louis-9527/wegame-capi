@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +34,13 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager)
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
-        AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
-        Long betRecordId = betRecordService.add(betRecord, gameType);
-        AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
+        try {
+            AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
+            betRecordService.add(betRecord, gameType);
+        } catch (DuplicateKeyException e) {
+            log.warn("add Duplicate key, betRecordId: {}", betRecord.getId(), e);
+            return betRecord.getId();
+        }
         boolean ret = gameRecordService.batchAdd(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         return betRecord.getId();
