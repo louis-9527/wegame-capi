@@ -109,14 +109,12 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                         .betRecordId(betDo.getBetDetail().getBetRecordId())
                         .playerId(userInfo.getPlayerId())
                         .batchId(betDo.getBetDetail().getGameRecordId())
-                        .direction(Sort.Direction.ASC)
                         .build(), getGame().getGameInfo().getGameType());
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
         // 按照index升序排列
         gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()
                 .filter(Objects::nonNull)
-                // todo 添加 index
-                .sorted(Comparator.comparingLong(MalakasGameRecordDo::getId))
+                .sorted(Comparator.comparingInt(MalakasGameRecordDo::getIndex))
                 .collect(Collectors.toList());
 
         return BetResultDo.<MalakasBetRecordDetailDo>builder()

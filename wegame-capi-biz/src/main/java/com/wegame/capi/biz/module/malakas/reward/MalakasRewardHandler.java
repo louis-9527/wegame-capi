@@ -70,7 +70,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .rewardType(RewardTypeEnum.NONE)
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
-                    .totalMultiple(null)
+                    .totalMultiple(rewardHandle.getCurrentMultiple())
                     .hasRewardFreeWheel(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                     .rewardLineDetailList(null)
                     .rewardFreeWheelTimes(Objects.isNull(freeWheelTimes) ? 0 : freeWheelTimes)

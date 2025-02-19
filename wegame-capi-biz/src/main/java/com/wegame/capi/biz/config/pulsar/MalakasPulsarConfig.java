@@ -1,4 +1,4 @@
-package com.wegame.capi.infrastructure.config.pulsar;
+package com.wegame.capi.biz.config.pulsar;
 
 import com.wegame.base.utils.IpUtil;
 import lombok.extern.slf4j.Slf4j;
