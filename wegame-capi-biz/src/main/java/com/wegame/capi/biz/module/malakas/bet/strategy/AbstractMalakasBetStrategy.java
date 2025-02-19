@@ -81,7 +81,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                countPayOutAmount(firstBatchList),
+                countPayOutAmount(list),
                 list);
         // 3、保存投注记录并派奖
         Long userCredit = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
