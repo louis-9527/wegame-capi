@@ -328,7 +328,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         List<Long> gameRecordIdList = null;
         if (CollectionUtils.isEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel()) {
-            gameRecordIdList = getGameRecordIdList(rewardResult.getRewardFreeWheelTimes());
+            gameRecordIdList = generateGameRecordIdList(rewardResult.getRewardFreeWheelTimes());
         }
         return MalakasGameRecordDo.builder()
                 .id(id)
