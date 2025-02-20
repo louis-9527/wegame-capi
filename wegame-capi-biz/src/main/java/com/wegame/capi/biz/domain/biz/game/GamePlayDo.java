@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.domain.biz.game;
 
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -10,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 玩游戏模型
@@ -19,7 +22,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GamePlayDo implements Serializable {
+public class GamePlayDo<WD extends SymbolDo> implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 游戏类型
@@ -41,6 +44,8 @@ public class GamePlayDo implements Serializable {
      * 投注记录id
      */
     private Long betRecordId;
+
+    private GameEventDo<WD> gameEventDo;
     //    /**
     //     * 免费轮次标识：是则生产10-15次滚轮结果
     //     */

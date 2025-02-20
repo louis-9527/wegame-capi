@@ -38,6 +38,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     MariaMakilingRecordManager mariaMakilingRecordManager;
 
+
     @Override
     public Game<MariaMakilingGameRecordDo> getGame() {
         return mariaMakilingGame;
@@ -58,6 +59,7 @@ public abstract class AbstractMariaMakilingBetStrategy
             return betForFreeWheel(betDo);
         }
     }
+
 
     /**
      * 免费轮投注

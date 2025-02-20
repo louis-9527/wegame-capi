@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.mariamakiling.game;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
@@ -12,20 +11,19 @@ import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.base.game.AbstractGame;
+import com.wegame.capi.biz.module.base.game.AbstractDynamicOperationGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
@@ -34,7 +32,7 @@ import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
 @Component
-public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
+public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilingGameRecordDo> {
 
     // ONE_COLUM_INDEX,THREE_COLUM_INDEX,FIVE_COLUM_INDEX顺序不可更改
     private static final List<Integer> SCATTER_COLUM_INDEX_LIST = Arrays.asList(
@@ -55,8 +53,14 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         return MARIA_MAKILING_GAME_INFO;
     }
 
+
     @Override
-    public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
+    public RewardHandler rewardHandler() {
+        return mariaMakilingRewardHandler;
+    }
+
+    @Override
+    public List<MariaMakilingGameRecordDo> normalPlay(GamePlayDo gamePlay) {
         List<MariaMakilingGameRecordDo> ret = new ArrayList<>();
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
@@ -107,6 +111,26 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             }
         }
         return ret;
+    }
+
+    @Override
+    public DynamicOperationEventKindEnum eventKindEnum(BetTypeEnum betType) {
+        if (BetTypeEnum.NORMAL_BET == betType) {
+            return DynamicOperationEventKindEnum.NORMAL_URGENT;
+        } else if (BetTypeEnum.BUY_BET == betType) {
+            return DynamicOperationEventKindEnum.FREE_URGENT;
+        }
+        return null;
+    }
+
+    @Override
+    public TreeMap<Integer, List<List<WheelDo<SymbolDo>>>> normalPayMultipleConfig() {
+        return null;
+    }
+
+    @Override
+    public TreeMap<Integer, List<List<WheelDo<SymbolDo>>>> freePayMultipleConfig() {
+        return null;
     }
 
     /**
@@ -244,7 +268,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         }
     }
 
-    private static MariaMakilingGameRecordDo buildGameRecord(Long id,
+    public  MariaMakilingGameRecordDo buildGameRecord(Long id,
                                                              Long parentId,
                                                              Long betRecordId,
                                                              Long batchId,

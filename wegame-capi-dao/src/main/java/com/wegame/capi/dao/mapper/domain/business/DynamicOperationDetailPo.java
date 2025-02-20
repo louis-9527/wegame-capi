@@ -1,0 +1,84 @@
+package com.wegame.capi.dao.mapper.domain.business;
+
+import io.swagger.models.auth.In;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.io.Serializable;
+
+@Data
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public class DynamicOperationDetailPo implements Serializable {
+    private static final long serialVersionUID = -5633677937689748357L;
+    /**
+     * 主键ID
+     */
+    @Id
+    @Field("_id")
+    private Long id;
+
+    /**
+     * 干预事件ID
+     */
+    private String eventId;
+
+    /**
+     * 干预金额
+     */
+    private String  operatorGameId;
+
+    /**
+     * 玩家ID(三方)
+     */
+    private String playerId;
+    /**
+     * 玩家名称(三方)
+     */
+    private String playerName;
+    /**
+     * 玩家ID
+     */
+    private String userId;
+
+    /**
+     * 派奖(消耗金额)
+     */
+    private Long payOutAmount;
+
+    /**
+     * 派奖时间
+     */
+    private Long payOutTime;
+
+    /**
+     * 投注id（单钱包）
+     */
+    private String betId;
+    /**
+     * 订单ID
+     */
+    private Long orderId;
+
+    /**
+     * 上报状态
+     * @see com.wegame.capi.common.enums.DynamicOperationReportStatusEnum
+     */
+    private Integer reportStatus;
+
+    /**
+     * 创建时间
+     */
+    private Long createTime;
+    /**
+     * 更新时间
+     */
+    private Long updateTime;
+}
