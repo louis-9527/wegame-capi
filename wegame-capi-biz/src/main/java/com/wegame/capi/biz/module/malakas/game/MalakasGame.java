@@ -312,7 +312,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     }
 
     private boolean generateSymbolGoldBorder(GameInfoDo gameInfo, int row, int column) {
-        List<BigDecimal> goldBoarderProbabilisticConfig = malakasConfig.getProbabilisticConfig().getGoldBoarderProbabilisticConfig();
+        List<BigDecimal> goldBoarderProbabilisticConfig = malakasConfig.getProbabilisticConfig().getCommonPlayGoldBoarderProbabilisticConfig();
         BigDecimal goldBoarderProbabilistic = null;
         if (Objects.equals(row, ONE_ROW_INDEX)) {
             goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(gameInfo.getColumn() - 1);

@@ -64,7 +64,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         BigDecimal totalMultiple = malakasMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             int scatterCount = scatterCount(rewardHandle);
-            Integer freeWheelTimes = malakasConfig.getScatterFreeSpinsTimesConfig().get(scatterCount);
+            Integer freeWheelTimes = malakasConfig.getScatterFreeWheelTimesConfig().get(scatterCount);
             // 未中奖
             return RewardResultDo.<MalakasSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())

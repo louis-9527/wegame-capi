@@ -19,7 +19,7 @@ public class MalakasProbabilisticUtil {
     public static Map<String, Integer> buildColumSymboleSizeProbabilisticMap(int currentColumnNo,
                                                                              int maxColumnSpan,
                                                                              MalakasConfig.ProbabilisticConfig probabilisticConfig) {
-        Map<String, List<BigDecimal>> sizeProbabilisticConfigMap = probabilisticConfig.getSymbolSizeProbabilisticConfig();
+        Map<String, List<BigDecimal>> sizeProbabilisticConfigMap = probabilisticConfig.getCommonPlaySymbolSizeProbabilisticConfig();
         AssertUtil.assertTrue(MapUtils.isNotEmpty(sizeProbabilisticConfigMap), ErrorCode.ERR_INTER);
         Map<String, Integer> map = new HashMap<>();
         sizeProbabilisticConfigMap.forEach((key, value) -> {
