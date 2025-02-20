@@ -37,7 +37,7 @@ public class UserControllerTest extends BaseTest {
 
     @Test
     public void test_me() {
-        CommonResponse<UserInfo> response = userController.me();
+        CommonResponse<UserInfo> response = userController.me(null);
         log.info("me: {}", response);
         Assert.notNull(response);
         Assert.isNull(response.getData());
