@@ -29,7 +29,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("user")
 @Api(value = "用户模块", tags = {"用户模块"})
-public class UserController {
+public class UserController extends AbstractController {
 
     @Autowired
     LoginService loginService;
@@ -55,14 +55,16 @@ public class UserController {
     @LoginRequired
     @ApiOperation(value = "个人信息", httpMethod = "GET")
     @GetMapping("/me")
-    public CommonResponse<UserInfo> me() {
+    public CommonResponse<UserInfo> me(HttpServletResponse response) {
+        noCacheControl(response);
         return CommonResponse.build(UserInfoContext.getUserInfo());
     }
 
     @LoginRequired
     @ApiOperation(value = "查询余额", httpMethod = "GET")
     @GetMapping("/getCredit")
-    public CommonResponse<Long> getCredit() {
+    public CommonResponse<Long> getCredit(HttpServletResponse response) {
+        noCacheControl(response);
         return CommonResponse.build(userService.getCredit());
     }
 }
