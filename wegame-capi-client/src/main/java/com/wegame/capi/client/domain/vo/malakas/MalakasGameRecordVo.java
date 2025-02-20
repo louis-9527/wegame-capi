@@ -23,7 +23,7 @@ public class MalakasGameRecordVo implements Validate, Serializable {
     private static final long serialVersionUID = -5835715678741184L;
     @ApiModelProperty("游戏记录id")
     private String id;
-    @ApiModelProperty("序号：0为Main，大于0为Free")
+    @ApiModelProperty("序号：0为初始轮，大于0为消除轮")
     private Integer index;
     @ApiModelProperty("投注金额")
     private Long betAmount;
