@@ -41,9 +41,9 @@ public class IbongAdarnaConfig {
     @AllArgsConstructor
     public static class OddsConfig implements Serializable {
         /**
-         * Map<元素ID，<赔率类型，具体赔率>>
+         * Map<元素ID，具体赔率
          */
-        private Map<String, Map<String, BigDecimal>> commonOddsConfig;
+        private Map<String, BigDecimal> commonOddsConfig;
     }
 
     @Data
@@ -52,21 +52,40 @@ public class IbongAdarnaConfig {
     @AllArgsConstructor
     public static class ProbabilisticConfig implements Serializable {
         /**
-         * 正常玩滚轮生成概率配置
+         * 元素出现概率配置
          * Map<元素ID，<列坐标，概率列表>>
          */
         private Map<String, List<BigDecimal>> commonPlayWheelProbabilisticConfig;
 
         /**
-         * 免费玩滚轮生成概率配置
-         * Map<元素ID，<列坐标，概率列表>>
+         * 元素分裂概率配置
+         * Map<元素ID，<分裂类型：不分裂，两倍分裂,三倍分裂，概率列表>>
          */
-        private Map<String, List<BigDecimal>> freePlayWheelProbabilisticConfig;
+        private Map<String, Map<String, BigDecimal>> symbolBreakUpProbabilisticConfig;
         /**
-         * 免费轮获得次数概率配置
+         * 倍率出现概率配置
+         * Map<倍率，<倍率类型：普通，ex，概率列表>>
          */
-        private Map<Integer, Integer> freeWheelTimesProbabilisticConfig;
+        private Map<Integer, Map<String, BigDecimal>> multiPleProbabilisticConfig;
     }
+
+    /**
+     * 固定线路配置
+     * 一共五条线
+     */
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RewardFixedLinesConfig {
+        // 坐标
+
+
+
+
+
+    }
+
 
     public void validate() {
         oddsConfigValidate();
