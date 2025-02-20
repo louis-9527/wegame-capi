@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.mariamakiling.bet;
+package com.wegame.capi.biz.module.ibongadarna.bet;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.module.base.bet.AbstractBetContext;

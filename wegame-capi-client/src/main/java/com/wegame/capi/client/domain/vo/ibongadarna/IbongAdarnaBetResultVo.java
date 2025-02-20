@@ -40,9 +40,9 @@ public class IbongAdarnaBetResultVo implements Serializable {
     private List<IbongAdarnaRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识,0:否,1:是")
     private Integer freeSpinFlag;
-    @ApiModelProperty("免费轮游戏记录Id列表")
+//    @ApiModelProperty("免费轮游戏记录Id列表")
     //    private List<String> freeSpinIds;
-    private List<String> gameRecordIds;
+//    private List<String> gameRecordIds;
 
 
 }

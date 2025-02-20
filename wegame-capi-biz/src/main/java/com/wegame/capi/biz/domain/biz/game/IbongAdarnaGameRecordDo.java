@@ -50,14 +50,6 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
     @Field("_id")
     private Long id;
     /**
-     * parentId: 无，则为0
-     */
-    private Long parentId;
-    /**
-     * 批次id
-     */
-    private Long batchId;
-    /**
      * 投注记录id
      */
     private Long betRecordId;
@@ -70,10 +62,6 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
      */
     private String playerName;
     /**
-     * 序号
-     */
-    private Integer index;
-    /**
      * 滚轮
      */
     private WheelDo<SymbolDo> wheel;
@@ -81,10 +69,6 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
      * 中奖结果
      */
     private RewardResultDo<SymbolDo> rewardResult;
-    /**
-     * 免费轮id列表
-     */
-    private List<Long> gameRecordIds;
 
     /**
      * 是否中奖免费轮
@@ -132,11 +116,6 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
                             .collect(Collectors.toSet()))
                     .rewardLineList(buildRewardLineList())
                     .freeSpinFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
-                    .gameRecordIds(Optional.ofNullable(gameRecordIds)
-                            .orElse(Collections.emptyList())
-                            .stream()
-                            .map(String::valueOf)
-                            .collect(Collectors.toList()))
                     .build();
         }
     }
@@ -146,7 +125,6 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
     public IbongAdarnaGameRecordVo toRecordVo() {
         return IbongAdarnaGameRecordVo.builder()
                 .id(String.valueOf(id))
-                .index(index)
                 .betAmount(Objects.nonNull(rewardResult) ? rewardResult.getBetAmount() : null)
                 .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)

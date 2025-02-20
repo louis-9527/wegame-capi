@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.mariamakiling.reward;
+package com.wegame.capi.biz.module.ibongadarna.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.ImmutableMap;

@@ -1,35 +1,24 @@
-package com.wegame.capi.biz.module.mariamakiling.bet.strategy.ibongadarna;
+package com.wegame.capi.biz.module.ibongadarna.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.IbongAdarnaBetRecordDetailDo;
-import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.IbongAdarnaBetDo;
-import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.manager.IbongAdarnaRecordManager;
-import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
-import com.wegame.capi.biz.module.mariamakiling.bet.strategy.MariaMakilingBetStrategy;
-import com.wegame.capi.biz.module.mariamakiling.game.IbongAdarnaGame;
-import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
-import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
+import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGame;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * IbongAdarna类游戏投注抽象接口
@@ -56,15 +45,18 @@ public abstract class AbstractIbongAdarnaBetStrategy
 
     @Override
     public BetResultDo<IbongAdarnaGameRecordDo> bet(BetDo<IbongAdarnaBetDo> betDo) {
-        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
-            // 非免费轮投注
-            return betForNonFreeWheel(betDo);
-        } else {
-            // 免费轮投注, 走查询
-            return null;
-        }
-    }
+        // play
 
+        // 落库
+
+        // 单钱包
+
+        // 修改状态
+
+        // 构建结果
+
+
+    }
 
     /**
      * 非免费轮投注

@@ -1,16 +1,13 @@
-package com.wegame.capi.biz.module.mariamakiling.bet.strategy.ibongadarna;
+package com.wegame.capi.biz.module.ibongadarna.bet.strategy;
 
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.IbongAdarnaBetRecordDetailDo;
-import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.IbongAdarnaBetDo;
-import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
-import com.wegame.capi.biz.module.mariamakiling.bet.strategy.AbstractMariaMakilingBetStrategy;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
