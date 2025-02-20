@@ -1,13 +1,14 @@
 package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
+import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.common.enums.MultipleTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -16,8 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.wegame.capi.common.Constants.CONST_10000;
-import static com.wegame.capi.common.Constants.CONST_1000000;
+import static com.wegame.capi.common.Constants.*;
 
 @Data
 @SuperBuilder
@@ -34,6 +34,11 @@ public class IbongAdarnaConfig {
      */
     private ProbabilisticConfig probabilisticConfig;
 
+    /**
+     * 固定线路配置
+     * Map<线路号，坐标：行号 & 列号>
+     */
+    private Map<Integer, List<List<Integer>>> rewardFixedLinesConfig;
 
     @Data
     @SuperBuilder
@@ -59,7 +64,7 @@ public class IbongAdarnaConfig {
 
         /**
          * 元素分裂概率配置
-         * Map<元素ID，<分裂类型：不分裂，两倍分裂,三倍分裂，概率列表>>
+         * Map<元素ID，<分裂类型：不分裂，两倍分裂,三倍分裂，概率>>
          */
         private Map<String, Map<String, BigDecimal>> symbolBreakUpProbabilisticConfig;
         /**
@@ -69,27 +74,11 @@ public class IbongAdarnaConfig {
         private Map<Integer, Map<String, BigDecimal>> multiPleProbabilisticConfig;
     }
 
-    /**
-     * 固定线路配置
-     * 一共五条线
-     */
-    @Data
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RewardFixedLinesConfig {
-        // 坐标
-
-
-
-
-
-    }
-
 
     public void validate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
+        rewardFixedLinesConfig();
     }
 
     private void oddsConfigValidate() {
@@ -97,22 +86,17 @@ public class IbongAdarnaConfig {
         Assert.notNull(oddsConfig.commonOddsConfig, "oddsConfig.commonOddsConfig is null");
         // 校验-赔率配置
         oddsConfig.commonOddsConfig.keySet().forEach(symbolId -> {
-            Map<String, BigDecimal> map = oddsConfig.commonOddsConfig.get(symbolId);
-            AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER, "Odds Config Err");
+            BigDecimal odds = oddsConfig.commonOddsConfig.get(symbolId);
+            AssertUtil.assertNotNull(odds, ErrorCode.ERR_INTER, "oddsConfig.commonOddsConfig.get(" + symbolId + ") is null");
         });
     }
 
     private void probabilisticConfigValidate() {
         Assert.notNull(probabilisticConfig, "probabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.commonPlayWheelProbabilisticConfig, "probabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.freePlayWheelProbabilisticConfig, "probabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.freeWheelTimesProbabilisticConfig, "probabilisticConfig is null");
-        // 校验-免费轮次数概率配置
-        int sum = probabilisticConfig.freeWheelTimesProbabilisticConfig.values()
-                .stream()
-                .reduce(0, Integer::sum);
-        AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
-        int colum = 5;
+        Assert.notNull(probabilisticConfig.commonPlayWheelProbabilisticConfig, "commonPlayWheelProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.symbolBreakUpProbabilisticConfig, "symbolBreakUpProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.multiPleProbabilisticConfig, "multiPleProbabilisticConfig is null");
+        int colum = 3;
         probabilisticConfig.commonPlayWheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
             AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
@@ -133,24 +117,45 @@ public class IbongAdarnaConfig {
         }
 
         ////
-
-        probabilisticConfig.freePlayWheelProbabilisticConfig.forEach((key, value) -> {
-            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig: " + key + " ERR");
+        probabilisticConfig.symbolBreakUpProbabilisticConfig.forEach((key, value) -> {
+            AssertUtil.assertNotNull(value, ErrorCode.ERR_INTER, "probabilisticConfig.symbolBreakUpProbabilisticConfig key: " + key + " ERR");
         });
         for (int columIndex = 0; columIndex < colum; columIndex++) {
             Integer columNo = columIndex;
             Map<String, Integer> map = new HashMap<>();
-            probabilisticConfig.freePlayWheelProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
-                if (val > 0) {
-                    map.put(item.getKey(), val);
-                }
+            probabilisticConfig.symbolBreakUpProbabilisticConfig.entrySet().forEach(item -> {
+                // 所有value相加为100
+                BigDecimal reduce = item.getValue().values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+                AssertUtil.assertTrue(new BigDecimal(CONST_100).compareTo(reduce) == 0, ErrorCode.ERR_INTER, "probabilisticConfig.symbolBreakUpProbabilisticConfig ERR, columNo:" + columNo);
             });
-            Integer sumProbabilistic = map.values()
-                    .stream()
-                    .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+        }
+
+        List<BigDecimal> normalMultiPleList = Lists.newArrayList();
+        List<BigDecimal> exMultiPleList = Lists.newArrayList();
+        probabilisticConfig.multiPleProbabilisticConfig.forEach((key, value) -> {
+            BigDecimal normalProbabilistic = value.get(MultipleTypeEnum.NORMAL.getCode());
+            AssertUtil.assertNotNull(normalProbabilistic, ErrorCode.ERR_INTER, "multiPleProbabilisticConfig is error,no normal probabilistic");
+            BigDecimal exProbabilistic = value.get(MultipleTypeEnum.EX.getCode());
+            AssertUtil.assertNotNull(normalProbabilistic, ErrorCode.ERR_INTER, "exProbabilistic is error,no ex probabilistic");
+            normalMultiPleList.add(normalProbabilistic);
+            exMultiPleList.add(exProbabilistic);
+        });
+
+        BigDecimal normalMultiPleSum = normalMultiPleList.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        AssertUtil.assertTrue(new BigDecimal(CONST_100).compareTo(normalMultiPleSum) == 0, ErrorCode.ERR_INTER, "probabilisticConfig.multiPleProbabilisticConfig ERR, not 100 %");
+        BigDecimal exMultiPleSum = exMultiPleList.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        AssertUtil.assertTrue(new BigDecimal(CONST_100).compareTo(exMultiPleSum) == 0, ErrorCode.ERR_INTER, "probabilisticConfig.multiPleProbabilisticConfig ERR, not 100 %");
+    }
+
+    private void rewardFixedLinesConfig() {
+        AssertUtil.assertNotNull(rewardFixedLinesConfig, ErrorCode.ERR_INTER, "oddsConfig is null");
+        for (Map.Entry<Integer, List<List<Integer>>> integerListEntry : rewardFixedLinesConfig.entrySet()) {
+            AssertUtil.assertNotEmpty(integerListEntry.getValue(), ErrorCode.ERR_INTER, "rewardFixedLinesConfig.get(" + integerListEntry.getKey() + ") is null");
+            AssertUtil.assertTrue(integerListEntry.getValue().size() == 3, ErrorCode.ERR_INTER, "rewardFixedLinesConfig.get(" + integerListEntry.getKey() + ") length is not equals 3");
+            integerListEntry.getValue().forEach(indexList -> {
+                AssertUtil.assertNotEmpty(indexList, ErrorCode.ERR_INTER, "rewardFixedLinesConfig.get(" + integerListEntry.getKey() + ") index is null");
+                AssertUtil.assertTrue(indexList.size() == 2, ErrorCode.ERR_INTER, "rewardFixedLinesConfig.get(" + integerListEntry.getKey() + ") index length is not equals 2");
+            });
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -42,4 +43,5 @@ public class GameConfig {
             return config;
         }
     }
+
 }

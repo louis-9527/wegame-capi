@@ -19,6 +19,8 @@ public enum SymbolEnum {
     Symbol1003("1003", "Symbol1003"),
     Symbol1004("1004", "Symbol1004"),
     Symbol1005("1005", "Symbol1005"),
+    Symbol1006("1006", "Symbol1006"),
+    Symbol1007("1007", "Symbol1007"),
 
     Symbol2001("2001", "Symbol2001"),
     Symbol2002("2002", "Symbol2002"),

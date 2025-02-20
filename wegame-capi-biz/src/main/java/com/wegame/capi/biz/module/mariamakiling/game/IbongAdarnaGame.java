@@ -228,20 +228,21 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
     }
 
     public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay, boolean isFreeSpinsFlag) {
-        if (isFreeSpinsFlag) {
-            return ibongAdarnaConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
-        } else {
-            switch (gamePlay.getBetSubType()) {
-                case NORMAL_BET:
-                case BUY_BET:
-                    return ibongAdarnaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
-                case FREE_SPINS_NORMAL_BET:
-                case FREE_SPINS_BUY_BET:
-                    return ibongAdarnaConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
-                default:
-                    throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
-            }
-        }
+//        if (isFreeSpinsFlag) {
+//            return ibongAdarnaConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
+//        } else {
+//            switch (gamePlay.getBetSubType()) {
+//                case NORMAL_BET:
+//                case BUY_BET:
+//                    return ibongAdarnaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
+//                case FREE_SPINS_NORMAL_BET:
+//                case FREE_SPINS_BUY_BET:
+//                    return ibongAdarnaConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
+//                default:
+//                    throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
+//            }
+//        }
+        return null;
     }
 
     private static IbongAdarnaGameRecordDo buildGameRecord(Long id,
@@ -268,15 +269,15 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
     }
 
     private Integer getWheelNumber() {
-        int randomNumber = randomService.randomInt(1, 100);
-        int startVal = 0;
-        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(ibongAdarnaConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
-            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-                return entry.getKey();
-            } else {
-                startVal += entry.getValue();
-            }
-        }
+//        int randomNumber = randomService.randomInt(1, 100);
+//        int startVal = 0;
+//        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(ibongAdarnaConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
+//            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+//                return entry.getKey();
+//            } else {
+//                startVal += entry.getValue();
+//            }
+//        }
         throw new BusinessException(ErrorCode.ERR_INTER);
     }
 }
