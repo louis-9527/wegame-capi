@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.domain.biz.game;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wegame.base.enums.BooleanEnum;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
@@ -101,7 +102,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
-                    .freeSpinFlag(0)
+                    .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? BooleanEnum.TRUE.getCode() : BooleanEnum.FALSE.getCode())
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .build();
         } else {
@@ -113,7 +114,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .rewardSymbolIndexSet(buildRewardSymbolIndexSet())
                     .rewardLineList(buildRewardLineList())
-                    .freeSpinFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
+                    .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? BooleanEnum.TRUE.getCode() : BooleanEnum.FALSE.getCode())
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .build();
         }

@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.malakas.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
+import com.wegame.base.enums.BooleanEnum;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
@@ -55,8 +56,6 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
     @Override
     public RewardResultDo<MalakasSymbolDo> handle(RewardHandleDo<MalakasSymbolDo> rewardHandle) {
         long current = System.currentTimeMillis();
-        int scatterCount = scatterCount(rewardHandle);
-        Integer freeWheelTimes = malakasConfig.getScatterFreeSpinsTimesConfig().get(scatterCount);
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
@@ -64,6 +63,8 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         // 3、计算倍率
         BigDecimal totalMultiple = malakasMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
         if (CollectionUtil.isEmpty(rewardLineList)) {
+            int scatterCount = scatterCount(rewardHandle);
+            Integer freeWheelTimes = malakasConfig.getScatterFreeSpinsTimesConfig().get(scatterCount);
             // 未中奖
             return RewardResultDo.<MalakasSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
@@ -71,7 +72,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
                     .totalMultiple(rewardHandle.getCurrentMultiple())
-                    .hasRewardFreeWheel(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
+                    .hasRewardFreeWheel(CollectionUtils.isEmpty(rewardLineList) && scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                     .rewardLineDetailList(null)
                     .rewardFreeWheelTimes(Objects.isNull(freeWheelTimes) ? 0 : freeWheelTimes)
                     .build();
@@ -108,9 +109,9 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
-                .hasRewardFreeWheel(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
+                .hasRewardFreeWheel(Boolean.FALSE)
                 .rewardLineDetailList(rewardLineDetailList)
-                .rewardFreeWheelTimes(Objects.isNull(freeWheelTimes) ? 0 : freeWheelTimes)
+                .rewardFreeWheelTimes(0)
                 .totalMultiple(totalMultiple)
                 .build();
         // 6.返回中奖信息

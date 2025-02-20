@@ -37,7 +37,7 @@ public class MalakasBetResultVo implements Serializable {
     @ApiModelProperty("中奖线列表")
     private List<MalakasRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识,0:否,1:是")
-    private Integer freeSpinFlag;
+    private Integer freeWheelFlag;
     @ApiModelProperty("免费轮游戏记录Id列表")
     private List<String> gameRecordIds;
 }

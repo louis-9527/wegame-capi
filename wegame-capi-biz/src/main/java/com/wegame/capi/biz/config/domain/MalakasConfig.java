@@ -113,6 +113,7 @@ public class MalakasConfig {
         AssertUtil.assertTrue(Objects.equals(probabilisticConfig.getGoldBoarderProbabilisticConfig().size(), 7), ErrorCode.ERR_INTER, "probabilisticConfig.goldBoarderProbabilisticConfig size error");
     }
     private void scatterFreeSpinsTimesConfigValidate() {
+        // todo 校验scatter配置
         Assert.notNull(scatterFreeSpinsTimesConfig, "scatterFreeSpinsTimesConfig is null");
     }
     private void commonPlayWheelProbabilisticConfigValid(int column) {

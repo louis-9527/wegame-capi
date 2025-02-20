@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.domain.biz.game;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wegame.base.enums.BooleanEnum;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
@@ -128,7 +129,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                             ).flatMap(List::stream)
                             .collect(Collectors.toSet()))
                     .rewardLineList(buildRewardLineList())
-                    .freeSpinFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
+                    .freeSpinFlag(rewardResult.isHasRewardFreeWheel() ? BooleanEnum.TRUE.getCode() : BooleanEnum.FALSE.getCode())
                     .gameRecordIds(Optional.ofNullable(gameRecordIds)
                             .orElse(Collections.emptyList())
                             .stream()
