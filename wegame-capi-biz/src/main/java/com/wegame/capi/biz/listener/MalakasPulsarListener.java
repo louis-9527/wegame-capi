@@ -14,7 +14,6 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
@@ -63,8 +62,8 @@ public class MalakasPulsarListener
     public void init() {
         executor = new WsThreadPoolExecutor(corePoolSize,
                 maximumPoolSize,
-                0,
-                TimeUnit.SECONDS,
+                3,
+                TimeUnit.MINUTES,
                 new ArrayBlockingQueue<>(1000),
                 new CustomizableThreadFactory("malakas-consumber-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
@@ -141,28 +140,36 @@ public class MalakasPulsarListener
         batchUpdate(updateRecordList, updateMessageIdMap);
     }
 
-    private void batchAdd(List<BetRecordDo<MalakasGameRecordDo>> recordList, Map<Long, MessageId> messageIdMap) {
+    public void batchAdd(List<BetRecordDo<MalakasGameRecordDo>> recordList, Map<Long, MessageId> messageIdMap) {
         long startTime = System.currentTimeMillis();
         if (CollectionUtils.isEmpty(recordList)) {
             return;
         }
         try {
-            boolean ret = malakasRecordManager.batchAdd(recordList, gameType);
+            boolean ret = malakasRecordManager.batchAdd(recordList, getGameType());
             if (ret) {
-                malakasConsumer.acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
+                getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
             }
         } catch (Exception e) {
-            log.error("batchAdd err, errMsg: {}", e.getMessage(), e);
-            for (BetRecordDo<MalakasGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
-                try {
-                    malakasRecordManager.add(betRecordDo, gameType);
-                    malakasConsumer.acknowledge(messageIdMap.get(betRecordDo.getId()));
-                } catch (Exception ep) {
-                    log.error("add , betRecordId: {}, errMsg: {}", betRecordDo.getId(), ep.getMessage(), ep);
-                }
-            }
+            log.error("batchAdd error, errMsg: {}", e.getMessage(), e);
+            add(recordList, messageIdMap);
+        } finally {
+            //            // help gc
+            //            messageIdMap.clear();
+            //            recordList = null;
         }
         long endTime = System.currentTimeMillis();
         log.info("batchAdd, size:{}, cost: {} ms", recordList.size(), endTime - startTime);
+    }
+
+    private void add(List<BetRecordDo<MalakasGameRecordDo>> recordList, Map<Long, MessageId> messageIdMap) {
+        for (BetRecordDo<MalakasGameRecordDo> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
+            try {
+                malakasRecordManager.add(betRecordDo, getGameType());
+                getConsumer().acknowledge(messageIdMap.get(betRecordDo.getId()));
+            } catch (Exception e) {
+                log.error("add error, betRecordId: {}, errMsg: {}", betRecordDo.getId(), e.getMessage(), e);
+            }
+        }
     }
 }
