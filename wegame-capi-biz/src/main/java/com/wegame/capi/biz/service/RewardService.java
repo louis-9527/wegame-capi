@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service;
 
+import com.wegame.base.CacheConstants;
 import com.wegame.capi.biz.domain.biz.reward.RewardInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -7,6 +8,7 @@ import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public class RewardService {
     @Autowired
     RedisTemplate redisTemplate;
 
+    @Cacheable(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id")
     public RewardInfoDo get(GameTypeEnum gameType) {
         log.info("get reward info");
         RewardInfoDo rewardInfoDo = new RewardInfoDo();

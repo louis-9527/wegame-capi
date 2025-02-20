@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("reward")
 @Api(value = "中奖模块", tags = {"中奖模块"})
-public class RewardController {
+public class RewardController extends AbstractController {
 
     @Autowired
     RewardService rewardService;
@@ -40,7 +40,9 @@ public class RewardController {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
-        response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate, max-age=0");
+        noCacheControl(response);
         return CommonResponse.build(RewardInfoConverter.doToVo(rewardService.get(gameType)));
     }
+
+
 }
