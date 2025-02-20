@@ -9,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.symbol.IbongSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
@@ -56,7 +57,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
         List<IbongAdarnaGameRecordDo> ret = new ArrayList<>();
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
-        WheelDo<SymbolDo> firstWheel=generateNormalWheel(gameInfo, getProbabilisticConfig(gamePlay, false));
+        WheelDo<SymbolDo> firstWheel = generateNormalWheel(gameInfo, getProbabilisticConfig(gamePlay, false));
 
         AssertUtil.assertNotNull(firstWheel, ErrorCode.ERR_INTER);
         RewardResultDo<SymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel, BigDecimal.ZERO));
@@ -75,27 +76,19 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<SymbolDo> generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
-        SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+    private WheelDo<IbongSymbolDo> generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+        IbongSymbolDo[][] symbolArr = new IbongSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
         int randomNumberindex = 0;
         for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
             // 一列只能包含一个scatter
-            boolean hasScatter = false;
             Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
             for (int row = 0; row < gameInfo.getRow(); row++) {
                 Integer random = randomNumberList.get(randomNumberindex);
-                if (hasScatter) {
-                    // 生成非scatter
-                    SymbolDo symbolDo = randomNonScatterSymbol(random, gameInfo, columProbabilisticMap);
-                    symbolArr[row][colum] = symbolDo;
-                } else {
-                    // 随机生成
-                    SymbolDo symbolDo = randomNormalSymbol(random, gameInfo, columProbabilisticMap);
-                    symbolArr[row][colum] = symbolDo;
-                    hasScatter = symbolDo.isScatterSymbol();
-                }
+                // 随机生成
+                SymbolDo symbolDo = randomNormalSymbol(random, gameInfo, columProbabilisticMap);
+                symbolArr[row][colum] = symbolDo;
                 randomNumberindex++;
             }
         }
