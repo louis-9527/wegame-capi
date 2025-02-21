@@ -154,7 +154,9 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             // loop play
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
-            totalMultipleAmount = rewardResult.getTotalMultiple();
+            if (CollectionUtils.isNotEmpty(ret)) {
+                totalMultipleAmount = ret.get(ret.size()-1).getRewardResult().getTotalMultiple();
+            }
             log.info("每一轮结束 parentId {} , gameRecordId {} , totalMultiple ----> {}", gameRecord.getParentId(), gameRecord.getId(), totalMultipleAmount);
         }
     }
