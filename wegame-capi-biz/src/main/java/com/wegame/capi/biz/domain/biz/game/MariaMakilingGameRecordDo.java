@@ -11,7 +11,6 @@ import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingRewardLineVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -84,9 +83,13 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      */
     private List<Long> gameRecordIds;
     /**
-     * 是否触发最大中奖倍数
+     * 累计中奖总金额
      */
-    private boolean triggerMaxRewardMultiple;
+    private Long overallRewardAmount;
+    /**
+     * 达到触发最大中奖倍数
+     */
+    private Boolean reachMaxRewardMultiple;
 
     /**
      * 是否中奖免费轮
@@ -105,7 +108,6 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
         if (Objects.isNull(rewardResult)) {
             return MariaMakilingBetResultVo.builder()
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
-                    .triggerMaxRewardMultiple(triggerMaxRewardMultiple)
                     .build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return MariaMakilingBetResultVo.builder()
@@ -114,8 +116,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
-                    .freeSpinFlag(0)
-                    .triggerMaxRewardMultiple(triggerMaxRewardMultiple)
+                    .freeWheelFlag(0)
                     .build();
         } else {
             return MariaMakilingBetResultVo.builder()
@@ -135,13 +136,12 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                             ).flatMap(List::stream)
                             .collect(Collectors.toSet()))
                     .rewardLineList(buildRewardLineList())
-                    .freeSpinFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
+                    .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
                     .gameRecordIds(Optional.ofNullable(gameRecordIds)
                             .orElse(Collections.emptyList())
                             .stream()
                             .map(String::valueOf)
                             .collect(Collectors.toList()))
-                    .triggerMaxRewardMultiple(triggerMaxRewardMultiple)
                     .build();
         }
     }
@@ -156,6 +156,8 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                 .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
                 .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
+                .overallRewardAmount(overallRewardAmount)
+                .reachMaxRewardMultiple(reachMaxRewardMultiple)
                 .rewardLineList(buildRewardLineList())
                 .build();
     }

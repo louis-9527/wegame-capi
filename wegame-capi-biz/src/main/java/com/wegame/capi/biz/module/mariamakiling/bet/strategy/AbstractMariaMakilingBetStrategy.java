@@ -90,25 +90,25 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .orElse(null);
         AssertUtil.assertNotNull(gameRecord, ErrorCode.ERR_PARAM, "NOT FOUND GAME RECORD");
         // 统计-当前轮次及之前记录奖励金额之和
-        Long overallRewardAmount = Optional.ofNullable(gameRecordList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .filter(item -> item.getRewardResult() != null && item.getIndex() <= gameRecord.getIndex())
-                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                .sum();
+        //        Long overallRewardAmount = Optional.ofNullable(gameRecordList)
+        //                .orElse(Collections.emptyList())
+        //                .stream()
+        //                .filter(item -> item.getRewardResult() != null && item.getIndex() <= gameRecord.getIndex())
+        //                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+        //                .sum();
         // 后处理-免费轮
         freeWheelAfterHandle(betDo,
                 MariaMakilingBetRecordDetailDo.builder()
                         .gameRecordList(gameRecordList)
                         .build(),
-                overallRewardAmount);
+                gameRecord.getOverallRewardAmount());
         // 返回
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betDetail.getBetRecordId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
-                .overallRewardAmount(overallRewardAmount)
+                .overallRewardAmount(gameRecord.getOverallRewardAmount())
                 .resultDetail(gameRecord)
                 .build();
     }
@@ -123,20 +123,22 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
                 .betAmount(betDo.getBetDetail().getBetAmount())
+                .payAmount(betDo.getBetDetail().getPayAmount())
                 .betRecordId(betRecordId)
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 最大中奖金额
         // 构建投注记录
+        MariaMakilingGameRecordDo gameRecord = list.get(0);
         BetRecordDo<MariaMakilingGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
                 this.getActualRewardAmount(list.stream().filter(item -> Objects.nonNull(item.getRewardResult()))
                         .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                        .sum(), betDo.getBetDetail().getBetAmount()),
+                        .sum(), betDo.getBetDetail().getPayAmount()),
                 list);
-        MariaMakilingGameRecordDo gameRecord = list.get(0);
+
         // 保存投注记录并派奖
         Long userCredit = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         // 组装返回结果

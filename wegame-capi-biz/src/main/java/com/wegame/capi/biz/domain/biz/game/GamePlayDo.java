@@ -38,6 +38,10 @@ public class GamePlayDo implements Serializable {
      */
     private Long betAmount;
     /**
+     * 支付金额
+     */
+    private Long payAmount;
+    /**
      * 投注记录id
      */
     private Long betRecordId;

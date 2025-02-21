@@ -31,19 +31,13 @@ public class MariaMakilingBetResultVo implements Serializable {
     @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
     @ApiModelProperty("滚轮")
-    //    private String[][] spinsResult;
     private String[][] wheel;
     @ApiModelProperty("中奖元素坐标集合")
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
     private List<MariaMakilingRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识,0:否,1:是")
-    private Integer freeSpinFlag;
+    private Integer freeWheelFlag;
     @ApiModelProperty("免费轮游戏记录Id列表")
-    //    private List<String> freeSpinIds;
     private List<String> gameRecordIds;
-    @ApiModelProperty("是否触发最大中奖倍数")
-    private Boolean triggerMaxRewardMultiple;
-
-
 }
