@@ -96,7 +96,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
         // loop play
         CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList = new CopyOnWriteArrayList<>();
-        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
+        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, null, gameRecord, freeWheelList);
         if (CollectionUtils.isNotEmpty(freeWheelList)) {
             handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeWheelList);
         }
@@ -109,6 +109,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     public void loopPlayOnPreGameRecord(GamePlayDo gamePlay,
                                         List<MalakasGameRecordDo> ret,
                                         AtomicLong totalRewardAmount,
+                                        BigDecimal totalMultipleAmount,
                                         MalakasGameRecordDo preGameRecord,
                                         CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList) {
         if (canContinuePlayOnPreWheel(preGameRecord.getRewardResult(), totalRewardAmount)) {
@@ -118,7 +119,9 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
+            totalMultipleAmount = rewardResult.getTotalMultiple();
+            log.info("gameRecordId {} , totalMultiple ----> {}", gameRecord.getId(), totalMultipleAmount);
+            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, totalMultipleAmount, gameRecord, freeWheelList);
         } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
             if (!reachMaxMultiple(gamePlay, totalRewardAmount)) {
                 Optional.ofNullable(preGameRecord.getGameRecordIds())
@@ -139,21 +142,21 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     }
 
     private void handleFreeWheelGamePlay(GamePlayDo gamePlay, List<MalakasGameRecordDo> ret, AtomicLong totalRewardAmount, CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList) {
-        BigDecimal totalMultiple  = new BigDecimal("1");
+        BigDecimal totalMultipleAmount  = new BigDecimal("1");
         while (!freeWheelList.isEmpty()) {
             FreeWheelHandleDo freeWheel = freeWheelList.remove(0);
             WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), true));
             // 判奖-根据游戏滚轮和中奖线算法判断
-            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, totalMultiple));
+            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, totalMultipleAmount));
             AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
             // 组装-游戏记录
             MalakasGameRecordDo gameRecord = buildGameRecord(freeWheel.getGameRecordId(), freeWheel.getParentGameRecordId(), gamePlay.getBetRecordId(), freeWheel.getGameRecordId(), wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            totalMultiple = rewardResult.getTotalMultiple();
-            log.info("gameRecordId {} , totalMultiple ----> {}", gameRecord.getId(), totalMultiple);
+            totalMultipleAmount = rewardResult.getTotalMultiple();
+            log.info("gameRecordId {} , totalMultiple ----> {}", gameRecord.getId(), totalMultipleAmount);
             // loop play
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
+            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, totalMultipleAmount, gameRecord, freeWheelList);
         }
     }
 
