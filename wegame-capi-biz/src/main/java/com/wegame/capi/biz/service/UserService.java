@@ -6,6 +6,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.api.MockSingleWalletApi;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
@@ -48,6 +49,8 @@ public class UserService {
     SingleWalletApi singleWalletApi;
     @Autowired
     RedisTemplate redisTemplate;
+    @Autowired
+    MockSingleWalletApi mockSingleWalletApi;
 
     /**
      * 新增
@@ -236,13 +239,15 @@ public class UserService {
         } catch (Exception e) {
             log.error("getCredit err, errMsg: {}", e.getMessage(), e);
         }
-        GetCreditRes res = singleWalletApi.getCredit(GetCreditReqBuilder.build());
+//        GetCreditRes res = singleWalletApi.getCredit(GetCreditReqBuilder.build());
+        GetCreditRes res = mockSingleWalletApi.getCredit(GetCreditReqBuilder.build());
         // todo 空的时候返回 0L 是否合适 @maidong
         return Objects.isNull(res.getCredit()) ? 0L : AmountUtil.toLong(res.getCredit());
     }
 
     public Void notifyCreditChange(CreditChangeNotifyDto dto) {
-        Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(dto.getChannelId());
+//        Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(dto.getChannelId());
+        Pair<String, String> privateKeyAndIv = mockSingleWalletApi.getPrivateKeyAndIvByChannelId(dto.getChannelId());
         String hash = singleWalletApi.hash(dto.getChannelId(), dto.getPlayerName(), DateUtil.toUTC(dto.getCreateTime()),dto.getRefId() ,privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
         AssertUtil.assertTrue(StringUtils.equals(hash, dto.getHash()), ErrorCode.ERR_PARAM);
         redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, dto.getPlayerName()), 1);

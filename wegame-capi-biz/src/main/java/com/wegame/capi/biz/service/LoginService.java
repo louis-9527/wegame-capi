@@ -3,6 +3,7 @@ package com.wegame.capi.biz.service;
 import cn.hutool.crypto.SecureUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.api.MockSingleWalletApi;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
@@ -28,9 +29,12 @@ public class LoginService {
     RedisTemplate redisTemplate;
     @Autowired
     SingleWalletApi singleWalletApi;
+    @Autowired
+    MockSingleWalletApi mockSingleWalletApi;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
-        AuthLoginTokenRes authLoginTokenRes = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
+//        AuthLoginTokenRes authLoginTokenRes = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
+        AuthLoginTokenRes authLoginTokenRes = mockSingleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
         AssertUtil.assertNotNull(authLoginTokenRes, ErrorCode.ERR_MIDDLE_PLATFORM);
         String token = SecureUtil.md5(userLoginDo.getToken());
         response.addHeader(Constants._TOKEN_, token);
