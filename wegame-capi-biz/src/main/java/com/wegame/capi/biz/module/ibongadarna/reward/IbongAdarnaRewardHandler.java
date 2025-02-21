@@ -3,15 +3,18 @@ package com.wegame.capi.biz.module.ibongadarna.reward;
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
+import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
+import com.wegame.capi.biz.domain.biz.symbol.IbongSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -36,7 +39,7 @@ import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
 @Component("ibongAdarnaRewardHandler")
-public class IbongAdarnaRewardHandler extends AbstractRewardHandler<SymbolDo> {
+public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolDo> {
 
     // ONE_COLUM_INDEX,THREE_COLUM_INDEX,FIVE_COLUM_INDEX顺序不可更改
     private static final List<Integer> SCATTER_COLUM_INDEX_LIST = Arrays.asList(
@@ -57,17 +60,19 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<SymbolDo> {
     MultipleCalculateStrategy mariaMakilingMultipleCalculateStrategy;
     @Autowired
     BetRecordService betRecordService;
+    @Autowired
+    IbongAdarnaConfig ibongAdarnaConfig;
 
-    public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
+    public RewardResultDo<IbongSymbolDo> handle(RewardHandleDo<IbongSymbolDo> rewardHandle) {
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
-        List<RewardLineDo<SymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
+        List<RewardLineDo<IbongSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算倍率
         BigDecimal totalMultiple = mariaMakilingMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
-            return RewardResultDo.<SymbolDo>builder()
+            return RewardResultDo.<IbongSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardType(RewardTypeEnum.NONE)
                     .rewardSubType(RewardSubTypeEnum.NONE)
@@ -117,108 +122,44 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         return rewardResult;
     }
 
-    private List<RewardLineDo<SymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<SymbolDo> wheel) {
-        SymbolDo[][] symbolArr = wheel.getSymbolArr();
-        // Map<第一列元素, TreeMap<列序号，满足规则的元素列表>
-        Map<SymbolDo, TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>>> map = new HashMap<>();
-        // 目标元素集合targetSymbolSet
-        Set<SymbolDo> targetSymbolSet = new HashSet<>();
-        // 1、处理第一列
-        for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
-            SymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
-            targetSymbolSet.add(targetSymbol);
-            if (!map.containsKey(targetSymbol)) {
-                map.put(targetSymbol, new TreeMap<>());
+    private List<RewardLineDo<IbongSymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<IbongSymbolDo> wheel) {
+        IbongSymbolDo[][] symbolArr = wheel.getSymbolArr();
+        List<RewardLineDo<IbongSymbolDo>> rewardLineDoList = Lists.newArrayList();
+        // 获取固定线路
+        Map<Integer, List<List<Integer>>> rewardFixedLinesConfigMap = ibongAdarnaConfig.getRewardFixedLinesConfig();
+
+        rewardFixedLinesConfigMap.forEach((lineNo, lineIndexList) -> {
+            Set<IbongSymbolDo> rewardSymbolDoSet = Sets.newHashSet();
+            List<IbongSymbolDo> rewardSymbolDoList = Lists.newArrayList();
+            IbongSymbolDo preSymbolDo = null;
+            for (List<Integer> lineIndex : lineIndexList) {
+                IbongSymbolDo symbolDo = symbolArr[lineIndex.get(0)][lineIndex.get(1)];
+                rewardSymbolDoList.add(symbolDo);
+                rewardSymbolDoList.add(symbolDo);
             }
-        }
-        // 2、循环处理(从第1列开始处理)
-        for (int colum = ONE_COLUM_INDEX; colum < gameInfo.getColumn(); colum++) {
-            Integer currentColum = colum;
-            for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
-                Integer currentRow = row;
-                SymbolDo currentSymbol = symbolArr[row][currentColum];
-                for (SymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
-                    if (targetSymbol.isScatterSymbol() && !SCATTER_COLUM_INDEX_LIST.contains(currentColum)) {
-                        continue;
-                    }
-                    if (!isMatchTargetSymbol(currentSymbol, targetSymbol)) {
-                        continue;
-                    }
-                    TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>> treeMap = map.get(targetSymbol);
-                    if (canPutIn(treeMap, currentSymbol, currentColum)) {
-                        RewardSymbolDo<SymbolDo> symbolIndex = RewardSymbolDo.<SymbolDo>builder()
-                                .symbol(currentSymbol)
-                                .index(IndexFactory.buildDo(currentRow, currentColum))
-                                .build();
-                        if (Objects.isNull(treeMap.get(currentColum))) {
-                            List<RewardSymbolDo<SymbolDo>> list = new ArrayList<>();
-                            list.add(symbolIndex);
-                            treeMap.put(currentColum, list);
-                        } else {
-                            treeMap.get(currentColum).add(symbolIndex);
-                        }
-                    }
-                }
-            }
-        }
-        // 3、统计中奖线
-        List<RewardLineDo<SymbolDo>> list = buildRewardLineList(map);
-        // 4、返回中奖线列表
-        return list;
+
+            // 当前线是否中奖
+
+
+        });
+
+
+        // 返回中奖线列表
+        return null;
     }
 
-    private boolean canPutIn(TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>> treeMap, SymbolDo currentSymbol, Integer currentColum) {
-        // 第一列必处理
-        if (Objects.equals(currentColum, ONE_COLUM_INDEX)) {
-            return true;
-        }
-        if (currentSymbol.isScatterSymbol()) {
-            // scatter元素，判断（逻辑上的）上一列的列表元素是否为空： 说明，scatter只能出现在135列
-            int preColumIndex = SCATTER_COLUM_INDEX_LIST.get(SCATTER_COLUM_INDEX_LIST.indexOf(currentColum) - 1);
-            return CollectionUtils.isNotEmpty(treeMap.get(preColumIndex));
-        } else {
-            // 非scatter元素，判断上一列的列表是否为空
-            return CollectionUtils.isNotEmpty(treeMap.get(currentColum - 1));
-        }
+    /**
+     * 判断是中奖线
+     *
+     * @param rewardSymbolDoSet
+     * @return
+     */
+    private boolean hasReward(Set<IbongSymbolDo> rewardSymbolDoSet) {
+        return false;
     }
 
-    private List<RewardLineDo<SymbolDo>> buildRewardLineList(Map<SymbolDo, TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>>> map) {
-        List<RewardLineDo<SymbolDo>> list = new ArrayList<>();
-        for (Map.Entry<SymbolDo, TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
-            if (MapUtils.isEmpty(entry.getValue())) {
-                continue;
-            }
-            TreeMap<Integer, List<RewardSymbolDo<SymbolDo>>> columMap = entry.getValue();
-            if (columMap.size() < RewardLineTypeEnum.THREE.getNo()) {
-                continue;
-            }
-            int totalLineCount = columMap.values()
-                    .stream()
-                    .map(item -> item.size())
-                    .reduce(1, (a, b) -> a * b);
-            list.add(RewardLineDo.<SymbolDo>builder()
-                    .rewardSymbol(entry.getKey())
-                    .rewardLineType(RewardLineTypeEnum.valueOfNo(columMap.size()))
-                    .rewardLineSubType(entry.getKey().isScatterSymbol() ? RewardLineSubTypeEnum.SCATTER : RewardLineSubTypeEnum.COMMON)
-                    .rewardLineCount(totalLineCount)
-                    .rewardSymbolList(columMap.values()
-                            .stream()
-                            .filter(CollectionUtils::isNotEmpty)
-                            .flatMap(List::stream)
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList()))
-                    .build());
-        }
-        return list;
-    }
 
-    private boolean isMatchTargetSymbol(SymbolDo symbol, SymbolDo targetSymbol) {
-        return Objects.equals(symbol, targetSymbol)
-                || Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.WILD)
-                || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
-    }
-
-    private void validate(RewardHandleDo<SymbolDo> rewardHandle) {
+    private void validate(RewardHandleDo<IbongSymbolDo> rewardHandle) {
         AssertUtil.assertNotNull(rewardHandle, ErrorCode.ERR_PARAM, "rewardHandle is null");
         AssertUtil.assertNotNull(rewardHandle.getGameType(), ErrorCode.ERR_INTER, "not support gameType");
         AssertUtil.assertNotNull(rewardHandle.getBetType(), ErrorCode.ERR_PARAM, "not support betType");
