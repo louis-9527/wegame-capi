@@ -89,7 +89,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
     /**
      * 达到触发最大中奖倍数
      */
-    private Boolean reachMaxRewardMultiple;
+    private Boolean accumulateReachMaxMultiple;
 
     /**
      * 是否中奖免费轮
@@ -156,8 +156,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                 .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
                 .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
-                .overallRewardAmount(overallRewardAmount)
-                .reachMaxRewardMultiple(reachMaxRewardMultiple)
+                .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                 .rewardLineList(buildRewardLineList())
                 .build();
     }

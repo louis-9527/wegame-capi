@@ -296,7 +296,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 .rewardResult(rewardResult)
                 .gameRecordIds(freeSpinGameRecordIds)
                 .overallRewardAmount(overallRewardAmount)
-                .reachMaxRewardMultiple(reachMaxRewardMultiple)
+                .accumulateReachMaxMultiple(reachMaxRewardMultiple)
                 .build();
     }
 

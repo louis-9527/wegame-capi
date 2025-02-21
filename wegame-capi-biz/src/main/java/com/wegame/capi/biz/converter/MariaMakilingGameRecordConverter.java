@@ -3,7 +3,6 @@ package com.wegame.capi.biz.converter;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 
 import java.math.BigDecimal;
@@ -39,6 +38,7 @@ public class MariaMakilingGameRecordConverter {
                 .rewardAmount(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getTotalRewardAmount).orElse(0L))
                 .wheel(SymbolBuilder.build(gameRecordDo.getWheel().getSymbolArr()))
                 .multiple(Optional.ofNullable(gameRecordDo.getRewardResult()).map(RewardResultDo::getTotalMultiple).orElse(BigDecimal.ZERO))
+                .accumulateReachMaxMultiple(gameRecordDo.getAccumulateReachMaxMultiple())
                 .build();
     }
 }
