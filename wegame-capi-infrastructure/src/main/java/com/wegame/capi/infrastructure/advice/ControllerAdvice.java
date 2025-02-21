@@ -3,6 +3,7 @@ package com.wegame.capi.infrastructure.advice;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.base.exception.RetryException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.exceptions.PersistenceException;
@@ -37,13 +38,19 @@ public class ControllerAdvice {
     @ExceptionHandler({MyBatisSystemException.class})
     public CommonResponse handleMyBatisSystemException(Exception ex) {
         log.error("Got MyBatisSystemException: [{}]", ex.getMessage(), ex);
-        return CommonResponse.build("" + HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.ERR_INTER.getMsg());
+        return CommonResponse.build(ErrorCode.ERR_INTER.getCode(), ErrorCode.ERR_INTER.getMsg());
     }
 
     @ExceptionHandler({PersistenceException.class})
     public CommonResponse handlePersistenceException(Exception ex) {
         log.error("Got PersistenceException: [{}]", ex.getMessage(), ex);
-        return CommonResponse.build("" + HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.ERR_INTER.getMsg());
+        return CommonResponse.build(ErrorCode.ERR_INTER.getCode(), ErrorCode.ERR_INTER.getMsg());
+    }
+
+    @ExceptionHandler({RetryException.class})
+    public CommonResponse handleRetryException(Exception ex) {
+        log.error("Got RetryException: [{}]", ex.getMessage(), ex);
+        return CommonResponse.build(ErrorCode.ERR_INTER.getCode(), ErrorCode.ERR_INTER.getMsg());
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
@@ -68,12 +75,12 @@ public class ControllerAdvice {
     @ExceptionHandler({Exception.class})
     public CommonResponse handleException(Exception ex) {
         log.error("Got Exception [{}]", ex.getMessage(), ex);
-        return CommonResponse.build("" + HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.ERR_INTER.getMsg());
+        return CommonResponse.build(ErrorCode.ERR_INTER.getCode(), ErrorCode.ERR_INTER.getMsg());
     }
 
     @ExceptionHandler({RuntimeException.class})
     public CommonResponse handleRuntimeException(RuntimeException ex) {
         log.error("Got RuntimeException [{}] ", ex.getMessage(), ex);
-        return CommonResponse.build("" + HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.ERR_INTER.getMsg());
+        return CommonResponse.build(ErrorCode.ERR_INTER.getCode(), ErrorCode.ERR_INTER.getMsg());
     }
 }
