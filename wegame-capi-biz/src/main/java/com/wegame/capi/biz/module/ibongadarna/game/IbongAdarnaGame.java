@@ -64,7 +64,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
         WheelDo<IbongSymbolDo> firstWheel = generateNormalWheel(gameInfo, getProbabilisticConfig(gamePlay, false));
 
         AssertUtil.assertNotNull(firstWheel, ErrorCode.ERR_INTER);
-        RewardResultDo<SymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel, BigDecimal.ZERO));
+        RewardResultDo<IbongSymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel, BigDecimal.ZERO));
         IbongAdarnaGameRecordDo record = buildGameRecord(generateGameRecordId(),
                 gamePlay.getBetRecordId(),
                 firstWheel,

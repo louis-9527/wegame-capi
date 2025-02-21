@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.symbol.IbongSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -64,11 +65,11 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
     /**
      * 滚轮
      */
-    private WheelDo<SymbolDo> wheel;
+    private WheelDo<IbongSymbolDo> wheel;
     /**
      * 中奖结果
      */
-    private RewardResultDo<SymbolDo> rewardResult;
+    private RewardResultDo<IbongSymbolDo> rewardResult;
 
     /**
      * 是否中奖免费轮
