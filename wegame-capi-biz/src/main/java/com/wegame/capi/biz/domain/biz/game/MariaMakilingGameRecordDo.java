@@ -115,6 +115,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
+                    .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .freeWheelFlag(0)
                     .build();
@@ -124,6 +125,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
+                    .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .rewardSymbolIndexSet(Optional.ofNullable(rewardResult.getRewardLineDetailList())
                             .orElse(Collections.emptyList())
