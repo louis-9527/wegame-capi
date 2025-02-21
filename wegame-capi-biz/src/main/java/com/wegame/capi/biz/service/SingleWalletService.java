@@ -2,7 +2,6 @@ package com.wegame.capi.biz.service;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.api.MockSingleWalletApi;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.api.domain.res.CommonRes;
@@ -38,8 +37,6 @@ public class SingleWalletService {
 
     @Autowired
     SingleWalletApi singleWalletApi;
-    @Autowired
-    MockSingleWalletApi mockSingleWalletApi;
 
     public BetSingleWalletResultDo betWithPayout(BetRecordDo betRecordDo) {
         if (!singleWalletApi.invoke) {
@@ -48,8 +45,7 @@ public class SingleWalletService {
                     .betId(String.valueOf(RandomUtils.nextInt()))
                     .build();
         }
-//        CommonRes<SingleWalletBetWithPayoutRes> commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
-        CommonRes<SingleWalletBetWithPayoutRes> commonRes = mockSingleWalletApi.betWithPayout(buildReq(betRecordDo));
+        CommonRes<SingleWalletBetWithPayoutRes> commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
         // 成功或者重复的refId都当作成功处理
         if (commonRes.isSuc()) {
             AssertUtil.assertNotNull(commonRes.getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
