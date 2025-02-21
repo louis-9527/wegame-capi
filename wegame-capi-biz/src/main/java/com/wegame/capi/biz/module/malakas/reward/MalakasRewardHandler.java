@@ -62,6 +62,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         List<RewardLineDo<MalakasSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算倍率
         BigDecimal totalMultiple = malakasMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
+        log.info("currentMultiple]{} totalMultiple={}", rewardHandle.getCurrentMultiple(), totalMultiple);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             int scatterCount = scatterCount(rewardHandle);
             Integer freeWheelTimes = malakasConfig.getScatterFreeWheelTimesConfig().get(scatterCount);
@@ -105,14 +106,14 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         }
         // 5.构建中奖结果
         RewardResultDo<MalakasSymbolDo> rewardResult = RewardResultDo.<MalakasSymbolDo>builder()
+                .betAmount(rewardHandle.getBetAmount())
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
-                .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
+                .totalMultiple(totalMultiple)
                 .hasRewardFreeWheel(Boolean.FALSE)
                 .rewardLineDetailList(rewardLineDetailList)
                 .rewardFreeWheelTimes(0)
-                .totalMultiple(totalMultiple)
                 .build();
         // 6.返回中奖信息
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
