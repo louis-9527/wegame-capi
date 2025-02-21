@@ -119,7 +119,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             BigDecimal totalMultipleAmount = rewardResult.getTotalMultiple();
-            log.info("gameRecordId {} , totalMultiple ----> {}", gameRecord.getId(), totalMultipleAmount);
+            log.info("parentId {} , gameRecordId {} , totalMultiple ----> {}", gameRecord.getParentId(), gameRecord.getId(), totalMultipleAmount);
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
             if (!reachMaxMultiple(gamePlay, totalRewardAmount)) {
