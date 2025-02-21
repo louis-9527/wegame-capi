@@ -40,6 +40,11 @@ public class IbongAdarnaConfig {
      */
     private Map<Integer, List<List<Integer>>> rewardFixedLinesConfig;
 
+    /**
+     * 最大中奖倍数
+     */
+    private Integer maxRewardMultiple;
+
     @Data
     @SuperBuilder
     @NoArgsConstructor
@@ -85,7 +90,8 @@ public class IbongAdarnaConfig {
     public void validate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
-        rewardFixedLinesConfig();
+        rewardFixedLinesConfigValidate();
+        maxRewardMultipleValidate();
     }
 
     private void oddsConfigValidate() {
@@ -160,7 +166,7 @@ public class IbongAdarnaConfig {
         });
     }
 
-    private void rewardFixedLinesConfig() {
+    private void rewardFixedLinesConfigValidate() {
         AssertUtil.assertNotNull(rewardFixedLinesConfig, ErrorCode.ERR_INTER, "oddsConfig is null");
         for (Map.Entry<Integer, List<List<Integer>>> integerListEntry : rewardFixedLinesConfig.entrySet()) {
             AssertUtil.assertNotEmpty(integerListEntry.getValue(), ErrorCode.ERR_INTER, "rewardFixedLinesConfig.get(" + integerListEntry.getKey() + ") is null");
@@ -170,5 +176,10 @@ public class IbongAdarnaConfig {
                 AssertUtil.assertTrue(indexList.size() == 2, ErrorCode.ERR_INTER, "rewardFixedLinesConfig.get(" + integerListEntry.getKey() + ") index length is not equals 2");
             });
         }
+    }
+
+    private void maxRewardMultipleValidate() {
+        AssertUtil.assertNotNull(maxRewardMultiple, ErrorCode.ERR_INTER, "maxRewardMultiple is null");
+        AssertUtil.assertTrue(maxRewardMultiple > 0, ErrorCode.ERR_INTER, "maxRewardMultiple must great than 0");
     }
 }
