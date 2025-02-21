@@ -96,7 +96,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
         // loop play
         CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList = new CopyOnWriteArrayList<>();
-        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, null, gameRecord, freeWheelList);
+        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         if (CollectionUtils.isNotEmpty(freeWheelList)) {
             handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeWheelList);
         }
@@ -109,7 +109,6 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
     public void loopPlayOnPreGameRecord(GamePlayDo gamePlay,
                                         List<MalakasGameRecordDo> ret,
                                         AtomicLong totalRewardAmount,
-                                        BigDecimal totalMultipleAmount,
                                         MalakasGameRecordDo preGameRecord,
                                         CopyOnWriteArrayList<FreeWheelHandleDo> freeWheelList) {
         if (canContinuePlayOnPreWheel(preGameRecord.getRewardResult(), totalRewardAmount)) {
@@ -119,9 +118,9 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            totalMultipleAmount = rewardResult.getTotalMultiple();
+            BigDecimal totalMultipleAmount = rewardResult.getTotalMultiple();
             log.info("gameRecordId {} , totalMultiple ----> {}", gameRecord.getId(), totalMultipleAmount);
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, totalMultipleAmount, gameRecord, freeWheelList);
+            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
             if (!reachMaxMultiple(gamePlay, totalRewardAmount)) {
                 Optional.ofNullable(preGameRecord.getGameRecordIds())
@@ -156,7 +155,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             totalMultipleAmount = rewardResult.getTotalMultiple();
             log.info("gameRecordId {} , totalMultiple ----> {}", gameRecord.getId(), totalMultipleAmount);
             // loop play
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, totalMultipleAmount, gameRecord, freeWheelList);
+            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         }
     }
 
