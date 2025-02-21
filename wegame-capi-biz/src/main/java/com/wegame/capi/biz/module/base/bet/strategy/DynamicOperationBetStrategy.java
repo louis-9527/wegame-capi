@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
@@ -14,6 +15,7 @@ import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationCheckResultDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
@@ -31,6 +33,7 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
+import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import javafx.util.Pair;
@@ -38,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
@@ -49,12 +53,19 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, BR extends ToVoConverter, WD extends SymbolDo> extends AbstractBetStrategy<R, BD, BR> {
     @Autowired
+    private DistributeLock distributeLock;
+    @Autowired
     private DynamicOperationManager dynamicOperationManager;
+    private static final String LOCK_FAIL_TIP = "Get lock[%s] fail";
 
     @Autowired
     private DynamicOperationEventDetailService dynamicOperationEventDetailService;
     @Autowired
     private DynamicOperationEventConfigService dynamicOperationEventConfigService;
+
+    private static final int[] arr = {100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
+            1500, 2000, 2500, 3000, 4000, 5000, 6000, 7000,
+            8000, 9000, 10000};
 
 
     @Override
@@ -70,17 +81,23 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
 
     public BetResultDo<BR> betForNonFreeWheel(BetDo<BD> betDo) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-
-        // 判断是否存在干预事件
-        DynamicOperationEventDo eventDo = this.getEventDo(betDo);
-        GameEventDo<WD> gameEventDo = new GameEventDo<>();
-        if (eventDo != null) {
-            //构建并获取Wheel
-            gameEventDo.setWheelDos(this.getWheelDos(betDo, eventDo));
-            gameEventDo.setEventId(eventDo.getEventId());
-            gameEventDo.setOperatorRecordId(eventDo.getId());
+        DynamicOperationCheckResultDo<R> checkResult = this.checkEventBet(betDo);
+        if (checkResult.getEventResult()) {
+            // 命中干预事件,从结果中获取数据
+            BetRecordDo<R> betRecordDo = this.rBetRecordDo(betDo, null);
+            return this.saveBetRecord(betRecordDo);
+        } else {
+            BetRecordDo<R> betRecordDo = checkResult.getBetRecordDo();
+            //调用派彩并返回记录
+            BetResultDo<BR> brBetResultDo = this.saveBetRecord(betRecordDo);
+            dynamicOperationManager.asyncEventReport(checkResult.getOperationRecordId(), checkResult.getOperationRecordDetailId(), checkResult.getBonus(), this.getGame().getGameInfo().getGameType());
+            return brBetResultDo;
         }
+
+    }
+
+
+    private BetRecordDo<R> rBetRecordDo(BetDo<BD> betDo, GameEventDo<WD> gameEventDo) {
         //获取投注记录
         long betRecordId = generateBetRecordId();
         List<R> list = getGame().play(GamePlayDo.<WD>builder()
@@ -92,23 +109,40 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
                 .gameEventDo(gameEventDo)
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
+        // 构建投注记录
+        return this.buildBetRecord(betRecordId, betDo, list);
+    }
 
-        // 构建投注记录并派奖
-        BetRecordDo<R> rBetRecordDo = this.buildBetRecord(betRecordId, betDo, list);
-        // 异步更新干预事件结果
-        Long detailId = null;
-        if (eventDo != null) {
+
+    private DynamicOperationCheckResultDo<R> checkEventBet(BetDo<BD> betDo) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        String lockName = LockNameUtil.getDynamicOperationBetLockName(userInfo.getPlayerId(), betDo.getGameId());
+        return distributeLock.lockThenCall(lockName, () -> {
+            // 判断是否存在干预事件
+            DynamicOperationEventDo eventDo = this.getEventDo(betDo);
+            if (eventDo == null) {
+                return DynamicOperationCheckResultDo.<R>builder().eventResult(Boolean.FALSE).build();
+            }
+            // 构建并获取Wheel
+            GameEventDo<WD> gameEventDo = new GameEventDo<>();
+            gameEventDo.setWheelDos(this.getWheelDos(betDo, eventDo));
+            gameEventDo.setEventId(eventDo.getEventId());
+            gameEventDo.setOperatorRecordId(eventDo.getId());
+            // 生成投注记录
+            BetRecordDo<R> betRecordDo = this.rBetRecordDo(betDo, gameEventDo);
+            betRecordDo.setIeId(eventDo.getEventId());
             // 构建并保存干预记录
-            detailId = this.saveEventDetail(userInfo, betRecordId, rBetRecordDo.getBetId(), rBetRecordDo.getPayOutAmount(), gameEventDo);
-        }
-        //调用派彩并返回记录
-        BetResultDo<BR> brBetResultDo = this.saveBetRecord(rBetRecordDo);
-        if (detailId != null) {
-            // 异步上报
-            dynamicOperationManager.asyncEventReport(eventDo, detailId, this.getGame().getGameInfo().getGameType());
-        }
-        return brBetResultDo;
+            Long detailId = this.saveEventDetail(userInfo, betRecordDo.getId(), betRecordDo.getPayOutAmount(), gameEventDo);
 
+            return DynamicOperationCheckResultDo.<R>builder()
+                    .eventResult(Boolean.TRUE)
+                    .eventId(eventDo.getEventId())
+                    .operationRecordId(eventDo.getId())
+                    .operationRecordDetailId(detailId)
+                    .bonus(eventDo.getBonus())
+                    .betRecordDo(betRecordDo)
+                    .build();
+        }, String.format(LOCK_FAIL_TIP, lockName));
     }
 
     public abstract BetResultDo<BR> saveBetRecord(BetRecordDo<R> rBetRecordDo);
@@ -124,7 +158,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         Long interveneBalance = operationEventDo.getBonusBalance() + betPayAmount;
 
         //计算最大倍数
-        Integer multiple = Math.toIntExact((interveneBalance / betPayAmount) > 100 ? 100 : (interveneBalance / betPayAmount));
+        Integer multiple = Math.toIntExact((interveneBalance / betPayAmount) >= 100 ? 100 : (interveneBalance / betPayAmount));
         switch (betDo.getBetType()) {
             case NORMAL_BET:
                 return this.normalPayMultipleConfig(0, multiple);
@@ -150,16 +184,16 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     }
 
 
-    private Long saveEventDetail(UserInfo userInfo, Long betRecordId, String betId, Long totalPayOutAmount, GameEventDo eventDo) {
+    private Long saveEventDetail(UserInfo userInfo, Long betRecordId, Long totalPayOutAmount, GameEventDo eventDo) {
         //扣减流水
         DynamicOperationEventDetailDo detailDo = new DynamicOperationEventDetailDo();
         detailDo.setId(generateBetRecordId());
         detailDo.setOperatorRecordId(eventDo.getOperatorRecordId());
         detailDo.setEventId(eventDo.getEventId());
-        detailDo.setBetId(betId);
         detailDo.setBetRecordId(betRecordId);
         detailDo.setPayOutAmount(totalPayOutAmount);
         detailDo.setPlayerName(userInfo.getPlayerName());
+        detailDo.setPlayerId(userInfo.getPlayerId());
         detailDo.setUserId(userInfo.getId());
         long currentMilli = DateUtil.getCurrentMilli();
         detailDo.setCreateTime(currentMilli);
@@ -178,7 +212,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         DynamicOperationConfigQuery configQuery = DynamicOperationConfigQuery.builder()
                 .gameId(this.getGame().getGameInfo().getGameType().getId())
                 .configType(configType)
-                .multiple(10).build();
+                .multiple(findClosest(multiple)).build();
         List<DynamicOperationConfigDo> configDetail = dynamicOperationEventConfigService.getConfigDetail(configQuery, this.getGame().getGameInfo().getGameType());
 
 
@@ -187,5 +221,28 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         return this.convertWheelDoList(dynamicOperationConfigDo.getDetail());
     }
 
+    public int findClosest(int target) {
+        int index = Arrays.binarySearch(arr, target);
 
+        // 如果找到，直接返回
+        if (index >= 0) {
+            return arr[index];
+        }
+
+        // binarySearch 返回 (-插入点 - 1) ，计算插入点
+        int insertPoint = -index - 1;
+
+        // 边界情况
+        if (insertPoint == 0) {
+            return arr[0]; // target 比最小值还小
+        }
+        if (insertPoint == arr.length) {
+            return arr[arr.length - 1]; // target 比最大值还大
+        }
+
+        // 计算 target 和左右相邻值的距离，返回最接近的
+        int prev = arr[insertPoint - 1];
+        int next = arr[insertPoint];
+        return (target - prev <= next - target) ? prev : next;
+    }
 }

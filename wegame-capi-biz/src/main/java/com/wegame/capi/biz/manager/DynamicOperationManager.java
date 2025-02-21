@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.manager;
 
+import com.wegame.base.lock.DistributeLock;
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationCheckResultDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
@@ -8,6 +10,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
+import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -48,17 +51,17 @@ public class DynamicOperationManager {
      * 结果上报
      */
     @Async(dynamicOperationThreadPoolExecutor)
-    public void asyncEventReport(DynamicOperationEventDo event, Long detailId, GameTypeEnum gameType) {
+    public void asyncEventReport(Long operationRecordId, Long detailId, Long bonus, GameTypeEnum gameType) {
         // 更新 订单状态
         DynamicOperationEventDetailDo updateReq = DynamicOperationEventDetailDo.builder().id(detailId).betStatus(BetStatusEnum.SUCCESS).build();
         dynamicOperationEventDetailService.update(updateReq, gameType);
         // 检查干预事件是否可上报,如果已完成则上报
-        Long payOutAmount = dynamicOperationEventDetailService.sumPayoutAmount(event.getId(), gameType);
+        Long payOutAmount = dynamicOperationEventDetailService.sumPayoutAmount(operationRecordId, gameType);
         // 金额在10%左右 可视为完成
-        if (isWithin10Percent(event.getBonus(), payOutAmount)) {
+        if (isWithin10Percent(bonus, payOutAmount)) {
             // todo 已完成执行上报
             // 上报完成,更新状态
-            DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(event.getId())
+            DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(operationRecordId)
                     .eventStatus(DynamicOperationEventStatusEnum.FINISH_NORMAL)
                     .reportStatus(DynamicOperationReportStatusEnum.FINISH_NORMAL).build();
             dynamicOperationEventService.update(eventUpdate, gameType);

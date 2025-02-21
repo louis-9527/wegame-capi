@@ -34,11 +34,6 @@ import java.util.*;
 
 @Component
 public abstract class AbstractDynamicOperationGame<R extends ToVoConverter> extends AbstractGame<R> {
-    @Autowired
-    private DynamicOperationEventService dynamicOperationEventService;
-    @Autowired
-    private DynamicOperationManager dynamicOperationManager;
-
     private static final Long GAME_RECORD_DEFAULT_PARENT_ID = 0L;
 
     public List<R> play(GamePlayDo gamePlay) {
@@ -108,11 +103,6 @@ public abstract class AbstractDynamicOperationGame<R extends ToVoConverter> exte
 
     public abstract List<R> normalPlay(GamePlayDo gamePlay);
 
-    public abstract DynamicOperationEventKindEnum eventKindEnum(BetTypeEnum betType);
-
-    public abstract TreeMap<Integer, List<List<WheelDo<SymbolDo>>>> normalPayMultipleConfig();
-
-    public abstract TreeMap<Integer, List<List<WheelDo<SymbolDo>>>> freePayMultipleConfig();
 
 
     public abstract R buildGameRecord(Long id,

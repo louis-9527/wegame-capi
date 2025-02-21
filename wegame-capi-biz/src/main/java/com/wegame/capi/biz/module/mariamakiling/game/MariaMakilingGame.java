@@ -113,26 +113,6 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
         return ret;
     }
 
-    @Override
-    public DynamicOperationEventKindEnum eventKindEnum(BetTypeEnum betType) {
-        if (BetTypeEnum.NORMAL_BET == betType) {
-            return DynamicOperationEventKindEnum.NORMAL_URGENT;
-        } else if (BetTypeEnum.BUY_BET == betType) {
-            return DynamicOperationEventKindEnum.FREE_URGENT;
-        }
-        return null;
-    }
-
-    @Override
-    public TreeMap<Integer, List<List<WheelDo<SymbolDo>>>> normalPayMultipleConfig() {
-        return null;
-    }
-
-    @Override
-    public TreeMap<Integer, List<List<WheelDo<SymbolDo>>>> freePayMultipleConfig() {
-        return null;
-    }
-
     /**
      * 正常滚轮生成：生成逻辑无任何限制
      *
