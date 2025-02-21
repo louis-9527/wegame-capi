@@ -26,6 +26,11 @@ public class DynamicOperationDetailPo implements Serializable {
     private Long id;
 
     /**
+     * 干预事件ID(系统)
+     */
+    private Long operatorRecordId;
+
+    /**
      * 干预事件ID
      */
     private String eventId;
@@ -63,15 +68,15 @@ public class DynamicOperationDetailPo implements Serializable {
      */
     private String betId;
     /**
-     * 订单ID
+     * 投注记录Id
      */
-    private Long orderId;
+    private Long betRecordId;
+
 
     /**
-     * 上报状态
-     * @see com.wegame.capi.common.enums.DynamicOperationReportStatusEnum
+     * 订单状态
      */
-    private Integer reportStatus;
+    private Integer betStatus;
 
     /**
      * 创建时间

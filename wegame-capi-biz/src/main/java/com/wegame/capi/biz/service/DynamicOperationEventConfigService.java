@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationConfigQueryBuilder;
+import com.wegame.capi.biz.converter.DynamicOperationConfigConvert;
 import com.wegame.capi.biz.converter.DynamicOperationConvert;
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -29,15 +32,17 @@ public class DynamicOperationEventConfigService {
 
     private final String dynamicOperationEventCollectionName = "mariamakiling_dynamicOperation_event_config";
 
-    public List<List<WheelDo>> getConfigDetail(DynamicOperationConfigQuery configQuery, GameTypeEnum gameType) {
-        List<List<WheelDo>> wheelDos = new ArrayList<>();
-        List<DynamicOperationConfigPo> dynamicOperationConfigPos = getMongoTemplate(gameType).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery), DynamicOperationConfigPo.class);
+    public void add(GameTypeEnum gameType){
+        DynamicOperationConfigPo configPo = new DynamicOperationConfigPo();
+        configPo.setConfigType(0);
+        configPo.setMultiple(10);
+        configPo.setGameId(gameType.getId());
+        getMongoTemplate(gameType).insert(configPo,dynamicOperationEventCollectionName);
+    }
 
-        for (DynamicOperationConfigPo configPo : dynamicOperationConfigPos) {
-            String detail = configPo.getDetail();
-            wheelDos.add(JSON.parseArray(detail, WheelDo.class));
-        }
-        return wheelDos;
+    public List<DynamicOperationConfigDo> getConfigDetail(DynamicOperationConfigQuery configQuery, GameTypeEnum gameType) {
+        List<DynamicOperationConfigPo> dynamicOperationConfigPos = getMongoTemplate(gameType).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery), DynamicOperationConfigPo.class,dynamicOperationEventCollectionName);
+        return DynamicOperationConfigConvert.convertDos(dynamicOperationConfigPos);
     }
 
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {

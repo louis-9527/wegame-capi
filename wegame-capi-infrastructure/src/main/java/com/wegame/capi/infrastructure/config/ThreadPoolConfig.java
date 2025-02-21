@@ -22,6 +22,8 @@ public class ThreadPoolConfig {
 
     public static final String betRecordThreadPoolExecutor = "betRecordThreadPoolExecutor";
 
+    public static final String dynamicOperationThreadPoolExecutor = "dynamicOperationThreadPoolExecutor";
+
     public static final String sendMessageThreadPoolExecutor = "sendMessageThreadPoolExecutor";
 
     /**
@@ -70,6 +72,25 @@ public class ThreadPoolConfig {
                 new ArrayBlockingQueue(10000),
                 new CustomizableThreadFactory("send-message-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        return executor;
+    }
+
+
+    /**
+     * 动态运营-线程池
+     *
+     * @return
+     */
+    @Bean(dynamicOperationThreadPoolExecutor)
+    public ThreadPoolExecutor dynamicOperationThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                100,
+                60L,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue(10000),
+                new CustomizableThreadFactory("bet-record-pool-"),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
         return executor;
     }

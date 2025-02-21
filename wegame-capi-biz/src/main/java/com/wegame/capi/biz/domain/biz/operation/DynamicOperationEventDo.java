@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.domain.biz.operation;
 
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
+import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -61,15 +62,19 @@ public class DynamicOperationEventDo {
     private Long expiredTime;
 
     /**
-     * 干预状态(0:干预中,1:已完成(正常),2:已完成(过期))
+     * 干预状态(0:干预中(默认),1:已完成(正常),2:已完成(过期))
      */
     private DynamicOperationEventStatusEnum eventStatus;
 
     /**
-     * 干预事件消息快照
+     * 上报状态
+     */
+    private DynamicOperationReportStatusEnum reportStatus;
+
+    /**
+     * 干预事件快照
      */
     private String eventMsgDetail;
-
     /**
      * 创建时间
      */

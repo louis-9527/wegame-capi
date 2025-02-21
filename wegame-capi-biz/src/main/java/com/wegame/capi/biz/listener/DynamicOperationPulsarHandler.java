@@ -16,11 +16,11 @@ public class DynamicOperationPulsarHandler {
     @Autowired
     private DynamicOperationEventService dynamicOperationEventService;
 
-    public Boolean handleMessage(DynamicOperationEventDo operationMsgDo) {
+    public Boolean handleMessage(DynamicOperationEventDo eventDo) {
         try {
             //todo 过滤只属于自己游戏的
-            if (operationMsgDo.getOperatorGameId().equals(GameTypeEnum.MARIA_MAKILING.getId())) {
-                dynamicOperationEventService.add(operationMsgDo, GameTypeEnum.MARIA_MAKILING);
+            if (eventDo.getOperatorGameId().equals(GameTypeEnum.MARIA_MAKILING.getId())) {
+                dynamicOperationEventService.add(eventDo, GameTypeEnum.MARIA_MAKILING);
             }
             return true;
         } catch (Exception e) {

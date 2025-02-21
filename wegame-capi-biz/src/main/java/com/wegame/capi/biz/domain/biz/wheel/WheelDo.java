@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.domain.biz.wheel;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 /**
@@ -42,6 +45,7 @@ public class WheelDo<T extends SymbolDo> implements Serializable {
             System.out.println();
         }
     }
+
 
 }
 

@@ -5,9 +5,13 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
+import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class DynamicOperationConvert {
 
@@ -16,26 +20,37 @@ public class DynamicOperationConvert {
             return null;
         }
         DynamicOperationPo po = DynamicOperationPo.builder().build();
-        po.setBonusBalance(msgDo.getBonus());
         po.setUpdateTime(DateUtil.getCurrentMilli());
         po.setId(msgDo.getId());
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
-            po.setEventStatus(DynamicOperationEventStatusEnum.ING.getCode());
+            po.setEventStatus(DynamicOperationEventStatusEnum.NONE.getCode());
+            po.setReportStatus(DynamicOperationReportStatusEnum.ING.getCode());
             po.setEffectedTime(msgDo.getEffectedTime());
-            po.setExpiredTime(msgDo.getEffectedTime());
+            po.setExpiredTime(msgDo.getExpiredTime());
             po.setPlayerName(msgDo.getPlayerName());
             po.setEventId(msgDo.getEventId());
             po.setEventKind(msgDo.getEventKind());
             po.setBonus(msgDo.getBonus());
             po.setChannelId(msgDo.getChannelId());
             po.setOperatorGameId(msgDo.getOperatorGameId());
-            po.setEventMsgDetail(JSON.toJSONString(msgDo));
+            po.setEventMsgDetail(msgDo.getEventMsgDetail());
             po.setCreateTime(currentMilli);
         } else {
             po.setEventStatus(msgDo.getEventStatus() == null ? null : msgDo.getEventStatus().getCode());
         }
         return po;
+    }
+
+
+    public static List<DynamicOperationEventDo> convertDos(List<DynamicOperationPo> eventPos) {
+        if (eventPos == null) {
+            return Collections.emptyList();
+        }
+        return eventPos.stream()
+                .map(DynamicOperationConvert::convertDo) // 复用已有的 convertDo 方法
+                .collect(Collectors.toList());
+
     }
 
     public static DynamicOperationEventDo convertDo(DynamicOperationPo eventPo) {

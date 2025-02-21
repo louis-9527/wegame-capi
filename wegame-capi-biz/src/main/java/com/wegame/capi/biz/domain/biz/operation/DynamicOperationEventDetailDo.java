@@ -17,7 +17,7 @@ public class DynamicOperationEventDetailDo {
 
     private Long id;
 
-    private Long eventRecordId;
+    private Long operatorRecordId;
 
     /**
      * 干预事件ID
@@ -62,13 +62,7 @@ public class DynamicOperationEventDetailDo {
     private Long betRecordId;
 
     /**
-     * 上报状态
-     * @see com.wegame.capi.common.enums.DynamicOperationReportStatusEnum
-     */
-    private DynamicOperationReportStatusEnum reportStatus;
-
-    /**
-     * 都住订单状态
+     * 订单状态
      */
     private BetStatusEnum betStatus;
 

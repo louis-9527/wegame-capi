@@ -10,10 +10,9 @@ import java.util.Objects;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum DynamicOperationEventStatusEnum {
 
-    NONE(0, "未干预"),
-    ING(1, "干预中"),
-    FINISH_NORMAL(2, "干预完成(正常)"),
-    FINISH_EXPIRED(3, "干预完成(过期)");
+    NONE(0, "未知"),
+    FINISH_NORMAL(1, "干预完成(正常)"),
+    FINISH_EXPIRED(2, "干预完成(过期)");
 
     /**
      * 枚举码.

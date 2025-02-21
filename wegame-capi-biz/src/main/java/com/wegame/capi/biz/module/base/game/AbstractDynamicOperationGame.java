@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
+import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
@@ -24,6 +25,7 @@ import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,11 +42,12 @@ public abstract class AbstractDynamicOperationGame<R extends ToVoConverter> exte
     private static final Long GAME_RECORD_DEFAULT_PARENT_ID = 0L;
 
     public List<R> play(GamePlayDo gamePlay) {
-        List wheelDos = gamePlay.getGameEventDo().getWheelDos();
-        if (wheelDos != null) {
-            return this.eventPlay(gamePlay, wheelDos);
-        } else {
+        GameEventDo gameEventDo = gamePlay.getGameEventDo();
+        if (gameEventDo == null || CollectionUtils.isEmpty(gameEventDo.getWheelDos())) {
             return this.normalPlay(gamePlay);
+        } else {
+
+            return this.eventPlay(gamePlay, gameEventDo.getWheelDos());
         }
     }
 

@@ -20,10 +20,10 @@ public class DynamicOperationQueryBuilder {
         criteria.and("playerName").is(recordQuery.getPlayerName());
         criteria.and("operatorGameId").is(recordQuery.getOperatorGameId());
         criteria.and("eventStatus").is(recordQuery.getEventStatus());
-        criteria.and("effectedTime").gte(currentMilli);
-        criteria.and("expiredTime").lte(currentMilli);
+        criteria.and("effectedTime").lte(currentMilli);
+        criteria.and("expiredTime").gte(currentMilli);
         Query query = new Query(criteria);
-        query.fields().include("id", "bonus", "bonusBalance", "eventKind", "eventId");
+        query.fields().include("id", "bonus", "eventKind", "eventId");
         query.limit(1);
         return query;
     }
@@ -33,11 +33,11 @@ public class DynamicOperationQueryBuilder {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }
         Update update = new Update();
-        if (Objects.nonNull(eventDo.getBonusBalance())) {
-            update.set("bonusBalance", eventDo.getBonusBalance());
-        }
         if (Objects.nonNull(eventDo.getEventStatus())) {
             update.set("eventStatus", eventDo.getEventStatus().getCode());
+        }
+        if (Objects.nonNull(eventDo.getReportStatus())) {
+            update.set("reportStatus", eventDo.getReportStatus().getCode());
         }
         if (Objects.nonNull(eventDo.getUpdateTime())) {
             update.set("updateTime", eventDo.getUpdateTime());

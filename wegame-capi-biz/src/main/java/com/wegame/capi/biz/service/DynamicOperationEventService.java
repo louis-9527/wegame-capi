@@ -3,6 +3,7 @@ package com.wegame.capi.biz.service;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
+import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationQueryBuilder;
 import com.wegame.capi.biz.builder.GameRecordQueryBuilder;
@@ -29,12 +30,16 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class DynamicOperationEventService {
+
+    @Autowired
+    public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
     private final String dynamicOperationEventCollectionName = "mariamakiling_dynamicOperation_event";
 
     public Long add(DynamicOperationEventDo dynamicOperationMsgDo, GameTypeEnum gameType) {
+        dynamicOperationMsgDo.setId(snowflakeIdGenerator.nextId());
         DynamicOperationPo dynamicOperationPo = DynamicOperationConvert.convertPo(dynamicOperationMsgDo, OptEnum.ADD);
         if (Objects.isNull(dynamicOperationPo)) {
             return null;
@@ -43,12 +48,12 @@ public class DynamicOperationEventService {
         return insert.getId();
     }
 
-    public Boolean updateById(DynamicOperationEventDo dynamicOperationMsgDo, GameTypeEnum gameType) {
+    public Boolean update(DynamicOperationEventDo eventDo, GameTypeEnum gameType) {
         Criteria criteria = new Criteria();
-        criteria.and("_id").is(dynamicOperationMsgDo.getId());
+        criteria.and("_id").is(eventDo.getId());
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(gameType).updateFirst(query,
-                DynamicOperationQueryBuilder.buildUpdateById(dynamicOperationMsgDo),
+                DynamicOperationQueryBuilder.buildUpdateById(eventDo),
                 DynamicOperationPo.class,
                 dynamicOperationEventCollectionName);
 
@@ -63,10 +68,11 @@ public class DynamicOperationEventService {
      *
      * @return
      */
-    public DynamicOperationEventDo getBuyUserNameAndTime(DynamicOperationQuery operationQuery,GameTypeEnum gameType) {
+    public List<DynamicOperationEventDo> getBuyUserNameAndTime(DynamicOperationQuery operationQuery, GameTypeEnum gameType) {
 
-        DynamicOperationPo dynamicOperationPo = getMongoTemplate(gameType).findOne(DynamicOperationQueryBuilder.buildQueryBuyUserNameAndTime(operationQuery), DynamicOperationPo.class);
-        return DynamicOperationConvert.convertDo(dynamicOperationPo);
+        List<DynamicOperationPo> operationPoList = getMongoTemplate(gameType).find(DynamicOperationQueryBuilder.buildQueryBuyUserNameAndTime(operationQuery), DynamicOperationPo.class, dynamicOperationEventCollectionName);
+        // 判断干预金额
+        return DynamicOperationConvert.convertDos(operationPoList);
     }
 
 

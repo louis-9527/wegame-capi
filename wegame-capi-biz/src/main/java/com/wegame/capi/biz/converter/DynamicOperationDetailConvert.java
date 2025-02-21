@@ -22,6 +22,7 @@ public class DynamicOperationDetailConvert {
         po.setId(detailDo.getId());
         if (OptEnum.ADD.equals(optEnum)) {
             po.setEventId(detailDo.getEventId());
+            po.setOperatorRecordId(detailDo.getOperatorRecordId());
             po.setOperatorGameId(detailDo.getOperatorGameId());
             po.setPlayerId(detailDo.getPlayerId());
             po.setPlayerName(detailDo.getPlayerName());
@@ -29,8 +30,8 @@ public class DynamicOperationDetailConvert {
             po.setPayOutAmount(detailDo.getPayOutAmount());
             po.setPayOutTime(detailDo.getPayOutTime());
             po.setBetId(detailDo.getBetId());
-            po.setOrderId(detailDo.getOrderId());
-            po.setReportStatus(detailDo.getReportStatus().getCode());
+            po.setBetRecordId(detailDo.getBetRecordId());
+            po.setBetStatus(detailDo.getBetStatus().getCode());
             po.setCreateTime(detailDo.getCreateTime());
             po.setUpdateTime(detailDo.getUpdateTime());
         } else {

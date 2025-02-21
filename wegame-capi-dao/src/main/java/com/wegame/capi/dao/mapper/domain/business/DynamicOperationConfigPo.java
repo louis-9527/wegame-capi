@@ -21,8 +21,7 @@ public class DynamicOperationConfigPo implements Serializable {
      * 主键ID
      */
     @Id
-    @Field("_id")
-    private Long id;
+    private String id;
 
     /**
      * 游戏ID

@@ -38,11 +38,6 @@ public class DynamicOperationPo implements Serializable {
      */
     private Long bonus;
 
-    /**
-     * 干预剩余金额
-     */
-    private Long bonusBalance;
-
 
     /**
      * 干预事件类型
@@ -77,10 +72,14 @@ public class DynamicOperationPo implements Serializable {
     private Long expiredTime;
 
     /**
-     * 干预状态(0:干预中,1:已完成(正常),2:已完成(过期))
+     * 干预状态(0:未知,1:已完成(正常),2:已完成(过期))
      */
     private Integer eventStatus;
 
+    /**
+     * 上报状态
+     */
+    private Integer reportStatus;
     /**
      * 干预事件消息快照
      */

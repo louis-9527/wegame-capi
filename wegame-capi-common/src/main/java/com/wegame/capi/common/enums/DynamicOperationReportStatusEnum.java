@@ -11,7 +11,7 @@ import java.util.Objects;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum DynamicOperationReportStatusEnum {
 
-    ING(0, "上报中"),
+    ING(0, "未上报(默认)"),
     FINISH_NORMAL(1, "上报成功"),
     FINISH_EXPIRED(2, "上报失败");
 
