@@ -72,6 +72,13 @@ public class IbongAdarnaConfig {
          * Map<倍率，<倍率类型：普通，ex，概率列表>>
          */
         private Map<Integer, Map<String, BigDecimal>> multiPleProbabilisticConfig;
+
+        /**
+         * 每一列重复出现元素个数概率配置
+         * index:代表列号
+         * Map<重复类型，概率>
+         */
+        private List<Map<String, BigDecimal>> perColumSymbolRepeatProbabilisticConfig;
     }
 
 
@@ -96,6 +103,7 @@ public class IbongAdarnaConfig {
         Assert.notNull(probabilisticConfig.commonPlayWheelProbabilisticConfig, "commonPlayWheelProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.symbolBreakUpProbabilisticConfig, "symbolBreakUpProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.multiPleProbabilisticConfig, "multiPleProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.perColumSymbolRepeatProbabilisticConfig, "preColumSymbolRepeatProbabilisticConfig is null");
         int colum = 3;
         probabilisticConfig.commonPlayWheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
@@ -145,6 +153,11 @@ public class IbongAdarnaConfig {
         AssertUtil.assertTrue(new BigDecimal(CONST_100).compareTo(normalMultiPleSum) == 0, ErrorCode.ERR_INTER, "probabilisticConfig.multiPleProbabilisticConfig ERR, not 100 %");
         BigDecimal exMultiPleSum = exMultiPleList.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         AssertUtil.assertTrue(new BigDecimal(CONST_100).compareTo(exMultiPleSum) == 0, ErrorCode.ERR_INTER, "probabilisticConfig.multiPleProbabilisticConfig ERR, not 100 %");
+
+        probabilisticConfig.perColumSymbolRepeatProbabilisticConfig.forEach(map -> {
+            BigDecimal totalProbabilistic = map.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+            AssertUtil.assertTrue(new BigDecimal(CONST_100).compareTo(totalProbabilistic) == 0, ErrorCode.ERR_INTER, "probabilisticConfig.perColumSymbolRepeatProbabilisticConfig ERR, not 100 %");
+        });
     }
 
     private void rewardFixedLinesConfig() {

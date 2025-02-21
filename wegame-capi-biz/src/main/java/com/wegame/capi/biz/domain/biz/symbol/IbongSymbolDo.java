@@ -1,5 +1,8 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wegame.capi.common.enums.MultipleTypeEnum;
+import com.wegame.capi.common.enums.SymbolBreakUpEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,11 +17,29 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"}, callSuper = true)
-public class IbongSymbolDo extends SymbolDo{
+@JsonFormat(shape = JsonFormat.Shape.STRING)
+public class IbongSymbolDo extends SymbolDo {
     private static final long serialVersionUID = -226678093710848L;
 
     /**
-     * 分裂次数
+     * 分裂
      */
-    private Integer breakUpCount;
+    private SymbolBreakUpEnum breakUp;
+
+    public IbongSymbolDo copy() {
+        return IbongSymbolDo.builder()
+                .id(this.getId())
+                .name(this.getName())
+                .symbolType(this.getSymbolType())
+                .build();
+    }
+
+    public static IbongSymbolDo buildIbongSymbolDo(SymbolDo symbolDo, SymbolBreakUpEnum breakUp) {
+        return IbongSymbolDo.builder()
+                .id(symbolDo.getId())
+                .name(symbolDo.getName())
+                .symbolType(symbolDo.getSymbolType())
+                .breakUp(breakUp)
+                .build();
+    }
 }

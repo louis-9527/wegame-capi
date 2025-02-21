@@ -25,7 +25,7 @@ public enum SymbolBreakUpEnum {
     ;
 
     /**
-     * 元素id.
+     * 元素分裂倍数.
      */
     private final Integer times;
 

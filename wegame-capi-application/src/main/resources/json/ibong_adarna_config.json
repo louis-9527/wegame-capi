@@ -122,7 +122,21 @@
                 "NORMAL": "1.00",
                 "EX": "5.00"
             }
-        }
+        },
+        "perColumSymbolRepeatProbabilisticConfig": [
+            {
+              "ONE": "30.00",
+              "TWO": "70.00"
+            },
+            {
+                "ONE": "30.00",
+                "TWO": "70.00"
+            },
+            {
+                "ONE": "30.00",
+                "TWO": "70.00"
+            }
+        ]
     },
 
     "rewardFixedLinesConfig": {
