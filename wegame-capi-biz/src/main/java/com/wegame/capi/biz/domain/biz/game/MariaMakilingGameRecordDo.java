@@ -11,6 +11,7 @@ import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingRewardLineVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -82,6 +83,10 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      * 免费轮id列表
      */
     private List<Long> gameRecordIds;
+    /**
+     * 是否触发最大中奖倍数
+     */
+    private boolean triggerMaxRewardMultiple;
 
     /**
      * 是否中奖免费轮
@@ -100,6 +105,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
         if (Objects.isNull(rewardResult)) {
             return MariaMakilingBetResultVo.builder()
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .triggerMaxRewardMultiple(triggerMaxRewardMultiple)
                     .build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return MariaMakilingBetResultVo.builder()
@@ -109,6 +115,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .freeSpinFlag(0)
+                    .triggerMaxRewardMultiple(triggerMaxRewardMultiple)
                     .build();
         } else {
             return MariaMakilingBetResultVo.builder()
@@ -134,6 +141,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
                             .stream()
                             .map(String::valueOf)
                             .collect(Collectors.toList()))
+                    .triggerMaxRewardMultiple(triggerMaxRewardMultiple)
                     .build();
         }
     }

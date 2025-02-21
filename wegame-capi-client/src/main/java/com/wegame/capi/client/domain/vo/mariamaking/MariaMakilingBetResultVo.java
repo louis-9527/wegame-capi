@@ -42,6 +42,8 @@ public class MariaMakilingBetResultVo implements Serializable {
     @ApiModelProperty("免费轮游戏记录Id列表")
     //    private List<String> freeSpinIds;
     private List<String> gameRecordIds;
+    @ApiModelProperty("是否触发最大中奖倍数")
+    private Boolean triggerMaxRewardMultiple;
 
 
 }

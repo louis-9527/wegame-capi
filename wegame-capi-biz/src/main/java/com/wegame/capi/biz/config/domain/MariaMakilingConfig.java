@@ -34,6 +34,10 @@ public class MariaMakilingConfig {
      */
     private ProbabilisticConfig probabilisticConfig;
 
+    /**
+     * 中奖最大倍数
+     */
+    private Integer rewardMaxMultiple;
 
     @Data
     @SuperBuilder
@@ -71,6 +75,12 @@ public class MariaMakilingConfig {
     public void validate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
+        rewardMaxMultipleValidate();
+    }
+
+    private void rewardMaxMultipleValidate() {
+        AssertUtil.assertNotNull(this.rewardMaxMultiple, ErrorCode.ERR_INTER, "rewardMaxMultiple is null");
+        AssertUtil.assertTrue(this.rewardMaxMultiple > 0, ErrorCode.ERR_INTER, "rewardMaxMultiple is must great than 0");
     }
 
     private void oddsConfigValidate() {

@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.mariamakiling.bet.strategy;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
+import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -37,6 +38,8 @@ public abstract class AbstractMariaMakilingBetStrategy
     MariaMakilingGame mariaMakilingGame;
     @Autowired
     MariaMakilingRecordManager mariaMakilingRecordManager;
+    @Autowired
+    MariaMakilingConfig mariaMakilingConfig;
 
     @Override
     public Game<MariaMakilingGameRecordDo> getGame() {
@@ -123,14 +126,15 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .betRecordId(betRecordId)
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
+        // 最大中奖金额
         // 构建投注记录
         BetRecordDo<MariaMakilingGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                list.stream().filter(item -> Objects.nonNull(item.getRewardResult()))
+                this.getActualRewardAmount(list.stream().filter(item -> Objects.nonNull(item.getRewardResult()))
                         .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                        .sum(),
+                        .sum(), betDo.getBetDetail().getBetAmount()),
                 list);
         MariaMakilingGameRecordDo gameRecord = list.get(0);
         // 保存投注记录并派奖
@@ -146,6 +150,12 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .totalPayoutAmount(betRecord.getPayOutAmount())
                 .resultDetail(gameRecord)
                 .build();
+    }
+
+    private long getActualRewardAmount(long currentTotalAmount, Long betAmount) {
+        // 大于投注金额的
+        Integer rewardMaxMultiple = mariaMakilingConfig.getRewardMaxMultiple();
+        return Math.min(currentTotalAmount, betAmount * rewardMaxMultiple);
     }
 
 
