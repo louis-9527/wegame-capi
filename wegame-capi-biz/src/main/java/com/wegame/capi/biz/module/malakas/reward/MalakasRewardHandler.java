@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.malakas.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
-import com.wegame.base.enums.BooleanEnum;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
@@ -62,7 +61,6 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         List<RewardLineDo<MalakasSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算倍率
         BigDecimal totalMultiple = malakasMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
-        log.info("currentMultiple]{} totalMultiple={}", rewardHandle.getCurrentMultiple(), totalMultiple);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             int scatterCount = scatterCount(rewardHandle);
             Integer freeWheelTimes = malakasConfig.getScatterFreeWheelTimesConfig().get(scatterCount);

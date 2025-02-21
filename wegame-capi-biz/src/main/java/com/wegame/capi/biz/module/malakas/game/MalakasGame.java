@@ -119,7 +119,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             BigDecimal totalMultipleAmount = rewardResult.getTotalMultiple();
-            log.info("parentId {} , gameRecordId {} , totalMultiple ----> {}", gameRecord.getParentId(), gameRecord.getId(), totalMultipleAmount);
+            log.info("消除回合 parentId {} , gameRecordId {} , totalMultiple ----> {}", gameRecord.getParentId(), gameRecord.getId(), totalMultipleAmount);
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
             if (!reachMaxMultiple(gamePlay, totalRewardAmount)) {
@@ -152,10 +152,10 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             MalakasGameRecordDo gameRecord = buildGameRecord(freeWheel.getGameRecordId(), freeWheel.getParentGameRecordId(), gamePlay.getBetRecordId(), freeWheel.getGameRecordId(), wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            totalMultipleAmount = rewardResult.getTotalMultiple();
-            log.info("parentId {} , gameRecordId {} , totalMultiple ----> {}", gameRecord.getParentId(), gameRecord.getId(), totalMultipleAmount);
             // loop play
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
+            totalMultipleAmount = rewardResult.getTotalMultiple();
+            log.info("每一轮结束 parentId {} , gameRecordId {} , totalMultiple ----> {}", gameRecord.getParentId(), gameRecord.getId(), totalMultipleAmount);
         }
     }
 
@@ -364,4 +364,3 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         private long parentGameRecordId;
     }
 }
-
