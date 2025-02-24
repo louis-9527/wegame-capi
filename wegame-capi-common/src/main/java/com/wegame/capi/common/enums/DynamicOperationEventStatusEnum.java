@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Objects;
+
 @ToString
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -40,6 +41,16 @@ public enum DynamicOperationEventStatusEnum {
             if (Objects.equals(item.getCode(), code)) {
                 return item;
             }
+        }
+        return null;
+    }
+
+    public static Integer convertUpdateEventsStatus(DynamicOperationEventStatusEnum eventStatusEnum) {
+        if (DynamicOperationEventStatusEnum.FINISH_NORMAL == eventStatusEnum) {
+            return 1;
+        }
+        if (DynamicOperationEventStatusEnum.FINISH_EXPIRED == eventStatusEnum) {
+            return 2;
         }
         return null;
     }

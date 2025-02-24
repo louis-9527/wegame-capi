@@ -158,14 +158,15 @@ pulsar:
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
 dynamic:
   operation:
-    pulsar_url: pulsar://pulsar.makillingslot.net:6650
+    pulsar_url: pulsar://pulsar-sw-main-external.client88.me:6650
     pulsar_tenant: ${spring.application.name}_MariaMakiling
     pulsar_namespace: ${spring.application.env}
     pulsar_topic: MariaMakiling
     pulsar_group:
       maria_makiling: MariaMakiling
       malakas: malakas
-    domain: https://xxx.cm
+    domain: https://dos-egame.dos88.me
+    public_key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuFfxoFw0IRd2QFopOOx2\n6udxe0DaSkVdqT64AZCZFdNbT1dh9TldrePcRMNtzEhZFLjx+v3Yn4T91vTkl4iU\nEHQiHsNTARh2OYuhaS/xzqiqcb4uX88Nuj8C++sNDcVI7sSb8ihRm3EBVWiBFgVm\nM88osuMspLaMhD/VKqafotmOyjI1X5fJcaiYXY6Zqwlpul3Opg2/Q6wmcO27JyJS\ngMUs2hRz3JDiW1RVjBlLSyPq6/K3wbUTXZBTVgGeRsEWrcKe2Qg9JOdqtzGoBg2u\nXU2miEtKban8PAcYtCn33r2BTA+hR8ey53SQjnJp7JHmdDPwvn4TKuRya1yTwE/y\nCQIDAQAB
 
 
 #lark

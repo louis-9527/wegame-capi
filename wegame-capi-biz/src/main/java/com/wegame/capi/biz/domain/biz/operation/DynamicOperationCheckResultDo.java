@@ -16,19 +16,11 @@ public class DynamicOperationCheckResultDo<R> {
      * 是否命中干预事件
      */
     private Boolean eventResult;
-    /**
-     * 干预事件ID(igo返回)
-     */
-    private String eventId;
-    /**
-     * 干预事件ID(系统生成)
-     */
-    private Long operationRecordId;
 
     /**
-     * 需要干预总金额
+     * 命中的干预事件
      */
-    private Long bonus;
+    private DynamicOperationEventDo dynamicOperationEvent;
 
     /**
      * 干预事件明细ID(系统生成)

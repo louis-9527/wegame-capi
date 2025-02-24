@@ -43,9 +43,19 @@ public class DynamicOperationEventDetailDo {
     private String userId;
 
     /**
+     * 投注金额
+     */
+    private Long betAmount;
+
+    /**
      * 派奖(消耗金额)
      */
     private Long payOutAmount;
+
+    /**
+     * 下注时间
+     */
+    private Long betTime;
 
     /**
      * 派奖时间

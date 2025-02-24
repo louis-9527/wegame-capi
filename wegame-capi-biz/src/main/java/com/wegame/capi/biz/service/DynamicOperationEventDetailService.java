@@ -8,6 +8,7 @@ import com.wegame.capi.biz.builder.DynamicOperationDetailQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationDetailConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
@@ -42,7 +43,8 @@ public class DynamicOperationEventDetailService {
     }
 
     public Long sumPayoutAmount(Long operatorRecordId, GameTypeEnum gameType) {
-        MatchOperation matchOperation = Aggregation.match(Criteria.where("operatorRecordId").is(operatorRecordId));
+        MatchOperation matchOperation = Aggregation.match(Criteria.where("operatorRecordId")
+                .is(operatorRecordId).and("betStatus").in(BetStatusEnum.SUCCESS,BetStatusEnum.ING));
 
         // 计算 payOutAmount 的总和
         GroupOperation sumOperation = Aggregation.group().sum("payOutAmount").as("totalPayOutAmount");

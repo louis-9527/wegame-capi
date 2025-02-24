@@ -88,9 +88,10 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
             return this.saveBetRecord(betRecordDo);
         } else {
             BetRecordDo<R> betRecordDo = checkResult.getBetRecordDo();
-            //调用派彩并返回记录
+            // 调用派彩并返回记录
             BetResultDo<BR> brBetResultDo = this.saveBetRecord(betRecordDo);
-            dynamicOperationManager.asyncEventReport(checkResult.getOperationRecordId(), checkResult.getOperationRecordDetailId(), checkResult.getBonus(), this.getGame().getGameInfo().getGameType());
+            // 异步上报
+            dynamicOperationManager.asyncEventReport(checkResult.getDynamicOperationEvent(), checkResult.getOperationRecordDetailId(), this.getGame().getGameInfo().getGameType());
             return brBetResultDo;
         }
 
@@ -136,10 +137,8 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
             return DynamicOperationCheckResultDo.<R>builder()
                     .eventResult(Boolean.TRUE)
-                    .eventId(eventDo.getEventId())
-                    .operationRecordId(eventDo.getId())
+                    .dynamicOperationEvent(eventDo)
                     .operationRecordDetailId(detailId)
-                    .bonus(eventDo.getBonus())
                     .betRecordDo(betRecordDo)
                     .build();
         }, String.format(LOCK_FAIL_TIP, lockName));

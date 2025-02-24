@@ -37,6 +37,8 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
     @Autowired
     private DynamicOperationEventDetailService dynamicOperationEventDetailService;
     @Autowired
+    private DynamicOperationManager dynamicOperationManager;
+    @Autowired
     private BetRecordService betRecordService;
 
     private final long fiveMinutesAgo = System.currentTimeMillis() - 10 * 60 * 1000;
@@ -109,13 +111,12 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
             if (StringUtils.isEmpty(eventDetailDo.getBetId())) {
                 detailUpdate.setBetId(recordDo.getBetId());
             }
+            // 更新订单状态
             dynamicOperationEventDetailService.update(detailUpdate, getGameType());
-            // 检查干预事件是否可上报,如果已完成则上报
-            Long payOutAmount = dynamicOperationEventDetailService.sumPayoutAmount(eventDetailDo.getOperatorRecordId(), getGameType());
             // 获取干预金额
             DynamicOperationEventDo operationEventDo = dynamicOperationEventService.getById(eventDetailDo.getOperatorRecordId(), getGameType());
             // 重新触发上报
-            dynamicOperationEventService.updateStatus(eventDetailDo.getOperatorRecordId(), operationEventDo.getBonus(), payOutAmount, null, getGameType());
+            dynamicOperationManager.tryUpdateEventAndReportEvent(operationEventDo, getGameType());
         }
         // 进行中的订单不处理
     }
@@ -151,7 +152,8 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
     }
 
     private void eventReportFailHandle(DynamicOperationEventDo eventDo) {
-        dynamicOperationEventService.report(eventDo.getId(), getGameType());
+        // 上报失败(未上报)重新触发
+        dynamicOperationManager.reportEvent(eventDo.getId(), eventDo.getEventId(), eventDo.getEventStatus(), getGameType());
     }
 
     /**
@@ -186,16 +188,12 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
 
     private void eventEventIngHandle(DynamicOperationEventDo eventDo) {
         if (eventDo.getExpiredTime() > DateUtil.getCurrentMilli()) {
-            // 过期
-            dynamicOperationEventService.updateStatus(eventDo.getId(), eventDo.getBonus(), null, DynamicOperationEventStatusEnum.FINISH_EXPIRED, getGameType());
+            // 过期上报
+            dynamicOperationManager.updateEventAndReportExpiredEvent(eventDo, getGameType());
             return;
         }
-        // 未过期 查询干预明细获取干预状态
-        // 检查干预事件是否可上报,如果已完成则上报
-        Long payOutAmount = dynamicOperationEventDetailService.sumPayoutAmount(eventDo.getId(), getGameType());
-
-        // 重新触发上报
-        dynamicOperationEventService.updateStatus(eventDo.getId(), eventDo.getBonus(), payOutAmount, null, getGameType());
+        // 未过期 检查上报
+        dynamicOperationManager.tryUpdateEventAndReportEvent(eventDo, getGameType());
 
     }
 

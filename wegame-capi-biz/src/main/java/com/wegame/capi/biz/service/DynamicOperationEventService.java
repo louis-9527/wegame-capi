@@ -6,6 +6,8 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.api.DynamicOperationApi;
+import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsStatusReq;
 import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.builder.DynamicOperationQueryBuilder;
 import com.wegame.capi.biz.builder.GameRecordQueryBuilder;
@@ -36,9 +38,11 @@ import java.util.Objects;
 public class DynamicOperationEventService {
 
     @Autowired
-    public SnowflakeIdGenerator snowflakeIdGenerator;
+    private SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
-    Map<String, MongoTemplate> mongoTemplateMap;
+    private Map<String, MongoTemplate> mongoTemplateMap;
+    @Autowired
+    private DynamicOperationApi dynamicOperationApi;
 
     private final String dynamicOperationEventCollectionName = "mariamakiling_dynamicOperation_event";
 
@@ -99,19 +103,7 @@ public class DynamicOperationEventService {
         return DynamicOperationConvert.convertDo(operationPo);
     }
 
-    public void updateStatus(Long id, Long bonus, Long useAmount, DynamicOperationEventStatusEnum eventStatus, GameTypeEnum gameType) {
-        if (eventStatus != null) {
-            eventStatus = this.getEventStatus(bonus, useAmount);
-        }
-        if (DynamicOperationEventStatusEnum.FINISH_NORMAL == eventStatus || DynamicOperationEventStatusEnum.FINISH_EXPIRED == eventStatus) {
-            //更新状态
-            DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(id)
-                    .eventStatus(eventStatus).build();
-            this.update(eventUpdate, gameType);
-            // 执行上报
-            this.report(id, gameType);
-        }
-    }
+
 
     public DynamicOperationEventStatusEnum getEventStatus(Long bonus, Long use) {
         long lowerBound = (long) (bonus * 0.9);
@@ -121,12 +113,6 @@ public class DynamicOperationEventService {
         return DynamicOperationEventStatusEnum.NONE;
     }
 
-    public void report(Long id, GameTypeEnum gameType) {
-        //更新上报状态
-        DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(id)
-                .reportStatus(DynamicOperationReportStatusEnum.FINISH).build();
-        this.update(eventReportUpdate, gameType);
-    }
 
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
         MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
