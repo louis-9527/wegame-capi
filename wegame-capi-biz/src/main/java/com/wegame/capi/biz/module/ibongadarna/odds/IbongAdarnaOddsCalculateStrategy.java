@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Slf4j
 @Component("ibongAdarnaOddsCalculateStrategy")
@@ -21,7 +22,7 @@ public class IbongAdarnaOddsCalculateStrategy extends AbstractOddsCalculateStrat
     IbongAdarnaConfig ibongAdarnaConfig;
 
     @Override
-    public Map<String, Map<String, BigDecimal>> getOddsConfig(OddsCalculateDo<IbongSymbolDo> oddsCalculateDo) {
+    public TreeMap<String, TreeMap<String, BigDecimal>> getOddsConfig(OddsCalculateDo<IbongSymbolDo> oddsCalculateDo) {
         return ibongAdarnaConfig.getOddsConfig().getCommonOddsConfig();
     }
 }
