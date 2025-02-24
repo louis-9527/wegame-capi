@@ -267,33 +267,6 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         }
     }
 
-    private static MariaMakilingGameRecordDo buildGameRecord(Long id,
-                                                             Long parentId,
-                                                             Long betRecordId,
-                                                             Long batchId,
-                                                             WheelDo<SymbolDo> wheel,
-                                                             RewardResultDo<SymbolDo> rewardResult,
-                                                             List<Long> freeSpinGameRecordIds,
-                                                             Long overallRewardAmount,
-                                                             boolean reachMaxRewardMultiple) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        return MariaMakilingGameRecordDo.builder()
-                .id(id)
-                .parentId(parentId)
-                .betRecordId(betRecordId)
-                .batchId(batchId)
-                .playerId(userInfo.getPlayerId())
-                .playerName(userInfo.getPlayerName())
-                .index(wheel.getIndex())
-                .wheel(wheel)
-                .rewardResult(rewardResult)
-                .gameRecordIds(freeSpinGameRecordIds)
-                .overallRewardAmount(overallRewardAmount)
-                .accumulateReachMaxMultiple(reachMaxRewardMultiple)
-                .build();
-    }
-
     private Integer getFreeWheelNumber() {
         int randomNumber = randomService.randomInt(1, 100);
         int startVal = 0;
