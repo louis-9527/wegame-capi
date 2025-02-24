@@ -143,6 +143,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         while (!freeWheelList.isEmpty()) {
             FreeWheelHandleDo freeWheel = freeWheelList.remove(0);
             WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(getGameInfo(), getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), true));
+            wheel.setFreeFlag(true);
             // 判奖-根据游戏滚轮和中奖线算法判断
             RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, totalMultipleAmount));
             AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
