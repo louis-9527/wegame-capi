@@ -147,6 +147,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                 .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
                 .rewardLineList(buildRewardLineList())
+                .freeWheelFlag(wheel.isFreeFlag())
                 .build();
     }
 

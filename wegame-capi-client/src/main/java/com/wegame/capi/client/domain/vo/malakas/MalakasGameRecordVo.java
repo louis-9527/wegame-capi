@@ -35,4 +35,6 @@ public class MalakasGameRecordVo implements Validate, Serializable {
     private BigDecimal multiple;
     @ApiModelProperty("中奖线列表")
     private List<MalakasRewardLineVo> rewardLineList;
+    @ApiModelProperty("免费轮标识 false否 true是")
+    private Boolean freeWheelFlag;
 }
