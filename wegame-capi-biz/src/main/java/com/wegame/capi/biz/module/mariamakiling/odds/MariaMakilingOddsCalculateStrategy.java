@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Slf4j
 @Component("mariaMakilingOddsCalculateStrategy")
@@ -19,7 +20,7 @@ public class MariaMakilingOddsCalculateStrategy extends AbstractOddsCalculateStr
     MariaMakilingConfig mariaMakilingConfig;
 
     @Override
-    public Map<String, Map<String, BigDecimal>> getOddsConfig(OddsCalculateDo<SymbolDo> oddsCalculateDo) {
+    public TreeMap<String, TreeMap<String, BigDecimal>> getOddsConfig(OddsCalculateDo<SymbolDo> oddsCalculateDo) {
         return mariaMakilingConfig.getOddsConfig().getCommonOddsConfig();
     }
 }

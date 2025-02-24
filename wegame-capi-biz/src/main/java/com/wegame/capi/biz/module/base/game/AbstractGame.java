@@ -49,7 +49,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         return gameRecordIdList;
     }
 
-    public TreeMap<String, Integer> buildColumProbabilisticMap(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
+    public TreeMap<String, Integer> buildColumProbabilisticMap(int cellNo, TreeMap<String, List<BigDecimal>> probabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
         TreeMap<String, Integer> map = new TreeMap<>();
         probabilisticConfigMap.entrySet().forEach(item -> {
