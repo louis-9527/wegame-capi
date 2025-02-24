@@ -33,6 +33,8 @@ public class MariaMakilingGameRecordVo implements Validate, Serializable {
     private String[][] wheel;
     @ApiModelProperty("倍率")
     private BigDecimal multiple;
+    @ApiModelProperty("累计达到最大中奖倍数：true是，false否")
+    private Boolean accumulateReachMaxMultiple;
     @ApiModelProperty("中奖线列表")
-    private List<MariaMakilingRewardLineVo> rewardLineList; // todo
+    private List<MariaMakilingRewardLineVo> rewardLineList;
 }

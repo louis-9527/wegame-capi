@@ -27,10 +27,13 @@ public class WheelDo<T extends SymbolDo> implements Serializable {
      */
     private Integer index;
     /**
+     * 免费轮标识
+     */
+    private boolean freeFlag;
+    /**
      * 滚轮-元素二维数组
      */
     private T[][] symbolArr;
-
 
     public void print() {
         log.info("index:{}", index);

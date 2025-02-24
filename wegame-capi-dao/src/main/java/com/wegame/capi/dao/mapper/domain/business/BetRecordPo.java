@@ -77,6 +77,10 @@ public class BetRecordPo implements Serializable {
      */
     private Long payAmount;
     /**
+     * 是否达到最大倍数
+     */
+    private Boolean reachMaxMultiple;
+    /**
      * 派彩金额 单位：分
      */
     private Long payOutAmount;

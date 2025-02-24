@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -37,7 +38,8 @@ public class UserControllerTest extends BaseTest {
 
     @Test
     public void test_me() {
-        CommonResponse<UserInfo> response = userController.me(null);
+        HttpServletResponse httpServletResponse = new MockHttpServletResponse();
+        CommonResponse<UserInfo> response = userController.me(httpServletResponse);
         log.info("me: {}", response);
         Assert.notNull(response);
         Assert.isNull(response.getData());
