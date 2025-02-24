@@ -78,14 +78,15 @@ public class ControllerAspect {
                         costTime,
                         req,
                         result);
-            } else {
-                log.info("{}#{}, cost times: {} ms, req={}, res={}",
-                        signature.getDeclaringTypeName(),
-                        signature.getName(),
-                        costTime,
-                        req,
-                        result);
             }
+//            else {
+//                log.info("{}#{}, cost times: {} ms, req={}, res={}",
+//                        signature.getDeclaringTypeName(),
+//                        signature.getName(),
+//                        costTime,
+//                        req,
+//                        result);
+//            }
         } catch (Throwable e) {
             log.error("ControllerAspect.statistic error: {}", e.getMessage(), e);
         }

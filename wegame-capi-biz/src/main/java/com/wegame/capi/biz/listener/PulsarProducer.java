@@ -52,11 +52,12 @@ public class PulsarProducer implements InitializingBean {
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
-        if (duration <= 10) {
-            log.info("sendMessage cost time less 10, {} ms", endTime - startTime);
-        } else if (duration > 10 && duration <= 20) {
-            log.info("sendMessage cost time(10-20], {} ms", endTime - startTime);
-        } else if (duration > 20) {
+//        if (duration <= 10) {
+//            log.info("sendMessage cost time less 10, {} ms", endTime - startTime);
+//        } else if (duration > 10 && duration <= 20) {
+//            log.info("sendMessage cost time(10-20], {} ms", endTime - startTime);
+//        } else
+        if (duration > 20) {
             log.info("sendMessage cost time more than 20, {} ms", endTime - startTime);
         }
         return messageId;
@@ -64,7 +65,7 @@ public class PulsarProducer implements InitializingBean {
 
     public <T> MessageId syncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
-            log.info("{}Producer syncSendMessage type:{},msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
+            // log.info("{}Producer syncSendMessage type:{},msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
             return getProducer(gameType)
                     .newMessage()
                     .key(mqMessage.getMsgId())
@@ -77,7 +78,7 @@ public class PulsarProducer implements InitializingBean {
     }
 
     public <T> CompletableFuture<MessageId> asyncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
-        log.info("{}Producer asyncSendMessage msgType:{}, msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
+        // log.info("{}Producer asyncSendMessage msgType:{}, msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
         long startTime = System.currentTimeMillis();
         CompletableFuture<MessageId> future = getProducer(gameType)
                 .newMessage()
@@ -85,7 +86,10 @@ public class PulsarProducer implements InitializingBean {
                 .value(JSON.toJSONBytes(mqMessage))
                 .sendAsync();
         long endTime = System.currentTimeMillis();
-        log.info("asyncSendMessage cost time, {} ms", endTime - startTime);
+        long cost = endTime - startTime;
+        if (cost >= 50) {
+            log.info("asyncSendMessage cost time, {} ms", endTime - startTime);
+        }
         return future;
     }
 
@@ -99,7 +103,7 @@ public class PulsarProducer implements InitializingBean {
                 .sendAsync();
         // 通过异步回调得知消息发送成功与否
         future.whenComplete(((messageId, throwable) -> {
-            if( null != throwable ) {
+            if (null != throwable) {
                 log.warn("asyncSendMessageThenRetry msgId:{} fail, then retry", mqMessage.getMsgId(), throwable);
                 MessageId id = syncSendMessage(gameType, mqMessage, 100);
                 if (Objects.isNull(id)) {
