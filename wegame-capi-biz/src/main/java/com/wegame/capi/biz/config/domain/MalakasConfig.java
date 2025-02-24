@@ -58,11 +58,11 @@ public class MalakasConfig {
     @AllArgsConstructor
     public static class ProbabilisticConfig implements Serializable {
         /**
-         * 正常玩儿概率
+         * 正常轮概率
          */
         private PlayProbabilisticConfig commonPlayProbabilisticConfig;
         /**
-         * 免费玩儿概率
+         * 免费轮概率
          */
         private PlayProbabilisticConfig freePlayProbabilisticConfig;
         /**
