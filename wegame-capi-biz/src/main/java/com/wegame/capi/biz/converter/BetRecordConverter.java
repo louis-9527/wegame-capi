@@ -44,6 +44,7 @@ public class BetRecordConverter {
         betRecordDo.setBetAmount(po.getBetAmount());
         betRecordDo.setPayAmount(po.getPayAmount());
         betRecordDo.setPayOutAmount(po.getPayOutAmount());
+        betRecordDo.setReachMaxMultiple(po.getReachMaxMultiple());
         betRecordDo.setMarketFlag(po.getMarketFlag());
         betRecordDo.setStatus(po.getStatus());
         betRecordDo.setCreator(po.getCreator());
