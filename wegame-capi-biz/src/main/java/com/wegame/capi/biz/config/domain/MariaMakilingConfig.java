@@ -100,16 +100,16 @@ public class MariaMakilingConfig {
                 .stream()
                 .reduce(0, Integer::sum);
         AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
-        int colum = 5;
+        int column = 5;
         probabilisticConfig.commonPlayWheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < colum; columIndex++) {
-            Integer columNo = columIndex;
+        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
+            Integer columnNo = columnIndex;
             TreeMap<String, Integer> map = new TreeMap<>();
             probabilisticConfig.commonPlayWheelProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
                 }
@@ -117,19 +117,19 @@ public class MariaMakilingConfig {
             Integer sumProbabilistic = map.values()
                     .stream()
                     .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columnNo);
         }
 
         ////
         probabilisticConfig.freePlayWheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig: " + key + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columIndex = 0; columIndex < colum; columIndex++) {
-            Integer columNo = columIndex;
+        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
+            Integer columnNo = columnIndex;
             TreeMap<String, Integer> map = new TreeMap<>();
             probabilisticConfig.freePlayWheelProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
                 }
@@ -137,7 +137,7 @@ public class MariaMakilingConfig {
             Integer sumProbabilistic = map.values()
                     .stream()
                     .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columNo:" + columnNo);
         }
     }
 }
