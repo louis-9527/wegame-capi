@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Slf4j
 @Component("malakasOddsCalculateStrategy")
@@ -18,7 +19,7 @@ public class MalakasOddsCalculateStrategy extends AbstractOddsCalculateStrategy 
     MalakasConfig malakasConfig;
 
     @Override
-    public Map<String, Map<String, BigDecimal>> getOddsConfig(OddsCalculateDo oddsCalculateDo) {
+    public TreeMap<String, TreeMap<String, BigDecimal>> getOddsConfig(OddsCalculateDo oddsCalculateDo) {
         return malakasConfig.getOddsConfig().getCommonOddsConfig();
     }
 }

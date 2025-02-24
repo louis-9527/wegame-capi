@@ -235,7 +235,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             // 一列只能包含两个scatter
             int scatterNumberInReel = 0;
-            Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
+            TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
                     // 当前元素非空，则跳过

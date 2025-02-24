@@ -11,10 +11,7 @@ import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -38,7 +35,7 @@ public class MalakasConfig {
     /**
      * Scatter个数对应的免费轮次数
      */
-    private Map<Integer, Integer> scatterFreeWheelTimesConfig;
+    private TreeMap<Integer, Integer> scatterFreeWheelTimesConfig;
     /**
      * 中奖最大倍数
      */
@@ -50,9 +47,9 @@ public class MalakasConfig {
     @AllArgsConstructor
     public static class OddsConfig implements Serializable {
         /**
-         * Map<元素ID，<赔率类型，具体赔率>>
+         * TreeMap<元素ID，<赔率类型，具体赔率>>
          */
-        private Map<String, Map<String, BigDecimal>> commonOddsConfig;
+        private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
     }
 
     @Data
@@ -71,7 +68,7 @@ public class MalakasConfig {
         /**
          * 免费轮获得Scatter个数概率配置
          */
-        private Map<Integer, Integer> freeWheelScatterProbabilisticConfig;
+        private TreeMap<Integer, Integer> freeWheelScatterProbabilisticConfig;
     }
 
     @Data
@@ -81,13 +78,13 @@ public class MalakasConfig {
     public static class PlayProbabilisticConfig implements Serializable {
         /**
          * 滚轮生成概率配置
-         * Map<元素ID，<列坐标，概率列表>>
+         * TreeMap<元素ID，<列坐标，概率列表>>
          */
-        private Map<String, List<BigDecimal>> wheelProbabilisticConfig;
+        private TreeMap<String, List<BigDecimal>> wheelProbabilisticConfig;
         /**
          * 元素大小概率配置 S M L XL
          */
-        private Map<String, List<BigDecimal>> symbolSizeProbabilisticConfig;
+        private TreeMap<String, List<BigDecimal>> symbolSizeProbabilisticConfig;
         /**
          * 每个reel出现金边概率配置: eg：5%
          */
@@ -111,7 +108,7 @@ public class MalakasConfig {
         Assert.notNull(oddsConfig.commonOddsConfig, "oddsConfig.commonOddsConfig is null");
         // 校验-赔率配置
         oddsConfig.commonOddsConfig.keySet().forEach(symbolId -> {
-            Map<String, BigDecimal> map = oddsConfig.commonOddsConfig.get(symbolId);
+            TreeMap<String, BigDecimal> map = oddsConfig.commonOddsConfig.get(symbolId);
             AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER, "Odds Config Err");
         });
     }
@@ -134,14 +131,14 @@ public class MalakasConfig {
         symbolSizeProbabilisticConfigValid(REEL_NUMBERS, playProbabilisticConfig.getSymbolSizeProbabilisticConfig());
         goldBoarderProbabilisticConfigValid(playProbabilisticConfig.getGoldBoarderProbabilisticConfig());
     }
-    private void wheelProbabilisticConfigValid(int column, Map<String, List<BigDecimal>> wheelProbabilisticConfig) {
+    private void wheelProbabilisticConfigValid(int column, TreeMap<String, List<BigDecimal>> wheelProbabilisticConfig) {
         wheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
             AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
         });
         for (int columnIndex = 0; columnIndex < column; columnIndex++) {
             int columnNo = columnIndex;
-            Map<String, Integer> map = new HashMap<>();
+            TreeMap<String, Integer> map = new TreeMap<>();
             wheelProbabilisticConfig.entrySet().forEach(item -> {
                 int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
@@ -152,14 +149,14 @@ public class MalakasConfig {
             AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columnNo:" + columnNo);
         }
     }
-    private void symbolSizeProbabilisticConfigValid(int column, Map<String, List<BigDecimal>> symbolSizeProbabilisticConfig) {
+    private void symbolSizeProbabilisticConfigValid(int column, TreeMap<String, List<BigDecimal>> symbolSizeProbabilisticConfig) {
         symbolSizeProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlaySymbolSizeProbabilisticConfigValid key: " + key + " ERR");
             AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlaySymbolSizeProbabilisticConfigValid: " + key + " ERR");
         });
         for (int columnIndex = 0; columnIndex < column; columnIndex++) {
             int columnNo = columnIndex;
-            Map<String, Integer> map = new HashMap<>();
+            TreeMap<String, Integer> map = new TreeMap<>();
             symbolSizeProbabilisticConfig.entrySet().forEach(item -> {
                 int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
