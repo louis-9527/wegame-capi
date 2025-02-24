@@ -35,7 +35,7 @@ public class IbongAdarnaBetResultVo implements Serializable {
     private Boolean accumulateReachMaxMultiple;
     @ApiModelProperty("滚轮")
     //    private String[][] spinsResult;
-    private String[][] wheel;
+    private IbongAdarnaSymbolVo[][] wheel;
     @ApiModelProperty("中奖元素坐标集合")
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
