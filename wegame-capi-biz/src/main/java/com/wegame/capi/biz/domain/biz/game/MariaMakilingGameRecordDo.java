@@ -90,6 +90,10 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      * 达到触发最大中奖倍数
      */
     private Boolean accumulateReachMaxMultiple;
+    /**
+     * 最后一轮标识
+     */
+    private Boolean lastGameFlag;
 
     /**
      * 是否中奖免费轮

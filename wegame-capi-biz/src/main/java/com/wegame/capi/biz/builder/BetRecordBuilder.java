@@ -14,7 +14,13 @@ import java.util.List;
 
 public class BetRecordBuilder {
 
-    public static <T> BetRecordDo<T> build(Long betRecordId, BetDo betDo, Long betAmount, Long payAmount, Long payOutAmount, List<T> gameRecordList) {
+    public static <T> BetRecordDo<T> build(Long betRecordId,
+                                           BetDo betDo,
+                                           Long betAmount,
+                                           Long payAmount,
+                                           Long payOutAmount,
+                                           Boolean reachMaxMultiple,
+                                           List<T> gameRecordList) {
 
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
@@ -34,6 +40,7 @@ public class BetRecordBuilder {
                 .betAmount(betAmount)
                 .payAmount(payAmount)
                 .payOutAmount(payOutAmount)
+                .reachMaxMultiple(reachMaxMultiple)
                 .status(BetStatusEnum.ING.getCode())
                 .creator(operator.getName())
                 .updater(operator.getName())

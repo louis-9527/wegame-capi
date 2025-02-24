@@ -26,6 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.module.base.AmountUtil.maxAmountControl;
+import static com.wegame.capi.biz.module.base.AmountUtil.reachMaxMultiple;
+
 /**
  * MariaMakiling类游戏投注抽象接口
  */
@@ -79,7 +82,7 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparingInt(MariaMakilingGameRecordDo::getIndex))
                 .collect(Collectors.toList());
-        // 匹配-免费轮游戏记录
+        // 匹配-免费轮游戏记录 todo 可直接查询游戏记录
         MariaMakilingGameRecordDo matchGameRecord = gameRecordList
                 .stream()
                 .filter(item -> Objects.equals(item.getId(), betDetail.getGameRecordId()))
@@ -117,6 +120,7 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
+        //// 总中奖金额
         long totalRewardAmount = list.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
@@ -125,7 +129,8 @@ public abstract class AbstractMariaMakilingBetStrategy
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                getPayOutAmount(totalRewardAmount, betDo.getBetDetail().getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                maxAmountControl(totalRewardAmount, betDo.getBetDetail().getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 list);
         // 保存投注记录并派奖
         MariaMakilingGameRecordDo gameRecord = list.get(0);
