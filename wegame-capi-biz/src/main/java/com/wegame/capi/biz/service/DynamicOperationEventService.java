@@ -5,12 +5,16 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.builder.DynamicOperationQueryBuilder;
 import com.wegame.capi.biz.builder.GameRecordQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
+import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
+import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
@@ -62,6 +66,13 @@ public class DynamicOperationEventService {
 
     }
 
+    public List<DynamicOperationEventDo> queryPage(DynamicOperationQuery operationQuery, GameTypeEnum gameType) {
+
+        List<DynamicOperationPo> operationPoList = getMongoTemplate(gameType).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), DynamicOperationPo.class, dynamicOperationEventCollectionName);
+        // 判断干预金额
+        return DynamicOperationConvert.convertDos(operationPoList);
+    }
+
 
     /**
      * 获取当前玩家在生效中的干预时间,并按时间取第一条
@@ -75,10 +86,53 @@ public class DynamicOperationEventService {
         return DynamicOperationConvert.convertDos(operationPoList);
     }
 
+    public DynamicOperationEventDo getById(Long id, GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        Criteria criteria = new Criteria();
+        criteria.and("_id").is(id);
+        Query query = new Query(criteria);
+        query.fields().include("id", "bonus", "eventKind", "eventId");
+        DynamicOperationPo operationPo = getMongoTemplate(gameType).findOne(
+                query,
+                DynamicOperationPo.class,
+                dynamicOperationEventCollectionName);
+        return DynamicOperationConvert.convertDo(operationPo);
+    }
+
+    public void updateStatus(Long id, Long bonus, Long useAmount, DynamicOperationEventStatusEnum eventStatus, GameTypeEnum gameType) {
+        if (eventStatus != null) {
+            eventStatus = this.getEventStatus(bonus, useAmount);
+        }
+        if (DynamicOperationEventStatusEnum.FINISH_NORMAL == eventStatus || DynamicOperationEventStatusEnum.FINISH_EXPIRED == eventStatus) {
+            //更新状态
+            DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(id)
+                    .eventStatus(eventStatus).build();
+            this.update(eventUpdate, gameType);
+            // 执行上报
+            this.report(id, gameType);
+        }
+    }
+
+    public DynamicOperationEventStatusEnum getEventStatus(Long bonus, Long use) {
+        long lowerBound = (long) (bonus * 0.9);
+        if (use >= lowerBound) {
+            return DynamicOperationEventStatusEnum.FINISH_NORMAL;
+        }
+        return DynamicOperationEventStatusEnum.NONE;
+    }
+
+    public void report(Long id, GameTypeEnum gameType) {
+        //更新上报状态
+        DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(id)
+                .reportStatus(DynamicOperationReportStatusEnum.FINISH).build();
+        this.update(eventReportUpdate, gameType);
+    }
 
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
         MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
         return template;
     }
+
+
 }

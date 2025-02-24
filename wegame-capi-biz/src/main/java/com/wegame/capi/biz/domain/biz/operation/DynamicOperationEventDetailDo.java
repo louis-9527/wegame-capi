@@ -25,7 +25,7 @@ public class DynamicOperationEventDetailDo {
     private String eventId;
 
     /**
-     * 干预金额
+     * 游戏ID
      */
     private String  operatorGameId;
 

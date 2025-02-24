@@ -1,7 +1,5 @@
 package com.wegame.capi.biz.manager;
 
-import com.wegame.base.lock.DistributeLock;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationCheckResultDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
@@ -10,7 +8,6 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
-import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -38,7 +35,8 @@ public class DynamicOperationManager {
         for (DynamicOperationEventDo event : eventDoList) {
             Long payOutAmount = dynamicOperationEventDetailService.sumPayoutAmount(event.getId(), gameType);
             // 金额在10%左右 可视为完成
-            if (!isWithin10Percent(event.getBonus(), payOutAmount)) {
+            DynamicOperationEventStatusEnum eventStatus = dynamicOperationEventService.getEventStatus(event.getBonus(), payOutAmount);
+            if (DynamicOperationEventStatusEnum.NONE == eventStatus) {
                 event.setBonusBalance(event.getBonus() - payOutAmount);
                 return event;
             }
@@ -57,24 +55,8 @@ public class DynamicOperationManager {
         dynamicOperationEventDetailService.update(updateReq, gameType);
         // 检查干预事件是否可上报,如果已完成则上报
         Long payOutAmount = dynamicOperationEventDetailService.sumPayoutAmount(operationRecordId, gameType);
-        // 金额在10%左右 可视为完成
-        if (isWithin10Percent(bonus, payOutAmount)) {
-            // todo 已完成执行上报
-            // 上报完成,更新状态
-            DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(operationRecordId)
-                    .eventStatus(DynamicOperationEventStatusEnum.FINISH_NORMAL)
-                    .reportStatus(DynamicOperationReportStatusEnum.FINISH_NORMAL).build();
-            dynamicOperationEventService.update(eventUpdate, gameType);
-        }
+        // 更新事件状态
+        dynamicOperationEventService.updateStatus(bonus, payOutAmount, operationRecordId,null, gameType);
     }
 
-
-    boolean isWithin10Percent(Long amount1, Long amount2) {
-        if (amount1 == null || amount2 == null) {
-            return true;
-        }
-
-        long lowerBound = (long) (amount1 * 0.9);
-        return amount2 >= lowerBound;
-    }
 }

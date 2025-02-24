@@ -7,9 +7,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -18,8 +20,6 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class DynamicOperationQuery implements Serializable {
     private static final long serialVersionUID = 6879761477910223464L;
-    @Id
-    @Field("_id")
     private Long id;
 
     /**
@@ -45,5 +45,35 @@ public class DynamicOperationQuery implements Serializable {
      * 事件状态
      */
     private Integer eventStatus;
+
+    private Long createTime;
+
+
+    /**
+     * 过期时间(大于)
+     */
+    private Long expiredTimeLt;
+
+    private List<Integer> eventStatusList;
+
+    private Integer reportStatus;
+
+    private Integer limit;
+
+    private Long createTimeLt;
+
+    /**
+     * 上一页最后一条的Id
+     */
+    private Long lastId;
+
+    /**
+     * 排序语句
+     */
+    private String orderByClause;
+    /**
+     * 排序语句
+     */
+    private Sort.Direction direction;
 
 }

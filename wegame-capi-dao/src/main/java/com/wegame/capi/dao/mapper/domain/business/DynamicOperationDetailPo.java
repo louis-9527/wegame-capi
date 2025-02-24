@@ -36,7 +36,7 @@ public class DynamicOperationDetailPo implements Serializable {
     private String eventId;
 
     /**
-     * 干预金额
+     * 游戏ID
      */
     private String  operatorGameId;
 

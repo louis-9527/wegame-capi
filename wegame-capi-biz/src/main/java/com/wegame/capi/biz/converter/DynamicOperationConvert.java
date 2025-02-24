@@ -25,7 +25,7 @@ public class DynamicOperationConvert {
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
             po.setEventStatus(DynamicOperationEventStatusEnum.NONE.getCode());
-            po.setReportStatus(DynamicOperationReportStatusEnum.ING.getCode());
+            po.setReportStatus(DynamicOperationReportStatusEnum.NONE.getCode());
             po.setEffectedTime(msgDo.getEffectedTime());
             po.setExpiredTime(msgDo.getExpiredTime());
             po.setPlayerName(msgDo.getPlayerName());

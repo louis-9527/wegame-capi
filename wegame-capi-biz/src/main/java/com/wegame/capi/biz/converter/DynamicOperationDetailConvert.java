@@ -5,12 +5,16 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class DynamicOperationDetailConvert {
 
@@ -38,5 +42,36 @@ public class DynamicOperationDetailConvert {
             po.setUpdateTime(DateUtil.getCurrentMilli());
         }
         return po;
+    }
+
+    public static DynamicOperationEventDetailDo convertDo(DynamicOperationDetailPo detailPo) {
+        if (Objects.isNull(detailPo)) {
+            return null;
+        }
+        DynamicOperationEventDetailDo detailDo = new DynamicOperationEventDetailDo();
+        detailDo.setId(detailPo.getId());
+        detailDo.setOperatorRecordId(detailPo.getOperatorRecordId());
+        detailDo.setEventId(detailPo.getEventId());
+        detailDo.setOperatorGameId(detailPo.getOperatorGameId());
+        detailDo.setPlayerId(detailPo.getPlayerId());
+        detailDo.setPlayerName(detailPo.getPlayerName());
+        detailDo.setUserId(detailPo.getUserId());
+        detailDo.setPayOutAmount(detailPo.getPayOutAmount());
+        detailDo.setPayOutTime(detailPo.getPayOutTime());
+        detailDo.setBetId(detailPo.getBetId());
+        detailDo.setBetRecordId(detailPo.getBetRecordId());
+        detailDo.setBetStatus(BetStatusEnum.valueOfCode(detailPo.getBetStatus()));
+        detailDo.setCreateTime(detailPo.getCreateTime());
+        detailDo.setUpdateTime(detailPo.getUpdateTime());
+        return detailDo;
+    }
+    public static List<DynamicOperationEventDetailDo> convertDos(List<DynamicOperationDetailPo> eventDetailPos) {
+        if (eventDetailPos == null) {
+            return Collections.emptyList();
+        }
+        return eventDetailPos.stream()
+                .map(DynamicOperationDetailConvert::convertDo)
+                .collect(Collectors.toList());
+
     }
 }

@@ -9,6 +9,7 @@ import com.wegame.capi.biz.converter.DynamicOperationDetailConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailPo;
+import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +21,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -54,6 +56,14 @@ public class DynamicOperationEventDetailService {
     }
 
 
+    public List<DynamicOperationEventDetailDo> queryPage(DynamicOperationDetailQuery query, GameTypeEnum gameType) {
+        List<DynamicOperationDetailPo> dynamicOperationDetailPos = getMongoTemplate(gameType).find(DynamicOperationDetailQueryBuilder.buildQuery(query), DynamicOperationDetailPo.class, dynamicOperationEventDetailCollectionName);
+
+        return DynamicOperationDetailConvert.convertDos(dynamicOperationDetailPos);
+
+    }
+
+
     public Boolean update(DynamicOperationEventDetailDo detailDo, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(detailDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(detailDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
@@ -61,7 +71,7 @@ public class DynamicOperationEventDetailService {
         criteria.and("_id").is(detailDo.getId());
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(gameType).updateFirst(query,
-                DynamicOperationDetailQueryBuilder.buildUpdateStatus(detailDo),
+                DynamicOperationDetailQueryBuilder.buildUpdate(detailDo),
                 DynamicOperationDetailPo.class,
                 dynamicOperationEventDetailCollectionName);
         return result.getModifiedCount() > 0;

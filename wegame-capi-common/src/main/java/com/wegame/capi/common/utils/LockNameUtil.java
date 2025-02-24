@@ -13,6 +13,8 @@ public class LockNameUtil {
 
     private static final String BET_LOCK = "lock:bet_lock_%s_%s";
 
+    private static final String DYNAMIC_OPERATION_STATUS_SCHEDULER_LOCK = "lock:dynamic_operation_status_scheduler_lock:%s";
+
 
     private LockNameUtil() {
     }
@@ -32,6 +34,11 @@ public class LockNameUtil {
         AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(gameId, ErrorCode.ERR_PARAM);
         return String.format(DYNAMIC_OPERATION_BET_LOCK, playerId, gameId);
+    }
+
+    public static String getDynamicOperationSchedulerLockName(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(DYNAMIC_OPERATION_STATUS_SCHEDULER_LOCK, gameType.getName());
     }
 
 }
