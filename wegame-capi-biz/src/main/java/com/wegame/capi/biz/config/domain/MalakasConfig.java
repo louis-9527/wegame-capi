@@ -58,35 +58,37 @@ public class MalakasConfig {
     @AllArgsConstructor
     public static class ProbabilisticConfig implements Serializable {
         /**
-         * 正常玩滚轮生成概率配置
-         * Map<元素ID，<列坐标，概率列表>>
+         * 正常玩儿概率
          */
-        private Map<String, List<BigDecimal>> commonPlayWheelProbabilisticConfig;
+        private PlayProbabilisticConfig commonPlayProbabilisticConfig;
         /**
-         * 免费玩滚轮生成概率配置
-         * Map<元素ID，<列坐标，概率列表>>
+         * 免费玩儿概率
          */
-        private Map<String, List<BigDecimal>> freePlayWheelProbabilisticConfig;
-        /**
-         * 正常玩儿元素大小概率配置 S M L XL
-         */
-        private Map<String, List<BigDecimal>> commonPlaySymbolSizeProbabilisticConfig;
-        /**
-         * 免费轮元素大小概率配置 S M L XL
-         */
-        private Map<String, List<BigDecimal>> freeWheelSymbolSizeProbabilisticConfig;
-        /**
-         * 正常玩儿每个reel出现金边概率配置: eg：5%
-         */
-        private List<BigDecimal> commonPlayGoldBoarderProbabilisticConfig;
-        /**
-         * 免费轮每个reel出现金边概率配置: eg：5%
-         */
-        private List<BigDecimal> freeWheelGoldBoarderProbabilisticConfig;
+        private PlayProbabilisticConfig freePlayProbabilisticConfig;
         /**
          * 免费轮获得Scatter个数概率配置
          */
         private Map<Integer, Integer> freeWheelScatterProbabilisticConfig;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PlayProbabilisticConfig implements Serializable {
+        /**
+         * 滚轮生成概率配置
+         * Map<元素ID，<列坐标，概率列表>>
+         */
+        private Map<String, List<BigDecimal>> wheelProbabilisticConfig;
+        /**
+         * 元素大小概率配置 S M L XL
+         */
+        private Map<String, List<BigDecimal>> symbolSizeProbabilisticConfig;
+        /**
+         * 每个reel出现金边概率配置: eg：5%
+         */
+        private List<BigDecimal> goldBoarderProbabilisticConfig;
     }
 
     public void validate() {
@@ -104,38 +106,34 @@ public class MalakasConfig {
             AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER, "Odds Config Err");
         });
     }
-
     private void probabilisticConfigValidate() {
         Assert.notNull(probabilisticConfig, "probabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.commonPlayWheelProbabilisticConfig, "probabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.freePlayWheelProbabilisticConfig, "probabilisticConfig.freePlayWheelProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.commonPlayProbabilisticConfig, "probabilisticConfig.commonPlayProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.freePlayProbabilisticConfig, "probabilisticConfig.freePlayPlayProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.freeWheelScatterProbabilisticConfig, "probabilisticConfig.freeWheelScatterProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.commonPlaySymbolSizeProbabilisticConfig, "probabilisticConfig.commonPlaySymbolSizeProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.freeWheelSymbolSizeProbabilisticConfig, "probabilisticConfig.freeWheelSymbolSizeProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.commonPlayGoldBoarderProbabilisticConfig, "probabilisticConfig.commonPlayGoldBoarderProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.freeWheelGoldBoarderProbabilisticConfig, "probabilisticConfig.freeWheelGoldBoarderProbabilisticConfig is null");
 
-        commonPlayWheelProbabilisticConfigValid(REEL_NUMBERS);
+        playProbabilisticConfigValid(probabilisticConfig.commonPlayProbabilisticConfig);
+        playProbabilisticConfigValid(probabilisticConfig.freePlayProbabilisticConfig);
         freeWheelScatterProbabilisticConfigValid();
-        freePlayWheelProbabilisticConfigValid(REEL_NUMBERS);
-        commonPlaySymbolSizeProbabilisticConfigValid(REEL_NUMBERS);
-        freeWheelSymbolSizeProbabilisticConfigValid(REEL_NUMBERS);
-        AssertUtil.assertTrue(Objects.equals(probabilisticConfig.getCommonPlayGoldBoarderProbabilisticConfig().size(), 7), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayGoldBoarderProbabilisticConfig size error");
-        AssertUtil.assertTrue(Objects.equals(probabilisticConfig.getFreeWheelGoldBoarderProbabilisticConfig().size(), 7), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelGoldBoarderProbabilisticConfig size error");
     }
     private void scatterFreeWheelTimesConfigValidate() {
-        // todo 校验scatter配置
         Assert.notNull(scatterFreeWheelTimesConfig, "scatterFreeWheelTimesConfig is null");
     }
-    private void commonPlayWheelProbabilisticConfigValid(int column) {
-        probabilisticConfig.commonPlayWheelProbabilisticConfig.forEach((key, value) -> {
+
+    private void playProbabilisticConfigValid(PlayProbabilisticConfig playProbabilisticConfig) {
+        wheelProbabilisticConfigValid(REEL_NUMBERS, playProbabilisticConfig.getWheelProbabilisticConfig());
+        symbolSizeProbabilisticConfigValid(REEL_NUMBERS, playProbabilisticConfig.getSymbolSizeProbabilisticConfig());
+        goldBoarderProbabilisticConfigValid(playProbabilisticConfig.getGoldBoarderProbabilisticConfig());
+    }
+    private void wheelProbabilisticConfigValid(int column, Map<String, List<BigDecimal>> wheelProbabilisticConfig) {
+        wheelProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
             AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
         });
         for (int columnIndex = 0; columnIndex < column; columnIndex++) {
             int columnNo = columnIndex;
             Map<String, Integer> map = new HashMap<>();
-            probabilisticConfig.commonPlayWheelProbabilisticConfig.entrySet().forEach(item -> {
+            wheelProbabilisticConfig.entrySet().forEach(item -> {
                 int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
@@ -145,39 +143,15 @@ public class MalakasConfig {
             AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columnNo:" + columnNo);
         }
     }
-    private void freePlayWheelProbabilisticConfigValid(int column) {
-        probabilisticConfig.freePlayWheelProbabilisticConfig.forEach((key, value) -> {
-            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig: " + key + " ERR");
-        });
-        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
-            int columnNo = columnIndex;
-            Map<String, Integer> map = new HashMap<>();
-            probabilisticConfig.freePlayWheelProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
-                if (val > 0) {
-                    map.put(item.getKey(), val);
-                }
-            });
-            Integer sumProbabilistic = map.values().stream().reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freePlayWheelProbabilisticConfig ERR, columnNo:" + columnNo);
-        }
-    }
-    private void freeWheelScatterProbabilisticConfigValid() {
-        // 校验-免费轮次数概率配置
-        int sum = probabilisticConfig.freeWheelScatterProbabilisticConfig.values().stream().reduce(0, Integer::sum);
-        AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
-    }
-
-    private void commonPlaySymbolSizeProbabilisticConfigValid(int column) {
-        probabilisticConfig.commonPlaySymbolSizeProbabilisticConfig.forEach((key, value) -> {
+    private void symbolSizeProbabilisticConfigValid(int column, Map<String, List<BigDecimal>> symbolSizeProbabilisticConfig) {
+        symbolSizeProbabilisticConfig.forEach((key, value) -> {
             AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlaySymbolSizeProbabilisticConfigValid key: " + key + " ERR");
             AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlaySymbolSizeProbabilisticConfigValid: " + key + " ERR");
         });
         for (int columnIndex = 0; columnIndex < column; columnIndex++) {
             int columnNo = columnIndex;
             Map<String, Integer> map = new HashMap<>();
-            probabilisticConfig.commonPlaySymbolSizeProbabilisticConfig.entrySet().forEach(item -> {
+            symbolSizeProbabilisticConfig.entrySet().forEach(item -> {
                 int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
                     map.put(item.getKey(), val);
@@ -187,22 +161,12 @@ public class MalakasConfig {
             AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlaySymbolSizeProbabilisticConfigValid ERR, columnNo:" + columnNo);
         }
     }
-    private void freeWheelSymbolSizeProbabilisticConfigValid(int column) {
-        probabilisticConfig.freeWheelSymbolSizeProbabilisticConfig.forEach((key, value) -> {
-            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelSymbolSizeProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelSymbolSizeProbabilisticConfig: " + key + " ERR");
-        });
-        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
-            int columnNo = columnIndex;
-            Map<String, Integer> map = new HashMap<>();
-            probabilisticConfig.freeWheelSymbolSizeProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
-                if (val > 0) {
-                    map.put(item.getKey(), val);
-                }
-            });
-            Integer sumProbabilistic = map.values().stream().reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelSymbolSizeProbabilisticConfig ERR, columnNo:" + columnNo);
-        }
+    private void goldBoarderProbabilisticConfigValid(List<BigDecimal> list) {
+        AssertUtil.assertTrue(Objects.equals(list.size(), 7), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelGoldBoarderProbabilisticConfig size error");
+    }
+    private void freeWheelScatterProbabilisticConfigValid() {
+        // 校验-免费轮次数概率配置
+        int sum = probabilisticConfig.freeWheelScatterProbabilisticConfig.values().stream().reduce(0, Integer::sum);
+        AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
     }
 }

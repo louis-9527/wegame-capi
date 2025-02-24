@@ -118,8 +118,6 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            BigDecimal totalMultipleAmount = rewardResult.getTotalMultiple();
-            log.info("消除回合 parentId {} , gameRecordId {} , totalMultiple ----> {}", gameRecord.getParentId(), gameRecord.getId(), totalMultipleAmount);
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
             if (!reachMaxMultiple(gamePlay, totalRewardAmount)) {
@@ -157,12 +155,11 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             if (CollectionUtils.isNotEmpty(ret)) {
                 totalMultipleAmount = ret.get(ret.size()-1).getRewardResult().getTotalMultiple();
             }
-            log.info("每一轮结束 parentId {} , gameRecordId {} , totalMultiple ----> {}", gameRecord.getParentId(), gameRecord.getId(), totalMultipleAmount);
         }
     }
 
     private WheelDo<MalakasSymbolDo> generateNormalWheelFromPreWheel(GameInfoDo gameInfo,
-                                                                     Map<String, List<BigDecimal>> probabilisticConfig,
+                                                                     MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
                                                                      MalakasGameRecordDo preGameRecord) {
         WheelDo<MalakasSymbolDo> preWheel = preGameRecord.getWheel();
         RewardResultDo<MalakasSymbolDo> preRewardResult = preGameRecord.getRewardResult();
@@ -180,7 +177,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         // todo del
         // MalakasSymbolUtil.print(symbolArr, "rebuild after");
         // 生产：缺失元素(填补剩余元素)
-        WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(gameInfo, symbolArr, probabilisticConfig, preWheel.getIndex() + 1);
+        WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(gameInfo, symbolArr, playProbabilisticConfig, preWheel.getIndex() + 1);
         // todo del
         // MalakasSymbolUtil.print(wheel.getSymbolArr(), "current wheel");
         return wheel;
@@ -192,13 +189,13 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<MalakasSymbolDo> generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo<MalakasSymbolDo> generateNormalWheel(GameInfoDo gameInfo, MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig) {
         MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 第一行第一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
         // 第一行最后一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
-        return generateCommonNormalWheel(gameInfo, symbolArr, probabilisticConfig, WHEEL_DEFAULT_INDEX);
+        return generateCommonNormalWheel(gameInfo, symbolArr, playProbabilisticConfig, WHEEL_DEFAULT_INDEX);
     }
 
     /**
@@ -207,13 +204,13 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<MalakasSymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo<MalakasSymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo, MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig) {
         MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 第一行第一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
         // 第一行最后一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
-        WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(gameInfo, symbolArr, probabilisticConfig, WHEEL_DEFAULT_INDEX);
+        WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(gameInfo, symbolArr, playProbabilisticConfig, WHEEL_DEFAULT_INDEX);
         int scatterSymbolCount = countIndexSymbol(wheel.getSymbolArr(), SymbolEnum.Scatter);
         int randomCount = randomService.randomInt(4, 6);
         int needAddCount = randomCount - scatterSymbolCount;
@@ -237,7 +234,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
 
     private WheelDo<MalakasSymbolDo> generateCommonNormalWheel(GameInfoDo gameInfo,
                                                                MalakasSymbolDo[][] symbolArr,
-                                                               Map<String, List<BigDecimal>> probabilisticConfig,
+                                                               MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
                                                                int wheelIndex) {
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
@@ -246,7 +243,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             // 一列只能包含两个scatter
             int scatterNumberInReel = 0;
-            Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, probabilisticConfig);
+            Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
                     // 当前元素非空，则跳过
@@ -257,19 +254,19 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     // 第一行 || 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
                     // 生成非scatter
                     SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
-                    SymbolSizeEnum symbolSize = generateSymbolSize(row, MalakasSymbolUtil.getMaxRow(symbolArr, row, column), column, gameInfo);
+                    SymbolSizeEnum symbolSize = generateSymbolSize(row, MalakasSymbolUtil.getMaxRow(symbolArr, row, column), column, gameInfo, playProbabilisticConfig);
                     MalakasSymbolUtil.handlePlaceholderSymbol(symbolArr, row, column, symbolSize);
                     // 构建元素金边
-                    boolean symbolGoldBorder = generateSymbolGoldBorder(gameInfo, row, column);
+                    boolean symbolGoldBorder = generateSymbolGoldBorder(gameInfo, playProbabilisticConfig, row, column);
                     MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
                     symbolArr[row][column] = malakasSymbolDo;
                 } else {
                     // 随机生成
                     SymbolDo symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
-                    SymbolSizeEnum symbolSize = generateSymbolSize(row, MalakasSymbolUtil.getMaxRow(symbolArr, row, column), column, gameInfo);
+                    SymbolSizeEnum symbolSize = generateSymbolSize(row, MalakasSymbolUtil.getMaxRow(symbolArr, row, column), column, gameInfo, playProbabilisticConfig);
                     MalakasSymbolUtil.handlePlaceholderSymbol(symbolArr, row, column, symbolSize);
                     // 构建元素金边
-                    boolean symbolGoldBorder = generateSymbolGoldBorder(gameInfo, row, column);
+                    boolean symbolGoldBorder = generateSymbolGoldBorder(gameInfo, playProbabilisticConfig, row, column);
                     MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
                     symbolArr[row][column] = malakasSymbolDo;
                     if (symbolDo.isScatterSymbol()) {
@@ -301,22 +298,22 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         return CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
     }
 
-    private SymbolSizeEnum generateSymbolSize(int currentRow, int maxRow, int currentColum, GameInfoDo gameInfo) {
+    private SymbolSizeEnum generateSymbolSize(int currentRow, int maxRow, int currentColum, GameInfoDo gameInfo, MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig) {
         if (Objects.equals(currentRow, ONE_ROW_INDEX)
                 || Objects.equals(currentColum, ONE_COLUM_INDEX)
                 || Objects.equals(currentColum, gameInfo.getColumn() - 1)) {
             // 第一行，第一列，最后一列：只能为小元素
             return SymbolSizeEnum.S;
         }
-        Map<String, Integer> map = MalakasProbabilisticUtil.buildColumSymboleSizeProbabilisticMap(currentColum, maxRow - currentRow + 1, malakasConfig.getProbabilisticConfig());
+        Map<String, Integer> map = MalakasProbabilisticUtil.buildColumSymboleSizeProbabilisticMap(currentColum, maxRow - currentRow + 1, playProbabilisticConfig);
         AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
         return randomSymbolSize(map, randomService.randomInt(1, map.values()
                 .stream()
                 .reduce(0, Integer::sum)));
     }
 
-    private boolean generateSymbolGoldBorder(GameInfoDo gameInfo, int row, int column) {
-        List<BigDecimal> goldBoarderProbabilisticConfig = malakasConfig.getProbabilisticConfig().getCommonPlayGoldBoarderProbabilisticConfig();
+    private boolean generateSymbolGoldBorder(GameInfoDo gameInfo, MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig, int row, int column) {
+        List<BigDecimal> goldBoarderProbabilisticConfig = playProbabilisticConfig.getGoldBoarderProbabilisticConfig();
         BigDecimal goldBoarderProbabilistic = null;
         if (Objects.equals(row, ONE_ROW_INDEX)) {
             goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(gameInfo.getColumn() - 1);

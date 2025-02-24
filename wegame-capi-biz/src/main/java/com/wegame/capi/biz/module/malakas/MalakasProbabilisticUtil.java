@@ -18,8 +18,8 @@ public class MalakasProbabilisticUtil {
 
     public static Map<String, Integer> buildColumSymboleSizeProbabilisticMap(int currentColumnNo,
                                                                              int maxColumnSpan,
-                                                                             MalakasConfig.ProbabilisticConfig probabilisticConfig) {
-        Map<String, List<BigDecimal>> sizeProbabilisticConfigMap = probabilisticConfig.getCommonPlaySymbolSizeProbabilisticConfig();
+                                                                             MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig) {
+        Map<String, List<BigDecimal>> sizeProbabilisticConfigMap = playProbabilisticConfig.getSymbolSizeProbabilisticConfig();
         AssertUtil.assertTrue(MapUtils.isNotEmpty(sizeProbabilisticConfigMap), ErrorCode.ERR_INTER);
         Map<String, Integer> map = new HashMap<>();
         sizeProbabilisticConfigMap.forEach((key, value) -> {
@@ -32,17 +32,17 @@ public class MalakasProbabilisticUtil {
         return map;
     }
 
-    public static Map<String, List<BigDecimal>> getWheelProbabilisticConfig(GamePlayDo gamePlay, MalakasConfig.ProbabilisticConfig probabilisticConfig, boolean freePlay) {
+    public static MalakasConfig.PlayProbabilisticConfig getWheelProbabilisticConfig(GamePlayDo gamePlay, MalakasConfig.ProbabilisticConfig probabilisticConfig, boolean freePlay) {
         if (freePlay) {
-            return probabilisticConfig.getFreePlayWheelProbabilisticConfig();
+            return probabilisticConfig.getFreePlayProbabilisticConfig();
         } else {
             switch (gamePlay.getBetSubType()) {
                 case NORMAL_BET:
                 case BUY_BET:
-                    return probabilisticConfig.getCommonPlayWheelProbabilisticConfig();
+                    return probabilisticConfig.getCommonPlayProbabilisticConfig();
                 case FREE_SPINS_NORMAL_BET:
                 case FREE_SPINS_BUY_BET:
-                    return probabilisticConfig.getFreePlayWheelProbabilisticConfig();
+                    return probabilisticConfig.getFreePlayProbabilisticConfig();
                 default:
                     throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
             }
