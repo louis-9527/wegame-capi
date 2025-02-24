@@ -1,7 +1,6 @@
 package com.wegame.capi.client.domain.vo.ibongadarna;
 
 import com.wegame.capi.client.domain.vo.IndexVo;
-import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingRewardLineVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -34,17 +33,13 @@ public class IbongAdarnaBetResultVo implements Serializable {
     @ApiModelProperty("累计达到最大中奖倍数：true是，false否")
     private Boolean accumulateReachMaxMultiple;
     @ApiModelProperty("滚轮")
-    //    private String[][] spinsResult;
     private IbongAdarnaSymbolVo[][] wheel;
     @ApiModelProperty("中奖元素坐标集合")
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
     private List<IbongAdarnaRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识,0:否,1:是")
-    private Integer freeSpinFlag;
-//    @ApiModelProperty("免费轮游戏记录Id列表")
-    //    private List<String> freeSpinIds;
-//    private List<String> gameRecordIds;
+    private Integer freeWheelFlag;
 
 
 }

@@ -6,14 +6,10 @@ import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IbongSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaBetResultVo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaGameRecordVo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaRewardLineVo;
-import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
-import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
-import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingRewardLineVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -106,7 +102,7 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .accumulateReachMaxMultiple(this.accumulateReachMaxMultiple)
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
-                    .freeSpinFlag(0)
+                    .freeWheelFlag(0)
                     .build();
         } else {
             return IbongAdarnaBetResultVo.builder()
@@ -127,7 +123,7 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
                             ).flatMap(List::stream)
                             .collect(Collectors.toSet()))
                     .rewardLineList(buildRewardLineList())
-                    .freeSpinFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
+                    .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
                     .build();
         }
     }
