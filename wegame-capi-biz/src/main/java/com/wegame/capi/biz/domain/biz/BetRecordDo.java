@@ -75,6 +75,10 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Long payOutAmount;
     /**
+     * 是否达到最大倍数
+     */
+    private Boolean reachMaxMultiple;
+    /**
      * 营销标识 0否 1是
      */
     private Integer marketFlag;

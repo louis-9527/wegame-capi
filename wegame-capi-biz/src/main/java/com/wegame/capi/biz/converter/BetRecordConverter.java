@@ -72,6 +72,7 @@ public class BetRecordConverter {
         po.setBetAmount(betRecordDo.getBetAmount());
         po.setPayAmount(betRecordDo.getPayAmount());
         po.setPayOutAmount(betRecordDo.getPayOutAmount());
+        po.setReachMaxMultiple(betRecordDo.getReachMaxMultiple());
         po.setMarketFlag(betRecordDo.getMarketFlag());
         po.setStatus(betRecordDo.getStatus());
         if (OptEnum.ADD.equals(optEnum)) {
@@ -99,6 +100,7 @@ public class BetRecordConverter {
         vo.setBetAmount(betRecordDo.getBetAmount());
         vo.setPayAmount(betRecordDo.getPayAmount());
         vo.setPayOutAmount(betRecordDo.getPayOutAmount());
+        vo.setReachMaxMultiple(betRecordDo.getReachMaxMultiple());
         vo.setStatus(betRecordDo.getStatus());
         vo.setCreateTime(betRecordDo.getCreateTime());
         return vo;
