@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.module.ibongadarna.game;
 
-import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wegame.base.enums.ErrorCode;
@@ -14,6 +13,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IbongSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.base.AmountUtil;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.common.Constants;
@@ -63,8 +63,8 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                 gamePlay.getBetRecordId(),
                 wheel,
                 rewardResult,
-                getActualRewardAmount(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount()),
-                reachMaxRewardMultiple(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount()));
+                AmountUtil.maxAmountControl(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(),ibongAdarnaConfig.getMaxRewardMultiple()),
+                AmountUtil.reachMaxMultiple(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(),ibongAdarnaConfig.getMaxRewardMultiple()));
         ret.add(record);
         // 判断是否命中免费轮
         return ret;
@@ -218,17 +218,5 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                 .overallRewardAmount(overallRewardAmount)
                 .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                 .build();
-    }
-
-    private long getActualRewardAmount(long currentTotalAmount, Long betAmount) {
-        // 大于投注金额的
-        Integer rewardMaxMultiple = ibongAdarnaConfig.getMaxRewardMultiple();
-        return Math.min(currentTotalAmount, betAmount * rewardMaxMultiple);
-    }
-
-    private boolean reachMaxRewardMultiple(long currentTotalAmount, Long betAmount) {
-        // 大于投注金额的
-        Integer rewardMaxMultiple = ibongAdarnaConfig.getMaxRewardMultiple();
-        return currentTotalAmount >= betAmount * rewardMaxMultiple;
     }
 }

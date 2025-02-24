@@ -5,7 +5,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.IbongAdarnaBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.IbongAdarnaBetDo;
@@ -13,6 +12,7 @@ import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.manager.IbongAdarnaRecordManager;
+import com.wegame.capi.biz.module.base.AmountUtil;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGame;
@@ -64,15 +64,17 @@ public abstract class AbstractIbongAdarnaBetStrategy
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                getActualRewardAmount
-                        (gameRecord.getRewardResult().getTotalRewardAmount(), betDo.getBetDetail().getBetAmount()),
+                AmountUtil.maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
+                        betDo.getBetDetail().getBetAmount(),ibongAdarnaConfig.getMaxRewardMultiple()),
+                AmountUtil.reachMaxMultiple(gameRecord.getRewardResult().getTotalRewardAmount(),
+                        betDo.getBetDetail().getBetAmount(),ibongAdarnaConfig.getMaxRewardMultiple()),
                 list);
 
         // 保存投注记录并派奖
         Long userCredit = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         // 中大奖处理
-        this.rewardAfterHandle(betDo, getActualRewardAmount
-                (gameRecord.getRewardResult().getTotalRewardAmount(), betDo.getBetDetail().getBetAmount()));
+        this.rewardAfterHandle(betDo,AmountUtil.maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
+                betDo.getBetDetail().getBetAmount(),ibongAdarnaConfig.getMaxRewardMultiple()));
 
         // 组装返回结果
         return BetResultDo.<IbongAdarnaGameRecordDo>builder()
@@ -90,11 +92,5 @@ public abstract class AbstractIbongAdarnaBetStrategy
 
     public void rewardAfterHandle(BetDo<IbongAdarnaBetDo> betDo, Long totalRewardAmount) {
         // do nothing
-    }
-
-    private long getActualRewardAmount(long currentTotalAmount, Long betAmount) {
-        // 大于投注金额的
-        Integer rewardMaxMultiple = ibongAdarnaConfig.getMaxRewardMultiple();
-        return Math.min(currentTotalAmount, betAmount * rewardMaxMultiple);
     }
 }
