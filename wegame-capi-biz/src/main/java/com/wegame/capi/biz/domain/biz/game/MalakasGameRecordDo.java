@@ -66,6 +66,10 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
      */
     private Integer index;
     /**
+     * 免费轮标识 false否 true是
+     */
+    private Boolean freeWheelFlag;
+    /**
      * 滚轮
      */
     private WheelDo<MalakasSymbolDo> wheel;
