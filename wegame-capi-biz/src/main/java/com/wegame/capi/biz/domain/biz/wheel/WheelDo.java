@@ -27,21 +27,15 @@ public class WheelDo<T extends SymbolDo> implements Serializable {
      */
     private Integer index;
     /**
-     * id
+     * 免费轮标识
      */
-    private Long id;
-    /**
-     * parentId
-     */
-    private Long parentId;
+    private boolean freeFlag;
     /**
      * 滚轮-元素二维数组
      */
     private T[][] symbolArr;
 
     public void valid() {
-
-    }
 
     //    public void print() {
     //        System.out.println("index: " + index);
