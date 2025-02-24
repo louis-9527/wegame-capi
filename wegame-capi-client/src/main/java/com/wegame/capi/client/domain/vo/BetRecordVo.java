@@ -1,6 +1,7 @@
 package com.wegame.capi.client.domain.vo;
 
 import com.wegame.base.Validate;
+import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaGameRecordVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -47,7 +48,7 @@ public class BetRecordVo implements Validate, Serializable {
     private Long createTime;
     // todo fix 联调后 修改类型为 Object
     @ApiModelProperty("游戏记录列表")
-    private List<MariaMakilingGameRecordVo> gameRecordList;
+    private List<IbongAdarnaGameRecordVo> gameRecordList;
 
 
 }
