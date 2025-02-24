@@ -13,6 +13,7 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.MultipleTypeEnum;
 import com.wegame.capi.common.enums.SymbolEnum;
+import com.wegame.capi.common.utils.GameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Slf4j
 @Component("ibongAdarnaMultipleCalculateStrategy")
@@ -41,23 +43,13 @@ public class IbongAdarnaMultipleCalculateStrategy extends AbstractMultipleCalcul
 
     private BigDecimal randomMultiple(BetSubTypeEnum betSubType) {
         // 取出对应投注类型的倍率出现概率配置
-        Map<BigDecimal, Map<String, BigDecimal>> multiPleProbabilisticConfig = ibongAdarnaConfig.getProbabilisticConfig().getMultiPleProbabilisticConfig();
-        Map<BigDecimal, Integer> betTypemultiPleProbabilisticMap = new HashMap<>();
+        TreeMap<BigDecimal, TreeMap<String, BigDecimal>> multiPleProbabilisticConfig = ibongAdarnaConfig.getProbabilisticConfig().getMultiPleProbabilisticConfig();
+        TreeMap<BigDecimal, Integer> betTypeMultiPleProbabilisticMap = new TreeMap<>();
         MultipleTypeEnum multipleType = MultipleTypeEnum.fromBetSubTypeEnum(betSubType);
         multiPleProbabilisticConfig.forEach((key, value) -> {
-            betTypemultiPleProbabilisticMap.put(key, value.get(multipleType.getCode()).multiply(new BigDecimal(Constants.CONST_10000)).intValue());
+            betTypeMultiPleProbabilisticMap.put(key, value.get(multipleType.getCode()).multiply(new BigDecimal(Constants.CONST_10000)).intValue());
         });
-
         // 随机取出一个倍率
-        int random = randomService.randomInt(1, Constants.CONST_1000000);
-        int startVal = 0;
-        for (Map.Entry<BigDecimal, Integer> entry : CollectionUtils.emptyIfNull(betTypemultiPleProbabilisticMap.entrySet())) {
-            if (random > startVal && random <= startVal + entry.getValue()) {
-                return entry.getKey();
-            } else {
-                startVal += entry.getValue();
-            }
-        }
-        throw new BusinessException(ErrorCode.ERR_INTER, "no suport multiple probabilistic");
+        return GameUtil.randomKey(betTypeMultiPleProbabilisticMap, randomService.randomInt(1, Constants.CONST_1000000));
     }
 }

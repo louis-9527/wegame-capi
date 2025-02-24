@@ -13,10 +13,7 @@ import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.wegame.capi.common.Constants.*;
 
@@ -39,7 +36,7 @@ public class IbongAdarnaConfig {
      * 固定线路配置
      * Map<线路号，坐标：行号 & 列号>
      */
-    private Map<Integer, List<List<Integer>>> rewardFixedLinesConfig;
+    private TreeMap<Integer, List<List<Integer>>> rewardFixedLinesConfig;
 
     /**
      * 最大中奖倍数
@@ -59,7 +56,7 @@ public class IbongAdarnaConfig {
         /**
          * Map<元素ID，具体赔率
          */
-        private Map<String, Map<String, BigDecimal>> commonOddsConfig;
+        private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
     }
 
     @Data
@@ -71,25 +68,25 @@ public class IbongAdarnaConfig {
          * 元素出现概率配置
          * Map<元素ID，<列坐标，概率列表>>
          */
-        private Map<String, List<BigDecimal>> commonPlayWheelProbabilisticConfig;
+        private TreeMap<String, List<BigDecimal>> commonPlayWheelProbabilisticConfig;
 
         /**
          * 元素分裂概率配置
          * Map<元素ID，<分裂类型：不分裂，两倍分裂,三倍分裂，概率>>
          */
-        private Map<String, Map<String, BigDecimal>> symbolBreakUpProbabilisticConfig;
+        private TreeMap<String, TreeMap<String, BigDecimal>> symbolBreakUpProbabilisticConfig;
         /**
          * 倍率出现概率配置
          * Map<倍率，<倍率类型：普通，ex，概率列表>>
          */
-        private Map<BigDecimal, Map<String, BigDecimal>> multiPleProbabilisticConfig;
+        private TreeMap<BigDecimal, TreeMap<String, BigDecimal>> multiPleProbabilisticConfig;
 
         /**
          * 每一列重复出现元素个数概率配置
          * index:代表列号
          * Map<重复类型，概率>
          */
-        private List<Map<String, BigDecimal>> perColumSymbolRepeatProbabilisticConfig;
+        private List<TreeMap<String, BigDecimal>> perColumSymbolRepeatProbabilisticConfig;
     }
 
     public void validate() {

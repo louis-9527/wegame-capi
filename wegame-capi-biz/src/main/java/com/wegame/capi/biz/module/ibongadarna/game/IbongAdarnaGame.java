@@ -20,8 +20,11 @@ import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.SymbolBreakUpEnum;
+import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolRepeatTypeEnum;
+import com.wegame.capi.common.utils.GameUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,8 +66,8 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                 gamePlay.getBetRecordId(),
                 wheel,
                 rewardResult,
-                AmountUtil.maxAmountControl(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(),ibongAdarnaConfig.getMaxRewardMultiple()),
-                AmountUtil.reachMaxMultiple(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(),ibongAdarnaConfig.getMaxRewardMultiple()));
+                AmountUtil.maxAmountControl(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
+                AmountUtil.reachMaxMultiple(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()));
         ret.add(record);
         // 判断是否命中免费轮
         return ret;
@@ -80,7 +83,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
         IbongSymbolDo[][] symbolArr = new IbongSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 生成整盘随机数(row*column)
         for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
-            Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
+            TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
             // 每一列开始的时候决定是2个元素 or 1个元素
             SymbolRepeatTypeEnum symbolRepeatType = randomColumSymbolCount(colum);
             AssertUtil.assertNotNull(symbolRepeatType, ErrorCode.ERR_INTER, "invalid symbolRepeatType");
@@ -100,7 +103,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
      * @param gameInfo  游戏信息
      */
     private void generateColumSymbol(IbongSymbolDo[][] symbolArr, int colum, GameInfoDo gameInfo, List<SymbolDo> preSymbolGenList) {
-        Map<String, Map<String, Integer>> symbolBreakUpProbabilisticMap = buildSymbolBreakUpProbabilisticMap();
+        TreeMap<String, TreeMap<String, Integer>> symbolBreakUpProbabilisticMap = buildSymbolBreakUpProbabilisticMap();
         // 生成好固定个数
         int preSymbolIndex = 0;
         int preSymbolGenCount = preSymbolGenList.size();
@@ -129,7 +132,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
      * @param columProbabilisticMap 元素出现概率
      * @return 不重复的元素集合
      */
-    private List<SymbolDo> preGenerateSymboDoList(SymbolRepeatTypeEnum symbolRepeatType, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
+    private List<SymbolDo> preGenerateSymboDoList(SymbolRepeatTypeEnum symbolRepeatType, GameInfoDo gameInfo, TreeMap<String, Integer> columProbabilisticMap) {
         Set<SymbolDo> symbolDoSet = Sets.newHashSet();
         while (true) {
             if (symbolDoSet.size() < symbolRepeatType.getTimes()) {
@@ -142,15 +145,9 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
     }
 
     private SymbolRepeatTypeEnum randomColumSymbolCount(int colum) {
-        Map<String, Integer> columSymbolRepeatProbabilisticMap = this.buildPerColumSymbolRepeatProbabilisticMap(colum);
-        String repateType = null;
-        int random = randomService.randomInt(1, CONST_1000000);
-        for (Map.Entry<String, Integer> entry : columSymbolRepeatProbabilisticMap.entrySet()) {
-            if (random <= entry.getValue()) {
-                repateType = entry.getKey();
-            }
-        }
-        return Optional.ofNullable(SymbolRepeatTypeEnum.valueOfCode(repateType)).orElse(SymbolRepeatTypeEnum.TWO);
+        TreeMap<String, Integer> columSymbolRepeatProbabilisticMap = this.buildPerColumSymbolRepeatProbabilisticMap(colum);
+        String repeatType = GameUtil.randomKey(columSymbolRepeatProbabilisticMap, randomService.randomInt(1, CONST_1000000));
+        return Optional.ofNullable(SymbolRepeatTypeEnum.valueOfCode(repeatType)).orElse(SymbolRepeatTypeEnum.TWO);
     }
 
     /**
@@ -160,15 +157,9 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
      * @param symbolBreakUpProbabilisticMap 分裂概率配置map
      * @return 分裂倍数
      */
-    private SymbolBreakUpEnum randomSymbolBreakUpCount(SymbolDo symbolDo, Map<String, Map<String, Integer>> symbolBreakUpProbabilisticMap) {
-        int random = randomService.randomInt(1, CONST_1000000);
-        Map<String, Integer> symbolBreakUpProbabilistic = symbolBreakUpProbabilisticMap.get(symbolDo.getId());
-        String breakUpKey = null;
-        for (Map.Entry<String, Integer> entry : symbolBreakUpProbabilistic.entrySet()) {
-            if (random <= entry.getValue()) {
-                breakUpKey = entry.getKey();
-            }
-        }
+    private SymbolBreakUpEnum randomSymbolBreakUpCount(SymbolDo symbolDo, TreeMap<String, TreeMap<String, Integer>> symbolBreakUpProbabilisticMap) {
+        TreeMap<String, Integer> symbolBreakUpProbabilistic = symbolBreakUpProbabilisticMap.get(symbolDo.getId());
+        String breakUpKey = GameUtil.randomKey(symbolBreakUpProbabilistic, randomService.randomInt(1, CONST_1000000));
         return Optional.ofNullable(SymbolBreakUpEnum.valueOfCode(breakUpKey)).orElse(SymbolBreakUpEnum.NO_BREAK_UP);
     }
 
@@ -177,23 +168,23 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
      *
      * @return list
      */
-    private Map<String, Integer> buildPerColumSymbolRepeatProbabilisticMap(int colum) {
-        Map<String, BigDecimal> columSymbolRepeatProbabilisticConfigMap = ibongAdarnaConfig.getProbabilisticConfig()
+    private TreeMap<String, Integer> buildPerColumSymbolRepeatProbabilisticMap(int colum) {
+        TreeMap<String, BigDecimal> columSymbolRepeatProbabilisticConfigMap = ibongAdarnaConfig.getProbabilisticConfig()
                 .getPerColumSymbolRepeatProbabilisticConfig().get(colum);
-        Map<String, Integer> perColumSymbolRepeatProbabilisticMap = new HashMap<>();
+        TreeMap<String, Integer> perColumSymbolRepeatProbabilisticMap = new TreeMap<>();
         columSymbolRepeatProbabilisticConfigMap.forEach((key, probabilistic) ->
                 perColumSymbolRepeatProbabilisticMap.put(key, probabilistic.multiply(new BigDecimal(CONST_10000)).intValue()));
         return perColumSymbolRepeatProbabilisticMap;
     }
 
-    private Map<String, Map<String, Integer>> buildSymbolBreakUpProbabilisticMap() {
-        Map<String, Map<String, Integer>> symbolBreakUpProbabilisticMap = new HashMap<>();
+    private TreeMap<String, TreeMap<String, Integer>> buildSymbolBreakUpProbabilisticMap() {
+        TreeMap<String, TreeMap<String, Integer>> symbolBreakUpProbabilisticMap = new TreeMap<>();
 
-        Map<String, Map<String, BigDecimal>> symbolBreakUpProbabilisticConfig =
+        TreeMap<String, TreeMap<String, BigDecimal>> symbolBreakUpProbabilisticConfig =
                 ibongAdarnaConfig.getProbabilisticConfig().getSymbolBreakUpProbabilisticConfig();
-        for (Map.Entry<String, Map<String, BigDecimal>> breakUpEnt : symbolBreakUpProbabilisticConfig.entrySet()) {
+        for (Map.Entry<String, TreeMap<String, BigDecimal>> breakUpEnt : symbolBreakUpProbabilisticConfig.entrySet()) {
             Map<String, BigDecimal> valueMap = breakUpEnt.getValue();
-            Map<String, Integer> intValueMap = new HashMap<>();
+            TreeMap<String, Integer> intValueMap = new TreeMap<>();
             valueMap.forEach((key, probabilistic) -> intValueMap.put(key, probabilistic.multiply(new BigDecimal(Constants.CONST_10000)).intValue()));
             symbolBreakUpProbabilisticMap.put(breakUpEnt.getKey(), intValueMap);
         }
