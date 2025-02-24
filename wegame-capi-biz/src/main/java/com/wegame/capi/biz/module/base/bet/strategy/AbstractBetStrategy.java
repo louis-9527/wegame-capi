@@ -50,6 +50,10 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         return betRecordId;
     }
 
+    public long getPayOutAmount(long totalRewardAmount, Long payAmount, int rewardMaxMultiple) {
+        return Math.min(totalRewardAmount, payAmount * rewardMaxMultiple);
+    }
+
     /**
      * 保存投注记录并投注派彩
      */

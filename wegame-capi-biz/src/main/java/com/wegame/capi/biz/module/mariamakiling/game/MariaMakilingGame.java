@@ -21,11 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static com.wegame.capi.biz.module.base.reward.RewardUtil.getOverallRewardAmount;
+import static com.wegame.capi.biz.module.base.reward.RewardUtil.reachMaxRewardMultiple;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -56,11 +55,14 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
-        List<MariaMakilingGameRecordDo> ret = new ArrayList<>();
+        UserInfo userInfo = UserInfoContext.getUserInfo();
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
+        List<MariaMakilingGameRecordDo> ret = new ArrayList<>();
         WheelDo<SymbolDo> firstWheel;
         long firstGameRecordId = generateGameRecordId();
+        List<MariaMakilingGameRecordDo> freeWheelGameRecordList = null;
+        List<Long> freeWheelGameRecordIds = null;
         // 根据投注类型：生成游戏滚轮
         switch (gamePlay.getBetType()) {
             case NORMAL_BET:
@@ -73,69 +75,60 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
         AssertUtil.assertNotNull(firstWheel, ErrorCode.ERR_INTER);
-        RewardResultDo<SymbolDo> rewardResult = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel, BigDecimal.ZERO));
-        // 判断-是否命中免费轮
-        List<Long> freeWheelGameRecordIds = new ArrayList<>();
-        long totalRewardAmount = rewardResult.getTotalRewardAmount();
-        boolean reachMaxRewardMultiple = this.reachMaxRewardMultiple(totalRewardAmount, gamePlay.getPayAmount());
-        MariaMakilingGameRecordDo record = buildGameRecord(firstGameRecordId,
-                GAME_RECORD_DEFAULT_PARENT_ID,
-                gamePlay.getBetRecordId(),
-                0L,
-                firstWheel,
-                rewardResult,
-                freeWheelGameRecordIds,
-                getActualRewardAmount(rewardResult.getTotalRewardAmount(), gamePlay.getPayAmount()),
-                reachMaxRewardMultiple);
-        ret.add(record);
-        // 首轮触发最大倍数
-        if (reachMaxRewardMultiple) {
-            log.info("MariaMakilingGame normal play trigger max rewardMultiple,betRecordId:{},maxRewardMultiple:{}",
-                    gamePlay.getBetRecordId(), mariaMakilingConfig.getRewardMaxMultiple());
-            freeWheelGameRecordIds = null;
-            return ret;
-        }
-
-        if (rewardResult.isHasRewardFreeWheel()) {
-            // 判断是否命中免费轮
-            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true));
-            // 组装&返回-游戏记录列表
-            long overallRewardAmount = totalRewardAmount;
+        RewardResultDo<SymbolDo> firstWheelRewardResult = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel, BigDecimal.ZERO));
+        boolean firstWheelReachMaxRewardMultiple = reachMaxRewardMultiple(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple());
+        if (!firstWheelReachMaxRewardMultiple && firstWheelRewardResult.isHasRewardFreeWheel()) {
+            // 首轮未达到最大倍数 && 首轮命中免费轮
+            freeWheelGameRecordList = new ArrayList<>();
+            freeWheelGameRecordIds = new ArrayList<>();
+            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true));// 累计中奖金额
+            long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
             for (WheelDo<SymbolDo> wheelDo : CollectionUtils.emptyIfNull(wheelList)) {
                 RewardResultDo rewardResultDo = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheelDo, BigDecimal.ZERO));
-                Long gameRecordId = generateGameRecordId();
-                // 累计中奖金额
                 overallRewardAmount = overallRewardAmount + rewardResultDo.getTotalRewardAmount();
-                boolean freeWheelReachMaxRewardMultiple = this.reachMaxRewardMultiple(totalRewardAmount, gamePlay.getPayAmount());
-                MariaMakilingGameRecordDo gameRecord = buildGameRecord(gameRecordId,
-                        GAME_RECORD_DEFAULT_PARENT_ID,
-                        record.getBetRecordId(),
-                        record.getId(),
-                        wheelDo,
-                        rewardResultDo,
-                        null,
-                        getActualRewardAmount(overallRewardAmount, gamePlay.getPayAmount()),
-                        freeWheelReachMaxRewardMultiple);
-                ret.add(gameRecord);
-                freeWheelGameRecordIds.add(gameRecordId);
+                boolean freeWheelReachMaxRewardMultiple = reachMaxRewardMultiple(overallRewardAmount, gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple());
+                // 构建免费轮游戏记录
+                MariaMakilingGameRecordDo gameRecord = MariaMakilingGameRecordDo.builder()
+                        .id(generateGameRecordId())
+                        .parentId(GAME_RECORD_DEFAULT_PARENT_ID)
+                        .betRecordId(gamePlay.getBetRecordId())
+                        .batchId(firstGameRecordId)
+                        .playerId(userInfo.getPlayerId())
+                        .playerName(userInfo.getPlayerName())
+                        .index(wheelDo.getIndex())
+                        .wheel(wheelDo)
+                        .rewardResult(rewardResultDo)
+                        .gameRecordIds(null)
+                        .overallRewardAmount(getOverallRewardAmount(overallRewardAmount, gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
+                        .accumulateReachMaxMultiple(freeWheelReachMaxRewardMultiple)
+                        .build();
+                freeWheelGameRecordList.add(gameRecord);
+                freeWheelGameRecordIds.add(gameRecord.getId());
                 if (freeWheelReachMaxRewardMultiple) {
                     break;
                 }
             }
         }
+        // 构建首轮游戏记录
+        MariaMakilingGameRecordDo firstGameRecord = MariaMakilingGameRecordDo.builder()
+                        .id(firstGameRecordId)
+                        .parentId(GAME_RECORD_DEFAULT_PARENT_ID)
+                        .betRecordId(gamePlay.getBetRecordId())
+                        .batchId(0L)
+                        .playerId(userInfo.getPlayerId())
+                        .playerName(userInfo.getPlayerName())
+                        .index(firstWheel.getIndex())
+                        .wheel(firstWheel)
+                        .rewardResult(firstWheelRewardResult)
+                        .gameRecordIds(freeWheelGameRecordIds)
+                        .overallRewardAmount(getOverallRewardAmount(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
+                        .accumulateReachMaxMultiple(firstWheelReachMaxRewardMultiple)
+                        .build();
+        ret.add(firstGameRecord);
+        if (CollectionUtils.isNotEmpty(freeWheelGameRecordList)) {
+            ret.addAll(freeWheelGameRecordList);
+        }
         return ret;
-    }
-
-    private boolean reachMaxRewardMultiple(long currentTotalAmount, Long betAmount) {
-        // 大于投注金额的
-        Integer rewardMaxMultiple = mariaMakilingConfig.getRewardMaxMultiple();
-        return currentTotalAmount >= betAmount * rewardMaxMultiple;
-    }
-
-    private long getActualRewardAmount(long currentTotalAmount, Long payAmount) {
-        // 大于投注金额的
-        Integer rewardMaxMultiple = mariaMakilingConfig.getRewardMaxMultiple();
-        return Math.min(currentTotalAmount, payAmount * rewardMaxMultiple);
     }
 
     /**
@@ -234,11 +227,11 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 // 当前列元素概率
                 Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
                 for (int row = 0; row < gameInfo.getRow(); row++) {
-                    if (wildSymbolArr[row][colum] != null) {
+                    if (Objects.nonNull(wildSymbolArr[row][colum])) {
                         // 当前坐标对应元素为wild
                         symbolArr[row][colum] = wildSymbolArr[row][colum];
                     } else {
-                        // 当前坐标对应元素为wild，重新生成元素（非Scatter元素）
+                        // 当前坐标对应元素为wild，重新生成(非Scatter)元素
                         SymbolDo symbolDo = randomNonScatterSymbol(randomNumberList.get(randomNumberIndex), gameInfo, columProbabilisticMap);
                         symbolArr[row][colum] = symbolDo;
                         if (symbolDo.isWildSymbol()) {
