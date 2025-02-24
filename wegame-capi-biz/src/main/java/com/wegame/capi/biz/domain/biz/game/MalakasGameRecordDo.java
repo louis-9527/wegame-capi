@@ -81,6 +81,18 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
      * 免费轮游戏记录id列表
      */
     private List<Long> gameRecordIds;
+    /**
+     * 累计中奖总金额
+     */
+    private Long overallRewardAmount;
+    /**
+     * 达到触发最大中奖倍数
+     */
+    private Boolean accumulateReachMaxMultiple;
+    /**
+     * 最后一轮标识
+     */
+    private Boolean lastGameFlag;
 
     /**
      * 是否中奖免费轮

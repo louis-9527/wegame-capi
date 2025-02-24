@@ -95,13 +95,18 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
         // 3、保存投注记录并派奖
         Long userCredit = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
         // 4、组装返回结果
+        //// 合计中奖总金额
+        long overallRewardAmount = firstBatchList.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
         return BetResultDo.<MalakasBetRecordDetailDo>builder()
                 .betRecordId(betRecord.getId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
                 .credit(userCredit)
-                .overallRewardAmount(betRecord.getPayOutAmount())
+                .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetDetail().getPayAmount(), malakasConfig.getRewardMaxMultiple()))
                 .totalPayoutAmount(betRecord.getPayOutAmount())
                 .resultDetail(MalakasBetRecordDetailDo.builder().gameRecordList(firstBatchList).build())
                 .build();
@@ -125,8 +130,8 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparingInt(MalakasGameRecordDo::getIndex))
                 .collect(Collectors.toList());
-        //// 总中奖金额
-        long totalRewardAmount = gameRecordList.stream()
+        //// 合计中奖总金额
+        long overallRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
@@ -135,8 +140,8 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
-                .overallRewardAmount(totalRewardAmount)
-                .totalPayoutAmount(totalRewardAmount)
+                .overallRewardAmount(overallRewardAmount)
+                .totalPayoutAmount(0L)
                 .resultDetail(MalakasBetRecordDetailDo.builder().gameRecordList(gameRecordList).build())
                 .build();
     }
