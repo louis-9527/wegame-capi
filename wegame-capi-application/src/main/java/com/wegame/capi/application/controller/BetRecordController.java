@@ -7,7 +7,6 @@ import com.wegame.base.domain.PageInfoVo;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.BetRecordConverter;
-import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.service.BetRecordService;
@@ -43,6 +42,7 @@ public class BetRecordController {
 
     public static final Map<GameTypeEnum, String> RECORD_MANAGER_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingRecordManager")
+            .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaRecordManager")
             .build();
 
     @Autowired
