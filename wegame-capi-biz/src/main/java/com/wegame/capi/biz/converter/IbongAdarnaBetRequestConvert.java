@@ -13,6 +13,7 @@ public class IbongAdarnaBetRequestConvert implements BetToDoConvert<IbongAdarnaB
     public IbongAdarnaBetDo toDo(IbongAdarnaBetRequest betRequest) {
         return IbongAdarnaBetDo.builder()
                 .betAmount(betRequest.getBetAmount())
+                .payAmount(betRequest.getPayAmount())
                 .build();
     }
 

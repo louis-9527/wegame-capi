@@ -22,11 +22,15 @@ import java.util.Objects;
 public class IbongAdarnaBetRequest implements BetRequestValidate, Serializable {
     @ApiModelProperty(value = "投注金额", required = true)
     private Long betAmount;
+    @ApiModelProperty(value = "支付金额", required = true)
+    private Long payAmount;
 
     @Override
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
         // 投注类型只能正常投注
         AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET.equals(betType), ErrorCode.ERR_PARAM, "not support betType");
         // 投注子类型只能是正常投注/ex投注
