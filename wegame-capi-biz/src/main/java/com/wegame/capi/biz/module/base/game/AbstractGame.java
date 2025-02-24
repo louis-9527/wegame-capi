@@ -78,10 +78,10 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         throw new BusinessException(ErrorCode.ERR_INTER);
     }
 
-    public SymbolDo randomNonScatterSymbol(Integer randomNumber, GameInfoDo gameInfo, TreeMap<String, Integer> columProbabilisticMap) {
+    public SymbolDo randomNonScatterSymbol(Integer randomNumber, GameInfoDo gameInfo, TreeMap<String, Integer> columnProbabilisticMap) {
         Integer tempRandomNumber = randomNumber;
         while (true) {
-            SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, tempRandomNumber);
+            SymbolEnum symbol = randomOneSymbol(columnProbabilisticMap, tempRandomNumber);
             SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
             if (!symbolDo.isScatterSymbol()) {
                 return symbolDo;
@@ -90,8 +90,8 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         }
     }
 
-    public SymbolDo randomNormalSymbol(Integer randomNumber, GameInfoDo gameInfo, TreeMap<String, Integer> columProbabilisticMap) {
-        SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, randomNumber);
+    public SymbolDo randomNormalSymbol(Integer randomNumber, GameInfoDo gameInfo, TreeMap<String, Integer> columnProbabilisticMap) {
+        SymbolEnum symbol = randomOneSymbol(columnProbabilisticMap, randomNumber);
         return gameInfo.getSymbolById(symbol.getId());
     }
 
