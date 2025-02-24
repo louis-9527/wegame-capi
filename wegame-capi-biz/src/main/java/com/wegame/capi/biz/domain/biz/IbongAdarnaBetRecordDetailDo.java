@@ -30,12 +30,4 @@ public class IbongAdarnaBetRecordDetailDo {
         IbongAdarnaGameRecordDo recordDo = CollectionUtils.isEmpty(gameRecordList) ? null : gameRecordList.get(gameRecordList.size() - 1);
         return Objects.isNull(recordDo) ? false : Objects.equals(recordDo.getId(), freeWheelGameRecordId);
     }
-
-    public long freeWheelCount() {
-        return Optional.ofNullable(gameRecordList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .filter(item -> item.getIndex() > 0)
-                .count();
-    }
 }

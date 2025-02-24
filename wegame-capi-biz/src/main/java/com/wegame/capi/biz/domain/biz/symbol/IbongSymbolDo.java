@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wegame.capi.common.enums.MultipleTypeEnum;
 import com.wegame.capi.common.enums.SymbolBreakUpEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;

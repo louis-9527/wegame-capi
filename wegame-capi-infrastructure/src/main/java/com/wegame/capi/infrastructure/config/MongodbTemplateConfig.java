@@ -52,7 +52,7 @@ public class MongodbTemplateConfig {
      *
      * @return
      */
-    @Bean("ibongAdarnaMongoTemplate")
+    @Bean("ibongadarnaMongoTemplate")
     public MongoTemplate ibongAdarnaMongoTemplate() {
         return new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdbDb);
     }

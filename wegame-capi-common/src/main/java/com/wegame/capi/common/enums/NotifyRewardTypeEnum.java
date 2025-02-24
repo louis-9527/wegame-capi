@@ -17,6 +17,7 @@ import lombok.ToString;
 public enum NotifyRewardTypeEnum {
 
     NORMAL_FREE_SPINS,
+    MULTIPLE,
     ;
 
 

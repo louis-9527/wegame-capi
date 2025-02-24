@@ -4,7 +4,6 @@ import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
@@ -21,7 +20,7 @@ import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.SymbolBreakUpEnum;
-import com.wegame.capi.common.enums.SymbolRepateTypeEnum;
+import com.wegame.capi.common.enums.SymbolRepeatTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,17 +31,11 @@ import java.util.*;
 import static com.wegame.capi.biz.module.ibongadarna.IbongAdarnaGameHelper.IBONG_ADARNA_GAME_INFO;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
-import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
 @Component
 public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
 
-    // ONE_COLUM_INDEX,THREE_COLUM_INDEX,FIVE_COLUM_INDEX顺序不可更改
-    private static final List<Integer> SCATTER_COLUM_INDEX_LIST = Arrays.asList(
-            ONE_COLUM_INDEX,
-            THREE_COLUM_INDEX,
-            FIVE_COLUM_INDEX);
     private static final Integer DEFAULT_WHEEL_INDEX = 0;
 
     @Autowired
@@ -61,14 +54,17 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
         List<IbongAdarnaGameRecordDo> ret = new ArrayList<>();
         // 获取-游戏基础信息
         GameInfoDo gameInfo = getGameInfo();
-        WheelDo<IbongSymbolDo> firstWheel = generateNormalWheel(gameInfo, getProbabilisticConfig(gamePlay, false));
+        Map<String, List<BigDecimal>> wheelProbabilisticConfigMap = ibongAdarnaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
+        WheelDo<IbongSymbolDo> wheel = generateNormalWheel(gameInfo, wheelProbabilisticConfigMap);
 
-        AssertUtil.assertNotNull(firstWheel, ErrorCode.ERR_INTER);
-        RewardResultDo<IbongSymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel, BigDecimal.ZERO));
+        AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
+        RewardResultDo<IbongSymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, BigDecimal.ZERO));
         IbongAdarnaGameRecordDo record = buildGameRecord(generateGameRecordId(),
                 gamePlay.getBetRecordId(),
-                firstWheel,
-                rewardResult);
+                wheel,
+                rewardResult,
+                getActualRewardAmount(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount()),
+                reachMaxRewardMultiple(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount()));
         ret.add(record);
         // 判断是否命中免费轮
         return ret;
@@ -86,18 +82,9 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
         for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
             Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
             // 每一列开始的时候决定是2个元素 or 1个元素
-            SymbolRepateTypeEnum symbolRepateType = randomColumSymbolCount(colum);
-            switch (symbolRepateType) {
-                case ONE:
-                    generateColumSymbol(symbolArr, colum, gameInfo, this.preGenerateSymboDoList(1, gameInfo, columProbabilisticMap));
-                    break;
-                case TWO:
-                    generateColumSymbol(symbolArr, colum, gameInfo, this.preGenerateSymboDoList(2, gameInfo, columProbabilisticMap));
-                    break;
-                default:
-                    throw new BusinessException(ErrorCode.ERR_INTER, "invalid ");
-
-            }
+            SymbolRepeatTypeEnum symbolRepeatType = randomColumSymbolCount(colum);
+            AssertUtil.assertNotNull(symbolRepeatType, ErrorCode.ERR_INTER, "invalid symbolRepeatType");
+            generateColumSymbol(symbolArr, colum, gameInfo, this.preGenerateSymboDoList(symbolRepeatType, gameInfo, columProbabilisticMap));
         }
         return WheelDo.<IbongSymbolDo>builder()
                 .index(DEFAULT_WHEEL_INDEX)
@@ -116,10 +103,13 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
         Map<String, Map<String, Integer>> symbolBreakUpProbabilisticMap = buildSymbolBreakUpProbabilisticMap();
         // 生成好固定个数
         int preSymbolIndex = 0;
+        int preSymbolGenCount = preSymbolGenList.size();
         for (int row = 0; row < gameInfo.getRow(); row++) {
             SymbolDo symbolDo;
-            if (preSymbolIndex >= preSymbolGenList.size()) {
-                preSymbolIndex = RandomUtil.randomInt(preSymbolGenList.size() - 1);
+            if (preSymbolGenCount <= 1) {
+                preSymbolIndex = 0;
+            } else if (preSymbolIndex >= preSymbolGenCount) {
+                preSymbolIndex = randomService.randomInt(0, preSymbolGenCount - 1);
             }
             symbolDo = preSymbolGenList.get(preSymbolIndex);
             // 分裂
@@ -134,15 +124,15 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
     /**
      * 预生成固定个数不重复的基础元素
      *
-     * @param count                 生成个数
+     * @param symbolRepeatType      元素重复类型
      * @param gameInfo              游戏信息
      * @param columProbabilisticMap 元素出现概率
      * @return 不重复的元素集合
      */
-    private List<SymbolDo> preGenerateSymboDoList(int count, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
+    private List<SymbolDo> preGenerateSymboDoList(SymbolRepeatTypeEnum symbolRepeatType, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
         Set<SymbolDo> symbolDoSet = Sets.newHashSet();
         while (true) {
-            if (symbolDoSet.size() < count) {
+            if (symbolDoSet.size() < symbolRepeatType.getTimes()) {
                 SymbolDo symbolDo = randomNormalSymbol(randomService.randomInt(1, CONST_1000000), gameInfo, columProbabilisticMap);
                 symbolDoSet.add(symbolDo);
             } else {
@@ -151,7 +141,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
         }
     }
 
-    private SymbolRepateTypeEnum randomColumSymbolCount(int colum) {
+    private SymbolRepeatTypeEnum randomColumSymbolCount(int colum) {
         Map<String, Integer> columSymbolRepeatProbabilisticMap = this.buildPerColumSymbolRepeatProbabilisticMap(colum);
         String repateType = null;
         int random = randomService.randomInt(1, CONST_1000000);
@@ -160,7 +150,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                 repateType = entry.getKey();
             }
         }
-        return Optional.of(SymbolRepateTypeEnum.valueOf(repateType)).orElse(SymbolRepateTypeEnum.TWO);
+        return Optional.ofNullable(SymbolRepeatTypeEnum.valueOfCode(repateType)).orElse(SymbolRepeatTypeEnum.TWO);
     }
 
     /**
@@ -179,7 +169,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                 breakUpKey = entry.getKey();
             }
         }
-        return Optional.of(SymbolBreakUpEnum.valueOf(breakUpKey)).orElse(SymbolBreakUpEnum.NO_BREAK_UP);
+        return Optional.ofNullable(SymbolBreakUpEnum.valueOfCode(breakUpKey)).orElse(SymbolBreakUpEnum.NO_BREAK_UP);
     }
 
     /**
@@ -210,28 +200,12 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
         return symbolBreakUpProbabilisticMap;
     }
 
-    public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay, boolean isFreeSpinsFlag) {
-//        if (isFreeSpinsFlag) {
-//            return ibongAdarnaConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
-//        } else {
-//            switch (gamePlay.getBetSubType()) {
-//                case NORMAL_BET:
-//                case BUY_BET:
-//                    return ibongAdarnaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
-//                case FREE_SPINS_NORMAL_BET:
-//                case FREE_SPINS_BUY_BET:
-//                    return ibongAdarnaConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
-//                default:
-//                    throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
-//            }
-//        }
-        return null;
-    }
-
     private static IbongAdarnaGameRecordDo buildGameRecord(Long id,
                                                            Long betRecordId,
                                                            WheelDo<IbongSymbolDo> wheel,
-                                                           RewardResultDo<IbongSymbolDo> rewardResult) {
+                                                           RewardResultDo<IbongSymbolDo> rewardResult,
+                                                           Long overallRewardAmount,
+                                                           Boolean accumulateReachMaxMultiple) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         return IbongAdarnaGameRecordDo.builder()
@@ -241,19 +215,20 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                 .playerName(userInfo.getPlayerName())
                 .wheel(wheel)
                 .rewardResult(rewardResult)
+                .overallRewardAmount(overallRewardAmount)
+                .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                 .build();
     }
 
-    private Integer getWheelNumber() {
-//        int randomNumber = randomService.randomInt(1, 100);
-//        int startVal = 0;
-//        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(ibongAdarnaConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
-//            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-//                return entry.getKey();
-//            } else {
-//                startVal += entry.getValue();
-//            }
-//        }
-        throw new BusinessException(ErrorCode.ERR_INTER);
+    private long getActualRewardAmount(long currentTotalAmount, Long betAmount) {
+        // 大于投注金额的
+        Integer rewardMaxMultiple = ibongAdarnaConfig.getMaxRewardMultiple();
+        return Math.min(currentTotalAmount, betAmount * rewardMaxMultiple);
+    }
+
+    private boolean reachMaxRewardMultiple(long currentTotalAmount, Long betAmount) {
+        // 大于投注金额的
+        Integer rewardMaxMultiple = ibongAdarnaConfig.getMaxRewardMultiple();
+        return currentTotalAmount >= betAmount * rewardMaxMultiple;
     }
 }

@@ -31,6 +31,8 @@ public class IbongAdarnaBetResultVo implements Serializable {
     private Long totalRewardAmount;
     @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
+    @ApiModelProperty("累计达到最大中奖倍数：true是，false否")
+    private Boolean accumulateReachMaxMultiple;
     @ApiModelProperty("滚轮")
     //    private String[][] spinsResult;
     private String[][] wheel;

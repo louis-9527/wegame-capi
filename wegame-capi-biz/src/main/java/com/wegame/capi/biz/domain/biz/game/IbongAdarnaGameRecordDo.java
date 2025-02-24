@@ -70,6 +70,14 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
      * 中奖结果
      */
     private RewardResultDo<IbongSymbolDo> rewardResult;
+    /**
+     * 累计中奖总金额
+     */
+    private Long overallRewardAmount;
+    /**
+     * 达到触发最大中奖倍数
+     */
+    private Boolean accumulateReachMaxMultiple;
 
     /**
      * 是否中奖免费轮
@@ -87,6 +95,7 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
     public IbongAdarnaBetResultVo toResultVo() {
         if (Objects.isNull(rewardResult)) {
             return IbongAdarnaBetResultVo.builder()
+                    .accumulateReachMaxMultiple(this.accumulateReachMaxMultiple)
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
@@ -95,6 +104,7 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
+                    .accumulateReachMaxMultiple(this.accumulateReachMaxMultiple)
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .freeSpinFlag(0)
                     .build();
@@ -104,6 +114,7 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
+                    .accumulateReachMaxMultiple(this.accumulateReachMaxMultiple)
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .rewardSymbolIndexSet(Optional.ofNullable(rewardResult.getRewardLineDetailList())
                             .orElse(Collections.emptyList())
@@ -129,6 +140,8 @@ public class IbongAdarnaGameRecordDo implements Serializable, ToVoConverter<Ibon
                 .betAmount(Objects.nonNull(rewardResult) ? rewardResult.getBetAmount() : null)
                 .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
+                .overallRewardAmount(this.overallRewardAmount)
+                .accumulateReachMaxMultiple(this.accumulateReachMaxMultiple)
                 .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                 .rewardLineList(buildRewardLineList())
                 .build();

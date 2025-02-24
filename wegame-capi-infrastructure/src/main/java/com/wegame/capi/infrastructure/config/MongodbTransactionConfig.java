@@ -22,7 +22,7 @@ public class MongodbTransactionConfig {
     @Autowired
     MongoTemplate mariamakilingMongoTemplate;
     @Autowired
-    MongoTemplate ibongAdarnaMongoTemplate;
+    MongoTemplate ibongadarnaMongoTemplate;
 
 
     @Bean(name = mariamakilingTransactionManager)
@@ -42,7 +42,7 @@ public class MongodbTransactionConfig {
 
     @Bean(name = ibongAdarnaTransactionManager)
     public MongoTransactionManager ibongAdarnaTransactionManager() {
-        MongoTransactionManager manager = new MongoTransactionManager(ibongAdarnaMongoTemplate.getMongoDbFactory());
+        MongoTransactionManager manager = new MongoTransactionManager(ibongadarnaMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)
                 .build();

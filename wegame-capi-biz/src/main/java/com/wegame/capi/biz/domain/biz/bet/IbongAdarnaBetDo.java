@@ -24,14 +24,6 @@ public class IbongAdarnaBetDo implements Validate, Serializable {
     @ApiModelProperty(value = "投注金额", required = true)
     private Long betAmount;
     /**
-     * 投注记录id
-     */
-    private Long betRecordId;
-    /**
-     * 免费轮游戏记录id
-     */
-    private Long gameRecordId;
-    /**
      * 支付金额
      */
     private Long payAmount;

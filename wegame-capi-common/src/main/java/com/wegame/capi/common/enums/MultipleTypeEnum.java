@@ -2,6 +2,10 @@ package com.wegame.capi.common.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -40,6 +44,18 @@ public enum MultipleTypeEnum {
             }
         }
         return null;
+    }
+
+    public static MultipleTypeEnum fromBetSubTypeEnum(BetSubTypeEnum betSubTypeEnum) {
+        AssertUtil.assertNotNull(betSubTypeEnum, ErrorCode.ERR_INTER, "no support MultipleTypeEnum");
+        switch (betSubTypeEnum) {
+            case NORMAL_BET:
+                return NORMAL;
+            case EX_BET:
+                return EX;
+            default:
+                throw new BusinessException(ErrorCode.ERR_INTER, "no support MultipleTypeEnum");
+        }
     }
 
 }

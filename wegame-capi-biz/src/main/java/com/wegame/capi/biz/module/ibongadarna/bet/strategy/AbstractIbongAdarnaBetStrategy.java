@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.ibongadarna.bet.strategy;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
+import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.IbongAdarnaBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -32,6 +33,8 @@ public abstract class AbstractIbongAdarnaBetStrategy
     IbongAdarnaGame ibongAdarnaGame;
     @Autowired
     IbongAdarnaRecordManager ibongAdarnaRecordManager;
+    @Autowired
+    IbongAdarnaConfig ibongAdarnaConfig;
 
     @Override
     public Game<IbongAdarnaGameRecordDo> getGame() {
@@ -45,23 +48,6 @@ public abstract class AbstractIbongAdarnaBetStrategy
 
     @Override
     public BetResultDo<IbongAdarnaGameRecordDo> bet(BetDo<IbongAdarnaBetDo> betDo) {
-        // play
-
-        // 落库
-
-        // 单钱包
-
-        // 修改状态
-
-        // 构建结果
-
-
-    }
-
-    /**
-     * 非免费轮投注
-     */
-    private BetResultDo<IbongAdarnaGameRecordDo> betForNonFreeWheel(BetDo<IbongAdarnaBetDo> betDo) {
         long betRecordId = generateBetRecordId();
         List<IbongAdarnaGameRecordDo> list = getGame().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
@@ -71,18 +57,23 @@ public abstract class AbstractIbongAdarnaBetStrategy
                 .betRecordId(betRecordId)
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
+        IbongAdarnaGameRecordDo gameRecord = list.get(0);
+
         // 构建投注记录
         BetRecordDo<IbongAdarnaGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                list.stream().filter(item -> Objects.nonNull(item.getRewardResult()))
-                        .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                        .sum(),
+                getActualRewardAmount
+                        (gameRecord.getRewardResult().getTotalRewardAmount(), betDo.getBetDetail().getBetAmount()),
                 list);
-        IbongAdarnaGameRecordDo gameRecord = list.get(0);
+
         // 保存投注记录并派奖
         Long userCredit = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        // 中大奖处理
+        this.rewardAfterHandle(betDo, getActualRewardAmount
+                (gameRecord.getRewardResult().getTotalRewardAmount(), betDo.getBetDetail().getBetAmount()));
+
         // 组装返回结果
         return BetResultDo.<IbongAdarnaGameRecordDo>builder()
                 .betRecordId(betRecord.getId())
@@ -97,8 +88,13 @@ public abstract class AbstractIbongAdarnaBetStrategy
     }
 
 
-    public void freeWheelAfterHandle(BetDo<IbongAdarnaBetDo> betDo, IbongAdarnaBetRecordDetailDo detailDo, Long totalRewardAmount) {
+    public void rewardAfterHandle(BetDo<IbongAdarnaBetDo> betDo, Long totalRewardAmount) {
         // do nothing
     }
 
+    private long getActualRewardAmount(long currentTotalAmount, Long betAmount) {
+        // 大于投注金额的
+        Integer rewardMaxMultiple = ibongAdarnaConfig.getMaxRewardMultiple();
+        return Math.min(currentTotalAmount, betAmount * rewardMaxMultiple);
+    }
 }

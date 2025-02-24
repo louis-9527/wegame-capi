@@ -34,6 +34,10 @@ public class IbongAdarnaGameRecordVo implements Validate, Serializable {
     private String[][] wheel;
     @ApiModelProperty("倍率")
     private BigDecimal multiple;
+    @ApiModelProperty("累计中奖总金额")
+    private Long overallRewardAmount;
+    @ApiModelProperty("达到触发最大中奖倍数")
+    private Boolean accumulateReachMaxMultiple;
     @ApiModelProperty("中奖线列表")
     private List<IbongAdarnaRewardLineVo> rewardLineList; // todo
 }

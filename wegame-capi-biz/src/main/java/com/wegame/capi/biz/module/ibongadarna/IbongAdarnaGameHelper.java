@@ -64,7 +64,7 @@ public class IbongAdarnaGameHelper {
                     .put(IBONG_ADARNA_Symbol1004.getId(), IBONG_ADARNA_Symbol1004)
                     .put(IBONG_ADARNA_Symbol1005.getId(), IBONG_ADARNA_Symbol1005)
                     .put(IBONG_ADARNA_Symbol1006.getId(), IBONG_ADARNA_Symbol1006)
-                    .put(IBONG_ADARNA_Symbol1006.getId(), IBONG_ADARNA_Symbol1006)
+                    .put(IBONG_ADARNA_Symbol1007.getId(), IBONG_ADARNA_Symbol1007)
                     .put(IBONG_ADARNA_Wild.getId(), IBONG_ADARNA_Wild)
                     .build())
             .build();

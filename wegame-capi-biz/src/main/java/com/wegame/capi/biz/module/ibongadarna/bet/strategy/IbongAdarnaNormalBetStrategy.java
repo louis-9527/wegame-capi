@@ -4,7 +4,7 @@ import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.biz.domain.biz.IbongAdarnaBetRecordDetailDo;
+import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.IbongAdarnaBetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
@@ -20,7 +20,6 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.Date;
 
 @Slf4j
 @Component("ibongAdarnaNormalBetStrategy")
@@ -28,15 +27,23 @@ public class IbongAdarnaNormalBetStrategy extends AbstractIbongAdarnaBetStrategy
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    IbongAdarnaConfig ibongAdarnaConfig;
 
     @Override
-    public void freeWheelAfterHandle(BetDo<IbongAdarnaBetDo> betDo, IbongAdarnaBetRecordDetailDo detailDo, Long totalRewardAmount) {
-        if (detailDo.isLastFreeSpins(betDo.getBetDetail().getGameRecordId())) {
-            updateRewardNotifyInfo(betDo.getGameType(), detailDo.freeWheelCount(), totalRewardAmount);
+    public void rewardAfterHandle(BetDo<IbongAdarnaBetDo> betDo, Long totalRewardAmount) {
+        Integer multiple = rewardMultiple(betDo.getBetDetail().getBetAmount(), totalRewardAmount);
+        Integer rewardNotifyMinMultiple = ibongAdarnaConfig.getRewardNotifyMinMultiple();
+        if (multiple >= rewardNotifyMinMultiple) {
+            updateRewardNotifyInfo(betDo.getGameType(), multiple, totalRewardAmount);
         }
     }
 
-    private void updateRewardNotifyInfo(GameTypeEnum gameType, long freeSpinsCount, long totalRewardAmount) {
+    private Integer rewardMultiple(Long betAmount, Long totalRewardAmount) {
+        return Math.toIntExact(totalRewardAmount / betAmount);
+    }
+
+    private void updateRewardNotifyInfo(GameTypeEnum gameType, Integer multiple, long totalRewardAmount) {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
@@ -45,17 +52,16 @@ public class IbongAdarnaNormalBetStrategy extends AbstractIbongAdarnaBetStrategy
                     .gameName(GameTypeEnum.IBONG_ADARNA.getName())
                     .userId(Long.valueOf(userInfo.getId()))
                     .userName(userInfo.getUserName())
-                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_SPINS.name())
+                    .notifyRewardType(NotifyRewardTypeEnum.MULTIPLE.name())
                     .rewardTime(DateUtil.getCurrentMilli())
-                    .rewardContent(String.format(Constants.WEGAME_REWARD_NOTIFY_CONTENT_FORMAT,
-                            DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
+                    .rewardContent(String.format(Constants.IBONG_REWARD_NOTIFY_CONTENT_FORMAT,
                             userInfo.getUserName(),
-                            NumberUtil.decimalFormat("#,##0.00", NumberUtil.div(totalRewardAmount, 100)),
-                            freeSpinsCount))
+                            multiple,
+                            NumberUtil.decimalFormat("#,##0.00", NumberUtil.div(totalRewardAmount, 100))))
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
-            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
+            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_IBONG_REWARD_NOTIFY_SIZE);
         } catch (Exception e) {
             log.error("[MariaMakilingNonBuyFreeSpinsBetStrategy-notifyRewardHandle] error", e);
         }

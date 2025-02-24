@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -45,6 +46,11 @@ public class IbongAdarnaConfig {
      */
     private Integer maxRewardMultiple;
 
+    /**
+     * 中奖通知最小倍数
+     */
+    private Integer rewardNotifyMinMultiple;
+
     @Data
     @SuperBuilder
     @NoArgsConstructor
@@ -53,7 +59,7 @@ public class IbongAdarnaConfig {
         /**
          * Map<元素ID，具体赔率
          */
-        private Map<String, BigDecimal> commonOddsConfig;
+        private Map<String, Map<String, BigDecimal>> commonOddsConfig;
     }
 
     @Data
@@ -76,7 +82,7 @@ public class IbongAdarnaConfig {
          * 倍率出现概率配置
          * Map<倍率，<倍率类型：普通，ex，概率列表>>
          */
-        private Map<Integer, Map<String, BigDecimal>> multiPleProbabilisticConfig;
+        private Map<BigDecimal, Map<String, BigDecimal>> multiPleProbabilisticConfig;
 
         /**
          * 每一列重复出现元素个数概率配置
@@ -86,12 +92,12 @@ public class IbongAdarnaConfig {
         private List<Map<String, BigDecimal>> perColumSymbolRepeatProbabilisticConfig;
     }
 
-
     public void validate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
         rewardFixedLinesConfigValidate();
         maxRewardMultipleValidate();
+        rewardNotifyMinMultipleValidate();
     }
 
     private void oddsConfigValidate() {
@@ -99,8 +105,8 @@ public class IbongAdarnaConfig {
         Assert.notNull(oddsConfig.commonOddsConfig, "oddsConfig.commonOddsConfig is null");
         // 校验-赔率配置
         oddsConfig.commonOddsConfig.keySet().forEach(symbolId -> {
-            BigDecimal odds = oddsConfig.commonOddsConfig.get(symbolId);
-            AssertUtil.assertNotNull(odds, ErrorCode.ERR_INTER, "oddsConfig.commonOddsConfig.get(" + symbolId + ") is null");
+            Map<String, BigDecimal> map = oddsConfig.commonOddsConfig.get(symbolId);
+            AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER, "Odds Config Err");
         });
     }
 
@@ -181,5 +187,10 @@ public class IbongAdarnaConfig {
     private void maxRewardMultipleValidate() {
         AssertUtil.assertNotNull(maxRewardMultiple, ErrorCode.ERR_INTER, "maxRewardMultiple is null");
         AssertUtil.assertTrue(maxRewardMultiple > 0, ErrorCode.ERR_INTER, "maxRewardMultiple must great than 0");
+    }
+
+    private void rewardNotifyMinMultipleValidate() {
+        AssertUtil.assertNotNull(rewardNotifyMinMultiple, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple is null");
+        AssertUtil.assertTrue(rewardNotifyMinMultiple > 0, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple must great than 0");
     }
 }

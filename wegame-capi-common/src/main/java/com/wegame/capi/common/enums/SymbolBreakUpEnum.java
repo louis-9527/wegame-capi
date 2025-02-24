@@ -19,9 +19,9 @@ import java.util.Objects;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum SymbolBreakUpEnum {
 
-    NO_BREAK_UP(1, "不分裂"),
-    TWO_BREAK_UP(2, "两倍分裂"),
-    THREE_BREAK_UP(3, "三倍分裂"),
+    NO_BREAK_UP(1, "NO_BREAK_UP"),
+    TWO_BREAK_UP(2, "TWO_BREAK_UP"),
+    THREE_BREAK_UP(3, "THREE_BREAK_UP"),
     ;
 
     /**
@@ -32,11 +32,11 @@ public enum SymbolBreakUpEnum {
     /**
      * 元素名称.
      */
-    private final String desc;
+    private final String code;
 
-    public static SymbolBreakUpEnum valueOfTimes(Integer times) {
+    public static SymbolBreakUpEnum valueOfCode(String code) {
         for (SymbolBreakUpEnum item : SymbolBreakUpEnum.values()) {
-            if (Objects.equals(item.getTimes(), times)) {
+            if (Objects.equals(item.getCode(), code)) {
                 return item;
             }
         }

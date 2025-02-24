@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -17,7 +16,7 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum SymbolRepateTypeEnum {
+public enum SymbolRepeatTypeEnum {
 
     ONE(1, "ONE"),
     TWO(2, "TWO"),
@@ -33,8 +32,8 @@ public enum SymbolRepateTypeEnum {
     private final String code;
 
     @JsonCreator
-    public static SymbolRepateTypeEnum valueOfCode(String code) {
-        for (SymbolRepateTypeEnum item : SymbolRepateTypeEnum.values()) {
+    public static SymbolRepeatTypeEnum valueOfCode(String code) {
+        for (SymbolRepeatTypeEnum item : SymbolRepeatTypeEnum.values()) {
             if (item.getCode().equals(code)) {
                 return item;
             }
