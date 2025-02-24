@@ -104,6 +104,9 @@ spring:
         maria_makiling_mdb:
           uri: mongodb://172.31.27.141:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
           db: makiling
+        ibong_adarna_mdb:
+          uri: mongodb://172.31.27.141:27017/ibong?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
+          db: ibong
 ## fastjson
 fastjson:
   parser:
@@ -145,6 +148,12 @@ pulsar:
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
+    ibong_adarna:
+      url: pulsar://pulsar.makillingslot.net:6650
+      tenant: ${spring.application.name}_IbongAdarna
+      namespace: ${spring.application.env}
+      bet_topic: IbongAdarna_topic
+      bet_deadLetter_topic: IbongAdarna_deadLetter_topic
 #lark
 lark:
   robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
