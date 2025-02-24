@@ -17,10 +17,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 抽象游戏
@@ -53,9 +50,9 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         return gameRecordIdList;
     }
 
-    public Map<String, Integer> buildColumProbabilisticMap(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
+    public TreeMap<String, Integer> buildColumProbabilisticMap(int cellNo, Map<String, List<BigDecimal>> probabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
-        Map<String, Integer> map = new HashMap<>();
+        TreeMap<String, Integer> map = new TreeMap<>();
         probabilisticConfigMap.entrySet().forEach(item -> {
             int val = (item.getValue().get(cellNo).multiply(new BigDecimal(Constants.CONST_10000))).intValue();
             if (val > 0) {
@@ -69,7 +66,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         return map;
     }
 
-    public SymbolEnum randomOneSymbol(Map<String, Integer> map, int randomNumber) {
+    public SymbolEnum randomOneSymbol(TreeMap<String, Integer> map, int randomNumber) {
         int startVal = 0;
         for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
@@ -81,7 +78,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         throw new BusinessException(ErrorCode.ERR_INTER);
     }
 
-    public SymbolDo randomNonScatterSymbol(Integer randomNumber, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
+    public SymbolDo randomNonScatterSymbol(Integer randomNumber, GameInfoDo gameInfo, TreeMap<String, Integer> columProbabilisticMap) {
         Integer tempRandomNumber = randomNumber;
         while (true) {
             SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, tempRandomNumber);
@@ -93,7 +90,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         }
     }
 
-    public SymbolDo randomNormalSymbol(Integer randomNumber, GameInfoDo gameInfo, Map<String, Integer> columProbabilisticMap) {
+    public SymbolDo randomNormalSymbol(Integer randomNumber, GameInfoDo gameInfo, TreeMap<String, Integer> columProbabilisticMap) {
         SymbolEnum symbol = randomOneSymbol(columProbabilisticMap, randomNumber);
         return gameInfo.getSymbolById(symbol.getId());
     }

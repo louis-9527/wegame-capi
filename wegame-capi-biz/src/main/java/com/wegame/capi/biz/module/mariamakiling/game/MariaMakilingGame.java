@@ -138,7 +138,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<SymbolDo> generateNormalWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo<SymbolDo> generateNormalWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
@@ -146,7 +146,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         for (int column = 0; column < gameInfo.getColumn(); column++) {
             // 一列只能包含一个scatter
             boolean hasScatter = false;
-            Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, probabilisticConfig);
+            TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, probabilisticConfig);
             for (int row = 0; row < gameInfo.getRow(); row++) {
                 Integer random = randomNumberList.get(randomNumberindex);
                 if (hasScatter) {
@@ -173,7 +173,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<SymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo<SymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig) {
         WheelDo<SymbolDo> wheelDo = generateNormalWheel(gameInfo, probabilisticConfig);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
         // 生成整盘随机数(SCATTER_COLUM_INDEX_LIST.size())个
@@ -209,7 +209,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮列表
      */
-    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, Map<String, List<BigDecimal>> probabilisticConfig) {
+    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig) {
         // 保存全局wild
         SymbolDo[][] wildSymbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 免费次数
@@ -226,7 +226,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
             for (int column = 0; column < gameInfo.getColumn(); column++) {
                 // 当前列元素概率
-                Map<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, probabilisticConfig);
+                TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, probabilisticConfig);
                 for (int row = 0; row < gameInfo.getRow(); row++) {
                     if (Objects.nonNull(wildSymbolArr[row][column])) {
                         // 当前坐标对应元素为wild
@@ -250,7 +250,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         return wheels;
     }
 
-    public Map<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay, boolean isFreeSpinsFlag) {
+    public TreeMap<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay, boolean isFreeSpinsFlag) {
         if (isFreeSpinsFlag) {
             return mariaMakilingConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
         } else {
@@ -265,33 +265,6 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                     throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
             }
         }
-    }
-
-    private static MariaMakilingGameRecordDo buildGameRecord(Long id,
-                                                             Long parentId,
-                                                             Long betRecordId,
-                                                             Long batchId,
-                                                             WheelDo<SymbolDo> wheel,
-                                                             RewardResultDo<SymbolDo> rewardResult,
-                                                             List<Long> freeSpinGameRecordIds,
-                                                             Long overallRewardAmount,
-                                                             boolean reachMaxRewardMultiple) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        return MariaMakilingGameRecordDo.builder()
-                .id(id)
-                .parentId(parentId)
-                .betRecordId(betRecordId)
-                .batchId(batchId)
-                .playerId(userInfo.getPlayerId())
-                .playerName(userInfo.getPlayerName())
-                .index(wheel.getIndex())
-                .wheel(wheel)
-                .rewardResult(rewardResult)
-                .gameRecordIds(freeSpinGameRecordIds)
-                .overallRewardAmount(overallRewardAmount)
-                .accumulateReachMaxMultiple(reachMaxRewardMultiple)
-                .build();
     }
 
     private Integer getFreeWheelNumber() {
