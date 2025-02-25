@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.request.query;
 
+import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.domain.PageQueryRequest;
 import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
@@ -8,6 +9,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -30,6 +32,18 @@ public class PageQueryBetRecordRequest extends PageQueryRequest implements Valid
     @ApiModelProperty(value = "结束创建/投注时间", required = false)
     private Long endCreateTime;
     @ApiModelProperty(value = "上一页最后一条数据的Id", required = false)
-    private Long lastId;
+    private String lastId;
+
+    @Override
+    public void validate() {
+        if (StringUtils.isNotBlank(id)) {
+            AssertUtil.assertTrue(NumberUtil.isLong(id), ErrorCode.ERR_PARAM);
+        }
+        AssertUtil.assertNotNull(startCreateTime, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(endCreateTime, ErrorCode.ERR_PARAM);
+        if (StringUtils.isNotBlank(lastId)) {
+            AssertUtil.assertTrue(NumberUtil.isLong(lastId), ErrorCode.ERR_PARAM);
+        }
+    }
 }
 
