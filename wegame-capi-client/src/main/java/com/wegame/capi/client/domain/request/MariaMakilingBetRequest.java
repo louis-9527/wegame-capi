@@ -28,8 +28,6 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
     private String betRecordId;
     @ApiModelProperty(value = "免费轮游戏记录ID, 非必填", required = false)
     private String gameRecordId;
-    //    private Integer freeSpinsId;
-
 
     @Override
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
