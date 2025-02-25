@@ -32,12 +32,13 @@ public class AbstractCacheAspect {
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         (System.currentTimeMillis() - startTime));
-            } else {
-                log.info("AbstractCache，{}#{}，COST TIME：{} ms",
-                        signature.getDeclaringTypeName(),
-                        signature.getName(),
-                        (System.currentTimeMillis() - startTime));
             }
+            //            else {
+            //                log.info("AbstractCache，{}#{}，COST TIME：{} ms",
+            //                        signature.getDeclaringTypeName(),
+            //                        signature.getName(),
+            //                        (System.currentTimeMillis() - startTime));
+            //            }
         }
     }
 }

@@ -32,12 +32,13 @@ public class AbstractBetContextAspect {
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         (System.currentTimeMillis() - startTime));
-            } else {
-                log.info("AbstractBetContext#bet，{}#{}，COST TIME：{} ms",
-                        signature.getDeclaringTypeName(),
-                        signature.getName(),
-                        (System.currentTimeMillis() - startTime));
             }
+            //            else {
+            //                log.info("AbstractBetContext#bet，{}#{}，COST TIME：{} ms",
+            //                        signature.getDeclaringTypeName(),
+            //                        signature.getName(),
+            //                        (System.currentTimeMillis() - startTime));
+            //            }
         }
     }
 }

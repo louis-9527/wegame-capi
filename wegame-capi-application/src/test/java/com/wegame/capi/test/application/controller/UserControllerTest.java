@@ -11,15 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Locale;
 
 @Slf4j
 public class UserControllerTest extends BaseTest {
@@ -37,6 +33,22 @@ public class UserControllerTest extends BaseTest {
     }
 
     @Test
+    public void test_login() {
+        CommonResponse<UserInfo> result = userController.login(null, buildUserLoginRequest());
+        Assert.notNull(result.getData());
+        Assert.notBlank(result.getData().getToken());
+    }
+
+    @Test
+    public void test_loginOUt() {
+        HttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("token", ""); // todo
+        CommonResponse<Boolean> result = userController.logout(request);
+        Assert.notNull(result.getData());
+        Assert.isTrue(result.getData());
+    }
+
+    @Test
     public void test_me() {
         HttpServletResponse httpServletResponse = new MockHttpServletResponse();
         CommonResponse<UserInfo> response = userController.me(httpServletResponse);
@@ -45,8 +57,13 @@ public class UserControllerTest extends BaseTest {
         Assert.isNull(response.getData());
     }
 
+
     @Test
-    public void test_login() {
+    public void test_getCredit() {
+
+    }
+
+    private static UserLoginRequest buildUserLoginRequest() {
         UserLoginRequest request = new UserLoginRequest();
         request.setPId("55");
         request.setChannelId("1051");
@@ -57,13 +74,7 @@ public class UserControllerTest extends BaseTest {
         request.setNickName("YUAN6401");
         request.setUserLevel("1");
         request.setToken("13820fff6c479bfb53107bc8c43b81c6be7881b21dca68e8db6b9f2265599f968b5c8509eb065535ae1395483a741b96658fc228a1da41d4620d1765daa2588c59b86d0310e3e434ab252a7b4a58e265b61913194d845f17a6afec2867b8e964");
-        CommonResponse<UserInfo> result = userController.login(null, request);
-        Assert.isNull(result.getData());
-    }
-
-    @Test
-    public void test_getCredit() {
-
+        return request;
     }
 
 }

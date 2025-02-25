@@ -75,7 +75,10 @@ public abstract class AbstractPulsarListener {
             //            recordList = null;
         }
         long endTime = System.currentTimeMillis();
-        log.info("{}, batchUpdate, size:{} cost: {} ms", getGameType().getName(), recordList.size(), endTime - startTime);
+        long costTime = endTime - startTime;
+        if (costTime >= 50) {
+            log.info("{}, batchUpdate, size:{} cost: {} ms", getGameType().getName(), recordList.size(), costTime);
+        }
     }
 
     private void update(List<BetRecordDo> recordList, Map<Long, MessageId> messageIdMap) {

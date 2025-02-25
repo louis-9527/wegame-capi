@@ -22,8 +22,9 @@ import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.COMPLETED_P
 
 @Slf4j
 @Component
-public class MockSingleWalletApi extends BaseApi {
+public class MockSingleWalletApi extends SingleWalletApi {
 
+    @Override
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
         try {
             return AuthLoginTokenRes.builder()
@@ -36,6 +37,7 @@ public class MockSingleWalletApi extends BaseApi {
         }
     }
 
+    @Override
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public GetCreditRes getCredit(GetCreditReq req) {
         try {
@@ -49,6 +51,7 @@ public class MockSingleWalletApi extends BaseApi {
         }
     }
 
+    @Override
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public CommonRes<SingleWalletBetWithPayoutRes> betWithPayout(BetWithPayoutReq req) {
         try {
@@ -73,6 +76,7 @@ public class MockSingleWalletApi extends BaseApi {
      * @param req req
      * @return response
      */
+    @Override
     public BetStatusRes getBetStatus(BetStatusReq req) {
         try {
             // 参数签名

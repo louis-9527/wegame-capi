@@ -46,7 +46,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
 
     public long generateBetRecordId() {
         long betRecordId = snowflakeIdGenerator.nextId();
-        log.info("generateBetRecordId: {}", betRecordId);
+        // log.info("generateBetRecordId: {}", betRecordId);
         return betRecordId;
     }
 
@@ -109,7 +109,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
             pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
             long endTime = System.currentTimeMillis();
-            log.info("asyncSaveBetRecordAndBetWithPayout cost time: {} ms", endTime - startTime);
+            // log.info("asyncSaveBetRecordAndBetWithPayout cost time: {} ms", endTime - startTime);
             return AmountUtil.toLong(betSingleWalletResult.getCredit());
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("asyncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
