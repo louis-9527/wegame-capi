@@ -1,12 +1,9 @@
-package com.wegame.capi.test.application.controller;
+package com.wegame.capi.test.application.controller.mariamakiling;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.biz.converter.BetConverter;
-import com.wegame.capi.biz.converter.BetResultConverter;
-import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.request.MariaMakilingBetRequest;
 import com.wegame.capi.client.domain.vo.BetResultVo;
@@ -16,6 +13,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.test.application.controller.BetControllerTest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -73,7 +71,7 @@ public class MariamakilingBetControllerTest extends BetControllerTest {
         List<String> gameRecordIds = resultVo.getGameRecordIds();
         for (String gameRecordId : CollectionUtils.emptyIfNull(gameRecordIds)) {
             BetRequest queryBetRequest = buildQueryBuyBetRequest(gameRecordId, betRecordId);
-            CommonResponse<BetResultVo> res = betController.bet(betRequest);
+            CommonResponse<BetResultVo> res = betController.bet(queryBetRequest);
             Assert.notNull(res);
             Assert.notNull(res.getData());
             Assert.isTrue(StringUtils.equals(res.getCode(), CommonResponse.SUC_CODE));

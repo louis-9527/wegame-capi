@@ -47,7 +47,7 @@ public class BetRecordVo implements Validate, Serializable {
     private Long createTime;
     // todo fix 联调后 修改类型为 Object
     @ApiModelProperty("游戏记录列表")
-    private List<MariaMakilingGameRecordVo> gameRecordList;
+    private List<Object> gameRecordList;
 
 
 }
