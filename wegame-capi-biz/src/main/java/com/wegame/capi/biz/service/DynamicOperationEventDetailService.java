@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationDetailQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationDetailConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
+import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailPo;
@@ -31,14 +32,13 @@ import java.util.Objects;
 public class DynamicOperationEventDetailService {
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
-    private final String dynamicOperationEventDetailCollectionName = "mariamakiling_dynamicOperation_event_detail";
-
     public Long add(DynamicOperationEventDetailDo detailDo, GameTypeEnum gameType) {
         DynamicOperationDetailPo detailPo = DynamicOperationDetailConvert.convertPo(detailDo, OptEnum.ADD);
         if (Objects.isNull(detailPo)) {
             return null;
         }
-        DynamicOperationDetailPo insert = getMongoTemplate(gameType).insert(detailPo, dynamicOperationEventDetailCollectionName);
+        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
+        DynamicOperationDetailPo insert = getMongoTemplate(gameType).insert(detailPo, dynamicOperationGameEnum.getEventDetailCollectionName());
         return insert.getId();
     }
 
@@ -51,16 +51,18 @@ public class DynamicOperationEventDetailService {
 
         // 构建 Aggregation 查询管道
         Aggregation aggregation = Aggregation.newAggregation(matchOperation, sumOperation);
-        AggregationResults<Document> results = getMongoTemplate(gameType).aggregate(aggregation, dynamicOperationEventDetailCollectionName, Document.class);
+        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
+
+        AggregationResults<Document> results = getMongoTemplate(gameType).aggregate(aggregation, dynamicOperationGameEnum.getEventDetailCollectionName(), Document.class);
         // 获取 totalPayOutAmount 值
         Document result = results.getUniqueMappedResult();
         return result != null ? result.getLong("totalPayOutAmount") : 0L; // 如果查询为空，返回 0
     }
 
 
-    public List<DynamicOperationEventDetailDo> queryPage(DynamicOperationDetailQuery query, GameTypeEnum gameType) {
-        List<DynamicOperationDetailPo> dynamicOperationDetailPos = getMongoTemplate(gameType).find(DynamicOperationDetailQueryBuilder.buildQuery(query), DynamicOperationDetailPo.class, dynamicOperationEventDetailCollectionName);
-
+    public List<DynamicOperationEventDetailDo> queryList(DynamicOperationDetailQuery query, GameTypeEnum gameType) {
+        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
+        List<DynamicOperationDetailPo> dynamicOperationDetailPos = getMongoTemplate(gameType).find(DynamicOperationDetailQueryBuilder.buildQuery(query), DynamicOperationDetailPo.class, dynamicOperationGameEnum.getEventDetailCollectionName());
         return DynamicOperationDetailConvert.convertDos(dynamicOperationDetailPos);
 
     }
@@ -69,13 +71,15 @@ public class DynamicOperationEventDetailService {
     public Boolean update(DynamicOperationEventDetailDo detailDo, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(detailDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(detailDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
+        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
+
         Criteria criteria = new Criteria();
         criteria.and("_id").is(detailDo.getId());
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(gameType).updateFirst(query,
                 DynamicOperationDetailQueryBuilder.buildUpdate(detailDo),
                 DynamicOperationDetailPo.class,
-                dynamicOperationEventDetailCollectionName);
+                dynamicOperationGameEnum.getEventDetailCollectionName());
         return result.getModifiedCount() > 0;
     }
 

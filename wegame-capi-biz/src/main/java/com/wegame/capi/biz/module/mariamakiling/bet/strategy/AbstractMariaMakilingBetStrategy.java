@@ -9,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
@@ -25,6 +26,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
@@ -154,23 +156,24 @@ public abstract class AbstractMariaMakilingBetStrategy
     public BetResultDo<MariaMakilingGameRecordDo> saveBetRecord(BetRecordDo<MariaMakilingGameRecordDo> betRecord) {
         MariaMakilingGameRecordDo gameRecord = betRecord.getGameRecordList().get(0);
         // 保存投注记录并派奖
-        Long userCredit = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        BetSingleWalletResultDo betSingleWalletResult = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         // 组装返回结果
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betRecord.getId())
                 .gameId(betRecord.getGameId())
                 .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
                 .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
-                .credit(userCredit)
+                .credit(AmountUtil.toLong(betSingleWalletResult.getCredit()))
                 .overallRewardAmount(Objects.nonNull(gameRecord.getRewardResult()) ? gameRecord.getRewardResult().getTotalRewardAmount() : 0L)
                 .totalPayoutAmount(betRecord.getPayOutAmount())
                 .resultDetail(gameRecord)
+                .betId(betSingleWalletResult.getBetId())
                 .build();
     }
 
     @Override
-    public List<WheelDo<SymbolDo>> convertWheelDoList(String wheelConfig) {
-        return JSON.parseObject(wheelConfig, new TypeReference<List<WheelDo<SymbolDo>>>() {
+    public List<WheelDo<SymbolDo>> convertWheelDoList(List<Object> wheelConfig) {
+        return JSON.parseObject(JSON.toJSONString(wheelConfig), new TypeReference<List<WheelDo<SymbolDo>>>() {
         });
     }
 

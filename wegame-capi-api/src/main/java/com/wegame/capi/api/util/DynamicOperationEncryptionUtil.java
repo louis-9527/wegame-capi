@@ -26,7 +26,8 @@ public class DynamicOperationEncryptionUtil {
     String cpPrivateKey;
     @Value("${api.sport.cp.privateIv}")
     String cpPrivateIv;
-    String publicKeyStr = "YOUR_BASE64_RSA_PUBLIC_KEY";
+    @Value("${dynamic.operation.public_key}")
+    String publicKeyStr;
 
 
     /**

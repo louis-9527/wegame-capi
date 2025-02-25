@@ -9,6 +9,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Objects;
 
 @Data
 @SuperBuilder
@@ -42,5 +44,5 @@ public class DynamicOperationConfigPo implements Serializable {
     /**
      * 配置明细
      */
-    private String detail;
+    private List<Object> detail;
 }

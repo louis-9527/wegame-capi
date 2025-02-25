@@ -10,6 +10,7 @@ import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
@@ -30,18 +31,22 @@ public class DynamicOperationEventConfigService {
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
-    private final String dynamicOperationEventCollectionName = "mariamakiling_dynamicOperation_event_config";
-
     public void add(GameTypeEnum gameType){
+        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
+
         DynamicOperationConfigPo configPo = new DynamicOperationConfigPo();
         configPo.setConfigType(0);
         configPo.setMultiple(10);
         configPo.setGameId(gameType.getId());
-        getMongoTemplate(gameType).insert(configPo,dynamicOperationEventCollectionName);
+
+        //configPo.setDetail();
+        getMongoTemplate(gameType).insert(configPo,dynamicOperationGameEnum.getEventConfigCollectionName());
     }
 
     public List<DynamicOperationConfigDo> getConfigDetail(DynamicOperationConfigQuery configQuery, GameTypeEnum gameType) {
-        List<DynamicOperationConfigPo> dynamicOperationConfigPos = getMongoTemplate(gameType).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery), DynamicOperationConfigPo.class,dynamicOperationEventCollectionName);
+        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
+
+        List<DynamicOperationConfigPo> dynamicOperationConfigPos = getMongoTemplate(gameType).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery), DynamicOperationConfigPo.class,dynamicOperationGameEnum.getEventConfigCollectionName());
         return DynamicOperationConfigConvert.convertDos(dynamicOperationConfigPos);
     }
 

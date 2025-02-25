@@ -78,7 +78,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
 
         do {
             query.setLastId(lastId);
-            eventDetailDoList = dynamicOperationEventDetailService.queryPage(query, getGameType());
+            eventDetailDoList = dynamicOperationEventDetailService.queryList(query, getGameType());
             if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                 lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
             }
@@ -140,7 +140,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
 
         do {
             query.setLastId(lastId);
-            eventDetailDoList = dynamicOperationEventService.queryPage(query, getGameType());
+            eventDetailDoList = dynamicOperationEventService.queryList(query, getGameType());
             if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                 lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
             }
@@ -157,7 +157,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
     }
 
     /**
-     * 事件已经完成,但未上报
+     * 事件进行中,但未上报
      */
     private void eventEventIngExec() {
         log.info("AbstractDynamicOperationEventScheduler#eventEventIngExec run start:{}", getGameType().getId());
@@ -175,7 +175,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
 
         do {
             query.setLastId(lastId);
-            eventDetailDoList = dynamicOperationEventService.queryPage(query, getGameType());
+            eventDetailDoList = dynamicOperationEventService.queryList(query, getGameType());
             if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                 lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
             }
@@ -187,7 +187,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
     }
 
     private void eventEventIngHandle(DynamicOperationEventDo eventDo) {
-        if (eventDo.getExpiredTime() > DateUtil.getCurrentMilli()) {
+        if (eventDo.getExpiredTime() < DateUtil.getCurrentMilli()) {
             // 过期上报
             dynamicOperationManager.updateEventAndReportExpiredEvent(eventDo, getGameType());
             return;

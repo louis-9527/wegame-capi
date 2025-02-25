@@ -63,6 +63,21 @@ public class DynamicOperationQuery implements Serializable {
     private Long createTimeLt;
 
     /**
+     * 生效开始时间
+     */
+    private Long effectedStartTime;
+
+    /**
+     * 生效结束时间
+     */
+    private Long effectedEndTime;
+
+    /**
+     * 事件列表
+     */
+    private List<String> eventIdList;
+
+    /**
      * 上一页最后一条的Id
      */
     private Long lastId;

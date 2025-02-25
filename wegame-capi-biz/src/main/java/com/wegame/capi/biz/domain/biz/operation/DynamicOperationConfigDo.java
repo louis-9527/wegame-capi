@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -29,5 +31,5 @@ public class DynamicOperationConfigDo {
     /**
      * 配置明细
      */
-    private String detail;
+    private List<Object> detail;
 }

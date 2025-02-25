@@ -30,6 +30,11 @@ public class DynamicOperationEventDetailDo {
     private String  operatorGameId;
 
     /**
+     * 渠道ID
+     */
+    private String channelId;
+
+    /**
      * 玩家ID(三方)
      */
     private String playerId;

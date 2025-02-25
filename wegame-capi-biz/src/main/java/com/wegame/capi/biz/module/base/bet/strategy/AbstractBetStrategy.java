@@ -54,7 +54,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
     /**
      * 保存投注记录并投注派彩
      */
-    public Long saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
+    public BetSingleWalletResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
         if (syncOpt) {
             return syncSaveBetRecordAndBetWithPayout(betRecordDo);
         } else {
@@ -62,7 +62,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         }
     }
 
-    private Long syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+    private BetSingleWalletResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         Long betRecordId = getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         BetSingleWalletResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
@@ -70,7 +70,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
             // 异步更新：更新为->投注成功
             getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult),
                     getGame().getGameInfo().getGameType());
-            return AmountUtil.toLong(betSingleWalletResult.getCredit());
+            return betSingleWalletResult;
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("syncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步更新：更新为->投注失败
@@ -82,7 +82,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         }
     }
 
-    public Long asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+    public BetSingleWalletResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         long startTime = System.currentTimeMillis();
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
@@ -108,7 +108,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
                     buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
             long endTime = System.currentTimeMillis();
             log.info("asyncSaveBetRecordAndBetWithPayout cost time: {} ms", endTime - startTime);
-            return AmountUtil.toLong(betSingleWalletResult.getCredit());
+            return betSingleWalletResult;
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("asyncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步发送更新消息: 更新为投注成功

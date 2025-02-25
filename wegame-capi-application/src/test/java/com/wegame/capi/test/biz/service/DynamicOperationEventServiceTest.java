@@ -28,7 +28,7 @@ public class DynamicOperationEventServiceTest extends BaseTest {
         eventDo.setUpdateTime(DateUtil.getCurrentMilli());
         eventDo.setEffectedTime(DateUtil.getCurrentMilli());
         eventDo.setExpiredTime(1742537902000L);
-        eventDo.setReportStatus(DynamicOperationReportStatusEnum.ING);
+        eventDo.setReportStatus(DynamicOperationReportStatusEnum.NONE);
         eventDo.setPlayerName("slottest01");
         dynamicOperationEventService.add(eventDo,GameTypeEnum.MARIA_MAKILING);
     }
