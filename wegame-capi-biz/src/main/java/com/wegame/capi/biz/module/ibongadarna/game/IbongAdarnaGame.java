@@ -20,11 +20,9 @@ import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.SymbolBreakUpEnum;
-import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolRepeatTypeEnum;
 import com.wegame.capi.common.utils.GameUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,13 +53,12 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
     @Override
     public List<IbongAdarnaGameRecordDo> play(GamePlayDo gamePlay) {
         List<IbongAdarnaGameRecordDo> ret = new ArrayList<>();
-        // 获取-游戏基础信息
-        GameInfoDo gameInfo = getGameInfo();
-        TreeMap<String, List<BigDecimal>> wheelProbabilisticConfigMap = ibongAdarnaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
-        WheelDo<IbongSymbolDo> wheel = generateNormalWheel(gameInfo, wheelProbabilisticConfigMap);
-
+        // 生成滚轮
+        WheelDo<IbongSymbolDo> wheel = generateNormalWheel(getGameInfo());
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
-        RewardResultDo<IbongSymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, BigDecimal.ZERO));
+        // 中奖处理
+        RewardResultDo<IbongSymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ZERO));
+        // 构建返回
         IbongAdarnaGameRecordDo record = buildGameRecord(generateGameRecordId(),
                 gamePlay.getBetRecordId(),
                 wheel,
@@ -69,7 +66,6 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                 AmountUtil.maxAmountControl(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
                 AmountUtil.reachMaxMultiple(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()));
         ret.add(record);
-        // 判断是否命中免费轮
         return ret;
     }
 
@@ -79,13 +75,15 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<IbongSymbolDo> generateNormalWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo<IbongSymbolDo> generateNormalWheel(GameInfoDo gameInfo) {
         IbongSymbolDo[][] symbolArr = new IbongSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-        // 生成整盘随机数(row*column)
+        // 元素出现概率配置
+        TreeMap<String, List<BigDecimal>> wheelProbabilisticConfigMap = ibongAdarnaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
+        // 逐个生成滚轮
         for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
-            TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, probabilisticConfig);
+            TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, wheelProbabilisticConfigMap);
             // 每一列开始的时候决定是2个元素 or 1个元素
-            SymbolRepeatTypeEnum symbolRepeatType = randomColumSymbolCount(colum);
+            SymbolRepeatTypeEnum symbolRepeatType = randomSymbolRepeatType(colum);
             AssertUtil.assertNotNull(symbolRepeatType, ErrorCode.ERR_INTER, "invalid symbolRepeatType");
             generateColumSymbol(symbolArr, colum, gameInfo, this.preGenerateSymboDoList(symbolRepeatType, gameInfo, columProbabilisticMap));
         }
@@ -98,13 +96,13 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
     /**
      * 每一列只有两个不同的元素
      *
-     * @param symbolArr 元素数组
-     * @param colum     当前列
-     * @param gameInfo  游戏信息
+     * @param symbolArr        元素数组
+     * @param colum            当前列
+     * @param gameInfo         游戏信息
+     * @param preSymbolGenList 预生成的当前列元素集合
      */
     private void generateColumSymbol(IbongSymbolDo[][] symbolArr, int colum, GameInfoDo gameInfo, List<SymbolDo> preSymbolGenList) {
         TreeMap<String, TreeMap<String, Integer>> symbolBreakUpProbabilisticMap = buildSymbolBreakUpProbabilisticMap();
-        // 生成好固定个数
         int preSymbolIndex = 0;
         int preSymbolGenCount = preSymbolGenList.size();
         for (int row = 0; row < gameInfo.getRow(); row++) {
@@ -116,9 +114,8 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
             }
             symbolDo = preSymbolGenList.get(preSymbolIndex);
             // 分裂
-            SymbolBreakUpEnum breakUpCount = randomSymbolBreakUpCount(symbolDo, symbolBreakUpProbabilisticMap);
+            SymbolBreakUpEnum breakUpCount = randomSymbolBreakUpType(symbolDo, symbolBreakUpProbabilisticMap);
             IbongSymbolDo ibongSymbolDo = IbongSymbolDo.buildIbongSymbolDo(symbolDo, breakUpCount);
-            // 每一列元素个数控制,每一列最多只能有2个元素
             symbolArr[row][colum] = ibongSymbolDo;
             preSymbolIndex++;
         }
@@ -144,7 +141,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
         }
     }
 
-    private SymbolRepeatTypeEnum randomColumSymbolCount(int colum) {
+    private SymbolRepeatTypeEnum randomSymbolRepeatType(int colum) {
         TreeMap<String, Integer> columSymbolRepeatProbabilisticMap = this.buildPerColumSymbolRepeatProbabilisticMap(colum);
         String repeatType = GameUtil.randomKey(columSymbolRepeatProbabilisticMap, randomService.randomInt(1, CONST_1000000));
         return Optional.ofNullable(SymbolRepeatTypeEnum.valueOfCode(repeatType)).orElse(SymbolRepeatTypeEnum.TWO);
@@ -157,7 +154,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
      * @param symbolBreakUpProbabilisticMap 分裂概率配置map
      * @return 分裂倍数
      */
-    private SymbolBreakUpEnum randomSymbolBreakUpCount(SymbolDo symbolDo, TreeMap<String, TreeMap<String, Integer>> symbolBreakUpProbabilisticMap) {
+    private SymbolBreakUpEnum randomSymbolBreakUpType(SymbolDo symbolDo, TreeMap<String, TreeMap<String, Integer>> symbolBreakUpProbabilisticMap) {
         TreeMap<String, Integer> symbolBreakUpProbabilistic = symbolBreakUpProbabilisticMap.get(symbolDo.getId());
         String breakUpKey = GameUtil.randomKey(symbolBreakUpProbabilistic, randomService.randomInt(1, CONST_1000000));
         return Optional.ofNullable(SymbolBreakUpEnum.valueOfCode(breakUpKey)).orElse(SymbolBreakUpEnum.NO_BREAK_UP);

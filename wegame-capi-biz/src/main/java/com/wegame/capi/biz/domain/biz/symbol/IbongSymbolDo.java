@@ -25,14 +25,6 @@ public class IbongSymbolDo extends SymbolDo {
      */
     private SymbolBreakUpEnum breakUp;
 
-    public IbongSymbolDo copy() {
-        return IbongSymbolDo.builder()
-                .id(this.getId())
-                .name(this.getName())
-                .symbolType(this.getSymbolType())
-                .build();
-    }
-
     public static IbongSymbolDo buildIbongSymbolDo(SymbolDo symbolDo, SymbolBreakUpEnum breakUp) {
         return IbongSymbolDo.builder()
                 .id(symbolDo.getId())

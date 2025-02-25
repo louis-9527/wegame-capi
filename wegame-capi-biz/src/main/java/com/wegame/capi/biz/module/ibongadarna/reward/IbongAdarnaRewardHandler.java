@@ -153,9 +153,13 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolD
      * @return line
      */
     private RewardLineDo<IbongSymbolDo> buildRewardLineDo(List<RewardSymbolDo<IbongSymbolDo>> rewardSymbolDoList, Integer lineNo) {
-        int rewardLineCount = 1;
-        for (RewardSymbolDo<IbongSymbolDo> symbol : rewardSymbolDoList) {
-            rewardLineCount = rewardLineCount * symbol.getSymbol().getBreakUp().getTimes();
+        int totalRewardLineCount = 1;
+        if (CollectionUtil.isEmpty(rewardSymbolDoList)) {
+            totalRewardLineCount = 0;
+        } else {
+            for (RewardSymbolDo<IbongSymbolDo> symbol : CollectionUtil.emptyIfNull(rewardSymbolDoList)) {
+                totalRewardLineCount = totalRewardLineCount * symbol.getSymbol().getBreakUp().getTimes();
+            }
         }
         // 中奖元素选择
         RewardSymbolDo<IbongSymbolDo> rewardSymbolDo = rewardSymbolDoList.stream()
@@ -164,7 +168,7 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolD
                 .rewardLineType(RewardLineTypeEnum.THREE)
                 .rewardLineSubType(RewardLineSubTypeEnum.COMMON)
                 .rewardLineNo(lineNo)
-                .rewardLineCount(rewardLineCount)
+                .rewardLineCount(totalRewardLineCount)
                 .rewardSymbol(rewardSymbolDo.getSymbol())
                 .rewardSymbolList(rewardSymbolDoList)
                 .build();
