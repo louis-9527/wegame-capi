@@ -26,7 +26,7 @@ import org.springframework.util.MultiValueMap;
 import java.net.URI;
 
 @Slf4j
-@Component
+//@Component
 public class SingleWalletApi extends BaseApi {
 
     private static final String AUTH_LOGIN_TOKEN_URL_FORMAT = "%s/authLoginToken";
