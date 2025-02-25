@@ -79,7 +79,7 @@ public class BetRecordController {
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
         betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(GameRecordQuery.builder()
                         .betRecordId(betRecordDo.getId())
-                        .orderByClause("_id")
+                        .orderByClause("batchId")
                         .direction(Sort.Direction.ASC)
                         .build(), GameTypeEnum.valueOfId(userInfo.getGameId())));
         return CommonResponse.build(betRecordVo);
