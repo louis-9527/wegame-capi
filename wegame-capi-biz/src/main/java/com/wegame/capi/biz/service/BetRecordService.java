@@ -44,8 +44,8 @@ public class BetRecordService {
         BetRecordPo po = getMongoTemplate(gameType).insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD),
                 gameType.getBetRecordCollectionName());
         long endTime = System.currentTimeMillis();
-        log.info("addBetRecord id:{}", betRecordDo.getId());
-        log.info("BetRecordService#add cost time:{}", endTime - startTime);
+        //        log.info("addBetRecord id:{}", betRecordDo.getId());
+        //        log.info("BetRecordService#add cost time:{}", endTime - startTime);
         return po.getId();
     }
 
@@ -60,12 +60,12 @@ public class BetRecordService {
                 gameType.getBetRecordCollectionName());
         poList.forEach(item -> {
             // todo delete log
-            log.info("addBetRecord id:{}", item.getId());
+            // log.info("addBetRecord id:{}", item.getId());
             bulkOps.insert(item);
         });
         bulkOps.execute();
         long endTime = System.currentTimeMillis();
-        log.info("BetRecordService#batchInsert cost time:{}ms", endTime - startTime);
+        // log.info("BetRecordService#batchInsert cost time:{}ms", endTime - startTime);
         return true;
     }
 
@@ -81,7 +81,7 @@ public class BetRecordService {
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         long endTime = System.currentTimeMillis();
-        log.info("BetRecordService#update cost time:{}ms", endTime - startTime);
+        // log.info("BetRecordService#update cost time:{}ms", endTime - startTime);
         return Objects.nonNull(result) && result.getModifiedCount() > 0;
     }
 
@@ -101,7 +101,7 @@ public class BetRecordService {
         BulkWriteResult bulkWriteResult = bulkOps.execute();
         int modifiedCount = bulkWriteResult.getModifiedCount();
         long endTime = System.currentTimeMillis();
-        log.info("BetRecordService#batchUpdate cost time:{}ms", endTime - startTime);
+        // log.info("BetRecordService#batchUpdate cost time:{}ms", endTime - startTime);
         return modifiedCount;
     }
 
@@ -129,7 +129,7 @@ public class BetRecordService {
                 query,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
-        log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
+        // log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
         return BetRecordConverter.poToDo(betRecordPo);
     }
 

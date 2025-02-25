@@ -60,9 +60,9 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
             // todo delete log
-            gameRecordList.forEach(item -> {
-                log.info("addGameRecord id:{}", item.getId());
-            });
+            //            gameRecordList.forEach(item -> {
+            //                log.info("addGameRecord id:{}", item.getId());
+            //            });
             boolean insertRet = gameRecordService.batchAdd(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
             AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
         }

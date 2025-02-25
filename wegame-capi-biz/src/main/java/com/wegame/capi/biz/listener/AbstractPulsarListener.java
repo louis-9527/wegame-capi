@@ -75,9 +75,9 @@ public abstract class AbstractPulsarListener {
             //            recordList = null;
         }
         long endTime = System.currentTimeMillis();
-        long call = endTime - startTime;
-        if (call >= 50) {
-            log.info("{}, batchUpdate, size:{} cost: {} ms", getGameType().getName(), recordList.size(), endTime - startTime);
+        long costTime = endTime - startTime;
+        if (costTime >= 50) {
+            log.info("{}, batchUpdate, size:{} cost: {} ms", getGameType().getName(), recordList.size(), costTime);
         }
     }
 

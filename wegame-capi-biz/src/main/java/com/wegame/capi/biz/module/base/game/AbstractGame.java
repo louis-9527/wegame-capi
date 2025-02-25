@@ -33,7 +33,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
 
     public long generateGameRecordId() {
         long gameRecordId = snowflakeIdGenerator.nextId();
-        log.info("generateGameRecord id:{}", gameRecordId);
+        // log.info("generateGameRecord id:{}", gameRecordId);
         return gameRecordId;
     }
 

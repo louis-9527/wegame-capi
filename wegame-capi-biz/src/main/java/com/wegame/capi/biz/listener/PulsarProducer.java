@@ -52,12 +52,12 @@ public class PulsarProducer implements InitializingBean {
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
-//        if (duration <= 10) {
-//            log.info("sendMessage cost time less 10, {} ms", endTime - startTime);
-//        } else if (duration > 10 && duration <= 20) {
-//            log.info("sendMessage cost time(10-20], {} ms", endTime - startTime);
-//        } else
-        if (duration > 20) {
+        //        if (duration <= 10) {
+        //            log.info("sendMessage cost time less 10, {} ms", endTime - startTime);
+        //        } else if (duration > 10 && duration <= 20) {
+        //            log.info("sendMessage cost time(10-20], {} ms", endTime - startTime);
+        //        } else
+        if (duration > 20L) {
             log.info("sendMessage cost time more than 20, {} ms", endTime - startTime);
         }
         return messageId;
@@ -88,14 +88,14 @@ public class PulsarProducer implements InitializingBean {
         long endTime = System.currentTimeMillis();
         long cost = endTime - startTime;
         if (cost >= 50) {
-            log.info("asyncSendMessage cost time, {} ms", endTime - startTime);
+            log.info("asyncSendMessage cost time: more than 50, {} ms", endTime - startTime);
         }
         return future;
     }
 
     @Async(sendMessageThreadPoolExecutor)
     public <T> void asyncSendMessageThenRetry(GameTypeEnum gameType, MQMessage<T> mqMessage) {
-        log.info("{}Producer asyncSendMessageThenRetry msgType:{}, msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
+        // log.info("{}Producer asyncSendMessageThenRetry msgType:{}, msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
         CompletableFuture<MessageId> future = getProducer(gameType)
                 .newMessage()
                 .key(mqMessage.getMsgId())
