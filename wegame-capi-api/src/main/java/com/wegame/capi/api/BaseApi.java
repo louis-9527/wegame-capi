@@ -55,6 +55,9 @@ public class BaseApi {
     @Value("${api.go.secretString}")
     String secretString;
 
+    @Value("${dynamic.operation.domain}")
+    String dynamicOperationDomain;
+
     @Autowired
     RestTemplate restTemplate;
 

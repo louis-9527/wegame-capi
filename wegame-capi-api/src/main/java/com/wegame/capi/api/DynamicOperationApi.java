@@ -54,7 +54,7 @@ public class DynamicOperationApi extends BaseApi {
                     .agentCode(cpChannelId)
                     .message(dynamicOperationEncryptionUtil.encryptWithAES256CBC(JSON.toJSONString(req)))
                     .build();
-            RequestEntity<DynamicOperationReq> requestEntity = new RequestEntity<>(operationReq, headers, HttpMethod.POST, URI.create(String.format(UPDATE_EVENTS_STATUS, singleDomain)));
+            RequestEntity<DynamicOperationReq> requestEntity = new RequestEntity<>(operationReq, headers, HttpMethod.POST, URI.create(String.format(UPDATE_EVENTS_STATUS, dynamicOperationDomain)));
             ResponseEntity<UpdateEventsStatusRes> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);

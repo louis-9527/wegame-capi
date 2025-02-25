@@ -67,6 +67,8 @@ public class DynamicOperationConvert {
         eventDo.setChannelId(eventPo.getChannelId());
         eventDo.setEffectedTime(eventPo.getEffectedTime());
         eventDo.setExpiredTime(eventPo.getExpiredTime());
+        eventDo.setEventStatus(DynamicOperationEventStatusEnum.valueOfCode(eventPo.getEventStatus()));
+        eventDo.setReportStatus(DynamicOperationReportStatusEnum.valueOfCode(eventPo.getReportStatus()));
         return eventDo;
     }
 }

@@ -32,6 +32,8 @@ public class DynamicOperationQueryBuilder {
                 query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
             }
         }
+        query.fields().include("_id","eventId","playerName","bonus","eventKind","operatorGameId","channelId","effectedTime","expiredTime","eventStatus","reportStatus");
+
         return query;
 
     }
@@ -69,7 +71,7 @@ public class DynamicOperationQueryBuilder {
         criteria.and("effectedTime").lte(currentMilli);
         criteria.and("expiredTime").gte(currentMilli);
         Query query = new Query(criteria);
-        query.fields().include("id", "bonus", "eventKind", "eventId");
+        query.fields().include("_id","eventId","playerName","bonus","eventKind","operatorGameId","channelId","effectedTime","expiredTime","eventStatus","reportStatus");
         //query.limit(1);
         return query;
     }
