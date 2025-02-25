@@ -43,6 +43,4 @@ public class RewardController extends AbstractController {
         noCacheControl(response);
         return CommonResponse.build(RewardInfoConverter.doToVo(rewardService.get(gameType)));
     }
-
-
 }
