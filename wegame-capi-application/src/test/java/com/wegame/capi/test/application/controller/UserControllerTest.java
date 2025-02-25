@@ -1,6 +1,5 @@
 package com.wegame.capi.test.application.controller;
 
-import cn.hutool.core.lang.Assert;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.ThreadMdcUtil;
@@ -13,6 +12,7 @@ import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +41,10 @@ public class UserControllerTest extends BaseTest {
         // login success
         HttpServletResponse response = new MockHttpServletResponse();
         CommonResponse<UserInfo> commonResponse = userController.login(response, buildUserLoginRequestForSuccess());
-        Assert.notNull(commonResponse);
-        Assert.isTrue(StringUtils.equals(commonResponse.getCode(), CommonResponse.SUC_CODE));
-        Assert.notNull(commonResponse.getData());
-        Assert.notBlank(commonResponse.getData().getToken());
+        Assert.assertNotNull(commonResponse);
+        Assert.assertTrue(StringUtils.equals(commonResponse.getCode(), CommonResponse.SUC_CODE));
+        Assert.assertNotNull(commonResponse.getData());
+        Assert.assertTrue(StringUtils.isNotEmpty(commonResponse.getData().getToken()));
         // login fail
         Exception exception = assertThrows(BusinessException.class, () -> {
             userController.login(response, buildUserLoginRequestForFail());
@@ -57,17 +57,17 @@ public class UserControllerTest extends BaseTest {
     public void test_logout() {
         HttpServletResponse response = new MockHttpServletResponse();
         CommonResponse<UserInfo> loginResponse = userController.login(response, buildUserLoginRequestForSuccess());
-        Assert.notNull(loginResponse);
-        Assert.isTrue(StringUtils.equals(loginResponse.getCode(), CommonResponse.SUC_CODE));
-        Assert.notNull(loginResponse.getData());
-        Assert.notBlank(loginResponse.getData().getToken());
+        Assert.assertNotNull(loginResponse);
+        Assert.assertTrue(StringUtils.equals(loginResponse.getCode(), CommonResponse.SUC_CODE));
+        Assert.assertNotNull(loginResponse.getData());
+        Assert.assertTrue(StringUtils.isNotEmpty(loginResponse.getData().getToken()));
 
         // logout success
         HttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute(Constants._TOKEN_, loginResponse.getData().getToken());
         CommonResponse<Boolean> result = userController.logout(request);
-        Assert.notNull(result.getData());
-        Assert.isTrue(result.getData());
+        Assert.assertNotNull(result.getData());
+        Assert.assertTrue(result.getData());
     }
 
     @Test
@@ -75,25 +75,25 @@ public class UserControllerTest extends BaseTest {
         // test me success
         HttpServletResponse loginHttpServletResponse = new MockHttpServletResponse();
         CommonResponse<UserInfo> loginResponse = userController.login(loginHttpServletResponse, buildUserLoginRequestForSuccess());
-        Assert.notNull(loginResponse);
-        Assert.isTrue(StringUtils.equals(loginResponse.getCode(), CommonResponse.SUC_CODE));
-        Assert.notNull(loginResponse.getData());
-        Assert.notBlank(loginResponse.getData().getToken());
+        Assert.assertNotNull(loginResponse);
+        Assert.assertTrue(StringUtils.equals(loginResponse.getCode(), CommonResponse.SUC_CODE));
+        Assert.assertNotNull(loginResponse.getData());
+        Assert.assertTrue(StringUtils.isNotEmpty(loginResponse.getData().getToken()));
         HttpServletResponse successMeHttpServletResponse = new MockHttpServletResponse();
         CommonResponse<UserInfo> successMeResponse = userController.me(successMeHttpServletResponse);
-        Assert.notNull(successMeResponse);
-        Assert.isNull(successMeResponse.getData());
+        Assert.assertNotNull(successMeResponse);
+        Assert.assertNull(successMeResponse.getData());
 
         // test me fail
         HttpServletRequest logoutHttpServletRequest = new MockHttpServletRequest();
         logoutHttpServletRequest.setAttribute(Constants._TOKEN_, loginResponse.getData().getToken());
         CommonResponse<Boolean> logoutResponse = userController.logout(logoutHttpServletRequest);
-        Assert.notNull(logoutResponse.getData());
-        Assert.isTrue(logoutResponse.getData());
+        Assert.assertNotNull(logoutResponse.getData());
+        Assert.assertTrue(logoutResponse.getData());
         HttpServletResponse failMeHttpServletResponse = new MockHttpServletResponse();
         CommonResponse<UserInfo> failMeResponse = userController.me(failMeHttpServletResponse);
-        Assert.notNull(failMeResponse);
-        Assert.isNull(failMeResponse.getData());
+        Assert.assertNotNull(failMeResponse);
+        Assert.assertNull(failMeResponse.getData());
     }
 
 
@@ -102,15 +102,15 @@ public class UserControllerTest extends BaseTest {
         // test getCredit success
         HttpServletResponse loginHttpServletResponse = new MockHttpServletResponse();
         CommonResponse<UserInfo> loginResponse = userController.login(loginHttpServletResponse, buildUserLoginRequestForSuccess());
-        Assert.notNull(loginResponse);
-        Assert.isTrue(StringUtils.equals(loginResponse.getCode(), CommonResponse.SUC_CODE));
-        Assert.notNull(loginResponse.getData());
-        Assert.notBlank(loginResponse.getData().getToken());
+        Assert.assertNotNull(loginResponse);
+        Assert.assertTrue(StringUtils.equals(loginResponse.getCode(), CommonResponse.SUC_CODE));
+        Assert.assertNotNull(loginResponse.getData());
+        Assert.assertTrue(StringUtils.isNotEmpty(loginResponse.getData().getToken()));
         UserInfoContext.setUserInfo(loginResponse.getData());
         HttpServletResponse successGetCreditHttpServletResponse = new MockHttpServletResponse();
         CommonResponse<Long> successGetCreditResponse = userController.getCredit(successGetCreditHttpServletResponse);
-        Assert.notNull(successGetCreditResponse);
-        Assert.notNull(successGetCreditResponse.getData());
+        Assert.assertNotNull(successGetCreditResponse);
+        Assert.assertNotNull(successGetCreditResponse.getData());
 
         // test getCredit fail
         Exception exception = assertThrows(BusinessException.class, () -> {
