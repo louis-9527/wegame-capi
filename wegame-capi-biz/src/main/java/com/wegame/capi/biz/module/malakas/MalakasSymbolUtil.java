@@ -3,7 +3,6 @@ package com.wegame.capi.biz.module.malakas;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
@@ -12,20 +11,20 @@ import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
+import static com.wegame.capi.common.enums.SymbolEnum.Symbol1000;
+import static com.wegame.capi.common.enums.SymbolSizeEnum.S;
 
 public class MalakasSymbolUtil {
 
-    public static MalakasSymbolDo[][] copySymbolArr(MalakasSymbolDo[][] symbolArr) {
+    public static MalakasSymbolDo[][] copySymbolArr(MalakasSymbolDo[][] symbolArr, MalakasSymbolDo placeholderSymbol) {
         int row = symbolArr.length;
         int col = symbolArr[0].length;
         MalakasSymbolDo[][] newSymbolArr = new MalakasSymbolDo[row][col];
@@ -33,8 +32,8 @@ public class MalakasSymbolUtil {
             for (int j = 0; j < col; j++) {
                 if (Objects.isNull(symbolArr[i][j])) {
                     newSymbolArr[i][j] = null;
-                } else if (Objects.equals(symbolArr[i][j], MALAKAS_SYMBOL_PLACEHOLDER)) {
-                    newSymbolArr[i][j] = MALAKAS_SYMBOL_PLACEHOLDER;
+                } else if (StringUtils.equals(symbolArr[i][j].getId(), placeholderSymbol.getId())) {
+                    newSymbolArr[i][j] = placeholderSymbol;
                 } else {
                     newSymbolArr[i][j] = symbolArr[i][j].copy();
                 }
@@ -161,21 +160,21 @@ public class MalakasSymbolUtil {
         }
     }
 
-    public static void handlePlaceholderSymbol(MalakasSymbolDo[][] symbolArr, int row, int column, SymbolSizeEnum symbolSize) {
+    public static void handlePlaceholderSymbol(MalakasSymbolDo[][] symbolArr, int row, int column, SymbolSizeEnum symbolSize, MalakasSymbolDo placeholderSymbol) {
         switch (symbolSize) {
             case S:
                 break;
             case M:
-                symbolArr[row + 1][column] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 1][column] = placeholderSymbol;
                 break;
             case L:
-                symbolArr[row + 1][column] = MALAKAS_SYMBOL_PLACEHOLDER;
-                symbolArr[row + 2][column] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 1][column] = placeholderSymbol;
+                symbolArr[row + 2][column] = placeholderSymbol;
                 break;
             case XL:
-                symbolArr[row + 1][column] = MALAKAS_SYMBOL_PLACEHOLDER;
-                symbolArr[row + 2][column] = MALAKAS_SYMBOL_PLACEHOLDER;
-                symbolArr[row + 3][column] = MALAKAS_SYMBOL_PLACEHOLDER;
+                symbolArr[row + 1][column] = placeholderSymbol;
+                symbolArr[row + 2][column] = placeholderSymbol;
+                symbolArr[row + 3][column] = placeholderSymbol;
                 break;
         }
     }
@@ -192,7 +191,7 @@ public class MalakasSymbolUtil {
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
-                if (StringUtils.equals(symbolArr[row][col].getId(), symbol.getId())) {
+                if (Objects.nonNull(symbolArr[row][col]) && StringUtils.equals(symbolArr[row][col].getId(), symbol.getId())) {
                     count++;
                 }
             }
@@ -200,17 +199,14 @@ public class MalakasSymbolUtil {
         return count;
     }
 
-    public static void postPlaceholderSymbol(List<MalakasGameRecordDo> ret) {
-        for (MalakasGameRecordDo record : CollectionUtils.emptyIfNull(ret)) {
-            MalakasSymbolDo[][] symbolArr = record.getWheel().getSymbolArr();
-            for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
-                for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
-                    if (Objects.equals(symbolArr[row][column], MALAKAS_SYMBOL_PLACEHOLDER)) {
-                        symbolArr[row][column] = null;
-                    }
-                }
-            }
-        }
+    public static MalakasSymbolDo getPlaceholderSymbol() {
+        return MalakasSymbolDo.builder()
+                .id(Symbol1000.getId())
+                .name(Symbol1000.getName())
+                .symbolType(SymbolTypeEnum.COMMON)
+                .symbolSize(S)
+                .symbolGoldBorder(false)
+                .build();
     }
 
     public static void print(MalakasSymbolDo[][] symbolArr, String scene) {
