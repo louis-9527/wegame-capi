@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.malakas;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
@@ -11,6 +12,7 @@ import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -207,6 +209,19 @@ public class MalakasSymbolUtil {
             }
         }
         return count;
+    }
+
+    public static void postPlaceholderSymbol(List<MalakasGameRecordDo> ret) {
+        for (MalakasGameRecordDo record : CollectionUtils.emptyIfNull(ret)) {
+            MalakasSymbolDo[][] symbolArr = record.getWheel().getSymbolArr();
+            for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+                for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
+                    if (Objects.nonNull(symbolArr[row][column].getId()) && StringUtils.equals(symbolArr[row][column].getId(), Symbol1000.getId())) {
+                        symbolArr[row][column] = null;
+                    }
+                }
+            }
+        }
     }
 
     public static MalakasSymbolDo getPlaceholderSymbol() {

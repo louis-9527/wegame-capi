@@ -88,7 +88,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
         // 判奖-根据游戏滚轮和中奖线算法判断
-        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ZERO));
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ONE));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
         MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
@@ -101,7 +101,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeWheelList, placeholderSymbol);
         }
         // 占位元素-将占位元素设置为空:
-        placeholderSymbol = null;
+        //        placeholderSymbol = null;
+        postPlaceholderSymbol(ret);
         // 返回-游戏记录列表
         return ret;
     }
