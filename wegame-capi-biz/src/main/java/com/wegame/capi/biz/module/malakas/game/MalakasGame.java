@@ -171,7 +171,8 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         // 重建：元素数组（非空元素按列下落处理：第1-6Reel非空元素向下移动，第7Reel非空元素向左移动）
         rebuildSymbolArr(symbolArr, gameInfo);
         // 生产：缺失元素(填补剩余元素)
-        return generateCommonNormalWheel(gameInfo, symbolArr, playProbabilisticConfig, preWheel.getIndex() + 1, preGameRecord.getFreeWheelFlag());
+        int scatterNumberInWheel = countIndexSymbol(symbolArr, SymbolEnum.Scatter);
+        return generateCommonNormalWheel(gameInfo, symbolArr, scatterNumberInWheel, playProbabilisticConfig, preWheel.getIndex() + 1, preGameRecord.getFreeWheelFlag());
     }
 
     /**
@@ -186,7 +187,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
         // 第一行最后一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
-        return generateCommonNormalWheel(gameInfo, symbolArr, playProbabilisticConfig, WHEEL_DEFAULT_INDEX, freeWheelFlag);
+        return generateCommonNormalWheel(gameInfo, symbolArr, 0, playProbabilisticConfig, WHEEL_DEFAULT_INDEX, freeWheelFlag);
     }
 
     /**
@@ -201,7 +202,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
         // 第一行最后一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
-        WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(gameInfo, symbolArr, playProbabilisticConfig, WHEEL_DEFAULT_INDEX, freeWheelFlag);
+        WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(gameInfo, symbolArr, 0, playProbabilisticConfig, WHEEL_DEFAULT_INDEX, freeWheelFlag);
         int scatterSymbolCount = countIndexSymbol(wheel.getSymbolArr(), SymbolEnum.Scatter);
         int randomCount = randomService.randomInt(4, 6);
         int needAddCount = randomCount - scatterSymbolCount;
@@ -225,19 +226,22 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
 
     private WheelDo<MalakasSymbolDo> generateCommonNormalWheel(GameInfoDo gameInfo,
                                                                MalakasSymbolDo[][] symbolArr,
+                                                               int scatterNumberInWheel,
                                                                MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
                                                                int wheelIndex,
                                                                boolean freeFlag) {
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
         int randomNumberIndex = 0;
-        int scatterNumberInWheel = 0;
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             // 一列只能包含两个scatter
             int scatterNumberInReel = 0;
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
-            for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
+            for (int row = gameInfo.getRow() - 1; row >= ONE_ROW_INDEX; row--) {
                 if (Objects.nonNull(symbolArr[row][column])) {
+                    if (symbolArr[row][column].isScatterSymbol()) {
+                        scatterNumberInReel++;
+                    }
                     // 当前元素非空，则跳过
                     continue;
                 }
