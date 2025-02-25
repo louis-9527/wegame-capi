@@ -199,6 +199,16 @@ public class MalakasSymbolUtil {
         return count;
     }
 
+    public static int countIndexSymbol(MalakasSymbolDo[][] symbolArr, SymbolEnum symbol, int column) {
+        int count = 0;
+        for (int row = 0; row < symbolArr.length; row++) {
+            if (Objects.nonNull(symbolArr[row][column]) && StringUtils.equals(symbolArr[row][column].getId(), symbol.getId())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public static MalakasSymbolDo getPlaceholderSymbol() {
         return MalakasSymbolDo.builder()
                 .id(Symbol1000.getId())

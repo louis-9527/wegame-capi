@@ -257,13 +257,10 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         int randomNumberIndex = 0;
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             // 一列只能包含两个scatter
-            int scatterNumberInReel = 0;
+            int scatterNumberInReel = countIndexSymbol(symbolArr, SymbolEnum.Scatter, column);
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
-            for (int row = gameInfo.getRow() - 1; row >= ONE_ROW_INDEX; row--) {
+            for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
-                    if (symbolArr[row][column].isScatterSymbol()) {
-                        scatterNumberInReel++;
-                    }
                     // 当前元素非空，则跳过
                     continue;
                 }
