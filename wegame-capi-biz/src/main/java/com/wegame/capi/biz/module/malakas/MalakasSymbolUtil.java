@@ -181,7 +181,7 @@ public class MalakasSymbolUtil {
 
     public static int getMaxRow(MalakasSymbolDo[][] symbolArr, int currentRow, int currentColum) {
         int maxRow = currentRow;
-        while (maxRow < symbolArr.length - 1 && Objects.isNull(symbolArr[maxRow + 1][currentColum])) {
+        while (maxRow < symbolArr.length - 1 && Objects.isNull(symbolArr[maxRow - 1][currentColum])) {
             maxRow++;
         }
         return maxRow;
