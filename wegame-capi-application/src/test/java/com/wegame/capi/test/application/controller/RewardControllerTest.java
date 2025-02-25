@@ -18,7 +18,7 @@ public class RewardControllerTest extends BaseTest {
     public RewardController rewardController;
 
 
-    public void commonGet() {
+    protected void commonGet() {
         HttpServletResponse httpServletResponse = new MockHttpServletResponse();
         CommonResponse<RewardInfoVo> commonResponse = rewardController.get(httpServletResponse);
         Assert.notNull(commonResponse);

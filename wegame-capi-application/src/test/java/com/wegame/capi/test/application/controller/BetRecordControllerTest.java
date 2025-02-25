@@ -17,7 +17,7 @@ public class BetRecordControllerTest extends BaseTest {
     @Autowired
     public BetRecordController betRecordController;
 
-    public void commonPageQuery() {
+    protected void commonPageQuery() {
         PageQueryBetRecordRequest request = buildPageQueryBetRecordRequest();
         CommonResponse<PageInfoVo<BetRecordVo>> commonResponse = betRecordController.pageQuery(request);
         Assert.notNull(commonResponse);
@@ -27,7 +27,7 @@ public class BetRecordControllerTest extends BaseTest {
         Assert.isTrue(CollectionUtils.isNotEmpty(commonResponse.getData().getList()));
     }
 
-    public BetRecordVo commonGet(String id) {
+    protected BetRecordVo commonGet(String id) {
         CommonResponse<BetRecordVo> commonResponse = betRecordController.get(id);
         Assert.notNull(commonResponse);
         Assert.notNull(commonResponse.getData());
