@@ -15,18 +15,18 @@ public class IndexFactory {
 
     private static final String INDEX_MAP_KEY = "%d-%d";
 
-    public static IndexDo buildDo(int rowIndex, int columIndex) {
+    public static IndexDo buildDo(int rowIndex, int columnIndex) {
         AssertUtil.assertTrue(rowIndex >= 0, ErrorCode.ERR_PARAM, "rowIndex must be greater than or equal 0");
-        AssertUtil.assertTrue(columIndex >= 0, ErrorCode.ERR_PARAM, "columIndex must be greater than or equal 0");
-        IndexDo existSymbolIndexDo = INDEX_DO_MAP.get(buildKey(rowIndex, columIndex));
+        AssertUtil.assertTrue(columnIndex >= 0, ErrorCode.ERR_PARAM, "columnIndex must be greater than or equal 0");
+        IndexDo existSymbolIndexDo = INDEX_DO_MAP.get(buildKey(rowIndex, columnIndex));
         if (Objects.nonNull(existSymbolIndexDo)) {
             return existSymbolIndexDo;
         } else {
             IndexDo symbolIndexDo = IndexDo.builder()
                     .rowIndex(rowIndex)
-                    .columIndex(columIndex)
+                    .columnIndex(columnIndex)
                     .build();
-            INDEX_DO_MAP.put(buildKey(rowIndex, columIndex), symbolIndexDo);
+            INDEX_DO_MAP.put(buildKey(rowIndex, columnIndex), symbolIndexDo);
             return symbolIndexDo;
         }
     }
@@ -34,21 +34,21 @@ public class IndexFactory {
     public static IndexVo buildVo(IndexDo indexDo) {
         AssertUtil.assertNotNull(indexDo, ErrorCode.ERR_PARAM, "indexDo must not be null");
         AssertUtil.assertTrue(indexDo.getRowIndex() >= 0, ErrorCode.ERR_PARAM, "rowIndex must be greater than or equal 0");
-        AssertUtil.assertTrue(indexDo.getColumIndex() >= 0, ErrorCode.ERR_PARAM, "columIndex must be greater than or equal 0");
-        IndexVo existIndexVo = INDEX_VO_MAP.get(buildKey(indexDo.getRowIndex(), indexDo.getColumIndex()));
+        AssertUtil.assertTrue(indexDo.getColumnIndex() >= 0, ErrorCode.ERR_PARAM, "columnIndex must be greater than or equal 0");
+        IndexVo existIndexVo = INDEX_VO_MAP.get(buildKey(indexDo.getRowIndex(), indexDo.getColumnIndex()));
         if (Objects.nonNull(existIndexVo)) {
             return existIndexVo;
         } else {
             IndexVo indexVo = IndexVo.builder()
                     .rowIndex(indexDo.getRowIndex())
-                    .columIndex(indexDo.getColumIndex())
+                    .columnIndex(indexDo.getColumnIndex())
                     .build();
-            INDEX_VO_MAP.put(buildKey(indexDo.getRowIndex(), indexDo.getColumIndex()), indexVo);
+            INDEX_VO_MAP.put(buildKey(indexDo.getRowIndex(), indexDo.getColumnIndex()), indexVo);
             return indexVo;
         }
     }
 
-    private static String buildKey(int rowIndex, int columIndex) {
-        return String.format(INDEX_MAP_KEY, rowIndex, columIndex);
+    private static String buildKey(int rowIndex, int columnIndex) {
+        return String.format(INDEX_MAP_KEY, rowIndex, columnIndex);
     }
 }

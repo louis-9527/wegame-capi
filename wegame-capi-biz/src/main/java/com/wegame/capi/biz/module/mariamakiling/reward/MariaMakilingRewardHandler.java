@@ -174,8 +174,8 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
         }
         if (currentSymbol.isScatterSymbol()) {
             // scatter元素，判断（逻辑上的）上一列的列表元素是否为空： 说明，scatter只能出现在135列
-            int preColumIndex = SCATTER_COLUM_INDEX_LIST.get(SCATTER_COLUM_INDEX_LIST.indexOf(currentColum) - 1);
-            return CollectionUtils.isNotEmpty(treeMap.get(preColumIndex));
+            int preColumnIndex = SCATTER_COLUM_INDEX_LIST.get(SCATTER_COLUM_INDEX_LIST.indexOf(currentColum) - 1);
+            return CollectionUtils.isNotEmpty(treeMap.get(preColumnIndex));
         } else {
             // 非scatter元素，判断上一列的列表是否为空
             return CollectionUtils.isNotEmpty(treeMap.get(currentColum - 1));
