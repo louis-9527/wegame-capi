@@ -2,14 +2,19 @@ package com.wegame.capi.test.application.controller;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.base.exception.BusinessException;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.application.controller.UserController;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -17,23 +22,49 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @Slf4j
 public class UserControllerTest extends BaseTest {
 
     @Autowired
     UserController userController;
 
-    @Test
-    public void test_login() {
-        CommonResponse<UserInfo> result = userController.login(null, buildUserLoginRequest());
-        Assert.notNull(result.getData());
-        Assert.notBlank(result.getData().getToken());
+    @Before
+    public void beforeTest() {
+        ThreadMdcUtil.setTraceIdIfAbsent();
     }
 
     @Test
-    public void test_loginOut() {
+    public void test_login() {
+        // login success
+        HttpServletResponse response = new MockHttpServletResponse();
+        CommonResponse<UserInfo> commonResponse = userController.login(response, buildUserLoginRequestForSuccess());
+        Assert.notNull(commonResponse);
+        Assert.isTrue(StringUtils.equals(commonResponse.getCode(), CommonResponse.SUC_CODE));
+        Assert.notNull(commonResponse.getData());
+        Assert.notBlank(commonResponse.getData().getToken());
+        // login fail
+        Exception exception = assertThrows(BusinessException.class, () -> {
+            userController.login(response, buildUserLoginRequestForFail());
+        });
+        String errorMsg = "invalid login";
+        assertEquals(errorMsg, exception.getMessage());
+    }
+
+    @Test
+    public void test_logout() {
+        HttpServletResponse response = new MockHttpServletResponse();
+        CommonResponse<UserInfo> loginResponse = userController.login(response, buildUserLoginRequestForSuccess());
+        Assert.notNull(loginResponse);
+        Assert.isTrue(StringUtils.equals(loginResponse.getCode(), CommonResponse.SUC_CODE));
+        Assert.notNull(loginResponse.getData());
+        Assert.notBlank(loginResponse.getData().getToken());
+
+        // logout success
         HttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute("token", ""); // todo
+        request.setAttribute(Constants._TOKEN_, loginResponse.getData().getToken());
         CommonResponse<Boolean> result = userController.logout(request);
         Assert.notNull(result.getData());
         Assert.isTrue(result.getData());
@@ -41,49 +72,86 @@ public class UserControllerTest extends BaseTest {
 
     @Test
     public void test_me() {
-        HttpServletResponse httpServletResponse = new MockHttpServletResponse();
-        CommonResponse<UserInfo> response = userController.me(httpServletResponse);
-        log.info("me: {}", response);
-        Assert.notNull(response);
-        Assert.isNull(response.getData());
+        // test me success
+        HttpServletResponse loginHttpServletResponse = new MockHttpServletResponse();
+        CommonResponse<UserInfo> loginResponse = userController.login(loginHttpServletResponse, buildUserLoginRequestForSuccess());
+        Assert.notNull(loginResponse);
+        Assert.isTrue(StringUtils.equals(loginResponse.getCode(), CommonResponse.SUC_CODE));
+        Assert.notNull(loginResponse.getData());
+        Assert.notBlank(loginResponse.getData().getToken());
+        HttpServletResponse successMeHttpServletResponse = new MockHttpServletResponse();
+        CommonResponse<UserInfo> successMeResponse = userController.me(successMeHttpServletResponse);
+        Assert.notNull(successMeResponse);
+        Assert.isNull(successMeResponse.getData());
+
+        // test me fail
+        HttpServletRequest logoutHttpServletRequest = new MockHttpServletRequest();
+        logoutHttpServletRequest.setAttribute(Constants._TOKEN_, loginResponse.getData().getToken());
+        CommonResponse<Boolean> logoutResponse = userController.logout(logoutHttpServletRequest);
+        Assert.notNull(logoutResponse.getData());
+        Assert.isTrue(logoutResponse.getData());
+        HttpServletResponse failMeHttpServletResponse = new MockHttpServletResponse();
+        CommonResponse<UserInfo> failMeResponse = userController.me(failMeHttpServletResponse);
+        Assert.notNull(failMeResponse);
+        Assert.isNull(failMeResponse.getData());
     }
 
 
     @Test
     public void test_getCredit() {
+        // test getCredit success
+        HttpServletResponse loginHttpServletResponse = new MockHttpServletResponse();
+        CommonResponse<UserInfo> loginResponse = userController.login(loginHttpServletResponse, buildUserLoginRequestForSuccess());
+        Assert.notNull(loginResponse);
+        Assert.isTrue(StringUtils.equals(loginResponse.getCode(), CommonResponse.SUC_CODE));
+        Assert.notNull(loginResponse.getData());
+        Assert.notBlank(loginResponse.getData().getToken());
+        UserInfoContext.setUserInfo(loginResponse.getData());
+        HttpServletResponse successGetCreditHttpServletResponse = new MockHttpServletResponse();
+        CommonResponse<Long> successGetCreditResponse = userController.getCredit(successGetCreditHttpServletResponse);
+        Assert.notNull(successGetCreditResponse);
+        Assert.notNull(successGetCreditResponse.getData());
 
+        // test getCredit fail
+        Exception exception = assertThrows(BusinessException.class, () -> {
+            UserInfoContext.setUserInfo(UserInfo.builder()
+                    .id("10000")
+                    .playerId("123456")
+                    .playerName("123456")
+                    .userName("system")
+                    .build());
+            HttpServletResponse failMeHttpServletResponse = new MockHttpServletResponse();
+            userController.getCredit(failMeHttpServletResponse);
+        });
+        String errorMsg = "Parameter error";
+        assertEquals(errorMsg, exception.getMessage());
     }
 
-    private static UserLoginRequest buildUserLoginRequest() {
+    private static UserLoginRequest buildUserLoginRequestForSuccess() {
         UserLoginRequest request = new UserLoginRequest();
         request.setPId("55");
         request.setChannelId("1051");
-        request.setGameId("zhumeng001");
-        request.setPlayerId("igoslot01");
-        request.setPlayerName("igoslot01");
-        request.setUserName("1204352556");
-        request.setNickName("YUAN6401");
-        request.setUserLevel("1");
-        request.setToken("13820fff6c479bfb53107bc8c43b81c6be7881b21dca68e8db6b9f2265599f968b5c8509eb065535ae1395483a741b96658fc228a1da41d4620d1765daa2588c59b86d0310e3e434ab252a7b4a58e265b61913194d845f17a6afec2867b8e964");
+        request.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
+        request.setPlayerId(TEST_PLAYER_ID);
+        request.setPlayerName(TEST_PLAYER_NAME);
+        request.setUserName(TEST_USER_NAME);
+        request.setNickName(TEST_NICK_NAME);
+        request.setUserLevel(TEST_USER_LEVEL);
+        request.setToken(TEST_TOKEN);
         return request;
     }
 
-    //    curl 'https://capi.makillingslot.net/capi/game/user/login' \
-    //            -H 'accept: */*' \
-    //            -H 'accept-language: zh-CN,zh;q=0.9' \
-    //            -H 'content-type: application/json' \
-    //            -H 'gameid: zhumeng002' \
-    //            -H 'noncestr: boo06wgzbl' \
-    //            -H 'origin: https://game2.makillingslot.net' \
-    //            -H 'playerid: IgoTest10020' \
-    //            -H 'priority: u=1, i' \
-    //            -H 'sec-fetch-dest: empty' \
-    //            -H 'sec-fetch-mode: cors' \
-    //            -H 'sec-fetch-site: same-site' \
-    //            -H 'signature: b76f0f468c4560a136cabe9411e3303c' \
-    //            -H 'timestamp: 1740473523940' \
-    //            -H 'token-game: 143a5c0ea9f3021065f0e37383a14a71' \
-    //            -H 'user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1' \
-    //            --data-raw '{"birthday":"01-01-1990","channelId":"1051","nickName":"IgoTest10020","gameId":"zhumeng002","pId":"55","playerId":"IgoTest10020","playerName":"IgoTest10020","token":"13820fff6c479bfb53107bc8c43b81c6be7881b21dca68e8db6b9f2265599f96364f19e939f86dfeda3dd7e4d115050939a8d1e83b6a5c6a76ae9d1a610f9300054725e423edbe9b3c8d7bfc5d815b2435df548520f3f1750356e22a5f6f8065","userLevel":"1","userName":"IgoTest10020"}'
-
+    private static UserLoginRequest buildUserLoginRequestForFail() {
+        UserLoginRequest request = new UserLoginRequest();
+        request.setPId("55");
+        request.setChannelId("1051");
+        request.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
+        request.setPlayerId(TEST_PLAYER_ID + "_invalid");
+        request.setPlayerName(TEST_PLAYER_NAME + "_invalid");
+        request.setUserName(TEST_USER_NAME + "_invalid");
+        request.setNickName(TEST_NICK_NAME + "_invalid");
+        request.setUserLevel(TEST_USER_LEVEL + "_invalid");
+        request.setToken(TEST_TOKEN + "_invalid");
+        return request;
+    }
 }
