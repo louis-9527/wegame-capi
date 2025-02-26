@@ -24,6 +24,7 @@ public class DynamicOperationConfigConvert {
             return null;
         }
         DynamicOperationConfigDo configDo = new DynamicOperationConfigDo();
+        configDo.setId(configDo.getId());
         configDo.setGameId(configPo.getGameId());
         configDo.setConfigType(configPo.getConfigType());
         configDo.setMultiple(configPo.getMultiple());

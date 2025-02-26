@@ -15,8 +15,8 @@ import com.wegame.capi.biz.domain.biz.operation.DynamicOperationStatusOfEventsRe
 import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
 import com.wegame.capi.biz.service.DynamicOperationEventService;
 import com.wegame.capi.client.domain.request.DynamicOperationStatusOfEventRequest;
-import com.wegame.capi.client.domain.vo.DynamicOperationStatusOfEventsRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
@@ -26,12 +26,11 @@ import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicOperationThreadPoolExecutor;
 
@@ -43,6 +42,8 @@ public class DynamicOperationManager {
     private DynamicOperationEventDetailService dynamicOperationEventDetailService;
     @Autowired
     private DynamicOperationApi dynamicOperationApi;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     /**
@@ -51,19 +52,33 @@ public class DynamicOperationManager {
      * @return
      */
     public DynamicOperationEventDo getBuyUserNameAndTime(DynamicOperationQuery operationQuery, GameTypeEnum gameType) {
-        List<DynamicOperationEventDo> eventDoList = dynamicOperationEventService.getBuyUserNameAndTime(operationQuery, gameType);
-        for (DynamicOperationEventDo event : eventDoList) {
-            Long payOutAmount = dynamicOperationEventDetailService.sumPayoutAmount(event.getId(), gameType);
-            // 金额在10%左右 可视为完成
-            DynamicOperationEventStatusEnum eventStatus = dynamicOperationEventService.getEventStatus(event.getBonus(), payOutAmount);
-            if (DynamicOperationEventStatusEnum.NONE == eventStatus) {
-                event.setBonusBalance(event.getBonus() - payOutAmount);
-                return event;
+        String key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameType.getId(), operationQuery.getPlayerName());
+        // 缓存事件信息
+        // 判断是否存在干预事件
+        Set<Object> members = redisTemplate.opsForSet().members(key);
+        if (CollectionUtils.isEmpty(members)) {
+            return null;
+        }
+        for (Object recordIdObj : members) {
+            Long recordId = (Long) recordIdObj;
+            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(recordId, gameType);
+            // 判断是否过期
+            if (DateUtil.getCurrentMilli() > eventDo.getExpiredTime()) {
+                redisTemplate.opsForSet().remove(key, recordId);
+                continue;
             }
+            Long payOutAmount = dynamicOperationEventDetailService.sumPayoutAmount(recordId, gameType);
+            // 金额在10%左右 可视为完成
+            DynamicOperationEventStatusEnum eventStatus = dynamicOperationEventService.getEventStatus(eventDo.getBonus(), payOutAmount);
+            if (DynamicOperationEventStatusEnum.NONE != eventStatus) {
+                redisTemplate.opsForSet().remove(key, recordId);
+                continue;
+            }
+            eventDo.setInterventionAmount(eventDo.getBonus() - payOutAmount);
+            return eventDo;
         }
         return null;
     }
-
 
     /**
      * 结果上报
@@ -189,7 +204,7 @@ public class DynamicOperationManager {
         Integer eventReportStatus = DynamicOperationEventStatusEnum.convertUpdateEventsStatus(eventStatus);
 
         AssertUtil.assertNotNull(eventReportStatus, ErrorCode.ERR_PARAM, "eventStatus is error");
-        //获取待上报所有订单
+        // 获取事件下所有已完成订单
         DynamicOperationDetailQuery detailQuery = DynamicOperationDetailQuery.builder()
                 .operationId(id)
                 .betStatus(BetStatusEnum.SUCCESS.getCode())
@@ -224,7 +239,7 @@ public class DynamicOperationManager {
                 .betRecords(betRecords)
                 .eventStatus(eventReportStatus)
                 .build();
-
+        // 上报
         dynamicOperationApi.updateEventsStatus(updateEventsStatusReq);
         // 更新事件状态为已上报
         DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(id)

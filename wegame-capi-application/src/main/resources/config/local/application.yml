@@ -159,12 +159,10 @@ pulsar:
 dynamic:
   operation:
     pulsar_url: pulsar://pulsar-sw-main-external.client88.me:6650
-    pulsar_tenant: ${spring.application.name}_MariaMakiling
-    pulsar_namespace: ${spring.application.env}
-    pulsar_topic: MariaMakiling
+    pulsar_topic: dos_game_slot_event
     pulsar_group:
-      maria_makiling: MariaMakiling
-      malakas: malakas
+      maria_makiling: ${api.sport.cp.channelId}_MariaMakiling
+      malakas: ${api.sport.cp.channelId}_malakas
     domain: https://dos-egame.dos88.me
     public_key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuFfxoFw0IRd2QFopOOx26udxe0DaSkVdqT64AZCZFdNbT1dh9TldrePcRMNtzEhZFLjx+v3Yn4T91vTkl4iUEHQiHsNTARh2OYuhaS/xzqiqcb4uX88Nuj8C++sNDcVI7sSb8ihRm3EBVWiBFgVmM88osuMspLaMhD/VKqafotmOyjI1X5fJcaiYXY6Zqwlpul3Opg2/Q6wmcO27JyJSgMUs2hRz3JDiW1RVjBlLSyPq6/K3wbUTXZBTVgGeRsEWrcKe2Qg9JOdqtzGoBg2uXU2miEtKban8PAcYtCn33r2BTA+hR8ey53SQjnJp7JHmdDPwvn4TKuRya1yTwE/yCQIDAQAB
 

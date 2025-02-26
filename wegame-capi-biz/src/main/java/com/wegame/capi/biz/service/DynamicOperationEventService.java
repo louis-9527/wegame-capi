@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service;
 
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
@@ -10,6 +11,7 @@ import com.wegame.capi.biz.converter.DynamicOperationConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +37,8 @@ public class DynamicOperationEventService {
     private SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     private Map<String, MongoTemplate> mongoTemplateMap;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
 
     public Long add(DynamicOperationEventDo dynamicOperationMsgDo, GameTypeEnum gameType) {
@@ -42,9 +47,21 @@ public class DynamicOperationEventService {
         if (Objects.isNull(dynamicOperationPo)) {
             return null;
         }
-        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
-        DynamicOperationPo insert = getMongoTemplate(gameType).insert(dynamicOperationPo, dynamicOperationGameEnum.getEventCollectionName());
-        return insert.getId();
+        try {
+            DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
+            DynamicOperationPo insert = getMongoTemplate(gameType).insert(dynamicOperationPo, dynamicOperationGameEnum.getEventCollectionName());
+            String key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameType.getId(), dynamicOperationMsgDo.getPlayerName());
+            // 缓存事件信息
+            redisTemplate.opsForSet().add(key, insert.getId());
+            return insert.getId();
+
+        } catch (MongoWriteException error) {
+            if (error.getCode() == 11000) {
+                return null;
+            }
+            throw error;
+        }
+
     }
 
     public Boolean update(DynamicOperationEventDo eventDo, GameTypeEnum gameType) {
@@ -57,9 +74,14 @@ public class DynamicOperationEventService {
                 DynamicOperationQueryBuilder.buildUpdateById(eventDo),
                 DynamicOperationPo.class,
                 dynamicOperationGameEnum.getEventCollectionName());
-
-        return result.getModifiedCount() > 0;
-
+        if (result.getModifiedCount() > 0) {
+            if (eventDo.getEventStatus() != null && (eventDo.getEventStatus() == DynamicOperationEventStatusEnum.FINISH_NORMAL || eventDo.getEventStatus() == DynamicOperationEventStatusEnum.FINISH_EXPIRED)) {
+                String key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameType.getId(), eventDo.getPlayerName());
+                redisTemplate.opsForSet().remove(key, eventDo.getId());
+                return true;
+            }
+        }
+        return false;
 
     }
 
@@ -79,7 +101,6 @@ public class DynamicOperationEventService {
      */
     public List<DynamicOperationEventDo> getBuyUserNameAndTime(DynamicOperationQuery operationQuery, GameTypeEnum gameType) {
         DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
-
         List<DynamicOperationPo> operationPoList = getMongoTemplate(gameType).find(DynamicOperationQueryBuilder.buildQueryBuyUserNameAndTime(operationQuery), DynamicOperationPo.class, dynamicOperationGameEnum.getEventCollectionName());
         // 判断干预金额
         return DynamicOperationConvert.convertDos(operationPoList);
@@ -92,14 +113,13 @@ public class DynamicOperationEventService {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
-        query.fields().include("_id","eventId","playerName","bonus","eventKind","operatorGameId","channelId","effectedTime","expiredTime","eventStatus","reportStatus");
+        query.fields().include("_id", "eventId", "playerName", "bonus", "eventKind", "operatorGameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "reportStatus");
         DynamicOperationPo operationPo = getMongoTemplate(gameType).findOne(
                 query,
                 DynamicOperationPo.class,
                 dynamicOperationGameEnum.getEventCollectionName());
         return DynamicOperationConvert.convertDo(operationPo);
     }
-
 
 
     public DynamicOperationEventStatusEnum getEventStatus(Long bonus, Long use) {

@@ -20,7 +20,6 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.manager.DynamicOperationManager;
 import com.wegame.capi.biz.service.DynamicOperationEventConfigService;
 import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
-import com.wegame.capi.biz.service.DynamicOperationEventService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
@@ -28,24 +27,23 @@ import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import javafx.util.Pair;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 动态运营下注策略
  */
+@Slf4j
 @Service
 public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, BR extends ToVoConverter, WD extends SymbolDo> extends AbstractBetStrategy<R, BD, BR> {
     @Autowired
@@ -126,8 +124,16 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
                         .build();
             }
             // 构建并获取Wheel
+            List<WheelDo<WD>> wheelDos = this.getWheelDos(betDo, eventDo.getInterventionAmount());
+            if (CollectionUtils.isEmpty(wheelDos)) {
+                BetRecordDo<R> betRecordDo = this.rBetRecordDo(betDo, null);
+                return DynamicOperationCheckResultDo.<R>builder()
+                        .eventResult(Boolean.FALSE)
+                        .betRecordDo(betRecordDo)
+                        .build();
+            }
             GameEventDo<WD> gameEventDo = new GameEventDo<>();
-            gameEventDo.setWheelDos(this.getWheelDos(betDo, eventDo));
+            gameEventDo.setWheelDos(wheelDos);
             gameEventDo.setEventId(eventDo.getEventId());
             gameEventDo.setOperatorRecordId(eventDo.getId());
             gameEventDo.setChannelId(eventDo.getChannelId());
@@ -153,18 +159,19 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     public abstract BetResultDo<BR> betForFreeWheel(BetDo<BD> betDo);
 
 
-    public List<WheelDo<WD>> getWheelDos(BetDo<BD> betDo, DynamicOperationEventDo operationEventDo) {
+    public List<WheelDo<WD>> getWheelDos(BetDo<BD> betDo, Long interventionAmount) {
         //计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
         Long betPayAmount = this.getBetAndPayAmount(betDo).getValue();
-        Long interveneBalance = operationEventDo.getBonusBalance() + betPayAmount;
+        Long interveneBalance = interventionAmount + betPayAmount;
 
         //计算最大倍数
-        Integer multiple = Math.toIntExact((interveneBalance / betPayAmount) >= 100 ? 100 : (interveneBalance / betPayAmount));
+        int multiple = Math.toIntExact((interveneBalance / betPayAmount) >= 100 ? 100 : (interveneBalance / betPayAmount));
         switch (betDo.getBetType()) {
+            // 倍数计算存储时*100,查询时需要*100
             case NORMAL_BET:
-                return this.normalPayMultipleConfig(0, multiple);
+                return this.normalPayMultipleConfig(0, multiple*100);
             case BUY_BET:
-                return this.normalPayMultipleConfig(1, multiple);
+                return this.normalPayMultipleConfig(1, multiple*100);
 
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
@@ -219,7 +226,10 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
                 .multiple(multiple).build();
         List<DynamicOperationConfigDo> configDetail = dynamicOperationEventConfigService.getConfigDetail(configQuery, this.getGame().getGameInfo().getGameType());
 
-
+        if (CollectionUtils.isEmpty(configDetail)) {
+            log.error("normalPayMultipleConfig result null,configType:{},multiple:{}", configType, multiple);
+            return null;
+        }
         int randomIndex = ThreadLocalRandom.current().nextInt(configDetail.size());
         DynamicOperationConfigDo dynamicOperationConfigDo = configDetail.get(randomIndex);
         return this.convertWheelDoList(dynamicOperationConfigDo.getDetail());

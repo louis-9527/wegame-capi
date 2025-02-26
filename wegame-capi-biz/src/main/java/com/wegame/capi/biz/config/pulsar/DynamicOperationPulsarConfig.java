@@ -2,6 +2,7 @@ package com.wegame.capi.biz.config.pulsar;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationMsgDo;
 import com.wegame.capi.biz.listener.DynamicOperationPulsarHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
@@ -17,10 +18,7 @@ import static com.wegame.base.PulsarConstants.PULSAR_TOPIC_FORMAT;
 public class DynamicOperationPulsarConfig {
     @Value("${dynamic.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
-    @Value("${dynamic.operation.pulsar_tenant}")
-    String dynamicOperationTenant;
-    @Value("${dynamic.operation.pulsar_namespace}")
-    String dynamicOperationNamespace;
+
     @Value("${dynamic.operation.pulsar_topic}")
     String dynamicOperationTopic;
 
@@ -39,13 +37,15 @@ public class DynamicOperationPulsarConfig {
 
     @Bean(name = "dynamicOperationConsumer", destroyMethod = "close")
     public Consumer<byte[]> dynamicOperationConsumer(@Autowired PulsarClient mariaMakilingPulsarClient) throws PulsarClientException {
-        String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, dynamicOperationTenant, dynamicOperationNamespace, dynamicOperationTopic);
+        String deadLetterTopic = dynamicOperationTopic;
         return mariaMakilingPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
                 .subscriptionName(dynamicOperationGroupMariaMakiling)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener((consumer, msg) -> {
-                    DynamicOperationEventDo dynamicOperationMsgDo = JSON.parseObject(new String(msg.getData()), DynamicOperationEventDo.class);
+                    String msgData = new String(msg.getData());
+                    log.info("accept dynamicOperation msg:{}",msgData);
+                    DynamicOperationMsgDo dynamicOperationMsgDo = JSON.parseObject(msgData, DynamicOperationMsgDo.class);
                     Boolean result = dynamicOperationPulsarHandler.handleMessage(dynamicOperationMsgDo);
                     if (result) {
                         try {

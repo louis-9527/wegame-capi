@@ -15,7 +15,7 @@ public class MariaMakiLingDynamicOperationEventScheduler extends AbstractDynamic
         return GameTypeEnum.MARIA_MAKILING;
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void schedule() {
         long startTime = DateUtil.getCurrentMilli();
         log.info("MariaMakiLingDynamicOperationEventScheduler#schedule start");

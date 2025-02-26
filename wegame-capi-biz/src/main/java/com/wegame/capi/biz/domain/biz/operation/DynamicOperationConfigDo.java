@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DynamicOperationConfigDo {
+    private String id;
     /**
      * 游戏ID
      */

@@ -16,28 +16,17 @@ import java.math.BigDecimal;
 public class DynamicOperationMsgDo {
 
     /**
-     * 主键ID
+     * 玩家名称
      */
-    private String id;
+    private String playerName;
+    /**
+     * 干预金额
+     */
+    private BigDecimal bonus;
     /**
      * 干预事件ID
      */
     private String eventId;
-    /**
-     * 玩家名称
-     */
-    private String playerName;
-
-    /**
-     * 干预金额
-     */
-    private Long bonus;
-
-    /**
-     * 干预剩余金额
-     */
-    private Long bonusBalance;
-
 
     /**
      * 干预事件类型
@@ -48,6 +37,12 @@ public class DynamicOperationMsgDo {
      */
     private Integer eventKind;
 
+
+
+    /**
+     * 游戏ID
+     */
+    private String gameId;
 
     /**
      * 游戏ID(Indicates the game's unique ID in the FPMS system in which the intervention event works)
@@ -60,34 +55,37 @@ public class DynamicOperationMsgDo {
      */
     private String channelId;
 
+    /**
+     * 策略ID
+     */
+    private String strategyId;
+
+    /**
+     * 订单ID
+     */
+    private String orderNo;
+
+    /**
+     * 结算日期
+     */
+    private String settlementTime;
 
     /**
      * 生效时间
      */
-    private Long effectedTime;
+    private String effectedTime;
 
     /**
-     * 过期时间
+     * 过期时间(如果为空,则事件不会过期)
      */
-    private Long expiredTime;
+    private String expiredTime;
 
     /**
-     * 干预状态(0:干预中,1:已完成(正常),2:已完成(过期))
+     * strategyId = 1, 命中策略时，该投注记录是该用户第几笔投注；
+     * strategyId = 2, 命中策略时，该投注记录是该用户第几笔投注
+     * strategyId = 3, 命中策略时，该投注记录是该用户的session 时长
+     * 主要用于调试与分析。
      */
-    private Integer eventStatus;
-
-    /**
-     * 干预事件消息快照
-     */
-    private String eventMsgDetail;
-
-    /**
-     * 创建时间
-     */
-    private Long createTime;
-    /**
-     * 更新时间
-     */
-    private Long updateTime;
+    private BigDecimal timesOrSessionDuration;
 
 }

@@ -28,11 +28,6 @@ public class DynamicOperationEventDo {
     private Long bonus;
 
     /**
-     * 干预剩余金额
-     */
-    private Long bonusBalance;
-
-    /**
      * 干预事件ID
      */
     private String eventId;
@@ -83,5 +78,11 @@ public class DynamicOperationEventDo {
      * 更新时间
      */
     private Long updateTime;
+
+
+    /**
+     * 本次干预金额
+     */
+    private Long interventionAmount;
 
 }
