@@ -186,7 +186,6 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         MalakasSymbolDo[][] symbolArr = copySymbolArr(preWheel.getSymbolArr(), placeholderSymbol);
         // 消除：中奖元素
         clearRewardSymbol(symbolArr, preRewardResult);
-        MalakasSymbolUtil.print(symbolArr, "clear after");
         // 重建：元素数组（非空元素按列下落处理：第1-6Reel非空元素向下移动，第7Reel非空元素向左移动）
         rebuildSymbolArr(symbolArr, gameInfo);
         // 生产：缺失元素(填补剩余元素)
