@@ -33,7 +33,7 @@ public class GameRecordService<T> {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(tClass, ErrorCode.ERR_INTER);
         BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass);
-        gameRecordList.forEach(bulkOps::insert);
+        bulkOps.insert(gameRecordList);
         bulkOps.execute();
         return true;
     }

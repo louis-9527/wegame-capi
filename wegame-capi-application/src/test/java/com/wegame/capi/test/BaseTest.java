@@ -1,7 +1,14 @@
 package com.wegame.capi.test;
 
 
+import com.wegame.base.context.Operator;
+import com.wegame.base.context.OperatorContext;
 import com.wegame.capi.application.Application;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.common.context.UserInfoContext;
+import org.apache.poi.ss.formula.functions.T;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
