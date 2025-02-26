@@ -2,7 +2,6 @@ package com.wegame.capi.application.controller;
 
 import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
@@ -41,7 +40,6 @@ public class BetRecordController {
 
     public static final Map<GameTypeEnum, String> RECORD_MANAGER_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingRecordManager")
-            .put(GameTypeEnum.MALAKAS, "malakasRecordManager")
             .build();
 
     @Autowired
@@ -78,12 +76,7 @@ public class BetRecordController {
         BetRecordDo betRecordDo = betRecordService.getWithCache(Long.valueOf(id), userInfo.getPlayerId(), gameType);
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
-
-        betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(GameRecordQuery.builder()
-                        .betRecordId(betRecordDo.getId())
-                        .orderByClause("_id")
-                        .direction(Sort.Direction.ASC)
-                        .build(), GameTypeEnum.valueOfId(userInfo.getGameId())));
+        betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(Long.parseLong(id), GameTypeEnum.valueOfId(userInfo.getGameId())));
         return CommonResponse.build(betRecordVo);
     }
 
