@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,6 +19,8 @@ public class GameRecordQueryBuilder {
         if (StringUtils.isNotEmpty(recordQuery.getOrderByClause())) {
             if (Objects.isNull(recordQuery.getDirection())) {
                 query.with(Sort.by(Sort.Direction.DESC, recordQuery.getOrderByClause()));
+            } else if (CollectionUtils.isNotEmpty(recordQuery.getSortList())) {
+                recordQuery.getSortList().forEach(query::with);
             } else {
                 query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
             }

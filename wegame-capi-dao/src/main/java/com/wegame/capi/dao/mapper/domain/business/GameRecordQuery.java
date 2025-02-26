@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 游戏记录查询模型
@@ -98,6 +99,8 @@ public class GameRecordQuery implements Serializable {
      * 排序语句
      */
     private Sort.Direction direction;
+
+    private List<Sort> sortList;
 
     ///////////////  above auto generated ///////////////
 

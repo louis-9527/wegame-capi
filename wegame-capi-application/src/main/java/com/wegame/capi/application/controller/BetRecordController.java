@@ -2,6 +2,7 @@ package com.wegame.capi.application.controller;
 
 import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
@@ -77,10 +78,12 @@ public class BetRecordController {
         BetRecordDo betRecordDo = betRecordService.getWithCache(Long.valueOf(id), userInfo.getPlayerId(), gameType);
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
+
         betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(GameRecordQuery.builder()
                         .betRecordId(betRecordDo.getId())
-                        .orderByClause("batchId")
-                        .direction(Sort.Direction.ASC)
+//                        .orderByClause("batchId")
+//                        .direction(Sort.Direction.ASC)
+                        .sortList(Lists.newArrayList(Sort.by(Sort.Direction.ASC, "batchId"), Sort.by(Sort.Direction.ASC, "_id")))
                         .build(), GameTypeEnum.valueOfId(userInfo.getGameId())));
         return CommonResponse.build(betRecordVo);
     }
