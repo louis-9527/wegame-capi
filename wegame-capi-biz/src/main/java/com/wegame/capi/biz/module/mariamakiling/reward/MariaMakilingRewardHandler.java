@@ -213,9 +213,9 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
     }
 
     private boolean isMatchTargetSymbol(SymbolDo symbol, SymbolDo targetSymbol) {
-        return Objects.equals(symbol, targetSymbol)
-                || Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.WILD)
-                || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
+        return StringUtils.equals(symbol.getId(), targetSymbol.getId())
+                || symbol.isWildSymbol()
+                || targetSymbol.isWildSymbol();
     }
 
     private void validate(RewardHandleDo<SymbolDo> rewardHandle) {
