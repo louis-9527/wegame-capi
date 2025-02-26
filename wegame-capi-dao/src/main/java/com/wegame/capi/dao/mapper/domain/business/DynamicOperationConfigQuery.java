@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
+
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -26,6 +28,6 @@ public class DynamicOperationConfigQuery {
     /**
      * 倍数
      */
-    private Integer multiple;
+    private Double multiple;
 
 }

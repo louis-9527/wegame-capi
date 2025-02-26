@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +40,7 @@ public class DynamicOperationConfigPo implements Serializable {
     /**
      * 倍数
      */
-    private Integer multiple;
+    private Double multiple;
 
     /**
      * 配置明细

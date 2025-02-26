@@ -118,47 +118,60 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .build();
     }
 
-    /**
-     * 非免费轮投注
-     */
-    private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeWheel(BetDo<MariaMakilingBetDo> betDo) {
-        long betRecordId = generateBetRecordId();
-        List<MariaMakilingGameRecordDo> list = getGame().play(GamePlayDo.builder()
-                .gameType(betDo.getGameType())
-                .betType(betDo.getBetType())
-                .betSubType(betDo.getBetSubType())
-                .betAmount(betDo.getBetDetail().getBetAmount())
-                .payAmount(betDo.getBetDetail().getPayAmount())
-                .betRecordId(betRecordId)
-                .build());
-        AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
+    @Override
+    public Pair<Long, Long> getBetAndPayAmount(BetDo<MariaMakilingBetDo> betDo) {
+        return new Pair<>(betDo.getBetDetail().getBetAmount(), betDo.getBetDetail().getPayAmount());
+    }
+    @Override
+    public DynamicOperationEventKindEnum eventKindEnum(BetTypeEnum betType) {
+        if (BetTypeEnum.NORMAL_BET == betType) {
+            return DynamicOperationEventKindEnum.NORMAL_URGENT;
+        }
+        if (BetTypeEnum.BUY_BET == betType) {
+            return DynamicOperationEventKindEnum.FREE_URGENT;
+        }
+        return null;
+    }
+
+    @Override
+    public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(Long betRecordId, BetDo<MariaMakilingBetDo> betDo, List<MariaMakilingGameRecordDo> list) {
         // 构建投注记录
-        //// 总中奖金额
         long totalRewardAmount = list.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        BetRecordDo<MariaMakilingGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
+        return BetRecordBuilder.build(betRecordId,
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
                 maxAmountControl(totalRewardAmount, betDo.getBetDetail().getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 list);
+    }
+
+    @Override
+    public BetResultDo<MariaMakilingGameRecordDo> saveBetRecord(BetRecordDo<MariaMakilingGameRecordDo> betRecord) {
+        MariaMakilingGameRecordDo gameRecord = betRecord.getGameRecordList().get(0);
         // 保存投注记录并派奖
-        MariaMakilingGameRecordDo gameRecord = list.get(0);
-        Long userCredit = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        BetSingleWalletResultDo betSingleWalletResult = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         // 组装返回结果
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
                 .betRecordId(betRecord.getId())
-                .gameId(betDo.getGameId())
-                .betType(betDo.getBetType())
-                .betSubType(betDo.getBetSubType())
-                .credit(userCredit)
+                .gameId(betRecord.getGameId())
+                .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
+                .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
+                .credit(AmountUtil.toLong(betSingleWalletResult.getCredit()))
                 .overallRewardAmount(gameRecord.getOverallRewardAmount())
                 .totalPayoutAmount(betRecord.getPayOutAmount())
                 .resultDetail(gameRecord)
+                .betId(betSingleWalletResult.getBetId())
                 .build();
+    }
+
+    @Override
+    public List<WheelDo<SymbolDo>> convertWheelDoList(List<Object> wheelConfig) {
+        return JSON.parseObject(JSON.toJSONString(wheelConfig), new TypeReference<List<WheelDo<SymbolDo>>>() {
+        });
     }
 
     public void freeWheelAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {

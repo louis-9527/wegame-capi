@@ -31,18 +31,6 @@ public class DynamicOperationEventConfigService {
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
-    public void add(GameTypeEnum gameType){
-        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
-
-        DynamicOperationConfigPo configPo = new DynamicOperationConfigPo();
-        configPo.setConfigType(0);
-        configPo.setMultiple(10);
-        configPo.setGameId(gameType.getId());
-
-        //configPo.setDetail();
-        getMongoTemplate(gameType).insert(configPo,dynamicOperationGameEnum.getEventConfigCollectionName());
-    }
-
     public List<DynamicOperationConfigDo> getConfigDetail(DynamicOperationConfigQuery configQuery, GameTypeEnum gameType) {
         DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
 

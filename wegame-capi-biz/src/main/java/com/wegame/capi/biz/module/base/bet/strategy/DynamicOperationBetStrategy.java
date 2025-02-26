@@ -36,6 +36,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -57,9 +59,9 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     @Autowired
     private DynamicOperationEventConfigService dynamicOperationEventConfigService;
 
-    private static final int[] arr = {100, 200, 300, 400, 500, 600, 700, 800, 900, 1000,
-            1500, 2000, 2500, 3000, 4000, 5000, 6000, 7000,
-            8000, 9000, 10000};
+    private static final double[] arr = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0,
+            15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0,
+            80.0, 90.0, 100.0};
 
 
     @Override
@@ -162,16 +164,22 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     public List<WheelDo<WD>> getWheelDos(BetDo<BD> betDo, Long interventionAmount) {
         //计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
         Long betPayAmount = this.getBetAndPayAmount(betDo).getValue();
-        Long interveneBalance = interventionAmount + betPayAmount;
+        long interveneBalance = interventionAmount + betPayAmount;
 
         //计算最大倍数
-        int multiple = Math.toIntExact((interveneBalance / betPayAmount) >= 100 ? 100 : (interveneBalance / betPayAmount));
+        double multiple = ((double) interveneBalance / betPayAmount);
+
+        // 根据倍数找最接近的
+        Double closest = findClosest(multiple);
+        if (closest == null) {
+            return null;
+        }
         switch (betDo.getBetType()) {
             // 倍数计算存储时*100,查询时需要*100
             case NORMAL_BET:
-                return this.normalPayMultipleConfig(0, multiple*100);
+                return this.normalPayMultipleConfig(0, closest);
             case BUY_BET:
-                return this.normalPayMultipleConfig(1, multiple*100);
+                return this.normalPayMultipleConfig(1, closest);
 
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
@@ -219,7 +227,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     public abstract List<WheelDo<WD>> convertWheelDoList(List<Object> wheelConfig);
 
-    private List<WheelDo<WD>> normalPayMultipleConfig(Integer configType, Integer multiple) {
+    private List<WheelDo<WD>> normalPayMultipleConfig(Integer configType, double multiple) {
         DynamicOperationConfigQuery configQuery = DynamicOperationConfigQuery.builder()
                 .gameId(this.getGame().getGameInfo().getGameType().getId())
                 .configType(configType)
@@ -235,28 +243,22 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         return this.convertWheelDoList(dynamicOperationConfigDo.getDetail());
     }
 
-    public int findClosest(int target) {
-        int index = Arrays.binarySearch(arr, target);
+    public static Double findClosest(double input) {
+        int left = 0;
+        int right = arr.length - 1;
+        int result = -1;
 
-        // 如果找到，直接返回
-        if (index >= 0) {
-            return arr[index];
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (arr[mid] <= input) {
+                result = mid;
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
         }
 
-        // binarySearch 返回 (-插入点 - 1) ，计算插入点
-        int insertPoint = -index - 1;
-
-        // 边界情况
-        if (insertPoint == 0) {
-            return arr[0]; // target 比最小值还小
-        }
-        if (insertPoint == arr.length) {
-            return arr[arr.length - 1]; // target 比最大值还大
-        }
-
-        // 计算 target 和左右相邻值的距离，返回最接近的
-        int prev = arr[insertPoint - 1];
-        int next = arr[insertPoint];
-        return (target - prev <= next - target) ? prev : next;
+        return result == -1 ? null : arr[result];
     }
+
 }
