@@ -168,14 +168,12 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
         //计算最大倍数
         double multiple = ((double) interveneBalance / betPayAmount);
-
         // 根据倍数找最接近的
         Double closest = findClosest(multiple);
         if (closest == null) {
             return null;
         }
         switch (betDo.getBetType()) {
-            // 倍数计算存储时*100,查询时需要*100
             case NORMAL_BET:
                 return this.normalPayMultipleConfig(0, closest);
             case BUY_BET:
