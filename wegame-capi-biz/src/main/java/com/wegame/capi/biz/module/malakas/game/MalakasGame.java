@@ -100,8 +100,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeWheelList, placeholderSymbol);
         }
         // 占位元素-将占位元素设置为空:
-        placeholderSymbol = null;
-        // postPlaceholderSymbol(ret);
+         postPlaceholderSymbol(ret);
         // 返回-游戏记录列表
         return ret;
     }
