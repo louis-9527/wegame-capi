@@ -248,13 +248,14 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
 
     private WheelDo<MalakasSymbolDo> generateCommonNormalWheel(GameInfoDo gameInfo,
                                                                MalakasSymbolDo[][] symbolArr,
-                                                               int scatterNumberInWheel,
+                                                               int totalScatterNumberInWheel,
                                                                MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
                                                                int wheelIndex,
                                                                boolean freeFlag,
                                                                MalakasSymbolDo placeholderSymbol) {
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
+        int scatterNumberInWheel = totalScatterNumberInWheel;
         int randomNumberIndex = 0;
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             // 一列只能包含两个scatter
@@ -266,9 +267,9 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     continue;
                 }
                 Integer randomNumber = randomNumberList.get(randomNumberIndex);
-                if (scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL || Objects.equals(row, ONE_ROW_INDEX)) {
+                if (Objects.equals(row, ONE_ROW_INDEX) || scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL) {
                     // 第一行 || 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
-                    // 生成非scatter
+                    // 生成元素：非scatter元素
                     SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
                     SymbolSizeEnum symbolSize = generateSymbolSize(row, MalakasSymbolUtil.getMaxRow(symbolArr, row, column), column, gameInfo, playProbabilisticConfig);
                     MalakasSymbolUtil.handlePlaceholderSymbol(symbolArr, row, column, symbolSize, placeholderSymbol);
@@ -277,7 +278,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
                     symbolArr[row][column] = malakasSymbolDo;
                 } else {
-                    // 随机生成
+                    // 生成元素：随机生成
                     SymbolDo symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
                     SymbolSizeEnum symbolSize = generateSymbolSize(row, MalakasSymbolUtil.getMaxRow(symbolArr, row, column), column, gameInfo, playProbabilisticConfig);
                     MalakasSymbolUtil.handlePlaceholderSymbol(symbolArr, row, column, symbolSize, placeholderSymbol);

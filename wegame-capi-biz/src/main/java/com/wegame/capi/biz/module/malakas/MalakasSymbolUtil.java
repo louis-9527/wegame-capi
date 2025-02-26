@@ -203,7 +203,7 @@ public class MalakasSymbolUtil {
 
     public static int countIndexSymbol(MalakasSymbolDo[][] symbolArr, SymbolEnum symbol, int column) {
         int count = 0;
-        for (int row = 0; row < symbolArr.length; row++) {
+        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
             if (Objects.nonNull(symbolArr[row][column]) && StringUtils.equals(symbolArr[row][column].getId(), symbol.getId())) {
                 count++;
             }
