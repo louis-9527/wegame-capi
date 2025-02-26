@@ -71,7 +71,7 @@ public class MariamakilingPulsarConfig {
                 .receiverQueueSize(2000)
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(300)  // 批量最多100条
+                        .maxNumMessages(500)  // 批量最多100条
                         .timeout(100, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()

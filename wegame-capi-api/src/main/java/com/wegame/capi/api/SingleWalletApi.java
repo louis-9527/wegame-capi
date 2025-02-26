@@ -26,7 +26,7 @@ import org.springframework.util.MultiValueMap;
 import java.net.URI;
 
 @Slf4j
-@Component
+//@Component
 public class SingleWalletApi extends BaseApi {
 
     private static final String AUTH_LOGIN_TOKEN_URL_FORMAT = "%s/authLoginToken";
@@ -34,6 +34,7 @@ public class SingleWalletApi extends BaseApi {
     private static final String BET_WITH_PAYOUT_URL_FORMAT = "%s/betWithPayout";
     private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
 
+    @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
         try {
             assembleSingleSignature(req);
@@ -44,8 +45,8 @@ public class SingleWalletApi extends BaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (Exception e) {
             log.error("authTokenLogin err, req: {}, errMsg: {}", req, e.getMessage(), e);
@@ -88,11 +89,11 @@ public class SingleWalletApi extends BaseApi {
             headers.add("Connection", "Keep-Alive");
             RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(BET_WITH_PAYOUT_URL_FORMAT, singleDomain)));
-            log.info("before request betWithPayout, timeStamp: {}", System.currentTimeMillis());
+           // log.info("before request betWithPayout, timeStamp: {}", System.currentTimeMillis());
             ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
                     });
-            log.info("after request betWithPayout, timeStamp: {}", System.currentTimeMillis());
+           // log.info("after request betWithPayout, timeStamp: {}", System.currentTimeMillis());
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             return responseEntity.getBody();

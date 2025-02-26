@@ -17,7 +17,7 @@ server:
     uri-encoding: UTF-8
     connection-timeout: 3000
     max-connections: 100000
-    keep-alive-timeout: 3000
+    keep-alive-timeout: 180000
     accept-count: 10000
     threads:
       max: 200000
@@ -125,7 +125,7 @@ knife4j:
 ## api
 api:
   sport:
-    singleDomain: https://sw-http-main-apisix.igo8.me
+    singleDomain: http://sw-http-main-apisix.igo8.me
     # 是否调用
     invoke: false
     cp:

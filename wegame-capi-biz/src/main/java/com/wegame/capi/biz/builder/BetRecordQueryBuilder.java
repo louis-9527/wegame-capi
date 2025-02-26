@@ -7,7 +7,6 @@ import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Field;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
@@ -22,6 +21,9 @@ public class BetRecordQueryBuilder {
         }
         if (Objects.nonNull(recordQuery.getLastId())) {
             query.addCriteria(Criteria.where("_id").lt(recordQuery.getLastId()));
+        }
+        if (Objects.nonNull(recordQuery.getGtLastId())) {
+            query.addCriteria(Criteria.where("_id").gt(recordQuery.getLastId()));
         }
         if (StringUtils.isNotBlank(recordQuery.getOrderByClause())) {
             if (Objects.isNull(recordQuery.getDirection())) {

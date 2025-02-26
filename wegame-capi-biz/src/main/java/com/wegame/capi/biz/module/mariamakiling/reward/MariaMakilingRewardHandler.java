@@ -87,7 +87,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
             // 计算赔率
             BigDecimal odds = mariaMakilingOddsCalculateStrategy.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
             // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
-            BigDecimal lineRewardAmount = calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, totalMultiple);
+            BigDecimal lineRewardAmount = calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, totalMultiple.add(BigDecimal.ONE));
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
             // 中奖线明细列表
@@ -132,8 +132,8 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
             }
         }
         // 2、循环处理(从第1列开始处理)
-        for (int colum = ONE_COLUM_INDEX; colum < gameInfo.getColumn(); colum++) {
-            Integer currentColum = colum;
+        for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
+            Integer currentColum = column;
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 Integer currentRow = row;
                 SymbolDo currentSymbol = symbolArr[row][currentColum];
@@ -174,8 +174,8 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
         }
         if (currentSymbol.isScatterSymbol()) {
             // scatter元素，判断（逻辑上的）上一列的列表元素是否为空： 说明，scatter只能出现在135列
-            int preColumIndex = SCATTER_COLUM_INDEX_LIST.get(SCATTER_COLUM_INDEX_LIST.indexOf(currentColum) - 1);
-            return CollectionUtils.isNotEmpty(treeMap.get(preColumIndex));
+            int preColumnIndex = SCATTER_COLUM_INDEX_LIST.get(SCATTER_COLUM_INDEX_LIST.indexOf(currentColum) - 1);
+            return CollectionUtils.isNotEmpty(treeMap.get(preColumnIndex));
         } else {
             // 非scatter元素，判断上一列的列表是否为空
             return CollectionUtils.isNotEmpty(treeMap.get(currentColum - 1));
@@ -235,16 +235,16 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
         for (int row = 0; row < gameInfo.getRow(); row++) {
             // 校验：滚轮列数
             AssertUtil.assertTrue(symbolArr[row].length == gameInfo.getColumn(), ErrorCode.ERR_PARAM, "symbol arr err");
-            for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
+            for (int column = 0; column < gameInfo.getColumn(); column++) {
                 // 校验：所有元素不能为空
-                AssertUtil.assertNotNull(symbolArr[row][colum], ErrorCode.ERR_PARAM, "all symbol can not be null");
+                AssertUtil.assertNotNull(symbolArr[row][column], ErrorCode.ERR_PARAM, "all symbol can not be null");
                 // 校验：第一列不能包含wild
-                if (Objects.equals(colum, ONE_COLUM_INDEX)) {
-                    AssertUtil.assertTrue(!WILD_SYMBOL_MAP.containsKey(symbolArr[row][colum].getId()), ErrorCode.ERR_PARAM, "this first colum can not has wild");
+                if (Objects.equals(column, ONE_COLUM_INDEX)) {
+                    AssertUtil.assertTrue(!WILD_SYMBOL_MAP.containsKey(symbolArr[row][column].getId()), ErrorCode.ERR_PARAM, "this first column can not has wild");
                 }
                 // 校验：第二列 & 第4列不能包含scatter
-                if (Objects.equals(colum, TWO_COLUM_INDEX) || Objects.equals(colum, FOUR_COLUM_INDEX)) {
-                    AssertUtil.assertTrue(!StringUtils.equals(symbolArr[row][colum].getId(), SymbolEnum.Scatter.getId()), ErrorCode.ERR_PARAM, "this 2,3 colum can not has scatter");
+                if (Objects.equals(column, TWO_COLUM_INDEX) || Objects.equals(column, FOUR_COLUM_INDEX)) {
+                    AssertUtil.assertTrue(!StringUtils.equals(symbolArr[row][column].getId(), SymbolEnum.Scatter.getId()), ErrorCode.ERR_PARAM, "this 2,3 column can not has scatter");
                 }
             }
         }

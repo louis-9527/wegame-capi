@@ -12,7 +12,7 @@ server:
     uri-encoding: UTF-8
     connection-timeout: 3000
     max-connections: 100000
-    keep-alive-timeout: 3000
+    keep-alive-timeout: 180000
     accept-count: 10000
     threads:
       max: 200000
@@ -111,7 +111,7 @@ knife4j:
 ## api
 api:
   sport:
-    singleDomain: https://sw-http-main-apisix.igo9.me/
+    singleDomain: https://sw-http-main-apisix.igo9.me
     # 是否调用
     invoke: true
     cp:
@@ -127,6 +127,7 @@ api:
   go:
     wegameGoDomain: http://wegame-go-svc.wegame-uat.svc.cluster.local:9800/go/game
     secretString: xETPPpSvBtJ4CShtVQwme9ngrNixUfXHbi7UkXBJ7u8LxlJwwcNwNdJQgZUguTwa
+pulsar:
   dynamic:
     maria_makiling:
       url: pulsar://pulsar.makillingslot.net:6650

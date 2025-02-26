@@ -41,6 +41,10 @@ public class GamePlayDo<WD extends SymbolDo> implements Serializable {
      */
     private Long betAmount;
     /**
+     * 支付金额
+     */
+    private Long payAmount;
+    /**
      * 投注记录id
      */
     private Long betRecordId;

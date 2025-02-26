@@ -34,7 +34,7 @@ public abstract class AbstractRewardHandler<T extends SymbolDo>
             return BigDecimal.valueOf(betAmount)
                     .multiply(odds)
                     .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()))
-                    .multiply(BigDecimal.ONE.add(multiple));
+                    .multiply(multiple);
         } else if (rewardLine.isScatterReward()) {
             // scatter 无需进行倍率计算
             return BigDecimal.valueOf(betAmount)

@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 
 import java.math.BigDecimal;
-import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * 抽象赔率计算策略
@@ -25,16 +25,16 @@ public abstract class AbstractOddsCalculateStrategy<T extends SymbolDo>
      * @param oddsCalculateDo
      * @return 赔率Map
      */
-    public abstract Map<String, Map<String, BigDecimal>> getOddsConfig(OddsCalculateDo<T> oddsCalculateDo);
+    public abstract TreeMap<String, TreeMap<String, BigDecimal>> getOddsConfig(OddsCalculateDo<T> oddsCalculateDo);
 
     @Override
     public BigDecimal calculateOdds(OddsCalculateDo<T> oddsCalculate) {
         AssertUtil.assertNotNull(oddsCalculate, ErrorCode.ERR_INTER, "oddsCalculate is required");
-        Map<String, Map<String, BigDecimal>> oddsMap = getOddsConfig(oddsCalculate);
+        TreeMap<String, TreeMap<String, BigDecimal>> oddsMap = getOddsConfig(oddsCalculate);
         if (MapUtils.isEmpty(oddsMap)) {
             return BigDecimal.ZERO;
         }
-        Map<String, BigDecimal> map = oddsMap.get(oddsCalculate.getSymbol().getId());
+        TreeMap<String, BigDecimal> map = oddsMap.get(oddsCalculate.getSymbol().getId());
         if (MapUtils.isEmpty(map)) {
             return BigDecimal.ZERO;
         }

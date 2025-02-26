@@ -1,5 +1,6 @@
 package com.wegame.capi.application.controller;
 
+import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
@@ -7,7 +8,6 @@ import com.wegame.base.domain.PageInfoVo;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.BetRecordConverter;
-import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.service.BetRecordService;
@@ -25,10 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 投注记录模块
@@ -71,6 +68,7 @@ public class BetRecordController {
     @GetMapping("/get/{id}")
     public CommonResponse<BetRecordVo> get(@PathVariable("id") String id) {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(NumberUtil.isLong(id), ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
@@ -78,11 +76,7 @@ public class BetRecordController {
         BetRecordDo betRecordDo = betRecordService.getWithCache(Long.valueOf(id), userInfo.getPlayerId(), gameType);
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
-        betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(GameRecordQuery.builder()
-                        .betRecordId(betRecordDo.getId())
-                        .orderByClause("_id")
-                        .direction(Sort.Direction.ASC)
-                        .build(), GameTypeEnum.valueOfId(userInfo.getGameId())));
+        betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(Long.parseLong(id), GameTypeEnum.valueOfId(userInfo.getGameId())));
         return CommonResponse.build(betRecordVo);
     }
 

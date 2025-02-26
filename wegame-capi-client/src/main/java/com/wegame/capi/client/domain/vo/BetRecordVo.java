@@ -39,13 +39,15 @@ public class BetRecordVo implements Validate, Serializable {
     private Long payAmount;
     @ApiModelProperty("派彩总金额 单位：分")
     private Long payOutAmount;
+    @ApiModelProperty("是否达到最大倍数 true是，false否")
+    private Boolean reachMaxMultiple;
     @ApiModelProperty("状态 0进行中 1已完结 2无效")
     private Integer status;
     @ApiModelProperty("创建时间")
     private Long createTime;
     // todo fix 联调后 修改类型为 Object
     @ApiModelProperty("游戏记录列表")
-    private List<MariaMakilingGameRecordVo> gameRecordList;
+    private List<Object> gameRecordList;
 
 
 }
