@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.vo;
 
+import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaBetResultVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ public class BetResultVo implements Serializable {
     private Long overallRewardAmount;
     @ApiModelProperty("总计派奖金额")
     private Long totalPayoutAmount;
+    // todo 测试完成之后修改成object类型
     @ApiModelProperty("结果明细")
-    private Object resultDetail;
+    private IbongAdarnaBetResultVo resultDetail;
 }
