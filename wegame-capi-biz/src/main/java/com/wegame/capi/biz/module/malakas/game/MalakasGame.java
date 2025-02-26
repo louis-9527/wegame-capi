@@ -258,7 +258,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         int randomNumberIndex = 0;
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             // 一列只能包含两个scatter
-            int scatterNumberInReel = countIndexSymbol(symbolArr, SymbolEnum.Scatter, column);
+            int scatterNumberInColumn = countIndexSymbol(symbolArr, SymbolEnum.Scatter, column);
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
@@ -266,7 +266,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     continue;
                 }
                 Integer randomNumber = randomNumberList.get(randomNumberIndex);
-                if (scatterNumberInReel >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL || Objects.equals(row, ONE_ROW_INDEX)) {
+                if (scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL || Objects.equals(row, ONE_ROW_INDEX)) {
                     // 第一行 || 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
                     // 生成非scatter
                     SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
@@ -286,7 +286,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
                     symbolArr[row][column] = malakasSymbolDo;
                     if (symbolDo.isScatterSymbol()) {
-                        scatterNumberInReel++;
+                        scatterNumberInColumn++;
                         scatterNumberInWheel++;
                     }
                 }
