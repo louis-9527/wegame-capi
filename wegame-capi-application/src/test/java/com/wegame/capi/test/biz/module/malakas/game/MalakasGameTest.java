@@ -1,5 +1,8 @@
 package com.wegame.capi.test.biz.module.malakas.game;//package com.wegame.capi.test.biz.module.game;
 
+import com.wegame.base.context.Operator;
+import com.wegame.base.context.OperatorContext;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.module.malakas.MalakasSymbolUtil;
@@ -11,8 +14,8 @@ import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -23,18 +26,31 @@ public class MalakasGameTest extends BaseTest {
     @Autowired
     MalakasGame malakasGame;
 
-//    @BeforeAll
-//    public static void beforeTest() {
-//        UserInfoContext.setUserInfo(UserInfo.builder()
-//                .id("10000")
-//                .build());
-//    }
+    @Before
+    public void beforeTest() {
+        ThreadMdcUtil.setTraceIdIfAbsent();
+        UserInfo userInfo = UserInfo.builder()
+                .id("10000")
+                .pId("55")
+                .channelId("1051")
+                .gameId(GameTypeEnum.MARIA_MAKILING.getId())
+                .playerId(TEST_PLAYER_ID)
+                .playerName(TEST_PLAYER_NAME)
+                .userName(TEST_USER_NAME)
+                .nickName(TEST_NICK_NAME)
+                .userLevel(TEST_USER_LEVEL)
+                .token(TEST_TOKEN)
+                .build();
+        UserInfoContext.setUserInfo(userInfo);
+        OperatorContext.setOperator(Operator.builder()
+                .name(userInfo.getUserName())
+                .userId(Long.valueOf(userInfo.getId()))
+                .playerId(userInfo.getPlayerId())
+                .build());
+    }
 
     @Test
-    public void test_normal_bet_play() {
-        UserInfoContext.setUserInfo(UserInfo.builder()
-                .id("10000")
-                .build());
+    public void test_play_normal_bet() {
         GamePlayDo playDo = GamePlayDo.builder()
                 .gameType(GameTypeEnum.MALAKAS)
                 .betType(BetTypeEnum.NORMAL_BET)
@@ -53,10 +69,7 @@ public class MalakasGameTest extends BaseTest {
     }
 
     @Test
-    public void test_buy_bet_play() {
-        UserInfoContext.setUserInfo(UserInfo.builder()
-                .id("10000")
-                .build());
+    public void test_play_buy_bet() {
         GamePlayDo playDo = GamePlayDo.builder()
                 .gameType(GameTypeEnum.MALAKAS)
                 .betType(BetTypeEnum.BUY_BET)
