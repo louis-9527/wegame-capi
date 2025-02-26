@@ -31,8 +31,7 @@ public class IbongAdarnaRewardLineVo implements Serializable {
     private String rewardLineSubType;
     @ApiModelProperty("中奖线数量")
     private Integer rewardLineCount;
-    @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (中奖线数量WAYS)*(1 + 倍率) = 中奖金额）； " +
-            "SCATTER中奖计算公式（投注金额 * 赔率 * （中奖线数量WAYS）= 中奖金额）")
+    @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (中奖线数量WAYS)*倍率  = 中奖金额")
     private Long rewardAmount;
     @ApiModelProperty("投注金额")
     private Long betAmount;

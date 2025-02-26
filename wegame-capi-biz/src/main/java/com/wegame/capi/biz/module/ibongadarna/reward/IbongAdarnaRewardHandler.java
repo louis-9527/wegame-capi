@@ -80,7 +80,7 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolD
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardAmount(lineRewardAmount.longValue())
                     .odds(odds)
-                    .multiple(totalMultiple)
+                    .multiple(BigDecimal.valueOf(rewardLine.getRewardLineCount()))
                     .rewardLineType(rewardLine.getRewardLineType())
                     .rewardLineSubType(rewardLine.getRewardLineSubType())
                     .rewardLineCount(rewardLine.getRewardLineCount())
