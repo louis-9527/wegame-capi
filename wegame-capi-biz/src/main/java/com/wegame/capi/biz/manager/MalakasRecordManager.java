@@ -80,8 +80,8 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
     public List<MalakasGameRecordVo> listGameRecordVo(Long betRecordId, GameTypeEnum gameType) {
         List<MalakasGameRecordDo> list = gameRecordService.list(GameRecordQuery.builder()
                 .betRecordId(betRecordId)
-//                .orderByClause("_id")
-//                .direction(Sort.Direction.ASC)
+                .orderByClause("_id")
+                .direction(Sort.Direction.ASC)
                 .build(), gameType, MalakasGameRecordDo.class);
         return Optional.ofNullable(list).orElse(Collections.emptyList())
                 .stream()
