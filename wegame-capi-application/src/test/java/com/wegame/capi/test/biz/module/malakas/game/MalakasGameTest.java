@@ -62,6 +62,7 @@ public class MalakasGameTest extends BaseTest {
                 .betType(BetTypeEnum.BUY_BET)
                 .betSubType(BetSubTypeEnum.BUY_BET)
                 .betAmount(100L)
+                .payAmount(10000L)
                 .build();
         for (int i = 0; i < 100; i++) {
             List<MalakasGameRecordDo> recordList = malakasGame.play(playDo);
