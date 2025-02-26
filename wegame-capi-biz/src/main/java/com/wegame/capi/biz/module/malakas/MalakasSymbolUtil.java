@@ -216,7 +216,7 @@ public class MalakasSymbolUtil {
             MalakasSymbolDo[][] symbolArr = record.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
                 for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
-                    if (Objects.nonNull(symbolArr[row][column].getId()) && StringUtils.equals(symbolArr[row][column].getId(), Symbol1000.getId())) {
+                    if (Objects.nonNull(symbolArr[row][column]) && StringUtils.equals(symbolArr[row][column].getId(), Symbol1000.getId())) {
                         symbolArr[row][column] = null;
                     }
                 }

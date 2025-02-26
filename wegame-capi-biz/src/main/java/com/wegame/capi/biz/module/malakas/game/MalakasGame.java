@@ -200,11 +200,16 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                                                          MalakasSymbolDo placeholderSymbol,
                                                          boolean freeWheelFlag) {
         MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-        // 第一行第一列： 不生成元素,使用占位元素
+        // 第一行（第一列 && 最后一列）： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = placeholderSymbol;
-        // 第一行最后一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = placeholderSymbol;
-        return generateCommonNormalWheel(gameInfo, symbolArr, 0, playProbabilisticConfig, WHEEL_DEFAULT_INDEX, freeWheelFlag, placeholderSymbol);
+        return generateCommonNormalWheel(gameInfo,
+                symbolArr,
+                0,
+                playProbabilisticConfig,
+                WHEEL_DEFAULT_INDEX,
+                freeWheelFlag,
+                placeholderSymbol);
     }
 
     /**
@@ -218,29 +223,31 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                                                              MalakasSymbolDo placeholderSymbol,
                                                              boolean freeWheelFlag) {
         MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-        // 第一行第一列： 不生成元素,使用占位元素
+        // 第一行（第一列 && 最后一列）： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = placeholderSymbol;
-        // 第一行最后一列： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = placeholderSymbol;
         WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(gameInfo, symbolArr, 0, playProbabilisticConfig, WHEEL_DEFAULT_INDEX, freeWheelFlag, placeholderSymbol);
         int scatterSymbolCount = countIndexSymbol(wheel.getSymbolArr(), SymbolEnum.Scatter);
-        int randomCount = randomService.randomInt(4, 6);
-        int needAddCount = randomCount - scatterSymbolCount;
-        int num = 0;
-        while (num < needAddCount) {
-            int row = randomService.randomInt(0, gameInfo.getRow() - 1);
+        int randomScatterSymbolCount = randomService.randomInt(4, 6);
+        int needAddCount = randomScatterSymbolCount - scatterSymbolCount;
+        if (needAddCount <= 0) {
+            return wheel;
+        }
+        int tempCount = 0;
+        while (tempCount < needAddCount) {
+            // 注意：第一行不能出现scatter
+            int row = randomService.randomInt(1, gameInfo.getRow() - 1);
             int column = randomService.randomInt(0, gameInfo.getColumn() - 1);
-            if (Objects.isNull(wheel.getSymbolArr()[row][column])) {
-                continue;
-            }
-            if (StringUtils.equals(wheel.getSymbolArr()[row][column].getId(), placeholderSymbol.getId()) || StringUtils.equals(wheel.getSymbolArr()[row][column].getId(), SymbolEnum.Scatter.getId())) {
+            AssertUtil.assertNotNull(wheel.getSymbolArr()[row][column], ErrorCode.ERR_INTER);
+            if (StringUtils.equals(wheel.getSymbolArr()[row][column].getId(), placeholderSymbol.getId())
+                    || StringUtils.equals(wheel.getSymbolArr()[row][column].getId(), SymbolEnum.Scatter.getId())) {
                 // 为占位元素或者scatter元素，则继续
                 // do nothing;
             } else {
                 wheel.getSymbolArr()[row][column].setId(SymbolEnum.Scatter.getId());
                 wheel.getSymbolArr()[row][column].setName(SymbolEnum.Scatter.getName());
                 wheel.getSymbolArr()[row][column].setSymbolType(SymbolTypeEnum.SCATTER);
-                num++;
+                tempCount++;
             }
         }
         return wheel;
@@ -263,7 +270,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
-                    // 当前元素非空，则跳过
+                    // 当前元素非空，则不生成
                     continue;
                 }
                 Integer randomNumber = randomNumberList.get(randomNumberIndex);
