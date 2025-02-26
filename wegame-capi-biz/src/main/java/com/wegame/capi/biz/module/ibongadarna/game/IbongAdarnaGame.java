@@ -10,7 +10,7 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.symbol.IbongSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.AmountUtil;
@@ -54,10 +54,10 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
     public List<IbongAdarnaGameRecordDo> play(GamePlayDo gamePlay) {
         List<IbongAdarnaGameRecordDo> ret = new ArrayList<>();
         // 生成滚轮
-        WheelDo<IbongSymbolDo> wheel = generateNormalWheel(getGameInfo());
+        WheelDo<IbongAdarnaSymbolDo> wheel = generateNormalWheel(getGameInfo());
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
         // 中奖处理
-        RewardResultDo<IbongSymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ZERO));
+        RewardResultDo<IbongAdarnaSymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ZERO));
         // 构建返回
         IbongAdarnaGameRecordDo record = buildGameRecord(generateGameRecordId(),
                 gamePlay.getBetRecordId(),
@@ -75,8 +75,8 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<IbongSymbolDo> generateNormalWheel(GameInfoDo gameInfo) {
-        IbongSymbolDo[][] symbolArr = new IbongSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+    private WheelDo<IbongAdarnaSymbolDo> generateNormalWheel(GameInfoDo gameInfo) {
+        IbongAdarnaSymbolDo[][] symbolArr = new IbongAdarnaSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 元素出现概率配置
         TreeMap<String, List<BigDecimal>> wheelProbabilisticConfigMap = ibongAdarnaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
         // 逐个生成滚轮
@@ -87,7 +87,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
             AssertUtil.assertNotNull(symbolRepeatType, ErrorCode.ERR_INTER, "invalid symbolRepeatType");
             generateColumSymbol(symbolArr, colum, gameInfo, this.preGenerateSymboDoList(symbolRepeatType, gameInfo, columProbabilisticMap));
         }
-        return WheelDo.<IbongSymbolDo>builder()
+        return WheelDo.<IbongAdarnaSymbolDo>builder()
                 .index(DEFAULT_WHEEL_INDEX)
                 .symbolArr(symbolArr).build();
     }
@@ -101,7 +101,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
      * @param gameInfo         游戏信息
      * @param preSymbolGenList 预生成的当前列元素集合
      */
-    private void generateColumSymbol(IbongSymbolDo[][] symbolArr, int colum, GameInfoDo gameInfo, List<SymbolDo> preSymbolGenList) {
+    private void generateColumSymbol(IbongAdarnaSymbolDo[][] symbolArr, int colum, GameInfoDo gameInfo, List<SymbolDo> preSymbolGenList) {
         TreeMap<String, TreeMap<String, Integer>> symbolBreakUpProbabilisticMap = buildSymbolBreakUpProbabilisticMap();
         int preSymbolIndex = 0;
         int preSymbolGenCount = preSymbolGenList.size();
@@ -115,7 +115,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
             symbolDo = preSymbolGenList.get(preSymbolIndex);
             // 分裂
             SymbolBreakUpEnum breakUpCount = randomSymbolBreakUpType(symbolDo, symbolBreakUpProbabilisticMap);
-            IbongSymbolDo ibongSymbolDo = IbongSymbolDo.buildIbongSymbolDo(symbolDo, breakUpCount);
+            IbongAdarnaSymbolDo ibongSymbolDo = IbongAdarnaSymbolDo.buildIbongSymbolDo(symbolDo, breakUpCount);
             symbolArr[row][colum] = ibongSymbolDo;
             preSymbolIndex++;
         }
@@ -190,8 +190,8 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
 
     private static IbongAdarnaGameRecordDo buildGameRecord(Long id,
                                                            Long betRecordId,
-                                                           WheelDo<IbongSymbolDo> wheel,
-                                                           RewardResultDo<IbongSymbolDo> rewardResult,
+                                                           WheelDo<IbongAdarnaSymbolDo> wheel,
+                                                           RewardResultDo<IbongAdarnaSymbolDo> rewardResult,
                                                            Long overallRewardAmount,
                                                            Boolean accumulateReachMaxMultiple) {
         UserInfo userInfo = UserInfoContext.getUserInfo();

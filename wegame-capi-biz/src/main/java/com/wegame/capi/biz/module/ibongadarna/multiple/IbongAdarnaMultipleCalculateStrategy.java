@@ -1,33 +1,28 @@
 package com.wegame.capi.biz.module.ibongadarna.multiple;
 
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.symbol.IbongSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.module.base.multiple.AbstractMultipleCalculateStrategy;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.MultipleTypeEnum;
-import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.utils.GameUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 @Slf4j
 @Component("ibongAdarnaMultipleCalculateStrategy")
-public class IbongAdarnaMultipleCalculateStrategy extends AbstractMultipleCalculateStrategy<IbongSymbolDo> {
+public class IbongAdarnaMultipleCalculateStrategy extends AbstractMultipleCalculateStrategy<IbongAdarnaSymbolDo> {
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
     @Autowired
@@ -35,7 +30,7 @@ public class IbongAdarnaMultipleCalculateStrategy extends AbstractMultipleCalcul
 
 
     @Override
-    public BigDecimal calculateMultiple(RewardHandleDo<IbongSymbolDo> rewardHandle, List<RewardLineDo<IbongSymbolDo>> rewardLineList) {
+    public BigDecimal calculateMultiple(RewardHandleDo<IbongAdarnaSymbolDo> rewardHandle, List<RewardLineDo<IbongAdarnaSymbolDo>> rewardLineList) {
         BetSubTypeEnum betSubType = rewardHandle.getBetSubType();
         AssertUtil.assertNotNull(betSubType, ErrorCode.ERR_INTER, "betSubType NOT SUPPORTED");
         return this.randomMultiple(betSubType);

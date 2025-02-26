@@ -13,7 +13,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.symbol.IbongSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -33,7 +33,7 @@ import java.util.*;
 
 @Slf4j
 @Component("ibongAdarnaRewardHandler")
-public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolDo> {
+public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongAdarnaSymbolDo> {
     @Autowired
     OddsCalculateStrategy ibongAdarnaOddsCalculateStrategy;
     @Autowired
@@ -43,16 +43,16 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolD
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
 
-    public RewardResultDo<IbongSymbolDo> handle(RewardHandleDo<IbongSymbolDo> rewardHandle) {
+    public RewardResultDo<IbongAdarnaSymbolDo> handle(RewardHandleDo<IbongAdarnaSymbolDo> rewardHandle) {
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
-        List<RewardLineDo<IbongSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
+        List<RewardLineDo<IbongAdarnaSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算倍率->随机生成倍率
         BigDecimal totalMultiple = ibongAdarnaMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
-            return RewardResultDo.<IbongSymbolDo>builder()
+            return RewardResultDo.<IbongAdarnaSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardType(RewardTypeEnum.NONE)
                     .rewardSubType(RewardSubTypeEnum.NONE)
@@ -67,8 +67,8 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolD
         // 中奖总金额
         long totalRewardAmount = 0L;
         // 中奖坐标列表
-        List<RewardLineDetailDo<IbongSymbolDo>> rewardLineDetailList = Lists.newArrayList();
-        for (RewardLineDo<IbongSymbolDo> rewardLine : CollectionUtils.emptyIfNull(rewardLineList)) {
+        List<RewardLineDetailDo<IbongAdarnaSymbolDo>> rewardLineDetailList = Lists.newArrayList();
+        for (RewardLineDo<IbongAdarnaSymbolDo> rewardLine : CollectionUtils.emptyIfNull(rewardLineList)) {
             // 计算赔率
             BigDecimal odds = ibongAdarnaOddsCalculateStrategy.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
             // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率 * 倍率
@@ -76,7 +76,7 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolD
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
             // 中奖线明细列表
-            rewardLineDetailList.add(RewardLineDetailDo.<IbongSymbolDo>builder()
+            rewardLineDetailList.add(RewardLineDetailDo.<IbongAdarnaSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardAmount(lineRewardAmount.longValue())
                     .odds(odds)
@@ -89,7 +89,7 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolD
                     .build());
         }
         // 5.构建中奖结果
-        return RewardResultDo.<IbongSymbolDo>builder()
+        return RewardResultDo.<IbongAdarnaSymbolDo>builder()
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())
@@ -119,18 +119,18 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolD
                 .multiply(multiple);
     }
 
-    private List<RewardLineDo<IbongSymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<IbongSymbolDo> wheel) {
-        IbongSymbolDo[][] symbolArr = wheel.getSymbolArr();
-        List<RewardLineDo<IbongSymbolDo>> rewardLineDoList = Lists.newArrayList();
+    private List<RewardLineDo<IbongAdarnaSymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<IbongAdarnaSymbolDo> wheel) {
+        IbongAdarnaSymbolDo[][] symbolArr = wheel.getSymbolArr();
+        List<RewardLineDo<IbongAdarnaSymbolDo>> rewardLineDoList = Lists.newArrayList();
         // 获取固定线路
         Map<Integer, List<List<Integer>>> rewardFixedLinesConfigMap = ibongAdarnaConfig.getRewardFixedLinesConfig();
         rewardFixedLinesConfigMap.forEach((lineNo, lineIndexList) -> {
             Set<String> rewardSymbolDoSet = Sets.newHashSet();
-            List<RewardSymbolDo<IbongSymbolDo>> rewardSymbolDoList = Lists.newArrayList();
+            List<RewardSymbolDo<IbongAdarnaSymbolDo>> rewardSymbolDoList = Lists.newArrayList();
             for (List<Integer> lineIndex : lineIndexList) {
-                IbongSymbolDo symbolDo = symbolArr[lineIndex.get(0)][lineIndex.get(1)];
+                IbongAdarnaSymbolDo symbolDo = symbolArr[lineIndex.get(0)][lineIndex.get(1)];
                 rewardSymbolDoSet.add(symbolDo.getId());
-                rewardSymbolDoList.add(RewardSymbolDo.<IbongSymbolDo>builder()
+                rewardSymbolDoList.add(RewardSymbolDo.<IbongAdarnaSymbolDo>builder()
                         .symbol(symbolDo)
                         .index(IndexFactory.buildDo(lineIndex.get(0), lineIndex.get(1)))
                         .build());
@@ -152,19 +152,19 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolD
      * @param lineNo             线号
      * @return line
      */
-    private RewardLineDo<IbongSymbolDo> buildRewardLineDo(List<RewardSymbolDo<IbongSymbolDo>> rewardSymbolDoList, Integer lineNo) {
+    private RewardLineDo<IbongAdarnaSymbolDo> buildRewardLineDo(List<RewardSymbolDo<IbongAdarnaSymbolDo>> rewardSymbolDoList, Integer lineNo) {
         int totalRewardLineCount = 1;
         if (CollectionUtil.isEmpty(rewardSymbolDoList)) {
             totalRewardLineCount = 0;
         } else {
-            for (RewardSymbolDo<IbongSymbolDo> symbol : CollectionUtil.emptyIfNull(rewardSymbolDoList)) {
+            for (RewardSymbolDo<IbongAdarnaSymbolDo> symbol : CollectionUtil.emptyIfNull(rewardSymbolDoList)) {
                 totalRewardLineCount = totalRewardLineCount * symbol.getSymbol().getBreakUp().getTimes();
             }
         }
         // 中奖元素选择
-        RewardSymbolDo<IbongSymbolDo> rewardSymbolDo = rewardSymbolDoList.stream()
+        RewardSymbolDo<IbongAdarnaSymbolDo> rewardSymbolDo = rewardSymbolDoList.stream()
                 .filter(symbol -> !symbol.getSymbol().isWildSymbol()).findFirst().orElse(rewardSymbolDoList.get(0));
-        return RewardLineDo.<IbongSymbolDo>builder()
+        return RewardLineDo.<IbongAdarnaSymbolDo>builder()
                 .rewardLineType(RewardLineTypeEnum.THREE)
                 .rewardLineSubType(RewardLineSubTypeEnum.COMMON)
                 .rewardLineNo(lineNo)
@@ -192,7 +192,7 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongSymbolD
         }
     }
 
-    private void validate(RewardHandleDo<IbongSymbolDo> rewardHandle) {
+    private void validate(RewardHandleDo<IbongAdarnaSymbolDo> rewardHandle) {
         AssertUtil.assertNotNull(rewardHandle, ErrorCode.ERR_PARAM, "rewardHandle is null");
         AssertUtil.assertNotNull(rewardHandle.getGameType(), ErrorCode.ERR_INTER, "not support gameType");
         AssertUtil.assertNotNull(rewardHandle.getBetType(), ErrorCode.ERR_PARAM, "not support betType");

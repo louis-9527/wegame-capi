@@ -1,11 +1,10 @@
 package com.wegame.capi.biz.builder;
 
-import com.wegame.capi.biz.domain.biz.symbol.IbongSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaSymbolVo;
 import com.wegame.capi.common.enums.SymbolBreakUpEnum;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,7 +32,7 @@ public class SymbolBuilder {
     }
 
 
-    public static IbongAdarnaSymbolVo[][] build(IbongSymbolDo[][] symbolArr) {
+    public static IbongAdarnaSymbolVo[][] build(IbongAdarnaSymbolDo[][] symbolArr) {
         if (Objects.isNull(symbolArr)
                 || Objects.equals(symbolArr.length, 0)
                 || Objects.isNull(symbolArr[0])) {
