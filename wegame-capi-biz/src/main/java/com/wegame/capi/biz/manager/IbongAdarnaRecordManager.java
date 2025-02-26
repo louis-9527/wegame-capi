@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.ibongAdarnaTransactionManager;
 import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.mariamakilingTransactionManager;
 
 @Slf4j
@@ -32,7 +33,7 @@ public class IbongAdarnaRecordManager extends AbstractRecordManager<IbongAdarnaG
     GameRecordService<IbongAdarnaGameRecordDo> gameRecordService;
 
     @Override
-    @Transactional(transactionManager = mariamakilingTransactionManager)
+    @Transactional(transactionManager = ibongAdarnaTransactionManager)
     public Long add(BetRecordDo<IbongAdarnaGameRecordDo> betRecord, GameTypeEnum gameType) {
         try {
             AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
@@ -47,7 +48,7 @@ public class IbongAdarnaRecordManager extends AbstractRecordManager<IbongAdarnaG
     }
 
     @Override
-    @Transactional(transactionManager = mariamakilingTransactionManager)
+    @Transactional(transactionManager = ibongAdarnaTransactionManager)
     public boolean batchAdd(List<BetRecordDo<IbongAdarnaGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
