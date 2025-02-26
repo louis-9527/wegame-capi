@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,8 +77,12 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
     }
 
     @Override
-    public List<MalakasGameRecordVo> listGameRecordVo(GameRecordQuery query, GameTypeEnum gameType) {
-        List<MalakasGameRecordDo> list = gameRecordService.list(query, gameType, MalakasGameRecordDo.class);
+    public List<MalakasGameRecordVo> listGameRecordVo(Long betRecordId, GameTypeEnum gameType) {
+        List<MalakasGameRecordDo> list = gameRecordService.list(GameRecordQuery.builder()
+                .betRecordId(betRecordId)
+//                .orderByClause("_id")
+//                .direction(Sort.Direction.ASC)
+                .build(), gameType, MalakasGameRecordDo.class);
         return Optional.ofNullable(list).orElse(Collections.emptyList())
                 .stream()
                 .map(MalakasGameRecordDo::toRecordVo)
