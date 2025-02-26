@@ -100,8 +100,6 @@ public class GameRecordQuery implements Serializable {
      */
     private Sort.Direction direction;
 
-    private List<Sort> sortList;
-
     ///////////////  above auto generated ///////////////
 
     /**

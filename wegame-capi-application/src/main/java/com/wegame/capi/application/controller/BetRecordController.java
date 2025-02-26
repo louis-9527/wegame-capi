@@ -81,9 +81,8 @@ public class BetRecordController {
 
         betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(GameRecordQuery.builder()
                         .betRecordId(betRecordDo.getId())
-//                        .orderByClause("batchId")
-//                        .direction(Sort.Direction.ASC)
-                        .sortList(Lists.newArrayList(Sort.by(Sort.Direction.ASC, "batchId"), Sort.by(Sort.Direction.ASC, "_id")))
+                        .orderByClause("_id")
+                        .direction(Sort.Direction.ASC)
                         .build(), GameTypeEnum.valueOfId(userInfo.getGameId())));
         return CommonResponse.build(betRecordVo);
     }
