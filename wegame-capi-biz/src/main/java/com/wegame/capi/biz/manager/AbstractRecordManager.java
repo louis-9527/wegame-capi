@@ -34,6 +34,6 @@ public abstract class AbstractRecordManager<T extends ToVoConverter> {
 
     public abstract List<T> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType);
 
-    public abstract List<?> listGameRecordVo(GameRecordQuery query, GameTypeEnum gameType);
+    public abstract List<?> listGameRecordVo(Long betRecordId, GameTypeEnum gameType);
 
 }

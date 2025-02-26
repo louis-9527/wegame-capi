@@ -14,6 +14,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,8 +83,12 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     }
 
     @Override
-    public List<MariaMakilingGameRecordVo> listGameRecordVo(GameRecordQuery query, GameTypeEnum gameType) {
-        List<MariaMakilingGameRecordDo> list = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+    public List<MariaMakilingGameRecordVo> listGameRecordVo(Long betRecordId, GameTypeEnum gameType) {
+        List<MariaMakilingGameRecordDo> list = gameRecordService.list(GameRecordQuery.builder()
+                .betRecordId(betRecordId)
+                .orderByClause("_id")
+                .direction(Sort.Direction.ASC)
+                .build(), gameType, MariaMakilingGameRecordDo.class);
         return Optional.ofNullable(list).orElse(Collections.emptyList())
                 .stream()
                 .map(MariaMakilingGameRecordDo::toRecordVo)
