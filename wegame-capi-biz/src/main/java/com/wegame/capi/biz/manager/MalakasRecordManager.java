@@ -31,7 +31,7 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
     @Autowired
     GameRecordService<MalakasGameRecordDo> gameRecordService;
 
-    @Transactional(transactionManager = malakasTransactionManager)
+//    @Transactional(transactionManager = malakasTransactionManager)
     public Long add(BetRecordDo<MalakasGameRecordDo> betRecord, GameTypeEnum gameType) {
         Long id = betRecordService.add(betRecord, gameType);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
@@ -43,7 +43,7 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
         return betRecord.getId();
     }
 
-    @Transactional(transactionManager = malakasTransactionManager)
+//    @Transactional(transactionManager = malakasTransactionManager)
     @Override
     public boolean batchAdd(List<BetRecordDo<MalakasGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
