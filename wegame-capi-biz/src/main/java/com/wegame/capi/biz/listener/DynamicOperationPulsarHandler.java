@@ -24,7 +24,7 @@ public class DynamicOperationPulsarHandler {
 
     public Boolean handleMessage(DynamicOperationMsgDo msgDo) {
         try {
-            if (msgDo.getOperatorGameId().equals(GameTypeEnum.MARIA_MAKILING.getId())) {
+            if (msgDo.getGameId().equals(GameTypeEnum.MARIA_MAKILING.getId())) {
 
                 Long add = dynamicOperationEventService.add(this.convertEventDo(msgDo), GameTypeEnum.MARIA_MAKILING);
                 if (add == null) {
@@ -45,7 +45,7 @@ public class DynamicOperationPulsarHandler {
         eventDo.setBonus(AmountUtil.toLong(msgDo.getBonus()));
         eventDo.setEventId(msgDo.getEventId());
         eventDo.setEventKind(msgDo.getEventKind());
-        eventDo.setOperatorGameId(msgDo.getOperatorGameId());
+        eventDo.setGameId(msgDo.getGameId());
         eventDo.setChannelId(msgDo.getChannelId());
         eventDo.setEffectedTime(DateUtil.utcStringToEpochMilli(msgDo.getEffectedTime()));
         eventDo.setExpiredTime(msgDo.getExpiredTime() == null ? DateUtil.getMaxMilli() : DateUtil.utcStringToEpochMilli(msgDo.getExpiredTime()));

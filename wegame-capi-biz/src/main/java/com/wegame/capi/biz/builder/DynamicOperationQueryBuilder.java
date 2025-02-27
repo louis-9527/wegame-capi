@@ -32,7 +32,7 @@ public class DynamicOperationQueryBuilder {
                 query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
             }
         }
-        query.fields().include("_id","eventId","playerName","bonus","eventKind","operatorGameId","channelId","effectedTime","expiredTime","eventStatus","reportStatus");
+        query.fields().include("_id","eventId","playerName","bonus","eventKind","gameId","channelId","effectedTime","expiredTime","eventStatus","reportStatus");
 
         return query;
 
@@ -41,7 +41,9 @@ public class DynamicOperationQueryBuilder {
 
     public static Criteria buildCriteria(DynamicOperationQuery recordQuery) {
         Criteria criteria = new Criteria();
-
+        if (Objects.nonNull(recordQuery.getGameId())) {
+            criteria.and("gameId").is(recordQuery.getGameId());
+        }
         if (Objects.nonNull(recordQuery.getEventStatus())) {
             criteria.and("eventStatus").is(recordQuery.getEventStatus());
         }
@@ -71,7 +73,7 @@ public class DynamicOperationQueryBuilder {
         criteria.and("effectedTime").lte(currentMilli);
         criteria.and("expiredTime").gte(currentMilli);
         Query query = new Query(criteria);
-        query.fields().include("_id","eventId","playerName","bonus","eventKind","operatorGameId","channelId","effectedTime","expiredTime","eventStatus","reportStatus");
+        query.fields().include("_id","eventId","playerName","bonus","eventKind","gameId","channelId","effectedTime","expiredTime","eventStatus","reportStatus");
         //query.limit(1);
         return query;
     }

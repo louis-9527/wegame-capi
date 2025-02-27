@@ -20,7 +20,7 @@ public class DynamicOperationEventServiceTest extends BaseTest {
         DynamicOperationEventDo eventDo = new DynamicOperationEventDo();
         eventDo.setEventId("1000");
         eventDo.setEventStatus(DynamicOperationEventStatusEnum.NONE);
-        eventDo.setOperatorGameId(GameTypeEnum.MARIA_MAKILING.getId());
+        eventDo.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
         eventDo.setEventKind(1);
         eventDo.setBonus(1000L);
         eventDo.setChannelId("100");

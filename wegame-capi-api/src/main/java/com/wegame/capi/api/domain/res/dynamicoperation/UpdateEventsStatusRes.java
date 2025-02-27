@@ -5,6 +5,7 @@ import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @ToString
@@ -30,7 +31,7 @@ public class UpdateEventsStatusRes implements Serializable {
     /**
      * 已发送过的订单号列表
      */
-    private String duplicatedBetNos;
+    private List<String> duplicatedBetNos;
 
     public Boolean isSuccess() {
         return StringUtils.equals(SUC_CODE, status);
