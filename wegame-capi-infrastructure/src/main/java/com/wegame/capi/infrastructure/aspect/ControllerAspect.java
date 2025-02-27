@@ -50,19 +50,17 @@ public class ControllerAspect {
             }
             long costTime = System.currentTimeMillis() - startTime;
             if (costTime > 150L) {
-                log.info("{}#{}, cost times more than 150: {} ms, req={}, res={}",
+                log.info("{}#{}, cost times more than 150: {} ms, req={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
-                        req,
-                        result);
+                        req);
             } else {
-                log.info("{}#{}, cost times: {} ms, req={}, res={}",
+                log.info("{}#{}, cost times: {} ms, req={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
-                        req,
-                        result);
+                        req);
             }
         } catch (Throwable e) {
             log.error("ControllerAspect.statistic error: {}", e.getMessage(), e);
