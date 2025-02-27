@@ -44,10 +44,10 @@ public class DynamicOperationEventDetailService {
 
     public Long sumPayoutAmount(Long operatorRecordId, GameTypeEnum gameType) {
         MatchOperation matchOperation = Aggregation.match(Criteria.where("operatorRecordId")
-                .is(operatorRecordId).and("betStatus").in(BetStatusEnum.SUCCESS,BetStatusEnum.ING));
+                .is(operatorRecordId).and("betStatus").in(BetStatusEnum.SUCCESS.getCode(),BetStatusEnum.ING.getCode()));
 
         // 计算 payOutAmount 的总和
-        GroupOperation sumOperation = Aggregation.group().sum("payOutAmount").as("totalPayOutAmount");
+        GroupOperation sumOperation = Aggregation.group().sum("eventAmount").as("totalEventAmount");
 
         // 构建 Aggregation 查询管道
         Aggregation aggregation = Aggregation.newAggregation(matchOperation, sumOperation);
@@ -56,7 +56,7 @@ public class DynamicOperationEventDetailService {
         AggregationResults<Document> results = getMongoTemplate(gameType).aggregate(aggregation, dynamicOperationGameEnum.getEventDetailCollectionName(), Document.class);
         // 获取 totalPayOutAmount 值
         Document result = results.getUniqueMappedResult();
-        return result != null ? result.getLong("totalPayOutAmount") : 0L; // 如果查询为空，返回 0
+        return result != null ? result.getLong("totalEventAmount") : 0L; // 如果查询为空，返回 0
     }
 
 

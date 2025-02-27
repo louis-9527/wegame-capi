@@ -59,7 +59,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     @Autowired
     private DynamicOperationEventConfigService dynamicOperationEventConfigService;
 
-    private static final double[] arr = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0,
+    private static final double[] arr = {1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0,
             15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0,
             80.0, 90.0, 100.0};
 
@@ -128,6 +128,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
             // 构建并获取Wheel
             List<WheelDo<WD>> wheelDos = this.getWheelDos(betDo, eventDo.getInterventionAmount());
             if (CollectionUtils.isEmpty(wheelDos)) {
+                log.warn("DynamicOperationBetStrategy.getWheelDos is null,eventRecordId:{},InterventionAmount:{}", eventDo.getId(), eventDo.getInterventionAmount());
                 BetRecordDo<R> betRecordDo = this.rBetRecordDo(betDo, null);
                 return DynamicOperationCheckResultDo.<R>builder()
                         .eventResult(Boolean.FALSE)
@@ -205,7 +206,9 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         detailDo.setOperatorRecordId(eventDo.getOperatorRecordId());
         detailDo.setEventId(eventDo.getEventId());
         detailDo.setBetRecordId(betRecordDo.getId());
+        detailDo.setBetAmount(betRecordDo.getPayAmount());
         detailDo.setPayOutAmount(betRecordDo.getPayOutAmount());
+        detailDo.setEventAmount(betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount());
         detailDo.setBetTime(betRecordDo.getCreateTime());
         detailDo.setPayOutTime(betRecordDo.getCreateTime());
         detailDo.setPlayerName(userInfo.getPlayerName());
@@ -231,7 +234,6 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
                 .configType(configType)
                 .multiple(multiple).build();
         List<DynamicOperationConfigDo> configDetail = dynamicOperationEventConfigService.getConfigDetail(configQuery, this.getGame().getGameInfo().getGameType());
-
         if (CollectionUtils.isEmpty(configDetail)) {
             log.error("normalPayMultipleConfig result null,configType:{},multiple:{}", configType, multiple);
             return null;
@@ -242,6 +244,9 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     }
 
     public static Double findClosest(double input) {
+        if (input < 1.1) {
+            return null;
+        }
         int left = 0;
         int right = arr.length - 1;
         int result = -1;

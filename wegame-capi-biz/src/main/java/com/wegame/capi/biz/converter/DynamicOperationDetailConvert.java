@@ -28,6 +28,9 @@ public class DynamicOperationDetailConvert {
             po.setEventId(detailDo.getEventId());
             po.setOperatorRecordId(detailDo.getOperatorRecordId());
             po.setOperatorGameId(detailDo.getOperatorGameId());
+            po.setBetTime(detailDo.getBetTime());
+            po.setBetAmount(detailDo.getBetAmount());
+            po.setEventAmount(detailDo.getEventAmount());
             po.setPlayerId(detailDo.getPlayerId());
             po.setPlayerName(detailDo.getPlayerName());
             po.setUserId(detailDo.getUserId());
@@ -54,6 +57,9 @@ public class DynamicOperationDetailConvert {
         detailDo.setEventId(detailPo.getEventId());
         detailDo.setOperatorGameId(detailPo.getOperatorGameId());
         detailDo.setPlayerId(detailPo.getPlayerId());
+        detailDo.setBetAmount(detailPo.getBetAmount());
+        detailDo.setBetTime(detailPo.getBetTime());
+        detailDo.setEventAmount(detailPo.getEventAmount());
         detailDo.setPlayerName(detailPo.getPlayerName());
         detailDo.setUserId(detailPo.getUserId());
         detailDo.setPayOutAmount(detailPo.getPayOutAmount());

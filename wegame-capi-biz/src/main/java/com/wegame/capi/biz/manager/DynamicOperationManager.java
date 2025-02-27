@@ -52,31 +52,43 @@ public class DynamicOperationManager {
      * @return
      */
     public DynamicOperationEventDo getBuyUserNameAndTime(DynamicOperationQuery operationQuery, GameTypeEnum gameType) {
-        String key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameType.getId(), operationQuery.getPlayerName());
+        String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameType.getId(), operationQuery.getPlayerName());
         // 缓存事件信息
         // 判断是否存在干预事件
-        Set<Object> members = redisTemplate.opsForSet().members(key);
-        if (CollectionUtils.isEmpty(members)) {
+        Map<String, String> entries = redisTemplate.opsForHash().entries(catch_key);
+        if (entries.isEmpty()) {
             return null;
         }
-        for (Object recordIdObj : members) {
-            Long recordId = (Long) recordIdObj;
-            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(recordId, gameType);
+        for (Map.Entry<String, String> entry : entries.entrySet()) {
+            String recordId = entry.getKey();
+            String recordTime = entry.getValue();
+            // 判断是否到期
+            String[] recordTimeArray = recordTime.split("_");
+            long currentMilli = DateUtil.getCurrentMilli();
+            if (currentMilli < Long.parseLong(recordTimeArray[0])) {
+                continue;
+            }
             // 判断是否过期
-            if (DateUtil.getCurrentMilli() > eventDo.getExpiredTime()) {
-                redisTemplate.opsForSet().remove(key, recordId);
+            if (currentMilli > Long.parseLong(recordTimeArray[1])) {
+                redisTemplate.opsForHash().delete(catch_key, recordId);
                 continue;
             }
-            Long payOutAmount = dynamicOperationEventDetailService.sumPayoutAmount(recordId, gameType);
+            //查询事件详情
+            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(Long.parseLong(recordId), gameType);
+            if (eventDo.getEventStatus() != DynamicOperationEventStatusEnum.NONE) {
+                continue;
+            }
+            Long eventAmount = dynamicOperationEventDetailService.sumPayoutAmount(Long.parseLong(recordId), gameType);
             // 金额在10%左右 可视为完成
-            DynamicOperationEventStatusEnum eventStatus = dynamicOperationEventService.getEventStatus(eventDo.getBonus(), payOutAmount);
+            DynamicOperationEventStatusEnum eventStatus = dynamicOperationEventService.getEventStatus(eventDo.getBonus(), eventAmount);
             if (DynamicOperationEventStatusEnum.NONE != eventStatus) {
-                redisTemplate.opsForSet().remove(key, recordId);
+                redisTemplate.opsForHash().delete(catch_key, recordId);
                 continue;
             }
-            eventDo.setInterventionAmount(eventDo.getBonus() - payOutAmount);
+            eventDo.setInterventionAmount(eventDo.getBonus() - eventAmount);
             return eventDo;
         }
+
         return null;
     }
 
@@ -162,7 +174,7 @@ public class DynamicOperationManager {
             List<String> betNos = new ArrayList<>();
             List<DynamicOperationStatusOfEventsRecordDO> betRecords = new ArrayList<>();
 
-            for (int i = 0; i <= eventDetailDos.size(); i++) {
+            for (int i = 0; i < eventDetailDos.size(); i++) {
                 DynamicOperationEventDetailDo eventDetail = eventDetailDos.get(i);
                 if (i == 0) {
                     executeTime = eventDetail.getCreateTime();
@@ -219,7 +231,7 @@ public class DynamicOperationManager {
         Long startTime = null;
         List<UpdateEventsBetRecordReq> betRecords = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(eventDetailDos)) {
-            for (int i = 0; i <= eventDetailDos.size(); i++) {
+            for (int i = 0; i < eventDetailDos.size(); i++) {
                 DynamicOperationEventDetailDo eventDetail = eventDetailDos.get(i);
                 if (i == 0) {
                     startTime = eventDetail.getCreateTime();

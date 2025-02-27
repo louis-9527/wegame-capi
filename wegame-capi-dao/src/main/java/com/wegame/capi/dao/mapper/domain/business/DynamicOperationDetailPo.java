@@ -53,15 +53,29 @@ public class DynamicOperationDetailPo implements Serializable {
      */
     private String userId;
 
+
     /**
-     * 派奖(消耗金额)
+     * 投注金额
+     */
+    private Long betAmount;
+
+    /**
+     * 派奖金额
      */
     private Long payOutAmount;
+    /**
+     * 事件干预金额
+     */
+    private Long eventAmount;
 
     /**
      * 派奖时间
      */
     private Long payOutTime;
+    /**
+     * 下注时间
+     */
+    private Long betTime;
 
     /**
      * 投注id（单钱包）
