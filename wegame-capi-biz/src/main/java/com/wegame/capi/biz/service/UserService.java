@@ -204,13 +204,13 @@ public class UserService {
     ///////////////  above auto generated ///////////////
 
     /**
-     * 新增或更新
+     * 新增
      *
      * @param userDo
      * @return
      */
     @DSTransactional
-    public Long insertOrUpdate(UserDo userDo) {
+    public Long insert(UserDo userDo) {
         long startTime = DateUtil.getCurrentMilli();
         try {
             UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
@@ -220,17 +220,13 @@ public class UserService {
                 userMapper.insert(userPo);
                 AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
                 return userPo.getId();
-            } else {
-                // 更新
-                userPo.setId(id);
-                userManualMapper.updateByPlayerId(userPo);
-                return id;
             }
+            return id;
         } catch (Exception e) {
-            log.error("insertOrUpdate err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
+            log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");
         } finally {
-            log.info("com.wegame.capi.biz.service.UserService.insertOrUpdate cost:{}", DateUtil.getCurrentMilli() - startTime);
+            log.info("insert cost:{}", DateUtil.getCurrentMilli() - startTime);
         }
     }
 
