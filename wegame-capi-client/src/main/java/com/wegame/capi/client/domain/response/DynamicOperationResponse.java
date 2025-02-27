@@ -1,6 +1,5 @@
-package com.wegame.capi.client.domain.vo;
+package com.wegame.capi.client.domain.response;
 
-import com.wegame.base.domain.CommonResponse;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -16,6 +15,9 @@ import lombok.experimental.SuperBuilder;
 @ApiModel("动态运营通用返回")
 @EqualsAndHashCode(callSuper = false)
 public class DynamicOperationResponse<T> {
+    private static final String SUC_CODE = "200";
+    private static final String SUC_MESSAGE = "success";
+
     @ApiModelProperty("状态码")
     private String status;
     @ApiModelProperty("状态信息")
@@ -23,15 +25,12 @@ public class DynamicOperationResponse<T> {
     @ApiModelProperty("返回结果")
     private T results;
 
-    private DynamicOperationResponse(T data) {
-        this.status = "200";
-        this.message = "success";
-        this.results = data;
-    }
-
-
-    public static <T> DynamicOperationResponse<T> build(T data) {
-        return new DynamicOperationResponse<T>(data);
+    public static <T> DynamicOperationResponse<T> build(T results) {
+        return DynamicOperationResponse.<T>builder()
+                .status(SUC_CODE)
+                .message(null)
+                .results(results)
+                .build();
     }
 
 }

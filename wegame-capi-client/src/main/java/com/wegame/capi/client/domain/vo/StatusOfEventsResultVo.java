@@ -17,9 +17,9 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("动态运营干预事件")
+@ApiModel("干预事件结果")
 @EqualsAndHashCode(callSuper = false)
-public class DynamicOperationStatusOfEventsVo implements Serializable {
+public class StatusOfEventsResultVo implements Serializable {
     private static final long serialVersionUID = 7891252423487716266L;
     @ApiModelProperty("事件ID")
     private String eventId;
@@ -30,7 +30,7 @@ public class DynamicOperationStatusOfEventsVo implements Serializable {
     @ApiModelProperty("干预事件订单号")
     private List<String> betNos;
     @ApiModelProperty("干预事件订单信息")
-    private List<DynamicOperationStatusOfEventsRecordVo> betRecords;
+    private List<StatusOfEventsRecordVo> betRecords;
     @ApiModelProperty("干预事件状态码")
     private Integer eventStatus;
 }

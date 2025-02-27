@@ -14,7 +14,7 @@ import com.wegame.capi.biz.domain.biz.operation.DynamicOperationStatusOfEventsDo
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationStatusOfEventsRecordDO;
 import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
 import com.wegame.capi.biz.service.DynamicOperationEventService;
-import com.wegame.capi.client.domain.request.DynamicOperationStatusOfEventRequest;
+import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BetStatusEnum;
@@ -131,7 +131,7 @@ public class DynamicOperationManager {
     }
 
 
-    public List<DynamicOperationStatusOfEventsDo> queryStatusOfEvents(DynamicOperationStatusOfEventRequest request) {
+    public List<DynamicOperationStatusOfEventsDo> queryStatusOfEvents(GetStatusOfEventRequest request) {
         GameTypeEnum gameTypeEnum = GameTypeEnum.valueOfId(request.getGameId());
         // 根据条件查询已完成的事件信息
         DynamicOperationQuery operationQuery = DynamicOperationQuery.builder()

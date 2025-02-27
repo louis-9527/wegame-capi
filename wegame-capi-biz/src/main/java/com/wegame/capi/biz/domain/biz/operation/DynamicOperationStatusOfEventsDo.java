@@ -1,14 +1,10 @@
 package com.wegame.capi.biz.domain.biz.operation;
 
-import com.wegame.capi.client.domain.vo.DynamicOperationStatusOfEventsRecordVo;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Data
