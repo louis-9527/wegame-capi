@@ -1,8 +1,8 @@
 package com.wegame.capi.biz.converter;
 
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationStatusOfEventsDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationStatusOfEventsRecordDO;
+import com.wegame.capi.biz.domain.biz.operation.StatusOfEventsResultDo;
+import com.wegame.capi.biz.domain.biz.operation.StatusOfEventsRecordDo;
 import com.wegame.capi.client.domain.dto.CreditChangeNotifyDto;
 import com.wegame.capi.client.domain.request.CreditChangeNotifyRequest;
 import com.wegame.capi.client.domain.vo.StatusOfEventsRecordVo;
@@ -33,7 +33,7 @@ public class PlatformCallbackConverter {
                 .build();
     }
 
-    public static List<StatusOfEventsResultVo> dynamicOperationStatusOfEventsDoToVos(List<DynamicOperationStatusOfEventsDo> statusOfEventsDos) {
+    public static List<StatusOfEventsResultVo> dynamicOperationStatusOfEventsDoToVos(List<StatusOfEventsResultDo> statusOfEventsDos) {
         if (CollectionUtils.isEmpty(statusOfEventsDos)) {
             return new ArrayList<>();
         }
@@ -42,7 +42,7 @@ public class PlatformCallbackConverter {
                 .collect(Collectors.toList());
     }
 
-    public static StatusOfEventsResultVo dynamicOperationStatusOfEventsDoToVo(DynamicOperationStatusOfEventsDo statusOfEventsDo) {
+    public static StatusOfEventsResultVo dynamicOperationStatusOfEventsDoToVo(StatusOfEventsResultDo statusOfEventsDo) {
         if (statusOfEventsDo == null) {
             return null;
         }
@@ -57,7 +57,7 @@ public class PlatformCallbackConverter {
     }
 
 
-    public static List<StatusOfEventsRecordVo> statusOfEventsRecordDoToVos(List<DynamicOperationStatusOfEventsRecordDO> recordDos) {
+    public static List<StatusOfEventsRecordVo> statusOfEventsRecordDoToVos(List<StatusOfEventsRecordDo> recordDos) {
         if (CollectionUtils.isEmpty(recordDos)) {
             return new ArrayList<>();
         }
@@ -66,7 +66,7 @@ public class PlatformCallbackConverter {
                 .collect(Collectors.toList());
     }
 
-    public static StatusOfEventsRecordVo statusOfEventsRecordDoToVo(DynamicOperationStatusOfEventsRecordDO recordDo) {
+    public static StatusOfEventsRecordVo statusOfEventsRecordDoToVo(StatusOfEventsRecordDo recordDo) {
         if (recordDo == null) {
             return null;
         }

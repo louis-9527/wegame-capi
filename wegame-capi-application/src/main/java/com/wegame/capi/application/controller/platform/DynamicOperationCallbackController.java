@@ -1,7 +1,8 @@
 package com.wegame.capi.application.controller.platform;
 
 import com.wegame.capi.biz.converter.PlatformCallbackConverter;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationStatusOfEventsDo;
+import com.wegame.capi.biz.converter.StatusOfEventsConverter;
+import com.wegame.capi.biz.domain.biz.operation.StatusOfEventsResultDo;
 import com.wegame.capi.biz.manager.DynamicOperationManager;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.domain.response.DynamicOperationResponse;
@@ -16,19 +17,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.wegame.capi.biz.converter.StatusOfEventsConverter.toVoList;
+import static com.wegame.capi.client.domain.response.DynamicOperationResponse.build;
+
 @Slf4j
 @RestController
-@Api(value = "干预事件回调", tags = {"干预事件回调模块"})
+@Api(value = "干预事件回调模块", tags = {"干预事件回调模块"})
 public class DynamicOperationCallbackController {
 
     @Autowired
     DynamicOperationManager dynamicOperationManager;
 
-    @ApiOperation(value = "取干预事件结果", httpMethod = "POST")
+    // todo 支持多游戏
+
+    @ApiOperation(value = "获取干预事件结果", httpMethod = "POST")
     @PostMapping("/getStatusOfEvents")
     public DynamicOperationResponse<List<StatusOfEventsResultVo>> getStatusOfEvents(@RequestBody GetStatusOfEventRequest request) {
         request.validate();
-        List<DynamicOperationStatusOfEventsDo> dynamicOperationStatusOfEventsDos = dynamicOperationManager.getStatusOfEvents(request);
-        return DynamicOperationResponse.build(PlatformCallbackConverter.dynamicOperationStatusOfEventsDoToVos(dynamicOperationStatusOfEventsDos));
+        return build(toVoList(dynamicOperationManager.getStatusOfEvents(request)));
     }
 }

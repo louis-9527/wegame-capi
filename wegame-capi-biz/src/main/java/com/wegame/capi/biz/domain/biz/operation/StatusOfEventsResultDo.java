@@ -7,11 +7,14 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
+/**
+ * 干预事件结果
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DynamicOperationStatusOfEventsDo {
+public class StatusOfEventsResultDo {
     /**
      * 事件ID
      */
@@ -31,7 +34,7 @@ public class DynamicOperationStatusOfEventsDo {
     /**
      * 干预事件订单信息
      */
-    private List<DynamicOperationStatusOfEventsRecordDO> betRecords;
+    private List<StatusOfEventsRecordDo> betRecords;
     /**
      * 干预事件状态码
      */
