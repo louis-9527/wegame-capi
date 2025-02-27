@@ -4,40 +4,35 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.SingleWalletSignatureUtil;
-import com.wegame.capi.api.domain.req.singlewallet.*;
+import com.wegame.capi.api.domain.req.singlewallet.SingleWalletBaseReq;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
-//@Component
 public class SingleWalletBaseApi extends BaseApi {
 
-    private static final String AUTH_LOGIN_TOKEN_URL_FORMAT = "%s/authLoginToken";
-    private static final String GET_CREDIT_URL_FORMAT = "%s/getCredit";
-    private static final String BET_WITH_PAYOUT_URL_FORMAT = "%s/betWithPayout";
-    private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
     @Value("${api.sport.singleDomain}")
     public String singleDomain;
     // cp
     @Value("${api.sport.cp.platformId}")
-    String cpPlatformId;
+    public String cpPlatformId;
     @Value("${api.sport.cp.channelId}")
-    String cpChannelId;
+    public String cpChannelId;
     @Value("${api.sport.cp.privateKey}")
-    String cpPrivateKey;
+    public String cpPrivateKey;
     @Value("${api.sport.cp.privateIv}")
-    String cpPrivateIv;
+    public String cpPrivateIv;
     // igo
     @Value("${api.sport.igo.platformId}")
-    String igoPlatformId;
+    public String igoPlatformId;
     @Value("${api.sport.igo.channelId}")
-    String igoChannelId;
+    public String igoChannelId;
     @Value("${api.sport.igo.privateKey}")
-    String igoPrivateKey;
+    public String igoPrivateKey;
     @Value("${api.sport.igo.privateIv}")
-    String igoPrivateIv;
+    public String igoPrivateIv;
 
     public Pair<String, String> getPrivateKeyAndIvByChannelId(String channelId) {
         if (StringUtils.equals(channelId, cpChannelId)) {
