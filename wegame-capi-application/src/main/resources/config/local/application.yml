@@ -15,13 +15,13 @@ server:
   shutdown: graceful
   tomcat:
     uri-encoding: UTF-8
-    connection-timeout: 3000
-    max-connections: 100000
+    connection-timeout: 10000
+    max-connections: 110000
     keep-alive-timeout: 180000
     accept-count: 10000
     threads:
-      max: 200000
-      min-spare: 20
+      max: 250000
+      min-spare: 100
   servlet:
     context-path: /capi/game
     encoding:

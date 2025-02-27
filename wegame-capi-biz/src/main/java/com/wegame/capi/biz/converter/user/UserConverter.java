@@ -47,7 +47,6 @@ public class UserConverter {
         }
         UserDo userDo = new UserDo();
         userDo.setId(po.getId());
-        userDo.setPId(po.getPId());
         userDo.setPlayerId(po.getPlayerId());
         userDo.setPlayerName(po.getPlayerName());
         userDo.setNickName(po.getNickName());
@@ -69,7 +68,6 @@ public class UserConverter {
         Operator operator = OperatorUtil.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserPo po = new UserPo();
-        po.setPId(userDo.getPId());
         po.setPlayerId(userDo.getPlayerId());
         po.setPlayerName(userDo.getPlayerName());
         po.setNickName(userDo.getNickName());
@@ -150,7 +148,6 @@ public class UserConverter {
     public static UserQuery requestToQuery(PageQueryUserRequest request, String orderClause) {
         UserQuery query = new UserQuery();
         query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
-        query.setPId(request.getPId());
         query.setPlayerId(request.getPlayerId());
         query.setPlayerName(request.getPlayerName());
         query.setNickName(request.getNickName());

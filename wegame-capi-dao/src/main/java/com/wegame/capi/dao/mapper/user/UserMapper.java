@@ -17,7 +17,6 @@ import java.util.List;
 public interface UserMapper {
     /** 增 */
     @Insert({"insert into `user`(" +
-            " `p_id`, " +
             " `player_id`, " +
             " `player_name`, " +
             " `nick_name`, " +
@@ -30,7 +29,6 @@ public interface UserMapper {
             " `create_time`, " +
             " `update_time` " +
             ") values (" +
-            " #{pId}, " +
             " #{playerId}, " +
             " #{playerName}, " +
             " #{nickName}, " +
@@ -48,7 +46,6 @@ public interface UserMapper {
 
     @Insert({"<script>",
         " insert into `user` (",
-        "   `p_id`, ",
         "   `player_id`, ",
         "   `player_name`, ",
         "   `nick_name`, ",
@@ -63,7 +60,6 @@ public interface UserMapper {
         ") values ",
         " <foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\" nullable=\"true\"> ",
         " (",
-        "   #{item.pId}, ",
         "   #{item.playerId}, ",
         "   #{item.playerName}, ",
         "   #{item.nickName}, ",
@@ -97,7 +93,6 @@ public interface UserMapper {
     @Update({"<script>",
         " update `user` ",
         " <trim prefix=\"set\" suffixOverrides=\",\"> ",
-        "     <if test=\"pId != null\">`p_id` = #{pId},</if> ",
         "     <if test=\"playerId != null\">`player_id` = #{playerId},</if> ",
         "     <if test=\"playerName != null\">`player_name` = #{playerName},</if> ",
         "     <if test=\"nickName != null\">`nick_name` = #{nickName},</if> ",
@@ -121,7 +116,6 @@ public interface UserMapper {
             " select * from `user` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
-            "     <if test=\"query.pId != null and query.pId != ''\">and p_id like CONCAT('%', #{query.pId}, '%')</if> ",
             "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.playerName != null and query.playerName != ''\">and player_name like CONCAT('%', #{query.playerName}, '%')</if> ",
             "     <if test=\"query.nickName != null and query.nickName != ''\">and nick_name like CONCAT('%', #{query.nickName}, '%')</if> ",
@@ -145,7 +139,6 @@ public interface UserMapper {
             " select id from `user` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
-            "     <if test=\"query.pId != null and query.pId != ''\">and p_id like CONCAT('%', #{query.pId}, '%')</if> ",
             "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.playerName != null and query.playerName != ''\">and player_name like CONCAT('%', #{query.playerName}, '%')</if> ",
             "     <if test=\"query.nickName != null and query.nickName != ''\">and nick_name like CONCAT('%', #{query.nickName}, '%')</if> ",
@@ -180,7 +173,6 @@ public interface UserMapper {
             " select count(1) from `user` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
-            "     <if test=\"query.pId != null and query.pId != ''\">and p_id like CONCAT('%', #{query.pId}, '%')</if> ",
             "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.playerName != null and query.playerName != ''\">and player_name like CONCAT('%', #{query.playerName}, '%')</if> ",
             "     <if test=\"query.nickName != null and query.nickName != ''\">and nick_name like CONCAT('%', #{query.nickName}, '%')</if> ",
@@ -202,7 +194,6 @@ public interface UserMapper {
             " select * from `user` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
-            "     <if test=\"query.pId != null and query.pId != ''\">and p_id like CONCAT('%', #{query.pId}, '%')</if> ",
             "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.playerName != null and query.playerName != ''\">and player_name like CONCAT('%', #{query.playerName}, '%')</if> ",
             "     <if test=\"query.nickName != null and query.nickName != ''\">and nick_name like CONCAT('%', #{query.nickName}, '%')</if> ",
@@ -228,7 +219,6 @@ public interface UserMapper {
             " select id from `user` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
-            "     <if test=\"query.pId != null and query.pId != ''\">and p_id like CONCAT('%', #{query.pId}, '%')</if> ",
             "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.playerName != null and query.playerName != ''\">and player_name like CONCAT('%', #{query.playerName}, '%')</if> ",
             "     <if test=\"query.nickName != null and query.nickName != ''\">and nick_name like CONCAT('%', #{query.nickName}, '%')</if> ",

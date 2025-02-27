@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -38,37 +39,17 @@ public class SymbolDo implements Serializable {
 
     @JsonIgnore
     public boolean isCommonSymbol() {
-        return Objects.equals(symbolType, SymbolTypeEnum.COMMON);
+        return StringUtils.equals(symbolType.getCode(), SymbolTypeEnum.COMMON.getCode());
     }
 
     @JsonIgnore
     public boolean isScatterSymbol() {
-        return Objects.equals(symbolType, SymbolTypeEnum.SCATTER);
+        return StringUtils.equals(symbolType.getCode(), SymbolTypeEnum.SCATTER.getCode());
     }
 
     @JsonIgnore
     public boolean isWildSymbol() {
-        return Objects.equals(symbolType, SymbolTypeEnum.WILD);
+        return StringUtils.equals(symbolType.getCode(), SymbolTypeEnum.WILD.getCode());
     }
-
-    //    /**
-    //     * 元素规则
-    //     */
-    //    @Data
-    //    @SuperBuilder
-    //    @NoArgsConstructor
-    //    @AllArgsConstructor
-    //    @EqualsAndHashCode(callSuper = false)
-    //    public static class SymbolRuleDo implements Serializable {
-    //        private static final long serialVersionUID = 1L;
-    //        /**
-    //         * 规则类型
-    //         */
-    //        private SymbolRuleTypeEnum symbolRuleType;
-    //        /**
-    //         * 值
-    //         */
-    //        private BigDecimal value;
-    //    }
 }
 

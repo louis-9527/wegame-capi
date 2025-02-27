@@ -38,9 +38,10 @@ public class PageQueryBetRecordRequest extends PageQueryRequest implements Valid
     public void validate() {
         if (StringUtils.isNotBlank(id)) {
             AssertUtil.assertTrue(NumberUtil.isLong(id), ErrorCode.ERR_PARAM);
+        }else {
+            AssertUtil.assertNotNull(startCreateTime, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(endCreateTime, ErrorCode.ERR_PARAM);
         }
-        AssertUtil.assertNotNull(startCreateTime, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(endCreateTime, ErrorCode.ERR_PARAM);
         if (StringUtils.isNotBlank(lastId)) {
             AssertUtil.assertTrue(NumberUtil.isLong(lastId), ErrorCode.ERR_PARAM);
         }

@@ -34,6 +34,7 @@ import static com.wegame.capi.common.Constants.CUSER_CREDIT_CHANGE;
 
 /**
  * po服务
+ *
  * @author genereate
  */
 @Slf4j
@@ -140,10 +141,10 @@ public class UserService {
      * @param query 查询条件
      * @return id
      */
-     public Long selectId(UserQuery query) {
+    public Long selectId(UserQuery query) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         return userMapper.selectId(query);
-     }
+    }
 
     /**
      * 查询：根据id列表
@@ -203,13 +204,14 @@ public class UserService {
     ///////////////  above auto generated ///////////////
 
     /**
-     * 新增或更新
+     * 新增
      *
      * @param userDo
      * @return
      */
     @DSTransactional
-    public Long insertOrUpdate(UserDo userDo) {
+    public Long insert(UserDo userDo) {
+        long startTime = DateUtil.getCurrentMilli();
         try {
             UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
             Long id = userManualMapper.selectIdByPlayerId(userPo.getPlayerId());
@@ -218,15 +220,13 @@ public class UserService {
                 userMapper.insert(userPo);
                 AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
                 return userPo.getId();
-            } else {
-                // 更新
-                userPo.setId(id);
-                userManualMapper.updateByPlayerId(userPo);
-                return id;
             }
+            return id;
         } catch (Exception e) {
-            log.error("insertOrUpdate err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
+            log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");
+        } finally {
+            log.info("insert cost:{}", DateUtil.getCurrentMilli() - startTime);
         }
     }
 
@@ -243,7 +243,7 @@ public class UserService {
 
     public Void notifyCreditChange(CreditChangeNotifyDto dto) {
         Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(dto.getChannelId());
-        String hash = singleWalletApi.hash(dto.getChannelId(), dto.getPlayerName(), DateUtil.toUTC(dto.getCreateTime()),dto.getRefId() ,privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
+        String hash = singleWalletApi.hash(dto.getChannelId(), dto.getPlayerName(), DateUtil.toUTC(dto.getCreateTime()), dto.getRefId(), privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
         AssertUtil.assertTrue(StringUtils.equals(hash, dto.getHash()), ErrorCode.ERR_PARAM);
         redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, dto.getPlayerName()), 1);
         // todo 麦冬 返回void结果
