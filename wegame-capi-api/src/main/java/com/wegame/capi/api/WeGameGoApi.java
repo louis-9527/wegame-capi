@@ -2,6 +2,7 @@ package com.wegame.capi.api;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.api.base.BaseApi;
 import com.wegame.capi.api.domain.req.wegamego.MinMaxRandomReq;
 import com.wegame.capi.api.domain.req.wegamego.MultiMinMaxRandomReq;
 import com.wegame.capi.api.domain.res.wegamego.WeGameGoCommonRes;
