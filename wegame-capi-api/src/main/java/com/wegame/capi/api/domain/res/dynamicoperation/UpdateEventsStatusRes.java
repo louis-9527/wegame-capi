@@ -1,19 +1,21 @@
 package com.wegame.capi.api.domain.res.dynamicoperation;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class UpdateEventsStatusRes implements Serializable {
     private static final long serialVersionUID = -4392682699211806649L;
+    private static final String SUC_CODE = "200";
     /**
      * 响应状态码
      * 200:成功
@@ -22,19 +24,16 @@ public class UpdateEventsStatusRes implements Serializable {
      * 500:系统错误
      */
     private String status;
-
     /**
      * 响应消息
      */
     private String message;
-
     /**
      * 已发送过的订单号列表
      */
     private String duplicatedBetNos;
 
-
-    public Boolean isSuccess(){
-        return Objects.equals("200",status);
+    public Boolean isSuccess() {
+        return StringUtils.equals(SUC_CODE, status);
     }
 }
