@@ -6,12 +6,14 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.api.base.SingleWalletBaseApi;
 import com.wegame.capi.api.domain.req.dynamicoperation.DynamicOperationReq;
 import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsStatusReq;
 import com.wegame.capi.api.domain.res.dynamicoperation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -25,15 +27,15 @@ import java.net.URI;
 
 @Slf4j
 @Component
-public class DynamicOperationApi extends BaseApi {
+public class DynamicOperationApi extends SingleWalletBaseApi {
     private static final String UPDATE_EVENTS_STATUS = "%s/updateEventsStatus";
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
+    @Value("${dynamic.operation.domain}")
+    String dynamicOperationDomain;
 
     /**
      * 游戏状态上报
-     * @param req
-     * @return
      */
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public UpdateEventsStatusRes updateEventsStatus(UpdateEventsStatusReq req) {
