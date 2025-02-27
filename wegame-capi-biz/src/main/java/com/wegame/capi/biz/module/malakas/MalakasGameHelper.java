@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.malakas;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
@@ -75,6 +76,14 @@ public class MalakasGameHelper {
             .id(Wild.getId())
             .name(Wild.getName())
             .symbolType(SymbolTypeEnum.WILD)
+            .build();
+
+    public static final MalakasSymbolDo MALAKAS_SYMBOL_PLACEHOLDER = MalakasSymbolDo.builder()
+            .id(Symbol1000.getId())
+            .name(Symbol1000.getName())
+            .symbolType(SymbolTypeEnum.COMMON)
+            .symbolSize(S)
+            .symbolGoldBorder(false)
             .build();
 
     public static final GameInfoDo MALAKAS_GAME_INFO = GameInfoDo.builder()
