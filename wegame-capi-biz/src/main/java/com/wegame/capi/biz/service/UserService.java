@@ -226,8 +226,6 @@ public class UserService {
                 userManualMapper.updateByPlayerId(userPo);
                 return id;
             }
-
-
         } catch (Exception e) {
             log.error("insertOrUpdate err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");
