@@ -1,8 +1,5 @@
 package com.wegame.capi.application.controller.platform;
 
-import com.wegame.capi.biz.converter.PlatformCallbackConverter;
-import com.wegame.capi.biz.converter.StatusOfEventsConverter;
-import com.wegame.capi.biz.domain.biz.operation.StatusOfEventsResultDo;
 import com.wegame.capi.biz.manager.DynamicOperationManager;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.domain.response.DynamicOperationResponse;
