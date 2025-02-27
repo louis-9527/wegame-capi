@@ -28,7 +28,7 @@ public class DynamicOperationCallbackController {
     @PostMapping("/getStatusOfEvents")
     public DynamicOperationResponse<List<StatusOfEventsResultVo>> getStatusOfEvents(@RequestBody GetStatusOfEventRequest request) {
         request.validate();
-        List<DynamicOperationStatusOfEventsDo> dynamicOperationStatusOfEventsDos = dynamicOperationManager.queryStatusOfEvents(request);
+        List<DynamicOperationStatusOfEventsDo> dynamicOperationStatusOfEventsDos = dynamicOperationManager.getStatusOfEvents(request);
         return DynamicOperationResponse.build(PlatformCallbackConverter.dynamicOperationStatusOfEventsDoToVos(dynamicOperationStatusOfEventsDos));
     }
 }

@@ -37,13 +37,13 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicOper
 @Service
 public class DynamicOperationManager {
     @Autowired
-    private DynamicOperationEventService dynamicOperationEventService;
+    DynamicOperationEventService dynamicOperationEventService;
     @Autowired
-    private DynamicOperationEventDetailService dynamicOperationEventDetailService;
+    DynamicOperationEventDetailService dynamicOperationEventDetailService;
     @Autowired
-    private DynamicOperationApi dynamicOperationApi;
+    DynamicOperationApi dynamicOperationApi;
     @Autowired
-    private RedisTemplate redisTemplate;
+    RedisTemplate redisTemplate;
 
 
     /**
@@ -131,7 +131,7 @@ public class DynamicOperationManager {
     }
 
 
-    public List<DynamicOperationStatusOfEventsDo> queryStatusOfEvents(GetStatusOfEventRequest request) {
+    public List<DynamicOperationStatusOfEventsDo> getStatusOfEvents(GetStatusOfEventRequest request) {
         GameTypeEnum gameTypeEnum = GameTypeEnum.valueOfId(request.getGameId());
         // 根据条件查询已完成的事件信息
         DynamicOperationQuery operationQuery = DynamicOperationQuery.builder()
