@@ -33,7 +33,7 @@ public class DynamicOperationConvert {
             po.setEventKind(msgDo.getEventKind());
             po.setBonus(msgDo.getBonus());
             po.setChannelId(msgDo.getChannelId());
-            po.setOperatorGameId(msgDo.getOperatorGameId());
+            po.setGameId(msgDo.getGameId());
             po.setEventMsgDetail(msgDo.getEventMsgDetail());
             po.setCreateTime(currentMilli);
         } else {
@@ -63,7 +63,7 @@ public class DynamicOperationConvert {
         eventDo.setBonus(eventPo.getBonus());
         eventDo.setEventId(eventPo.getEventId());
         eventDo.setEventKind(eventPo.getEventKind());
-        eventDo.setOperatorGameId(eventPo.getOperatorGameId());
+        eventDo.setGameId(eventPo.getGameId());
         eventDo.setChannelId(eventPo.getChannelId());
         eventDo.setEffectedTime(eventPo.getEffectedTime());
         eventDo.setExpiredTime(eventPo.getExpiredTime());

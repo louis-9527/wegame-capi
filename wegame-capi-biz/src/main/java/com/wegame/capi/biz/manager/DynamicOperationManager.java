@@ -75,7 +75,8 @@ public class DynamicOperationManager {
             }
             //查询事件详情
             DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(Long.parseLong(recordId), gameType);
-            if (eventDo.getEventStatus() != DynamicOperationEventStatusEnum.NONE) {
+            if (eventDo ==null || eventDo.getEventStatus() != DynamicOperationEventStatusEnum.NONE) {
+                redisTemplate.opsForHash().delete(catch_key, recordId);
                 continue;
             }
             Long eventAmount = dynamicOperationEventDetailService.sumPayoutAmount(Long.parseLong(recordId), gameType);

@@ -28,23 +28,23 @@ public class DynamicOperationPulsarConfig {
     @Autowired
     private DynamicOperationPulsarHandler dynamicOperationPulsarHandler;
 
-    @Bean(name = "dynamicOperationPulsarClient", destroyMethod = "close")
-    public PulsarClient mariaMakilingPulsarClient() throws Exception {
+    @Bean(name = "dynamicOperationMariaMakilingPulsarClient", destroyMethod = "close")
+    public PulsarClient dynamicOperationPulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(dynamicOperationTopicUrl)
                 .build();
     }
 
-    @Bean(name = "dynamicOperationConsumer", destroyMethod = "close")
-    public Consumer<byte[]> dynamicOperationConsumer(@Autowired PulsarClient mariaMakilingPulsarClient) throws PulsarClientException {
+    @Bean(name = "dynamicOperationMariaMakilingConsumer", destroyMethod = "close")
+    public Consumer<byte[]> dynamicOperationConsumer(@Autowired PulsarClient dynamicOperationMariaMakilingPulsarClient) throws PulsarClientException {
         String deadLetterTopic = dynamicOperationTopic;
-        return mariaMakilingPulsarClient.newConsumer(Schema.BYTES)
+        return dynamicOperationMariaMakilingPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
                 .subscriptionName(dynamicOperationGroupMariaMakiling)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener((consumer, msg) -> {
                     String msgData = new String(msg.getData());
-                    log.info("accept dynamicOperation msg:{}",msgData);
+                    log.info("accept dynamicOperation msg:{}", msgData);
                     DynamicOperationMsgDo dynamicOperationMsgDo = JSON.parseObject(msgData, DynamicOperationMsgDo.class);
                     Boolean result = dynamicOperationPulsarHandler.handleMessage(dynamicOperationMsgDo);
                     if (result) {
@@ -56,5 +56,6 @@ public class DynamicOperationPulsarConfig {
                     }
                 }).subscribe();
     }
+
 
 }

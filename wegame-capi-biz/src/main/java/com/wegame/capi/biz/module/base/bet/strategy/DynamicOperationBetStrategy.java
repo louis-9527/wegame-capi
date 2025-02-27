@@ -59,10 +59,6 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     @Autowired
     private DynamicOperationEventConfigService dynamicOperationEventConfigService;
 
-    private static final double[] arr = {1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0,
-            15.0, 20.0, 25.0, 30.0, 40.0, 50.0, 60.0, 70.0,
-            80.0, 90.0, 100.0};
-
 
     @Override
     public BetResultDo<BR> bet(BetDo<BD> betDo) {
@@ -243,17 +239,18 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         return this.convertWheelDoList(dynamicOperationConfigDo.getDetail());
     }
 
-    public static Double findClosest(double input) {
+    public Double findClosest(double input) {
         if (input < 1.1) {
             return null;
         }
+        List<Double> arr = dynamicOperationEventConfigService.getConfigMultipleArray(this.getGame().getGameInfo().getGameType());
         int left = 0;
-        int right = arr.length - 1;
+        int right = arr.size() - 1;
         int result = -1;
 
         while (left <= right) {
             int mid = left + (right - left) / 2;
-            if (arr[mid] <= input) {
+            if (arr.get(mid) <= input) {
                 result = mid;
                 left = mid + 1;
             } else {
@@ -261,7 +258,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
             }
         }
 
-        return result == -1 ? null : arr[result];
+        return result == -1 ? null : arr.get(result);
     }
 
 }

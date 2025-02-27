@@ -31,6 +31,11 @@ public class DynamicOperationQuery implements Serializable {
      * 事件干预类型
      */
     private Integer eventKind;
+
+    /**
+     * 游戏ID
+     */
+    private String gameId;
     /**
      * 玩家名称
      */

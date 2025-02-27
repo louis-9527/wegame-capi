@@ -21,15 +21,16 @@ public class DynamicOperationPulsarHandlerTest extends BaseTest {
 
         String msgDoStr = "{\n" +
                 "    \"playerName\": \"slottest01\",\n" +
-                "    \"bonus\": 2.1,\n" +
-                "    \"eventId\": \"jsbs323\",\n" +
+                "    \"bonus\": 100,\n" +
+                "    \"eventId\": \"7a0de795-0692-4dc5-9f08-4a383b5d311a\",\n" +
                 "    \"eventKind\": 1,\n" +
-                "    \"gameId\": \"ssssjsbs323\",\n" +
-                "    \"operatorGameId\": \"zhumeng001\",\n" +
+                "    \"gameId\": \"zhumeng001\",\n" +
+                "    \"operatorGameId\": \"d596da1e-81a7-4010-9d22-749b9c30c69c\",\n" +
                 "    \"channelId\": \"1050\",\n" +
-                "    \"strategyId\": 1,\n" +
+                "    \"strategyId\": 3,\n" +
                 "    \"orderNo\": \"Sss123\",\n" +
-                "    \"effectedTime\": \"2024-12-01T15:00:00.000Z\",\n" +
+                "    \"effectedTime\": \"2025-02-27T07:31:13.357Z\",\n" +
+                "    \"settlementTime\": \"2025-02-27T07:31:10.000Z\",\n" +
                 "    \"timesOrSessionDuration\": 10\n" +
                 "}";
         DynamicOperationMsgDo msgDo = JSON.parseObject(msgDoStr, DynamicOperationMsgDo.class);

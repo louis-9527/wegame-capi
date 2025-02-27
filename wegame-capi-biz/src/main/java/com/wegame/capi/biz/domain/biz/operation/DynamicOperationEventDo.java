@@ -41,9 +41,9 @@ public class DynamicOperationEventDo {
      */
     private Integer eventKind;
     /**
-     * 游戏ID(Indicates the game's unique ID in the FPMS system in which the intervention event works)
+     * 游戏ID
      */
-    private String operatorGameId;
+    private String gameId;
 
     private String channelId;
     /**
