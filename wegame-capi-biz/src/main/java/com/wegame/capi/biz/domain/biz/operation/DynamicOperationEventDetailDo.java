@@ -53,9 +53,14 @@ public class DynamicOperationEventDetailDo {
     private Long betAmount;
 
     /**
-     * 派奖(消耗金额)
+     * 派奖金额
      */
     private Long payOutAmount;
+
+    /**
+     * 干预金额
+     */
+    private Long eventAmount;
 
     /**
      * 下注时间

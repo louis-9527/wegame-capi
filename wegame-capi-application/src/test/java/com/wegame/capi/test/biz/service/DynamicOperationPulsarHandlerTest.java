@@ -21,7 +21,7 @@ public class DynamicOperationPulsarHandlerTest extends BaseTest {
 
         String msgDoStr = "{\n" +
                 "    \"playerName\": \"slottest01\",\n" +
-                "    \"bonus\": 100.001,\n" +
+                "    \"bonus\": 2.1,\n" +
                 "    \"eventId\": \"jsbs323\",\n" +
                 "    \"eventKind\": 1,\n" +
                 "    \"gameId\": \"ssssjsbs323\",\n" +

@@ -52,7 +52,7 @@ public class DynamicOperationEventService {
             DynamicOperationPo insert = getMongoTemplate(gameType).insert(dynamicOperationPo, dynamicOperationGameEnum.getEventCollectionName());
             String key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameType.getId(), dynamicOperationMsgDo.getPlayerName());
             // 缓存事件信息
-            redisTemplate.opsForSet().add(key, insert.getId());
+            redisTemplate.opsForHash().put(key, String.valueOf(insert.getId()), dynamicOperationMsgDo.getEffectedTime() + "_" + dynamicOperationMsgDo.getExpiredTime());
             return insert.getId();
 
         } catch (MongoWriteException error) {
@@ -77,7 +77,7 @@ public class DynamicOperationEventService {
         if (result.getModifiedCount() > 0) {
             if (eventDo.getEventStatus() != null && (eventDo.getEventStatus() == DynamicOperationEventStatusEnum.FINISH_NORMAL || eventDo.getEventStatus() == DynamicOperationEventStatusEnum.FINISH_EXPIRED)) {
                 String key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameType.getId(), eventDo.getPlayerName());
-                redisTemplate.opsForSet().remove(key, eventDo.getId());
+                redisTemplate.opsForHash().delete(key, String.valueOf(eventDo.getId()));
                 return true;
             }
         }
