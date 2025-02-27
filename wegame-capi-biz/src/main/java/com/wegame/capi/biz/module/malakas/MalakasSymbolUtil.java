@@ -192,7 +192,7 @@ public class MalakasSymbolUtil {
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
-                if (StringUtils.equals(symbolArr[row][col].getId(), symbol.getId())) {
+                if (Objects.nonNull(symbolArr[row][col]) && StringUtils.equals(symbolArr[row][col].getId(), symbol.getId())) {
                     count++;
                 }
             }
