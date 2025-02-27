@@ -9,7 +9,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.domain.req.dynamicoperation.DynamicOperationReq;
 import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsStatusReq;
 import com.wegame.capi.api.domain.res.dynamicoperation.UpdateEventsStatusRes;
-import com.wegame.capi.api.util.DynamicOperationEncryptionUtil;
+import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -27,7 +27,7 @@ import java.net.URI;
 @Component
 public class DynamicOperationApi extends BaseApi {
     @Autowired
-    private DynamicOperationEncryptionUtil dynamicOperationEncryptionUtil;
+    private DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
     private static final String UPDATE_EVENTS_STATUS = "%s/updateEventsStatus";
 
 
@@ -41,8 +41,8 @@ public class DynamicOperationApi extends BaseApi {
         try {
             // 参数加密
             String sign = SecureUtil.md5(JSON.toJSONString(req));
-            String keyString = dynamicOperationEncryptionUtil.encryptWithPublicKey(cpPrivateKey);
-            String ivString = dynamicOperationEncryptionUtil.encryptWithPublicKey(cpPrivateIv);
+            String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateKey);
+            String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateIv);
             //生成header
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("Connection", "Keep-Alive");
@@ -52,7 +52,7 @@ public class DynamicOperationApi extends BaseApi {
 
             DynamicOperationReq operationReq = DynamicOperationReq.builder()
                     .agentCode(cpChannelId)
-                    .message(dynamicOperationEncryptionUtil.encryptWithAES256CBC(JSON.toJSONString(req)))
+                    .message(dynamicOperationEncryptionHelper.encryptWithAES256CBC(JSON.toJSONString(req)))
                     .build();
             RequestEntity<DynamicOperationReq> requestEntity = new RequestEntity<>(operationReq, headers, HttpMethod.POST, URI.create(String.format(UPDATE_EVENTS_STATUS, dynamicOperationDomain)));
             ResponseEntity<UpdateEventsStatusRes> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
