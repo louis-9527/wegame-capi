@@ -5,8 +5,8 @@ import com.wegame.capi.biz.domain.biz.operation.DynamicOperationStatusOfEventsDo
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationStatusOfEventsRecordDO;
 import com.wegame.capi.client.domain.dto.CreditChangeNotifyDto;
 import com.wegame.capi.client.domain.request.CreditChangeNotifyRequest;
-import com.wegame.capi.client.domain.vo.DynamicOperationStatusOfEventsRecordVo;
-import com.wegame.capi.client.domain.vo.DynamicOperationStatusOfEventsVo;
+import com.wegame.capi.client.domain.vo.StatusOfEventsRecordVo;
+import com.wegame.capi.client.domain.vo.StatusOfEventsResultVo;
 import com.wegame.capi.common.utils.AmountUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -33,7 +33,7 @@ public class PlatformCallbackConverter {
                 .build();
     }
 
-    public static List<DynamicOperationStatusOfEventsVo> dynamicOperationStatusOfEventsDoToVos(List<DynamicOperationStatusOfEventsDo> statusOfEventsDos) {
+    public static List<StatusOfEventsResultVo> dynamicOperationStatusOfEventsDoToVos(List<DynamicOperationStatusOfEventsDo> statusOfEventsDos) {
         if (CollectionUtils.isEmpty(statusOfEventsDos)) {
             return new ArrayList<>();
         }
@@ -42,11 +42,11 @@ public class PlatformCallbackConverter {
                 .collect(Collectors.toList());
     }
 
-    public static DynamicOperationStatusOfEventsVo dynamicOperationStatusOfEventsDoToVo(DynamicOperationStatusOfEventsDo statusOfEventsDo) {
+    public static StatusOfEventsResultVo dynamicOperationStatusOfEventsDoToVo(DynamicOperationStatusOfEventsDo statusOfEventsDo) {
         if (statusOfEventsDo == null) {
             return null;
         }
-        DynamicOperationStatusOfEventsVo statusOfEventsVo = new DynamicOperationStatusOfEventsVo();
+        StatusOfEventsResultVo statusOfEventsVo = new StatusOfEventsResultVo();
         statusOfEventsVo.setEventId(statusOfEventsDo.getEventId());
         statusOfEventsVo.setExecuteBouns(statusOfEventsDo.getExecuteBouns() == null ? null : AmountUtil.toBigDecimal(statusOfEventsDo.getExecuteBouns()));
         statusOfEventsVo.setExecuteTime(statusOfEventsDo.getExecuteTime() == null ? null : DateUtil.toUCTByMilli(statusOfEventsDo.getExecuteTime()));
@@ -57,7 +57,7 @@ public class PlatformCallbackConverter {
     }
 
 
-    public static List<DynamicOperationStatusOfEventsRecordVo> statusOfEventsRecordDoToVos(List<DynamicOperationStatusOfEventsRecordDO> recordDos) {
+    public static List<StatusOfEventsRecordVo> statusOfEventsRecordDoToVos(List<DynamicOperationStatusOfEventsRecordDO> recordDos) {
         if (CollectionUtils.isEmpty(recordDos)) {
             return new ArrayList<>();
         }
@@ -66,11 +66,11 @@ public class PlatformCallbackConverter {
                 .collect(Collectors.toList());
     }
 
-    public static DynamicOperationStatusOfEventsRecordVo statusOfEventsRecordDoToVo(DynamicOperationStatusOfEventsRecordDO recordDo) {
+    public static StatusOfEventsRecordVo statusOfEventsRecordDoToVo(DynamicOperationStatusOfEventsRecordDO recordDo) {
         if (recordDo == null) {
             return null;
         }
-        DynamicOperationStatusOfEventsRecordVo recordVo = new DynamicOperationStatusOfEventsRecordVo();
+        StatusOfEventsRecordVo recordVo = new StatusOfEventsRecordVo();
         recordVo.setBetNo(recordDo.getBetNo());
         recordVo.setOrderTime(DateUtil.toUCTByMilli(recordDo.getOrderTime()));
         recordVo.setSettlementTime(DateUtil.toUCTByMilli(recordDo.getSettlementTime()));
