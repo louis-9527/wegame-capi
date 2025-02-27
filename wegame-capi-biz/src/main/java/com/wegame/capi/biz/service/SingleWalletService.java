@@ -83,31 +83,5 @@ public class SingleWalletService {
 
     public BetStatusRes getBetStatus(BetStatusReq req) {
         return singleWalletApi.getBetStatus(req);
-        //        SingleWalletBetStatusEnum betStatus = valueOfCode(betStatusRes.getCode());
-        //        AssertUtil.assertNotNull(betStatus, ErrorCode.ERR_PARAM, "invalid bet status code");
-        //        switch (betStatus) {
-        //            case RECEIVED_BET_REQUEST:
-        //            case COMPLETED_BET_REQUEST:
-        //            case RECEIVED_PAYOUT_REQUEST:
-        //                return Pair.of(betStatusRes.getBetId(), BetStatusEnum.ING);
-        //            case COMPLETED_PAYOUT_REQUEST:
-        //                return Pair.of(betStatusRes.getBetId(), BetStatusEnum.SUCCESS);
-        //            case DATA_NOT_FOUND:
-        //                return Pair.of(betStatusRes.getBetId(), BetStatusEnum.FAIL);
-        //            default:
-        //                throw new BusinessException(ErrorCode.ERR_PARAM, "invalid bet status code");
-        //        }
     }
-
-    //    private BetSingleWalletResultDo queryBetDetail(BetRecordDo betRecordDo) {
-    //        // 此时状态为成功,请求betStatus获取订单betId
-    //        Pair<String, BetStatusEnum> betStatus = getBetStatus(buildStatusReq(betRecordDo));
-    //        // 获取余额
-    //        GetCreditRes creditRes = singleWalletApi.getCredit(GetCreditReqBuilder.build());
-    //        return BetSingleWalletResultDo.builder()
-    //                .betId(betStatus.getLeft())
-    //                .betStatus(betStatus.getRight())
-    //                .credit(creditRes.getCredit())
-    //                .build();
-    //    }
 }

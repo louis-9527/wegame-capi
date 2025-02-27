@@ -87,7 +87,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
             // 计算赔率
             BigDecimal odds = mariaMakilingOddsCalculateStrategy.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
             // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率(1 + 倍率)
-            BigDecimal lineRewardAmount = calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, totalMultiple);
+            BigDecimal lineRewardAmount = calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, totalMultiple.add(BigDecimal.ONE));
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
             // 中奖线明细列表
@@ -174,8 +174,8 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
         }
         if (currentSymbol.isScatterSymbol()) {
             // scatter元素，判断（逻辑上的）上一列的列表元素是否为空： 说明，scatter只能出现在135列
-            int preColumIndex = SCATTER_COLUM_INDEX_LIST.get(SCATTER_COLUM_INDEX_LIST.indexOf(currentColum) - 1);
-            return CollectionUtils.isNotEmpty(treeMap.get(preColumIndex));
+            int preColumnIndex = SCATTER_COLUM_INDEX_LIST.get(SCATTER_COLUM_INDEX_LIST.indexOf(currentColum) - 1);
+            return CollectionUtils.isNotEmpty(treeMap.get(preColumnIndex));
         } else {
             // 非scatter元素，判断上一列的列表是否为空
             return CollectionUtils.isNotEmpty(treeMap.get(currentColum - 1));
@@ -213,9 +213,9 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
     }
 
     private boolean isMatchTargetSymbol(SymbolDo symbol, SymbolDo targetSymbol) {
-        return Objects.equals(symbol, targetSymbol)
-                || Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.WILD)
-                || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
+        return StringUtils.equals(symbol.getId(), targetSymbol.getId())
+                || symbol.isWildSymbol()
+                || targetSymbol.isWildSymbol();
     }
 
     private void validate(RewardHandleDo<SymbolDo> rewardHandle) {

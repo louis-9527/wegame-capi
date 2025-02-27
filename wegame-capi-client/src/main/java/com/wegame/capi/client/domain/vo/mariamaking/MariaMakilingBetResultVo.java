@@ -38,7 +38,7 @@ public class MariaMakilingBetResultVo implements Serializable {
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
     private List<MariaMakilingRewardLineVo> rewardLineList;
-    @ApiModelProperty("免费轮标识,0:否,1:是")
+    @ApiModelProperty("免费轮标识 0:否,1:是")
     private Integer freeWheelFlag;
     @ApiModelProperty("免费轮游戏记录Id列表")
     private List<String> gameRecordIds;

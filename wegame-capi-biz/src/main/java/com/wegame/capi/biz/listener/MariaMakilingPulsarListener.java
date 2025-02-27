@@ -110,7 +110,7 @@ public class MariaMakilingPulsarListener extends AbstractPulsarListener implemen
         if (Objects.isNull(messages) || messages.size() == 0) {
             return;
         }
-        log.info("onConsumer messages size: {}", messages.size());
+        // log.info("onConsumer messages size: {}", messages.size());
         List<BetRecordDo<MariaMakilingGameRecordDo>> addRecordList = new ArrayList<>();
         List<BetRecordDo> updateRecordList = new ArrayList<>();
         Map<Long, MessageId> addMessageIdMap = new HashMap<>(messages.size());
@@ -121,7 +121,7 @@ public class MariaMakilingPulsarListener extends AbstractPulsarListener implemen
                     });
             BetRecordDo<MariaMakilingGameRecordDo> betRecord = mqMessage.getBody();
             if (message.getRedeliveryCount() > 0) {
-                log.info("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount());
+                log.warn("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount());
             }
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 addMessageIdMap.put(betRecord.getId(), message.getMessageId());
@@ -157,7 +157,10 @@ public class MariaMakilingPulsarListener extends AbstractPulsarListener implemen
             //            recordList = null;
         }
         long endTime = System.currentTimeMillis();
-        log.info("batchAdd, size:{}, cost: {} ms", recordList.size(), endTime - startTime);
+        long costTime = endTime - startTime;
+        if (costTime > 50L) {
+            log.info("batchAdd, size:{}, cost: {} ms", recordList.size(), endTime - startTime);
+        }
     }
 
     private void add(List<BetRecordDo<MariaMakilingGameRecordDo>> recordList, Map<Long, MessageId> messageIdMap) {

@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.request;
 
+import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
@@ -28,8 +29,6 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
     private String betRecordId;
     @ApiModelProperty(value = "免费轮游戏记录ID, 非必填", required = false)
     private String gameRecordId;
-    //    private Integer freeSpinsId;
-
 
     @Override
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
@@ -43,7 +42,9 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
                 AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(NumberUtil.isLong(betRecordId), ErrorCode.ERR_PARAM);
                 AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(NumberUtil.isLong(gameRecordId), ErrorCode.ERR_PARAM);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
@@ -55,7 +56,9 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
                 AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(NumberUtil.isLong(betRecordId), ErrorCode.ERR_PARAM);
                 AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(NumberUtil.isLong(gameRecordId), ErrorCode.ERR_PARAM);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }

@@ -22,28 +22,6 @@ import java.util.stream.Collectors;
 @Component
 public class ControllerAspect {
 
-    //    @Around("execution(* com.wegame.capi..Inner*Controller.*(..))")
-    //    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-    //        try {
-    //            Object[] args = joinPoint.getArgs();
-    //            OptRequest optRequest = (OptRequest) Arrays.stream(args)
-    //                    .filter(arg -> arg instanceof OptRequest)
-    //                    .findFirst()
-    //                    .orElse(null);
-    //            OperatorContext.setOperator(Operator.builder()
-    //                    .adminId(Long.valueOf(optRequest.getOptId()))
-    //                    .name(optRequest.getOptName())
-    //                    .build());
-    //        } catch (Exception e) {
-    //            log.error("ControllerAspect.around error: {}", e.getMessage(), e);
-    //        }
-    //        try {
-    //            return joinPoint.proceed();
-    //        } finally {
-    //            OperatorContext.clear();
-    //        }
-    //    }
-
     @Around("execution(* com.wegame.capi..*Controller.*(..))")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
@@ -72,19 +50,17 @@ public class ControllerAspect {
             }
             long costTime = System.currentTimeMillis() - startTime;
             if (costTime > 150L) {
-                log.info("{}#{}, cost times more than 150: {} ms, req={}, res={}",
+                log.info("{}#{}, cost times more than 150: {} ms, req={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
-                        req,
-                        result);
+                        req);
             } else {
-                log.info("{}#{}, cost times: {} ms, req={}, res={}",
+                log.info("{}#{}, cost times: {} ms, req={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
-                        req,
-                        result);
+                        req);
             }
         } catch (Throwable e) {
             log.error("ControllerAspect.statistic error: {}", e.getMessage(), e);
