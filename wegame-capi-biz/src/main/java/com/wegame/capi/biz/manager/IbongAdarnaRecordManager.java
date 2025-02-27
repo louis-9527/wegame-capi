@@ -14,6 +14,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,8 +84,12 @@ public class IbongAdarnaRecordManager extends AbstractRecordManager<IbongAdarnaG
     }
 
     @Override
-    public List<IbongAdarnaGameRecordVo> listGameRecordVo(GameRecordQuery query, GameTypeEnum gameType) {
-        List<IbongAdarnaGameRecordDo> list = gameRecordService.list(query, gameType, IbongAdarnaGameRecordDo.class);
+    public List<IbongAdarnaGameRecordVo> listGameRecordVo(Long betRecordId, GameTypeEnum gameType) {
+        List<IbongAdarnaGameRecordDo> list = gameRecordService.list(GameRecordQuery.builder()
+                .betRecordId(betRecordId)
+                .orderByClause("_id")
+                .direction(Sort.Direction.ASC)
+                .build(), gameType, IbongAdarnaGameRecordDo.class);
         return Optional.ofNullable(list).orElse(Collections.emptyList())
                 .stream()
                 .map(IbongAdarnaGameRecordDo::toRecordVo)
