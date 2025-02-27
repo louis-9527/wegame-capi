@@ -10,7 +10,7 @@ server:
   shutdown: graceful
   tomcat:
     uri-encoding: UTF-8
-    connection-timeout: 3000
+    connection-timeout: 10000
     max-connections: 30000
     keep-alive-timeout: 180000
     accept-count: 10000
@@ -80,9 +80,9 @@ spring:
           driver-class-name: com.mysql.jdbc.Driver
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 10
-            min-idle: 10
-            max-active: 5000
+            initial-size: 500
+            min-idle: 500
+            max-active: 1000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30000

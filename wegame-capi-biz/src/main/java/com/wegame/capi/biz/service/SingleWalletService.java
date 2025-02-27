@@ -17,6 +17,7 @@ import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -35,11 +36,13 @@ import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode
 @Service
 public class SingleWalletService {
 
+    @Value("${api.sport.invoke:true}")
+    boolean invoke;
     @Autowired
     SingleWalletApi singleWalletApi;
 
     public BetSingleWalletResultDo betWithPayout(BetRecordDo betRecordDo) {
-        if (!singleWalletApi.invoke) {
+        if (!invoke) {
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.SUCCESS)
                     .betId(String.valueOf(RandomUtils.nextInt()))

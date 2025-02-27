@@ -81,7 +81,7 @@ spring:
           druid:
             initial-size: 10
             min-idle: 10
-            max-active: 2000
+            max-active: 1000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30000
