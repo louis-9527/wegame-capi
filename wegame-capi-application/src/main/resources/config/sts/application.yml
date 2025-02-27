@@ -10,7 +10,7 @@ server:
   shutdown: graceful
   tomcat:
     uri-encoding: UTF-8
-    connection-timeout: 30000
+    connection-timeout: 10000
     max-connections: 30000
     keep-alive-timeout: 180000
     accept-count: 10000
