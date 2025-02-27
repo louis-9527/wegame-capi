@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.api.base.SingleWalletBaseApi;
 import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.api.domain.req.singlewallet.GetAuthLoginTokenReq;
@@ -19,7 +20,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -27,7 +27,7 @@ import java.net.URI;
 
 @Slf4j
 //@Component
-public class SingleWalletApi extends BaseApi {
+public class SingleWalletApi extends SingleWalletBaseApi {
 
     private static final String AUTH_LOGIN_TOKEN_URL_FORMAT = "%s/authLoginToken";
     private static final String GET_CREDIT_URL_FORMAT = "%s/getCredit";
@@ -89,11 +89,11 @@ public class SingleWalletApi extends BaseApi {
             headers.add("Connection", "Keep-Alive");
             RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(BET_WITH_PAYOUT_URL_FORMAT, singleDomain)));
-           // log.info("before request betWithPayout, timeStamp: {}", System.currentTimeMillis());
+            // log.info("before request betWithPayout, timeStamp: {}", System.currentTimeMillis());
             ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
                     });
-           // log.info("after request betWithPayout, timeStamp: {}", System.currentTimeMillis());
+            // log.info("after request betWithPayout, timeStamp: {}", System.currentTimeMillis());
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             return responseEntity.getBody();
