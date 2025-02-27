@@ -8,24 +8,40 @@ import com.wegame.capi.biz.service.DynamicOperationEventService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pulsar.client.api.Consumer;
+import org.apache.pulsar.client.api.Message;
+import org.apache.pulsar.client.api.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 
 /**
  * 动态运营消息监听
  */
 @Slf4j
 @Service
-public class DynamicOperationPulsarHandler {
+public class DynamicOperationPulsarListener implements MessageListener {
+
     @Autowired
-    private DynamicOperationEventService dynamicOperationEventService;
+    DynamicOperationEventService dynamicOperationEventService;
+
+    @Override
+    public void received(Consumer consumer, Message msg) {
+        String msgData = new String(msg.getData());
+        log.info("accept dynamicOperation msg:{}", msgData);
+        DynamicOperationMsgDo dynamicOperationMsgDo = JSON.parseObject(msgData, DynamicOperationMsgDo.class);
+        Boolean result = handleMessage(dynamicOperationMsgDo);
+        if (result) {
+            try {
+                consumer.acknowledge(msg);
+            } catch (Exception e) {
+                log.error("dynamicOperation msg ack error:", e);
+            }
+        }
+    }
 
     public Boolean handleMessage(DynamicOperationMsgDo msgDo) {
         try {
             if (msgDo.getGameId().equals(GameTypeEnum.MARIA_MAKILING.getId())) {
-
                 Long add = dynamicOperationEventService.add(this.convertEventDo(msgDo), GameTypeEnum.MARIA_MAKILING);
                 if (add == null) {
                     return true;
@@ -53,8 +69,5 @@ public class DynamicOperationPulsarHandler {
         eventDo.setCreateTime(currentMilli);
         eventDo.setUpdateTime(currentMilli);
         return eventDo;
-
     }
-
-
 }

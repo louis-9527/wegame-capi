@@ -5,7 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationMsgDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.listener.DynamicOperationPulsarHandler;
+import com.wegame.capi.biz.listener.DynamicOperationPulsarListener;
 import com.wegame.capi.test.BaseTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public class DynamicOperationPulsarHandlerTest extends BaseTest {
     @Autowired
-    private DynamicOperationPulsarHandler dynamicOperationPulsarHandler;
+    private DynamicOperationPulsarListener dynamicOperationPulsarHandler;
 
     @Test
     public void handleMessage(){
