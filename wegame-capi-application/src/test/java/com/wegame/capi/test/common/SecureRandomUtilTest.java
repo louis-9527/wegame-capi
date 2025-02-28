@@ -31,12 +31,23 @@ public class SecureRandomUtilTest {
     }
 
     @Test
-    public void testRandomIntList() {
+    public void test_randomIntList() {
+        // suc
         int max = 10;
-        int number = 5;
+        int number = 100;
         List<Integer> resultList = SecureRandomUtil.randomIntList(max, number);
         assertEquals(number, resultList.size());
+        System.out.println("test_randomIntList: " + resultList);
         resultList.forEach(num -> assertTrue(num >= 0 && num <= max));
+        // fail
+        IllegalArgumentException thrown1 = assertThrows(IllegalArgumentException.class, () -> {
+            SecureRandomUtil.randomIntList(-1, number);
+        });
+        assertEquals("max is less than 0", thrown1.getMessage());
+        IllegalArgumentException thrown2 = assertThrows(IllegalArgumentException.class, () -> {
+            SecureRandomUtil.randomIntList(max, -2);
+        });
+        assertEquals("number is less than 0", thrown2.getMessage());
     }
 
     @Test

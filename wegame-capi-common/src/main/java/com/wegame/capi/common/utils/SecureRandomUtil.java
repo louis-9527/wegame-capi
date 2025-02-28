@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public class SecureRandomUtil {
 
-    private void SecureRandomUtil(){
+    private SecureRandomUtil(){
     }
 
     /**
@@ -28,7 +28,10 @@ public class SecureRandomUtil {
     }
 
     /**
-     * 批量生成 [0, max) 区间的加密安全随机整数
+     * 生成 [0, max] 区间的加密安全随机整数
+     * @param max maxVal
+     * @param number 数量
+     * @return randomVal list
      */
     public static List<Integer> randomIntList(int max, int number) {
         if (max < 0) {
@@ -38,8 +41,8 @@ public class SecureRandomUtil {
             throw new IllegalArgumentException("number is less than 0");
         }
         List<Integer> randomList = new ArrayList<>();
-        SecureRandom secureRandom = new SecureRandom();
         for (int i = 0; i < number; i++) {
+            SecureRandom secureRandom = new SecureRandom();
             randomList.add(secureRandom.nextInt(max + 1));
         }
         return randomList;
@@ -47,8 +50,11 @@ public class SecureRandomUtil {
 
     /**
      * 生成介于 min 和 max 之间的加密安全随机整数 [min, max] 区间
+     * @param min minVal
+     * @param max maxVal
+     * @return randomVal
      */
-    public static Integer randomIntInRange(int min, int max) {
+    public static int randomIntInRange(int min, int max) {
         if (min < 0) {
             throw new IllegalArgumentException("min is less than 0");
         }
@@ -94,7 +100,7 @@ public class SecureRandomUtil {
      * @param number 数量
      * @return randomVal set
      */
-    public static Set<Integer> generateUniqueRandomNumbers(Integer min, Integer max, Integer number) {
+    public static Set<Integer> generateUniqueRandomNumbers(int min, int max, int number) {
         if (min < 0) {
             throw new IllegalArgumentException("min is less than 0");
         }
