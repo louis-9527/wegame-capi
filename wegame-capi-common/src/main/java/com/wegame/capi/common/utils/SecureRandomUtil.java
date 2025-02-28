@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * 安全随机数工具类
- * @author jayni
+ * @author tutu
  */
 public class SecureRandomUtil {
 
