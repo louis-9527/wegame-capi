@@ -28,6 +28,22 @@ public class DynamicOperationEventDo {
     private Long bonus;
 
     /**
+     * 最小干预金额
+     */
+    private Long minBonus;
+
+    /**
+     * 最大干预金额
+     */
+    private Long maxBonus;
+
+    /**
+     * 已完成干预金额
+     */
+    private Long finishBonus;
+
+
+    /**
      * 干预事件ID
      */
     private String eventId;

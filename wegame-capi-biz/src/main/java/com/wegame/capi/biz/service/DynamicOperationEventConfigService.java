@@ -14,6 +14,7 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.DynamicOperationEventTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
@@ -42,45 +43,27 @@ public class DynamicOperationEventConfigService {
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
-
-    private static final Map<String, List<Double>> configMultipleArray = new ConcurrentHashMap<>();
-
-    public List<DynamicOperationConfigDo> getConfigDetail(DynamicOperationConfigQuery configQuery, GameTypeEnum gameType) {
-        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
-
-        List<DynamicOperationConfigPo> dynamicOperationConfigPos = getMongoTemplate(gameType).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery), DynamicOperationConfigPo.class, dynamicOperationGameEnum.getEventConfigCollectionName());
+    public List<DynamicOperationConfigDo> getConfigDetail(DynamicOperationConfigQuery configQuery,DynamicOperationGameEnum dynamicOperationGame) {
+        List<DynamicOperationConfigPo> dynamicOperationConfigPos = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery), DynamicOperationConfigPo.class, dynamicOperationGame.getEventConfigCollectionName());
         return DynamicOperationConfigConvert.convertDos(dynamicOperationConfigPos);
     }
 
 
-    public List<Double> getConfigMultipleArray(GameTypeEnum gameType) {
-        String key = gameType.getId();
-        return configMultipleArray.computeIfAbsent(key, k -> {
-            DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
 
-            Aggregation aggregation = Aggregation.newAggregation(
-                    Aggregation.group().addToSet("multiple").as("values")
-            );
-            AggregationResults<Document> results = getMongoTemplate(gameType)
-                    .aggregate(aggregation, dynamicOperationGameEnum.getEventConfigCollectionName(), Document.class);
-            return results.getMappedResults().stream()
-                    .flatMap(doc -> ((List<?>) doc.get("values")).stream()) // 提取 "values" 数组
-                    .map(o -> ((Number) o).doubleValue()) // 转换为 Double
-                    .distinct() // 去重
-                    .sorted() // **保证升序排序**
-                    .collect(Collectors.toList());
-        });
+    public List<Double> getConfigMultipleArray(DynamicOperationGameEnum dynamicOperationGame) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.group().addToSet("multiple").as("values")
+        );
+        AggregationResults<Document> results = getMongoTemplate(dynamicOperationGame.getGameType())
+                .aggregate(aggregation, dynamicOperationGame.getEventConfigCollectionName(), Document.class);
+        return results.getMappedResults().stream()
+                .flatMap(doc -> ((List<?>) doc.get("values")).stream()) // 提取 "values" 数组
+                .map(o -> ((Number) o).doubleValue()) // 转换为 Double
+                .distinct() // 去重
+                .sorted() // **保证升序排序**
+                .collect(Collectors.toList());
     }
 
-    @PostConstruct
-    public void init() {
-        try {
-
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize encryption keys", e);
-        }
-    }
 
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
         MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);

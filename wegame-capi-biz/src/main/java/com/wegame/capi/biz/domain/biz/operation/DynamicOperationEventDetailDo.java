@@ -1,13 +1,10 @@
 package com.wegame.capi.biz.domain.biz.operation;
 
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.math.BigDecimal;
 
 @Data
 @SuperBuilder
@@ -17,7 +14,7 @@ public class DynamicOperationEventDetailDo {
 
     private Long id;
 
-    private Long operatorRecordId;
+    private Long eventRecordId;
 
     /**
      * 干预事件ID

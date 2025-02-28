@@ -8,85 +8,109 @@ import com.wegame.capi.api.DynamicOperationApi;
 import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsBetRecordReq;
 import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsStatusReq;
 import com.wegame.capi.biz.builder.req.DynamicOperationStatusReportBuilder;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
-import com.wegame.capi.biz.domain.biz.operation.StatusOfEventsResultDo;
-import com.wegame.capi.biz.domain.biz.operation.StatusOfEventsRecordDo;
+import com.wegame.capi.biz.domain.biz.operation.*;
+import com.wegame.capi.biz.service.DynamicOperationEventConfigService;
 import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
 import com.wegame.capi.biz.service.DynamicOperationEventService;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
+import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicOperationThreadPoolExecutor;
 
-@Service
-public class DynamicOperationManager {
+@Component
+public abstract class AbstractDynamicOperationManager {
+
     @Autowired
     DynamicOperationEventService dynamicOperationEventService;
     @Autowired
     DynamicOperationEventDetailService dynamicOperationEventDetailService;
     @Autowired
+    DynamicOperationEventConfigService dynamicOperationEventConfigService;
+    @Autowired
     DynamicOperationApi dynamicOperationApi;
     @Autowired
     RedisTemplate redisTemplate;
-
 
     /**
      * 获取当前玩家在生效中的干预时间,并按时间取第一条
      *
      * @return
      */
-    public DynamicOperationEventDo getBuyUserNameAndTime(DynamicOperationQuery operationQuery, GameTypeEnum gameType) {
-        String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameType.getId(), operationQuery.getPlayerName());
-        // 缓存事件信息
-        // 判断是否存在干预事件
-        Map<String, String> entries = redisTemplate.opsForHash().entries(catch_key);
-        if (entries.isEmpty()) {
-            return null;
-        }
-        for (Map.Entry<String, String> entry : entries.entrySet()) {
-            String recordId = entry.getKey();
-            String recordTime = entry.getValue();
-            // 判断是否到期
-            String[] recordTimeArray = recordTime.split("_");
+    public DynamicOperationEventDo getEffectedEvent(String playName, DynamicOperationEventKindEnum eventKind) {
+        DynamicOperationGameEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
+
+//        String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, dynamicOperationGame.getGameType().getId(), operationQuery.getPlayerName());
+//        // 缓存事件信息
+//        // 判断是否存在干预事件
+//        Map<String, String> entries = redisTemplate.opsForHash().entries(catch_key);
+//        if (entries.isEmpty()) {
+//
+//            return null;
+//        }
+        GameTypeEnum gameType = this.getDynamicOperationGameEnum().getGameType();
+
+        Map<Long, Pair<Long, Long>> entries = dynamicOperationEventService.getEffectList(playName, gameType.getId(), eventKind, this.getDynamicOperationGameEnum());
+
+        for (Map.Entry<Long, Pair<Long, Long>> entry : entries.entrySet()) {
+            long recordId = entry.getKey();
+            long effectedTime = entry.getValue().getLeft();
+            long expiredTime = entry.getValue().getRight();
             long currentMilli = DateUtil.getCurrentMilli();
-            if (currentMilli < Long.parseLong(recordTimeArray[0])) {
+            if (currentMilli < effectedTime) {
+                // 未到执行时间
                 continue;
             }
             // 判断是否过期
-            if (currentMilli > Long.parseLong(recordTimeArray[1])) {
-                redisTemplate.opsForHash().delete(catch_key, recordId);
+            if (currentMilli > expiredTime) {
+                // todo 过期 删除缓存并触发异步上报
                 continue;
             }
             //查询事件详情
-            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(Long.parseLong(recordId), gameType);
-            if (eventDo ==null || eventDo.getEventStatus() != DynamicOperationEventStatusEnum.NONE) {
-                redisTemplate.opsForHash().delete(catch_key, recordId);
+            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(recordId, dynamicOperationGame);
+            if (eventDo == null || DynamicOperationEventStatusEnum.eventFinish(eventDo.getEventStatus())) {
+                //  todo 已完成 删除缓存并触发异步上报
                 continue;
             }
-            Long eventAmount = dynamicOperationEventDetailService.sumPayoutAmount(Long.parseLong(recordId), gameType);
-            // 金额在10%左右 可视为完成
-            DynamicOperationEventStatusEnum eventStatus = dynamicOperationEventService.getEventStatus(eventDo.getBonus(), eventAmount);
-            if (DynamicOperationEventStatusEnum.NONE != eventStatus) {
-                redisTemplate.opsForHash().delete(catch_key, recordId);
+
+            if (eventDo.getEventStatus() != DynamicOperationEventStatusEnum.NONE) {
+                // 当前事件有未完成的干预事件 不执行
                 continue;
             }
-            eventDo.setInterventionAmount(eventDo.getBonus() - eventAmount);
+
+            // 判断金额
+            if (eventDo.getFinishBonus() >= eventDo.getMinBonus()) {
+                // todo 干预完成,删除缓存并触发异步上报
+                continue;
+            }
+            // 判断需要干预金额
+            long eventAmount = eventDo.getBonus() - eventDo.getFinishBonus();
+            if ((eventDo.getFinishBonus() + eventAmount) > eventDo.getMaxBonus()) {
+                // 如果干预后的金额,比最大金额还大,取最小的
+                eventAmount = eventDo.getMaxBonus() - eventDo.getFinishBonus();
+            }
+            eventDo.setInterventionAmount(eventAmount);
             return eventDo;
         }
 
@@ -96,41 +120,30 @@ public class DynamicOperationManager {
     /**
      * 结果上报
      */
-    @Async(dynamicOperationThreadPoolExecutor)
-    public void asyncEventReport(DynamicOperationEventDo eventDo, Long detailId, String betId, GameTypeEnum gameType) {
+    public void updateEventDetail(DynamicOperationEventDetailDo eventDetailDo, DynamicOperationEventDo eventDo) {
         // 更新 订单状态
-        DynamicOperationEventDetailDo updateReq = DynamicOperationEventDetailDo.builder().id(detailId)
-                .betStatus(BetStatusEnum.SUCCESS)
-                .betId(betId)
-                .build();
-        dynamicOperationEventDetailService.update(updateReq, gameType);
-        // 检查干预事件是否可上报,如果已完成则上报
-        this.tryUpdateEventAndReportEvent(eventDo, gameType);
+        dynamicOperationEventDetailService.update(eventDetailDo, this.getDynamicOperationGameEnum());
+        dynamicOperationEventService.update(eventDo, this.getDynamicOperationGameEnum());
     }
 
-    public void updateEventAndReportExpiredEvent(DynamicOperationEventDo eventDo, GameTypeEnum gameType) {
-        //更新状态
-        DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(eventDo.getId())
-                .eventStatus(DynamicOperationEventStatusEnum.FINISH_EXPIRED).build();
-        dynamicOperationEventService.update(eventUpdate, gameType);
-        // 执行上报
-        this.reportEvent(eventDo.getId(), eventDo.getEventId(), DynamicOperationEventStatusEnum.FINISH_EXPIRED, gameType);
+//    public void updateEventAndReportExpiredEvent(DynamicOperationEventDo eventDo, GameTypeEnum gameType) {
+//        //更新状态
+//        DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(eventDo.getId())
+//                .eventStatus(DynamicOperationEventStatusEnum.FINISH_EXPIRED).build();
+//        dynamicOperationEventService.update(eventUpdate, gameType);
+//        // 执行上报
+//        this.reportEvent(eventDo.getId(), eventDo.getEventId(), DynamicOperationEventStatusEnum.FINISH_EXPIRED, gameType);
+//    }
+
+
+    public Long addEventDetail(DynamicOperationEventDetailDo eventDetailDo) {
+        DynamicOperationGameEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
+        Long addId = dynamicOperationEventDetailService.add(eventDetailDo, dynamicOperationGame);
+        DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(eventDetailDo.getEventRecordId())
+                .eventStatus(DynamicOperationEventStatusEnum.ING).build();
+        dynamicOperationEventService.update(eventUpdate, dynamicOperationGame);
+        return addId;
     }
-
-    public void tryUpdateEventAndReportEvent(DynamicOperationEventDo eventDo, GameTypeEnum gameType) {
-        Long payOutAmount = dynamicOperationEventDetailService.sumPayoutAmount(eventDo.getId(), gameType);
-        DynamicOperationEventStatusEnum eventStatus = dynamicOperationEventService.getEventStatus(eventDo.getBonus(), payOutAmount);
-        if (DynamicOperationEventStatusEnum.FINISH_NORMAL == eventStatus) {
-            //更新状态
-            DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(eventDo.getId())
-                    .eventStatus(eventStatus).build();
-            dynamicOperationEventService.update(eventUpdate, gameType);
-            // 执行上报
-            this.reportEvent(eventDo.getId(), eventDo.getEventId(), DynamicOperationEventStatusEnum.FINISH_NORMAL, gameType);
-        }
-
-    }
-
 
     public List<StatusOfEventsResultDo> getStatusOfEvents(GetStatusOfEventRequest request) {
         GameTypeEnum gameTypeEnum = GameTypeEnum.valueOfId(request.getGameId());
@@ -141,7 +154,7 @@ public class DynamicOperationManager {
                 .effectedStartTime(request.getStartTime().toInstant().toEpochMilli())
                 .effectedEndTime(request.getEndTime().toInstant().toEpochMilli())
                 .build();
-        List<DynamicOperationEventDo> eventDoList = dynamicOperationEventService.queryList(operationQuery, gameTypeEnum);
+        List<DynamicOperationEventDo> eventDoList = dynamicOperationEventService.queryList(operationQuery, this.getDynamicOperationGameEnum());
         // 获取事件明细
         if (CollectionUtils.isEmpty(eventDoList)) {
             return new ArrayList<>();
@@ -149,10 +162,10 @@ public class DynamicOperationManager {
         List<StatusOfEventsResultDo> resultList = new ArrayList<>();
         eventDoList.forEach(eventDo -> {
             DynamicOperationDetailQuery detailQuery = DynamicOperationDetailQuery.builder()
-                    .operationId(eventDo.getId())
+                    .recordId(eventDo.getId())
                     .betStatus(BetStatusEnum.SUCCESS.getCode())
                     .build();
-            List<DynamicOperationEventDetailDo> eventDetailDos = dynamicOperationEventDetailService.queryList(detailQuery, gameTypeEnum);
+            List<DynamicOperationEventDetailDo> eventDetailDos = dynamicOperationEventDetailService.queryList(detailQuery, this.getDynamicOperationGameEnum());
 
             resultList.add(this.getStatusOfEvents(eventDo, eventDetailDos));
         });
@@ -208,24 +221,22 @@ public class DynamicOperationManager {
     /**
      * 事件上报
      *
-     * @param id
-     * @param eventId
      * @param eventStatus
-     * @param gameType
      */
-    public void reportEvent(Long id, String eventId, DynamicOperationEventStatusEnum eventStatus, GameTypeEnum gameType) {
-        Integer eventReportStatus = DynamicOperationEventStatusEnum.convertUpdateEventsStatus(eventStatus);
 
+    @Async(dynamicOperationThreadPoolExecutor)
+    public void reportEvent(Long recordId, String eventId, DynamicOperationEventStatusEnum eventStatus) {
+        Integer eventReportStatus = DynamicOperationEventStatusEnum.convertUpdateEventsStatus(eventStatus);
         AssertUtil.assertNotNull(eventReportStatus, ErrorCode.ERR_PARAM, "eventStatus is error");
         // 获取事件下所有已完成订单
         DynamicOperationDetailQuery detailQuery = DynamicOperationDetailQuery.builder()
-                .operationId(id)
+                .recordId(recordId)
                 .betStatus(BetStatusEnum.SUCCESS.getCode())
                 .orderByClause("createTime")
                 .direction(Sort.Direction.ASC)
                 .build();
 
-        List<DynamicOperationEventDetailDo> eventDetailDos = dynamicOperationEventDetailService.queryList(detailQuery, gameType);
+        List<DynamicOperationEventDetailDo> eventDetailDos = dynamicOperationEventDetailService.queryList(detailQuery, this.getDynamicOperationGameEnum());
 
         List<String> betNos = new ArrayList<>();
         long totalAmount = 0L;
@@ -242,7 +253,6 @@ public class DynamicOperationManager {
                 betRecords.add(DynamicOperationStatusReportBuilder.updateEventsBetRecordReqBuild(eventDetail));
             }
         }
-
         UpdateEventsStatusReq updateEventsStatusReq = UpdateEventsStatusReq.builder()
                 .eventId(eventId)
                 .requestTime(DateUtil.toUCTByMilli(new Date().getTime()))
@@ -255,9 +265,67 @@ public class DynamicOperationManager {
         // 上报
         dynamicOperationApi.updateEventsStatus(updateEventsStatusReq);
         // 更新事件状态为已上报
-        DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(id)
+        DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(recordId)
                 .reportStatus(DynamicOperationReportStatusEnum.FINISH).build();
-        dynamicOperationEventService.update(eventReportUpdate, gameType);
+        dynamicOperationEventService.update(eventReportUpdate, this.getDynamicOperationGameEnum());
     }
+
+
+    public DynamicOperationEventStatusEnum getNewEventStatus(DynamicOperationEventDo eventDo, Long eventAmount) {
+        if (DateUtil.getCurrentMilli() > eventDo.getExpiredTime()) {
+            // 过期
+            return DynamicOperationEventStatusEnum.FINISH_EXPIRED;
+        }
+        long finishBonus = eventDo.getFinishBonus() + eventAmount;
+        if (eventDo.getMinBonus() <= finishBonus) {
+            return DynamicOperationEventStatusEnum.FINISH_NORMAL;
+
+        }
+        return eventDo.getEventStatus();
+    }
+
+
+    /**
+     * 获取事件完成状态
+     * 只会返回 FINISH_NORMAL FINISH_NORMAL ,没有完成返回null;
+     *
+     * @param eventDo
+     * @param eventAmount
+     * @return
+     */
+    public DynamicOperationEventStatusEnum getFinishEventStatus(DynamicOperationEventDo eventDo, Long eventAmount) {
+        if (DateUtil.getCurrentMilli() > eventDo.getExpiredTime()) {
+            // 过期
+            return DynamicOperationEventStatusEnum.FINISH_EXPIRED;
+        }
+        long finishBonus = eventDo.getFinishBonus() + eventAmount;
+        if (eventDo.getMinBonus() <= finishBonus) {
+            return DynamicOperationEventStatusEnum.FINISH_NORMAL;
+
+        }
+        return null;
+    }
+
+    public DynamicOperationEventStatusEnum getNewEventStatus(DynamicOperationEventDo eventDo) {
+        if (DateUtil.getCurrentMilli() > eventDo.getExpiredTime()) {
+            // 过期
+            return DynamicOperationEventStatusEnum.FINISH_EXPIRED;
+        }
+
+        return eventDo.getEventStatus();
+
+    }
+
+    public abstract DynamicOperationGameEnum getDynamicOperationGameEnum();
+
+
+    public List<DynamicOperationConfigDo> getConfigDetail(DynamicOperationConfigQuery configQuery) {
+        return dynamicOperationEventConfigService.getConfigDetail(configQuery, getDynamicOperationGameEnum());
+    }
+
+    public List<Double> getConfigMultipleArray() {
+        return dynamicOperationEventConfigService.getConfigMultipleArray(getDynamicOperationGameEnum());
+    }
+
 
 }

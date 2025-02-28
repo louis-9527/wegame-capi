@@ -1,15 +1,10 @@
 package com.wegame.capi.biz.converter;
 
-import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
-import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailPo;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +21,7 @@ public class DynamicOperationDetailConvert {
         po.setId(detailDo.getId());
         if (OptEnum.ADD.equals(optEnum)) {
             po.setEventId(detailDo.getEventId());
-            po.setOperatorRecordId(detailDo.getOperatorRecordId());
+            po.setOperatorRecordId(detailDo.getEventRecordId());
             po.setOperatorGameId(detailDo.getOperatorGameId());
             po.setBetTime(detailDo.getBetTime());
             po.setBetAmount(detailDo.getBetAmount());
@@ -53,7 +48,7 @@ public class DynamicOperationDetailConvert {
         }
         DynamicOperationEventDetailDo detailDo = new DynamicOperationEventDetailDo();
         detailDo.setId(detailPo.getId());
-        detailDo.setOperatorRecordId(detailPo.getOperatorRecordId());
+        detailDo.setEventRecordId(detailPo.getOperatorRecordId());
         detailDo.setEventId(detailPo.getEventId());
         detailDo.setOperatorGameId(detailPo.getOperatorGameId());
         detailDo.setPlayerId(detailPo.getPlayerId());

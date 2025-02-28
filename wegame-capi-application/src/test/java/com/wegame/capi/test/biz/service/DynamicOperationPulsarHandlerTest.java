@@ -22,7 +22,7 @@ public class DynamicOperationPulsarHandlerTest extends BaseTest {
         String msgDoStr = "{\n" +
                 "    \"playerName\": \"slottest01\",\n" +
                 "    \"bonus\": 100,\n" +
-                "    \"eventId\": \"7a0de795-0692-4dc5-9f08-4a383b5d311a\",\n" +
+                "    \"eventId\": \"2-0692-4dc5-9f08-4a383b5d311a\",\n" +
                 "    \"eventKind\": 1,\n" +
                 "    \"gameId\": \"zhumeng001\",\n" +
                 "    \"operatorGameId\": \"d596da1e-81a7-4010-9d22-749b9c30c69c\",\n" +

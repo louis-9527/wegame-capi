@@ -42,11 +42,6 @@ public class DynamicOperationQuery implements Serializable {
     private String playerName;
 
     /**
-     * 游戏ID
-     */
-    private String operatorGameId;
-
-    /**
      * 事件状态
      */
     private Integer eventStatus;

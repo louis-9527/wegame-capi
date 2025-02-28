@@ -12,13 +12,13 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
-import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.manager.AbstractDynamicOperationManager;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
+import com.wegame.capi.biz.manager.MariaMakilingDynamicOperationManager;
 import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
-import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.bet.strategy.DynamicOperationBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
@@ -29,8 +29,8 @@ import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
-import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -53,6 +53,8 @@ public abstract class AbstractMariaMakilingBetStrategy
     MariaMakilingRecordManager mariaMakilingRecordManager;
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
+    @Autowired
+    MariaMakilingDynamicOperationManager mariaMakilingDynamicOperationManager;
 
 
     @Override
@@ -65,7 +67,11 @@ public abstract class AbstractMariaMakilingBetStrategy
         return mariaMakilingRecordManager;
     }
 
-//    @Override
+    @Override
+    public AbstractDynamicOperationManager getDynamicOperationManager() {
+        return mariaMakilingDynamicOperationManager;
+    }
+    //    @Override
 //    public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo<MariaMakilingBetDo> betDo) {
 //        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
 //            // 非免费轮投注
@@ -120,8 +126,9 @@ public abstract class AbstractMariaMakilingBetStrategy
 
     @Override
     public Pair<Long, Long> getBetAndPayAmount(BetDo<MariaMakilingBetDo> betDo) {
-        return new Pair<>(betDo.getBetDetail().getBetAmount(), betDo.getBetDetail().getPayAmount());
+        return  Pair.of(betDo.getBetDetail().getBetAmount(), betDo.getBetDetail().getPayAmount());
     }
+
     @Override
     public DynamicOperationEventKindEnum eventKindEnum(BetTypeEnum betType) {
         if (BetTypeEnum.NORMAL_BET == betType) {

@@ -27,6 +27,11 @@ public class DynamicOperationCheckResultDo<R> {
      */
     private Long operationRecordDetailId;
 
+    /**
+     * 干预金额
+     */
+    private Long eventAmount;
+
     private  BetRecordDo<R>  betRecordDo;
 
 }

@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service;
 
+import com.google.common.collect.Lists;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
@@ -12,12 +13,14 @@ import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
+import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -25,6 +28,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -41,18 +45,17 @@ public class DynamicOperationEventService {
     private RedisTemplate redisTemplate;
 
 
-    public Long add(DynamicOperationEventDo dynamicOperationMsgDo, GameTypeEnum gameType) {
+    public Long add(DynamicOperationEventDo dynamicOperationMsgDo, DynamicOperationGameEnum dynamicOperationGame) {
         dynamicOperationMsgDo.setId(snowflakeIdGenerator.nextId());
         DynamicOperationPo dynamicOperationPo = DynamicOperationConvert.convertPo(dynamicOperationMsgDo, OptEnum.ADD);
         if (Objects.isNull(dynamicOperationPo)) {
             return null;
         }
         try {
-            DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
-            DynamicOperationPo insert = getMongoTemplate(gameType).insert(dynamicOperationPo, dynamicOperationGameEnum.getEventCollectionName());
-            String key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameType.getId(), dynamicOperationMsgDo.getPlayerName());
+            DynamicOperationPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(dynamicOperationPo, dynamicOperationGame.getEventCollectionName());
+            //    String key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, dynamicOperationGame.getGameType().getId(), dynamicOperationMsgDo.getPlayerName());
             // 缓存事件信息
-            redisTemplate.opsForHash().put(key, String.valueOf(insert.getId()), dynamicOperationMsgDo.getEffectedTime() + "_" + dynamicOperationMsgDo.getExpiredTime());
+            //   redisTemplate.opsForHash().put(key, String.valueOf(insert.getId()), dynamicOperationMsgDo.getEffectedTime() + "_" + dynamicOperationMsgDo.getExpiredTime());
             return insert.getId();
 
         } catch (MongoWriteException error) {
@@ -64,60 +67,54 @@ public class DynamicOperationEventService {
 
     }
 
-    public Boolean update(DynamicOperationEventDo eventDo, GameTypeEnum gameType) {
-        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
+    public Boolean update(DynamicOperationEventDo eventDo, DynamicOperationGameEnum dynamicOperationGame) {
 
         Criteria criteria = new Criteria();
         criteria.and("_id").is(eventDo.getId());
         Query query = new Query(criteria);
-        UpdateResult result = getMongoTemplate(gameType).updateFirst(query,
+        UpdateResult result = getMongoTemplate(dynamicOperationGame.getGameType()).updateFirst(query,
                 DynamicOperationQueryBuilder.buildUpdateById(eventDo),
                 DynamicOperationPo.class,
-                dynamicOperationGameEnum.getEventCollectionName());
-        if (result.getModifiedCount() > 0) {
-            if (eventDo.getEventStatus() != null && (eventDo.getEventStatus() == DynamicOperationEventStatusEnum.FINISH_NORMAL || eventDo.getEventStatus() == DynamicOperationEventStatusEnum.FINISH_EXPIRED)) {
-                String key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameType.getId(), eventDo.getPlayerName());
-                redisTemplate.opsForHash().delete(key, String.valueOf(eventDo.getId()));
-                return true;
-            }
-        }
-        return false;
+                dynamicOperationGame.getEventCollectionName());
+        return result.getModifiedCount() > 0;
 
     }
 
-    public List<DynamicOperationEventDo> queryList(DynamicOperationQuery operationQuery, GameTypeEnum gameType) {
-        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
+    public List<DynamicOperationEventDo> queryList(DynamicOperationQuery operationQuery, DynamicOperationGameEnum dynamicOperationGame) {
 
-        List<DynamicOperationPo> operationPoList = getMongoTemplate(gameType).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), DynamicOperationPo.class, dynamicOperationGameEnum.getEventCollectionName());
+        List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
         // 判断干预金额
         return DynamicOperationConvert.convertDos(operationPoList);
     }
 
 
     /**
-     * 获取当前玩家在生效中的干预时间,并按时间取第一条
+     * 返回干预事件
+     * <id,pair<生效时间、过期时间></>></>
      *
      * @return
      */
-    public List<DynamicOperationEventDo> getBuyUserNameAndTime(DynamicOperationQuery operationQuery, GameTypeEnum gameType) {
-        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
-        List<DynamicOperationPo> operationPoList = getMongoTemplate(gameType).find(DynamicOperationQueryBuilder.buildQueryBuyUserNameAndTime(operationQuery), DynamicOperationPo.class, dynamicOperationGameEnum.getEventCollectionName());
-        // 判断干预金额
-        return DynamicOperationConvert.convertDos(operationPoList);
+    public Map<Long, Pair<Long, Long>> getEffectList(String playName, String gameId, DynamicOperationEventKindEnum eventKind, DynamicOperationGameEnum dynamicOperationGame) {
+        List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, gameId, eventKind), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
+
+        Map<Long, Pair<Long, Long>> resultMap = new HashMap<>();
+        for (DynamicOperationPo operationPo : operationPoList) {
+            resultMap.put(operationPo.getId(), Pair.of(operationPo.getEffectedTime(), operationPo.getExpiredTime()));
+        }
+        return resultMap;
     }
 
-    public DynamicOperationEventDo getById(Long id, GameTypeEnum gameType) {
+    public DynamicOperationEventDo getById(Long id, DynamicOperationGameEnum dynamicOperationGame) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        DynamicOperationGameEnum dynamicOperationGameEnum = DynamicOperationGameEnum.valueOfGameType(gameType);
 
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
-        query.fields().include("_id", "eventId", "playerName", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "reportStatus");
-        DynamicOperationPo operationPo = getMongoTemplate(gameType).findOne(
+        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "reportStatus");
+        DynamicOperationPo operationPo = getMongoTemplate(dynamicOperationGame.getGameType()).findOne(
                 query,
                 DynamicOperationPo.class,
-                dynamicOperationGameEnum.getEventCollectionName());
+                dynamicOperationGame.getEventCollectionName());
         return DynamicOperationConvert.convertDo(operationPo);
     }
 

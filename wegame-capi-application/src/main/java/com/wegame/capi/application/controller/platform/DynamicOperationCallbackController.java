@@ -1,6 +1,6 @@
 package com.wegame.capi.application.controller.platform;
 
-import com.wegame.capi.biz.manager.DynamicOperationManager;
+import com.wegame.capi.biz.manager.MariaMakilingDynamicOperationManager;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.domain.response.DynamicOperationResponse;
 import com.wegame.capi.client.domain.vo.StatusOfEventsResultVo;
@@ -23,7 +23,7 @@ import static com.wegame.capi.client.domain.response.DynamicOperationResponse.bu
 public class DynamicOperationCallbackController {
 
     @Autowired
-    DynamicOperationManager dynamicOperationManager;
+    MariaMakilingDynamicOperationManager mariaMakilingDynamicOperationManager;
 
     // todo 支持多游戏
 
@@ -31,6 +31,6 @@ public class DynamicOperationCallbackController {
     @PostMapping("/getStatusOfEvents")
     public DynamicOperationResponse<List<StatusOfEventsResultVo>> getStatusOfEvents(@RequestBody GetStatusOfEventRequest request) {
         request.validate();
-        return build(toVoList(dynamicOperationManager.getStatusOfEvents(request)));
+        return build(toVoList(mariaMakilingDynamicOperationManager.getStatusOfEvents(request)));
     }
 }

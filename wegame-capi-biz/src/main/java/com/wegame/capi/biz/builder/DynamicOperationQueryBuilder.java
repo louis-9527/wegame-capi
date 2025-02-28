@@ -1,21 +1,23 @@
 package com.wegame.capi.biz.builder;
 
+import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.util.Arrays;
 import java.util.Objects;
+
 
 public class DynamicOperationQueryBuilder {
 
@@ -32,7 +34,7 @@ public class DynamicOperationQueryBuilder {
                 query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
             }
         }
-        query.fields().include("_id","eventId","playerName","bonus","eventKind","gameId","channelId","effectedTime","expiredTime","eventStatus","reportStatus");
+        query.fields().include("_id", "eventId", "playerName", "minBonus", "maxBonus","finishBonus", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "reportStatus");
 
         return query;
 
@@ -64,17 +66,19 @@ public class DynamicOperationQueryBuilder {
     }
 
 
-    public static Query buildQueryBuyUserNameAndTime(DynamicOperationQuery recordQuery) {
+    public static Query buildQueryEffectList(String playName, String gameId, DynamicOperationEventKindEnum eventKind) {
         Criteria criteria = new Criteria();
         long currentMilli = DateUtil.getCurrentMilli();
-        criteria.and("playerName").is(recordQuery.getPlayerName());
-        criteria.and("operatorGameId").is(recordQuery.getOperatorGameId());
-        criteria.and("eventStatus").is(recordQuery.getEventStatus());
-        criteria.and("effectedTime").lte(currentMilli);
+        criteria.and("playerName").is(playName);
+        criteria.and("gameId").is(gameId);
+        criteria.and("eventStatus").in(Lists.newArrayList(DynamicOperationEventStatusEnum.NONE.getCode(),DynamicOperationEventStatusEnum.ING.getCode()));
         criteria.and("expiredTime").gte(currentMilli);
+        criteria.and("eventKind").is(eventKind.getCode());
+        criteria.and("$expr").is(
+                new Document("lt", Arrays.asList("$finishBonus", "$minBonus"))
+        );
         Query query = new Query(criteria);
-        query.fields().include("_id","eventId","playerName","bonus","eventKind","gameId","channelId","effectedTime","expiredTime","eventStatus","reportStatus");
-        //query.limit(1);
+        query.fields().include("_id", "gameId",  "effectedTime", "expiredTime", "eventStatus");
         return query;
     }
 
@@ -92,6 +96,9 @@ public class DynamicOperationQueryBuilder {
         }
         if (Objects.nonNull(eventDo.getUpdateTime())) {
             update.set("updateTime", eventDo.getUpdateTime());
+        }
+        if (Objects.nonNull(eventDo.getFinishBonus())) {
+            update.set("finishBonus", eventDo.getFinishBonus());
         }
 
         return update;

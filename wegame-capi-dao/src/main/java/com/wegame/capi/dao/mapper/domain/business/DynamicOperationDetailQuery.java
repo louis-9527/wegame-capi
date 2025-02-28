@@ -20,7 +20,7 @@ public class DynamicOperationDetailQuery implements Serializable {
     /**
      * 干预事件ID(系统)
      */
-    private Long operationId;
+    private Long recordId;
     /**
      * 订单状态
      */

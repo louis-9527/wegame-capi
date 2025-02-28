@@ -5,7 +5,10 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationMsgDo;
 import com.wegame.capi.biz.service.DynamicOperationEventService;
+import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
+import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
@@ -13,6 +16,8 @@ import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 /**
  * 动态运营消息监听
@@ -42,7 +47,7 @@ public class DynamicOperationPulsarListener implements MessageListener {
     public Boolean handleMessage(DynamicOperationMsgDo msgDo) {
         try {
             if (msgDo.getGameId().equals(GameTypeEnum.MARIA_MAKILING.getId())) {
-                Long add = dynamicOperationEventService.add(this.convertEventDo(msgDo), GameTypeEnum.MARIA_MAKILING);
+                Long add = dynamicOperationEventService.add(this.convertEventDo(msgDo), DynamicOperationGameEnum.MARIA_MAKILING_DYNAMIC);
                 if (add == null) {
                     return true;
                 }
@@ -56,9 +61,17 @@ public class DynamicOperationPulsarListener implements MessageListener {
 
     private DynamicOperationEventDo convertEventDo(DynamicOperationMsgDo msgDo) {
         long currentMilli = DateUtil.getCurrentMilli();
+        BigDecimal bonus = msgDo.getBonus();
+        BigDecimal minBonus = bonus.multiply(new BigDecimal("0.9"));
+        BigDecimal maxBonus = bonus.multiply(new BigDecimal("1.1"));
         DynamicOperationEventDo eventDo = new DynamicOperationEventDo();
         eventDo.setPlayerName(msgDo.getPlayerName());
-        eventDo.setBonus(AmountUtil.toLong(msgDo.getBonus()));
+        eventDo.setBonus(AmountUtil.toLong(bonus));
+        eventDo.setMinBonus(AmountUtil.toLong(minBonus));
+        eventDo.setMaxBonus(AmountUtil.toLong(maxBonus));
+        eventDo.setFinishBonus(0L);
+        eventDo.setEventStatus(DynamicOperationEventStatusEnum.NONE);
+        eventDo.setReportStatus(DynamicOperationReportStatusEnum.NONE);
         eventDo.setEventId(msgDo.getEventId());
         eventDo.setEventKind(msgDo.getEventKind());
         eventDo.setGameId(msgDo.getGameId());

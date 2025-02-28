@@ -38,7 +38,20 @@ public class DynamicOperationPo implements Serializable {
      */
     private Long bonus;
 
+    /**
+     * 最小干预金额
+     */
+    private Long minBonus;
 
+    /**
+     * 最大干预金额
+     */
+    private Long maxBonus;
+
+    /**
+     * 已完成干预金额
+     */
+    private Long finishBonus;
     /**
      * 干预事件类型
      * 代码：1, 表示正常游戏紧急干预.
