@@ -108,7 +108,7 @@ public class SecureRandomUtilTest {
     }
 
     @Test
-    public void testGenerateUniqueRandomNumbers() {
+    public void test_generateUniqueRandomNumbers() {
         // suc
         int min = 1;
         int max = 20;
