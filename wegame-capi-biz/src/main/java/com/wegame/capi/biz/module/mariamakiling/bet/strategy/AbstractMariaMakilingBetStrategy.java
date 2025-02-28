@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.mariamakiling.bet.strategy;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
@@ -26,6 +27,7 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
@@ -173,6 +175,27 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .resultDetail(gameRecord)
                 .betId(betSingleWalletResult.getBetId())
                 .build();
+        MariaMakilingGameRecordDo gameRecord = list.get(0);
+        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
+            return BetResultDo.<MariaMakilingGameRecordDo>builder()
+                    .betRecordId(betRecord.getId())
+                    .gameId(betDo.getGameId())
+                    .betType(betDo.getBetType())
+                    .betSubType(betDo.getBetSubType())
+                    .credit(resultDo.getCredit().longValue())
+                    .overallRewardAmount(gameRecord.getOverallRewardAmount())
+                    .totalPayoutAmount(betRecord.getPayOutAmount())
+                    .resultDetail(gameRecord)
+                    .build();
+        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
+            throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getReason());
+        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
+            throw new BusinessException(ErrorCode.ERR_NET);
+        } else {
+            throw new BusinessException(ErrorCode.ERR_INTER);
+        }
     }
 
     @Override

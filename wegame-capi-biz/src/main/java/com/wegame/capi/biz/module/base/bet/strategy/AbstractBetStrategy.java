@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
@@ -14,7 +13,6 @@ import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.MessageId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,20 +67,16 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
             // 异步更新：更新为->投注成功
             getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult),
                     getGame().getGameInfo().getGameType());
-            return betSingleWalletResult;
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("syncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步更新：更新为->投注失败
             getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult),
                     getGame().getGameInfo().getGameType());
-            throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
-        } else {
-            throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
         }
+        return betSingleWalletResult;
     }
 
     public BetSingleWalletResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
-        long startTime = System.currentTimeMillis();
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
         //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
@@ -105,18 +99,14 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
             // 异步发送更新消息: 更新为投注成功
             pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
-            long endTime = System.currentTimeMillis();
-            log.info("asyncSaveBetRecordAndBetWithPayout cost time: {} ms", endTime - startTime);
             return betSingleWalletResult;
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("asyncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步发送更新消息: 更新为投注成功
             pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult));
-            throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
-        } else {
-            throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
         }
+        return betSingleWalletResult;
     }
 
     private MQMessage<BetRecordDo> buildUpdateMessage(BetRecordDo<R> betRecordDo, BetStatusEnum status, BetSingleWalletResultDo betSingleWalletResult) {
