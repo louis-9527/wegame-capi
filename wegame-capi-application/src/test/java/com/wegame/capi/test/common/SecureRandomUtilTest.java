@@ -153,8 +153,12 @@ public class SecureRandomUtilTest {
         assertTrue(zeroIndex == 0);
         // fail
         IllegalArgumentException thrown1 = assertThrows(IllegalArgumentException.class, () -> {
+            SecureRandomUtil.randomWeights(null);
+        });
+        assertEquals("weights is null or empty", thrown1.getMessage());
+        IllegalArgumentException thrown2 = assertThrows(IllegalArgumentException.class, () -> {
             SecureRandomUtil.randomWeights(new int[]{});
         });
-        assertEquals("weights length is less than 1", thrown1.getMessage());
+        assertEquals("weights is null or empty", thrown2.getMessage());
     }
 }

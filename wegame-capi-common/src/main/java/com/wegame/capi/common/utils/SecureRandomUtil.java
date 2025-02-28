@@ -142,8 +142,8 @@ public class SecureRandomUtil {
      * @throws IllegalArgumentException
      */
     public static int randomWeights(int[] weights) throws IllegalArgumentException {
-        if (weights.length < 1) {
-            throw new IllegalArgumentException("weights length is less than 1");
+        if (weights == null || weights.length == 0) {
+            throw new IllegalArgumentException("weights is null or empty");
         } else if (weights.length == 1) {
             return 0;
         }
