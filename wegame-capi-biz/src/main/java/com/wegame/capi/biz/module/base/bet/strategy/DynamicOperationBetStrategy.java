@@ -9,6 +9,7 @@ import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationCheckResultDo;
@@ -27,16 +28,15 @@ import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicOperationThreadPoolExecutor;
@@ -70,16 +70,22 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         if (!checkResult.getEventResult()) {
             // 未命中干预事件,从结果中获取数据
             BetRecordDo<R> betRecordDo = checkResult.getBetRecordDo();
-            return this.saveBetRecord(betRecordDo);
+            BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
+            return this.buildResult(betRecordDo, resultDo);
         } else {
             BetRecordDo<R> betRecordDo = checkResult.getBetRecordDo();
-            // 调用派彩并返回记录
-            BetResultDo<BR> brBetResultDo = this.saveBetRecord(betRecordDo);
-            // 更新事件明细
+            // 调用派彩
+            BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
+            AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+            BetStatusEnum betStatusEnum = BetStatusEnum.FAIL;
+            if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
+                betStatusEnum = BetStatusEnum.SUCCESS;
+            }
+            // 命中的事件信息
             DynamicOperationEventDo eventDo = checkResult.getDynamicOperationEvent();
-            // 异步
-            this.asyncEventDetailUpdate(eventDo, BetStatusEnum.SUCCESS, checkResult.getOperationRecordDetailId(), betRecordDo.getBetId(), checkResult.getEventAmount());
-            return brBetResultDo;
+            // 异步上报、更新状态
+            this.asyncEventDetailUpdate(eventDo, betStatusEnum, checkResult.getOperationRecordDetailId(), betRecordDo.getBetId(), checkResult.getEventAmount());
+            return this.buildResult(betRecordDo, resultDo);
         }
     }
 
@@ -182,7 +188,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         }, String.format(LOCK_FAIL_TIP, lockName));
     }
 
-    public abstract BetResultDo<BR> saveBetRecord(BetRecordDo<R> rBetRecordDo);
+    public abstract BetResultDo<BR> buildResult(BetRecordDo<R> rBetRecordDo, BetSingleWalletResultDo resultDo);
 
     public abstract BetRecordDo<R> buildBetRecord(Long betRecordId, BetDo<BD> betDo, List<R> list);
 

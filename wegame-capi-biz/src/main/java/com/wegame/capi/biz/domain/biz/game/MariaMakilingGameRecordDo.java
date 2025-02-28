@@ -102,6 +102,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      */
     @Transient
     @JsonIgnore
+    @Override
     public boolean hasRewardFreeSpins() {
         return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel();
     }

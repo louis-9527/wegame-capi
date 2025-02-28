@@ -159,31 +159,15 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
-    public BetResultDo<MariaMakilingGameRecordDo> saveBetRecord(BetRecordDo<MariaMakilingGameRecordDo> betRecord) {
+    public BetResultDo<MariaMakilingGameRecordDo> buildResult(BetRecordDo<MariaMakilingGameRecordDo> betRecord, BetSingleWalletResultDo resultDo) {
         MariaMakilingGameRecordDo gameRecord = betRecord.getGameRecordList().get(0);
-        // 保存投注记录并派奖
-        BetSingleWalletResultDo betSingleWalletResult = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
-        // 组装返回结果
-        return BetResultDo.<MariaMakilingGameRecordDo>builder()
-                .betRecordId(betRecord.getId())
-                .gameId(betRecord.getGameId())
-                .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
-                .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
-                .credit(AmountUtil.toLong(betSingleWalletResult.getCredit()))
-                .overallRewardAmount(gameRecord.getOverallRewardAmount())
-                .totalPayoutAmount(betRecord.getPayOutAmount())
-                .resultDetail(gameRecord)
-                .betId(betSingleWalletResult.getBetId())
-                .build();
-        MariaMakilingGameRecordDo gameRecord = list.get(0);
-        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             return BetResultDo.<MariaMakilingGameRecordDo>builder()
                     .betRecordId(betRecord.getId())
-                    .gameId(betDo.getGameId())
-                    .betType(betDo.getBetType())
-                    .betSubType(betDo.getBetSubType())
+                    .gameId(betRecord.getGameId())
+                    .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
+                    .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
                     .credit(resultDo.getCredit().longValue())
                     .overallRewardAmount(gameRecord.getOverallRewardAmount())
                     .totalPayoutAmount(betRecord.getPayOutAmount())
