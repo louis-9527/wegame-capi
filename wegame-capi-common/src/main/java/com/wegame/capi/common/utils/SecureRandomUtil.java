@@ -6,17 +6,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 /**
  * 安全随机数工具类
+ * @author jayni
  */
 public class SecureRandomUtil {
 
-    private SecureRandomUtil(){
+    private SecureRandomUtil() {
+        throw new IllegalStateException("can not instance class");
     }
 
     /**
      * 生成 [0, max] 区间的加密安全随机整数
+     *
      * @param max maxVal
      * @return randomVal
      */
@@ -29,7 +31,8 @@ public class SecureRandomUtil {
 
     /**
      * 生成 [0, max] 区间的加密安全随机整数
-     * @param max maxVal
+     *
+     * @param max    maxVal
      * @param number 数量
      * @return randomVal list
      */
@@ -41,8 +44,8 @@ public class SecureRandomUtil {
             throw new IllegalArgumentException("number is less than 0");
         }
         List<Integer> randomList = new ArrayList<>();
+        SecureRandom secureRandom = new SecureRandom();
         for (int i = 0; i < number; i++) {
-            SecureRandom secureRandom = new SecureRandom();
             randomList.add(secureRandom.nextInt(max + 1));
         }
         return randomList;
@@ -50,6 +53,7 @@ public class SecureRandomUtil {
 
     /**
      * 生成介于 min 和 max 之间的加密安全随机整数 [min, max] 区间
+     *
      * @param min minVal
      * @param max maxVal
      * @return randomVal
@@ -64,14 +68,14 @@ public class SecureRandomUtil {
         if (min >= max) {
             throw new IllegalArgumentException("min must be less than max");
         }
-        SecureRandom secureRandom = new SecureRandom();
-        return min + secureRandom.nextInt(max - min + 1);
+        return min + new SecureRandom().nextInt(max - min + 1);
     }
 
     /**
      * 批量生成介于 min 和 max 之间的加密安全随机整数 [min, max] 区间
-     * @param min minVal
-     * @param max maxVal
+     *
+     * @param min    minVal
+     * @param max    maxVal
      * @param number 数量
      * @return randomVal list
      */
@@ -95,8 +99,9 @@ public class SecureRandomUtil {
 
     /**
      * 生成 number 个不重复的随机整数 [min, max] 区间
-     * @param min minVal
-     * @param max maxVal
+     *
+     * @param min    minVal
+     * @param max    maxVal
      * @param number 数量
      * @return randomVal set
      */
@@ -121,6 +126,7 @@ public class SecureRandomUtil {
 
     /**
      * randomWeights
+     *
      * @param weights 权重
      * @return randomVal
      * @throws IllegalArgumentException
