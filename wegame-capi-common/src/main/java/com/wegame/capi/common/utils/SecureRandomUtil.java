@@ -40,8 +40,8 @@ public class SecureRandomUtil {
         if (max < 0) {
             throw new IllegalArgumentException("max is less than 0");
         }
-        if (number < 0) {
-            throw new IllegalArgumentException("number is less than 0");
+        if (number < 1) {
+            throw new IllegalArgumentException("number is less than 1");
         }
         List<Integer> randomList = new ArrayList<>();
         SecureRandom secureRandom = new SecureRandom();
@@ -86,9 +86,13 @@ public class SecureRandomUtil {
         if (max < 0) {
             throw new IllegalArgumentException("max is less than 0");
         }
+        if (number < 1) {
+            throw new IllegalArgumentException("number is less than 1");
+        }
         if (min >= max) {
             throw new IllegalArgumentException("min must be less than max");
         }
+
         List<Integer> randomList = new ArrayList<>();
         SecureRandom secureRandom = new SecureRandom();
         for (int i = 0; i < number; i++) {
@@ -112,8 +116,14 @@ public class SecureRandomUtil {
         if (max < 0) {
             throw new IllegalArgumentException("max is less than 0");
         }
+        if (min >= max) {
+            throw new IllegalArgumentException("min must be less than max");
+        }
+        if (number < 1) {
+            throw new IllegalArgumentException("number is less than 1");
+        }
         if (number > (max - min + 1)) {
-            throw new IllegalArgumentException("range is too small to generate " + number + "unique numbers");
+            throw new IllegalArgumentException("min to max range is less than " + number);
         }
         SecureRandom secureRandom = new SecureRandom();
         Set<Integer> uniqueRandomSet = new HashSet<>();
@@ -133,7 +143,7 @@ public class SecureRandomUtil {
      */
     public static int randomWeights(int[] weights) throws IllegalArgumentException {
         if (weights.length < 1) {
-            throw new IllegalArgumentException("weights length is < 1");
+            throw new IllegalArgumentException("weights length is less than 1");
         } else if (weights.length == 1) {
             return 0;
         }
@@ -146,12 +156,12 @@ public class SecureRandomUtil {
             return 0;
         }
         // 生成 [0, sum) 之间的随机数
-        int r = new SecureRandom().nextInt(sumWeight);
+        int randomWeight = new SecureRandom().nextInt(sumWeight);
         // 查找权重对应的下标
-        int t = 0;
+        int totalTempWeight = 0;
         for (int i = 0; i < weights.length; i++) {
-            t += weights[i];
-            if (t > r) {
+            totalTempWeight += weights[i];
+            if (totalTempWeight > randomWeight) {
                 return i;
             }
         }
