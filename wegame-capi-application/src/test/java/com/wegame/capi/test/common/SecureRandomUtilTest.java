@@ -12,18 +12,22 @@ public class SecureRandomUtilTest {
 
     @Test
     public void testRandomInt() {
-        int max = 10;
-        Integer result = SecureRandomUtil.randomInt(max);
-        assertNotNull(result);
-        assertTrue(result >= 0 && result <= max);
     }
 
     @Test
-    public void testRandomIntWithInvalidMax() {
+    public void test_randomInt() {
+        // suc
+        int max = 10;
+        for (int i = 0; i < 100; i++) {
+            int randomInt = SecureRandomUtil.randomInt(max);
+            System.out.println(randomInt);
+            assertTrue(randomInt >= 0 && randomInt <= max);
+        }
+        // fail
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-            SecureRandomUtil.randomInt(0);
+            SecureRandomUtil.randomInt(-1);
         });
-        assertEquals("max is <= 0", thrown.getMessage());
+        assertEquals("max is less than 0", thrown.getMessage());
     }
 
     @Test
