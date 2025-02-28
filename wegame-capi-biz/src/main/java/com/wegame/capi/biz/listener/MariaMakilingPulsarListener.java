@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMakilingGameRecordDo> implements Runnable {
+public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMakilingGameRecordDo>{
 
     private static final String LISTENER_NAME = "MariaMakilingPulsarListener";
     private static final String POOL_NAME = "mariamakiling-consumber-pool-";
