@@ -21,6 +21,7 @@ public class UpdateEventsStatusRes implements Serializable {
      * 200:成功
      * 400:干预事件状态错误
      * 404:干预事件Id不存在
+     * 409:干预事件已完成
      * 500:系统错误
      */
     private String status;
@@ -33,7 +34,15 @@ public class UpdateEventsStatusRes implements Serializable {
      */
     private List<String> duplicatedBetNos;
 
-    public Boolean isSuccess() {
-        return StringUtils.equals(SUC_CODE, status);
+    public Boolean success() {
+        return StringUtils.equals(SUC_CODE, status) || StringUtils.equals("409", status);
+    }
+
+
+    public String fail() {
+        if (StringUtils.equals("404", status)) {
+            return message;
+        }
+        return null;
     }
 }

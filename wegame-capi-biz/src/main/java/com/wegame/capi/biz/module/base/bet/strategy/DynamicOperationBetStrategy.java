@@ -20,11 +20,9 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.manager.AbstractDynamicOperationManager;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
@@ -32,14 +30,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.ThreadPoolExecutor;
 
-import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicOperationThreadPoolExecutor;
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicEventThreadPoolExecutor;
 
 /**
  * 动态运营下注策略
@@ -50,6 +49,10 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     @Autowired
     private DistributeLock distributeLock;
     private static final String LOCK_FAIL_TIP = "Get lock[%s] fail";
+    @Autowired
+    @Qualifier(dynamicEventThreadPoolExecutor)
+    private ThreadPoolExecutor threadPoolExecutor;
+
 
     public abstract AbstractDynamicOperationManager getDynamicOperationManager();
 
@@ -89,38 +92,40 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         }
     }
 
-    @Async(dynamicOperationThreadPoolExecutor)
     public void asyncEventDetailUpdate(DynamicOperationEventDo eventDo, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
-
-        Long finishAmount = null;
-        DynamicOperationEventStatusEnum newEventStatus = getDynamicOperationManager().getFinishEventStatus(eventDo, eventAmount);
-        if (BetStatusEnum.SUCCESS == betStatus) {
-            // 获取最新状态
-            finishAmount = eventDo.getFinishBonus() + eventAmount;
-        }
-
-        // 如果为完成需要更新 事件状态为可干预
-        if (!DynamicOperationEventStatusEnum.eventFinish(newEventStatus)) {
-            if (eventDo.getEventStatus() == DynamicOperationEventStatusEnum.ING) {
-                newEventStatus = DynamicOperationEventStatusEnum.NONE;
+        threadPoolExecutor.execute(() -> {
+            Long finishAmount = null;
+            DynamicOperationEventStatusEnum newEventStatus = getDynamicOperationManager().getFinishEventStatus(eventDo, eventAmount);
+            if (BetStatusEnum.SUCCESS == betStatus) {
+                // 获取最新状态
+                finishAmount = eventDo.getFinishBonus() + eventAmount;
             }
-        }
 
-        DynamicOperationEventDetailDo eventDetailUpdate = DynamicOperationEventDetailDo.builder()
-                .id(detailId)
-                .betStatus(betStatus)
-                .betId(betId)
-                .build();
-        DynamicOperationEventDo eventDoUpdate = DynamicOperationEventDo.builder()
-                .id(eventDo.getId())
-                .finishBonus(finishAmount)
-                .eventStatus(newEventStatus).build();
-        getDynamicOperationManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
-        // 执行上报
-        if (DynamicOperationEventStatusEnum.eventFinish(newEventStatus)) {
-            // 如果完成执行上报
-            getDynamicOperationManager().reportEvent(eventDo.getId(), eventDo.getEventId(), newEventStatus);
-        }
+            // 如果为完成需要更新 事件状态为可干预
+            if (!DynamicOperationEventStatusEnum.eventFinish(newEventStatus)) {
+                if (eventDo.getEventStatus() == DynamicOperationEventStatusEnum.ING) {
+                    newEventStatus = DynamicOperationEventStatusEnum.NONE;
+                }
+            }
+
+            DynamicOperationEventDetailDo eventDetailUpdate = DynamicOperationEventDetailDo.builder()
+                    .id(detailId)
+                    .betStatus(betStatus)
+                    .betId(betId)
+                    .build();
+            DynamicOperationEventDo eventDoUpdate = DynamicOperationEventDo.builder()
+                    .id(eventDo.getId())
+                    .finishBonus(finishAmount)
+                    .eventStatus(newEventStatus).build();
+
+
+            getDynamicOperationManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
+            // 执行上报
+            if (DynamicOperationEventStatusEnum.eventFinish(newEventStatus)) {
+                // 如果完成执行上报
+                getDynamicOperationManager().reportEvent(eventDo.getId(), newEventStatus);
+            }
+        });
     }
 
 
@@ -221,7 +226,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     private DynamicOperationEventDo getEventDo(BetDo<BD> betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        return getDynamicOperationManager().getEffectedEvent(userInfo.getPlayerName(), this.eventKindEnum(betDo.getBetType()));
+        return getDynamicOperationManager().getEffectedEvent(userInfo.getPlayerName(), betDo.getBetType());
     }
 
 
@@ -250,7 +255,6 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     public abstract Pair<Long, Long> getBetAndPayAmount(BetDo<BD> betDo);
 
-    public abstract DynamicOperationEventKindEnum eventKindEnum(BetTypeEnum betType);
 
     public abstract List<WheelDo<WD>> convertWheelDoList(List<Object> wheelConfig);
 

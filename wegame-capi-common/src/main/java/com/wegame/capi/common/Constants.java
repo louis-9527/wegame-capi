@@ -38,7 +38,7 @@ public class Constants {
     public static final int CONST_1000000 = 1000000;
 
 
-    public static final String DYNAMIC_OPERATION_EVENT_EXIST_KEY = "wegame:cuser:dynamic_operation_event_exist_key:%s_%s";
+    public static final String DYNAMIC_OPERATION_EVENT_EXIST_KEY = "wegame:cuser:dynamic_operation_event_exist_key:%s_%s_%s";
 
     public static final String DYNAMIC_OPERATION_EVENT_DETAIL_KEY = "wegame:cuser:dynamic_operation_event_detail_key:%s_%s";
 

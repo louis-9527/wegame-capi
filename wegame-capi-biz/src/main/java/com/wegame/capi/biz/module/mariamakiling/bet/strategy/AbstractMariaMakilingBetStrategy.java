@@ -130,18 +130,6 @@ public abstract class AbstractMariaMakilingBetStrategy
     public Pair<Long, Long> getBetAndPayAmount(BetDo<MariaMakilingBetDo> betDo) {
         return  Pair.of(betDo.getBetDetail().getBetAmount(), betDo.getBetDetail().getPayAmount());
     }
-
-    @Override
-    public DynamicOperationEventKindEnum eventKindEnum(BetTypeEnum betType) {
-        if (BetTypeEnum.NORMAL_BET == betType) {
-            return DynamicOperationEventKindEnum.NORMAL_URGENT;
-        }
-        if (BetTypeEnum.BUY_BET == betType) {
-            return DynamicOperationEventKindEnum.FREE_URGENT;
-        }
-        return null;
-    }
-
     @Override
     public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(Long betRecordId, BetDo<MariaMakilingBetDo> betDo, List<MariaMakilingGameRecordDo> list) {
         // 构建投注记录

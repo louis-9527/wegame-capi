@@ -5,6 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
@@ -34,7 +35,7 @@ public class DynamicOperationQueryBuilder {
                 query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
             }
         }
-        query.fields().include("_id", "eventId", "playerName", "minBonus", "maxBonus","finishBonus", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "reportStatus");
+        query.fields().include("_id", "eventId", "playerName", "minBonus", "maxBonus", "finishBonus", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "reportStatus");
 
         return query;
 
@@ -66,19 +67,19 @@ public class DynamicOperationQueryBuilder {
     }
 
 
-    public static Query buildQueryEffectList(String playName, String gameId, DynamicOperationEventKindEnum eventKind) {
+    public static Query buildQueryEffectList(String playName, String gameId, BetTypeEnum betType) {
         Criteria criteria = new Criteria();
         long currentMilli = DateUtil.getCurrentMilli();
         criteria.and("playerName").is(playName);
         criteria.and("gameId").is(gameId);
-        criteria.and("eventStatus").in(Lists.newArrayList(DynamicOperationEventStatusEnum.NONE.getCode(),DynamicOperationEventStatusEnum.ING.getCode()));
+        criteria.and("eventStatus").in(Lists.newArrayList(DynamicOperationEventStatusEnum.NONE.getCode(), DynamicOperationEventStatusEnum.ING.getCode()));
         criteria.and("expiredTime").gte(currentMilli);
-        criteria.and("eventKind").is(eventKind.getCode());
+        criteria.and("betType").is(betType.getCode());
         criteria.and("$expr").is(
                 new Document("lt", Arrays.asList("$finishBonus", "$minBonus"))
         );
         Query query = new Query(criteria);
-        query.fields().include("_id", "gameId",  "effectedTime", "expiredTime", "eventStatus");
+        query.fields().include("_id", "gameId", "effectedTime", "expiredTime", "eventStatus");
         return query;
     }
 
@@ -99,6 +100,9 @@ public class DynamicOperationQueryBuilder {
         }
         if (Objects.nonNull(eventDo.getFinishBonus())) {
             update.set("finishBonus", eventDo.getFinishBonus());
+        }
+        if (Objects.nonNull(eventDo.getReportFailMsg())) {
+            update.set("reportFailMsg", eventDo.getReportFailMsg());
         }
 
         return update;

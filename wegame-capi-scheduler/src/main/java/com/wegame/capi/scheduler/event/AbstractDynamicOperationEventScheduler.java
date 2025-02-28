@@ -133,7 +133,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
                 .eventStatus(newEventStatus).build();
         getDynamicOperationManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
         if (finish) {
-            getDynamicOperationManager().reportEvent(eventDo.getId(), eventDo.getEventId(), newEventStatus);
+            getDynamicOperationManager().reportEvent(eventDo.getId(),  newEventStatus);
         }
     }
 
@@ -170,7 +170,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
 
     private void eventReportFailHandle(DynamicOperationEventDo eventDo) {
         // 上报失败(未上报)重新触发
-        getDynamicOperationManager().reportEvent(eventDo.getId(), eventDo.getEventId(), eventDo.getEventStatus());
+        getDynamicOperationManager().reportEvent(eventDo.getId(),  eventDo.getEventStatus());
     }
 
     /**
@@ -208,7 +208,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
     private void eventEventIngHandle(DynamicOperationEventDo eventDo) {
         if (eventDo.getExpiredTime() < DateUtil.getCurrentMilli()) {
             // 过期上报
-            getDynamicOperationManager().reportEvent(eventDo.getId(), eventDo.getEventId(), DynamicOperationEventStatusEnum.FINISH_EXPIRED);
+            getDynamicOperationManager().reportEvent(eventDo.getId(),  DynamicOperationEventStatusEnum.FINISH_EXPIRED);
         }
 
     }

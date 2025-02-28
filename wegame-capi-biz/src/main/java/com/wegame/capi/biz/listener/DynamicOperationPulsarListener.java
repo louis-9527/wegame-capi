@@ -5,8 +5,11 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationMsgDo;
 import com.wegame.capi.biz.service.DynamicOperationEventService;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.Constants;
+import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
@@ -15,6 +18,7 @@ import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -47,10 +51,12 @@ public class DynamicOperationPulsarListener implements MessageListener {
     public Boolean handleMessage(DynamicOperationMsgDo msgDo) {
         try {
             if (msgDo.getGameId().equals(GameTypeEnum.MARIA_MAKILING.getId())) {
-                Long add = dynamicOperationEventService.add(this.convertEventDo(msgDo), DynamicOperationGameEnum.MARIA_MAKILING_DYNAMIC);
-                if (add == null) {
+                DynamicOperationEventDo eventDo = this.convertEventDo(msgDo);
+                if (eventDo == null) {
+                    log.warn("dynamicOperation msg content error:{}", JSON.toJSONString(msgDo));
                     return true;
                 }
+                dynamicOperationEventService.add(eventDo, DynamicOperationGameEnum.MARIA_MAKILING_DYNAMIC);
             }
             return true;
         } catch (Exception e) {
@@ -61,10 +67,19 @@ public class DynamicOperationPulsarListener implements MessageListener {
 
     private DynamicOperationEventDo convertEventDo(DynamicOperationMsgDo msgDo) {
         long currentMilli = DateUtil.getCurrentMilli();
+        DynamicOperationEventKindEnum eventKindEnum = DynamicOperationEventKindEnum.valueOfCode(msgDo.getEventKind());
+        if (eventKindEnum == null) {
+            return null;
+        }
+        BetTypeEnum betType = convertBetType(eventKindEnum);
+        if (betType == null) {
+            return null;
+        }
         BigDecimal bonus = msgDo.getBonus();
         BigDecimal minBonus = bonus.multiply(new BigDecimal("0.9"));
         BigDecimal maxBonus = bonus.multiply(new BigDecimal("1.1"));
         DynamicOperationEventDo eventDo = new DynamicOperationEventDo();
+
         eventDo.setPlayerName(msgDo.getPlayerName());
         eventDo.setBonus(AmountUtil.toLong(bonus));
         eventDo.setMinBonus(AmountUtil.toLong(minBonus));
@@ -73,7 +88,8 @@ public class DynamicOperationPulsarListener implements MessageListener {
         eventDo.setEventStatus(DynamicOperationEventStatusEnum.NONE);
         eventDo.setReportStatus(DynamicOperationReportStatusEnum.NONE);
         eventDo.setEventId(msgDo.getEventId());
-        eventDo.setEventKind(msgDo.getEventKind());
+        eventDo.setEventKind(eventKindEnum);
+        eventDo.setBetType(betType);
         eventDo.setGameId(msgDo.getGameId());
         eventDo.setChannelId(msgDo.getChannelId());
         eventDo.setEffectedTime(DateUtil.utcStringToEpochMilli(msgDo.getEffectedTime()));
@@ -82,5 +98,15 @@ public class DynamicOperationPulsarListener implements MessageListener {
         eventDo.setCreateTime(currentMilli);
         eventDo.setUpdateTime(currentMilli);
         return eventDo;
+    }
+
+    private BetTypeEnum convertBetType(DynamicOperationEventKindEnum eventKindEnum) {
+        if (DynamicOperationEventKindEnum.NORMAL_URGENT == eventKindEnum) {
+            return BetTypeEnum.NORMAL_BET;
+        }
+        if (DynamicOperationEventKindEnum.FREE_URGENT == eventKindEnum) {
+            return BetTypeEnum.BUY_BET;
+        }
+        return null;
     }
 }

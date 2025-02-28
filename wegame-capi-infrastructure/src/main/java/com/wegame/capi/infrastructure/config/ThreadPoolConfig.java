@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
-import java.util.concurrent.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +21,8 @@ public class ThreadPoolConfig {
 
     public static final String betRecordThreadPoolExecutor = "betRecordThreadPoolExecutor";
 
-    public static final String dynamicOperationThreadPoolExecutor = "dynamicOperationThreadPoolExecutor";
+    public static final String dynamicEventThreadPoolExecutor = "dynamicEventThreadPoolExecutor";
+    public static final String dynamicEventReportThreadPoolExecutor = "dynamicEventReportThreadPoolExecutor";
 
     public static final String sendMessageThreadPoolExecutor = "sendMessageThreadPoolExecutor";
 
@@ -82,14 +82,27 @@ public class ThreadPoolConfig {
      *
      * @return
      */
-    @Bean(dynamicOperationThreadPoolExecutor)
+    @Bean(dynamicEventThreadPoolExecutor)
     public ThreadPoolExecutor dynamicOperationThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
                 100,
                 60L,
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue(10000),
-                new CustomizableThreadFactory("bet-record-pool-"),
+                new CustomizableThreadFactory("dynamic-event-pool-"),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        return executor;
+    }
+
+    @Bean(dynamicEventReportThreadPoolExecutor)
+    public ThreadPoolExecutor dynamicEventReportThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                100,
+                60L,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue(10000),
+                new CustomizableThreadFactory("dynamic-event-report-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
         return executor;

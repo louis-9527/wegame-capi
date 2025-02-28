@@ -60,7 +60,6 @@ public class DynamicOperationApi extends SingleWalletBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuccess(),ErrorCode.ERR_MIDDLE_PLATFORM);
             return responseEntity.getBody();
         } catch (BusinessException be) {
             log.error("updateEventsStatus err, req: {}, errMsg: {}", req, be.getMessage(), be);

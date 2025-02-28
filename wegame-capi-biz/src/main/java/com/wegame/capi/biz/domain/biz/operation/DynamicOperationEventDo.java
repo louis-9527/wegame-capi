@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.domain.biz.operation;
 
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import lombok.AllArgsConstructor;
@@ -55,7 +57,7 @@ public class DynamicOperationEventDo {
      * 代码:  3,  表示免费游戏紧急干预
      * 代码:  4, 表示免费游戏普通干预
      */
-    private Integer eventKind;
+    private DynamicOperationEventKindEnum eventKind;
     /**
      * 游戏ID
      */
@@ -71,6 +73,8 @@ public class DynamicOperationEventDo {
      * 过期时间
      */
     private Long expiredTime;
+
+    private BetTypeEnum betType;
 
     /**
      * 干预状态(0:干预中(默认),1:已完成(正常),2:已完成(过期))
@@ -95,6 +99,10 @@ public class DynamicOperationEventDo {
      */
     private Long updateTime;
 
+    /**
+     * 上报失败原因
+     */
+    private String reportFailMsg;
 
     /**
      * 本次干预金额

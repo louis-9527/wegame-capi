@@ -10,6 +10,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
@@ -19,6 +20,7 @@ import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,11 +55,9 @@ public class DynamicOperationEventService {
         }
         try {
             DynamicOperationPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(dynamicOperationPo, dynamicOperationGame.getEventCollectionName());
-            //    String key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, dynamicOperationGame.getGameType().getId(), dynamicOperationMsgDo.getPlayerName());
-            // 缓存事件信息
-            //   redisTemplate.opsForHash().put(key, String.valueOf(insert.getId()), dynamicOperationMsgDo.getEffectedTime() + "_" + dynamicOperationMsgDo.getExpiredTime());
+            String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, dynamicOperationMsgDo.getGameId(), dynamicOperationMsgDo.getPlayerName(), dynamicOperationMsgDo.getBetType().getCode());
+            redisTemplate.delete(catch_key);
             return insert.getId();
-
         } catch (MongoWriteException error) {
             if (error.getCode() == 11000) {
                 return null;
@@ -94,13 +94,32 @@ public class DynamicOperationEventService {
      *
      * @return
      */
-    public Map<Long, Pair<Long, Long>> getEffectList(String playName, String gameId, DynamicOperationEventKindEnum eventKind, DynamicOperationGameEnum dynamicOperationGame) {
-        List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, gameId, eventKind), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
-
+    public Map<Long, Pair<Long, Long>> getEffectList(String playName, BetTypeEnum betType, DynamicOperationGameEnum dynamicOperationGame) {
+        String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, dynamicOperationGame.getGameType().getId(), playName, betType.getCode());
+        Map<String, String> entries = redisTemplate.opsForHash().entries(catch_key);
+        if (!entries.isEmpty()) {
+            if (entries.containsKey("-1")) {
+                return new HashMap<>();
+            }
+            Map<Long, Pair<Long, Long>> resultMap = new HashMap<>();
+            for (Map.Entry<String, String> entry : entries.entrySet()) {
+                String[] timeArray = entry.getValue().split("_");
+                resultMap.put(Long.valueOf(entry.getKey()), Pair.of(Long.valueOf(timeArray[0]), Long.valueOf(timeArray[1])));
+            }
+            return resultMap;
+        }
+        List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId(), betType), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
+        if (CollectionUtils.isEmpty(operationPoList)) {
+            redisTemplate.opsForHash().put(catch_key, "-1", null);
+            return new HashMap<>();
+        }
         Map<Long, Pair<Long, Long>> resultMap = new HashMap<>();
+        Map<String, String> catchMap = new HashMap<>();
         for (DynamicOperationPo operationPo : operationPoList) {
             resultMap.put(operationPo.getId(), Pair.of(operationPo.getEffectedTime(), operationPo.getExpiredTime()));
+            catchMap.put(String.valueOf(operationPo.getId()), operationPo.getEffectedTime() + "_" + operationPo.getExpiredTime());
         }
+        redisTemplate.opsForHash().putAll(catch_key, catchMap);
         return resultMap;
     }
 

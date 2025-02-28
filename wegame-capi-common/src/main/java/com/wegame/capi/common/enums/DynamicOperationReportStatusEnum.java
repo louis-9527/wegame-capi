@@ -12,7 +12,8 @@ import java.util.Objects;
 public enum DynamicOperationReportStatusEnum {
 
     NONE(0, "未上报(默认)"),
-    FINISH(1, "已上报");
+    FINISH(1, "已上报"),
+    FAIL(2, "上报失败");
 
     /**
      * 枚举码.
@@ -43,6 +44,7 @@ public enum DynamicOperationReportStatusEnum {
         }
         return null;
     }
+
 
 
 }

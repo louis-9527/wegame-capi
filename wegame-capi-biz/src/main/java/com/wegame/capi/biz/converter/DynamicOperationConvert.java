@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
@@ -30,7 +31,8 @@ public class DynamicOperationConvert {
             po.setExpiredTime(msgDo.getExpiredTime());
             po.setPlayerName(msgDo.getPlayerName());
             po.setEventId(msgDo.getEventId());
-            po.setEventKind(msgDo.getEventKind());
+            po.setEventKind(msgDo.getEventKind().getCode());
+            po.setBetType(msgDo.getBetType().getCode());
             po.setMinBonus(msgDo.getMinBonus());
             po.setMaxBonus(msgDo.getMaxBonus());
             po.setBonus(msgDo.getBonus());
@@ -68,7 +70,7 @@ public class DynamicOperationConvert {
         eventDo.setMaxBonus(eventPo.getMaxBonus());
         eventDo.setFinishBonus(eventPo.getFinishBonus());
         eventDo.setEventId(eventPo.getEventId());
-        eventDo.setEventKind(eventPo.getEventKind());
+        eventDo.setEventKind(DynamicOperationEventKindEnum.valueOfCode(eventPo.getEventKind()));
         eventDo.setGameId(eventPo.getGameId());
         eventDo.setChannelId(eventPo.getChannelId());
         eventDo.setEffectedTime(eventPo.getEffectedTime());

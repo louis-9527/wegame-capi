@@ -42,21 +42,6 @@ public class DynamicOperationEventDetailService {
         return insert.getId();
     }
 
-    public Long sumPayoutAmount(Long operatorRecordId, DynamicOperationGameEnum dynamicOperationGameEnum) {
-        MatchOperation matchOperation = Aggregation.match(Criteria.where("operatorRecordId")
-                .is(operatorRecordId).and("betStatus").in(BetStatusEnum.SUCCESS.getCode(), BetStatusEnum.ING.getCode()));
-
-        // 计算 payOutAmount 的总和
-        GroupOperation sumOperation = Aggregation.group().sum("eventAmount").as("totalEventAmount");
-
-        // 构建 Aggregation 查询管道
-        Aggregation aggregation = Aggregation.newAggregation(matchOperation, sumOperation);
-
-        AggregationResults<Document> results = getMongoTemplate(dynamicOperationGameEnum.getGameType()).aggregate(aggregation, dynamicOperationGameEnum.getEventDetailCollectionName(), Document.class);
-        // 获取 totalPayOutAmount 值
-        Document result = results.getUniqueMappedResult();
-        return result != null ? result.getLong("totalEventAmount") : 0L; // 如果查询为空，返回 0
-    }
 
 
     public List<DynamicOperationEventDetailDo> queryList(DynamicOperationDetailQuery query, DynamicOperationGameEnum dynamicOperationGameEnum) {
