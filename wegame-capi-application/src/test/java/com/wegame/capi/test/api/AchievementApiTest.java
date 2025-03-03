@@ -27,6 +27,7 @@ public class AchievementApiTest extends BaseTest {
     public void test_redeemAchievement() {
         RedeemAchievementRes res = achievementApi.redeemAchievement(buildRedeemAchievementReq());
         System.out.println("test_redeemAchievement ret: {}" + res);
+        // todo assert
     }
 
     private static RedeemAchievementReq buildRedeemAchievementReq() {
