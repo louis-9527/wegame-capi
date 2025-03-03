@@ -2,8 +2,8 @@ package com.wegame.capi.test.api;
 
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.api.WeGameGoApi;
-import com.wegame.capi.api.domain.req.wegamego.MinMaxRandomReq;
-import com.wegame.capi.api.domain.req.wegamego.MultiMinMaxRandomReq;
+import com.wegame.capi.api.domain.req.go.MinMaxRandomReq;
+import com.wegame.capi.api.domain.req.go.MultiMinMaxRandomReq;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;

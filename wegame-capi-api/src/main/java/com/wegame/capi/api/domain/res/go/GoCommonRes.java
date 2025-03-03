@@ -1,4 +1,4 @@
-package com.wegame.capi.api.domain.res.wegamego;
+package com.wegame.capi.api.domain.res.go;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.util.Objects;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class WeGameGoCommonRes<T> implements Serializable {
+public class GoCommonRes<T> implements Serializable {
     private static final long serialVersionUID = 4567899887668567L;
     private static final Integer SUC_CODE = 1;
     private Integer code;

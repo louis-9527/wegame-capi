@@ -23,6 +23,7 @@ public interface UserManualMapper {
     @Update({"<script>",
             " update `user` ",
             " <trim prefix=\"set\" suffixOverrides=\",\"> ",
+            "     <if test=\"pId != null\">`p_id` = #{pId},</if> ",
             "     <if test=\"playerId != null\">`player_id` = #{playerId},</if> ",
             "     <if test=\"playerName != null\">`player_name` = #{playerName},</if> ",
             "     <if test=\"nickName != null\">`nick_name` = #{nickName},</if> ",

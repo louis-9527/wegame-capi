@@ -1,5 +1,6 @@
 package com.wegame.capi.api.domain.req.singlewallet;
 
+import com.wegame.capi.api.domain.req.BaseReq;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class BoxingPayoutReq extends SingleWalletBaseReq {
+public class BoxingPayoutReq extends BaseReq {
     private static final long serialVersionUID = -6363345345418L;
     /**
      * 最小长度为1的付款列表

@@ -124,11 +124,10 @@ knife4j:
     version: v1.0.0
 ## api
 api:
-  sport:
+  game:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: http://sw-http-main-apisix.igo8.me
-    # 是否调用
-    invoke: false
+    invokeSingle: false
     cp:
       platformId: 50
       channelId: 1050
@@ -141,7 +140,6 @@ api:
       privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
   go:
     wegameGoDomain: https://dev-client.sportslive.com.ph/go/game
-    #    wegameGoDomain: http://localhost:9800/go/game
     secretString: cvFz78Gsxtwtpp2Wol6RcHBhRY5wdGEOcdUUhUzGzDDdzzWl94FDrFJKX3Z7nyBm
 pulsar:
   dynamic:
