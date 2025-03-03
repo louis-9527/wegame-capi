@@ -17,6 +17,7 @@ import java.util.List;
 public interface UserMapper {
     /** 增 */
     @Insert({"insert into `user`(" +
+            " `p_id`, " +
             " `player_id`, " +
             " `player_name`, " +
             " `nick_name`, " +
@@ -29,6 +30,7 @@ public interface UserMapper {
             " `create_time`, " +
             " `update_time` " +
             ") values (" +
+            " #{pId}, " +
             " #{playerId}, " +
             " #{playerName}, " +
             " #{nickName}, " +
@@ -45,35 +47,37 @@ public interface UserMapper {
     int insert(UserPo user);
 
     @Insert({"<script>",
-        " insert into `user` (",
-        "   `player_id`, ",
-        "   `player_name`, ",
-        "   `nick_name`, ",
-        "   `user_level`, ",
-        "   `user_name`, ",
-        "   `present_amount`, ",
-        "   `extend`, ",
-        "   `creator`, ",
-        "   `updater`, ",
-        "   `create_time`, ",
-        "   `update_time` ",
-        ") values ",
-        " <foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\" nullable=\"true\"> ",
-        " (",
-        "   #{item.playerId}, ",
-        "   #{item.playerName}, ",
-        "   #{item.nickName}, ",
-        "   #{item.userLevel}, ",
-        "   #{item.userName}, ",
-        "   #{item.presentAmount}, ",
-        "   #{item.extend}, ",
-        "   #{item.creator}, ",
-        "   #{item.updater}, ",
-        "   current_timestamp(), ",
-        "   current_timestamp()",
-        " )",
-        " </foreach> ",
-        "</script>"})
+            " insert into `user` (",
+            "   `p_id`, ",
+            "   `player_id`, ",
+            "   `player_name`, ",
+            "   `nick_name`, ",
+            "   `user_level`, ",
+            "   `user_name`, ",
+            "   `present_amount`, ",
+            "   `extend`, ",
+            "   `creator`, ",
+            "   `updater`, ",
+            "   `create_time`, ",
+            "   `update_time` ",
+            ") values ",
+            " <foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\" nullable=\"true\"> ",
+            " (",
+            "   #{item.pId}, ",
+            "   #{item.playerId}, ",
+            "   #{item.playerName}, ",
+            "   #{item.nickName}, ",
+            "   #{item.userLevel}, ",
+            "   #{item.userName}, ",
+            "   #{item.presentAmount}, ",
+            "   #{item.extend}, ",
+            "   #{item.creator}, ",
+            "   #{item.updater}, ",
+            "   current_timestamp(), ",
+            "   current_timestamp()",
+            " )",
+            " </foreach> ",
+            "</script>"})
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int batchInsert(@Param("list") List<UserPo> list);
 
@@ -82,30 +86,31 @@ public interface UserMapper {
     int deleteById(@Param("id") Long id);
 
     @Delete({"<script>",
-        " delete from `user` where `id` in ",
-        " <foreach item=\"item\" index=\"index\" collection=\"ids\" open=\"(\" separator=\",\" close=\")\" nullable=\"true\"> ",
-        "   #{item} ",
-        " </foreach> ",
-        "</script>"})
+            " delete from `user` where `id` in ",
+            " <foreach item=\"item\" index=\"index\" collection=\"ids\" open=\"(\" separator=\",\" close=\")\" nullable=\"true\"> ",
+            "   #{item} ",
+            " </foreach> ",
+            "</script>"})
     int deleteByIds(@Param("ids") List<Long> ids);
 
     /** 改 */
     @Update({"<script>",
-        " update `user` ",
-        " <trim prefix=\"set\" suffixOverrides=\",\"> ",
-        "     <if test=\"playerId != null\">`player_id` = #{playerId},</if> ",
-        "     <if test=\"playerName != null\">`player_name` = #{playerName},</if> ",
-        "     <if test=\"nickName != null\">`nick_name` = #{nickName},</if> ",
-        "     <if test=\"userLevel != null\">`user_level` = #{userLevel},</if> ",
-        "     <if test=\"userName != null\">`user_name` = #{userName},</if> ",
-        "     <if test=\"presentAmount != null\">`present_amount` = #{presentAmount},</if> ",
-        "     <if test=\"extend != null\">`extend` = #{extend},</if> ",
-        "     <if test=\"creator != null\">`creator` = #{creator},</if> ",
-        "     <if test=\"updater != null\">`updater` = #{updater},</if> ",
-        "     `update_time` = current_timestamp() ",
-        " </trim> ",
-        " where id = #{id} limit 1",
-        "</script>"})
+            " update `user` ",
+            " <trim prefix=\"set\" suffixOverrides=\",\"> ",
+            "     <if test=\"pId != null\">`p_id` = #{pId},</if> ",
+            "     <if test=\"playerId != null\">`player_id` = #{playerId},</if> ",
+            "     <if test=\"playerName != null\">`player_name` = #{playerName},</if> ",
+            "     <if test=\"nickName != null\">`nick_name` = #{nickName},</if> ",
+            "     <if test=\"userLevel != null\">`user_level` = #{userLevel},</if> ",
+            "     <if test=\"userName != null\">`user_name` = #{userName},</if> ",
+            "     <if test=\"presentAmount != null\">`present_amount` = #{presentAmount},</if> ",
+            "     <if test=\"extend != null\">`extend` = #{extend},</if> ",
+            "     <if test=\"creator != null\">`creator` = #{creator},</if> ",
+            "     <if test=\"updater != null\">`updater` = #{updater},</if> ",
+            "     `update_time` = current_timestamp() ",
+            " </trim> ",
+            " where id = #{id} limit 1",
+            "</script>"})
     int updateById(UserPo user);
 
     /** 查 */
@@ -116,6 +121,7 @@ public interface UserMapper {
             " select * from `user` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
+            "     <if test=\"query.pId != null and query.pId != ''\">and p_id like CONCAT('%', #{query.pId}, '%')</if> ",
             "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.playerName != null and query.playerName != ''\">and player_name like CONCAT('%', #{query.playerName}, '%')</if> ",
             "     <if test=\"query.nickName != null and query.nickName != ''\">and nick_name like CONCAT('%', #{query.nickName}, '%')</if> ",
@@ -139,6 +145,7 @@ public interface UserMapper {
             " select id from `user` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
+            "     <if test=\"query.pId != null and query.pId != ''\">and p_id like CONCAT('%', #{query.pId}, '%')</if> ",
             "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.playerName != null and query.playerName != ''\">and player_name like CONCAT('%', #{query.playerName}, '%')</if> ",
             "     <if test=\"query.nickName != null and query.nickName != ''\">and nick_name like CONCAT('%', #{query.nickName}, '%')</if> ",
@@ -173,6 +180,7 @@ public interface UserMapper {
             " select count(1) from `user` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
+            "     <if test=\"query.pId != null and query.pId != ''\">and p_id like CONCAT('%', #{query.pId}, '%')</if> ",
             "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.playerName != null and query.playerName != ''\">and player_name like CONCAT('%', #{query.playerName}, '%')</if> ",
             "     <if test=\"query.nickName != null and query.nickName != ''\">and nick_name like CONCAT('%', #{query.nickName}, '%')</if> ",
@@ -194,6 +202,7 @@ public interface UserMapper {
             " select * from `user` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
+            "     <if test=\"query.pId != null and query.pId != ''\">and p_id like CONCAT('%', #{query.pId}, '%')</if> ",
             "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.playerName != null and query.playerName != ''\">and player_name like CONCAT('%', #{query.playerName}, '%')</if> ",
             "     <if test=\"query.nickName != null and query.nickName != ''\">and nick_name like CONCAT('%', #{query.nickName}, '%')</if> ",
@@ -219,6 +228,7 @@ public interface UserMapper {
             " select id from `user` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
+            "     <if test=\"query.pId != null and query.pId != ''\">and p_id like CONCAT('%', #{query.pId}, '%')</if> ",
             "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.playerName != null and query.playerName != ''\">and player_name like CONCAT('%', #{query.playerName}, '%')</if> ",
             "     <if test=\"query.nickName != null and query.nickName != ''\">and nick_name like CONCAT('%', #{query.nickName}, '%')</if> ",
