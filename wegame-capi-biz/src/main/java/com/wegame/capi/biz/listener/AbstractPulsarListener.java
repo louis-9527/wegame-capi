@@ -31,7 +31,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -58,7 +57,6 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
 
     public abstract int getMaximumPoolSize();
 
-
     @PostConstruct
     public void init() {
         executor = new WsThreadPoolExecutor(getCorePoolSize(),
@@ -83,17 +81,18 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 executor.shutdown();
                 boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
                 if (stopFlag) {
-                    log.info("{} executor graceful stop success ,{},{}",this.getListenerName(),  executor, stopFlag);
+                    log.info("{} executor graceful stop success ,{},{}", this.getListenerName(), executor, stopFlag);
                 } else {
                     log.info("{} executor graceful stop fail after 20 seconds,force stop it,{},{}", this.getListenerName(), executor, stopFlag);
                     executor.shutdownNow();
                 }
             } catch (InterruptedException e) {
-                log.info("{} executorService graceful stop exception,force stop it,{}",this.getListenerName(),  executor);
+                log.info("{} executorService graceful stop exception,force stop it,{}", this.getListenerName(), executor);
                 executor.shutdownNow();
             }
         }
     }
+
 
     @Override
     public void run() {

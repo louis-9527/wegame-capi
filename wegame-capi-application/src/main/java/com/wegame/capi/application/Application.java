@@ -3,7 +3,6 @@ package com.wegame.capi.application;
 import com.alibaba.druid.util.StringUtils;
 import com.wegame.base.domain.ServicePublishMessage;
 import com.wegame.base.enums.EnvEnum;
-import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.base.utils.LarkUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +15,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
-import org.springframework.boot.web.server.GracefulShutdownCallback;
-import org.springframework.boot.web.server.GracefulShutdownResult;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -98,4 +95,6 @@ public class Application implements CommandLineRunner {
             }
         });
     }
+
+
 }

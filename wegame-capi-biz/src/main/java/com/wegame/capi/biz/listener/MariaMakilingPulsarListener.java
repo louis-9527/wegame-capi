@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMakilingGameRecordDo>{
-
     private static final String LISTENER_NAME = "MariaMakilingPulsarListener";
     private static final String POOL_NAME = "mariamakiling-consumber-pool-";
     @Autowired
@@ -65,4 +64,5 @@ public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMak
     public int getMaximumPoolSize() {
         return 1;
     }
+
 }

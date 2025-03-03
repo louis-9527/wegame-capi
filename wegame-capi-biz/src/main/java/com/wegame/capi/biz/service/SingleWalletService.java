@@ -17,6 +17,7 @@ import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -35,11 +36,13 @@ import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode
 @Service
 public class SingleWalletService {
 
+    @Value("${api.game.invokeSingle:true}")
+    boolean invokeSingle;
     @Autowired
     SingleWalletApi singleWalletApi;
 
     public BetSingleWalletResultDo betWithPayout(BetRecordDo betRecordDo) {
-        if (!singleWalletApi.invoke) {
+        if (!invokeSingle) {
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.SUCCESS)
                     .betId(String.valueOf(RandomUtils.nextInt()))
@@ -49,13 +52,12 @@ public class SingleWalletService {
         // 成功或者重复的refId都当作成功处理
         if (commonRes.isSuc()) {
             AssertUtil.assertNotNull(commonRes.getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
-            BetSingleWalletResultDo betSingleWalletResult = BetSingleWalletResultDo.builder()
+            return BetSingleWalletResultDo.builder()
                     .betId(commonRes.getData().getBetId())
                     .refId(commonRes.getData().getRefId())
                     .credit(commonRes.getData().getCredit())
+                    .betStatus(BetStatusEnum.SUCCESS)
                     .build();
-            betSingleWalletResult.setBetStatus(BetStatusEnum.SUCCESS);
-            return betSingleWalletResult;
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
             log.warn("betWithPayout, duplicate reference id. betRecordDo: {}, commonRes: {}", betRecordDo, commonRes);
             // 获取投注状态
