@@ -85,12 +85,15 @@ public class Application implements CommandLineRunner {
         allExecutors.forEach(executorService -> {
             try {
                 executorService.shutdown();
-                if (!executorService.awaitTermination(20, TimeUnit.SECONDS)) {
-                    log.info("executorService graceful stop fail after 20 seconds,force stop it,{}", executorService);
+                boolean stopFlag = executorService.awaitTermination(20, TimeUnit.SECONDS);
+                if (stopFlag) {
+                    log.info("executorService graceful stop success ,{},{}", executorService, stopFlag);
+                } else {
+                    log.info("executorService graceful stop fail after 20 seconds,force stop it,{},{}", executorService, stopFlag);
                     executorService.shutdownNow();
                 }
-                log.info("executorService graceful stop success ,{}", executorService);
             } catch (InterruptedException e) {
+                log.info("executorService graceful stop exception,force stop it,{}", executorService);
                 executorService.shutdownNow();
             }
         });
