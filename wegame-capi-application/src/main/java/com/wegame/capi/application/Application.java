@@ -3,21 +3,30 @@ package com.wegame.capi.application;
 import com.alibaba.druid.util.StringUtils;
 import com.wegame.base.domain.ServicePublishMessage;
 import com.wegame.base.enums.EnvEnum;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.base.utils.LarkUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
+import org.springframework.boot.web.server.GracefulShutdownCallback;
+import org.springframework.boot.web.server.GracefulShutdownResult;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.annotation.PreDestroy;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 启动类
@@ -42,6 +51,9 @@ public class Application implements CommandLineRunner {
     @Value("${lark.robot}")
     private String robot;
 
+    @Autowired
+    List<ExecutorService> allExecutors;
+
     public static void main(String[] args) {
         log.info("Begin Start Application 😄😄😄😄😄😄");
         SpringApplication.run(Application.class, args);
@@ -65,5 +77,22 @@ public class Application implements CommandLineRunner {
             log.warn("send publish message fail:{}", te.getMessage(), te);
         }
 
+    }
+
+    @PreDestroy
+    public void destroy() {
+        log.info("start destroy executor before destroy");
+        allExecutors.forEach(executorService -> {
+            try {
+                executorService.shutdown();
+                if (!executorService.awaitTermination(20, TimeUnit.SECONDS)) {
+                    log.info("executorService graceful stop fail after 20 seconds,force stop it,{}", executorService);
+                    executorService.shutdownNow();
+                }
+                log.info("executorService graceful stop success ,{}", executorService);
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+            }
+        });
     }
 }

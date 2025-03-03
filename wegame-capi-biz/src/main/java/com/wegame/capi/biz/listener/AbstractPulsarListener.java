@@ -31,6 +31,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -78,7 +79,13 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
             getConsumer().close();
         }
         if (executor != null) {
-            executor.shutdownNow();
+            executor.shutdown();
+            while (!executor.isTerminated()) {
+                // 等待线程池中所有任务完成
+                LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(1L));
+
+
+            }
         }
     }
 
