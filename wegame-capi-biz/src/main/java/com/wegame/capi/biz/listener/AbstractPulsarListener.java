@@ -77,7 +77,19 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
             getConsumer().close();
         }
         if (executor != null) {
-            executor.shutdownNow();
+            try {
+                executor.shutdown();
+                boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
+                if (stopFlag) {
+                    log.info("{} executor graceful stop success ,{},{}", this.getListenerName(), executor, stopFlag);
+                } else {
+                    log.info("{} executor graceful stop fail after 20 seconds,force stop it,{},{}", this.getListenerName(), executor, stopFlag);
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                log.info("{} executorService graceful stop exception,force stop it,{}", this.getListenerName(), executor);
+                executor.shutdownNow();
+            }
         }
     }
 
