@@ -12,7 +12,6 @@ public class UserLoginConvert {
             return null;
         return UserLoginDo.builder()
                 .pId(request.getPId())
-               // .channelId(request.getChannelId())
                 .gameId(request.getGameId())
                 .playerId(request.getPlayerId())
                 .playerName(request.getPlayerName())
