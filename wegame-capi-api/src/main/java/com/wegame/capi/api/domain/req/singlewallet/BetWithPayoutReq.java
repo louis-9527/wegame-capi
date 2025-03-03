@@ -21,6 +21,8 @@ public class BetWithPayoutReq extends SingleWalletBaseReq {
 
     private BigDecimal payoutAmount;
 
+    private String ieId;
+
     private BetDetails betDetails;
 
 

@@ -22,6 +22,7 @@ public class BetWithPayoutReqBuilder {
                 .channelId(betRecordDo.getChannelId())
                 .playerName(betRecordDo.getPlayerName())
                 .refId(betRecordDo.getBetSerialNo())
+                .ieId(betRecordDo.getIeId())
                 .createTime(DateUtil.toUTC(new Date(betRecordDo.getCreateTime())))
                 .betAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()))
                 .payoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()))
