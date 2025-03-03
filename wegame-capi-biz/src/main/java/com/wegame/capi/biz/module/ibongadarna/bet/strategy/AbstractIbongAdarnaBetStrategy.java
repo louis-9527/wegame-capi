@@ -1,12 +1,14 @@
 package com.wegame.capi.biz.module.ibongadarna.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.domain.biz.bet.IbongAdarnaBetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
@@ -16,9 +18,11 @@ import com.wegame.capi.biz.module.base.AmountUtil;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGame;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -65,28 +69,40 @@ public abstract class AbstractIbongAdarnaBetStrategy
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
                 AmountUtil.maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
-                        betDo.getBetDetail().getBetAmount(),ibongAdarnaConfig.getMaxRewardMultiple()),
+                        betDo.getBetDetail().getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
                 AmountUtil.reachMaxMultiple(gameRecord.getRewardResult().getTotalRewardAmount(),
-                        betDo.getBetDetail().getBetAmount(),ibongAdarnaConfig.getMaxRewardMultiple()),
+                        betDo.getBetDetail().getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
                 list);
 
         // 保存投注记录并派奖
-        Long userCredit = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        BetSingleWalletResultDo betSingleWalletResultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         // 中大奖处理
-        this.rewardAfterHandle(betDo,AmountUtil.maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
-                betDo.getBetDetail().getBetAmount(),ibongAdarnaConfig.getMaxRewardMultiple()));
+        this.rewardAfterHandle(betDo, AmountUtil.maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
+                betDo.getBetDetail().getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()));
 
-        // 组装返回结果
-        return BetResultDo.<IbongAdarnaGameRecordDo>builder()
-                .betRecordId(betRecord.getId())
-                .gameId(betDo.getGameId())
-                .betType(betDo.getBetType())
-                .betSubType(betDo.getBetSubType())
-                .credit(userCredit)
-                .overallRewardAmount(Objects.nonNull(gameRecord.getRewardResult()) ? gameRecord.getRewardResult().getTotalRewardAmount() : 0L)
-                .totalPayoutAmount(betRecord.getPayOutAmount())
-                .resultDetail(gameRecord)
-                .build();
+        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
+            // 组装返回结果
+            return BetResultDo.<IbongAdarnaGameRecordDo>builder()
+                    .betRecordId(betRecord.getId())
+                    .gameId(betDo.getGameId())
+                    .betType(betDo.getBetType())
+                    .betSubType(betDo.getBetSubType())
+                    .credit(Optional.ofNullable(resultDo.getCredit()).map(BigDecimal::longValue).orElse(0L))
+                    .overallRewardAmount(Objects.nonNull(gameRecord.getRewardResult()) ? gameRecord.getRewardResult().getTotalRewardAmount() : 0L)
+                    .totalPayoutAmount(betRecord.getPayOutAmount())
+                    .resultDetail(gameRecord)
+                    .build();
+        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
+            throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getReason());
+        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
+            throw new BusinessException(ErrorCode.ERR_NET);
+        } else {
+            throw new BusinessException(ErrorCode.ERR_INTER);
+        }
+
+
     }
 
 
