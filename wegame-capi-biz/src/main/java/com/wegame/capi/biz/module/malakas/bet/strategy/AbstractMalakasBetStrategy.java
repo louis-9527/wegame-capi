@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.module.malakas.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
@@ -8,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
@@ -19,6 +21,7 @@ import com.wegame.capi.biz.module.malakas.game.MalakasGame;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,24 +96,33 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 maxAmountControl(totalRewardAmount, betDo.getBetDetail().getPayAmount(), malakasConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getPayAmount(), malakasConfig.getRewardMaxMultiple()),
                 list);
-        // 3、保存投注记录并派奖
-        Long userCredit = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
-        // 4、组装返回结果
-        //// 合计中奖总金额
-        long overallRewardAmount = firstBatchList.stream()
-                .filter(item -> Objects.nonNull(item.getRewardResult()))
-                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                .sum();
-        return BetResultDo.<MalakasBetRecordDetailDo>builder()
-                .betRecordId(betRecord.getId())
-                .gameId(betDo.getGameId())
-                .betType(betDo.getBetType())
-                .betSubType(betDo.getBetSubType())
-                .credit(userCredit)
-                .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetDetail().getPayAmount(), malakasConfig.getRewardMaxMultiple()))
-                .totalPayoutAmount(betRecord.getPayOutAmount())
-                .resultDetail(MalakasBetRecordDetailDo.builder().gameRecordList(firstBatchList).build())
-                .build();
+        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
+        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+
+        if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
+            //        // 4、组装返回结果
+            //// 合计中奖总金额
+            long overallRewardAmount = firstBatchList.stream()
+                    .filter(item -> Objects.nonNull(item.getRewardResult()))
+                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                    .sum();
+            return BetResultDo.<MalakasBetRecordDetailDo>builder()
+                    .betRecordId(betRecord.getId())
+                    .gameId(betDo.getGameId())
+                    .betType(betDo.getBetType())
+                    .betSubType(betDo.getBetSubType())
+                    .credit(resultDo.getCredit().longValue())
+                    .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetDetail().getPayAmount(), malakasConfig.getRewardMaxMultiple()))
+                    .totalPayoutAmount(betRecord.getPayOutAmount())
+                    .resultDetail(MalakasBetRecordDetailDo.builder().gameRecordList(firstBatchList).build())
+                    .build();
+        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
+            throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getReason());
+        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
+            throw new BusinessException(ErrorCode.ERR_NET);
+        } else {
+            throw new BusinessException(ErrorCode.ERR_INTER);
+        }
     }
 
     /**
