@@ -56,7 +56,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
      * @param syncOpt 是否同步写库
      * @return 玩家余额
      */
-    public Long saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
+    public BetSingleWalletResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
         if (syncOpt) {
             return syncSaveBetRecordAndBetWithPayout(betRecordDo);
         } else {
@@ -64,7 +64,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         }
     }
 
-    private Long syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+    private BetSingleWalletResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         Long betRecordId = getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         BetSingleWalletResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
@@ -72,20 +72,16 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
             // 异步更新：更新为->投注成功
             getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult),
                     getGame().getGameInfo().getGameType());
-            return AmountUtil.toLong(betSingleWalletResult.getCredit());
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("syncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步更新：更新为->投注失败
             getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult),
                     getGame().getGameInfo().getGameType());
-            throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
-        } else {
-            throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
         }
+        return betSingleWalletResult;
     }
 
-    public Long asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
-        long startTime = System.currentTimeMillis();
+    public BetSingleWalletResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
         //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
@@ -108,18 +104,14 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
             // 异步发送更新消息: 更新为投注成功
             pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
-            long endTime = System.currentTimeMillis();
-            // log.info("asyncSaveBetRecordAndBetWithPayout cost time: {} ms", endTime - startTime);
-            return AmountUtil.toLong(betSingleWalletResult.getCredit());
+            return betSingleWalletResult;
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("asyncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步发送更新消息: 更新为投注成功
             pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult));
-            throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
-        } else {
-            throw new BusinessException(ErrorCode.ERR_INTER, betSingleWalletResult.getReason());
         }
+        return betSingleWalletResult;
     }
 
     private MQMessage<BetRecordDo> buildUpdateMessage(BetRecordDo<R> betRecordDo, BetStatusEnum status, BetSingleWalletResultDo betSingleWalletResult) {

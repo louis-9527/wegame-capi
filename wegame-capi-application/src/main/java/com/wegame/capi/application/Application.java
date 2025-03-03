@@ -8,6 +8,7 @@ import com.wegame.base.utils.LarkUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +19,11 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.annotation.PreDestroy;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 启动类
@@ -41,6 +47,9 @@ public class Application implements CommandLineRunner {
     private String env;
     @Value("${lark.robot}")
     private String robot;
+
+    @Autowired
+    List<ExecutorService> allExecutors;
 
     public static void main(String[] args) {
         log.info("Begin Start Application 😄😄😄😄😄😄");
@@ -66,4 +75,26 @@ public class Application implements CommandLineRunner {
         }
 
     }
+
+    @PreDestroy
+    public void destroy() {
+        log.info("start destroy executor before destroy");
+        allExecutors.forEach(executorService -> {
+            try {
+                executorService.shutdown();
+                boolean stopFlag = executorService.awaitTermination(20, TimeUnit.SECONDS);
+                if (stopFlag) {
+                    log.info("executorService graceful stop success ,{},{}", executorService, stopFlag);
+                } else {
+                    log.info("executorService graceful stop fail after 20 seconds,force stop it,{},{}", executorService, stopFlag);
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                log.info("executorService graceful stop exception,force stop it,{}", executorService);
+                executorService.shutdownNow();
+            }
+        });
+    }
+
+
 }

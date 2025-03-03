@@ -52,13 +52,12 @@ public class SingleWalletService {
         // 成功或者重复的refId都当作成功处理
         if (commonRes.isSuc()) {
             AssertUtil.assertNotNull(commonRes.getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
-            BetSingleWalletResultDo betSingleWalletResult = BetSingleWalletResultDo.builder()
+            return BetSingleWalletResultDo.builder()
                     .betId(commonRes.getData().getBetId())
                     .refId(commonRes.getData().getRefId())
                     .credit(commonRes.getData().getCredit())
+                    .betStatus(BetStatusEnum.SUCCESS)
                     .build();
-            betSingleWalletResult.setBetStatus(BetStatusEnum.SUCCESS);
-            return betSingleWalletResult;
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
             log.warn("betWithPayout, duplicate reference id. betRecordDo: {}, commonRes: {}", betRecordDo, commonRes);
             // 获取投注状态
