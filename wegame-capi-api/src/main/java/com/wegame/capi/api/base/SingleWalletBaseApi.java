@@ -13,25 +13,25 @@ import org.springframework.beans.factory.annotation.Value;
 @Slf4j
 public class SingleWalletBaseApi extends BaseApi {
 
-    @Value("${api.sport.singleDomain}")
+    @Value("${api.game.singleDomain}")
     public String singleDomain;
     // cp
-    @Value("${api.sport.cp.platformId}")
+    @Value("${api.game.cp.platformId}")
     public String cpPlatformId;
-    @Value("${api.sport.cp.channelId}")
+    @Value("${api.game.cp.channelId}")
     public String cpChannelId;
-    @Value("${api.sport.cp.privateKey}")
+    @Value("${api.game.cp.privateKey}")
     public String cpPrivateKey;
-    @Value("${api.sport.cp.privateIv}")
+    @Value("${api.game.cp.privateIv}")
     public String cpPrivateIv;
     // igo
-    @Value("${api.sport.igo.platformId}")
+    @Value("${api.game.igo.platformId}")
     public String igoPlatformId;
-    @Value("${api.sport.igo.channelId}")
+    @Value("${api.game.igo.channelId}")
     public String igoChannelId;
-    @Value("${api.sport.igo.privateKey}")
+    @Value("${api.game.igo.privateKey}")
     public String igoPrivateKey;
-    @Value("${api.sport.igo.privateIv}")
+    @Value("${api.game.igo.privateIv}")
     public String igoPrivateIv;
 
     public Pair<String, String> getPrivateKeyAndIvByChannelId(String channelId) {
