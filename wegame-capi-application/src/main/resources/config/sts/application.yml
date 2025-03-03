@@ -115,7 +115,7 @@ knife4j:
 ## api
 api:
   game:
-    singleDomain: http://sw-http-main-apisix-stress-v2.igo8.me
+    singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
     invokeSingle: true
     cp:
       platformId: 50

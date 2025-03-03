@@ -26,7 +26,7 @@ public class UserConverter {
             return null;
         }
         UserDo userDo = new UserDo();
-        userDo.setPId(vo.getPlatformId());
+        userDo.setPId(vo.getPId());
         userDo.setPlayerId(vo.getPlayerId());
         userDo.setPlayerName(vo.getPlayerName());
         userDo.setNickName(vo.getNickName());
@@ -47,6 +47,7 @@ public class UserConverter {
         }
         UserDo userDo = new UserDo();
         userDo.setId(po.getId());
+        userDo.setPId(po.getPId());
         userDo.setPlayerId(po.getPlayerId());
         userDo.setPlayerName(po.getPlayerName());
         userDo.setNickName(po.getNickName());
@@ -68,6 +69,7 @@ public class UserConverter {
         Operator operator = OperatorUtil.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserPo po = new UserPo();
+        po.setPId(userDo.getPId());
         po.setPlayerId(userDo.getPlayerId());
         po.setPlayerName(userDo.getPlayerName());
         po.setNickName(userDo.getNickName());
@@ -94,7 +96,7 @@ public class UserConverter {
         }
         UserVo vo = new UserVo();
         vo.setId(Objects.nonNull(userDo.getId()) ? String.valueOf(userDo.getId()) : null);
-        vo.setPlatformId(userDo.getPId());
+        vo.setPId(userDo.getPId());
         vo.setPlayerId(userDo.getPlayerId());
         vo.setPlayerName(userDo.getPlayerName());
         vo.setNickName(userDo.getNickName());
