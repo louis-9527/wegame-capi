@@ -1,37 +1,47 @@
 package com.wegame.capi.api.domain.req;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
 /**
- * 基础请求模型
+ * 单钱包基础请求模型
  */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@ToString
 public class BaseReq implements Serializable {
+    private static final long serialVersionUID = 1L;
     /**
-     * 请求 ID
+     * 平台id
      */
-    private String requestId;
+    @JsonProperty("pId")
+    private String pId;
     /**
-     * 平台 ID
+     * 渠道id
      */
-    private String platformId;
+    private String channelId;
     /**
-     * 代理商 ID
+     * 玩家姓名
      */
-    private String agentId;
+    private String playerName;
     /**
-     * 签名
+     * request hash
      */
-    private String signature;
-
+    private String hash;
+    /**
+     * request refId
+     */
+    private String refId;
+    /**
+     *
+     */
+    private String createTime;
 }

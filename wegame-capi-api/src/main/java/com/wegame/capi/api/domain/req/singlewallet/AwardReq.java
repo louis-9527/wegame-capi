@@ -1,5 +1,6 @@
 package com.wegame.capi.api.domain.req.singlewallet;
 
+import com.wegame.capi.api.domain.req.BaseReq;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AwardReq extends SingleWalletBaseReq {
+public class AwardReq extends BaseReq {
     /**
      * 下注ID
      */
