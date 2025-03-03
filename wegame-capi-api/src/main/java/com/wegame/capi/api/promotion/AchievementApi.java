@@ -5,8 +5,10 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.base.PromotionBaseApi;
+import com.wegame.capi.api.domain.req.promotion.GetAchievementReq;
 import com.wegame.capi.api.domain.req.promotion.RedeemAchievementReq;
 import com.wegame.capi.api.domain.res.CommonRes;
+import com.wegame.capi.api.domain.res.promotion.GetAchievementRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemAchievementRes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,11 +22,36 @@ import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
 
+/**
+ * 成就api
+ */
 @Slf4j
 @Component
 public class AchievementApi extends PromotionBaseApi {
 
     private static final String REDEEM_ACHIEVEMENT_URL_FORMAT = "%s/redeemAchievement";
+    private static final String GET_ACHIEVEMENT_URL_FORMAT = "%s/getAchievement";
+
+    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    public GetAchievementRes getAchievement(GetAchievementReq req) {
+        try {
+            assembleSingleSignature(req);
+            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+            headers.add("Connection", "Keep-Alive");
+            headers.add("uid", req.getPlayerName());
+            RequestEntity<GetAchievementReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_ACHIEVEMENT_URL_FORMAT, promotionDomain)));
+            ResponseEntity<CommonRes<GetAchievementRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetAchievementRes>>() {
+            });
+            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
+            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            return responseEntity.getBody().getData();
+        } catch (Exception e) {
+            log.error("redeemAchievement err, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw e;
+        }
+    }
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public RedeemAchievementRes redeemAchievement(RedeemAchievementReq req) {

@@ -15,7 +15,7 @@ import java.util.List;
 public class RedeemAchievementRes implements Serializable {
     private static final long serialVersionUID = -63633463436518L;
     /**
-     * pic
+     * pId
      */
     private String pId;
     /**
