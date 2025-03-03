@@ -4,8 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.SingleWalletSignatureUtil;
-import com.wegame.capi.api.domain.req.promotion.PromotionBaseReq;
-import com.wegame.capi.api.domain.req.singlewallet.SingleWalletBaseReq;
+import com.wegame.capi.api.domain.req.BaseReq;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -14,25 +13,25 @@ import org.springframework.beans.factory.annotation.Value;
 @Slf4j
 public class PromotionBaseApi extends BaseApi {
 
-    @Value("${api.sport.promotionDomain}")
+    @Value("${api.game.promotionDomain}")
     public String promotionDomain;
     // cp
-    @Value("${api.sport.cp.platformId}")
+    @Value("${api.game.cp.platformId}")
     public String cpPlatformId;
-    @Value("${api.sport.cp.channelId}")
+    @Value("${api.game.cp.channelId}")
     public String cpChannelId;
-    @Value("${api.sport.cp.privateKey}")
+    @Value("${api.game.cp.privateKey}")
     public String cpPrivateKey;
-    @Value("${api.sport.cp.privateIv}")
+    @Value("${api.game.cp.privateIv}")
     public String cpPrivateIv;
     // igo
-    @Value("${api.sport.igo.platformId}")
+    @Value("${api.game.igo.platformId}")
     public String igoPlatformId;
-    @Value("${api.sport.igo.channelId}")
+    @Value("${api.game.igo.channelId}")
     public String igoChannelId;
-    @Value("${api.sport.igo.privateKey}")
+    @Value("${api.game.igo.privateKey}")
     public String igoPrivateKey;
-    @Value("${api.sport.igo.privateIv}")
+    @Value("${api.game.igo.privateIv}")
     public String igoPrivateIv;
 
     public Pair<String, String> getPrivateKeyAndIvByChannelId(String channelId) {
@@ -45,7 +44,7 @@ public class PromotionBaseApi extends BaseApi {
         throw new BusinessException(ErrorCode.ERR_PARAM);
     }
 
-    public void assembleSingleSignature(PromotionBaseReq req) {
+    public void assembleSingleSignature(BaseReq req) {
         String channelId = getChannelId(req.getPId());
         Pair<String, String> privateKeyAndIv = getPrivateKeyAndIv(req.getPId());
         String hash = hash(channelId, req.getPlayerName(), req.getCreateTime(), req.getRefId(), privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
