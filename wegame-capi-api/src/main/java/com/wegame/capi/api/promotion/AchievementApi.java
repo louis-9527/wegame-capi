@@ -34,9 +34,6 @@ import java.net.URI;
 public class AchievementApi extends PromotionBaseApi {
 
     private static final String REDEEM_ACHIEVEMENT_URL_FORMAT = "%s/redeemAchievement";
-    private static final String GET_CREDIT_URL_FORMAT = "%s/getCredit";
-    private static final String BET_WITH_PAYOUT_URL_FORMAT = "%s/betWithPayout";
-    private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public RedeemAchievementRes redeemAchievement(RedeemAchievementReq req) {
