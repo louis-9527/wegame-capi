@@ -125,6 +125,7 @@ knife4j:
 ## api
 api:
   sport:
+    promotionDomain: http://reward-http.igo8.me
     singleDomain: http://sw-http-main-apisix.igo8.me
     # 是否调用
     invoke: false
