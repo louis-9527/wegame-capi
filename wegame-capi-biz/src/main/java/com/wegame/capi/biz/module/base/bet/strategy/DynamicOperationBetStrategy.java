@@ -177,6 +177,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
             gameEventDo.setEventId(eventDo.getEventId());
             gameEventDo.setOperatorRecordId(eventDo.getId());
             gameEventDo.setChannelId(eventDo.getChannelId());
+            gameEventDo.setGameId(eventDo.getGameId());
             // 生成投注记录
             BetRecordDo<R> betRecordDo = this.rBetRecordDo(betDo, gameEventDo);
             betRecordDo.setIeId(eventDo.getEventId());
@@ -202,9 +203,15 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     public List<WheelDo<WD>> getWheelDos(BetDo<BD> betDo, Long interventionAmount) {
         // 计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
+        /**
+         * (x+y)/x <1.1
+         * 下注金额 =  x
+         * 赠送金额 =  y
+         * 那么y < 0.1x 则赠送金额y小于下注金额x10% 就会出现赠送不出去情况
+         * 每次下注最小为1,购买轮下注金额的35倍,如果赠送金额<3.5 就会出现无法赠送的情况
+         */
         Long betPayAmount = this.getBetAndPayAmount(betDo).getValue();
         long interveneBalance = interventionAmount + betPayAmount;
-
         //计算最大倍数
         double multiple = ((double) interveneBalance / betPayAmount);
         // 根据倍数找最接近的
@@ -245,6 +252,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         detailDo.setPlayerName(userInfo.getPlayerName());
         detailDo.setPlayerId(userInfo.getPlayerId());
         detailDo.setUserId(userInfo.getId());
+        detailDo.setGameId(eventDo.getGameId());
         detailDo.setChannelId(eventDo.getChannelId());
         long currentMilli = DateUtil.getCurrentMilli();
         detailDo.setCreateTime(currentMilli);

@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -160,7 +161,6 @@ public abstract class AbstractDynamicOperationManager {
     }
 
     public List<StatusOfEventsResultDo> getStatusOfEvents(GetStatusOfEventRequest request) {
-        GameTypeEnum gameTypeEnum = GameTypeEnum.valueOfId(request.getGameId());
         // 根据条件查询已完成的事件信息
         DynamicOperationQuery operationQuery = DynamicOperationQuery.builder()
                 .eventIdList(request.getEventIds())
@@ -239,7 +239,7 @@ public abstract class AbstractDynamicOperationManager {
      */
 
     public void reportEvent(Long recordId, DynamicOperationEventStatusEnum eventStatus) {
-        dynamicEventReportThreadPoolExecutor.execute(()->{
+        dynamicEventReportThreadPoolExecutor.execute(() -> {
             DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(recordId, this.getDynamicOperationGameEnum());
             AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
             if (!DynamicOperationEventStatusEnum.eventFinish(eventDo.getEventStatus())) {
@@ -283,23 +283,23 @@ public abstract class AbstractDynamicOperationManager {
                     .build();
             // 上报
             UpdateEventsStatusRes updateEventsStatusRes = dynamicOperationApi.updateEventsStatus(updateEventsStatusReq);
-            DynamicOperationReportStatusEnum finish = DynamicOperationReportStatusEnum.FINISH;
-            if(updateEventsStatusRes.success()){
+            if (updateEventsStatusRes.success()) {
                 // 更新事件状态为已上报
                 DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(recordId)
                         .reportStatus(DynamicOperationReportStatusEnum.FINISH).build();
                 dynamicOperationEventService.update(eventReportUpdate, this.getDynamicOperationGameEnum());
                 return;
             }
-            if(StringUtils.isEmpty(updateEventsStatusRes.fail())){
+            if (StringUtils.isEmpty(updateEventsStatusRes.fail())) {
                 // 如果失败(特定情况)
                 DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(recordId)
                         .reportStatus(DynamicOperationReportStatusEnum.FAIL)
                         .reportFailMsg(updateEventsStatusRes.fail())
                         .build();
                 dynamicOperationEventService.update(eventReportUpdate, this.getDynamicOperationGameEnum());
+                return;
             }
-
+            log.error("dynamicOperationEvent report error:{}", JSON.toJSONString(updateEventsStatusReq));
         });
     }
 

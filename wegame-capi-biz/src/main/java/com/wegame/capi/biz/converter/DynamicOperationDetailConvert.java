@@ -32,6 +32,8 @@ public class DynamicOperationDetailConvert {
             po.setPayOutAmount(detailDo.getPayOutAmount());
             po.setPayOutTime(detailDo.getPayOutTime());
             po.setBetId(detailDo.getBetId());
+            po.setChannelId(detailDo.getChannelId());
+            po.setGameId(detailDo.getGameId());
             po.setBetRecordId(detailDo.getBetRecordId());
             po.setBetStatus(detailDo.getBetStatus().getCode());
             po.setCreateTime(detailDo.getCreateTime());

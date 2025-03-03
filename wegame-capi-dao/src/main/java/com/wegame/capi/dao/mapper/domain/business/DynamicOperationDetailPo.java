@@ -92,6 +92,16 @@ public class DynamicOperationDetailPo implements Serializable {
      */
     private Integer betStatus;
 
+
+    /**
+     * 渠道ID
+     */
+    private String channelId;
+
+    /**
+     * 游戏ID
+     */
+    private String gameId;
     /**
      * 创建时间
      */

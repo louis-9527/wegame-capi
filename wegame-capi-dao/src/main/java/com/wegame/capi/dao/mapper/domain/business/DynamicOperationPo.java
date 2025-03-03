@@ -103,6 +103,9 @@ public class DynamicOperationPo implements Serializable {
      */
     private String eventMsgDetail;
 
+
+    private String reportFailMsg;
+
     /**
      * 创建时间
      */

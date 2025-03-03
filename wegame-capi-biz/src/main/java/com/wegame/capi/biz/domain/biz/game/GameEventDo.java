@@ -28,6 +28,11 @@ public class GameEventDo<WD extends SymbolDo> {
     private String channelId;
 
     /**
+     * 游戏ID
+     */
+    private String gameId;
+
+    /**
      * 干预事件记录ID(系统)
      */
     private Long operatorRecordId;
