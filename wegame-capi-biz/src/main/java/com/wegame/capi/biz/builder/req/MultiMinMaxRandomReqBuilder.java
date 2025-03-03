@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.builder.req;
 
-import com.wegame.capi.api.domain.req.wegamego.MultiMinMaxRandomReq;
+import com.wegame.capi.api.domain.req.go.MultiMinMaxRandomReq;
 
 public class MultiMinMaxRandomReqBuilder {
 

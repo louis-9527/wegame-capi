@@ -3,9 +3,9 @@ package com.wegame.capi.api;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.base.BaseApi;
-import com.wegame.capi.api.domain.req.wegamego.MinMaxRandomReq;
-import com.wegame.capi.api.domain.req.wegamego.MultiMinMaxRandomReq;
-import com.wegame.capi.api.domain.res.wegamego.WeGameGoCommonRes;
+import com.wegame.capi.api.domain.req.go.MinMaxRandomReq;
+import com.wegame.capi.api.domain.req.go.MultiMinMaxRandomReq;
+import com.wegame.capi.api.domain.res.go.GoCommonRes;
 import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +34,7 @@ public class WeGameGoApi extends BaseApi {
     public Integer minMaxRandom(MinMaxRandomReq req) {
         try {
             RequestEntity<MinMaxRandomReq> requestEntity = new RequestEntity<>(req, buildWeGameGoHeaders(), HttpMethod.POST, URI.create(String.format(MIN_MAX_RANDOM_URL, wegameGoDomain)));
-            ResponseEntity<WeGameGoCommonRes<Integer>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<WeGameGoCommonRes<Integer>>() {
+            ResponseEntity<GoCommonRes<Integer>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<GoCommonRes<Integer>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -49,7 +49,7 @@ public class WeGameGoApi extends BaseApi {
     public List<Integer> multiMinMaxRandom(MultiMinMaxRandomReq req) {
         try {
             RequestEntity<MultiMinMaxRandomReq> requestEntity = new RequestEntity<>(req, buildWeGameGoHeaders(), HttpMethod.POST, URI.create(String.format(MULTI_MIN_MAX_RANDOM_URL, wegameGoDomain)));
-            ResponseEntity<WeGameGoCommonRes<List<Integer>>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<WeGameGoCommonRes<List<Integer>>>() {
+            ResponseEntity<GoCommonRes<List<Integer>>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<GoCommonRes<List<Integer>>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);

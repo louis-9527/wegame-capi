@@ -36,13 +36,13 @@ import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode
 @Service
 public class SingleWalletService {
 
-    @Value("${api.sport.invoke:true}")
-    boolean invoke;
+    @Value("${api.game.invokeSingle:true}")
+    boolean invokeSingle;
     @Autowired
     SingleWalletApi singleWalletApi;
 
     public BetSingleWalletResultDo betWithPayout(BetRecordDo betRecordDo) {
-        if (!invoke) {
+        if (!invokeSingle) {
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.SUCCESS)
                     .betId(String.valueOf(RandomUtils.nextInt()))
