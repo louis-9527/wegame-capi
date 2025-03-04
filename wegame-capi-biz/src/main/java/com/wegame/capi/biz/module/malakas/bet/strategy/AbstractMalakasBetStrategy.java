@@ -22,6 +22,7 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +112,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .credit(resultDo.getCredit().longValue())
+                    .credit(AmountUtil.toLong(resultDo.getCredit()))
                     .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetDetail().getPayAmount(), malakasConfig.getRewardMaxMultiple()))
                     .totalPayoutAmount(betRecord.getPayOutAmount())
                     .resultDetail(MalakasBetRecordDetailDo.builder().gameRecordList(firstBatchList).build())
