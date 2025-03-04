@@ -13,7 +13,6 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.base.AmountUtil;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.common.Constants;
@@ -29,6 +28,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
+import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.ibongadarna.IbongAdarnaGameHelper.IBONG_ADARNA_GAME_INFO;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -63,8 +64,8 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                 gamePlay.getBetRecordId(),
                 wheel,
                 rewardResult,
-                AmountUtil.maxAmountControl(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
-                AmountUtil.reachMaxMultiple(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()));
+                maxAmountControl(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
+                reachMaxMultiple(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()));
         ret.add(record);
         return ret;
     }

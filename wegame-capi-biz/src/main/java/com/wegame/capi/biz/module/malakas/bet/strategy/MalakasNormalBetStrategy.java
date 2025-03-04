@@ -50,7 +50,7 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                     .userName(userInfo.getUserName())
                     .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_SPINS.name())
                     .rewardTime(DateUtil.getCurrentMilli())
-                    .rewardContent(String.format(Constants.WEGAME_REWARD_NOTIFY_CONTENT_FORMAT,
+                    .rewardContent(String.format(Constants.MALAKA_REWARD_NOTIFY_CONTENT_FORMAT,
                             DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
                             userInfo.getUserName(),
                             NumberUtil.div(totalRewardAmount, 100),
@@ -58,7 +58,7 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
-            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
+            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_MALAKA_REWARD_NOTIFY_SIZE);
             rewardService.evict(gameType);
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
