@@ -132,7 +132,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
         Map<Long, MessageId> updateMessageIdMap = new HashMap<>(messages.size());
         messages.forEach(message -> {
             Object o = JSON.parseObject(new String(message.getData()), Object.class);
-            log.info("{} message: {}", this.getListenerName(), FastJsonUtils.toJSONString(o));
+            log.info("{} {} message: {}", this.getListenerName(), this.getTypeReference(), FastJsonUtils.toJSONString(o));
             MQMessage<BetRecordDo<T>> mqMessage = JSON.parseObject(new String(message.getData()), this.getTypeReference());
             BetRecordDo<T> betRecord = mqMessage.getBody();
             if (message.getRedeliveryCount() > 0) {
