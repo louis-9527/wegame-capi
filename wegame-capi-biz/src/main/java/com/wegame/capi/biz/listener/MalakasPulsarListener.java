@@ -15,10 +15,9 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class MalakasPulsarListener
-        extends AbstractPulsarListener<MalakasGameRecordDo> {
-    private static final String LISTENER_NAME = "MariaMakilingPulsarListener";
-    private static final String POOL_NAME = "mariamakiling-consumber-pool-";
+public class MalakasPulsarListener extends AbstractPulsarListener<MalakasGameRecordDo> {
+    private static final String LISTENER_NAME = "MalakasPulsarListener";
+    private static final String POOL_NAME = "malakas-consumber-pool-";
     private static final GameTypeEnum gameType = GameTypeEnum.MALAKAS;
     private static final int corePoolSize = 1;
     private static final int maximumPoolSize = 1;
