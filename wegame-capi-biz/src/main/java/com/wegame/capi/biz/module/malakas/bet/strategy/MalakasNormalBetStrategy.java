@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
+import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
@@ -28,6 +29,8 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    RewardService rewardService;
 
     @Override
     public void freeSpinsAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo recordDetail, Long totalRewardAmount) {
@@ -38,8 +41,6 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
 
     private void updateRewardNotifyInfo(GameTypeEnum gameType, long freeSpinsCount, long totalRewardAmount) {
         try {
-            // todo 测试日志,后面删除
-            log.info("MalakasNormalBetStrategy-updateRewardNotifyInfo触发:{},{}", freeSpinsCount, totalRewardAmount);
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
@@ -58,8 +59,9 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
+            rewardService.evict(gameType);
         } catch (Exception e) {
-            log.error("MalakasNonBuyFreeSpinsBetStrategy#notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
+            log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }
     }
 }
