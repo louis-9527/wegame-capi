@@ -112,7 +112,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .credit(AmountUtil.toLong(resultDo.getCredit()))
+                    .credit(resultDo.getCredit())
                     .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetDetail().getPayAmount(), malakasConfig.getRewardMaxMultiple()))
                     .totalPayoutAmount(betRecord.getPayOutAmount())
                     .resultDetail(MalakasBetRecordDetailDo.builder().gameRecordList(firstBatchList).build())
