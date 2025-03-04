@@ -22,11 +22,11 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -146,7 +146,7 @@ public abstract class AbstractMariaMakilingBetStrategy
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .credit(Optional.ofNullable(resultDo.getCredit()).map(BigDecimal::longValue).orElse(0L))
+                    .credit(AmountUtil.toLong(resultDo.getCredit()))
                     .overallRewardAmount(gameRecord.getOverallRewardAmount())
                     .totalPayoutAmount(betRecord.getPayOutAmount())
                     .resultDetail(gameRecord)
