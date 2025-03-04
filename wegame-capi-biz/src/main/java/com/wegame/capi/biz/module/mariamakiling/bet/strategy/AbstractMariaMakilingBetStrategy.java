@@ -146,7 +146,7 @@ public abstract class AbstractMariaMakilingBetStrategy
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .credit(AmountUtil.toLong(resultDo.getCredit()))
+                    .credit(resultDo.getCredit())
                     .overallRewardAmount(gameRecord.getOverallRewardAmount())
                     .totalPayoutAmount(betRecord.getPayOutAmount())
                     .resultDetail(gameRecord)
