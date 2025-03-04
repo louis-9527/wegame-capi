@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.executor.WsThreadPoolExecutor;
 import com.wegame.base.mq.MQMessage;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -130,8 +131,9 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
         Map<Long, MessageId> addMessageIdMap = new HashMap<>(messages.size());
         Map<Long, MessageId> updateMessageIdMap = new HashMap<>(messages.size());
         messages.forEach(message -> {
-            MQMessage<BetRecordDo<T>> mqMessage = JSON.parseObject(new String(message.getData()),
-                    this.getTypeReference());
+            Object o = JSON.parseObject(new String(message.getData()), Object.class);
+            log.info("message: {}", FastJsonUtils.toJSONString(o));
+            MQMessage<BetRecordDo<T>> mqMessage = JSON.parseObject(new String(message.getData()), this.getTypeReference());
             BetRecordDo<T> betRecord = mqMessage.getBody();
             if (message.getRedeliveryCount() > 0) {
                 log.info("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount());
