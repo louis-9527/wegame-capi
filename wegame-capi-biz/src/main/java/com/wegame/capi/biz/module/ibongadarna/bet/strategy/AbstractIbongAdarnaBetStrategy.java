@@ -14,7 +14,6 @@ import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.manager.IbongAdarnaRecordManager;
-import com.wegame.capi.biz.module.base.AmountUtil;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGame;
@@ -22,8 +21,11 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+
+import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
+import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 
 /**
  * IbongAdarna类游戏投注抽象接口
@@ -68,16 +70,16 @@ public abstract class AbstractIbongAdarnaBetStrategy
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                AmountUtil.maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
+                maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
                         betDo.getBetDetail().getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
-                AmountUtil.reachMaxMultiple(gameRecord.getRewardResult().getTotalRewardAmount(),
+                reachMaxMultiple(gameRecord.getRewardResult().getTotalRewardAmount(),
                         betDo.getBetDetail().getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
                 list);
 
         // 保存投注记录并派奖
         BetSingleWalletResultDo betSingleWalletResultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         // 中大奖处理
-        this.rewardAfterHandle(betDo, AmountUtil.maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
+        this.rewardAfterHandle(betDo, maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
                 betDo.getBetDetail().getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()));
 
         BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
@@ -89,7 +91,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .credit(Optional.ofNullable(resultDo.getCredit()).map(BigDecimal::longValue).orElse(0L))
+                    .credit(resultDo.getCredit())
                     .overallRewardAmount(Objects.nonNull(gameRecord.getRewardResult()) ? gameRecord.getRewardResult().getTotalRewardAmount() : 0L)
                     .totalPayoutAmount(betRecord.getPayOutAmount())
                     .resultDetail(gameRecord)
@@ -101,8 +103,6 @@ public abstract class AbstractIbongAdarnaBetStrategy
         } else {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }
-
-
     }
 
 
