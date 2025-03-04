@@ -32,7 +32,7 @@ public class BetRequest implements Validate, Serializable {
     private String betSubType;
     // todo 调试结束后， 修改类型为Object @bruce
     @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true)
-    private IbongAdarnaBetRequest betDetail;
+    private Object betDetail;
 
     @Override
     public void validateParam() {
