@@ -101,6 +101,9 @@ spring:
           uri: mongodb://16.162.139.203:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
           #          uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
           db: makiling
+        malakas_mdb:
+          uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/malakas?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
+          db: malakas
         ibong_adarna_mdb:
           uri: mongodb://16.162.139.203:27017/ibong?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
           db: ibong
@@ -142,6 +145,12 @@ pulsar:
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
+    malakas:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_Malakas
+      namespace: ${spring.application.env}
+      bet_topic: Malakas_topic
+      bet_deadLetter_topic: Malakas_deadLetter_topic
     ibong_adarna:
       url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
       tenant: ${spring.application.name}_IbongAdarna

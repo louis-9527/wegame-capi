@@ -26,13 +26,14 @@ public class BetService {
 
     private static final Map<GameTypeEnum, String> contextNameMap = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingBetContext")
+            .put(GameTypeEnum.MALAKAS, "malakasBetContext")
             .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaBetContext")
             .build();
 
     @Autowired
     Map<String, AbstractBetContext> contextMap;
 
-    public  BetResultDo bet(BetDo<T> betDo) {
+    public BetResultDo bet(BetDo<T> betDo) {
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_PARAM);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(betDo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);

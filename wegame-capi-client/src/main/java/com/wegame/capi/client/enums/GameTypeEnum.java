@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 public enum GameTypeEnum {
 
     MARIA_MAKILING("zhumeng001", "MariaMakiling", "mariamakiling_bet_record"),
+    MALAKAS("zhumeng002", "Malakas", "malakas_bet_record"),
     IBONG_ADARNA("zhumeng003", "IbongAdarna", "ibongadarna_bet_record"),
 
 

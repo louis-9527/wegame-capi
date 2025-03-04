@@ -22,6 +22,7 @@ public class BetConverter {
     // 定义转换模型
     private static final Map<GameTypeEnum, BetToDoConvert<?, ?>> GAME_BET_CLASS_MAP = ImmutableMap.<GameTypeEnum, BetToDoConvert<?, ?>>builder()
             .put(GameTypeEnum.MARIA_MAKILING, new MariaMakilingBetRequestConvert<>())
+            .put(GameTypeEnum.MALAKAS, new MalakasBetRequestConvert<>())
             .put(GameTypeEnum.IBONG_ADARNA, new IbongAdarnaBetRequestConvert())
             .build();
 
