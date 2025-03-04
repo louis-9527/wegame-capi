@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"}, callSuper = true)
-@JsonFormat(shape = JsonFormat.Shape.STRING)
+//@JsonFormat(shape = JsonFormat.Shape.STRING)
 public class IbongAdarnaSymbolDo extends SymbolDo {
     private static final long serialVersionUID = -226678093710848L;
 
