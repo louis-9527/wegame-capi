@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.module.mariamakiling.bet.strategy;
 
 import cn.hutool.core.util.NumberUtil;
-import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
@@ -9,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
+import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
@@ -16,7 +16,6 @@ import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
@@ -30,8 +29,9 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    RewardService rewardService;
 
-    @CacheEvict(value = CacheConstants.REWARD_INFO)
     @Override
     public void freeWheelAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
         if (detailDo.isLastFreeSpins(betDo.getBetDetail().getGameRecordId())) {
@@ -59,6 +59,7 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
+            rewardService.evict(gameType);
         } catch (Exception e) {
             log.error("[MariaMakilingNonBuyFreeSpinsBetStrategy-notifyRewardHandle] error", e);
         }
