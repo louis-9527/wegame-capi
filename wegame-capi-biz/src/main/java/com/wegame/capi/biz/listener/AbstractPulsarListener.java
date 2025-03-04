@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component
+//@Component
 public abstract class AbstractPulsarListener<T extends ToVoConverter> implements Runnable {
     private volatile boolean start = false;
     @Autowired
