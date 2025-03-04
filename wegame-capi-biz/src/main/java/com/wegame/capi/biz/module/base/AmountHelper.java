@@ -1,9 +1,9 @@
 package com.wegame.capi.biz.module.base;
 
 /**
- * AmountUtil
+ * AmountHelper
  */
-public class AmountUtil {
+public class AmountHelper {
 
     /**
      * 是否达到最大倍数
