@@ -23,8 +23,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.wegame.capi.biz.module.base.AmountUtil.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountUtil.reachMaxMultiple;
+import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
+import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
 import static com.wegame.capi.common.Constants.CONST_1000000;

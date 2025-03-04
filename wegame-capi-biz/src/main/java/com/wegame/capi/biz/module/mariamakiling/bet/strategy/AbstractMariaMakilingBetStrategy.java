@@ -22,7 +22,6 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.module.base.AmountUtil.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountUtil.reachMaxMultiple;
+import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
+import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 
 /**
  * MariaMakiling类游戏投注抽象接口
@@ -146,7 +145,7 @@ public abstract class AbstractMariaMakilingBetStrategy
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .credit(AmountUtil.toLong(resultDo.getCredit()))
+                    .credit(resultDo.getCredit())
                     .overallRewardAmount(gameRecord.getOverallRewardAmount())
                     .totalPayoutAmount(betRecord.getPayOutAmount())
                     .resultDetail(gameRecord)

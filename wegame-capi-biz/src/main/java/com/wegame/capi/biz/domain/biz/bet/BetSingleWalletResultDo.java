@@ -13,9 +13,24 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BetSingleWalletResultDo {
+    /**
+     * 投注id
+     */
     private String betId;
+    /**
+     * refId
+     */
     private String refId;
-    private BigDecimal credit;
+    /**
+     * 投注后用户余额（分）
+     */
+    private Long credit;
+    /**
+     * 投注状态
+     */
     private BetStatusEnum betStatus;
+    /**
+     * 投注失败原因
+     */
     private String reason;
 }
