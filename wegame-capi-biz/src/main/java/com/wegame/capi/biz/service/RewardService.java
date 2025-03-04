@@ -8,6 +8,7 @@ import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class RewardService {
         return rewardInfoDo;
     }
 
-    @Cacheable(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id")
+    @CacheEvict(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id")
     public void evict(GameTypeEnum gameType) {
         // do nothing
     }
