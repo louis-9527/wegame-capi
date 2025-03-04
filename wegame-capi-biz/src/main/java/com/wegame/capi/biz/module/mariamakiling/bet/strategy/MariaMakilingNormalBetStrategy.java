@@ -61,7 +61,7 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
             rewardService.evict(gameType);
         } catch (Exception e) {
-            log.error("[MariaMakilingNonBuyFreeSpinsBetStrategy-notifyRewardHandle] error", e);
+            log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }
     }
 }
