@@ -3,9 +3,11 @@ package com.wegame.capi.application.controller.promotion;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.service.promotion.TreasureService;
-import com.wegame.capi.client.domain.request.promotion.QueryRewardBagRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryTreasureRequest;
+import com.wegame.capi.client.domain.request.promotion.UseTreasureRequest;
 import com.wegame.capi.client.domain.vo.promotion.RewardStarCardVo;
+import com.wegame.capi.client.domain.vo.promotion.TreasureVo;
+import com.wegame.capi.client.domain.vo.promotion.UseTreasureVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +30,17 @@ public class TreasureController {
     TreasureService treasureService;
 
     @LoginRequired
-    @ApiOperation(value = "获取宝箱列表", httpMethod = "POST")
-    @PostMapping("/queryTreasureList")
-    public CommonResponse<List<RewardStarCardVo>> queryTreasureList(@RequestBody QueryTreasureRequest bagRequest) {
-        bagRequest.validate();
+    @ApiOperation(value = "获取宝箱", httpMethod = "POST")
+    @PostMapping("/queryTreasure")
+    public CommonResponse<TreasureVo> queryTreasureList(@RequestBody QueryTreasureRequest request) {
+        request.validate();
         // BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
-        return CommonResponse.build(new ArrayList<>());
+        return CommonResponse.build(null);
     }
 
-    //public CommonResponse<>
+    public CommonResponse<UseTreasureVo> useTreasure(@RequestBody UseTreasureRequest request) {
+        request.validate();
+        return CommonResponse.build(null);
+    }
 
 }
