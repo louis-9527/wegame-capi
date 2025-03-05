@@ -5,7 +5,6 @@ import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.service.promotion.TreasureService;
 import com.wegame.capi.client.domain.request.promotion.QueryTreasureRequest;
 import com.wegame.capi.client.domain.request.promotion.UseTreasureRequest;
-import com.wegame.capi.client.domain.vo.promotion.RewardStarCardVo;
 import com.wegame.capi.client.domain.vo.promotion.TreasureVo;
 import com.wegame.capi.client.domain.vo.promotion.UseTreasureVo;
 import io.swagger.annotations.Api;
@@ -16,9 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @RestController

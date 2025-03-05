@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "背包VO")
-public class RewardBagVo {
-    @ApiModelProperty(value = "背包星卡列表", required = true)
-    private List<RewardStarCardVo> RewardStarCards;
+public class BagVo {
+    @ApiModelProperty(value = "背包列表", required = true)
+    private List<BigRewardDetailVo> rewardDetails;
 }
