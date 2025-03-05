@@ -4,6 +4,7 @@ import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.service.promotion.MissionService;
+import com.wegame.capi.client.domain.request.promotion.RedeemAchievementRequest;
 import com.wegame.capi.client.domain.vo.promotion.AchievementVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,5 +38,16 @@ public class AchievementController {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
 
         return CommonResponse.build(null);
+    }
+
+    @ApiOperation(value = "领取成就奖励", httpMethod = "POST")
+    @PostMapping("/redeemAchievement")
+    public CommonResponse<Boolean> redeemAchievement(RedeemAchievementRequest request) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+
+        return CommonResponse.build(true);
     }
 }
