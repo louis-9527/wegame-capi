@@ -105,5 +105,9 @@ public class GameRecordQuery implements Serializable {
      * 缓存key
      */
     private String cacheKey;
+    /**
+     * 查询是否强制走主分片
+     */
+    private boolean fromPrimary;
 }
 

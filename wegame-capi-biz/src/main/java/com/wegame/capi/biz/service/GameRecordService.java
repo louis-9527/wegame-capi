@@ -1,9 +1,11 @@
 package com.wegame.capi.biz.service;
 
+import com.mongodb.ReadPreference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.GameRecordQueryBuilder;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -38,15 +40,6 @@ public class GameRecordService<T> {
         return true;
     }
 
-    // todo cache
-    public List<T> listByBetRecordIdWithCache(Long betRecordId, GameTypeEnum gameType, Class<T> clazz) {
-        GameRecordQuery query = new GameRecordQuery();
-        query.setBetRecordId(betRecordId);
-        query.setOrderByClause("_id");
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return getMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
-    }
-
     /**
      * 查询列表
      *
@@ -55,7 +48,14 @@ public class GameRecordService<T> {
      */
     public List<T> list(GameRecordQuery query, GameTypeEnum gameType, Class<T> clazz) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return getMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
+        if (query.isFromPrimary()) {
+            return getMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
+        } else {
+            return getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {
+                collection.withReadPreference(ReadPreference.primary());
+                return getMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
+            });
+        }
     }
 
     ///////////////  above auto generated ///////////////

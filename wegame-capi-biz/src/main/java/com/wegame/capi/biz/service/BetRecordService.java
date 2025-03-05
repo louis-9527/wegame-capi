@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.service;
 
 import cn.hutool.core.lang.Opt;
+import com.mongodb.ReadPreference;
 import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
@@ -119,7 +120,6 @@ public class BetRecordService {
 
     @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #playerId + '_'  + #id")
     public BetRecordDo getWithCache(Long id, String playerId, GameTypeEnum gameType) {
-        long startTime = System.currentTimeMillis();
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
@@ -129,7 +129,13 @@ public class BetRecordService {
                 query,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
-        // log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
+        if (Objects.isNull(betRecordPo)) {
+            log.warn("get betRecord ret is null, then force query from primary. id: {}", id);
+            betRecordPo = getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {
+                collection.withReadPreference(ReadPreference.primary());
+                return getMongoTemplate(gameType).findOne(query, BetRecordPo.class, gameType.getBetRecordCollectionName());
+            });
+        }
         return BetRecordConverter.poToDo(betRecordPo);
     }
 
