@@ -82,8 +82,10 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             freeWheelGameRecordIds = new ArrayList<>();
             List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true));// 累计中奖金额
             long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
-            for (WheelDo<SymbolDo> wheelDo : CollectionUtils.emptyIfNull(wheelList)) {
+            for (int index = 0; index < wheelList.size(); index++) {
+                WheelDo<SymbolDo> wheelDo = wheelList.get(index);
                 RewardResultDo rewardResultDo = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheelDo, BigDecimal.ZERO));
+                // 累加合计中奖总金额
                 overallRewardAmount = overallRewardAmount + rewardResultDo.getTotalRewardAmount();
                 boolean freeWheelReachMaxRewardMultiple = reachMaxMultiple(overallRewardAmount, gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple());
                 // 构建免费轮游戏记录
@@ -100,7 +102,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                         .gameRecordIds(null)
                         .overallRewardAmount(maxAmountControl(overallRewardAmount, gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
                         .accumulateReachMaxMultiple(freeWheelReachMaxRewardMultiple)
-                        .lastGameFlag(freeWheelReachMaxRewardMultiple)
+                        .lastGameFlag(freeWheelReachMaxRewardMultiple || index == wheelList.size() - 1)
                         .build();
                 freeWheelGameRecordList.add(gameRecord);
                 freeWheelGameRecordIds.add(gameRecord.getId());
@@ -111,20 +113,20 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         }
         // 构建首轮游戏记录
         MariaMakilingGameRecordDo firstGameRecord = MariaMakilingGameRecordDo.builder()
-                        .id(firstGameRecordId)
-                        .parentId(GAME_RECORD_DEFAULT_PARENT_ID)
-                        .betRecordId(gamePlay.getBetRecordId())
-                        .batchId(0L)
-                        .playerId(userInfo.getPlayerId())
-                        .playerName(userInfo.getPlayerName())
-                        .index(firstWheel.getIndex())
-                        .wheel(firstWheel)
-                        .rewardResult(firstWheelRewardResult)
-                        .gameRecordIds(freeWheelGameRecordIds)
-                        .overallRewardAmount(maxAmountControl(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
-                        .accumulateReachMaxMultiple(firstWheelReachMaxRewardMultiple)
-                        .lastGameFlag(!firstWheelReachMaxRewardMultiple && firstWheelRewardResult.isHasRewardFreeWheel())
-                        .build();
+                .id(firstGameRecordId)
+                .parentId(GAME_RECORD_DEFAULT_PARENT_ID)
+                .betRecordId(gamePlay.getBetRecordId())
+                .batchId(0L)
+                .playerId(userInfo.getPlayerId())
+                .playerName(userInfo.getPlayerName())
+                .index(firstWheel.getIndex())
+                .wheel(firstWheel)
+                .rewardResult(firstWheelRewardResult)
+                .gameRecordIds(freeWheelGameRecordIds)
+                .overallRewardAmount(maxAmountControl(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
+                .accumulateReachMaxMultiple(firstWheelReachMaxRewardMultiple)
+                .lastGameFlag(firstWheelReachMaxRewardMultiple || !firstWheelRewardResult.isHasRewardFreeWheel())
+                .build();
         ret.add(firstGameRecord);
         if (CollectionUtils.isNotEmpty(freeWheelGameRecordList)) {
             ret.addAll(freeWheelGameRecordList);
@@ -210,15 +212,14 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @return 滚轮列表
      */
     private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig) {
+        List<WheelDo<SymbolDo>> wheels = new ArrayList<>();
         // 保存全局wild
         SymbolDo[][] wildSymbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 免费次数
         int wheelNumber = getFreeWheelNumber();
         if (wheelNumber == 0) {
-            return null;
+            return wheels;
         }
-        // 生成轮盘总和
-        List<WheelDo<SymbolDo>> wheels = new ArrayList<>();
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, wheelNumber * gameInfo.getRow() * gameInfo.getColumn());
         int randomNumberIndex = 0;
