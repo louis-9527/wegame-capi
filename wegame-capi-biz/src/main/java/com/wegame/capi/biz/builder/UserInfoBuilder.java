@@ -1,8 +1,7 @@
 package com.wegame.capi.biz.builder;
 
-import com.wegame.capi.biz.domain.UserLoginDo;
+import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 
