@@ -14,13 +14,13 @@ public class AmountUtil {
         if (amount == null) {
             return BigDecimal.ZERO;
         }
-        return NumberUtil.div(String.valueOf(amount), "100", 2);
+        return NumberUtil.div(String.valueOf(amount), "1000", 3);
     }
 
     public static long toLong(BigDecimal amount) {
         if (amount == null) {
             return 0L;
         }
-        return NumberUtil.mul(amount, 100).longValue();
+        return NumberUtil.mul(amount, 1000).longValue();
     }
 }
