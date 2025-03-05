@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.swing.*;
 import java.io.Serializable;
 
 @Data
@@ -30,6 +31,8 @@ public class BetRequest implements Validate, Serializable {
             "BUY_BET:购买投注, " +
             "FREE_SPINS_BUY_BET: 免费轮购买投注", required = true)
     private String betSubType;
+    @ApiModelProperty(value = "星卡ID,如果有星卡ID会使用星卡做投注", required = false)
+    private Spring starCard;
     @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true)
     private Object betDetail;
 

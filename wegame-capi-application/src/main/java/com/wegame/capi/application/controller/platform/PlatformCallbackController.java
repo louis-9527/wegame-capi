@@ -21,7 +21,7 @@ public class PlatformCallbackController {
     UserService userService;
 
     @ApiOperation(value = "余额变动通知", httpMethod = "POST")
-    @PostMapping("/notifyCreditChange")
+    @PostMapping("/promonotifyCreditChange")
     public CommonResponse<Void> notifyCreditChange(@RequestBody CreditChangeNotifyRequest request) {
         request.validateParam();
         return CommonResponse.build(userService.notifyCreditChange(PlatformCallbackConverter.requestToDto(request)));
