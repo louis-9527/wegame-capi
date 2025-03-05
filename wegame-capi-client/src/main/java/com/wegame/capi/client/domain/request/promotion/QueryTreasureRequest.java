@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 @Data
-//@NoArgsConstructor
-//@AllArgsConstructor
 @ApiModel(description = "获取宝箱列表请求")
 public class QueryTreasureRequest implements Validate, Serializable {
     private static final long serialVersionUID = -4568260918349559605L;
