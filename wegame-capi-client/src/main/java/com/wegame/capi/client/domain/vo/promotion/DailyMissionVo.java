@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "任务列表")
+@ApiModel(description = "任务")
 public class DailyMissionVo implements  Serializable {
 
     private static final long serialVersionUID = -1704392640858325682L;

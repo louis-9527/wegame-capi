@@ -27,7 +27,7 @@ public class MissionController {
     @Autowired
     MissionService missionService;
 
-    @ApiOperation(value = "分页查询", httpMethod = "POST")
+    @ApiOperation(value = "任务列表", httpMethod = "POST")
     @GetMapping("/getDailyMission")
     public CommonResponse<List<DailyMissionVo>> getDailyMission() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
