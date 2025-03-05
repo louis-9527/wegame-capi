@@ -140,19 +140,19 @@ api:
 pulsar:
   dynamic:
     maria_makiling:
-      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      url: pulsar://pulsar.makillingslot.net:6650
       tenant: ${spring.application.name}_MariaMakiling
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
     malakas:
-      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      url: pulsar://pulsar.makillingslot.net:6650
       tenant: ${spring.application.name}_Malakas
       namespace: ${spring.application.env}
       bet_topic: Malakas_topic
       bet_deadLetter_topic: Malakas_deadLetter_topic
     ibong_adarna:
-      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      url: pulsar://pulsar.makillingslot.net:6650
       tenant: ${spring.application.name}_IbongAdarna
       namespace: ${spring.application.env}
       bet_topic: IbongAdarna_topic
