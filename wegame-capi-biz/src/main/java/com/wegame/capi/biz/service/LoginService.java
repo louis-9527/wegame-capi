@@ -32,7 +32,7 @@ public class LoginService {
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
         AuthLoginTokenRes authLoginTokenRes = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
         AssertUtil.assertNotNull(authLoginTokenRes, ErrorCode.ERR_MIDDLE_PLATFORM);
-        String token = SecureUtil.md5(userLoginDo.getToken());
+        String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);
         UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
         Long userId = userService.insert(userDo);
