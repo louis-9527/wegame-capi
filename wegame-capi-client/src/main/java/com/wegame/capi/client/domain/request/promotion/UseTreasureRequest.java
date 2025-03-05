@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class UseTreasureRequest  implements Validate, Serializable {
     private static final long serialVersionUID = -7035134333452916163L;
     @ApiModelProperty(value = "宝箱ID", required = true)
-    private String id;
+    private String treasureId;
     @ApiModelProperty(value = "宝箱等级", required = true)
     private String level;
 }
