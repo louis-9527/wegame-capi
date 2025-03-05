@@ -23,11 +23,9 @@ public class RestTemplateAspect {
     //                    FastJsonUtils.toJSONString(joinPoint.getArgs()),
     //                    throwable.getMessage(),
     //                    throwable);
-    //            // todo 埋点上报
     //            throw throwable;
     //        } finally {
     //            // req req cost_time url suc_fail
-    //            // todo 埋点上报
     //            log.info("调用第三方接口耗时，{}#{}，耗时：{} ms",
     //                    signature.getDeclaringTypeName(),
     //                    signature.getName(),

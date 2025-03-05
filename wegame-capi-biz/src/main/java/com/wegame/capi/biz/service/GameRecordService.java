@@ -48,7 +48,7 @@ public class GameRecordService<T> {
      */
     public List<T> list(GameRecordQuery query, GameTypeEnum gameType, Class<T> clazz) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        if (query.isFromPrimary()) {
+        if (!query.isFromPrimary()) {
             return getMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
         } else {
             return getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {

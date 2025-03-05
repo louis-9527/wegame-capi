@@ -14,7 +14,7 @@
 //
 ///**
 // * Nacos配置: Mysterious游戏概率配置
-// * * todo: 配置正确性校验
+// * * to 配置正确性校验
 // */
 //@Component
 //@Data
