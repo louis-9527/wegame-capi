@@ -7,7 +7,7 @@ import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
-import com.wegame.capi.biz.domain.UserLoginDo;
+import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
