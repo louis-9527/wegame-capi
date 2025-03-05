@@ -237,16 +237,14 @@ public class UserService {
             log.error("getCredit err, errMsg: {}", e.getMessage(), e);
         }
         GetCreditRes res = singleWalletApi.getCredit(GetCreditReqBuilder.build());
-        // todo 空的时候返回 0L 是否合适 @maidong
-        return Objects.isNull(res.getCredit()) ? 0L : AmountUtil.toLong(res.getCredit());
+        AssertUtil.assertNotNull(res.getCredit(), ErrorCode.ERR_NET);
+        return AmountUtil.toLong(res.getCredit());
     }
 
-    public Void notifyCreditChange(CreditChangeNotifyDto dto) {
+    public void notifyCreditChange(CreditChangeNotifyDto dto) {
         Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(dto.getChannelId());
         String hash = singleWalletApi.hash(dto.getChannelId(), dto.getPlayerName(), DateUtil.toUTC(dto.getCreateTime()), dto.getRefId(), privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
         AssertUtil.assertTrue(StringUtils.equals(hash, dto.getHash()), ErrorCode.ERR_PARAM);
         redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, dto.getPlayerName()), 1);
-        // todo 麦冬 返回void结果
-        return null;
     }
 }
