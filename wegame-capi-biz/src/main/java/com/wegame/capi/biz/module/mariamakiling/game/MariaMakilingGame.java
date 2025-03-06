@@ -80,7 +80,8 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
             // 首轮未达到最大倍数 && 首轮命中免费轮
             freeWheelGameRecordList = new ArrayList<>();
             freeWheelGameRecordIds = new ArrayList<>();
-            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true));// 累计中奖金额
+            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true), firstWheelRewardResult.getRewardFreeWheelTimes());
+            // 累计中奖金额
             long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
             for (int index = 0; index < wheelList.size(); index++) {
                 WheelDo<SymbolDo> wheelDo = wheelList.get(index);
@@ -211,12 +212,10 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
      * @param gameInfo 游戏信息
      * @return 滚轮列表
      */
-    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig) {
+    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig, int wheelNumber) {
         List<WheelDo<SymbolDo>> wheels = new ArrayList<>();
         // 保存全局wild
         SymbolDo[][] wildSymbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-        // 免费次数
-        int wheelNumber = getFreeWheelNumber();
         if (wheelNumber == 0) {
             return wheels;
         }
@@ -266,18 +265,5 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                     throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
             }
         }
-    }
-
-    private Integer getFreeWheelNumber() {
-        int randomNumber = randomService.randomInt(1, 100);
-        int startVal = 0;
-        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(mariaMakilingConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
-            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-                return entry.getKey();
-            } else {
-                startVal += entry.getValue();
-            }
-        }
-        throw new BusinessException(ErrorCode.ERR_INTER);
     }
 }
