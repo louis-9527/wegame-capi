@@ -122,7 +122,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
-            if (!reachMaxMultiple(totalRewardAmount.get(), gamePlay.getPayAmount(), malakasConfig.getRewardMaxMultiple())) {
+            if (!reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), malakasConfig.getRewardMaxMultiple())) {
                 for (int times = 1; times <= preGameRecord.getRewardResult().getRewardFreeWheelTimes(); times++) {
                     freeWheelList.addLast(FreeWheelHandleDo.builder()
                             .parentGameRecordId(preGameRecord.getId())
@@ -317,7 +317,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return false;
         }
-        if (reachMaxMultiple(totalRewardAmount.get(), gamePlay.getPayAmount(), malakasConfig.getRewardMaxMultiple())) {
+        if (reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), malakasConfig.getRewardMaxMultiple())) {
             log.warn("reach max reward multiple bet. totalRewardAmount: {}, payAmount: {}", totalRewardAmount.get(), gamePlay.getPayAmount());
             return false;
         }

@@ -101,7 +101,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                         .wheel(wheelDo)
                         .rewardResult(rewardResultDo)
                         .gameRecordIds(null)
-                        .overallRewardAmount(maxAmountControl(overallRewardAmount, gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
+                        .overallRewardAmount(maxAmountControl(overallRewardAmount, gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
                         .accumulateReachMaxMultiple(freeWheelReachMaxRewardMultiple)
                         .lastGameFlag(freeWheelReachMaxRewardMultiple || index == wheelList.size() - 1)
                         .build();

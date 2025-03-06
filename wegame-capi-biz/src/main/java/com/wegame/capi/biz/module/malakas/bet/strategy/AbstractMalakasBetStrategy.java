@@ -94,8 +94,8 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                maxAmountControl(totalRewardAmount, betDo.getBetDetail().getPayAmount(), malakasConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getPayAmount(), malakasConfig.getRewardMaxMultiple()),
+                maxAmountControl(totalRewardAmount, betDo.getBetDetail().getBetAmount(), malakasConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getBetAmount(), malakasConfig.getRewardMaxMultiple()),
                 list);
         BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
@@ -113,7 +113,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
                     .credit(resultDo.getCredit())
-                    .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetDetail().getPayAmount(), malakasConfig.getRewardMaxMultiple()))
+                    .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetDetail().getBetAmount(), malakasConfig.getRewardMaxMultiple()))
                     .totalPayoutAmount(betRecord.getPayOutAmount())
                     .resultDetail(MalakasBetRecordDetailDo.builder().gameRecordList(firstBatchList).build())
                     .build();
