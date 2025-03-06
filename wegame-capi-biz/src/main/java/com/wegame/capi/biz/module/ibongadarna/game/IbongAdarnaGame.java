@@ -64,8 +64,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                 gamePlay.getBetRecordId(),
                 wheel,
                 rewardResult,
-                maxAmountControl(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
-                reachMaxMultiple(rewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()));
+                rewardResult.getTotalRewardAmount());
         ret.add(record);
         return ret;
     }
@@ -206,8 +205,7 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                                                            Long betRecordId,
                                                            WheelDo<IbongAdarnaSymbolDo> wheel,
                                                            RewardResultDo<IbongAdarnaSymbolDo> rewardResult,
-                                                           Long overallRewardAmount,
-                                                           Boolean accumulateReachMaxMultiple) {
+                                                           Long overallRewardAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         return IbongAdarnaGameRecordDo.builder()
@@ -218,7 +216,6 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
                 .wheel(wheel)
                 .rewardResult(rewardResult)
                 .overallRewardAmount(overallRewardAmount)
-                .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                 .build();
     }
 }

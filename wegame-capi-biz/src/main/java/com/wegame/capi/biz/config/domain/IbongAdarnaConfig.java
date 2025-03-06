@@ -39,11 +39,6 @@ public class IbongAdarnaConfig {
     private TreeMap<Integer, List<List<Integer>>> rewardFixedLinesConfig;
 
     /**
-     * 最大中奖倍数
-     */
-    private Integer maxRewardMultiple;
-
-    /**
      * 中奖通知最小倍数
      */
     private Integer rewardNotifyMinMultiple;
@@ -93,7 +88,6 @@ public class IbongAdarnaConfig {
         oddsConfigValidate();
         probabilisticConfigValidate();
         rewardFixedLinesConfigValidate();
-        maxRewardMultipleValidate();
         rewardNotifyMinMultipleValidate();
     }
 
@@ -179,11 +173,6 @@ public class IbongAdarnaConfig {
                 AssertUtil.assertTrue(indexList.size() == 2, ErrorCode.ERR_INTER, "rewardFixedLinesConfig.get(" + integerListEntry.getKey() + ") index length is not equals 2");
             });
         }
-    }
-
-    private void maxRewardMultipleValidate() {
-        AssertUtil.assertNotNull(maxRewardMultiple, ErrorCode.ERR_INTER, "maxRewardMultiple is null");
-        AssertUtil.assertTrue(maxRewardMultiple > 0, ErrorCode.ERR_INTER, "maxRewardMultiple must great than 0");
     }
 
     private void rewardNotifyMinMultipleValidate() {

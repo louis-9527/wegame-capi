@@ -70,18 +70,15 @@ public abstract class AbstractIbongAdarnaBetStrategy
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
-                        betDo.getBetDetail().getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
-                reachMaxMultiple(gameRecord.getRewardResult().getTotalRewardAmount(),
-                        betDo.getBetDetail().getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()),
+                gameRecord.getRewardResult().getTotalRewardAmount(),
+                false,
                 list);
 
         // 保存投注记录并派奖
         BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         // 中大奖处理
-        this.rewardAfterHandle(betDo, maxAmountControl(gameRecord.getRewardResult().getTotalRewardAmount(),
-                betDo.getBetDetail().getBetAmount(), ibongAdarnaConfig.getMaxRewardMultiple()));
+        this.rewardAfterHandle(betDo, gameRecord.getRewardResult().getTotalRewardAmount());
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             // 组装返回结果
             return BetResultDo.<IbongAdarnaGameRecordDo>builder()
