@@ -75,7 +75,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
         }
         AssertUtil.assertNotNull(firstWheel, ErrorCode.ERR_INTER);
         RewardResultDo<SymbolDo> firstWheelRewardResult = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel, BigDecimal.ZERO));
-        boolean firstWheelReachMaxRewardMultiple = reachMaxMultiple(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple());
+        boolean firstWheelReachMaxRewardMultiple = reachMaxMultiple(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple());
         if (!firstWheelReachMaxRewardMultiple && firstWheelRewardResult.isHasRewardFreeWheel()) {
             // 首轮未达到最大倍数 && 首轮命中免费轮
             freeWheelGameRecordList = new ArrayList<>();
@@ -88,7 +88,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 RewardResultDo rewardResultDo = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheelDo, BigDecimal.ZERO));
                 // 累加合计中奖总金额
                 overallRewardAmount = overallRewardAmount + rewardResultDo.getTotalRewardAmount();
-                boolean freeWheelReachMaxRewardMultiple = reachMaxMultiple(overallRewardAmount, gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple());
+                boolean freeWheelReachMaxRewardMultiple = reachMaxMultiple(overallRewardAmount, gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple());
                 // 构建免费轮游戏记录
                 MariaMakilingGameRecordDo gameRecord = MariaMakilingGameRecordDo.builder()
                         .id(generateGameRecordId())
@@ -101,7 +101,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                         .wheel(wheelDo)
                         .rewardResult(rewardResultDo)
                         .gameRecordIds(null)
-                        .overallRewardAmount(maxAmountControl(overallRewardAmount, gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
+                        .overallRewardAmount(maxAmountControl(overallRewardAmount, gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
                         .accumulateReachMaxMultiple(freeWheelReachMaxRewardMultiple)
                         .lastGameFlag(freeWheelReachMaxRewardMultiple || index == wheelList.size() - 1)
                         .build();
@@ -124,7 +124,7 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
                 .wheel(firstWheel)
                 .rewardResult(firstWheelRewardResult)
                 .gameRecordIds(freeWheelGameRecordIds)
-                .overallRewardAmount(maxAmountControl(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
+                .overallRewardAmount(maxAmountControl(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
                 .accumulateReachMaxMultiple(firstWheelReachMaxRewardMultiple)
                 .lastGameFlag(firstWheelReachMaxRewardMultiple || !firstWheelRewardResult.isHasRewardFreeWheel())
                 .build();
