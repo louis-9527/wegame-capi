@@ -27,7 +27,7 @@ public class TreasureListVo implements Serializable {
     @ApiModelProperty(value = "状态:1 - in progress , 2 - redeemable , 3 - redeemed", required = true)
     private Integer status;
     @ApiModelProperty(value = "宝箱等级", required = true)
-    private Integer level;
+    private Integer vipLevel;
     @ApiModelProperty(value = "宝箱奖励列表", required = true)
     private List<TreasureRewardVo> rewards;
 }
