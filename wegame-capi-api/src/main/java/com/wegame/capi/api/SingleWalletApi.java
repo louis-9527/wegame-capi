@@ -49,9 +49,12 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
-        } catch (Exception e) {
-            log.error("authTokenLogin err, req: {}, errMsg: {}", req, e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.error("authTokenLogin BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw e;
+        } catch (Exception e) {
+            log.error("authTokenLogin Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
 
@@ -73,10 +76,10 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             return responseEntity.getBody().getData();
         } catch (BusinessException be) {
-            log.error("getCredit err, req: {}, errMsg: {}", req, be.getMessage(), be);
+            log.error("getCredit BusinessException, req: {}, errMsg: {}", req, be.getMessage(), be);
             throw be;
         } catch (Exception e) {
-            log.error("getCredit err, req: {}, errMsg: {}", req, e.getMessage(), e);
+            log.error("getCredit Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
@@ -98,11 +101,11 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             return responseEntity.getBody();
-        } catch (BusinessException be) {
-            log.error("betWithPayout err, req: {}, errMsg: {}", req, be.getMessage(), be);
-            throw be;
+        } catch (BusinessException e) {
+            log.error("betWithPayout BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("betWithPayout err, req: {}, errMsg: {}", req, e.getMessage(), e);
+            log.error("betWithPayout Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
@@ -129,11 +132,11 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
             return responseEntity.getBody().getData();
-        } catch (BusinessException be) {
-            log.error("betStatus business err, req: {}, errMsg: {}", req, be.getMessage(), be);
-            throw be;
+        } catch (BusinessException e) {
+            log.error("betStatus BusinessException err, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
-            log.error("betStatus err, req: {}, errMsg: {}", req, e.getMessage(), e);
+            log.error("betStatus Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }

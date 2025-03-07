@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 /**
  * 用户模块
@@ -39,7 +38,7 @@ public class UserController extends AbstractController {
     @ApiOperation(value = "登录", httpMethod = "POST")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
     @PostMapping("/login")
-    public CommonResponse<UserInfo> login(HttpServletResponse response, @Valid @RequestBody UserLoginRequest request) {
+    public CommonResponse<UserInfo> login(HttpServletResponse response, @RequestBody UserLoginRequest request) {
         request.validateParam();
         return CommonResponse.build(loginService.login(response, UserLoginConvert.requestToDo(request)));
     }

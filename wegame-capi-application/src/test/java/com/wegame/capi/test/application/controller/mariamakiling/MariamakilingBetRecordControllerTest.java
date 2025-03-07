@@ -37,7 +37,6 @@ public class MariamakilingBetRecordControllerTest extends BetRecordControllerTes
     @Test
     public void test_pageGet() {
         beforeTest();
-        // todo
         //        commonGet("12345");
     }
 }

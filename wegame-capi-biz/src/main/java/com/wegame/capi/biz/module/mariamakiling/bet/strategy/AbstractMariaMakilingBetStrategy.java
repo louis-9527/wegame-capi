@@ -132,8 +132,8 @@ public abstract class AbstractMariaMakilingBetStrategy
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                maxAmountControl(totalRewardAmount, betDo.getBetDetail().getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                maxAmountControl(totalRewardAmount, betDo.getBetDetail().getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 list);
         // 保存投注记录并派奖
         MariaMakilingGameRecordDo gameRecord = list.get(0);

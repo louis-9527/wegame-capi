@@ -18,7 +18,6 @@
 //        long startTime = System.currentTimeMillis();
 //        Object result = proceedingJoinPoint.proceed();
 //        Signature signature = proceedingJoinPoint.getSignature();
-//        // todo 埋点上报 + 成功 or 失败
 //        log.info("第三方接口调用耗时，{}#{}, req={}, res={}, cost times: {} ms",
 //                signature.getDeclaringTypeName(),
 //                signature.getName(),

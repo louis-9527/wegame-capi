@@ -24,7 +24,8 @@ public class PlatformCallbackController {
     @PostMapping("/notifyCreditChange")
     public CommonResponse<Void> notifyCreditChange(@RequestBody CreditChangeNotifyRequest request) {
         request.validateParam();
-        return CommonResponse.build(userService.notifyCreditChange(PlatformCallbackConverter.requestToDto(request)));
+        userService.notifyCreditChange(PlatformCallbackConverter.requestToDto(request));
+        return CommonResponse.build(null);
     }
 
 }
