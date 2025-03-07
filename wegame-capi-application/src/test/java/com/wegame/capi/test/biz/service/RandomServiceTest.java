@@ -1,8 +1,8 @@
 package com.wegame.capi.test.biz.service;
 
 import com.wegame.capi.biz.service.RandomService;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

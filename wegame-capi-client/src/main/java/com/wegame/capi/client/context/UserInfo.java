@@ -1,4 +1,4 @@
-package com.wegame.capi.common.context;
+package com.wegame.capi.client.context;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
