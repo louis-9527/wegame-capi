@@ -295,11 +295,11 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
                     symbolArr[row][column] = malakasSymbolDo;
                     if (symbolDo.isScatterSymbol()) {
-                        scatterNumberInColumn++;
-                        scatterNumberInWheel++;
+                        scatterNumberInColumn = scatterNumberInColumn + 1;
+                        scatterNumberInWheel = scatterNumberInWheel + 1;
                     }
                 }
-                randomNumberIndex++;
+                randomNumberIndex = randomNumberIndex + 1;
             }
         }
         // 返回：滚轮
