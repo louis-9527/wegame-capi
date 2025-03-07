@@ -112,11 +112,12 @@ public class BetRecordService {
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         if (Objects.isNull(betRecordPo)) {
-            log.warn("get betRecord ret is null, then force query from primary. id: {}", id);
+            log.warn("get betRecord ret is null, then force query from primary. id: {}, playerId: {}", id, playerId);
             betRecordPo = getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {
                 collection.withReadPreference(ReadPreference.primary());
                 return getMongoTemplate(gameType).findOne(query, BetRecordPo.class, gameType.getBetRecordCollectionName());
             });
+            log.warn("get betRecord ret is null, then force query from primary. id: {}, playerId: {}, po: {}", id, playerId, betRecordPo);
         }
         return BetRecordConverter.poToDo(betRecordPo);
     }
@@ -137,7 +138,11 @@ public class BetRecordService {
                 recordQuery,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
-        return Optional.ofNullable(betRecordPoList).orElse(Collections.emptyList()).stream().map(BetRecordPo::getId).collect(Collectors.toList());
+        return Optional.ofNullable(betRecordPoList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(BetRecordPo::getId)
+                .collect(Collectors.toList());
     }
 
     public List<Long> listNotExistIdList(List<Long> idList, GameTypeEnum gameType) {
