@@ -13,6 +13,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 @Data
@@ -35,5 +37,12 @@ public class IbongAdarnaBetRequest implements BetRequestValidate, Serializable {
         AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET.equals(betType), ErrorCode.ERR_PARAM, "not support betType");
         // 投注子类型只能是正常投注/ex投注
         AssertUtil.assertTrue(BetSubTypeEnum.NORMAL_BET.equals(betSubType) || BetSubTypeEnum.EX_BET.equals(betSubType), ErrorCode.ERR_PARAM, "not support betSubType");
+        // ex类型，支付金额必须是投注金额的1.5倍
+        if (Objects.equals(BetSubTypeEnum.EX_BET, betSubType)) {
+            BigDecimal payAmountDecimal = BigDecimal.valueOf(payAmount);
+            BigDecimal betAmountDecimal = BigDecimal.valueOf(betAmount);
+            BigDecimal exceptPayAmount = betAmountDecimal.multiply(new BigDecimal("1.5")).setScale(0, RoundingMode.FLOOR);
+            AssertUtil.assertTrue(exceptPayAmount.compareTo(payAmountDecimal) == 0, ErrorCode.ERR_PARAM, "ex bet payAmount must be 1.5 times of betAmount");
+        }
     }
 }
