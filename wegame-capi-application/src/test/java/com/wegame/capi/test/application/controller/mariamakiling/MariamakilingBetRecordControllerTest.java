@@ -2,10 +2,9 @@ package com.wegame.capi.test.application.controller.mariamakiling;
 
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
-import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.test.application.controller.BetRecordControllerTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

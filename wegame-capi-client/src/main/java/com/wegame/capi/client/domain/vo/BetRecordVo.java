@@ -32,6 +32,8 @@ public class BetRecordVo implements Validate, Serializable {
     private String id;
     @ApiModelProperty("用户id")
     private String userId;
+    @ApiModelProperty("玩家id")
+    private String playerId;
     @ApiModelProperty("玩家名称")
     private String playerName;
     @ApiModelProperty("投注金额 单位：分")
@@ -48,7 +50,5 @@ public class BetRecordVo implements Validate, Serializable {
     private Long createTime;
     @ApiModelProperty("游戏记录列表")
     private List<Object> gameRecordList;
-
-
 }
 

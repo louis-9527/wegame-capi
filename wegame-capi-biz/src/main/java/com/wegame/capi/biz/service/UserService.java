@@ -12,7 +12,7 @@ import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
 import com.wegame.capi.biz.converter.user.UserConverter;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.client.domain.dto.CreditChangeNotifyDto;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.user.UserManualMapper;
 import com.wegame.capi.dao.mapper.user.UserMapper;
