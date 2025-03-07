@@ -10,7 +10,7 @@ import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.common.Constants;
-import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.client.context.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
