@@ -20,4 +20,6 @@ public class TreasureRewardVo implements Serializable {
     private String rewardName;
     @ApiModelProperty(value = "奖励次数", required = true)
     private Integer rewardCount;
+    @ApiModelProperty(value = "奖励等级", required = true)
+    private Integer starLevel;
 }
