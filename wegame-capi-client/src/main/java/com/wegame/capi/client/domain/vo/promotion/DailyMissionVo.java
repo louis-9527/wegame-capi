@@ -26,5 +26,7 @@ public class DailyMissionVo implements  Serializable {
     private BigDecimal target;
     @ApiModelProperty(value = "状态:1 - in progress , 2 - finish", required = true)
     private Integer status;
+    @ApiModelProperty(value = "等级", required = true)
+    private Integer starLevel;
 
 }
