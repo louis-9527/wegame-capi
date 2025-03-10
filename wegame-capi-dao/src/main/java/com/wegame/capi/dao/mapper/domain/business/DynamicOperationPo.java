@@ -90,10 +90,15 @@ public class DynamicOperationPo implements Serializable {
     private Long expiredTime;
 
     /**
-     * 干预状态(0:未知,1:已完成(正常),2:已完成(过期))
+     * 干预状态
+     * com.wegame.capi.common.enums.DynamicOperationEventStatusEnum
      */
     private Integer eventStatus;
-
+    /**
+     * 干预状态
+     * com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum
+     */
+    private Integer eventSubStatus;
     /**
      * 上报状态
      */

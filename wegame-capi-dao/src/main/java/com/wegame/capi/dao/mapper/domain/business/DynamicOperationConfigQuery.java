@@ -15,6 +15,11 @@ public class DynamicOperationConfigQuery {
     private Long id;
 
     /**
+     * 玩家id
+     */
+    private String playerId;
+
+    /**
      * 游戏ID
      */
     private String gameId;

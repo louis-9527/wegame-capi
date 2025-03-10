@@ -13,8 +13,7 @@ public enum DynamicOperationEventStatusEnum {
 
     NONE(0, "可干预"),
     ING(1, "干预中"),
-    FINISH_NORMAL(2, "干预完成(正常)"),
-    FINISH_EXPIRED(3, "干预完成(过期)");
+    FINISH(2, "干预完成");
 
     /**
      * 枚举码.
@@ -37,6 +36,7 @@ public enum DynamicOperationEventStatusEnum {
         this.desc = desc;
     }
 
+
     public static DynamicOperationEventStatusEnum valueOfCode(Integer code) {
         for (DynamicOperationEventStatusEnum item : DynamicOperationEventStatusEnum.values()) {
             if (Objects.equals(item.getCode(), code)) {
@@ -44,24 +44,5 @@ public enum DynamicOperationEventStatusEnum {
             }
         }
         return null;
-    }
-
-    public static Integer convertUpdateEventsStatus(DynamicOperationEventStatusEnum eventStatusEnum) {
-        if (DynamicOperationEventStatusEnum.FINISH_NORMAL == eventStatusEnum) {
-            return 1;
-        }
-        if (DynamicOperationEventStatusEnum.FINISH_EXPIRED == eventStatusEnum) {
-            return 2;
-        }
-        return null;
-    }
-
-
-    public static Boolean eventFinish(DynamicOperationEventStatusEnum eventStatusEnum){
-            if(DynamicOperationEventStatusEnum.FINISH_NORMAL == eventStatusEnum
-                    || DynamicOperationEventStatusEnum.FINISH_EXPIRED == eventStatusEnum){
-                return Boolean.TRUE;
-            }
-            return false;
     }
 }

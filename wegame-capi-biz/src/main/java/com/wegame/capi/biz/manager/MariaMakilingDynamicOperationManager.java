@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager;
 
+import com.google.common.collect.Lists;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
@@ -28,9 +29,9 @@ import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.mar
 public class MariaMakilingDynamicOperationManager extends AbstractDynamicOperationManager {
     // 使用 ConcurrentHashMap 进行缓存
     private static final Map<String, List<Double>> configMultipleArray = new ConcurrentHashMap<>();
-    private static final Map<Double, List<DynamicOperationConfigDo>> normalConfigDetailArray = new ConcurrentHashMap<>();
+    private static final Map<Double, List<List<DynamicOperationConfigDo>>> normalConfigDetailArray = new ConcurrentHashMap<>();
 
-    private static final Map<Double, List<DynamicOperationConfigDo>> freeConfigDetailArray = new ConcurrentHashMap<>();
+    private static final Map<Double, List<List<DynamicOperationConfigDo>>> freeConfigDetailArray = new ConcurrentHashMap<>();
 
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager)
@@ -51,7 +52,7 @@ public class MariaMakilingDynamicOperationManager extends AbstractDynamicOperati
     }
 
     @Override
-    public List<DynamicOperationConfigDo> getConfigDetail(DynamicOperationConfigQuery configQuery) {
+    public List<List<DynamicOperationConfigDo>> getConfigDetail(DynamicOperationConfigQuery configQuery) {
         Double multiple = configQuery.getMultiple();
         if (DynamicOperationEventTypeEnum.NORMAL.getCode().equals(configQuery.getConfigType())) {
             return normalConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigDetail(configQuery));

@@ -6,6 +6,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
+import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
 
@@ -26,6 +27,7 @@ public class DynamicOperationConvert {
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
             po.setEventStatus(DynamicOperationEventStatusEnum.NONE.getCode());
+            po.setEventSubStatus(DynamicOperationEventSubStatusEnum.NONE.getCode());
             po.setReportStatus(DynamicOperationReportStatusEnum.NONE.getCode());
             po.setEffectedTime(msgDo.getEffectedTime());
             po.setExpiredTime(msgDo.getExpiredTime());
@@ -43,6 +45,8 @@ public class DynamicOperationConvert {
             po.setCreateTime(currentMilli);
         } else {
             po.setEventStatus(msgDo.getEventStatus() == null ? null : msgDo.getEventStatus().getCode());
+            po.setEventSubStatus(msgDo.getEventSubStatus() == null ? null : msgDo.getEventSubStatus().getCode());
+            po.setReportStatus(msgDo.getReportStatus() == null ? null : msgDo.getReportStatus().getCode());
         }
         return po;
     }
@@ -76,6 +80,7 @@ public class DynamicOperationConvert {
         eventDo.setEffectedTime(eventPo.getEffectedTime());
         eventDo.setExpiredTime(eventPo.getExpiredTime());
         eventDo.setEventStatus(DynamicOperationEventStatusEnum.valueOfCode(eventPo.getEventStatus()));
+        eventDo.setEventSubStatus(DynamicOperationEventSubStatusEnum.valueOfCode(eventPo.getEventStatus()));
         eventDo.setReportStatus(DynamicOperationReportStatusEnum.valueOfCode(eventPo.getReportStatus()));
         return eventDo;
     }

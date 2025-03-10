@@ -50,9 +50,7 @@ public class DynamicOperationQueryBuilder {
         if (Objects.nonNull(recordQuery.getEventStatus())) {
             criteria.and("eventStatus").is(recordQuery.getEventStatus());
         }
-        if (Objects.nonNull(recordQuery.getEventStatusList())) {
-            criteria.and("eventStatus").in(recordQuery.getEventStatusList());
-        }
+
         if (Objects.nonNull(recordQuery.getReportStatus())) {
             criteria.and("reportStatus").is(recordQuery.getReportStatus());
         }

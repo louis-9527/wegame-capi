@@ -20,10 +20,12 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.manager.AbstractDynamicOperationManager;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
+import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,6 +56,8 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     @Qualifier(dynamicEventThreadPoolExecutor)
     private ThreadPoolExecutor threadPoolExecutor;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public abstract AbstractDynamicOperationManager getDynamicOperationManager();
 
@@ -94,18 +99,18 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     public void asyncEventDetailUpdate(DynamicOperationEventDo eventDo, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
         threadPoolExecutor.execute(() -> {
-            Long finishAmount = null;
-            DynamicOperationEventStatusEnum newEventStatus = getDynamicOperationManager().getFinishEventStatus(eventDo, eventAmount);
-            if (BetStatusEnum.SUCCESS == betStatus) {
-                // 获取最新状态
-                finishAmount = eventDo.getFinishBonus() + eventAmount;
+            // 判断是否完成
+            DynamicOperationEventSubStatusEnum eventSubStatusEnum = null;
+            DynamicOperationEventStatusEnum eventStatusEnum = DynamicOperationEventStatusEnum.NONE;
+            if (DateUtil.getCurrentMilli() > eventDo.getExpiredTime()) {
+                // 过期
+                eventSubStatusEnum = DynamicOperationEventSubStatusEnum.FINISH_EXPIRED;
+                eventStatusEnum = DynamicOperationEventStatusEnum.FINISH;
             }
-
-            // 如果为完成需要更新 事件状态为可干预
-            if (!DynamicOperationEventStatusEnum.eventFinish(newEventStatus)) {
-                if (eventDo.getEventStatus() == DynamicOperationEventStatusEnum.ING) {
-                    newEventStatus = DynamicOperationEventStatusEnum.NONE;
-                }
+            Long finishBonus = eventDo.getFinishBonus() + eventAmount;
+            if (eventDo.getMinBonus() <= finishBonus) {
+                eventSubStatusEnum = DynamicOperationEventSubStatusEnum.FINISH_NORMAL;
+                eventStatusEnum = DynamicOperationEventStatusEnum.FINISH;
             }
 
             DynamicOperationEventDetailDo eventDetailUpdate = DynamicOperationEventDetailDo.builder()
@@ -115,18 +120,21 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
                     .build();
             DynamicOperationEventDo eventDoUpdate = DynamicOperationEventDo.builder()
                     .id(eventDo.getId())
-                    .finishBonus(finishAmount)
-                    .eventStatus(newEventStatus).build();
+                    .finishBonus(BetStatusEnum.SUCCESS == betStatus ? finishBonus : null)
+                    .eventStatus(eventStatusEnum)
+                    .eventSubStatus(eventSubStatusEnum)
+                    .build();
 
 
             getDynamicOperationManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
             // 执行上报
-            if (DynamicOperationEventStatusEnum.eventFinish(newEventStatus)) {
+            if (DynamicOperationEventSubStatusEnum.finish(eventSubStatusEnum)) {
                 // 如果完成执行上报
-                getDynamicOperationManager().reportEvent(eventDo.getId(), newEventStatus);
+                getDynamicOperationManager().asyncReportEvent(eventDo.getId());
             }
         });
     }
+
 
 
     private BetRecordDo<R> rBetRecordDo(BetDo<BD> betDo, GameEventDo<WD> gameEventDo) {
@@ -210,7 +218,18 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
          * 那么y < 0.1x 则赠送金额y小于下注金额x10% 就会出现赠送不出去情况
          * 每次下注最小为1,购买轮下注金额的35倍,如果赠送金额<3.5 就会出现无法赠送的情况
          */
+
+
         Long betPayAmount = this.getBetAndPayAmount(betDo).getValue();
+
+        if (this.getBetAndPayAmount(betDo).getKey() <= this.getGame().getGameInfo().getGameType().getMinBetAmount()) {
+            // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
+            if (interventionAmount < 0.1 * betPayAmount) {
+                // 上报
+               // this.getDynamicOperationManager().reportEvent();
+            }
+        }
+
         long interveneBalance = interventionAmount + betPayAmount;
         //计算最大倍数
         double multiple = ((double) interveneBalance / betPayAmount);
@@ -271,11 +290,20 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
                 .gameId(this.getGame().getGameInfo().getGameType().getId())
                 .configType(configType)
                 .multiple(multiple).build();
-        List<DynamicOperationConfigDo> configDetail = getDynamicOperationManager().getConfigDetail(configQuery);
-        if (CollectionUtils.isEmpty(configDetail)) {
+        List<List<DynamicOperationConfigDo>> configDetailGroup = getDynamicOperationManager().getConfigDetail(configQuery);
+        if (CollectionUtils.isEmpty(configDetailGroup)) {
             log.error("normalPayMultipleConfig result null,configType:{},multiple:{}", configType, multiple);
             return null;
         }
+        // 获取分组下config配置,避免玩家相同倍数连续命中同样的滚轮
+        String incrementKey = String.format(Constants.DYNAMIC_OPERATION_CONFIG_INCREMENT_KEY,
+                this.getGame().getGameInfo().getId(),
+                UserInfoContext.getUserInfo().getId(), configType, multiple);
+        Long increment = redisTemplate.opsForValue().increment(incrementKey);
+        if (increment >= configDetailGroup.size()) {
+            redisTemplate.opsForValue().set(incrementKey, 1L);
+        }
+        List<DynamicOperationConfigDo> configDetail = configDetailGroup.get((int) (increment - 1));
         int randomIndex = ThreadLocalRandom.current().nextInt(configDetail.size());
         DynamicOperationConfigDo dynamicOperationConfigDo = configDetail.get(randomIndex);
         return this.convertWheelDoList(dynamicOperationConfigDo.getDetail());

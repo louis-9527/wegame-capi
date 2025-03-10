@@ -50,11 +50,9 @@ public class DynamicOperationQuery implements Serializable {
 
 
     /**
-     * 过期时间(大于)
+     * 过期时间小于
      */
     private Long expiredTimeLt;
-
-    private List<Integer> eventStatusList;
 
     private Integer reportStatus;
 

@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.service;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.wegame.base.enums.ErrorCode;
@@ -19,6 +20,7 @@ import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +45,16 @@ public class DynamicOperationEventConfigService {
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
-    public List<DynamicOperationConfigDo> getConfigDetail(DynamicOperationConfigQuery configQuery,DynamicOperationGameEnum dynamicOperationGame) {
-        List<DynamicOperationConfigPo> dynamicOperationConfigPos = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery), DynamicOperationConfigPo.class, dynamicOperationGame.getEventConfigCollectionName());
-        return DynamicOperationConfigConvert.convertDos(dynamicOperationConfigPos);
-    }
+    private static final int partitionSize = 10;
 
+    public List<List<DynamicOperationConfigDo>> getConfigDetail(DynamicOperationConfigQuery configQuery, DynamicOperationGameEnum dynamicOperationGame) {
+        List<DynamicOperationConfigPo> dynamicOperationConfigPos = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery), DynamicOperationConfigPo.class, dynamicOperationGame.getEventConfigCollectionName());
+        List<DynamicOperationConfigDo> dynamicOperationConfigDos = DynamicOperationConfigConvert.convertDos(dynamicOperationConfigPos);
+        if (CollectionUtils.isEmpty(dynamicOperationConfigDos)) {
+            return new ArrayList<>();
+        }
+        return Lists.partition(dynamicOperationConfigDos, partitionSize);
+    }
 
 
     public List<Double> getConfigMultipleArray(DynamicOperationGameEnum dynamicOperationGame) {

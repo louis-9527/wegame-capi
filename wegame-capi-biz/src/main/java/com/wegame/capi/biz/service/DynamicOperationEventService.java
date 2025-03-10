@@ -138,14 +138,6 @@ public class DynamicOperationEventService {
     }
 
 
-    public DynamicOperationEventStatusEnum getEventStatus(Long bonus, Long use) {
-        long lowerBound = (long) (bonus * 0.9);
-        if (use >= lowerBound) {
-            return DynamicOperationEventStatusEnum.FINISH_NORMAL;
-        }
-        return DynamicOperationEventStatusEnum.NONE;
-    }
-
 
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
         MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);

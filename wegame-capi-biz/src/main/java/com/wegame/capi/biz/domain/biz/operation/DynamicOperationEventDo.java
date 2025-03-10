@@ -3,6 +3,7 @@ package com.wegame.capi.biz.domain.biz.operation;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
+import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -77,9 +78,13 @@ public class DynamicOperationEventDo {
     private BetTypeEnum betType;
 
     /**
-     * 干预状态(0:干预中(默认),1:已完成(正常),2:已完成(过期))
+     * 干预状态
      */
     private DynamicOperationEventStatusEnum eventStatus;
+    /**
+     * 干预子状态
+     */
+    private DynamicOperationEventSubStatusEnum eventSubStatus;
 
     /**
      * 上报状态
