@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "奖励明细")
-public class BigRewardDetailVo implements Serializable {
+public class BagRewardDetailVo implements Serializable {
     private static final long serialVersionUID = -2041608152456306530L;
     @ApiModelProperty(value = "奖励ID", required = true)
     private String rewardId;
@@ -21,7 +21,7 @@ public class BigRewardDetailVo implements Serializable {
     @ApiModelProperty(value = "奖励描述", required = true)
     private String description;
     @ApiModelProperty(value = "余额要求", required = true)
-    private String balanceRequired;
+    private Long balanceRequired;
     @ApiModelProperty(value = "跳转时游戏ID", required = true)
     private String skipGameId;
     @ApiModelProperty(value = "系统游戏ID", required = true)
