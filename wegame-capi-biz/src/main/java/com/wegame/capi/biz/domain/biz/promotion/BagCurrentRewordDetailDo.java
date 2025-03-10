@@ -23,6 +23,11 @@ public class BagCurrentRewordDetailDo {
     private String name;
 
     /**
+     * 等级
+     */
+    private Integer starLevel;
+
+    /**
      * 奖励描述
      */
     private String description;

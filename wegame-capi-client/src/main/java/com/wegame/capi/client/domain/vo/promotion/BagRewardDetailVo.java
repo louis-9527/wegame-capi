@@ -18,6 +18,8 @@ public class BagRewardDetailVo implements Serializable {
     private String rewardId;
     @ApiModelProperty(value = "奖励名称", required = true)
     private String name;
+    @ApiModelProperty(value = "等级", required = true)
+    private Integer starLevel;
     @ApiModelProperty(value = "奖励描述", required = true)
     private String description;
     @ApiModelProperty(value = "余额要求", required = true)

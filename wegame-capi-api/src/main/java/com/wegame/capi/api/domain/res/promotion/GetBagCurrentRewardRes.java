@@ -46,6 +46,11 @@ public class GetBagCurrentRewardRes {
         private String rewardId;
 
         /**
+         * 等级
+         */
+        private Integer starLevel;
+
+        /**
          * 奖励URL
          */
         private String imgUrl;
