@@ -60,10 +60,6 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            // todo delete log
-            //            gameRecordList.forEach(item -> {
-            //                log.info("addGameRecord id:{}", item.getId());
-            //            });
             boolean insertRet = gameRecordService.batchAdd(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
             AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
         }
@@ -79,17 +75,26 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Cacheable(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #query.getCacheKey()")
     public List<MariaMakilingGameRecordDo> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertStrNotEmpty(query.getCacheKey(), ErrorCode.ERR_PARAM);
-        return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+        List<MariaMakilingGameRecordDo> recordDos = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+        if (CollectionUtils.isNotEmpty(recordDos)) {
+            log.warn("list game record ret is empty, then query from primary, {}, {}", gameType, query);
+            query.setFromPrimary(true);
+            recordDos = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+        }
+        return recordDos;
     }
 
     @Override
     public List<MariaMakilingGameRecordVo> listGameRecordVo(Long betRecordId, GameTypeEnum gameType) {
         List<MariaMakilingGameRecordDo> list = gameRecordService.list(GameRecordQuery.builder()
-                .betRecordId(betRecordId)
-                .orderByClause("_id")
-                .direction(Sort.Direction.ASC)
-                .build(), gameType, MariaMakilingGameRecordDo.class);
-        return Optional.ofNullable(list).orElse(Collections.emptyList())
+                        .betRecordId(betRecordId)
+                        .orderByClause("_id")
+                        .direction(Sort.Direction.ASC)
+                        .build(),
+                gameType,
+                MariaMakilingGameRecordDo.class);
+        return Optional.ofNullable(list)
+                .orElse(Collections.emptyList())
                 .stream()
                 .map(MariaMakilingGameRecordDo::toRecordVo)
                 .collect(Collectors.toList());

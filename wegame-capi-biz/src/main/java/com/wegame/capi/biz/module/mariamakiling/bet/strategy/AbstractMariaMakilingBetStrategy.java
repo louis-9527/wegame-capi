@@ -19,10 +19,9 @@ import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.module.base.AmountUtil.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountUtil.reachMaxMultiple;
+import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
+import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 
 /**
  * MariaMakiling类游戏投注抽象接口
@@ -86,7 +85,7 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparingInt(MariaMakilingGameRecordDo::getIndex))
                 .collect(Collectors.toList());
-        // 匹配-免费轮游戏记录 todo 可直接查询游戏记录
+        // 匹配-免费轮游戏记录
         MariaMakilingGameRecordDo matchGameRecord = gameRecordList
                 .stream()
                 .filter(item -> Objects.equals(item.getId(), betDetail.getGameRecordId()))
@@ -114,14 +113,7 @@ public abstract class AbstractMariaMakilingBetStrategy
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeWheel(BetDo<MariaMakilingBetDo> betDo) {
         long betRecordId = generateBetRecordId();
-        List<MariaMakilingGameRecordDo> list = getGame().play(GamePlayDo.builder()
-                .gameType(betDo.getGameType())
-                .betType(betDo.getBetType())
-                .betSubType(betDo.getBetSubType())
-                .betAmount(betDo.getBetDetail().getBetAmount())
-                .payAmount(betDo.getBetDetail().getPayAmount())
-                .betRecordId(betRecordId)
-                .build());
+        List<MariaMakilingGameRecordDo> list = getGame().play(buildGamePlay(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
         //// 总中奖金额
@@ -133,8 +125,8 @@ public abstract class AbstractMariaMakilingBetStrategy
                 betDo,
                 betDo.getBetDetail().getBetAmount(),
                 betDo.getBetDetail().getPayAmount(),
-                maxAmountControl(totalRewardAmount, betDo.getBetDetail().getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                maxAmountControl(totalRewardAmount, betDo.getBetDetail().getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 list);
         // 保存投注记录并派奖
         MariaMakilingGameRecordDo gameRecord = list.get(0);
@@ -146,7 +138,7 @@ public abstract class AbstractMariaMakilingBetStrategy
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
-                    .credit(AmountUtil.toLong(resultDo.getCredit()))
+                    .credit(resultDo.getCredit())
                     .overallRewardAmount(gameRecord.getOverallRewardAmount())
                     .totalPayoutAmount(betRecord.getPayOutAmount())
                     .resultDetail(gameRecord)
@@ -164,4 +156,14 @@ public abstract class AbstractMariaMakilingBetStrategy
         // do nothing
     }
 
+    private GamePlayDo buildGamePlay(BetDo<MariaMakilingBetDo> betDo, long betRecordId) {
+        return GamePlayDo.builder()
+                .gameType(betDo.getGameType())
+                .betType(betDo.getBetType())
+                .betSubType(betDo.getBetSubType())
+                .betAmount(betDo.getBetDetail().getBetAmount())
+                .payAmount(betDo.getBetDetail().getPayAmount())
+                .betRecordId(betRecordId)
+                .build();
+    }
 }

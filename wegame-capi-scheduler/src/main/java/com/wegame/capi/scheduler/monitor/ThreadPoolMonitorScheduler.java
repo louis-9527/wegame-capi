@@ -36,7 +36,6 @@
 //    TomcatServletWebServerFactory factory;
 //
 //    /**
-//     * todo 指定一个单独的线程池
 //     * 定时任务
 //     */
 //    @Scheduled(cron = "0 0/5 * * * ?")

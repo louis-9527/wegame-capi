@@ -8,12 +8,11 @@ import com.wegame.capi.client.domain.request.promotion.QueryBagOtherGameRewardRe
 import com.wegame.capi.client.domain.vo.promotion.BagCurrentRewordVo;
 import com.wegame.capi.client.domain.vo.promotion.BagOtherRewordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.test.BaseTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class BagControllerTest extends BaseTest {

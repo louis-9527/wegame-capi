@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @EnableScheduling
 @EnableAsync
+@EnableRetry
 @EnableCaching
 @EnableTransactionManagement
 @MapperScan(value = {"com.wegame.capi.dao.*"})

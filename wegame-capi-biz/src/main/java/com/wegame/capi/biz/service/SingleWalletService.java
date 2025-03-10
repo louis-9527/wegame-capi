@@ -14,6 +14,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class SingleWalletService {
             return BetSingleWalletResultDo.builder()
                     .betId(commonRes.getData().getBetId())
                     .refId(commonRes.getData().getRefId())
-                    .credit(commonRes.getData().getCredit())
+                    .credit(AmountUtil.toLong(commonRes.getData().getCredit()))
                     .betStatus(BetStatusEnum.SUCCESS)
                     .build();
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
@@ -69,7 +70,7 @@ public class SingleWalletService {
             return BetSingleWalletResultDo.builder()
                     .betId(betStatusRes.getBetId())
                     .betStatus(BetStatusEnum.valueOfSingleWalletBetStatus(singleWalletBetStatus))
-                    .credit(creditRes.getCredit())
+                    .credit(AmountUtil.toLong(creditRes.getCredit()))
                     .build();
         } else {
             // 获取余额

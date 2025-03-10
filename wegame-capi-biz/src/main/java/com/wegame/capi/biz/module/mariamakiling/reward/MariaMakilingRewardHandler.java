@@ -4,8 +4,10 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
+import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
@@ -19,6 +21,7 @@ import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
 import com.wegame.capi.biz.service.BetRecordService;
+import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +60,10 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
     MultipleCalculateStrategy mariaMakilingMultipleCalculateStrategy;
     @Autowired
     BetRecordService betRecordService;
+    @Autowired
+    RandomService randomService;
+    @Autowired
+    MariaMakilingConfig mariaMakilingConfig;
 
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
         // 1、业务校验
@@ -74,6 +81,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
                     .totalRewardAmount(0L)
                     .totalMultiple(totalMultiple)
                     .hasRewardFreeWheel(false)
+                    .rewardFreeWheelTimes(0)
                     .rewardLineDetailList(null)
                     .build();
         }
@@ -110,6 +118,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
                 .hasRewardFreeWheel(hasRewardScatter(rewardLineList))
+                .rewardFreeWheelTimes(getFreeWheelNumber())
                 .rewardLineDetailList(rewardLineDetailList)
                 .totalMultiple(totalMultiple)
                 .build();
@@ -216,6 +225,19 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
         return StringUtils.equals(symbol.getId(), targetSymbol.getId())
                 || symbol.isWildSymbol()
                 || targetSymbol.isWildSymbol();
+    }
+
+    private Integer getFreeWheelNumber() {
+        int randomNumber = randomService.randomInt(1, 100);
+        int startVal = 0;
+        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(mariaMakilingConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
+            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+                return entry.getKey();
+            } else {
+                startVal += entry.getValue();
+            }
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER);
     }
 
     private void validate(RewardHandleDo<SymbolDo> rewardHandle) {

@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.service;
 
-import cn.hutool.core.lang.Opt;
+import com.mongodb.ReadPreference;
 import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
@@ -40,17 +40,12 @@ public class BetRecordService {
     Map<String, MongoTemplate> mongoTemplateMap;
 
     public Long add(BetRecordDo betRecordDo, GameTypeEnum gameType) {
-        long startTime = System.currentTimeMillis();
         BetRecordPo po = getMongoTemplate(gameType).insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD),
                 gameType.getBetRecordCollectionName());
-        long endTime = System.currentTimeMillis();
-        //        log.info("addBetRecord id:{}", betRecordDo.getId());
-        //        log.info("BetRecordService#add cost time:{}", endTime - startTime);
         return po.getId();
     }
 
     public boolean batchAdd(List<BetRecordDo> betRecordList, GameTypeEnum gameType) {
-        long startTime = System.currentTimeMillis();
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_INTER);
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM, "betRecordList is empty");
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
@@ -58,19 +53,12 @@ public class BetRecordService {
         BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
-        poList.forEach(item -> {
-            // todo delete log
-            // log.info("addBetRecord id:{}", item.getId());
-            bulkOps.insert(item);
-        });
+        poList.forEach(bulkOps::insert);
         bulkOps.execute();
-        long endTime = System.currentTimeMillis();
-        // log.info("BetRecordService#batchInsert cost time:{}ms", endTime - startTime);
         return true;
     }
 
     public boolean update(BetRecordDo betRecordDo, GameTypeEnum gameType) {
-        long startTime = System.currentTimeMillis();
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
         Criteria criteria = new Criteria();
@@ -80,13 +68,10 @@ public class BetRecordService {
                 BetRecordQueryBuilder.buildMongoUpdate(betRecordDo),
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
-        long endTime = System.currentTimeMillis();
-        // log.info("BetRecordService#update cost time:{}ms", endTime - startTime);
         return Objects.nonNull(result) && result.getModifiedCount() > 0;
     }
 
     public int batchUpdate(List<BetRecordDo> betRecordDoList, GameTypeEnum gameType) {
-        long startTime = System.currentTimeMillis();
         AssertUtil.assertNotEmpty(betRecordDoList, ErrorCode.ERR_PARAM, "betRecordDoList is empty");
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
@@ -100,8 +85,6 @@ public class BetRecordService {
         });
         BulkWriteResult bulkWriteResult = bulkOps.execute();
         int modifiedCount = bulkWriteResult.getModifiedCount();
-        long endTime = System.currentTimeMillis();
-        // log.info("BetRecordService#batchUpdate cost time:{}ms", endTime - startTime);
         return modifiedCount;
     }
 
@@ -119,7 +102,6 @@ public class BetRecordService {
 
     @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #playerId + '_'  + #id")
     public BetRecordDo getWithCache(Long id, String playerId, GameTypeEnum gameType) {
-        long startTime = System.currentTimeMillis();
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
@@ -129,7 +111,14 @@ public class BetRecordService {
                 query,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
-        // log.info("BetRecordService#get cost time:{}", System.currentTimeMillis() - startTime);
+        if (Objects.isNull(betRecordPo)) {
+            log.warn("get betRecord ret is null, then force query from primary. id: {}, playerId: {}", id, playerId);
+            betRecordPo = getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {
+                collection.withReadPreference(ReadPreference.primary());
+                return getMongoTemplate(gameType).findOne(query, BetRecordPo.class, gameType.getBetRecordCollectionName());
+            });
+            log.warn("get betRecord ret is null, then force query from primary. id: {}, playerId: {}, po: {}", id, playerId, betRecordPo);
+        }
         return BetRecordConverter.poToDo(betRecordPo);
     }
 
@@ -149,7 +138,11 @@ public class BetRecordService {
                 recordQuery,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
-        return Optional.ofNullable(betRecordPoList).orElse(Collections.emptyList()).stream().map(BetRecordPo::getId).collect(Collectors.toList());
+        return Optional.ofNullable(betRecordPoList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(BetRecordPo::getId)
+                .collect(Collectors.toList());
     }
 
     public List<Long> listNotExistIdList(List<Long> idList, GameTypeEnum gameType) {
