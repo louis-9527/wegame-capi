@@ -71,8 +71,16 @@ public class GetDailyMissionRes implements Serializable {
          */
         private String description;
         /**
+         * Img Url
+         */
+        private String imgUrl;
+        /**
          * experience
          */
         private String experience;
+        /**
+         * status
+         */
+        private String status;
     }
 }

@@ -34,8 +34,7 @@ public class MissionController {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
-
-        return CommonResponse.build(null);
+        return CommonResponse.build(missionService.getDailyMission());
     }
 
 }
