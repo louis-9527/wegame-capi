@@ -1,31 +1,54 @@
 package com.wegame.capi.client.domain.vo.promotion;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Data
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "成就")
 public class AchievementVo implements  Serializable {
     private static final long serialVersionUID = -1704382640858325682L;
-    @ApiModelProperty(value = "成就名称", required = true)
+    private String id;
     private String name;
-    @ApiModelProperty(value = "任务描述", required = true)
     private String description;
-    @ApiModelProperty(value = "任务描述", required = true)
     private String iconUrl;
-    @ApiModelProperty(value = "当前进度", required = true)
-    private BigDecimal current;
-    @ApiModelProperty(value = "目标进度", required = true)
-    private BigDecimal target;
-    @ApiModelProperty(value = "1 - in progress , 2 - redeemable , 3 - redeemed", required = true)
+    private ProgressVo progressVoList;
+    private Date completeAt;
     private Integer status;
+    private String redeemId;
+    private List<RewardVo> rewards;
 
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProgressVo implements Serializable {
+        private BigDecimal target;
+        private BigDecimal current;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RewardVo implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private String rewardConfigId;
+        private String name;
+        private String starLevel;
+        private Integer count;
+        private String imgUrl;
+        private BigDecimal betValue;
+        private BigDecimal balanceRequired;
+    }
 }

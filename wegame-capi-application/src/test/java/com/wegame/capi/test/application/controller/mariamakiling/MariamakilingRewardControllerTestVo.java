@@ -6,13 +6,13 @@ import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
-import com.wegame.capi.test.application.controller.RewardControllerTest;
+import com.wegame.capi.test.application.controller.RewardVoControllerTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 
 @Slf4j
-public class MariamakilingRewardControllerTest extends RewardControllerTest {
+public class MariamakilingRewardControllerTestVo extends RewardVoControllerTest {
 
 
     @Before

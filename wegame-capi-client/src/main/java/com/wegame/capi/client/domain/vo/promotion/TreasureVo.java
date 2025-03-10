@@ -5,19 +5,51 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "宝箱列表")
+@ApiModel(description = "宝箱")
 public class TreasureVo implements  Serializable {
+    @ApiModelProperty(value = "宝箱ID", required = true)
+    private String treasureId;
+    @ApiModelProperty(value = "宝箱名称", required = true)
+    private String name;
+    @ApiModelProperty(value = "当前进度", required = true)
+    private BigDecimal currentExperience;
+    @ApiModelProperty(value = "目标进度", required = true)
+    private BigDecimal targetExperience;
+    @ApiModelProperty(value = "状态:1 - in progress , 2 - redeemable , 3 - redeemed", required = true)
+    private Integer status;
+    @ApiModelProperty(value = "宝箱等级", required = true)
+    private Integer vipLevel;
+    @ApiModelProperty(value = "宝箱奖励列表", required = true)
+    private List<RewardVo> rewards;
 
-    private static final long serialVersionUID = -1704392640858105682L;
-    @ApiModelProperty(value = "宝箱列表", required = true)
-    private List<TreasureListVo> treasureList;
-
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ApiModel(description = "宝箱奖励")
+    public static class RewardVo implements Serializable {
+        private static final long serialVersionUID = 7692352397871708565L;
+        @ApiModelProperty(value = "奖励ID", required = true)
+        private String rewardId;
+        @ApiModelProperty(value = "奖励名称", required = true)
+        private String rewardName;
+        @ApiModelProperty(value = "奖励次数", required = true)
+        private Integer rewardCount;
+        @ApiModelProperty(value = "奖励等级", required = true)
+        private Integer starLevel;
+        @ApiModelProperty(value = "icon地址", required = true)
+        private String imgUrl;
+    }
 }
+
+

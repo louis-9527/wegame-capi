@@ -11,10 +11,17 @@ import java.util.Date;
 
 public class MissionReqBuilder {
     public static GetDailyMissionReq build() {
+//        return GetDailyMissionReq.builder()
+//                .pId(UserInfoContext.getUserInfo().getPId())
+//                .channelId(UserInfoContext.getUserInfo().getChannelId())
+//                .playerName(UserInfoContext.getUserInfo().getPlayerName())
+//                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
+//                .createTime(DateUtil.toUTC(new Date()))
+//                .build();
         return GetDailyMissionReq.builder()
-                .pId(UserInfoContext.getUserInfo().getPId())
-                .channelId(UserInfoContext.getUserInfo().getChannelId())
-                .playerName(UserInfoContext.getUserInfo().getPlayerName())
+                .pId("50")
+                .channelId("1050")
+                .playerName("cpcpmstest01")
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();

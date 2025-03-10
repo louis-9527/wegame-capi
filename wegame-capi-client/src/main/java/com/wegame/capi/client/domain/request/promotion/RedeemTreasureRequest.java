@@ -1,6 +1,8 @@
 package com.wegame.capi.client.domain.request.promotion;
 
 import com.wegame.base.Validate;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -13,10 +15,16 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "使用宝箱请求")
-public class UseTreasureRequest  implements Validate, Serializable {
+public class RedeemTreasureRequest implements Validate, Serializable {
     private static final long serialVersionUID = -7035134333452916163L;
     @ApiModelProperty(value = "宝箱ID", required = true)
     private String treasureId;
     @ApiModelProperty(value = "宝箱等级", required = true)
-    private String level;
+    private Integer level;
+
+    @Override
+    public void validate() {
+        AssertUtil.assertNotNull(treasureId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(level, ErrorCode.ERR_PARAM);
+    }
 }

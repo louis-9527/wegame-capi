@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -15,68 +16,50 @@ import java.util.List;
 @AllArgsConstructor
 public class GetAchievementRes implements Serializable {
     private static final long serialVersionUID = -63633463436518L;
-    /**
-     * pId
-     */
     private String pId;
-    /**
-     * channelId
-     */
     private String channelId;
-    /**
-     * refId
-     */
     private String refId;
-    /**
-     * playerName
-     */
     private String playerName;
-    /**
-     * 奖励列表
-     */
-    private List<GetAchievement> achievementList;
+    private List<Achievement> achievementList;
 
     @Data
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetAchievement implements Serializable {
+    public static class Achievement implements Serializable {
         private static final long serialVersionUID = 1L;
-        /**
-         * id
-         */
         private String id;
-        /**
-         * Redeem Achievement Id
-         */
-        private String redeemId;
-        /**
-         * Achievement name
-         */
         private String name;
-        /**
-         * status:1 - in progress , 2 - redeemable , 3 - redeemed
-         */
-        private Integer status;
-        /**
-         * Achievement description
-         */
         private String description;
-        /**
-         * rewardId
-         */
-        private Integer rewardId;
-        /**
-         * rewardName
-         */
-        private String rewardName;
-        /**
-         * Achievement progress
-         */
-        private Integer progress;
-        /**
-         * Complete Achievement DateTime
-         */
+        private String iconUrl;
+        private Progress progressList;
         private Date completeAt;
+        private Integer status;
+        private String redeemId;
+        private List<Reward> rewards;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Progress implements Serializable {
+        private BigDecimal target;
+        private BigDecimal current;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Reward implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private String rewardConfigId;
+        private String name;
+        private String starLevel;
+        private Integer count;
+        private String imgUrl;
+        private BigDecimal betValue;
+        private BigDecimal balanceRequired;
     }
 }

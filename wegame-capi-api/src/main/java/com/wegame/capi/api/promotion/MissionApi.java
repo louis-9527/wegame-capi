@@ -43,9 +43,12 @@ public class MissionApi extends PromotionBaseApi {
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
-        } catch (Exception e) {
-            log.error("getDailyMission err, req: {}, errMsg: {}", req, e.getMessage(), e);
+        } catch (BusinessException e) {
+            log.error("getDailyMission BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw e;
+        } catch (Exception e) {
+            log.error("getDailyMission Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
 
