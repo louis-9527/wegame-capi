@@ -246,10 +246,14 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 // 为占位元素或者scatter元素，则继续
                 // do nothing;
             } else {
+                int columnScatterNum = countIndexSymbol(wheel.getSymbolArr(), SymbolEnum.Scatter, column);
+                if (columnScatterNum >= MAX_SCATTER_NUMBER_IN_REEL) {
+                    continue;
+                }
                 wheel.getSymbolArr()[row][column].setId(SymbolEnum.Scatter.getId());
                 wheel.getSymbolArr()[row][column].setName(SymbolEnum.Scatter.getName());
                 wheel.getSymbolArr()[row][column].setSymbolType(SymbolTypeEnum.SCATTER);
-                tempCount++;
+                tempCount = tempCount + 1;
             }
         }
         return wheel;
