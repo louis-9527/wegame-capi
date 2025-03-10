@@ -5,7 +5,7 @@ import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.ThreadMdcUtil;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfoContext;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.web.method.HandlerMethod;

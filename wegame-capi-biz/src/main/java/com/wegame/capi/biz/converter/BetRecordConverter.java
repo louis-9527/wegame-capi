@@ -4,12 +4,11 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
@@ -58,6 +57,7 @@ public class BetRecordConverter {
         if (Objects.isNull(betRecordDo)) {
             return null;
         }
+        long currentMilli = DateUtil.getCurrentMilli();
         BetRecordPo po = new BetRecordPo();
         po.setId(betRecordDo.getId());
         po.setPId(betRecordDo.getPId());
@@ -77,14 +77,13 @@ public class BetRecordConverter {
         po.setMarketFlag(betRecordDo.getMarketFlag());
         po.setStatus(betRecordDo.getStatus());
         if (OptEnum.ADD.equals(optEnum)) {
-            long currentMilli = DateUtil.getCurrentMilli();
             po.setCreator(betRecordDo.getCreator());
-            po.setCreateTime(betRecordDo.getCreateTime() == null ? currentMilli : betRecordDo.getCreateTime());
+            po.setCreateTime(currentMilli);
             po.setUpdater(betRecordDo.getUpdater());
-            po.setUpdateTime(betRecordDo.getUpdateTime() == null ? currentMilli : betRecordDo.getUpdateTime());
+            po.setUpdateTime(currentMilli);
         } else {
             po.setUpdater(betRecordDo.getUpdater());
-            po.setUpdateTime(betRecordDo.getUpdateTime() == null ? DateUtil.getCurrentMilli() : betRecordDo.getUpdateTime());
+            po.setUpdateTime(currentMilli);
             po.setId(betRecordDo.getId());
         }
         return po;
@@ -97,6 +96,7 @@ public class BetRecordConverter {
         BetRecordVo vo = new BetRecordVo();
         vo.setId(Objects.nonNull(betRecordDo.getId()) ? String.valueOf(betRecordDo.getId()) : null);
         vo.setUserId(Objects.nonNull(betRecordDo.getUserId()) ? String.valueOf(betRecordDo.getUserId()) : null);
+        vo.setPlayerId(betRecordDo.getPlayerId());
         vo.setPlayerName(betRecordDo.getPlayerName());
         vo.setBetAmount(betRecordDo.getBetAmount());
         vo.setPayAmount(betRecordDo.getPayAmount());

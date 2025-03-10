@@ -1,4 +1,4 @@
-package com.wegame.capi.common.context;
+package com.wegame.capi.client.context;
 
 /**
  * UserInfoContext

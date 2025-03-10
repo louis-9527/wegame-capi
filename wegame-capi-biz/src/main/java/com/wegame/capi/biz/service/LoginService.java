@@ -7,10 +7,10 @@ import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
-import com.wegame.capi.biz.domain.UserLoginDo;
+import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.common.Constants;
-import com.wegame.capi.common.context.UserInfo;
+import com.wegame.capi.client.context.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,7 +32,7 @@ public class LoginService {
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
         AuthLoginTokenRes authLoginTokenRes = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
         AssertUtil.assertNotNull(authLoginTokenRes, ErrorCode.ERR_MIDDLE_PLATFORM);
-        String token = SecureUtil.md5(userLoginDo.getToken());
+        String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);
         UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
         Long userId = userService.insert(userDo);
