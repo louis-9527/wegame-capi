@@ -12,8 +12,8 @@ import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewordDetailDo;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
