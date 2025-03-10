@@ -83,7 +83,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
             SymbolEnum symbol = randomOneSymbol(columnProbabilisticMap, tempRandomNumber);
             SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
             if (Objects.nonNull(symbolDo) && !symbolDo.isScatterSymbol()) {
-                return symbolDo.copy();
+                return symbolDo;
             }
             // 如果非第一次则更新Random值(小概率)
             tempRandomNumber = randomService.randomInt(1, Constants.CONST_1000000);
@@ -92,8 +92,6 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
 
     public SymbolDo randomNormalSymbol(Integer randomNumber, GameInfoDo gameInfo, TreeMap<String, Integer> columnProbabilisticMap) {
         SymbolEnum symbol = randomOneSymbol(columnProbabilisticMap, randomNumber);
-        SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
-        AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
-        return symbolDo.copy();
+        return gameInfo.getSymbolById(symbol.getId());
     }
 }
