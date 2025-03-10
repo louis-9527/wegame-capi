@@ -15,6 +15,7 @@ import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.manager.MalakasRecordManager;
+import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.malakas.game.MalakasGame;
@@ -114,7 +115,10 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                     .credit(resultDo.getCredit())
                     .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetDetail().getBetAmount(), malakasConfig.getRewardMaxMultiple()))
                     .totalPayoutAmount(betRecord.getPayOutAmount())
-                    .resultDetail(MalakasBetRecordDetailDo.builder().gameRecordList(firstBatchList).build())
+                    .resultDetail(MalakasBetRecordDetailDo.builder()
+                            .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetDetail().getBetAmount(), overallRewardAmount))
+                            .gameRecordList(firstBatchList)
+                            .build())
                     .build();
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
             throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getReason());
@@ -155,7 +159,10 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .betSubType(betDo.getBetSubType())
                 .overallRewardAmount(overallRewardAmount)
                 .totalPayoutAmount(0L)
-                .resultDetail(MalakasBetRecordDetailDo.builder().gameRecordList(gameRecordList).build())
+                .resultDetail(MalakasBetRecordDetailDo.builder()
+                        .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetDetail().getBetAmount(), overallRewardAmount))
+                        .gameRecordList(gameRecordList)
+                        .build())
                 .build();
     }
 

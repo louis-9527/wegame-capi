@@ -4,6 +4,8 @@ import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasBetResultDetailVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasGameRecordVo;
+import com.wegame.capi.common.enums.RewardSubTypeEnum;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,6 +27,10 @@ import java.util.stream.Collectors;
 public class MalakasBetRecordDetailDo implements ToVoConverter<MalakasBetResultDetailVo, MalakasGameRecordVo> {
 
     /**
+     * 整轮中奖子类型: NONE:未中奖,other,nice,mega,super,sensational
+     */
+    private RewardSubTypeEnum allWheelRewardSubType;
+    /**
      * 游戏记录列表
      */
     private List<MalakasGameRecordDo> gameRecordList;
@@ -45,6 +51,7 @@ public class MalakasBetRecordDetailDo implements ToVoConverter<MalakasBetResultD
     @Override
     public MalakasBetResultDetailVo toResultVo() {
         return MalakasBetResultDetailVo.builder()
+                .allWheelRewardSubType(allWheelRewardSubType.getCode())
                 .resultList(Optional.ofNullable(gameRecordList)
                         .orElse(Collections.emptyList())
                         .stream()

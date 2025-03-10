@@ -19,6 +19,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class MalakasBetResultDetailVo implements Serializable {
     private static final long serialVersionUID = -4792907227811616042L;
+    @ApiModelProperty("整轮中奖子类型: none:未中奖,other,nice,mega,super,sensational")
+    private String allWheelRewardSubType;
     @ApiModelProperty("投注结果列表")
     private List<MalakasBetResultVo> resultList;
 }
