@@ -51,7 +51,7 @@ public class MalakasBetRecordDetailDo implements ToVoConverter<MalakasBetResultD
     @Override
     public MalakasBetResultDetailVo toResultVo() {
         return MalakasBetResultDetailVo.builder()
-                .allWheelRewardSubType(allWheelRewardSubType.getCode())
+                .allWheelRewardSubType(Objects.nonNull(allWheelRewardSubType) ? allWheelRewardSubType.getCode() : "")
                 .resultList(Optional.ofNullable(gameRecordList)
                         .orElse(Collections.emptyList())
                         .stream()
