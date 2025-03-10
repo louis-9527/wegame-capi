@@ -2,11 +2,16 @@ package com.wegame.capi.application.controller.promotion;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
+import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewordDetailDo;
 import com.wegame.capi.biz.service.promotion.BagService;
-import com.wegame.capi.client.domain.request.promotion.QueryBagRewardRequest;
+import com.wegame.capi.client.domain.request.promotion.QueryBagCurrentGameRewardRequest;
+import com.wegame.capi.client.domain.request.promotion.QueryBagOtherGameRewardRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryRewardStarCardDetailRequest;
-import com.wegame.capi.client.domain.vo.promotion.BagVo;
-import com.wegame.capi.client.domain.vo.promotion.BigRewardDetailVo;
+import com.wegame.capi.client.domain.vo.promotion.BagCurrentRewordVo;
+import com.wegame.capi.client.domain.vo.promotion.BagOtherRewordVo;
+import com.wegame.capi.client.domain.vo.promotion.BagRewardDetailVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("bag")
@@ -23,20 +30,34 @@ import org.springframework.web.bind.annotation.RestController;
 public class BagController {
 
     @Autowired
-    BagService bagService;
+    private BagService bagService;
 
     @LoginRequired
-    @ApiOperation(value = "获取背包列表", httpMethod = "POST")
-    @PostMapping("/queryRewardBag")
-    public CommonResponse<BagVo> getRewardBag(@RequestBody QueryBagRewardRequest bagRequest) {
+    @ApiOperation(value = "获取背包列表(当前游戏)", httpMethod = "POST")
+    @PostMapping("/queryBagCurrentGameReward")
+    public CommonResponse<BagCurrentRewordVo> queryBagCurrentGameReward(@RequestBody QueryBagCurrentGameRewardRequest bagRequest) {
         bagRequest.validate();
-        // BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
-        return CommonResponse.build(null);
+        List<BagCurrentRewordDetailDo> detailDos = bagService.ListCurrentRewordRecord();
+        return CommonResponse.build(BagCurrentRewordVo.builder()
+                .rewardDetails(BagRewordConverter.currentDoToVoList(detailDos))
+                .build());
     }
+
+    @LoginRequired
+    @ApiOperation(value = "获取背包列表(其他游戏)", httpMethod = "POST")
+    @PostMapping("/queryBagOtherGameReward")
+    public CommonResponse<BagOtherRewordVo> queryBagOtherGameReward(@RequestBody QueryBagOtherGameRewardRequest bagRequest) {
+        bagRequest.validate();
+        List<BagOtherRewordDetailDo> detailDos = bagService.ListOtherRewordRecord();
+        return CommonResponse.build(BagOtherRewordVo.builder()
+                .rewardDetails(BagRewordConverter.otherDoToVoList(detailDos))
+                .build());
+    }
+
     @LoginRequired
     @ApiOperation(value = "获取背包物品详情", httpMethod = "POST")
     @PostMapping("/getRewardDetail")
-    public CommonResponse<BigRewardDetailVo> getRewardStarCardDetail(@RequestBody QueryRewardStarCardDetailRequest request){
+    public CommonResponse<BagRewardDetailVo> getRewardStarCardDetail(@RequestBody QueryRewardStarCardDetailRequest request) {
         return CommonResponse.build(null);
     }
 

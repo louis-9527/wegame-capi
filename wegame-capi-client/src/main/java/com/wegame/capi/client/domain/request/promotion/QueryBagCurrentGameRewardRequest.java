@@ -10,14 +10,9 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@ApiModel(description = "获取背包列表请求")
-public class QueryBagRewardRequest implements Validate, Serializable {
+//@NoArgsConstructor
+//@AllArgsConstructor
+@ApiModel(description = "获取背包列表请求(当前游戏)")
+public class QueryBagCurrentGameRewardRequest implements Validate, Serializable {
     private static final long serialVersionUID = -4002950733224509502L;
-    @ApiModelProperty(value = "游戏Id", required = true)
-    private String gameId;
-    @ApiModelProperty(value = "(1: Current Game or 2: Other)", required = true)
-    private String type;
-
 }

@@ -2,8 +2,8 @@ package com.wegame.capi.test.api;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.api.domain.req.promotion.GetRewardBagReq;
-import com.wegame.capi.api.domain.res.promotion.GetRewardBagRes;
+import com.wegame.capi.api.domain.req.promotion.GetBagCurrentRewardReq;
+import com.wegame.capi.api.domain.res.promotion.GetBagCurrentRewardRes;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.test.BaseTest;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class BagApiTest extends BaseTest {
 
     @Test
     public void test_getRewardBag_SUCCESS(){
-        GetRewardBagReq bagReq = GetRewardBagReq.builder()
+        GetBagCurrentRewardReq bagReq = GetBagCurrentRewardReq.builder()
                 .pId("50")
                 .channelId("183")
                 .playerName("aaa1046212064")
@@ -26,7 +26,7 @@ public class BagApiTest extends BaseTest {
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
 
-        GetRewardBagRes rewardBag = bagApi.getRewardBag(bagReq);
+        GetBagCurrentRewardRes rewardBag = bagApi.getBagCurrentReward(bagReq);
         System.out.println(JSON.toJSONString(rewardBag));
     }
 }

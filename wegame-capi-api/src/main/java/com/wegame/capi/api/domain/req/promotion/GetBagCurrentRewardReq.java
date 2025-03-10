@@ -12,10 +12,14 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class GetRewardBagReq extends BaseReq {
+public class GetBagCurrentRewardReq extends BaseReq {
 
     private static final long serialVersionUID = 377465336780048879L;
 
     private Integer type;
+    /**
+     * 游戏code,对应程序游戏ID
+     */
+    private String gameCode;
 
 }

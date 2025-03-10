@@ -14,18 +14,18 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetRewardBagRes {
+public class GetBagCurrentRewardRes {
     private String playerName;
     private String refId;
     private String channelId;
     private String pid;
-    private List<GetRewardBag> rewardBag;
+    private List<GetBagCurrentRewardRecord> rewardBag;
 
     @Data
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetRewardBag implements Serializable {
+    public static class GetBagCurrentRewardRecord implements Serializable {
         private static final long serialVersionUID = 1906312186996092565L;
 
         /**
