@@ -194,7 +194,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
 
         DynamicOperationQuery query = DynamicOperationQuery.builder()
                 .reportStatus(DynamicOperationReportStatusEnum.NONE.getCode())
-                .eventStatus(DynamicOperationEventStatusEnum.NONE.getCode())
+               // .eventStatus(DynamicOperationEventStatusEnum.NONE.getCode())
                 .expiredTimeLt(DateUtil.getCurrentMilli())
                 .direction(Sort.Direction.ASC)
                 .orderByClause("_id")

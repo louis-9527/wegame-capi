@@ -54,7 +54,9 @@ public class DynamicOperationQueryBuilder {
         if (Objects.nonNull(recordQuery.getReportStatus())) {
             criteria.and("reportStatus").is(recordQuery.getReportStatus());
         }
-
+        if (Objects.nonNull(recordQuery.getExpiredTimeLt())) {
+            criteria.and("expiredTime").lt(recordQuery.getExpiredTimeLt());
+        }
         if (Objects.nonNull(recordQuery.getCreateTimeLt())) {
             criteria.and("createTime").lt(recordQuery.getCreateTimeLt());
         }
