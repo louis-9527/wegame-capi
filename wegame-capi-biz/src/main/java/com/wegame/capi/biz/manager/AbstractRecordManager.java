@@ -30,10 +30,16 @@ public abstract class AbstractRecordManager<T extends ToVoConverter> {
         betRecordService.update(betRecordDo, gameType);
     }
 
+    public BetRecordDo getBetRecord(Long betRecordId, GameTypeEnum gameType) {
+        return betRecordService.get(betRecordId, gameType);
+    }
+
     public abstract List<T> listGameRecord(GameRecordQuery query, GameTypeEnum gameType);
 
     public abstract List<T> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType);
 
     public abstract List<?> listGameRecordVo(Long betRecordId, GameTypeEnum gameType);
+
+    public abstract Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType);
 
 }

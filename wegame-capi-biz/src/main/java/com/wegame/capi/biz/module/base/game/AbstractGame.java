@@ -83,7 +83,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         while (true) {
             SymbolEnum symbol = randomOneSymbol(columnProbabilisticMap, tempRandomNumber);
             SymbolDo symbolDo = gameInfo.getSymbolById(symbol.getId());
-            if (!symbolDo.isScatterSymbol()) {
+            if (Objects.nonNull(symbolDo) && !symbolDo.isScatterSymbol()) {
                 return symbolDo;
             }
             tempRandomNumber = randomService.randomInt(1, Constants.CONST_1000000);

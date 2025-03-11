@@ -1,22 +1,26 @@
 package com.wegame.capi.biz.service;
 
 import com.mongodb.ReadPreference;
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.GameRecordQueryBuilder;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.gameRecordCachePutThreadPoolExecutor;
 
 /**
  * 投注记录服务
@@ -40,6 +44,12 @@ public class GameRecordService<T> {
         return true;
     }
 
+    @Async(gameRecordCachePutThreadPoolExecutor)
+    @CachePut(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #cacheKey")
+    public List<T> asyncPutCache(List<T> gameRecordList, GameTypeEnum gameType, String cacheKey) {
+        return gameRecordList;
+    }
+
     /**
      * 查询列表
      *
@@ -51,9 +61,25 @@ public class GameRecordService<T> {
         if (!query.isFromPrimary()) {
             return getMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
         } else {
-            return getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {
+            return getMongoTemplate(gameType).execute(gameType.getGameRecordCollectionName(), collection -> {
                 collection.withReadPreference(ReadPreference.primary());
                 return getMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
+            });
+        }
+    }
+
+    /**
+     * 统计
+     * @return 数量
+     */
+    public Long count(GameRecordQuery query, GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        if (!query.isFromPrimary()) {
+            return getMongoTemplate(gameType).count(GameRecordQueryBuilder.buildMongodbQuery(query), gameType.getGameRecordCollectionName());
+        } else {
+            return getMongoTemplate(gameType).execute(gameType.getGameRecordCollectionName(), collection -> {
+                collection.withReadPreference(ReadPreference.primary());
+                return getMongoTemplate(gameType).count(GameRecordQueryBuilder.buildMongodbQuery(query), gameType.getGameRecordCollectionName());
             });
         }
     }

@@ -48,6 +48,12 @@ public class GameRecordQueryBuilder {
         if (Objects.nonNull(recordQuery.getPlayerName())) {
             criteria.and("playerName").is(recordQuery.getPlayerName());
         }
+        if (Objects.nonNull(recordQuery.getIndex())) {
+            criteria.and("index").is(recordQuery.getIndex());
+        }
+        if (Objects.nonNull(recordQuery.getFreeWheelFlag())) {
+            criteria.and("freeWheelFlag").is(recordQuery.getFreeWheelFlag());
+        }
         return criteria;
     }
 }
