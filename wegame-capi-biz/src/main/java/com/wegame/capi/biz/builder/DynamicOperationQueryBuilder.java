@@ -92,6 +92,9 @@ public class DynamicOperationQueryBuilder {
         if (Objects.nonNull(eventDo.getEventStatus())) {
             update.set("eventStatus", eventDo.getEventStatus().getCode());
         }
+        if (Objects.nonNull(eventDo.getEventSubStatus())) {
+            update.set("eventSubStatus", eventDo.getEventSubStatus().getCode());
+        }
         if (Objects.nonNull(eventDo.getReportStatus())) {
             update.set("reportStatus", eventDo.getReportStatus().getCode());
         }

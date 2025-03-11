@@ -39,10 +39,10 @@ public class UpdateEventsStatusRes implements Serializable {
     }
 
 
-    public String fail() {
+    public Boolean fail() {
         if (StringUtils.equals("404", status)) {
-            return message;
+            return true;
         }
-        return null;
+        return false;
     }
 }

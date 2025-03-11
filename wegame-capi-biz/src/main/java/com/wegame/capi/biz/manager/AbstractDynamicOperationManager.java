@@ -305,11 +305,11 @@ public abstract class AbstractDynamicOperationManager {
                 dynamicOperationEventService.update(eventReportUpdate, this.getDynamicOperationGameEnum());
                 return;
             }
-            if (StringUtils.isEmpty(updateEventsStatusRes.fail())) {
+            if (updateEventsStatusRes.fail()) {
                 // 如果失败(特定情况)
                 DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(recordId)
                         .reportStatus(DynamicOperationReportStatusEnum.FAIL)
-                        .reportFailMsg(updateEventsStatusRes.fail())
+                        .reportFailMsg(updateEventsStatusRes.getMessage())
                         .build();
                 dynamicOperationEventService.update(eventReportUpdate, this.getDynamicOperationGameEnum());
                 return;

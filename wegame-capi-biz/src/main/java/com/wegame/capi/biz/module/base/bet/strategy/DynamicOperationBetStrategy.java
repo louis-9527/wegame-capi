@@ -136,7 +136,6 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     }
 
 
-
     private BetRecordDo<R> rBetRecordDo(BetDo<BD> betDo, GameEventDo<WD> gameEventDo) {
         //获取投注记录
         long betRecordId = generateBetRecordId();
@@ -226,7 +225,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
             // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
             if (interventionAmount < 0.1 * betPayAmount) {
                 // 上报
-               // this.getDynamicOperationManager().reportEvent();
+                // this.getDynamicOperationManager().reportEvent();
             }
         }
 
@@ -301,7 +300,8 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
                 UserInfoContext.getUserInfo().getId(), configType, multiple);
         Long increment = redisTemplate.opsForValue().increment(incrementKey);
         if (increment >= configDetailGroup.size()) {
-            redisTemplate.opsForValue().set(incrementKey, 1L);
+            increment = 1L;
+            redisTemplate.opsForValue().set(incrementKey, increment);
         }
         List<DynamicOperationConfigDo> configDetail = configDetailGroup.get((int) (increment - 1));
         int randomIndex = ThreadLocalRandom.current().nextInt(configDetail.size());
