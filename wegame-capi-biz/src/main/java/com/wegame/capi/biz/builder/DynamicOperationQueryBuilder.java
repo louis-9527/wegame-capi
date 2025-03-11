@@ -79,6 +79,7 @@ public class DynamicOperationQueryBuilder {
                 new Document("lt", Arrays.asList("$finishBonus", "$minBonus"))
         );
         Query query = new Query(criteria);
+        query.with(Sort.by(Sort.Direction.ASC, "createTime"));
         query.fields().include("_id", "gameId", "effectedTime", "expiredTime", "eventStatus");
         return query;
     }

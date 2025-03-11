@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.manager;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
@@ -30,8 +29,6 @@ import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
@@ -41,7 +38,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicEventThreadPoolExecutor;
@@ -78,12 +74,12 @@ public abstract class AbstractDynamicOperationManager {
      */
     public DynamicOperationEventDo getEffectedEvent(String playName, BetTypeEnum betType) {
         DynamicOperationGameEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
-        Map<Long, Pair<Long, Long>> entries = dynamicOperationEventService.getEffectList(playName, betType, this.getDynamicOperationGameEnum());
+        List<DynamicOperationEffectEventCatchDo> entries = dynamicOperationEventService.getEffectList(playName, betType, this.getDynamicOperationGameEnum());
 
-        for (Map.Entry<Long, Pair<Long, Long>> entry : entries.entrySet()) {
-            long recordId = entry.getKey();
-            long effectedTime = entry.getValue().getLeft();
-            long expiredTime = entry.getValue().getRight();
+        for (DynamicOperationEffectEventCatchDo entry : entries) {
+            long recordId = entry.getId();
+            long effectedTime = entry.getEffectedTime();
+            long expiredTime = entry.getExpiredTime();
             long currentMilli = DateUtil.getCurrentMilli();
             if (currentMilli < effectedTime) {
                 // 未到执行时间
@@ -137,6 +133,9 @@ public abstract class AbstractDynamicOperationManager {
         // 更新 订单状态
         dynamicOperationEventDetailService.update(eventDetailDo, this.getDynamicOperationGameEnum());
         dynamicOperationEventService.update(eventDo, this.getDynamicOperationGameEnum());
+        if (DynamicOperationEventStatusEnum.FINISH == eventDo.getEventStatus()) {
+            this.asyncReportEvent(eventDo.getId());
+        }
     }
 
 //    public void updateEventAndReportExpiredEvent(DynamicOperationEventDo eventDo, GameTypeEnum gameType) {
@@ -332,7 +331,7 @@ public abstract class AbstractDynamicOperationManager {
 
     private void delCatchAndReport(String playName, Long recordId, BetTypeEnum betType, DynamicOperationEventSubStatusEnum eventSubStatusEnum) {
         String gameId = this.getDynamicOperationGameEnum().getGameType().getId();
-        String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, gameId, playName, betType.getCode());
+        String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, gameId, playName, betType.getCode());
         redisTemplate.opsForHash().delete(catch_key, String.valueOf(recordId));
         this.asyncUpdateFinishEvent(recordId, eventSubStatusEnum);
     }

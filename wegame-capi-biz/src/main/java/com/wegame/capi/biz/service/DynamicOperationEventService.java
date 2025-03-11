@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.service;
 
-import com.google.common.collect.Lists;
+import com.alibaba.fastjson.JSON;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
@@ -9,31 +9,28 @@ import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationConvert;
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEffectEventCatchDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
-import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,7 +41,7 @@ public class DynamicOperationEventService {
     @Autowired
     private Map<String, MongoTemplate> mongoTemplateMap;
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
 
     public Long add(DynamicOperationEventDo dynamicOperationMsgDo, DynamicOperationGameEnum dynamicOperationGame) {
@@ -55,7 +52,7 @@ public class DynamicOperationEventService {
         }
         try {
             DynamicOperationPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(dynamicOperationPo, dynamicOperationGame.getEventCollectionName());
-            String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, dynamicOperationMsgDo.getGameId(), dynamicOperationMsgDo.getPlayerName(), dynamicOperationMsgDo.getBetType().getCode());
+            String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, dynamicOperationMsgDo.getGameId(), dynamicOperationMsgDo.getPlayerName(), dynamicOperationMsgDo.getBetType().getCode());
             redisTemplate.delete(catch_key);
             return insert.getId();
         } catch (MongoWriteException error) {
@@ -94,33 +91,44 @@ public class DynamicOperationEventService {
      *
      * @return
      */
-    public Map<Long, Pair<Long, Long>> getEffectList(String playName, BetTypeEnum betType, DynamicOperationGameEnum dynamicOperationGame) {
-        String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_EXIST_KEY, dynamicOperationGame.getGameType().getId(), playName, betType.getCode());
-        Map<String, String> entries = redisTemplate.opsForHash().entries(catch_key);
+    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, BetTypeEnum betType, DynamicOperationGameEnum dynamicOperationGame) {
+        String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, dynamicOperationGame.getGameType().getId(), playName, betType.getCode());
+        Map<Object, Object> entries = redisTemplate.opsForHash().entries(catch_key);
         if (!entries.isEmpty()) {
             if (entries.containsKey("-1")) {
-                return new HashMap<>();
+                return new ArrayList<>();
             }
-            Map<Long, Pair<Long, Long>> resultMap = new HashMap<>();
-            for (Map.Entry<String, String> entry : entries.entrySet()) {
-                String[] timeArray = entry.getValue().split("_");
-                resultMap.put(Long.valueOf(entry.getKey()), Pair.of(Long.valueOf(timeArray[0]), Long.valueOf(timeArray[1])));
+            List<DynamicOperationEffectEventCatchDo> resultList = new ArrayList<>(entries.size());
+            for (Map.Entry<Object, Object> entry : entries.entrySet()) {
+                resultList.add(JSON.parseObject((String) entry.getValue(), DynamicOperationEffectEventCatchDo.class));
             }
-            return resultMap;
+            return resultList;
         }
+
         List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId(), betType), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
         if (CollectionUtils.isEmpty(operationPoList)) {
-            redisTemplate.opsForHash().put(catch_key, "-1", null);
-            return new HashMap<>();
+            Map<String, String> catchMap = new HashMap<>();
+            catchMap.put("-1","-1");
+            redisTemplate.opsForHash().putAll(catch_key,catchMap);
+           // this.saveCatch(catch_key,catchMap);
+            return new ArrayList<>();
         }
-        Map<Long, Pair<Long, Long>> resultMap = new HashMap<>();
+        List<DynamicOperationEffectEventCatchDo> resultList = new ArrayList<>(entries.size());
         Map<String, String> catchMap = new HashMap<>();
         for (DynamicOperationPo operationPo : operationPoList) {
-            resultMap.put(operationPo.getId(), Pair.of(operationPo.getEffectedTime(), operationPo.getExpiredTime()));
-            catchMap.put(String.valueOf(operationPo.getId()), operationPo.getEffectedTime() + "_" + operationPo.getExpiredTime());
+            DynamicOperationEffectEventCatchDo build = DynamicOperationEffectEventCatchDo.builder()
+                    .id(operationPo.getId())
+                    .effectedTime(operationPo.getEffectedTime())
+                    .expiredTime(operationPo.getExpiredTime())
+                    .createTime(operationPo.getCreateTime()).build();
+            resultList.add(build);
+            catchMap.put(String.valueOf(operationPo.getId()), JSON.toJSONString(build));
         }
-        redisTemplate.opsForHash().putAll(catch_key, catchMap);
-        return resultMap;
+        redisTemplate.opsForHash().putAll(catch_key,catchMap);
+       // this.saveCatch(catch_key,catchMap);
+        return resultList.stream()
+                .sorted(Comparator.comparing(DynamicOperationEffectEventCatchDo::getCreateTime))
+                .collect(Collectors.toList());
     }
 
     public DynamicOperationEventDo getById(Long id, DynamicOperationGameEnum dynamicOperationGame) {
@@ -138,11 +146,31 @@ public class DynamicOperationEventService {
     }
 
 
-
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
         MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
         return template;
+    }
+
+
+    private void saveCatch(String catch_key,Map<String, String> catchMap){
+        // 构造 Lua 脚本
+        String luaScript =
+                "redis.call('HMSET', KEYS[1], unpack(ARGV, 1, #ARGV - 1)); " +
+                        "redis.call('EXPIRE', KEYS[1], tonumber(ARGV[#ARGV])); " +
+                        "return 1;";
+        List<String> args = new ArrayList<>();
+        for (Map.Entry<String, String> entry : catchMap.entrySet()) {
+            args.add(entry.getKey());
+            args.add(entry.getValue());
+        }
+        args.add(String.valueOf(24 * 60 * 60)); // 24小时转换成秒
+        redisTemplate.execute(
+                new DefaultRedisScript<>(luaScript, Long.class),
+                Collections.singletonList(catch_key),
+                args.toArray()
+        );
+
     }
 
 
