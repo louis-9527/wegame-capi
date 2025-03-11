@@ -126,9 +126,13 @@ public class BetRecordService {
 
     public List<BetRecordDo> list(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query),
-                BetRecordPo.class,
-                gameType.getBetRecordCollectionName());
+        List<BetRecordPo> recordPoList = getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {
+            // 强制走从分片
+            collection.withReadPreference(ReadPreference.secondary());
+            return getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query),
+                    BetRecordPo.class,
+                    gameType.getBetRecordCollectionName());
+        });
         return BetRecordConverter.poToDoList(recordPoList);
     }
 
