@@ -52,6 +52,10 @@ public class GameRecordQuery implements Serializable {
      */
     private Integer index;
     /**
+     * 免费轮标识 false否 true是
+     */
+    private Boolean freeWheelFlag;
+    /**
      * 创建人
      */
     private String creator;
