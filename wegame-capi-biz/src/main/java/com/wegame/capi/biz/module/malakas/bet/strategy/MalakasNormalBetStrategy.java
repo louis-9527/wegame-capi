@@ -33,10 +33,9 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
     RewardService rewardService;
 
     @Override
-    public void freeSpinsAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo recordDetail, Long totalRewardAmount) {
-        if (recordDetail.isLastFreeSpins(betDo.getBetDetail().getGameRecordId())) {
-            updateRewardNotifyInfo(betDo.getGameType(), recordDetail.freeSpinCount(), totalRewardAmount);
-        }
+    public void freeWheelAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo recordDetail, Long totalRewardAmount) {
+        // todo 总共中了多少钱，中了多少轮
+        updateRewardNotifyInfo(betDo.getGameType(), recordDetail.freeSpinCount(), totalRewardAmount);
     }
 
     private void updateRewardNotifyInfo(GameTypeEnum gameType, long freeSpinsCount, long totalRewardAmount) {

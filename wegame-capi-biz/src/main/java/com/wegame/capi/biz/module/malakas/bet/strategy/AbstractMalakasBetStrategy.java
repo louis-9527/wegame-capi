@@ -152,6 +152,11 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
+        // 后处理-免费轮
+        MalakasBetRecordDetailDo detailDo = MalakasBetRecordDetailDo.builder()
+                .gameRecordList(gameRecordList)
+                .build();
+        freeWheelAfterHandle(betDo, detailDo, overallRewardAmount);
         return BetResultDo.<MalakasBetRecordDetailDo>builder()
                 .betRecordId(betDetail.getBetRecordId())
                 .gameId(betDo.getGameId())
@@ -181,7 +186,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .collect(Collectors.toList());
     }
 
-    public void freeSpinsAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo recordDetail, Long totalRewardAmount) {
+    public void freeWheelAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo detailDo, Long totalRewardAmount) {
         // do nothing
     }
 }
