@@ -1,15 +1,11 @@
 package com.wegame.capi.application.controller.promotion;
 
+import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.service.promotion.AchievementService;
 import com.wegame.capi.client.domain.request.promotion.RedeemAchievementRequest;
 import com.wegame.capi.client.domain.vo.promotion.AchievementVo;
 import com.wegame.capi.client.domain.vo.promotion.RedeemAchievementVo;
-import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.context.UserInfoContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -29,24 +25,18 @@ public class AchievementController {
     @Autowired
     AchievementService achievementService;
 
+    @LoginRequired
     @ApiOperation(value = "成就列表", httpMethod = "POST")
     @PostMapping("/getAchievement")
     public CommonResponse<List<AchievementVo>> getAchievement() {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
-        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         return CommonResponse.build(achievementService.getAchievement());
     }
 
+    @LoginRequired
     @ApiOperation(value = "领取成就奖励", httpMethod = "POST")
     @PostMapping("/redeemAchievement")
     public CommonResponse<RedeemAchievementVo> redeemAchievement(RedeemAchievementRequest request) {
         request.validate();
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
-        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         return CommonResponse.build(achievementService.redeemAchievement(request.getAchievementId(), request.getRedeemId()));
     }
 }

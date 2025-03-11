@@ -4,8 +4,8 @@ import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.service.promotion.TreasureService;
 import com.wegame.capi.client.domain.request.promotion.RedeemTreasureRequest;
-import com.wegame.capi.client.domain.vo.promotion.TreasureVo;
 import com.wegame.capi.client.domain.vo.promotion.RedeemTreasureVo;
+import com.wegame.capi.client.domain.vo.promotion.TreasureVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +26,14 @@ public class TreasureController {
     @Autowired
     TreasureService treasureService;
 
+    @LoginRequired
     @ApiOperation(value = "获取宝箱列表", httpMethod = "POST")
     @PostMapping("/getTreasure")
     public CommonResponse<List<TreasureVo>> list() {
         return CommonResponse.build(treasureService.getTreasure());
     }
 
+    @LoginRequired
     @ApiOperation(value = "领取宝箱", httpMethod = "POST")
     @PostMapping("/redeemTreasure")
     public CommonResponse<RedeemTreasureVo> redeemTreasure(@RequestBody RedeemTreasureRequest request) {
