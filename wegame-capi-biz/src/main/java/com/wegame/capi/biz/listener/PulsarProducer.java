@@ -114,7 +114,7 @@ public class PulsarProducer implements InitializingBean {
     }
 
     private Producer<byte[]> getProducer(GameTypeEnum gameType) {
-        Producer<byte[]> producer = producerCache.get(StringUtils.lowerCase(gameType.getName()) + "Producer");
+        Producer<byte[]> producer = producerCache.get(StringUtils.lowerCase(gameType.getName()) + PRODUCER);
         AssertUtil.assertNotNull(producer, ErrorCode.ERR_INTER);
         return producer;
     }
