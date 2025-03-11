@@ -147,7 +147,7 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
         List<Long> freeWheelGameRecordIds = new ArrayList<>();
         if (wheelDos.size() > 1) {
             // 命中了免费轮
-            for (int i = 1; i <= wheelDos.size(); i++) {
+            for (int i = 1; i < wheelDos.size(); i++) {
                 WheelDo<SymbolDo> wheelDo = wheelDos.get(i);
                 RewardResultDo<SymbolDo> rewardResultDo = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheelDo, BigDecimal.ZERO));
                 overallRewardAmount = overallRewardAmount + rewardResultDo.getTotalRewardAmount();

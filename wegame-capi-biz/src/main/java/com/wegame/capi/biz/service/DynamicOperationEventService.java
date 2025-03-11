@@ -135,7 +135,7 @@ public class DynamicOperationEventService {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
-        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "reportStatus");
+        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus","eventSubStatus", "reportStatus");
         DynamicOperationPo operationPo = getMongoTemplate(dynamicOperationGame.getGameType()).findOne(
                 query,
                 DynamicOperationPo.class,

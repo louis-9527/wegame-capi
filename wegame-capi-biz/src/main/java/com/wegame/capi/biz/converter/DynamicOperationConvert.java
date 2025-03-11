@@ -80,7 +80,7 @@ public class DynamicOperationConvert {
         eventDo.setEffectedTime(eventPo.getEffectedTime());
         eventDo.setExpiredTime(eventPo.getExpiredTime());
         eventDo.setEventStatus(DynamicOperationEventStatusEnum.valueOfCode(eventPo.getEventStatus()));
-        eventDo.setEventSubStatus(DynamicOperationEventSubStatusEnum.valueOfCode(eventPo.getEventStatus()));
+        eventDo.setEventSubStatus(DynamicOperationEventSubStatusEnum.valueOfCode(eventPo.getEventSubStatus()));
         eventDo.setReportStatus(DynamicOperationReportStatusEnum.valueOfCode(eventPo.getReportStatus()));
         return eventDo;
     }
