@@ -107,14 +107,13 @@ public class DynamicOperationEventService {
 
         List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId(), betType), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
         if (CollectionUtils.isEmpty(operationPoList)) {
-            Map<String, String> catchMap = new HashMap<>();
-            catchMap.put("-1","-1");
-            redisTemplate.opsForHash().putAll(catch_key,catchMap);
-           // this.saveCatch(catch_key,catchMap);
+            Map<Long, String> catchMap = new HashMap<>();
+            catchMap.put(-1L,"-1");
+            this.saveCatch(catch_key,catchMap);
             return new ArrayList<>();
         }
         List<DynamicOperationEffectEventCatchDo> resultList = new ArrayList<>(entries.size());
-        Map<String, String> catchMap = new HashMap<>();
+        Map<Long, String> catchMap = new HashMap<>();
         for (DynamicOperationPo operationPo : operationPoList) {
             DynamicOperationEffectEventCatchDo build = DynamicOperationEffectEventCatchDo.builder()
                     .id(operationPo.getId())
@@ -122,10 +121,9 @@ public class DynamicOperationEventService {
                     .expiredTime(operationPo.getExpiredTime())
                     .createTime(operationPo.getCreateTime()).build();
             resultList.add(build);
-            catchMap.put(String.valueOf(operationPo.getId()), JSON.toJSONString(build));
+            catchMap.put(operationPo.getId(), JSON.toJSONString(build));
         }
-        redisTemplate.opsForHash().putAll(catch_key,catchMap);
-       // this.saveCatch(catch_key,catchMap);
+        this.saveCatch(catch_key,catchMap);
         return resultList.stream()
                 .sorted(Comparator.comparing(DynamicOperationEffectEventCatchDo::getCreateTime))
                 .collect(Collectors.toList());
@@ -153,22 +151,23 @@ public class DynamicOperationEventService {
     }
 
 
-    private void saveCatch(String catch_key,Map<String, String> catchMap){
+    private void saveCatch(String catch_key,Map<Long, String> catchMap){
         // 构造 Lua 脚本
         String luaScript =
-                "redis.call('HMSET', KEYS[1], unpack(ARGV, 1, #ARGV - 1)); " +
-                        "redis.call('EXPIRE', KEYS[1], tonumber(ARGV[#ARGV])); " +
-                        "return 1;";
-        List<String> args = new ArrayList<>();
-        for (Map.Entry<String, String> entry : catchMap.entrySet()) {
+                "for i = 1, #ARGV - 1, 2 do " +
+                        "redis.call('HSET', KEYS[1], tostring(ARGV[i]), tostring(ARGV[i+1])) " +
+                        "end " +
+                        "redis.call('EXPIRE', KEYS[1], tonumber(ARGV[#ARGV]))";
+        List<Object> args = new ArrayList<>();
+        for (Map.Entry<Long, String> entry : catchMap.entrySet()) {
             args.add(entry.getKey());
             args.add(entry.getValue());
         }
-        args.add(String.valueOf(24 * 60 * 60)); // 24小时转换成秒
+        args.add(24 * 60 * 60); // 24小时转换成秒
         redisTemplate.execute(
                 new DefaultRedisScript<>(luaScript, Long.class),
                 Collections.singletonList(catch_key),
-                args.toArray()
+                args.toArray() // 关键：转换为 String[]
         );
 
     }
