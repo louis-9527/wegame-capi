@@ -45,6 +45,7 @@ public class IbongAdarnaPulsarListener extends AbstractPulsarListener<IbongAdarn
 
     @Override
     public TypeReference<MQMessage<BetRecordDo<IbongAdarnaGameRecordDo>>> getTypeReference() {
+        log.info("IbongAdarnaPulsarListener getTypeReference。。。 ");
         return new TypeReference<MQMessage<BetRecordDo<IbongAdarnaGameRecordDo>>>() {
         };
     }
