@@ -40,4 +40,6 @@ public abstract class AbstractRecordManager<T extends ToVoConverter> {
 
     public abstract List<?> listGameRecordVo(Long betRecordId, GameTypeEnum gameType);
 
+    public abstract Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType);
+
 }

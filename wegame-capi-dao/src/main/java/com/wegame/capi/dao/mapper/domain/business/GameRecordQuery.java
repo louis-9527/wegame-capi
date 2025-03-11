@@ -48,6 +48,10 @@ public class GameRecordQuery implements Serializable {
      */
     private String playerName;
     /**
+     * 序号
+     */
+    private Integer index;
+    /**
      * 创建人
      */
     private String creator;

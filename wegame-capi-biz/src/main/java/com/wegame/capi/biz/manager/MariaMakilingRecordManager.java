@@ -104,4 +104,9 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 .map(MariaMakilingGameRecordDo::toRecordVo)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
+        return gameRecordService.count(query, gameType);
+    }
 }
