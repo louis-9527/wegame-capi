@@ -29,7 +29,7 @@ public class RewardHelper {
             return RewardSubTypeEnum.MEGA;
         } else if (rewardTimes >= 15 && rewardTimes < 20) {
             return RewardSubTypeEnum.SUPER;
-        } else if (rewardTimes > 20) {
+        } else if (rewardTimes >= 20) {
             return RewardSubTypeEnum.SENSATIONAL;
         } else {
             return RewardSubTypeEnum.OTHER;
