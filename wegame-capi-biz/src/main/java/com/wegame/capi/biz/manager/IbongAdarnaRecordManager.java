@@ -95,4 +95,9 @@ public class IbongAdarnaRecordManager extends AbstractRecordManager<IbongAdarnaG
                 .map(IbongAdarnaGameRecordDo::toRecordVo)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
+        return gameRecordService.count(query, gameType);
+    }
 }
