@@ -4,7 +4,6 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.promotion.GetDailyMissionReq;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.common.context.UserInfoContext;
 import org.slf4j.MDC;
 
 import java.util.Date;
