@@ -112,21 +112,27 @@ public class BetRecordService {
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         if (Objects.isNull(betRecordPo)) {
-            log.warn("get betRecord ret is null, then force query from primary. id: {}, playerId: {}", id, playerId);
             betRecordPo = getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {
                 collection.withReadPreference(ReadPreference.primary());
                 return getMongoTemplate(gameType).findOne(query, BetRecordPo.class, gameType.getBetRecordCollectionName());
             });
-            log.warn("get betRecord ret is null, then force query from primary. id: {}, playerId: {}, po: {}", id, playerId, betRecordPo);
+            log.warn("get betRecord ret is null, then force query from primary. id: {}, playerId: {}, betRecordPo: {}", id, playerId, betRecordPo);
+            if (Objects.isNull(betRecordPo)) {
+                log.error("get betRecord ret is null, id: {}, playerId: {}", id, playerId);
+            }
         }
         return BetRecordConverter.poToDo(betRecordPo);
     }
 
     public List<BetRecordDo> list(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query),
-                BetRecordPo.class,
-                gameType.getBetRecordCollectionName());
+        List<BetRecordPo> recordPoList = getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {
+            // 强制走从分片
+            collection.withReadPreference(ReadPreference.secondary());
+            return getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query),
+                    BetRecordPo.class,
+                    gameType.getBetRecordCollectionName());
+        });
         return BetRecordConverter.poToDoList(recordPoList);
     }
 

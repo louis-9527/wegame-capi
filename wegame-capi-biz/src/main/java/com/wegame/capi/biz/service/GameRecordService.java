@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.service;
 
 import com.mongodb.ReadPreference;
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.GameRecordQueryBuilder;
@@ -11,12 +12,17 @@ import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.gameRecordCachePutThreadPoolExecutor;
 
 /**
  * 投注记录服务
@@ -38,6 +44,12 @@ public class GameRecordService<T> {
         bulkOps.insert(gameRecordList);
         bulkOps.execute();
         return true;
+    }
+
+    @Async(gameRecordCachePutThreadPoolExecutor)
+    @CachePut(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #cacheKey")
+    public List<T> asyncPutCache(List<T> gameRecordList, GameTypeEnum gameType, String cacheKey) {
+        return gameRecordList;
     }
 
     /**

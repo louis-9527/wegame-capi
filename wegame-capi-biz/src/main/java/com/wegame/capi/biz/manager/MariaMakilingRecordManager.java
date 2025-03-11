@@ -44,6 +44,9 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
         }
         boolean ret = gameRecordService.batchAdd(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
+        // 异步设置游戏记录缓存
+        String cacheKey = String.format("%s_%s", betRecord.getId(), betRecord.getPlayerId());
+        gameRecordService.asyncPutCache(betRecord.getGameRecordList(), gameType, cacheKey);
         return betRecord.getId();
     }
 
@@ -74,14 +77,16 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Override
     @Cacheable(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #query.getCacheKey()")
     public List<MariaMakilingGameRecordDo> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType) {
-        AssertUtil.assertStrNotEmpty(query.getCacheKey(), ErrorCode.ERR_PARAM);
-        List<MariaMakilingGameRecordDo> recordDos = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
-        if (CollectionUtils.isNotEmpty(recordDos)) {
-            log.warn("list game record ret is empty, then query from primary, {}, {}", gameType, query);
-            query.setFromPrimary(true);
-            recordDos = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
-        }
-        return recordDos;
+        //        AssertUtil.assertStrNotEmpty(query.getCacheKey(), ErrorCode.ERR_PARAM);
+        //        List<MariaMakilingGameRecordDo> recordDos = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+        //        if (CollectionUtils.isNotEmpty(recordDos)) {
+        //            log.warn("list game record ret is empty, then query from primary, {}, {}", gameType, query);
+        //            query.setFromPrimary(true);
+        //            recordDos = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+        //        }
+        log.warn("list game record from primary, {}, {}", gameType, query);
+        query.setFromPrimary(true);
+        return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
     }
 
     @Override
