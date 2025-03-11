@@ -25,6 +25,8 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -152,11 +154,13 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        // 后处理-免费轮
-        MalakasBetRecordDetailDo detailDo = MalakasBetRecordDetailDo.builder()
-                .gameRecordList(gameRecordList)
-                .build();
-        freeWheelAfterHandle(betDo, detailDo, overallRewardAmount);
+        if (CollectionUtils.isNotEmpty(gameRecordList)) {
+            MalakasGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
+            if (Objects.nonNull(lastGameRecord)) {
+                // 后处理-免费轮
+                freeWheelAfterHandle(lastGameRecord.getBetRecordId());
+            }
+        }
         return BetResultDo.<MalakasBetRecordDetailDo>builder()
                 .betRecordId(betDetail.getBetRecordId())
                 .gameId(betDo.getGameId())
@@ -186,7 +190,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .collect(Collectors.toList());
     }
 
-    public void freeWheelAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo detailDo, Long totalRewardAmount) {
+    public void freeWheelAfterHandle(Long betRecordId) {
         // do nothing
     }
 }

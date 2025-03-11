@@ -4,9 +4,7 @@ import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.context.UserInfo;
@@ -33,12 +31,13 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
     RewardService rewardService;
 
     @Override
-    public void freeWheelAfterHandle(BetDo<MalakasBetDo> betDo, MalakasBetRecordDetailDo recordDetail, Long totalRewardAmount) {
-        // todo 总共中了多少钱，中了多少轮
-        updateRewardNotifyInfo(betDo.getGameType(), recordDetail.freeSpinCount(), totalRewardAmount);
+    public void freeWheelAfterHandle(Long betRecordId) {
+        BetRecordDo betRecord = malakasRecordManager.getBetRecord(betRecordId, GameTypeEnum.MALAKAS);
+        AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
+//        updateRewardNotifyInfo(recordDetail.freeSpinCount(), betRecord.getPayOutAmount());
     }
 
-    private void updateRewardNotifyInfo(GameTypeEnum gameType, long freeSpinsCount, long totalRewardAmount) {
+    private void updateRewardNotifyInfo(long freeSpinsCount, long totalRewardAmount) {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
@@ -55,10 +54,10 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                             NumberUtil.div(totalRewardAmount, 100),
                             freeSpinsCount))
                     .build();
-            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
+            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MALAKAS.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
-            rewardService.evict(gameType);
+            rewardService.evict(GameTypeEnum.MALAKAS);
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }
