@@ -99,6 +99,9 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         if (CollectionUtils.isNotEmpty(freeWheelList)) {
             handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeWheelList);
         }
+        if (CollectionUtils.isNotEmpty(ret)) {
+            ret.get(ret.size() -1).setLastGameFlag(true);
+        }
         // 占位元素-将占位元素设置为空:
          postPlaceholderSymbol(ret);
         // 返回-游戏记录列表
@@ -128,12 +131,6 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                             .parentGameRecordId(preGameRecord.getId())
                             .build());
                 }
-                //                Optional.ofNullable(preGameRecord.getGameRecordIds())
-                //                        .orElse(Collections.emptyList())
-                //                        .forEach(gameRecordId -> freeWheelList.addLast(FreeWheelHandleDo.builder()
-                //                                .gameRecordId(gameRecordId)
-                //                                .parentGameRecordId(preGameRecord.getId())
-                //                                .build()));
             } else {
                 // help gc
                 freeWheelList.clear();
@@ -380,6 +377,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 .wheel(wheel)
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
+                .lastGameFlag(false)
                 .build();
     }
 

@@ -101,7 +101,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
 
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            //        // 4、组装返回结果
+            // 4、组装返回结果
             //// 合计中奖总金额
             long overallRewardAmount = firstBatchList.stream()
                     .filter(item -> Objects.nonNull(item.getRewardResult()))
