@@ -16,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"}, callSuper = true)
 public class MalakasSymbolDo extends SymbolDo {
-    private static final long serialVersionUID = -2266308277093710848L;
+    private static final long serialVersionUID = -2266308987663710848L;
     /**
      * 元素大小
      */

@@ -99,6 +99,9 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         if (CollectionUtils.isNotEmpty(freeWheelList)) {
             handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeWheelList);
         }
+        if (CollectionUtils.isNotEmpty(ret)) {
+            ret.get(ret.size() -1).setLastGameFlag(true);
+        }
         // 占位元素-将占位元素设置为空:
          postPlaceholderSymbol(ret);
         // 返回-游戏记录列表
@@ -122,18 +125,12 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
-            if (!reachMaxMultiple(totalRewardAmount.get(), gamePlay.getPayAmount(), malakasConfig.getRewardMaxMultiple())) {
+            if (!reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), malakasConfig.getRewardMaxMultiple())) {
                 for (int times = 1; times <= preGameRecord.getRewardResult().getRewardFreeWheelTimes(); times++) {
                     freeWheelList.addLast(FreeWheelHandleDo.builder()
                             .parentGameRecordId(preGameRecord.getId())
                             .build());
                 }
-                //                Optional.ofNullable(preGameRecord.getGameRecordIds())
-                //                        .orElse(Collections.emptyList())
-                //                        .forEach(gameRecordId -> freeWheelList.addLast(FreeWheelHandleDo.builder()
-                //                                .gameRecordId(gameRecordId)
-                //                                .parentGameRecordId(preGameRecord.getId())
-                //                                .build()));
             } else {
                 // help gc
                 freeWheelList.clear();
@@ -246,10 +243,14 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 // 为占位元素或者scatter元素，则继续
                 // do nothing;
             } else {
+                int columnScatterNum = countIndexSymbol(wheel.getSymbolArr(), SymbolEnum.Scatter, column);
+                if (columnScatterNum >= MAX_SCATTER_NUMBER_IN_REEL) {
+                    continue;
+                }
                 wheel.getSymbolArr()[row][column].setId(SymbolEnum.Scatter.getId());
                 wheel.getSymbolArr()[row][column].setName(SymbolEnum.Scatter.getName());
                 wheel.getSymbolArr()[row][column].setSymbolType(SymbolTypeEnum.SCATTER);
-                tempCount++;
+                tempCount = tempCount + 1;
             }
         }
         return wheel;
@@ -295,11 +296,11 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                     MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
                     symbolArr[row][column] = malakasSymbolDo;
                     if (symbolDo.isScatterSymbol()) {
-                        scatterNumberInColumn++;
-                        scatterNumberInWheel++;
+                        scatterNumberInColumn = scatterNumberInColumn + 1;
+                        scatterNumberInWheel = scatterNumberInWheel + 1;
                     }
                 }
-                randomNumberIndex++;
+                randomNumberIndex = randomNumberIndex + 1;
             }
         }
         // 返回：滚轮
@@ -317,7 +318,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
         if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return false;
         }
-        if (reachMaxMultiple(totalRewardAmount.get(), gamePlay.getPayAmount(), malakasConfig.getRewardMaxMultiple())) {
+        if (reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), malakasConfig.getRewardMaxMultiple())) {
             log.warn("reach max reward multiple bet. totalRewardAmount: {}, payAmount: {}", totalRewardAmount.get(), gamePlay.getPayAmount());
             return false;
         }
@@ -376,6 +377,7 @@ public class MalakasGame extends AbstractGame<MalakasGameRecordDo> {
                 .wheel(wheel)
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
+                .lastGameFlag(false)
                 .build();
     }
 
