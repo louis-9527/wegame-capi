@@ -88,7 +88,7 @@ public abstract class AbstractDynamicOperationManager {
             // 判断是否过期
             if (currentMilli > expiredTime) {
                 //过期 删除缓存并触发异步上报
-                this.delCatchAndReport(playName, recordId, betType, DynamicOperationEventSubStatusEnum.FINISH_EXPIRED);
+                this.asyncUpdateFinishEvent(recordId, DynamicOperationEventSubStatusEnum.FINISH_EXPIRED);
                 continue;
             }
             //查询事件详情
@@ -99,7 +99,7 @@ public abstract class AbstractDynamicOperationManager {
             }
             if (DynamicOperationEventStatusEnum.FINISH == eventDo.getEventStatus()) {
                 //已完成 删除缓存并触发异步上报
-                this.delCatchAndReport(playName, recordId, betType, eventDo.getEventSubStatus());
+                this.asyncUpdateFinishEvent(recordId, eventDo.getEventSubStatus());
                 continue;
             }
             if (eventDo.getEventStatus() != DynamicOperationEventStatusEnum.NONE) {
@@ -110,7 +110,7 @@ public abstract class AbstractDynamicOperationManager {
             // 判断金额
             if (eventDo.getFinishBonus() >= eventDo.getMinBonus()) {
                 // 干预完成,删除缓存并触发异步上报
-                this.delCatchAndReport(playName, recordId, betType, DynamicOperationEventSubStatusEnum.FINISH_NORMAL);
+                this.asyncUpdateFinishEvent(recordId, DynamicOperationEventSubStatusEnum.FINISH_NORMAL);
                 continue;
             }
             // 判断需要干预金额
@@ -133,19 +133,7 @@ public abstract class AbstractDynamicOperationManager {
         // 更新 订单状态
         dynamicOperationEventDetailService.update(eventDetailDo, this.getDynamicOperationGameEnum());
         dynamicOperationEventService.update(eventDo, this.getDynamicOperationGameEnum());
-        if (DynamicOperationEventStatusEnum.FINISH == eventDo.getEventStatus()) {
-            this.asyncReportEvent(eventDo.getId());
-        }
     }
-
-//    public void updateEventAndReportExpiredEvent(DynamicOperationEventDo eventDo, GameTypeEnum gameType) {
-//        //更新状态
-//        DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(eventDo.getId())
-//                .eventStatus(DynamicOperationEventStatusEnum.FINISH_EXPIRED).build();
-//        dynamicOperationEventService.update(eventUpdate, gameType);
-//        // 执行上报
-//        this.reportEvent(eventDo.getId(), eventDo.getEventId(), DynamicOperationEventStatusEnum.FINISH_EXPIRED, gameType);
-//    }
 
 
     public Long addEventDetail(DynamicOperationEventDetailDo eventDetailDo) {
@@ -251,8 +239,11 @@ public abstract class AbstractDynamicOperationManager {
         });
     }
 
+
     /**
-     * 事件上报
+     * 异步上报,
+     *
+     * @param recordId   事件ID
      */
     public void asyncReportEvent(Long recordId) {
         dynamicEventReportThreadPool.execute(() -> {
@@ -262,6 +253,10 @@ public abstract class AbstractDynamicOperationManager {
                 log.warn("event not finish,report fail:{}", recordId);
                 return;
             }
+            //清除事件缓存
+            String gameId = this.getDynamicOperationGameEnum().getGameType().getId();
+            String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, gameId, eventDo.getPlayerName(), eventDo.getBetType().getCode());
+            redisTemplate.opsForHash().delete(catch_key, String.valueOf(recordId));
             // 获取事件下所有已完成订单
             DynamicOperationDetailQuery detailQuery = DynamicOperationDetailQuery.builder()
                     .recordId(recordId)
@@ -317,6 +312,7 @@ public abstract class AbstractDynamicOperationManager {
         });
     }
 
+
     public abstract DynamicOperationGameEnum getDynamicOperationGameEnum();
 
 
@@ -328,12 +324,5 @@ public abstract class AbstractDynamicOperationManager {
         return dynamicOperationEventConfigService.getConfigMultipleArray(getDynamicOperationGameEnum());
     }
 
-
-    private void delCatchAndReport(String playName, Long recordId, BetTypeEnum betType, DynamicOperationEventSubStatusEnum eventSubStatusEnum) {
-        String gameId = this.getDynamicOperationGameEnum().getGameType().getId();
-        String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, gameId, playName, betType.getCode());
-        redisTemplate.opsForHash().delete(catch_key, String.valueOf(recordId));
-        this.asyncUpdateFinishEvent(recordId, eventSubStatusEnum);
-    }
 
 }
