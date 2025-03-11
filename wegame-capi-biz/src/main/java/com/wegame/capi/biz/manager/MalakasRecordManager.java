@@ -88,4 +88,9 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
                 .map(MalakasGameRecordDo::toRecordVo)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
+        return gameRecordService.count(query, gameType);
+    }
 }
