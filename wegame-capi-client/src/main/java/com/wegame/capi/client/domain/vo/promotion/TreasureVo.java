@@ -25,7 +25,7 @@ public class TreasureVo implements  Serializable {
     private BigDecimal currentExperience;
     @ApiModelProperty(value = "目标进度", required = true)
     private BigDecimal targetExperience;
-    @ApiModelProperty(value = "状态:1 - in progress , 2 - redeemable , 3 - redeemed", required = true)
+    @ApiModelProperty(value = "状态:1进行中 2可兑换 3已兑换", required = true)
     private Integer status;
     @ApiModelProperty(value = "宝箱等级", required = true)
     private Integer vipLevel;
