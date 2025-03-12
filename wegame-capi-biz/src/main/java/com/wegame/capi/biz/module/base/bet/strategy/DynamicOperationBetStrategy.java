@@ -35,8 +35,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
@@ -58,7 +60,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     private ThreadPoolExecutor threadPoolExecutor;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     public abstract AbstractDynamicOperationManager getDynamicOperationManager();
 
@@ -219,11 +221,11 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         //计算最大倍数
         double multiple = ((double) interveneBalance / betPayAmount);
         // 根据倍数找最接近的
-        Double closest = findClosest(multiple,betDo.getBetType());
+        Double closest = findClosest(multiple, betDo.getBetType());
         if (closest == null) {
             return null;
         }
-        return  this.normalPayMultipleConfig(betDo.getBetType(), closest);
+        return this.normalPayMultipleConfig(betDo.getBetType(), closest);
 
     }
 
@@ -231,7 +233,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     private DynamicOperationEventDo getEventDo(BetDo<BD> betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
-        return getDynamicOperationManager().getEffectedEvent(userInfo.getPlayerName(), betDo.getBetType(),betAndPayAmount.getKey(),betAndPayAmount.getValue());
+        return getDynamicOperationManager().getEffectedEvent(userInfo.getPlayerName(), betDo.getBetType(), betAndPayAmount.getKey(), betAndPayAmount.getValue());
     }
 
 
@@ -279,7 +281,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
                 this.getGame().getGameInfo().getId(),
                 UserInfoContext.getUserInfo().getId(), betTypeEnum.getCode(), multiple);
         Long increment = redisTemplate.opsForValue().increment(incrementKey);
-        if (increment >= configDetailGroup.size()) {
+        if (increment == null || increment >= configDetailGroup.size()) {
             increment = 1L;
             redisTemplate.opsForValue().set(incrementKey, increment);
         }
@@ -310,5 +312,4 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
         return result == -1 ? null : arr.get(result);
     }
-
 }
