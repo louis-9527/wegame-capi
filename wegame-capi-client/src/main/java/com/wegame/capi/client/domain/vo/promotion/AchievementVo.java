@@ -23,7 +23,7 @@ public class AchievementVo implements  Serializable {
     private String description;
     private String iconUrl;
     private ProgressVo progressVoList;
-    private Date completeAt;
+    private Long completeAt;
     private Integer status;
     private String redeemId;
     private List<RewardVo> rewards;
