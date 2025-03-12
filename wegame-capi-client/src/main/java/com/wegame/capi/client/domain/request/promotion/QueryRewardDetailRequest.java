@@ -13,11 +13,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "获取背包列表请求")
-public class QueryRewardStarCardDetailRequest implements Validate, Serializable {
+public class QueryRewardDetailRequest implements Validate, Serializable {
     private static final long serialVersionUID = -4002950733224509502L;
-    @ApiModelProperty(value = "游戏Id", required = true)
-    private String gameId;
-    @ApiModelProperty(value = "奖励ID", required = true)
-    private String rewardId;
+    @ApiModelProperty(value = "rewardConfigId", required = true)
+    private String rewardConfigId;
 
 }

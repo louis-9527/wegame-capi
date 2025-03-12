@@ -17,6 +17,11 @@ public class BagCurrentRewordDetailDo {
      * 奖励ID
      */
     private String rewardId;
+
+    /**
+     * Reward config Id
+     */
+    private String rewardConfigId;
     /**
      * 奖励名称
      */

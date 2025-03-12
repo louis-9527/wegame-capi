@@ -22,6 +22,7 @@ public class BagRewordConverter {
         }
         BagCurrentRewordDetailDo rewordDetailDo = new BagCurrentRewordDetailDo();
         rewordDetailDo.setRewardId(rewardBag.getRewardId());
+        rewordDetailDo.setRewardConfigId(rewardBag.getRewardConfigId());
         rewordDetailDo.setName(rewardBag.getName());
         rewordDetailDo.setStarLevel(rewardBag.getStarLevel());
         rewordDetailDo.setDescription(rewardBag.getDescription());
@@ -53,6 +54,7 @@ public class BagRewordConverter {
         }
         BagRewardDetailVo detailVo = new BagRewardDetailVo();
         detailVo.setRewardId(detailDo.getRewardId());
+        detailVo.setRewardConfigId(detailDo.getRewardConfigId());
         detailVo.setName(detailDo.getName());
         detailVo.setStarLevel(detailDo.getStarLevel());
         detailVo.setDescription(detailDo.getDescription());

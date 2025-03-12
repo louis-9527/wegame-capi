@@ -3,15 +3,18 @@ package com.wegame.capi.application.controller.promotion;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
+import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewordDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.RewordDetailDo;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.client.domain.request.promotion.QueryBagCurrentGameRewardRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryBagOtherGameRewardRequest;
-import com.wegame.capi.client.domain.request.promotion.QueryRewardStarCardDetailRequest;
+import com.wegame.capi.client.domain.request.promotion.QueryRewardDetailRequest;
 import com.wegame.capi.client.domain.vo.promotion.BagCurrentRewordVo;
 import com.wegame.capi.client.domain.vo.promotion.BagOtherRewordVo;
 import com.wegame.capi.client.domain.vo.promotion.BagRewardDetailVo;
+import com.wegame.capi.client.domain.vo.promotion.RewardDetailVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -55,10 +58,12 @@ public class BagController {
     }
 
     @LoginRequired
-    @ApiOperation(value = "获取背包物品详情", httpMethod = "POST")
+    @ApiOperation(value = "获取物品详情", httpMethod = "POST")
     @PostMapping("/getRewardDetail")
-    public CommonResponse<BagRewardDetailVo> getRewardStarCardDetail(@RequestBody QueryRewardStarCardDetailRequest request) {
-        return CommonResponse.build(null);
+    public CommonResponse<RewardDetailVo> getRewardStarCardDetail(@RequestBody QueryRewardDetailRequest detailRequest) {
+        detailRequest.validate();
+        RewordDetailDo byRewardConfigId = bagService.getByRewardConfigId(detailRequest.getRewardConfigId());
+        return CommonResponse.build(RewordDetailConverter.doToVo(byRewardConfigId));
     }
 
 }

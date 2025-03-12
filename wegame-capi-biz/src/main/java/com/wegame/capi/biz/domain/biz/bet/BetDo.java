@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import javax.swing.*;
 import java.io.Serializable;
 
 @Data
@@ -34,6 +35,11 @@ public class BetDo<R> implements Serializable {
      * 投注子类型
      */
     private BetSubTypeEnum betSubType;
+
+    /**
+     * 星卡ID
+     */
+    private StarCardUseDo starCardUseDo;
     /**
      * 投注详情
      */

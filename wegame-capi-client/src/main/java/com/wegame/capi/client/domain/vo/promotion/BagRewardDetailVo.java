@@ -16,6 +16,8 @@ public class BagRewardDetailVo implements Serializable {
     private static final long serialVersionUID = -2041608152456306530L;
     @ApiModelProperty(value = "奖励ID", required = true)
     private String rewardId;
+    @ApiModelProperty(value = "Reward config Id", required = true)
+    private String rewardConfigId;
     @ApiModelProperty(value = "奖励名称", required = true)
     private String name;
     @ApiModelProperty(value = "等级", required = true)

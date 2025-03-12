@@ -6,12 +6,16 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.domain.req.promotion.GetBagCurrentRewardReq;
 import com.wegame.capi.api.domain.req.promotion.GetBagOtherRewardReq;
+import com.wegame.capi.api.domain.req.promotion.GetBagRewardByIdReq;
 import com.wegame.capi.api.domain.res.promotion.GetBagCurrentRewardRes;
 import com.wegame.capi.api.domain.res.promotion.GetBagOtherRewardRes;
+import com.wegame.capi.api.domain.res.promotion.GetRewardDetailRes;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
+import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewordDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.RewordDetailDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,5 +69,21 @@ public class BagService {
         return BagRewordConverter.otherResToDoList(rewardBagRes.getRewardBag());
     }
 
+
+    public RewordDetailDo getByRewardConfigId(String rewardConfigId){
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GetBagRewardByIdReq rewardByIdReq = GetBagRewardByIdReq.builder()
+                .playerName(userInfo.getPlayerName())
+                .pId(userInfo.getPId())
+                .refId(String.valueOf(snowflakeIdGenerator.nextId()))
+                .channelId(userInfo.getChannelId())
+                .createTime(DateUtil.toUTC(new Date()))
+                .rewardConfigId(rewardConfigId)
+                .build();
+        GetRewardDetailRes rewardBagRes = bagApi.getRewardById(rewardByIdReq);
+        return RewordDetailConverter.resToDo(rewardBagRes.getDetails());
+
+    }
 
 }

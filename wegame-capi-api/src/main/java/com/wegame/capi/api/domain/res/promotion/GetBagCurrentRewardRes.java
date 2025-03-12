@@ -14,7 +14,8 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetBagCurrentRewardRes {
+public class GetBagCurrentRewardRes implements Serializable{
+    private static final long serialVersionUID = 1165155893675353428L;
     private String playerName;
     private String refId;
     private String channelId;
@@ -44,6 +45,11 @@ public class GetBagCurrentRewardRes {
          * 奖励ID
          */
         private String rewardId;
+
+        /**
+         * Reward config Id
+         */
+        private String rewardConfigId;
 
         /**
          * 等级
