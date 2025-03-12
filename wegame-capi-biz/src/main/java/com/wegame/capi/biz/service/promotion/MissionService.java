@@ -10,9 +10,6 @@ import com.wegame.capi.client.domain.vo.promotion.DailyMissionVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * 任务service
  */
@@ -22,9 +19,9 @@ public class MissionService {
     @Autowired
     MissionApi missionApi;
 
-    public List<DailyMissionVo> getDailyMission() {
+    public DailyMissionVo getDailyMission() {
         GetDailyMissionRes getDailyMissionRes = missionApi.getDailyMission(MissionReqBuilder.build());
         AssertUtil.assertNotNull(getDailyMissionRes.getDailyMissionList(), ErrorCode.ERR_PARAM);
-        return getDailyMissionRes.getDailyMissionList().stream().map(MissionConverter::build).collect(Collectors.toList());
+        return MissionConverter.buildDailyMissionItemList(getDailyMissionRes);
     }
 }

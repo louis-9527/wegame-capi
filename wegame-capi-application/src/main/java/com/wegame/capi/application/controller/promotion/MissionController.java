@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping("mission")
@@ -26,7 +24,7 @@ public class MissionController {
     @LoginRequired
     @ApiOperation(value = "任务列表", httpMethod = "POST")
     @PostMapping("/getDailyMission")
-    public CommonResponse<List<DailyMissionVo>> getDailyMission() {
+    public CommonResponse<DailyMissionVo> getDailyMission() {
         return CommonResponse.build(missionService.getDailyMission());
     }
 

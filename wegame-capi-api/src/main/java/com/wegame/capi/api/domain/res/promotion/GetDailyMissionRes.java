@@ -44,6 +44,10 @@ public class GetDailyMissionRes implements Serializable {
      */
     private String tierValue;
     /**
+     * refreshTime
+     */
+    private Date refreshTime;
+    /**
      * 任务列表
      */
     private List<DailyMission> dailyMissionList;
@@ -82,5 +86,9 @@ public class GetDailyMissionRes implements Serializable {
          * status
          */
         private String status;
+        /**
+         * starLevel
+         */
+        private Integer starLevel;
     }
 }
