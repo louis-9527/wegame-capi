@@ -46,7 +46,7 @@ public class AchievementVo implements  Serializable {
         private String name;
         private String starLevel;
         private Integer count;
-        private String iconUrl;
+        private String imgUrl;
         private BigDecimal betValue;
         private BigDecimal balanceRequired;
     }

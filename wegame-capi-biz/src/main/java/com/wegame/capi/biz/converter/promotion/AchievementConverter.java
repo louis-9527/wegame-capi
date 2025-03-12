@@ -53,7 +53,7 @@ public class AchievementConverter {
                 .name(reward.getName())
                 .count(reward.getCount())
                 .starLevel(reward.getStarLevel())
-                .iconUrl(reward.getIconUrl())
+                .imgUrl(reward.getImgUrl())
                 .build();
     }
 
