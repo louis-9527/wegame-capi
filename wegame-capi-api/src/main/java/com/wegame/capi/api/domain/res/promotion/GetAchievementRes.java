@@ -58,7 +58,7 @@ public class GetAchievementRes implements Serializable {
         private String name;
         private String starLevel;
         private Integer count;
-        private String imgUrl;
+        private String iconUrl;
         private BigDecimal betValue;
         private BigDecimal balanceRequired;
     }

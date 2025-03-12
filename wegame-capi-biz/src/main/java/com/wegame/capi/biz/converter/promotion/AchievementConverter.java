@@ -1,12 +1,9 @@
 package com.wegame.capi.biz.converter.promotion;
 
 import com.wegame.capi.api.domain.res.promotion.GetAchievementRes;
-import com.wegame.capi.api.domain.res.promotion.GetTreasureRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemAchievementRes;
-import com.wegame.capi.api.domain.res.promotion.RedeemTreasureRes;
 import com.wegame.capi.client.domain.vo.promotion.AchievementVo;
 import com.wegame.capi.client.domain.vo.promotion.RedeemAchievementVo;
-import com.wegame.capi.client.domain.vo.promotion.RedeemTreasureVo;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collections;
@@ -56,7 +53,7 @@ public class AchievementConverter {
                 .name(reward.getName())
                 .count(reward.getCount())
                 .starLevel(reward.getStarLevel())
-                .imgUrl(reward.getImgUrl())
+                .iconUrl(reward.getIconUrl())
                 .build();
     }
 
