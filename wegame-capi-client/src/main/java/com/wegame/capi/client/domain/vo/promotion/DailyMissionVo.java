@@ -20,7 +20,7 @@ public class DailyMissionVo implements  Serializable {
     private static final long serialVersionUID = -1704392640858325682L;
 
     @ApiModelProperty(value = "刷新时间", required = true)
-    private Date refreshTime;
+    private Long refreshTime;
     @ApiModelProperty(value = "任务列表", required = true)
     private List<DailyMissionItemVo> daliyMissionList;
 

@@ -5,12 +5,13 @@ import com.wegame.capi.client.domain.vo.promotion.DailyMissionVo;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class MissionConverter {
     public static DailyMissionVo buildDailyMissionItemList(GetDailyMissionRes res) {
         return DailyMissionVo.builder()
-                .refreshTime(res.getRefreshTime())
+                .refreshTime(Objects.isNull(res.getRefreshTime()) ? null : res.getRefreshTime().getTime())
                 .daliyMissionList(buildDailyMissionItemList(res.getDailyMissionList()))
                 .build();
     }
