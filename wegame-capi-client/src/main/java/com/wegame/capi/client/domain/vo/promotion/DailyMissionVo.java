@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -39,7 +38,7 @@ public class DailyMissionVo implements  Serializable {
         @ApiModelProperty(value = "目标进度", required = true)
         private String target;
         @ApiModelProperty(value = "icon地址", required = true)
-        private String imgUrl;
+        private String iconUrl;
         @ApiModelProperty(value = "状态 1锁定 2进行中 3完成", required = true)
         private String status;
         @ApiModelProperty(value = "星级", required = true)
