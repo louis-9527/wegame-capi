@@ -28,8 +28,6 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.ibongadarna.IbongAdarnaGameHelper.IBONG_ADARNA_GAME_INFO;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -144,14 +142,11 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
      */
     private List<SymbolDo> preGenerateSymboDoList(SymbolRepeatTypeEnum symbolRepeatType, GameInfoDo gameInfo, TreeMap<String, Integer> columProbabilisticMap) {
         Set<SymbolDo> symbolDoSet = Sets.newHashSet();
-        while (true) {
-            if (symbolDoSet.size() < symbolRepeatType.getTimes()) {
-                SymbolDo symbolDo = randomNormalSymbol(randomService.randomInt(1, CONST_1000000), gameInfo, columProbabilisticMap);
-                symbolDoSet.add(symbolDo);
-            } else {
-                return Lists.newArrayList(symbolDoSet);
-            }
+        while (symbolDoSet.size() < symbolRepeatType.getTimes()) {
+            SymbolDo symbolDo = randomNormalSymbol(randomService.randomInt(1, CONST_1000000), gameInfo, columProbabilisticMap);
+            symbolDoSet.add(symbolDo);
         }
+        return Lists.newArrayList(symbolDoSet);
     }
 
     private SymbolRepeatTypeEnum randomSymbolRepeatType(int colum) {
@@ -189,7 +184,6 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
 
     private TreeMap<String, TreeMap<String, Integer>> buildSymbolBreakUpProbabilisticMap() {
         TreeMap<String, TreeMap<String, Integer>> symbolBreakUpProbabilisticMap = new TreeMap<>();
-
         TreeMap<String, TreeMap<String, BigDecimal>> symbolBreakUpProbabilisticConfig =
                 ibongAdarnaConfig.getProbabilisticConfig().getSymbolBreakUpProbabilisticConfig();
         for (Map.Entry<String, TreeMap<String, BigDecimal>> breakUpEnt : symbolBreakUpProbabilisticConfig.entrySet()) {

@@ -63,7 +63,7 @@ public class IbongAdarnaNormalBetStrategy extends AbstractIbongAdarnaBetStrategy
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_IBONG_REWARD_NOTIFY_SIZE);
         } catch (Exception e) {
-            log.error("[MariaMakilingNonBuyFreeSpinsBetStrategy-notifyRewardHandle] error", e);
+            log.error("updateRewardNotifyInfo error", e);
         }
     }
 }

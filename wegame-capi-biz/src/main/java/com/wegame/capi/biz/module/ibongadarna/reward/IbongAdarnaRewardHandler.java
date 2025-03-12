@@ -20,7 +20,6 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
-import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 @Component("ibongAdarnaRewardHandler")
@@ -38,8 +40,6 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongAdarnaS
     OddsCalculateStrategy ibongAdarnaOddsCalculateStrategy;
     @Autowired
     MultipleCalculateStrategy ibongAdarnaMultipleCalculateStrategy;
-    @Autowired
-    BetRecordService betRecordService;
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
 
@@ -62,7 +62,6 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongAdarnaS
                     .rewardLineDetailList(null)
                     .build();
         }
-
         // 4、中奖线处理
         // 中奖总金额
         long totalRewardAmount = 0L;
@@ -146,11 +145,11 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongAdarnaS
     }
 
     /**
-     * 构建中间线
+     * 构建中奖线
      *
      * @param rewardSymbolDoList 中奖元素列表
      * @param lineNo             线号
-     * @return line
+     * @return 中奖线
      */
     private RewardLineDo<IbongAdarnaSymbolDo> buildRewardLineDo(List<RewardSymbolDo<IbongAdarnaSymbolDo>> rewardSymbolDoList, Integer lineNo) {
         int totalRewardLineCount = 1;

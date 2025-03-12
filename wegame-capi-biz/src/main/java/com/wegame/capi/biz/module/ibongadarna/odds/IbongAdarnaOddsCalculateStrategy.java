@@ -13,7 +13,8 @@ import java.util.TreeMap;
 
 @Slf4j
 @Component("ibongAdarnaOddsCalculateStrategy")
-public class IbongAdarnaOddsCalculateStrategy extends AbstractOddsCalculateStrategy<IbongAdarnaSymbolDo> {
+public class IbongAdarnaOddsCalculateStrategy
+        extends AbstractOddsCalculateStrategy<IbongAdarnaSymbolDo> {
 
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;

@@ -22,12 +22,12 @@ import java.util.TreeMap;
 
 @Slf4j
 @Component("ibongAdarnaMultipleCalculateStrategy")
-public class IbongAdarnaMultipleCalculateStrategy extends AbstractMultipleCalculateStrategy<IbongAdarnaSymbolDo> {
+public class IbongAdarnaMultipleCalculateStrategy
+        extends AbstractMultipleCalculateStrategy<IbongAdarnaSymbolDo> {
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
     @Autowired
     RandomService randomService;
-
 
     @Override
     public BigDecimal calculateMultiple(RewardHandleDo<IbongAdarnaSymbolDo> rewardHandle, List<RewardLineDo<IbongAdarnaSymbolDo>> rewardLineList) {

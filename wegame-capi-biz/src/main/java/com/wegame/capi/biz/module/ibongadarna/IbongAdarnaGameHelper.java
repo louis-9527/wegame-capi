@@ -45,13 +45,11 @@ public class IbongAdarnaGameHelper {
             .name(Symbol1007.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .build();
-
     private static final SymbolDo IBONG_ADARNA_Wild = SymbolDo.builder()
             .id(Wild.getId())
             .name(Wild.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
-
     public static final GameInfoDo IBONG_ADARNA_GAME_INFO = GameInfoDo.builder()
             .id(GameTypeEnum.IBONG_ADARNA.getId())
             .gameType(GameTypeEnum.IBONG_ADARNA)
