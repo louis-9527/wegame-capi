@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.converter;
 
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigPo;
 
 import java.util.Collections;
@@ -26,7 +27,7 @@ public class DynamicOperationConfigConvert {
         DynamicOperationConfigDo configDo = new DynamicOperationConfigDo();
         configDo.setId(configDo.getId());
         configDo.setGameId(configPo.getGameId());
-        configDo.setConfigType(configPo.getConfigType());
+        configDo.setBetType(BetTypeEnum.valueOfCode(configPo.getBetType()));
         configDo.setMultiple(configPo.getMultiple());
         configDo.setDetail(configPo.getDetail());
         return configDo;

@@ -108,8 +108,8 @@ public class DynamicOperationEventService {
         List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId(), betType), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
         if (CollectionUtils.isEmpty(operationPoList)) {
             Map<Long, String> catchMap = new HashMap<>();
-            catchMap.put(-1L,"-1");
-            this.saveCatch(catch_key,catchMap);
+            catchMap.put(-1L, "-1");
+            this.saveCatch(catch_key, catchMap);
             return new ArrayList<>();
         }
         List<DynamicOperationEffectEventCatchDo> resultList = new ArrayList<>(entries.size());
@@ -123,7 +123,7 @@ public class DynamicOperationEventService {
             resultList.add(build);
             catchMap.put(operationPo.getId(), JSON.toJSONString(build));
         }
-        this.saveCatch(catch_key,catchMap);
+        this.saveCatch(catch_key, catchMap);
         return resultList.stream()
                 .sorted(Comparator.comparing(DynamicOperationEffectEventCatchDo::getCreateTime))
                 .collect(Collectors.toList());
@@ -135,7 +135,7 @@ public class DynamicOperationEventService {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
-        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus","eventSubStatus", "reportStatus");
+        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus");
         DynamicOperationPo operationPo = getMongoTemplate(dynamicOperationGame.getGameType()).findOne(
                 query,
                 DynamicOperationPo.class,
@@ -151,7 +151,7 @@ public class DynamicOperationEventService {
     }
 
 
-    private void saveCatch(String catch_key,Map<Long, String> catchMap){
+    private void saveCatch(String catch_key, Map<Long, String> catchMap) {
         // 构造 Lua 脚本
         String luaScript =
                 "for i = 1, #ARGV - 1, 2 do " +

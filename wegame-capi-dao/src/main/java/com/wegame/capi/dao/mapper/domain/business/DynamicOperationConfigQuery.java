@@ -24,11 +24,9 @@ public class DynamicOperationConfigQuery {
      */
     private String gameId;
 
-    /**
-     * 0:正常游戏
-     * 1:购买免费游戏
-     */
-    private Integer configType;
+
+
+    private String betType;
 
     /**
      * 倍数

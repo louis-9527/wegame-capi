@@ -19,10 +19,7 @@ import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.common.Constants;
-import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
+import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
@@ -72,7 +69,7 @@ public abstract class AbstractDynamicOperationManager {
      *
      * @return
      */
-    public DynamicOperationEventDo getEffectedEvent(String playName, BetTypeEnum betType) {
+    public DynamicOperationEventDo getEffectedEvent(String playName, BetTypeEnum betType,Long betAmount,Long betPayAmount) {
         DynamicOperationGameEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
         List<DynamicOperationEffectEventCatchDo> entries = dynamicOperationEventService.getEffectList(playName, betType, this.getDynamicOperationGameEnum());
 
@@ -106,7 +103,6 @@ public abstract class AbstractDynamicOperationManager {
                 // 当前事件有未完成的干预事件 不执行
                 continue;
             }
-
             // 判断金额
             if (eventDo.getFinishBonus() >= eventDo.getMinBonus()) {
                 // 干预完成,删除缓存并触发异步上报
@@ -118,6 +114,16 @@ public abstract class AbstractDynamicOperationManager {
             if ((eventDo.getFinishBonus() + eventAmount) > eventDo.getMaxBonus()) {
                 // 如果干预后的金额,比最大金额还大,取最小的
                 eventAmount = eventDo.getMaxBonus() - eventDo.getFinishBonus();
+            }
+
+            // 如果投注金额小于系统最小的投注金额,需要判断是否可以赠送出去
+            if (betAmount <= getDynamicOperationGameEnum().getGameType().getMinBetAmount()) {
+                // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
+                if (eventAmount < 0.1 * betPayAmount) {
+                    // 上报
+                    this.asyncUpdateFinishEvent(recordId, DynamicOperationEventSubStatusEnum.FINISH_AMOUNT_ERROR);
+                    continue;
+                }
             }
             eventDo.setInterventionAmount(eventAmount);
             return eventDo;
@@ -320,8 +326,8 @@ public abstract class AbstractDynamicOperationManager {
         return dynamicOperationEventConfigService.getConfigDetail(configQuery, getDynamicOperationGameEnum());
     }
 
-    public List<Double> getConfigMultipleArray() {
-        return dynamicOperationEventConfigService.getConfigMultipleArray(getDynamicOperationGameEnum());
+    public List<Double> getConfigMultipleArray(BetTypeEnum betType) {
+        return dynamicOperationEventConfigService.getConfigMultipleArray(betType,getDynamicOperationGameEnum());
     }
 
 

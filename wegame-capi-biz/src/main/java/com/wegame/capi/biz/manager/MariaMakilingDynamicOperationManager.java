@@ -4,11 +4,13 @@ import com.google.common.collect.Lists;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
+import io.swagger.models.auth.In;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
@@ -42,7 +44,7 @@ public class MariaMakilingDynamicOperationManager extends AbstractDynamicOperati
 
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager)
-    public void updateEventDetail(DynamicOperationEventDetailDo eventDetailDo,DynamicOperationEventDo eventDo) {
+    public void updateEventDetail(DynamicOperationEventDetailDo eventDetailDo, DynamicOperationEventDo eventDo) {
         super.updateEventDetail(eventDetailDo, eventDo);
     }
 
@@ -54,17 +56,20 @@ public class MariaMakilingDynamicOperationManager extends AbstractDynamicOperati
     @Override
     public List<List<DynamicOperationConfigDo>> getConfigDetail(DynamicOperationConfigQuery configQuery) {
         Double multiple = configQuery.getMultiple();
-        if (DynamicOperationEventTypeEnum.NORMAL.getCode().equals(configQuery.getConfigType())) {
+        if (BetTypeEnum.NORMAL_BET.getCode().equals(configQuery.getBetType())) {
             return normalConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigDetail(configQuery));
-        } else if (DynamicOperationEventTypeEnum.FREE.getCode().equals(configQuery.getConfigType())) {
+        } else if (BetTypeEnum.BUY_BET.getCode().equals(configQuery.getBetType())) {
             return freeConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigDetail(configQuery));
         }
         return null;
     }
 
     @Override
-    public List<Double> getConfigMultipleArray() {
-        String key = this.getDynamicOperationGameEnum().getGameType().getId();
-        return configMultipleArray.computeIfAbsent(key, k -> super.getConfigMultipleArray());
+    public List<Double> getConfigMultipleArray(BetTypeEnum betType) {
+        // String gameId = this.getDynamicOperationGameEnum().getGameType().getId();
+        // 获取该 gameId 对应的 Map，如果不存在则创建
+        // Map<Integer, List<Double>> typeMap = configMultipleArray.computeIfAbsent(gameId, k -> new ConcurrentHashMap<>());
+        // 获取 gameType 对应的配置，如果不存在则查询数据库
+        return configMultipleArray.computeIfAbsent(betType.getCode(), type -> super.getConfigMultipleArray(betType));
     }
 }

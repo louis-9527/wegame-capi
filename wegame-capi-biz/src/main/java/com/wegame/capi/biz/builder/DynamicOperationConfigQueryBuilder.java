@@ -11,7 +11,7 @@ public class DynamicOperationConfigQueryBuilder {
         Criteria criteria = new Criteria();
         criteria.and("multiple").is(recordQuery.getMultiple());
         criteria.and("gameId").is(recordQuery.getGameId());
-        criteria.and("configType").is(recordQuery.getConfigType());
+        criteria.and("betType").is(recordQuery.getBetType());
         return new Query(criteria);
     }
 }

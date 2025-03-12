@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
@@ -79,6 +80,7 @@ public class DynamicOperationConvert {
         eventDo.setChannelId(eventPo.getChannelId());
         eventDo.setEffectedTime(eventPo.getEffectedTime());
         eventDo.setExpiredTime(eventPo.getExpiredTime());
+        eventDo.setBetType(BetTypeEnum.valueOfCode(eventPo.getBetType()));
         eventDo.setEventStatus(DynamicOperationEventStatusEnum.valueOfCode(eventPo.getEventStatus()));
         eventDo.setEventSubStatus(DynamicOperationEventSubStatusEnum.valueOfCode(eventPo.getEventSubStatus()));
         eventDo.setReportStatus(DynamicOperationReportStatusEnum.valueOfCode(eventPo.getReportStatus()));

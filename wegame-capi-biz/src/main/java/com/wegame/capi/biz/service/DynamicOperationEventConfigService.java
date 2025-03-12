@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.mongodb.client.model.Accumulators;
 import com.mongodb.client.model.Aggregates;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationConfigQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationConfigConvert;
@@ -13,6 +14,7 @@ import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventTypeEnum;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -57,8 +60,11 @@ public class DynamicOperationEventConfigService {
     }
 
 
-    public List<Double> getConfigMultipleArray(DynamicOperationGameEnum dynamicOperationGame) {
+    public List<Double> getConfigMultipleArray(BetTypeEnum betType, DynamicOperationGameEnum dynamicOperationGame) {
+
+
         Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("betType").is(betType.getCode())), // 添加 type 过滤
                 Aggregation.group().addToSet("multiple").as("values")
         );
         AggregationResults<Document> results = getMongoTemplate(dynamicOperationGame.getGameType())

@@ -20,6 +20,7 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.manager.AbstractDynamicOperationManager;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.context.UserInfo;
 import com.wegame.capi.common.context.UserInfoContext;
@@ -210,48 +211,27 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     public List<WheelDo<WD>> getWheelDos(BetDo<BD> betDo, Long interventionAmount) {
         // 计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
-        /**
-         * (x+y)/x <1.1
-         * 下注金额 =  x
-         * 赠送金额 =  y
-         * 那么y < 0.1x 则赠送金额y小于下注金额x10% 就会出现赠送不出去情况
-         * 每次下注最小为1,购买轮下注金额的35倍,如果赠送金额<3.5 就会出现无法赠送的情况
-         */
 
 
         Long betPayAmount = this.getBetAndPayAmount(betDo).getValue();
-
-        if (this.getBetAndPayAmount(betDo).getKey() <= this.getGame().getGameInfo().getGameType().getMinBetAmount()) {
-            // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
-            if (interventionAmount < 0.1 * betPayAmount) {
-                // 上报
-                // this.getDynamicOperationManager().reportEvent();
-            }
-        }
 
         long interveneBalance = interventionAmount + betPayAmount;
         //计算最大倍数
         double multiple = ((double) interveneBalance / betPayAmount);
         // 根据倍数找最接近的
-        Double closest = findClosest(multiple);
+        Double closest = findClosest(multiple,betDo.getBetType());
         if (closest == null) {
             return null;
         }
-        switch (betDo.getBetType()) {
-            case NORMAL_BET:
-                return this.normalPayMultipleConfig(0, closest);
-            case BUY_BET:
-                return this.normalPayMultipleConfig(1, closest);
+        return  this.normalPayMultipleConfig(betDo.getBetType(), closest);
 
-            default:
-                throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
-        }
     }
 
 
     private DynamicOperationEventDo getEventDo(BetDo<BD> betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        return getDynamicOperationManager().getEffectedEvent(userInfo.getPlayerName(), betDo.getBetType());
+        Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
+        return getDynamicOperationManager().getEffectedEvent(userInfo.getPlayerName(), betDo.getBetType(),betAndPayAmount.getKey(),betAndPayAmount.getValue());
     }
 
 
@@ -284,20 +264,20 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     public abstract List<WheelDo<WD>> convertWheelDoList(List<Object> wheelConfig);
 
-    private List<WheelDo<WD>> normalPayMultipleConfig(Integer configType, double multiple) {
+    private List<WheelDo<WD>> normalPayMultipleConfig(BetTypeEnum betTypeEnum, double multiple) {
         DynamicOperationConfigQuery configQuery = DynamicOperationConfigQuery.builder()
                 .gameId(this.getGame().getGameInfo().getGameType().getId())
-                .configType(configType)
+                .betType(betTypeEnum.getCode())
                 .multiple(multiple).build();
         List<List<DynamicOperationConfigDo>> configDetailGroup = getDynamicOperationManager().getConfigDetail(configQuery);
         if (CollectionUtils.isEmpty(configDetailGroup)) {
-            log.error("normalPayMultipleConfig result null,configType:{},multiple:{}", configType, multiple);
+            log.error("normalPayMultipleConfig result null,configType:{},multiple:{}", betTypeEnum.getCode(), multiple);
             return null;
         }
         // 获取分组下config配置,避免玩家相同倍数连续命中同样的滚轮
         String incrementKey = String.format(Constants.DYNAMIC_OPERATION_CONFIG_INCREMENT_KEY,
                 this.getGame().getGameInfo().getId(),
-                UserInfoContext.getUserInfo().getId(), configType, multiple);
+                UserInfoContext.getUserInfo().getId(), betTypeEnum.getCode(), multiple);
         Long increment = redisTemplate.opsForValue().increment(incrementKey);
         if (increment >= configDetailGroup.size()) {
             increment = 1L;
@@ -309,11 +289,11 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         return this.convertWheelDoList(dynamicOperationConfigDo.getDetail());
     }
 
-    public Double findClosest(double input) {
+    public Double findClosest(double input, BetTypeEnum betTypeEnum) {
         if (input < 1.1) {
             return null;
         }
-        List<Double> arr = getDynamicOperationManager().getConfigMultipleArray();
+        List<Double> arr = getDynamicOperationManager().getConfigMultipleArray(betTypeEnum);
         int left = 0;
         int right = arr.size() - 1;
         int result = -1;

@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.operation;
 
+import com.wegame.capi.client.enums.BetTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,10 +21,9 @@ public class DynamicOperationConfigDo {
     private String gameId;
 
     /**
-     * 0:正常游戏
-     * 1:购买免费游戏
+     * 投注类型
      */
-    private Integer configType;
+    private BetTypeEnum betType;
 
     /**
      * 倍数
