@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.listener;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.mq.MQMessage;
@@ -61,7 +62,7 @@ public class PulsarProducer implements InitializingBean {
             return getProducer(gameType)
                     .newMessage()
                     .key(mqMessage.getMsgId())
-                    .value(JSON.toJSONBytes(mqMessage))
+                    .value(JSON.toJSONBytes(mqMessage, SerializerFeature.DisableCircularReferenceDetect))
                     .send();
         } catch (PulsarClientException e) {
             log.error("{}Producer send fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
@@ -75,7 +76,7 @@ public class PulsarProducer implements InitializingBean {
         CompletableFuture<MessageId> future = getProducer(gameType)
                 .newMessage()
                 .key(mqMessage.getMsgId())
-                .value(JSON.toJSONBytes(mqMessage))
+                .value(JSON.toJSONBytes(mqMessage, SerializerFeature.DisableCircularReferenceDetect))
                 .sendAsync();
         long endTime = System.currentTimeMillis();
         long cost = endTime - startTime;
@@ -91,7 +92,7 @@ public class PulsarProducer implements InitializingBean {
         CompletableFuture<MessageId> future = getProducer(gameType)
                 .newMessage()
                 .key(mqMessage.getMsgId())
-                .value(JSON.toJSONBytes(mqMessage))
+                .value(JSON.toJSONBytes(mqMessage, SerializerFeature.DisableCircularReferenceDetect))
                 .sendAsync();
         // 通过异步回调得知消息发送成功与否
         future.whenComplete(((messageId, throwable) -> {

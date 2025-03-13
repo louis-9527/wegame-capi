@@ -23,6 +23,7 @@ public class BetConverter {
     private static final Map<GameTypeEnum, BetToDoConvert<?, ?>> GAME_BET_CLASS_MAP = ImmutableMap.<GameTypeEnum, BetToDoConvert<?, ?>>builder()
             .put(GameTypeEnum.MARIA_MAKILING, new MariaMakilingBetRequestConvert<>())
             .put(GameTypeEnum.MALAKAS, new MalakasBetRequestConvert<>())
+            .put(GameTypeEnum.IBONG_ADARNA, new IbongAdarnaBetRequestConvert())
             .build();
 
     public static <T extends BetRequestValidate, R> BetDo<R> requestToDo(BetRequest betRequest) {GameTypeEnum gameType = GameTypeEnum.valueOfId(betRequest.getGameId());
