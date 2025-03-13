@@ -43,6 +43,9 @@ public class ContextFilter extends OncePerRequestFilter {
         // do filter
         filterChain.doFilter(request, response);
 
+        response.setHeader("Connection", "keep-alive");
+        response.setHeader("Keep-Alive", "timeout=180");
+
         // clean context
         SystemInfoContext.clear();
         UserInfoContext.clear();

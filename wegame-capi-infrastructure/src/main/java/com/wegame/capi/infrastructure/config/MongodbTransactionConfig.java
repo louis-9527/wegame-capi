@@ -19,11 +19,11 @@ public class MongodbTransactionConfig {
 
     public static final String mariamakilingTransactionManager = "mariamakilingTransactionManager";
     @Autowired
-    MongoTemplate malakasMongoTemplate;
+    MongoTemplate mariamakilingMongoTemplate;
 
     @Bean(name = mariamakilingTransactionManager)
     public MongoTransactionManager mariamakilingTransactionManager() {
-        MongoTransactionManager manager = new MongoTransactionManager(malakasMongoTemplate.getMongoDbFactory());
+        MongoTransactionManager manager = new MongoTransactionManager(mariamakilingMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)
                 .build();
