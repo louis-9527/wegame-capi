@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.service;
 
-import com.mongodb.ReadPreference;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.MONGOTEMPLATE;
+import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMARY_MONGOTEMPLATE;
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.gameRecordPutCacheThreadPoolExecutor;
 
 /**
@@ -41,6 +41,8 @@ public class GameRecordService<T> implements InitializingBean {
         Arrays.stream(GameTypeEnum.values()).forEach(gameType -> {
             MongoTemplate mongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
             AssertUtil.assertNotNull(mongoTemplate, ErrorCode.ERR_INTER);
+            MongoTemplate primaryMongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
+            AssertUtil.assertNotNull(primaryMongoTemplate, ErrorCode.ERR_INTER);
         });
     }
 
@@ -71,10 +73,7 @@ public class GameRecordService<T> implements InitializingBean {
         if (!query.isFromPrimary()) {
             return getMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
         } else {
-            return getMongoTemplate(gameType).execute(gameType.getGameRecordCollectionName(), collection -> {
-                collection.withReadPreference(ReadPreference.primary());
-                return getMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
-            });
+            return getPrimaryMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
         }
     }
 
@@ -88,15 +87,16 @@ public class GameRecordService<T> implements InitializingBean {
         if (!query.isFromPrimary()) {
             return getMongoTemplate(gameType).count(GameRecordQueryBuilder.buildMongodbQuery(query), gameType.getGameRecordCollectionName());
         } else {
-            return getMongoTemplate(gameType).execute(gameType.getGameRecordCollectionName(), collection -> {
-                collection.withReadPreference(ReadPreference.primary());
-                return getMongoTemplate(gameType).count(GameRecordQueryBuilder.buildMongodbQuery(query), gameType.getGameRecordCollectionName());
-            });
+            return getPrimaryMongoTemplate(gameType).count(GameRecordQueryBuilder.buildMongodbQuery(query), gameType.getGameRecordCollectionName());
         }
     }
 
     ///////////////  above auto generated ///////////////
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
         return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
+    }
+
+    private MongoTemplate getPrimaryMongoTemplate(GameTypeEnum gameType) {
+        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
     }
 }
