@@ -51,7 +51,7 @@ public class Application implements CommandLineRunner {
     private String robot;
 
     @Autowired
-    List<ExecutorService> allExecutors;
+    List<ExecutorService> executorList;
 
     public static void main(String[] args) {
         log.info("Begin Start Application 😄😄😄😄😄😄");
@@ -81,19 +81,19 @@ public class Application implements CommandLineRunner {
     @PreDestroy
     public void destroy() {
         log.info("start destroy executor before destroy");
-        allExecutors.forEach(executorService -> {
+        executorList.forEach(executor -> {
             try {
-                executorService.shutdown();
-                boolean stopFlag = executorService.awaitTermination(20, TimeUnit.SECONDS);
+                executor.shutdown();
+                boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
                 if (stopFlag) {
-                    log.info("executorService graceful stop success ,{},{}", executorService, stopFlag);
+                    log.info("executorService graceful stop success ,{},{}", executor, stopFlag);
                 } else {
-                    log.info("executorService graceful stop fail after 20 seconds,force stop it,{},{}", executorService, stopFlag);
-                    executorService.shutdownNow();
+                    log.info("executorService graceful stop fail after 20 seconds,force stop it,{},{}", executor, stopFlag);
+                    executor.shutdownNow();
                 }
             } catch (InterruptedException e) {
-                log.info("executorService graceful stop exception,force stop it,{}", executorService);
-                executorService.shutdownNow();
+                log.info("executorService graceful stop exception,force stop it,{}", executor);
+                executor.shutdownNow();
             }
         });
     }

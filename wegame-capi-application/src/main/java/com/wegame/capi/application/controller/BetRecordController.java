@@ -25,11 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-/**
- * 投注记录模块
- *
- * @author generate
- */
 @Slf4j
 @RestController
 @RequestMapping("betRecord")
