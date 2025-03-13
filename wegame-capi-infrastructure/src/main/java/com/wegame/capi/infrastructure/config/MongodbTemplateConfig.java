@@ -58,6 +58,13 @@ public class MongodbTemplateConfig {
         return new MongoTemplate(MongoClients.create(malakasMdbUri), malakasMdb);
     }
 
+    @Bean("malakasPrimaryMongoTemplate")
+    public MongoTemplate malakasPrimaryMongoTemplate() {
+        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(malakasMdbUri), malakasMdb);
+        mongoTemplate.setReadPreference(ReadPreference.primary());
+        return mongoTemplate;
+    }
+
     /**
      * bean格式，游戏名称小写 + MongoTemplate
      *

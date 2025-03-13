@@ -37,6 +37,8 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
 
     @Override
     public void freeWheelAfterHandle(Long betRecordId) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        log.info("freeWheelAfterHandle start... betRecordId: {}", betRecordId);
         defaultThreadPoolExecutor.execute(() -> {
             try {
                 BetRecordDo betRecord = malakasRecordManager.getBetRecord(betRecordId, GameTypeEnum.MALAKAS);
@@ -44,18 +46,19 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                 GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
                 Long freeWheelCount = malakasRecordManager.countGameRecord(query, GameTypeEnum.MALAKAS);
                 if (Objects.isNull(freeWheelCount)) {
+                    log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
                     return;
                 }
-                updateRewardNotifyInfo(freeWheelCount, betRecord.getPayOutAmount());
+                updateRewardNotifyInfo(freeWheelCount, betRecord.getPayOutAmount(), userInfo);
             } catch (Exception e) {
                 log.error("freeWheelAfterHandle Exception, errMsg: {}", e.getMessage(), e);
             }
         });
     }
 
-    private void updateRewardNotifyInfo(long freeWheelCount, long totalRewardAmount) {
+    private void updateRewardNotifyInfo(long freeWheelCount, long totalRewardAmount, UserInfo userInfo) {
         try {
-            UserInfo userInfo = UserInfoContext.getUserInfo();
+            log.info("freeWheelAfterHandle updateRewardNotifyInfo freeWheelCount: {}, totalRewardAmount: {}, userInfo: {}", freeWheelCount, totalRewardAmount, userInfo);
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
                     .gameId(GameTypeEnum.MALAKAS.getId())
@@ -72,8 +75,11 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MALAKAS.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
+            log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
             rewardService.evict(GameTypeEnum.MALAKAS);
+            Object o = redisTemplate.opsForValue().get(key);
+            log.info("freeWheelAfterHandle updateRewardNotifyInfo redis value notifyInfo: {}, key: {}", o, key);
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }
