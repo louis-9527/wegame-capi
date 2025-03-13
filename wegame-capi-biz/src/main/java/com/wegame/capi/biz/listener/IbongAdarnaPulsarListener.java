@@ -15,23 +15,10 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class IbongAdarnaPulsarListener extends AbstractPulsarListener<IbongAdarnaGameRecordDo> {
-    private static final String LISTENER_NAME = "IbongAdarnaPulsarListener";
-    private static final String POOL_NAME = "ibongadarna-consumber-pool-";
-
     @Autowired
     IbongAdarnaRecordManager ibongAdarnaRecordManager;
     @Autowired
     Consumer<byte[]> ibongadarnaConsumer;
-
-    @Override
-    public String getListenerName() {
-        return LISTENER_NAME;
-    }
-
-    @Override
-    public String getPoolName() {
-        return POOL_NAME;
-    }
 
     @Override
     public Consumer<byte[]> getConsumer() {

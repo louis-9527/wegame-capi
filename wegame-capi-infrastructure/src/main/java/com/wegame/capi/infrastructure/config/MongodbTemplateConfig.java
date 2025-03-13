@@ -43,7 +43,7 @@ public class MongodbTemplateConfig {
 
     @Bean("mariamakilingPrimaryMongoTemplate")
     public MongoTemplate mariamakilingPrimaryMongoTemplate() {
-        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(mariaMakilingMdbUri), mariaMakilingMdbDb);
+        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(mariaMakilingMdbUri), mariaMakilingMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
     }
@@ -66,5 +66,12 @@ public class MongodbTemplateConfig {
     @Bean("ibongadarnaMongoTemplate")
     public MongoTemplate ibongAdarnaMongoTemplate() {
         return new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdbDb);
+    }
+
+    @Bean("ibongadarnaPrimaryMongoTemplate")
+    public MongoTemplate ibongadarnaPrimaryMongoTemplate() {
+        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdbDb);
+        mongoTemplate.setReadPreference(ReadPreference.primary());
+        return mongoTemplate;
     }
 }
