@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder
-@NoArgsConstructor
-@AllArgsConstructor
+//@SuperBuilder
+//@NoArgsConstructor
+//@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class StartCardUseRecordQuery extends StartCardUseRecordPo{
     private static final long serialVersionUID = -8901404698671384297L;

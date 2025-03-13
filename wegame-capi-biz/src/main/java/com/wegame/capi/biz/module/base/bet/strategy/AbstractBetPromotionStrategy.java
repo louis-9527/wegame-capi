@@ -2,9 +2,7 @@ package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -26,7 +24,6 @@ import com.wegame.capi.common.enums.StartCardReportStatusEnum;
 import com.wegame.capi.common.enums.StartCardUseStatusEnum;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
 import java.util.Objects;
@@ -102,7 +99,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
             startCardUseRecordService.update(updateRecord, this.getGame().getGameInfo().getGameType());
         }
         //调用派奖
-        BetSingleWalletResultDo resultDo = null;//saveBetRecordAndBetWithPayout(rBetRecordDo, rBetRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
+        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(rBetRecordDo, rBetRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
         // 上报状态
         if (useStartCard) {
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
