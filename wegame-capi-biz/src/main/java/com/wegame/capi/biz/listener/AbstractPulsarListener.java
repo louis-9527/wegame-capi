@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.executor.WsThreadPoolExecutor;
 import com.wegame.base.mq.MQMessage;
-import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -23,7 +22,6 @@ import org.apache.pulsar.client.api.Messages;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -35,16 +33,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
-//@Component
 public abstract class AbstractPulsarListener<T extends ToVoConverter> implements Runnable {
     private volatile boolean start = false;
     @Autowired
     BetRecordService betRecordService;
     ExecutorService executor;
-
-    public abstract String getListenerName();
-
-    public abstract String getPoolName();
 
     public abstract Consumer<byte[]> getConsumer();
 
@@ -65,7 +58,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 0,
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(1000),
-                new CustomizableThreadFactory(this.getPoolName()),
+                new CustomizableThreadFactory(getGameType().getName() + "-consumber-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         start = true;
         run();
@@ -78,26 +71,24 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
             getConsumer().close();
         }
         if (executor != null) {
-            try {
-                executor.shutdown();
-                boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
-                if (stopFlag) {
-                    log.info("{} executor graceful stop success ,{},{}", this.getListenerName(), executor, stopFlag);
-                } else {
-                    log.info("{} executor graceful stop fail after 20 seconds,force stop it,{},{}", this.getListenerName(), executor, stopFlag);
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                log.info("{} executorService graceful stop exception,force stop it,{}", this.getListenerName(), executor);
-                executor.shutdownNow();
+            executor.shutdown();
+            while (!executor.isTerminated()) {
+                // 等待线程池中所有任务完成
             }
+            //                boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
+            //                if (stopFlag) {
+            //                    log.info("{} executor graceful stop success ,{},{}", getClass().getSimpleName(), executor, stopFlag);
+            //                } else {
+            //                    log.info("{} executor graceful stop fail after 20 seconds,force stop it,{},{}", getClass().getSimpleName(), executor, stopFlag);
+            //                    executor.shutdownNow();
+            //                }
         }
     }
 
 
     @Override
     public void run() {
-        log.info("{} started...", this.getListenerName());
+        log.info("{} started...", getClass().getSimpleName());
         for (int i = 0; i < getMaximumPoolSize(); i++) {
             executor.submit(() -> {
                 while (start) {
@@ -110,14 +101,14 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                         }
                         onMessages(messages);
                     } catch (Exception e) {
-                        log.error("{} Error consuming messages, errMsg: {}", getListenerName(), e.getMessage(), e);
+                        log.error("{} Error consuming messages, errMsg: {}", getClass().getSimpleName(), e.getMessage(), e);
                     } finally {
                         MDC.clear();
                     }
                 }
             });
         }
-        log.info("{} stopped...", this.getListenerName());
+        log.info("{} stopped...", getClass().getSimpleName());
     }
 
 
@@ -131,9 +122,8 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
         Map<Long, MessageId> addMessageIdMap = new HashMap<>(messages.size());
         Map<Long, MessageId> updateMessageIdMap = new HashMap<>(messages.size());
         messages.forEach(message -> {
-            Object o = JSON.parseObject(new String(message.getData()), Object.class);
-            log.info("{} {} message: {}", this.getListenerName(), this.getTypeReference(), FastJsonUtils.toJSONString(o));
-            MQMessage<BetRecordDo<T>> mqMessage = JSON.parseObject(new String(message.getData()), this.getTypeReference());
+            MQMessage<BetRecordDo<T>> mqMessage = JSON.parseObject(new String(message.getData()),
+                    this.getTypeReference());
             BetRecordDo<T> betRecord = mqMessage.getBody();
             if (message.getRedeliveryCount() > 0) {
                 log.info("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount());

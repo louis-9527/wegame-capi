@@ -50,13 +50,8 @@ public class PulsarProducer implements InitializingBean {
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
-        //        if (duration <= 10) {
-        //            log.info("sendMessage cost time less 10, {} ms", endTime - startTime);
-        //        } else if (duration > 10 && duration <= 20) {
-        //            log.info("sendMessage cost time(10-20], {} ms", endTime - startTime);
-        //        } else
         if (duration > 20L) {
-            log.info("sendMessage cost time more than 20, {} ms", endTime - startTime);
+            log.warn("sendMessage cost time more than 20, {} ms", endTime - startTime);
         }
         return messageId;
     }
@@ -101,7 +96,7 @@ public class PulsarProducer implements InitializingBean {
                 .sendAsync();
         // 通过异步回调得知消息发送成功与否
         future.whenComplete(((messageId, throwable) -> {
-            if (null != throwable) {
+            if (Objects.nonNull(throwable)) {
                 log.warn("asyncSendMessageThenRetry msgId:{} fail, then retry", mqMessage.getMsgId(), throwable);
                 MessageId id = syncSendMessage(gameType, mqMessage, 100);
                 if (Objects.isNull(id)) {
@@ -112,8 +107,6 @@ public class PulsarProducer implements InitializingBean {
     }
 
     private Producer<byte[]> getProducer(GameTypeEnum gameType) {
-        Producer<byte[]> producer = producerCache.get(StringUtils.lowerCase(gameType.getName()) + "Producer");
-        AssertUtil.assertNotNull(producer, ErrorCode.ERR_INTER);
-        return producer;
+        return producerCache.get(StringUtils.lowerCase(gameType.getName()) + PRODUCER);
     }
 }

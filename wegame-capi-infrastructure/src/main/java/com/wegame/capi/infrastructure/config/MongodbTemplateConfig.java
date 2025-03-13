@@ -1,5 +1,6 @@
 package com.wegame.capi.infrastructure.config;
 
+import com.mongodb.ReadPreference;
 import com.mongodb.client.MongoClients;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration
 public class MongodbTemplateConfig {
     public static final String MONGOTEMPLATE = "MongoTemplate";
+    public static final String PRIMARY_MONGOTEMPLATE = "PrimaryMongoTemplate";
 
     @Value("${spring.data.mongodb.dynamic.maria_makiling_mdb.uri}")
     String mariaMakilingMdbUri;
@@ -37,6 +39,13 @@ public class MongodbTemplateConfig {
     @Bean("mariamakilingMongoTemplate")
     public MongoTemplate mariamakilingMongoTemplate() {
         return new MongoTemplate(MongoClients.create(mariaMakilingMdbUri), mariaMakilingMdb);
+    }
+
+    @Bean("mariamakilingPrimaryMongoTemplate")
+    public MongoTemplate mariamakilingPrimaryMongoTemplate() {
+        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(mariaMakilingMdbUri), mariaMakilingMdbDb);
+        mongoTemplate.setReadPreference(ReadPreference.primary());
+        return mongoTemplate;
     }
 
     /**

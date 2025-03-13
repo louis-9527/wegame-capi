@@ -36,7 +36,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
     @Autowired
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
-    PulsarProducer pulsarProducer;
+    public PulsarProducer pulsarProducer;
 
     public abstract Game<R> getGame();
 
@@ -44,7 +44,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
 
     public long generateBetRecordId() {
         long betRecordId = snowflakeIdGenerator.nextId();
-        // log.info("generateBetRecordId: {}", betRecordId);
         return betRecordId;
     }
 

@@ -42,7 +42,7 @@ spring:
     allow-circular-references: true
     allow-bean-definition-overriding: true
   lifecycle:
-    timeout-per-shutdown-phase: 30
+    timeout-per-shutdown-phase: 90
   servlet:
     multipart:
       max-file-size: 10MB

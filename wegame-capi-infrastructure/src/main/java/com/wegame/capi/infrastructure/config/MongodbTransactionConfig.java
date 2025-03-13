@@ -27,7 +27,6 @@ public class MongodbTransactionConfig {
     @Autowired
     MongoTemplate ibongadarnaMongoTemplate;
 
-
     @Bean(name = mariamakilingTransactionManager)
     public MongoTransactionManager mariamakilingTransactionManager() {
         MongoTransactionManager manager = new MongoTransactionManager(mariamakilingMongoTemplate.getMongoDbFactory());

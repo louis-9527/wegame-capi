@@ -41,6 +41,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("Connection", "Keep-Alive");
+            headers.add("Keep-Alive", "timeout=60");
             RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
             ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {
             });
@@ -65,6 +66,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("Connection", "Keep-Alive");
+            headers.add("Keep-Alive", "timeout=60");
             RequestEntity<GetCreditReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(GET_CREDIT_URL_FORMAT, singleDomain)));
             ResponseEntity<CommonRes<GetCreditRes>> responseEntity = restTemplate.exchange(requestEntity,
@@ -91,6 +93,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("Connection", "Keep-Alive");
+            headers.add("Keep-Alive", "timeout=60");
             RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(BET_WITH_PAYOUT_URL_FORMAT, singleDomain)));
             // log.info("before request betWithPayout, timeStamp: {}", System.currentTimeMillis());
@@ -122,6 +125,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("Connection", "Keep-Alive");
+            headers.add("Keep-Alive", "timeout=60");
             RequestEntity<BetStatusReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(BET_STATUS_URL_FORMAT, singleDomain)));
             ResponseEntity<CommonRes<BetStatusRes>> responseEntity = restTemplate.exchange(requestEntity,
