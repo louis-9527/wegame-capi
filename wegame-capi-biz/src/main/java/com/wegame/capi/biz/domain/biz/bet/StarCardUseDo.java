@@ -17,4 +17,5 @@ public class StarCardUseDo {
      * Reward id
      */
     private String rewardId;
+
 }

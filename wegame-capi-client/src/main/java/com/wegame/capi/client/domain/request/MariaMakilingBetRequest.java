@@ -31,7 +31,7 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
     private String gameRecordId;
 
     @Override
-    public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+    public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType, Boolean startCardUse) {
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
         if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
@@ -51,7 +51,11 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
         } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * 35), ErrorCode.ERR_PARAM);
+                if (startCardUse) {
+                    AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
+                } else {
+                    AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * 35), ErrorCode.ERR_PARAM);
+                }
             } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);

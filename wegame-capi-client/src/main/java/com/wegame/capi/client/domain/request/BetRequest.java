@@ -31,7 +31,7 @@ public class BetRequest implements Validate, Serializable {
             "BUY_BET:购买投注, " +
             "FREE_SPINS_BUY_BET: 免费轮购买投注", required = true)
     private String betSubType;
-    @ApiModelProperty(value = "星卡ID,如果有星卡ID会使用星卡做投注", required = false)
+    @ApiModelProperty(value = "星卡,如果有星卡ID会使用星卡做投注", required = false)
     private StarCardUseDetail starCardUseDetail;
     @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true)
     private Object betDetail;
@@ -45,6 +45,14 @@ public class BetRequest implements Validate, Serializable {
         AssertUtil.assertStrNotEmpty(betSubType, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(BetSubTypeEnum.valueOfCode(betSubType), ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betDetail, ErrorCode.ERR_PARAM);
+
+        // 判断是否使用星卡
+        if (starCardUseDetail != null) {
+            AssertUtil.assertNotNull(starCardUseDetail.getRewardConfigId(), ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(starCardUseDetail.getRewardId(), ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetTypeEnum.BUY_BET == BetTypeEnum.valueOfCode(betType), ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == BetSubTypeEnum.valueOfCode(betSubType), ErrorCode.ERR_PARAM);
+        }
         //        betDetail.validateParam(GameTypeEnum.valueOfId(gameId),
         //                BetTypeEnum.valueOfCode(betType),
         //                BetSubTypeEnum.valueOfCode(betSubType));

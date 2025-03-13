@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.StarCardUseDo;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.request.BetRequestValidate;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -11,6 +12,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * BetConverter
@@ -33,7 +35,8 @@ public class BetConverter {
         detail.validateParam(
                 gameType,
                 BetTypeEnum.valueOfCode(betRequest.getBetType()),
-                BetSubTypeEnum.valueOfCode(betRequest.getBetSubType())
+                BetSubTypeEnum.valueOfCode(betRequest.getBetSubType()),
+                betRequest.getStarCardUseDetail()!=null
         );
         R betDetail = converter.toDo(detail);
         return BetDo.<R>builder()
@@ -42,8 +45,12 @@ public class BetConverter {
                 .betType(BetTypeEnum.valueOfCode(betRequest.getBetType()))
                 .betSubType(BetSubTypeEnum.valueOfCode(betRequest.getBetSubType()))
                 .betDetail(betDetail)
+                .starCardUseDo(Optional.ofNullable(betRequest.getStarCardUseDetail())
+                        .map(cardUseReq -> StarCardUseDo.builder().rewardId(cardUseReq.getRewardId()).rewardConfigId(cardUseReq.getRewardConfigId()).build())
+                        .orElse(null))
                 .build();
     }
+
 
 
 }
