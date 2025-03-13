@@ -32,7 +32,7 @@ public class BetRequest implements Validate, Serializable {
             "FREE_SPINS_BUY_BET: 免费轮购买投注", required = true)
     private String betSubType;
     @ApiModelProperty(value = "星卡ID,如果有星卡ID会使用星卡做投注", required = false)
-    private Spring starCard;
+    private StarCardUseDetail starCardUseDetail;
     @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true)
     private Object betDetail;
 
