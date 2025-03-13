@@ -44,6 +44,9 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
         }
         boolean ret = gameRecordService.batchAdd(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
+        // 异步设置游戏记录缓存
+        String cacheKey = String.format("%s_%s", betRecord.getId(), betRecord.getPlayerId());
+        gameRecordService.asyncPutCache(betRecord.getGameRecordList(), gameType, cacheKey);
         return betRecord.getId();
     }
 
@@ -60,10 +63,6 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            // todo delete log
-            //            gameRecordList.forEach(item -> {
-            //                log.info("addGameRecord id:{}", item.getId());
-            //            });
             boolean insertRet = gameRecordService.batchAdd(gameRecordList, gameType, MariaMakilingGameRecordDo.class);
             AssertUtil.assertTrue(insertRet, ErrorCode.ERR_INTER);
         }
@@ -78,20 +77,36 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
     @Override
     @Cacheable(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #query.getCacheKey()")
     public List<MariaMakilingGameRecordDo> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType) {
-        AssertUtil.assertStrNotEmpty(query.getCacheKey(), ErrorCode.ERR_PARAM);
+        //        AssertUtil.assertStrNotEmpty(query.getCacheKey(), ErrorCode.ERR_PARAM);
+        //        List<MariaMakilingGameRecordDo> recordDos = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+        //        if (CollectionUtils.isNotEmpty(recordDos)) {
+        //            log.warn("list game record ret is empty, then query from primary, {}, {}", gameType, query);
+        //            query.setFromPrimary(true);
+        //            recordDos = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
+        //        }
+        log.warn("list game record from primary, {}, {}", gameType, query);
+        query.setFromPrimary(true);
         return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
     }
 
     @Override
     public List<MariaMakilingGameRecordVo> listGameRecordVo(Long betRecordId, GameTypeEnum gameType) {
         List<MariaMakilingGameRecordDo> list = gameRecordService.list(GameRecordQuery.builder()
-                .betRecordId(betRecordId)
-                .orderByClause("_id")
-                .direction(Sort.Direction.ASC)
-                .build(), gameType, MariaMakilingGameRecordDo.class);
-        return Optional.ofNullable(list).orElse(Collections.emptyList())
+                        .betRecordId(betRecordId)
+                        .orderByClause("_id")
+                        .direction(Sort.Direction.ASC)
+                        .build(),
+                gameType,
+                MariaMakilingGameRecordDo.class);
+        return Optional.ofNullable(list)
+                .orElse(Collections.emptyList())
                 .stream()
                 .map(MariaMakilingGameRecordDo::toRecordVo)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
+        return gameRecordService.count(query, gameType);
     }
 }

@@ -8,8 +8,8 @@ import com.wegame.capi.biz.converter.RewardInfoConverter;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.domain.vo.RewardInfoVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +41,6 @@ public class RewardController extends AbstractController {
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         noCacheControl(response);
-        return CommonResponse.build(RewardInfoConverter.doToVo(rewardService.get(gameType)));
+        return CommonResponse.build(RewardInfoConverter.doToVo(rewardService.getWithCache(gameType)));
     }
 }

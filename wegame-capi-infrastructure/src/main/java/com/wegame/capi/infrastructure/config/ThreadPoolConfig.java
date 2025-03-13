@@ -26,6 +26,8 @@ public class ThreadPoolConfig {
 
     public static final String sendMessageThreadPoolExecutor = "sendMessageThreadPoolExecutor";
 
+    public static final String gameRecordPutCacheThreadPoolExecutor = "gameRecordPutCacheThreadPoolExecutor";
+
     /**
      * 默认模块-线程池
      *
@@ -61,7 +63,6 @@ public class ThreadPoolConfig {
         executor.allowCoreThreadTimeOut(true);
         return executor;
     }
-
 
     @Bean(sendMessageThreadPoolExecutor)
     public ThreadPoolExecutor sendMessageThreadPoolExecutor() {
@@ -108,4 +109,16 @@ public class ThreadPoolConfig {
         return executor;
     }
 
+    @Bean(gameRecordPutCacheThreadPoolExecutor)
+    public ThreadPoolExecutor gameRecordPutCacheThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                50,
+                60L,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue(100000),
+                new CustomizableThreadFactory("game-record-cache-put-thread-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        return executor;
+    }
 }

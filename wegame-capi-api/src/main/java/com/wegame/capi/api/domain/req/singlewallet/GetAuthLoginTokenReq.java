@@ -1,5 +1,6 @@
 package com.wegame.capi.api.domain.req.singlewallet;
 
+import com.wegame.capi.api.domain.req.BaseReq;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,7 +12,7 @@ import java.io.Serializable;
 @Data
 @SuperBuilder
 @ToString
-public class GetAuthLoginTokenReq extends SingleWalletBaseReq implements Serializable {
+public class GetAuthLoginTokenReq extends BaseReq implements Serializable {
     private static final long serialVersionUID = 1L;
     private String token;
 

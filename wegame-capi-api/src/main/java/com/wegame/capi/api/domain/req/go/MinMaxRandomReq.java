@@ -1,4 +1,4 @@
-package com.wegame.capi.api.domain.req.wegamego;
+package com.wegame.capi.api.domain.req.go;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

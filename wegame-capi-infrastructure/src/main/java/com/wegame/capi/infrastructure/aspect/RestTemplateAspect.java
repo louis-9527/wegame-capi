@@ -23,11 +23,9 @@ public class RestTemplateAspect {
     //                    FastJsonUtils.toJSONString(joinPoint.getArgs()),
     //                    throwable.getMessage(),
     //                    throwable);
-    //            // todo 埋点上报
     //            throw throwable;
     //        } finally {
     //            // req req cost_time url suc_fail
-    //            // todo 埋点上报
     //            log.info("调用第三方接口耗时，{}#{}，耗时：{} ms",
     //                    signature.getDeclaringTypeName(),
     //                    signature.getName(),
@@ -54,7 +52,7 @@ public class RestTemplateAspect {
             if (costTime > 50L) {
                 log.info("invoke third, cost time more than 50: {}ms, Request: {}; Response: {}", costTime, argEntity, response);
             } else {
-              //  log.info("invoke third, cost time: {}ms, Request: {}; Response: {}", costTime, argEntity, response);
+                log.info("invoke third, cost time: {}ms, Request: {}; Response: {}", costTime, argEntity, response);
             }
         }
     }

@@ -8,6 +8,7 @@ import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class RewardService {
     RedisTemplate redisTemplate;
 
     @Cacheable(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id")
-    public RewardInfoDo get(GameTypeEnum gameType) {
+    public RewardInfoDo getWithCache(GameTypeEnum gameType) {
         RewardInfoDo rewardInfoDo = new RewardInfoDo();
         String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
         List<RewardNotifyInfoDo> messageList = (List<RewardNotifyInfoDo>) redisTemplate.opsForList().range(key, 0, -1);
@@ -33,5 +34,10 @@ public class RewardService {
                     .collect(Collectors.toList()));
         }
         return rewardInfoDo;
+    }
+
+    @CacheEvict(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id")
+    public void evict(GameTypeEnum gameType) {
+        // do nothing
     }
 }

@@ -1,5 +1,6 @@
 package com.wegame.capi.api.domain.req.singlewallet;
 
+import com.wegame.capi.api.domain.req.BaseReq;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -14,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class BetStatusReq extends SingleWalletBaseReq {
+public class BetStatusReq extends BaseReq {
     private static final long serialVersionUID = -63638322353418L;
 
     public static final int BET_WITH_PAYOUT_BET_TYPE = 2;

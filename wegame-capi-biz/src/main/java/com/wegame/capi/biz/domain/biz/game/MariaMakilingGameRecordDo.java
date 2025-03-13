@@ -71,6 +71,10 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      */
     private Integer index;
     /**
+     * 免费轮标识 false否 true是
+     */
+    private Boolean freeWheelFlag;
+    /**
      * 滚轮
      */
     private WheelDo<SymbolDo> wheel;

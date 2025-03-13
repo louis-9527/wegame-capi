@@ -1,17 +1,12 @@
 package com.wegame.capi.biz.builder.req;
 
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
-import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 
 import java.util.Date;
-
-import static com.wegame.capi.api.domain.req.singlewallet.BetStatusReq.BET_WITH_PAYOUT_BET_TYPE;
 
 public class BetWithPayoutReqBuilder {
 

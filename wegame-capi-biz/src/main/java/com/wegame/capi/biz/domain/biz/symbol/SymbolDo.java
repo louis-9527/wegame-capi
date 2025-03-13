@@ -51,5 +51,13 @@ public class SymbolDo implements Serializable {
     public boolean isWildSymbol() {
         return StringUtils.equals(symbolType.getCode(), SymbolTypeEnum.WILD.getCode());
     }
+
+    public SymbolDo copy() {
+        return SymbolDo.builder()
+                .id(id)
+                .name(name)
+                .symbolType(symbolType)
+                .build();
+    }
 }
 

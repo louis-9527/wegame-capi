@@ -10,7 +10,7 @@
 ///**
 // * Nacos配置: Mysterious游戏赔率配置
 // * <p>
-// * todo: 配置正确性校验
+// * 配置正确性校验
 // */
 //@Component
 //@ConfigurationProperties(prefix = "maria-makiling-config")

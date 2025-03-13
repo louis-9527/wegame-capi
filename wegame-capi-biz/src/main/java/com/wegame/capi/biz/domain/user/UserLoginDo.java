@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.domain;
+package com.wegame.capi.biz.domain.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

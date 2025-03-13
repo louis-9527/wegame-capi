@@ -10,9 +10,9 @@ server:
   shutdown: graceful
   tomcat:
     uri-encoding: UTF-8
-    connection-timeout: 10000
+    connection-timeout: 1000
     max-connections: 30000
-    keep-alive-timeout: 180000
+    keep-alive-timeout: 120000
     accept-count: 10000
     threads:
       max: 40000
@@ -111,10 +111,9 @@ knife4j:
     version: v1.0.0
 ## api
 api:
-  sport:
-    singleDomain: http://sw-http-main-apisix-stress-v2.igo8.me
-    # 是否调用
-    invoke: true
+  game:
+    singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
+    invokeSingle: true
     cp:
       platformId: 50
       channelId: 1050

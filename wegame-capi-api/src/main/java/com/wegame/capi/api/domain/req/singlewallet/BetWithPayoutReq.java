@@ -1,12 +1,10 @@
 package com.wegame.capi.api.domain.req.singlewallet;
 
-import com.alibaba.fastjson.JSON;
-import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.api.domain.req.BaseReq;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Data
 @SuperBuilder
@@ -14,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class BetWithPayoutReq extends SingleWalletBaseReq {
+public class BetWithPayoutReq extends BaseReq {
     private static final long serialVersionUID = 2474046915423606033L;
 
     private BigDecimal betAmount;

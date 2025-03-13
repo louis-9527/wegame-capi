@@ -7,8 +7,8 @@ import com.wegame.capi.biz.service.LoginService;
 import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
 import com.wegame.capi.common.Constants;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 /**
  * 用户模块
@@ -39,7 +38,7 @@ public class UserController extends AbstractController {
     @ApiOperation(value = "登录", httpMethod = "POST")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "success")})
     @PostMapping("/login")
-    public CommonResponse<UserInfo> login(HttpServletResponse response, @Valid @RequestBody UserLoginRequest request) {
+    public CommonResponse<UserInfo> login(HttpServletResponse response, @RequestBody UserLoginRequest request) {
         request.validateParam();
         return CommonResponse.build(loginService.login(response, UserLoginConvert.requestToDo(request)));
     }

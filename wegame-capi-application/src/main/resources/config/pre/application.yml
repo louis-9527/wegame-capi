@@ -94,7 +94,7 @@ spring:
     mongodb:
       dynamic:
         maria_makiling_mdb:
-          uri: mongodb+srv://uatMakilingSERvice:vImchf4Zpgx20OJD@makiling-uat-pri.ac9hy.mongodb.net/makiling?retryWrites=false&w=majority
+          uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/makiling?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           db: makiling
 ## fastjson
 fastjson:
@@ -110,10 +110,9 @@ knife4j:
     version: v1.0.0
 ## api
 api:
-  sport:
+  game:
     singleDomain: https://sw-http-main-apisix.igo9.me
-    # 是否调用
-    invoke: true
+    invokeSingle: true
     cp:
       platformId: 50
       channelId: 2050

@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.converter;
 
-import com.wegame.capi.biz.domain.UserLoginDo;
+import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
 
 import java.util.Objects;
@@ -12,7 +12,6 @@ public class UserLoginConvert {
             return null;
         return UserLoginDo.builder()
                 .pId(request.getPId())
-               // .channelId(request.getChannelId())
                 .gameId(request.getGameId())
                 .playerId(request.getPlayerId())
                 .playerName(request.getPlayerName())

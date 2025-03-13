@@ -77,7 +77,19 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
             getConsumer().close();
         }
         if (executor != null) {
-            executor.shutdownNow();
+            try {
+                executor.shutdown();
+                boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
+                if (stopFlag) {
+                    log.info("{} executor graceful stop success ,{},{}", this.getListenerName(), executor, stopFlag);
+                } else {
+                    log.info("{} executor graceful stop fail after 20 seconds,force stop it,{},{}", this.getListenerName(), executor, stopFlag);
+                    executor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                log.info("{} executorService graceful stop exception,force stop it,{}", this.getListenerName(), executor);
+                executor.shutdownNow();
+            }
         }
     }
 
@@ -97,7 +109,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                         }
                         onMessages(messages);
                     } catch (Exception e) {
-                        log.error("Error consuming messages, errMsg: {}", e.getMessage(), e);
+                        log.error("{} Error consuming messages, errMsg: {}", getListenerName(), e.getMessage(), e);
                     } finally {
                         MDC.clear();
                     }
@@ -112,7 +124,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
         if (Objects.isNull(messages) || messages.size() == 0) {
             return;
         }
-        log.info("onConsumer messages size: {}", messages.size());
+        log.info("{} onConsumer messages size: {}", getGameType().getName(), messages.size());
         List<BetRecordDo<T>> addRecordList = new ArrayList<>();
         List<BetRecordDo> updateRecordList = new ArrayList<>();
         Map<Long, MessageId> addMessageIdMap = new HashMap<>(messages.size());
@@ -150,7 +162,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
             }
         } catch (Exception e) {
-            log.error("batchAdd error, errMsg: {}", e.getMessage(), e);
+            log.error("{} batchAdd error, errMsg: {}", getGameType().getName(), e.getMessage(), e);
             add(recordList, messageIdMap);
         } finally {
             //            // help gc
@@ -158,7 +170,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
             //            recordList = null;
         }
         long endTime = System.currentTimeMillis();
-        log.info("batchAdd, size:{}, cost: {} ms", recordList.size(), endTime - startTime);
+        log.info("{} batchAdd, size:{}, cost: {} ms", getGameType().getName(), recordList.size(), endTime - startTime);
     }
 
 
@@ -220,7 +232,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 getRecordManager().add(betRecordDo, getGameType());
                 getConsumer().acknowledge(messageIdMap.get(betRecordDo.getId()));
             } catch (Exception e) {
-                log.error("add error, betRecordId: {}, errMsg: {}", betRecordDo.getId(), e.getMessage(), e);
+                log.error("{} add error, betRecordId: {}, errMsg: {}", getGameType().getName(), betRecordDo.getId(), e.getMessage(), e);
             }
         }
     }

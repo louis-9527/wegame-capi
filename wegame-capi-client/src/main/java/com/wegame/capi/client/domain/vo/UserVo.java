@@ -25,7 +25,7 @@ public class UserVo implements Validate, Serializable {
     @ApiModelProperty("主键ID")
     private String id;
     @ApiModelProperty("平台id")
-    private String platformId;
+    private String pId;
     @ApiModelProperty("用户姓名")
     private String playerId;
     @ApiModelProperty("用户姓名")
@@ -52,7 +52,7 @@ public class UserVo implements Validate, Serializable {
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(platformId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(pId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(playerName, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(nickName, ErrorCode.ERR_PARAM);

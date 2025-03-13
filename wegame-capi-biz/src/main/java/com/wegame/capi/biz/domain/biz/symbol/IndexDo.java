@@ -8,10 +8,10 @@ import java.io.Serializable;
 /**
  * 元素坐标
  */
-@Getter
+@Data
 @SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class IndexDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;

@@ -14,8 +14,8 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractDynamicOperationGame;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.wegame.capi.biz.module.base.AmountUtil.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountUtil.reachMaxMultiple;
+import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
+import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -76,17 +76,20 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
         }
         AssertUtil.assertNotNull(firstWheel, ErrorCode.ERR_INTER);
         RewardResultDo<SymbolDo> firstWheelRewardResult = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstWheel, BigDecimal.ZERO));
-        boolean firstWheelReachMaxRewardMultiple = reachMaxMultiple(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple());
+        boolean firstWheelReachMaxRewardMultiple = reachMaxMultiple(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple());
         if (!firstWheelReachMaxRewardMultiple && firstWheelRewardResult.isHasRewardFreeWheel()) {
             // 首轮未达到最大倍数 && 首轮命中免费轮
             freeWheelGameRecordList = new ArrayList<>();
             freeWheelGameRecordIds = new ArrayList<>();
-            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true));// 累计中奖金额
+            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true), firstWheelRewardResult.getRewardFreeWheelTimes());
+            // 累计中奖金额
             long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
-            for (WheelDo<SymbolDo> wheelDo : CollectionUtils.emptyIfNull(wheelList)) {
+            for (int index = 0; index < wheelList.size(); index++) {
+                WheelDo<SymbolDo> wheelDo = wheelList.get(index);
                 RewardResultDo rewardResultDo = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheelDo, BigDecimal.ZERO));
+                // 累加合计中奖总金额
                 overallRewardAmount = overallRewardAmount + rewardResultDo.getTotalRewardAmount();
-                boolean freeWheelReachMaxRewardMultiple = reachMaxMultiple(overallRewardAmount, gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple());
+                boolean freeWheelReachMaxRewardMultiple = reachMaxMultiple(overallRewardAmount, gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple());
                 // 构建免费轮游戏记录
                 MariaMakilingGameRecordDo gameRecord = MariaMakilingGameRecordDo.builder()
                         .id(generateGameRecordId())
@@ -99,9 +102,9 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
                         .wheel(wheelDo)
                         .rewardResult(rewardResultDo)
                         .gameRecordIds(null)
-                        .overallRewardAmount(maxAmountControl(overallRewardAmount, gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
+                        .overallRewardAmount(maxAmountControl(overallRewardAmount, gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
                         .accumulateReachMaxMultiple(freeWheelReachMaxRewardMultiple)
-                        .lastGameFlag(freeWheelReachMaxRewardMultiple)
+                        .lastGameFlag(freeWheelReachMaxRewardMultiple || index == wheelList.size() - 1)
                         .build();
                 freeWheelGameRecordList.add(gameRecord);
                 freeWheelGameRecordIds.add(gameRecord.getId());
@@ -111,7 +114,6 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
             }
         }
         // 构建首轮游戏记录
-
         MariaMakilingGameRecordDo firstGameRecord = MariaMakilingGameRecordDo.builder()
                 .id(firstGameRecordId)
                 .parentId(GAME_RECORD_DEFAULT_PARENT_ID)
@@ -123,9 +125,9 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
                 .wheel(firstWheel)
                 .rewardResult(firstWheelRewardResult)
                 .gameRecordIds(freeWheelGameRecordIds)
-                .overallRewardAmount(maxAmountControl(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getPayAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
+                .overallRewardAmount(maxAmountControl(firstWheelRewardResult.getTotalRewardAmount(), gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()))
                 .accumulateReachMaxMultiple(firstWheelReachMaxRewardMultiple)
-                .lastGameFlag(!firstWheelReachMaxRewardMultiple && firstWheelRewardResult.isHasRewardFreeWheel())
+                .lastGameFlag(firstWheelReachMaxRewardMultiple || !firstWheelRewardResult.isHasRewardFreeWheel())
                 .build();
         ret.add(firstGameRecord);
         if (CollectionUtils.isNotEmpty(freeWheelGameRecordList)) {
@@ -291,16 +293,13 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
      * @param gameInfo 游戏信息
      * @return 滚轮列表
      */
-    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig) {
+    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig, int wheelNumber) {
+        List<WheelDo<SymbolDo>> wheels = new ArrayList<>();
         // 保存全局wild
         SymbolDo[][] wildSymbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-        // 免费次数
-        int wheelNumber = getFreeWheelNumber();
         if (wheelNumber == 0) {
-            return null;
+            return wheels;
         }
-        // 生成轮盘总和
-        List<WheelDo<SymbolDo>> wheels = new ArrayList<>();
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, wheelNumber * gameInfo.getRow() * gameInfo.getColumn());
         int randomNumberIndex = 0;
@@ -347,18 +346,5 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
                     throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
             }
         }
-    }
-
-    private Integer getFreeWheelNumber() {
-        int randomNumber = randomService.randomInt(1, 100);
-        int startVal = 0;
-        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(mariaMakilingConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
-            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-                return entry.getKey();
-            } else {
-                startVal += entry.getValue();
-            }
-        }
-        throw new BusinessException(ErrorCode.ERR_INTER);
     }
 }

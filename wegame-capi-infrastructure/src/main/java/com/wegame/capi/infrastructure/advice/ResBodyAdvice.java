@@ -28,7 +28,6 @@
 //                                  Class<? extends HttpMessageConverter<?>> selectedConverterType,
 //                                  ServerHttpRequest request,
 //                                  ServerHttpResponse response) {
-//        // todo
 //        response.getHeaders().add(Constants.TRACE_ID, MDC.get(Constants.TRACE_ID));
 //        return body;
 //    }

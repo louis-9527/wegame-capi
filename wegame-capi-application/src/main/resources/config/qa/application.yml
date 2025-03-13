@@ -115,10 +115,9 @@ knife4j:
     version: v1.0.0
 ## api
 api:
-  sport:
+  game:
     singleDomain: http://sw-http-main-apisix.igo8.me
-    # 是否调用
-    invoke: true
+    invokeSingle: true
     cp:
       platformId: 50
       channelId: 1050
