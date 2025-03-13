@@ -45,7 +45,7 @@ public class DynamicOperationApi extends SingleWalletBaseApi {
             String sign = SecureUtil.md5(reqString);
             String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateKey);
             String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateIv);
-            // 生成header
+            // 构建header
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("Connection", "Keep-Alive");
             headers.add("sign", sign);
@@ -66,7 +66,7 @@ public class DynamicOperationApi extends SingleWalletBaseApi {
             throw be;
         } catch (Exception e) {
             log.error("updateEventsStatus err, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
+            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error, please retry again later", e);
         }
     }
 }

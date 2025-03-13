@@ -16,12 +16,10 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 @Component
@@ -33,14 +31,13 @@ public class DynamicOperationEncryptionHelper {
     String cpPrivateKey;
     @Value("${api.game.cp.privateIv}")
     String cpPrivateIv;
-
     @Value("${dynamic.operation.rsa.public_key}")
     private String publicKeyStr;
     @Value("${dynamic.operation.rsa.private_key}")
     private String privateKeyStr;
-
     @Value("${dynamic.operation.rsa.password}")
     private String privateKeyPassword;
+
     private RSAPublicKey rsaPublicKey;
     private RSAPrivateKey privateKey;
     private SecretKeySpec aesSecretKey;
