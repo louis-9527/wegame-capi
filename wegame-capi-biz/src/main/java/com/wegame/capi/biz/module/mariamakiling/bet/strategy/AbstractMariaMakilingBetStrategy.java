@@ -178,14 +178,4 @@ public abstract class AbstractMariaMakilingBetStrategy
     public void freeWheelAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
         // do nothing
     }
-    private GamePlayDo buildGamePlay(BetDo<MariaMakilingBetDo> betDo, long betRecordId) {
-        return GamePlayDo.builder()
-                .gameType(betDo.getGameType())
-                .betType(betDo.getBetType())
-                .betSubType(betDo.getBetSubType())
-                .betAmount(betDo.getBetDetail().getBetAmount())
-                .payAmount(betDo.getBetDetail().getPayAmount())
-                .betRecordId(betRecordId)
-                .build();
-    }
 }
