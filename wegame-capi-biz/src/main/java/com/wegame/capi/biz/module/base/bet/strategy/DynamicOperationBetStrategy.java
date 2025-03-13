@@ -98,7 +98,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
             // 命中的事件信息
             DynamicOperationEventDo eventDo = checkResult.getDynamicOperationEvent();
             // 异步上报、更新状态
-            this.asyncEventDetailUpdate(eventDo, betStatusEnum, checkResult.getOperationRecordDetailId(), betRecordDo.getBetId(), checkResult.getEventAmount());
+            this.asyncEventDetailUpdate(eventDo, betStatusEnum, checkResult.getOperationRecordDetailId(), resultDo.getBetId(), checkResult.getEventAmount());
         }
         return this.buildResult(betRecordDo, resultDo);
 

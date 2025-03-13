@@ -125,7 +125,7 @@ public class DynamicOperationEventService {
         }
         this.saveCatch(catch_key, catchMap);
         return resultList.stream()
-                .sorted(Comparator.comparing(DynamicOperationEffectEventCatchDo::getCreateTime))
+                .sorted(Comparator.comparing(DynamicOperationEffectEventCatchDo::getEffectedTime))
                 .collect(Collectors.toList());
     }
 
