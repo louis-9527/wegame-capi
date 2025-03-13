@@ -30,9 +30,4 @@ public class MongodbTransactionConfig {
         manager.setOptions(options);
         return manager;
     }
-
-    //    @Bean(name = "malakasTransactionManager")
-    //    public MongoTransactionManager malakasTransactionManager() {
-    //        return new MongoTransactionManager(malakasMongoTemplate.getMongoDatabaseFactory());
-    //    }
 }
