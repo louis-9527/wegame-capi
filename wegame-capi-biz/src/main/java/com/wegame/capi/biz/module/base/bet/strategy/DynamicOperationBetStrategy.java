@@ -62,7 +62,6 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     private RedisTemplate<String, Object> redisTemplate;
 
 
-
     public abstract AbstractDynamicOperationManager getDynamicOperationManager();
 
     @Override
@@ -78,17 +77,20 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
 
     public BetResultDo<BR> betForNonFreeWheel(BetDo<BD> betDo) {
-        DynamicOperationCheckResultDo<R> checkResult = this.checkEventBet(betDo);
-        if (!checkResult.getEventResult()) {
-            // 未命中干预事件,从结果中获取数据
-            BetRecordDo<R> betRecordDo = checkResult.getBetRecordDo();
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        // 只有CP渠道
+        if (!Objects.equals(cpChannelId, userInfo.getChannelId())) {
+            BetRecordDo<R> betRecordDo = this.rBetRecordDo(betDo, null);
             BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
             return this.buildResult(betRecordDo, resultDo);
-        } else {
-            BetRecordDo<R> betRecordDo = checkResult.getBetRecordDo();
-            // 调用派彩
-            BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
-            AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        }
+
+        DynamicOperationCheckResultDo<R> checkResult = this.checkEventBet(betDo);
+        BetRecordDo<R> betRecordDo = checkResult.getBetRecordDo();
+        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
+        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        if (checkResult.getEventResult()) {
+            // 命中干预事件,从结果中获取数据
             BetStatusEnum betStatusEnum = BetStatusEnum.FAIL;
             if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
                 betStatusEnum = BetStatusEnum.SUCCESS;
@@ -97,8 +99,9 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
             DynamicOperationEventDo eventDo = checkResult.getDynamicOperationEvent();
             // 异步上报、更新状态
             this.asyncEventDetailUpdate(eventDo, betStatusEnum, checkResult.getOperationRecordDetailId(), betRecordDo.getBetId(), checkResult.getEventAmount());
-            return this.buildResult(betRecordDo, resultDo);
         }
+        return this.buildResult(betRecordDo, resultDo);
+
     }
 
     public void asyncEventDetailUpdate(DynamicOperationEventDo eventDo, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
@@ -161,9 +164,6 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     private DynamicOperationCheckResultDo<R> checkEventBet(BetDo<BD> betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        if(!Objects.equals(cpChannelId,userInfo.getChannelId())){
-            return null;
-        }
         String lockName = LockNameUtil.getDynamicOperationBetLockName(userInfo.getPlayerId(), betDo.getGameId());
         return distributeLock.lockThenCall(lockName, () -> {
             // 判断是否存在干预事件
