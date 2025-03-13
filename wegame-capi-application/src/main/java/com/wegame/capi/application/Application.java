@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 启动类
@@ -84,19 +83,26 @@ public class Application implements CommandLineRunner {
         executorList.forEach(executor -> {
             try {
                 executor.shutdown();
-                boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
-                if (stopFlag) {
-                    log.info("executorService graceful stop success ,{},{}", executor, stopFlag);
-                } else {
-                    log.info("executorService graceful stop fail after 20 seconds,force stop it,{},{}", executor, stopFlag);
-                    executor.shutdownNow();
+                while (!executor.isTerminated()) {
+                    // 等待线程池中所有任务完成
                 }
-            } catch (InterruptedException e) {
-                log.info("executorService graceful stop exception,force stop it,{}", executor);
-                executor.shutdownNow();
+                log.info("executor {} graceful stop success", executor);
+            } catch (Exception e) {
+                log.error("executor {} graceful stop fail:{}", e.getMessage(), e);
             }
+            //            try {
+            //                executor.shutdown();
+            //                boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
+            //                if (stopFlag) {
+            //                    log.info("executorService graceful stop success ,{},{}", executor, stopFlag);
+            //                } else {
+            //                    log.info("executorService graceful stop fail after 20 seconds,force stop it,{},{}", executor, stopFlag);
+            //                    executor.shutdownNow();
+            //                }
+            //            } catch (InterruptedException e) {
+            //                log.info("executorService graceful stop exception,force stop it,{}", executor);
+            //                executor.shutdownNow();
+            //            }
         });
     }
-
-
 }
