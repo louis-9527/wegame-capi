@@ -9,7 +9,7 @@ public class DynamicOperationStatusReportBuilder {
 
     public static UpdateEventsBetRecordReq updateEventsBetRecordReqBuild(DynamicOperationEventDetailDo eventDetail){
         return UpdateEventsBetRecordReq.builder()
-                .betNo(String.valueOf(eventDetail.getBetRecordId()))
+                .betNo(eventDetail.getBetId())
                 .betAmount(AmountUtil.toBigDecimal(eventDetail.getBetAmount()))
                 .payoutAmount(AmountUtil.toBigDecimal(eventDetail.getPayOutAmount()))
                 .orderTime(DateUtil.toUCTByMilli(eventDetail.getBetTime()))

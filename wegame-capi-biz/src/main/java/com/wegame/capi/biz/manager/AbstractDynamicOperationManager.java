@@ -282,7 +282,7 @@ public abstract class AbstractDynamicOperationManager {
                     if (i == 0) {
                         startTime = eventDetail.getCreateTime();
                     }
-                    betNos.add(String.valueOf(eventDetail.getBetRecordId()));
+                    betNos.add(eventDetail.getBetId());
                     totalAmount += eventDetail.getPayOutAmount();
                     betRecords.add(DynamicOperationStatusReportBuilder.updateEventsBetRecordReqBuild(eventDetail));
                 }

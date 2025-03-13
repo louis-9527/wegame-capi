@@ -32,7 +32,9 @@ public class DynamicOperationDetailQueryBuilder {
 
     public static Criteria buildCriteria(DynamicOperationDetailQuery detailQuery) {
         Criteria criteria = new Criteria();
-
+        if (Objects.nonNull(detailQuery.getRecordId())) {
+            criteria.and("operatorRecordId").is(detailQuery.getRecordId());
+        }
         if (Objects.nonNull(detailQuery.getBetStatus())) {
             criteria.and("betStatus").is(detailQuery.getBetStatus());
         }

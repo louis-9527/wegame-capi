@@ -56,7 +56,7 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     @Autowired
     @Qualifier(dynamicEventThreadPoolExecutor)
     private ThreadPoolExecutor threadPoolExecutor;
-    @Value("${api.sport.cp.channelId}")
+    @Value("${api.game.cp.channelId}")
     private String cpChannelId;
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
