@@ -1,5 +1,6 @@
 package com.wegame.capi.infrastructure.aspect;
 
+import com.wegame.base.utils.FastJsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -50,9 +51,9 @@ public class RestTemplateAspect {
         } finally {
             long costTime = System.currentTimeMillis() - start;
             if (costTime > 50L) {
-                log.info("invoke third, cost time more than 50: {}ms, Request: {}; Response: {}", costTime, argEntity, response);
+                log.info("invoke third, cost time more than 50: {}ms, Request: {}; Response: {}", costTime, FastJsonUtils.toJSONString(argEntity), FastJsonUtils.toJSONString(response));
             } else {
-                log.info("invoke third, cost time: {}ms, Request: {}; Response: {}", costTime, argEntity, response);
+                log.info("invoke third, cost time: {}ms, Request: {}; Response: {}", costTime, FastJsonUtils.toJSONString(argEntity), FastJsonUtils.toJSONString(response));
             }
         }
     }
