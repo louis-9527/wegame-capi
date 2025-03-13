@@ -33,6 +33,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -55,9 +56,12 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
     @Autowired
     @Qualifier(dynamicEventThreadPoolExecutor)
     private ThreadPoolExecutor threadPoolExecutor;
-
+    @Value("${api.sport.cp.channelId}")
+    private String cpChannelId;
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+
 
     public abstract AbstractDynamicOperationManager getDynamicOperationManager();
 
@@ -157,6 +161,9 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     private DynamicOperationCheckResultDo<R> checkEventBet(BetDo<BD> betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
+        if(!Objects.equals(cpChannelId,userInfo.getChannelId())){
+            return null;
+        }
         String lockName = LockNameUtil.getDynamicOperationBetLockName(userInfo.getPlayerId(), betDo.getGameId());
         return distributeLock.lockThenCall(lockName, () -> {
             // 判断是否存在干预事件
