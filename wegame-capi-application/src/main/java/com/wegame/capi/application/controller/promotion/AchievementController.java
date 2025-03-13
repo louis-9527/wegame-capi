@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,7 +36,7 @@ public class AchievementController {
     @LoginRequired
     @ApiOperation(value = "领取成就奖励", httpMethod = "POST")
     @PostMapping("/redeemAchievement")
-    public CommonResponse<RedeemAchievementVo> redeemAchievement(RedeemAchievementRequest request) {
+    public CommonResponse<RedeemAchievementVo> redeemAchievement(@RequestBody RedeemAchievementRequest request) {
         request.validate();
         return CommonResponse.build(achievementService.redeemAchievement(request.getAchievementId(), request.getRedeemId()));
     }
