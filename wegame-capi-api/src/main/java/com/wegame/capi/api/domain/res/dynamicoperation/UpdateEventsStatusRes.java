@@ -16,6 +16,9 @@ import java.util.List;
 public class UpdateEventsStatusRes implements Serializable {
     private static final long serialVersionUID = -4392682699211806649L;
     private static final String SUC_CODE = "200";
+    private static final String FINISH_CODE = "409";
+    private static final String NOT_EXISTS_CODE = "404";
+
     /**
      * 响应状态码
      * 200:成功
@@ -34,13 +37,12 @@ public class UpdateEventsStatusRes implements Serializable {
      */
     private List<String> duplicatedBetNos;
 
-    public Boolean success() {
-        return StringUtils.equals(SUC_CODE, status) || StringUtils.equals("409", status);
+    public boolean isSuccess() {
+        return StringUtils.equals(SUC_CODE, status) || StringUtils.equals(FINISH_CODE, status);
     }
 
-
-    public Boolean fail() {
-        if (StringUtils.equals("404", status)) {
+    public Boolean isFail() {
+        if (StringUtils.equals(NOT_EXISTS_CODE, status)) {
             return true;
         }
         return false;

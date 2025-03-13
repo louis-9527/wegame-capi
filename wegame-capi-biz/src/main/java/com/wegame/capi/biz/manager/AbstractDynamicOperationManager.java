@@ -298,14 +298,14 @@ public abstract class AbstractDynamicOperationManager {
                     .build();
             // 上报
             UpdateEventsStatusRes updateEventsStatusRes = dynamicOperationApi.updateEventsStatus(updateEventsStatusReq);
-            if (updateEventsStatusRes.success()) {
+            if (updateEventsStatusRes.isSuccess()) {
                 // 更新事件状态为已上报
                 DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(recordId)
                         .reportStatus(DynamicOperationReportStatusEnum.FINISH).build();
                 dynamicOperationEventService.update(eventReportUpdate, this.getDynamicOperationGameEnum());
                 return;
             }
-            if (updateEventsStatusRes.fail()) {
+            if (updateEventsStatusRes.isFail()) {
                 // 如果失败(特定情况)
                 DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(recordId)
                         .reportStatus(DynamicOperationReportStatusEnum.FAIL)
