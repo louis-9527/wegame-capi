@@ -16,24 +16,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMakilingGameRecordDo>{
-    private static final String LISTENER_NAME = "MariaMakilingPulsarListener";
-    private static final String POOL_NAME = "mariamakiling-consumber-pool-";
     @Autowired
     BetRecordService betRecordService;
     @Autowired
     MariaMakilingRecordManager mariaMakilingRecordManager;
     @Autowired
     Consumer<byte[]> mariamakilingConsumer;
-
-    @Override
-    public String getListenerName() {
-        return LISTENER_NAME;
-    }
-
-    @Override
-    public String getPoolName() {
-        return POOL_NAME;
-    }
 
     @Override
     public Consumer<byte[]> getConsumer() {
