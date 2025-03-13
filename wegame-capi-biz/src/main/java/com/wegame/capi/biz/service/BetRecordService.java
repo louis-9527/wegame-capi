@@ -1,9 +1,7 @@
 package com.wegame.capi.biz.service;
 
-import com.mongodb.ReadPreference;
 import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.result.UpdateResult;
-import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
@@ -13,11 +11,10 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
-import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -27,6 +24,9 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.MONGOTEMPLATE;
+import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMARY_MONGOTEMPLATE;
+
 /**
  * 投注记录服务
  *
@@ -34,10 +34,20 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class BetRecordService {
+public class BetRecordService implements InitializingBean {
 
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Arrays.stream(GameTypeEnum.values()).forEach(gameType -> {
+            MongoTemplate mongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
+            AssertUtil.assertNotNull(mongoTemplate, ErrorCode.ERR_INTER);
+            MongoTemplate primaryMongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
+            AssertUtil.assertNotNull(primaryMongoTemplate, ErrorCode.ERR_INTER);
+        });
+    }
 
     public Long add(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         BetRecordPo po = getMongoTemplate(gameType).insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD),
@@ -100,8 +110,7 @@ public class BetRecordService {
         return BetRecordConverter.poToDo(betRecordPo);
     }
 
-    @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #playerId + '_'  + #id")
-    public BetRecordDo getWithCache(Long id, String playerId, GameTypeEnum gameType) {
+    public BetRecordDo get(Long id, String playerId, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
@@ -112,10 +121,10 @@ public class BetRecordService {
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         if (Objects.isNull(betRecordPo)) {
-            betRecordPo = getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {
-                collection.withReadPreference(ReadPreference.primary());
-                return getMongoTemplate(gameType).findOne(query, BetRecordPo.class, gameType.getBetRecordCollectionName());
-            });
+            betRecordPo = getPrimaryMongoTemplate(gameType).findOne(
+                    query,
+                    BetRecordPo.class,
+                    gameType.getBetRecordCollectionName());
             log.warn("get betRecord ret is null, then force query from primary. id: {}, playerId: {}, betRecordPo: {}", id, playerId, betRecordPo);
             if (Objects.isNull(betRecordPo)) {
                 log.error("get betRecord ret is null, id: {}, playerId: {}", id, playerId);
@@ -126,13 +135,9 @@ public class BetRecordService {
 
     public List<BetRecordDo> list(BetRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        List<BetRecordPo> recordPoList = getMongoTemplate(gameType).execute(BetRecordPo.class, collection -> {
-            // 强制走从分片
-            collection.withReadPreference(ReadPreference.secondary());
-            return getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query),
-                    BetRecordPo.class,
-                    gameType.getBetRecordCollectionName());
-        });
+        List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query),
+                BetRecordPo.class,
+                gameType.getBetRecordCollectionName());
         return BetRecordConverter.poToDoList(recordPoList);
     }
 
@@ -171,10 +176,11 @@ public class BetRecordService {
     }
 
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
-        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-        return template;
+        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
     }
 
+    private MongoTemplate getPrimaryMongoTemplate(GameTypeEnum gameType) {
+        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
+    }
     ///////////////  above auto generated ///////////////
 }
