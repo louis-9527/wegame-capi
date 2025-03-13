@@ -25,11 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-/**
- * 投注记录模块
- *
- * @author generate
- */
 @Slf4j
 @RestController
 @RequestMapping("betRecord")
@@ -72,7 +67,7 @@ public class BetRecordController {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
-        BetRecordDo betRecordDo = betRecordService.getWithCache(Long.valueOf(id), userInfo.getPlayerId(), gameType);
+        BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id), userInfo.getPlayerId(), gameType);
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
         betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(Long.parseLong(id), GameTypeEnum.valueOfId(userInfo.getGameId())));

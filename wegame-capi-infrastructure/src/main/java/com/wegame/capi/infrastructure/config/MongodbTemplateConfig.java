@@ -1,5 +1,6 @@
 package com.wegame.capi.infrastructure.config;
 
+import com.mongodb.ReadPreference;
 import com.mongodb.client.MongoClients;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration
 public class MongodbTemplateConfig {
     public static final String MONGOTEMPLATE = "MongoTemplate";
+    public static final String PRIMARY_MONGOTEMPLATE = "PrimaryMongoTemplate";
 
     @Value("${spring.data.mongodb.dynamic.maria_makiling_mdb.uri}")
     String mariaMakilingMdbUri;
@@ -34,6 +36,22 @@ public class MongodbTemplateConfig {
         return new MongoTemplate(MongoClients.create(mariaMakilingMdbUri), mariaMakilingMdb);
     }
 
+    @Bean("mariamakilingPrimaryMongoTemplate")
+    public MongoTemplate mariamakilingPrimaryMongoTemplate() {
+        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(mariaMakilingMdbUri), mariaMakilingMdb);
+        mongoTemplate.setReadPreference(ReadPreference.primary());
+        return mongoTemplate;
+    }
+
+    //    /**
+    //     * bean格式，游戏名称小写 + MongoTemplate
+    //     *
+    //     * @return
+    //     */
+    //    @Bean("malakasMongoTemplate")
+    //    public MongoTemplate malakasMongoTemplate() {
+    //        return new MongoTemplate(MongoClients.create(malakasMdbUri), "malakas_mdb");
+    //    }
     /**
      * bean格式，游戏名称小写 + MongoTemplate
      *
@@ -42,5 +60,12 @@ public class MongodbTemplateConfig {
     @Bean("malakasMongoTemplate")
     public MongoTemplate malakasMongoTemplate() {
         return new MongoTemplate(MongoClients.create(malakasMdbUri), malakasMdb);
+    }
+
+    @Bean("malakasPrimaryMongoTemplate")
+    public MongoTemplate malakasPrimaryMongoTemplate() {
+        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(malakasMdbUri), malakasMdb);
+        mongoTemplate.setReadPreference(ReadPreference.primary());
+        return mongoTemplate;
     }
 }

@@ -22,7 +22,7 @@ public class MongodbTransactionConfig {
     @Autowired
     MongoTemplate mariamakilingMongoTemplate;
     @Autowired
-    MongoTemplate malakasMongoTemplate;
+    MongoTemplate mariamakilingMongoTemplate;
 
     @Bean(name = mariamakilingTransactionManager)
     public MongoTransactionManager mariamakilingTransactionManager() {
