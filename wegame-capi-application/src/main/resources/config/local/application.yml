@@ -153,14 +153,14 @@ pulsar:
       url: pulsar://pulsar.makillingslot.net:6650
       tenant: ${spring.application.name}_MariaMakiling
       namespace: ${spring.application.env}
-      bet_topic: MariaMakiling_topic_1
+      bet_topic: MariaMakiling_topic
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
 dynamic:
   operation:
     pulsar_url: pulsar://pulsar-sw-main-external.client88.me:6650
     pulsar_topic: dos_game_slot_event
     pulsar_group:
-      maria_makiling: ${api.sport.cp.channelId}_MariaMakiling
+      maria_makiling: ${api.game.cp.channelId}_MariaMakiling
     domain: https://dos-egame.dos88.me
     rsa:
       public_key: |

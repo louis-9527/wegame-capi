@@ -48,7 +48,7 @@ public class SingleWalletService {
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.SUCCESS)
                     .betId(String.valueOf(RandomUtils.nextInt()))
-                    .credit(new BigDecimal(1000))
+                    .credit(1000L)
                     .build();
         }
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));

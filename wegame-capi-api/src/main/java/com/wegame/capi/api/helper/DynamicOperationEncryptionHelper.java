@@ -29,9 +29,9 @@ public class DynamicOperationEncryptionHelper {
     private static final String RSA_ALGORITHM = "RSA/ECB/OAEPWITHSHA-1ANDMGF1PADDING";
     private static final String AES_ALGORITHM = "AES/CBC/PKCS5Padding";
 
-    @Value("${api.sport.cp.privateKey}")
+    @Value("${api.game.cp.privateKey}")
     String cpPrivateKey;
-    @Value("${api.sport.cp.privateIv}")
+    @Value("${api.game.cp.privateIv}")
     String cpPrivateIv;
 
     @Value("${dynamic.operation.rsa.public_key}")
