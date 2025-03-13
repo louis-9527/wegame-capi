@@ -4,6 +4,7 @@ import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.context.SystemInfo;
 import com.wegame.base.context.SystemInfoContext;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -91,6 +92,7 @@ public class ContextFilter extends OncePerRequestFilter {
             if (StringUtils.isNotEmpty(_token_)) {
                 user = (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, _token_));
             }
+            log.info("login user info {}", FastJsonUtils.toJSONString(user));
             UserInfoContext.setUserInfo(user);
         } catch (Exception e) {
             log.error("buildUserInfoContextInfo error: {}", e.getMessage(), e);

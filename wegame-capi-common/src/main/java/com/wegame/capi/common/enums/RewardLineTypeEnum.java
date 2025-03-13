@@ -18,9 +18,10 @@ import java.util.Objects;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum RewardLineTypeEnum {
 
-    THREE(3, "THREE", "三连", OddsTypeEnum.THREE),
-    FOUR(4, "FOUR", "四连", OddsTypeEnum.FOUR),
-    FIVE(5, "FIVE", "五连", OddsTypeEnum.FIVE),
+    THREE(3,"THREE", "三连", OddsTypeEnum.THREE),
+    FOUR(4,"FOUR", "四连", OddsTypeEnum.FOUR),
+    FIVE(5,"FIVE", "五连", OddsTypeEnum.FIVE),
+    SIX(6,"SIX", "六连", OddsTypeEnum.SIX),
 
     ;
 

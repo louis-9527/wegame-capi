@@ -49,6 +49,9 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
 
     /**
      * 保存投注记录并投注派彩
+     * @param betRecordDo 投注记录
+     * @param syncOpt 是否同步写库
+     * @return 玩家余额
      */
     public BetSingleWalletResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
         if (syncOpt) {
@@ -60,6 +63,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
 
     private BetSingleWalletResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         Long betRecordId = getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
+        log.info("syncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordId);
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         BetSingleWalletResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
