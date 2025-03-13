@@ -19,10 +19,11 @@ public class BagApiTest extends BaseTest {
     public void test_getRewardBag_SUCCESS(){
         GetBagCurrentRewardReq bagReq = GetBagCurrentRewardReq.builder()
                 .pId("50")
-                .channelId("183")
-                .playerName("aaa1046212064")
+                .channelId("1050")
+                .gameCode("zhumeng002")
+                .playerName("slottest01")
                 .type(1)
-                .refId("ad4b269c-22ac-4262-b305-56272ce56711")
+                .refId("ad4b269c-22ac-4262-b305-56272ce52226711")
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
 
