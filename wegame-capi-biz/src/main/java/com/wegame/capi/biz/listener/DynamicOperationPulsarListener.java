@@ -72,7 +72,7 @@ public class DynamicOperationPulsarListener implements MessageListener {
             return null;
         }
         BigDecimal bonus = msgDo.getBonus();
-        BigDecimal minBonus = bonus.multiply(new BigDecimal("0.9"));
+        BigDecimal minBonus = bonus.multiply(new BigDecimal("0.95"));
         DynamicOperationEventDo eventDo = new DynamicOperationEventDo();
         eventDo.setPlayerName(msgDo.getPlayerName());
         eventDo.setBonus(AmountUtil.toLong(bonus));
