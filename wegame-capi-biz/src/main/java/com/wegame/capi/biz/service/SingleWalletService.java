@@ -11,12 +11,14 @@ import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -43,7 +45,8 @@ public class SingleWalletService {
     SingleWalletApi singleWalletApi;
 
     public BetSingleWalletResultDo betWithPayout(BetRecordDo betRecordDo) {
-        if (!invokeSingle) {
+        if (!invokeSingle || StringUtils.equals(betRecordDo.getGameId(), GameTypeEnum.MALAKAS.getId())) {
+            log.info("betWithPayout, mock");
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.SUCCESS)
                     .betId(String.valueOf(RandomUtils.nextInt()))
