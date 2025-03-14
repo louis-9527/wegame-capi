@@ -19,7 +19,7 @@ public class MongodbTransactionConfig {
 
     public static final String mariamakilingTransactionManager = "mariamakilingTransactionManager";
     public static final String malakasTransactionManager = "malakasTransactionManager";
-    public static final String ibongAdarnaTransactionManager = "ibongAdarnaTransactionManager";
+    public static final String ibongadarnaTransactionManager = "ibongadarnaTransactionManager";
     @Autowired
     MongoTemplate mariamakilingMongoTemplate;
     @Autowired
@@ -47,8 +47,8 @@ public class MongodbTransactionConfig {
         return manager;
     }
 
-    @Bean(name = ibongAdarnaTransactionManager)
-    public MongoTransactionManager ibongAdarnaTransactionManager() {
+    @Bean(name = ibongadarnaTransactionManager)
+    public MongoTransactionManager ibongadarnaTransactionManager() {
         MongoTransactionManager manager = new MongoTransactionManager(ibongadarnaMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)

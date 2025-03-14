@@ -23,7 +23,7 @@ public class MongodbTemplateConfig {
     private static final String malakasMongoTemplate = "malakasMongoTemplate";
     private static final String malakasPrimaryMongoTemplate= "malakasPrimaryMongoTemplate";
 
-    private static final String ibongAdarnaMongoTemplate = "ibongAdarnaMongoTemplate";
+    private static final String ibongadarnaMongoTemplate = "ibongadarnaMongoTemplate";
     private static final String ibongadarnaPrimaryMongoTemplate= "ibongadarnaPrimaryMongoTemplate";
 
     @Value("${spring.data.mongodb.dynamic.maria_makiling_mdb.uri}")
@@ -76,8 +76,8 @@ public class MongodbTemplateConfig {
     /**
      * bean格式，游戏名称小写 + MongoTemplate
      */
-    @Bean(ibongAdarnaMongoTemplate)
-    public MongoTemplate ibongAdarnaMongoTemplate() {
+    @Bean(ibongadarnaMongoTemplate)
+    public MongoTemplate ibongadarnaMongoTemplate() {
         return new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdbDb);
     }
 
