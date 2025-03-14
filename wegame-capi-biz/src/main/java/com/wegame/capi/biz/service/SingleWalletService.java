@@ -2,16 +2,19 @@ package com.wegame.capi.biz.service;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.api.domain.res.CommonRes;
+import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
 import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
 import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
+import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
 import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
-import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
@@ -19,10 +22,13 @@ import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Objects;
 
 import static com.wegame.capi.biz.builder.req.BetStatusReqBuilder.buildStatusReq;
@@ -44,9 +50,21 @@ public class SingleWalletService {
     @Autowired
     SingleWalletApi singleWalletApi;
 
+    public boolean authLoginToken(UserLoginDo userLoginDo) {
+        AuthLoginTokenRes res = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
+        AssertUtil.assertNotNull(res, ErrorCode.ERR_NET);
+        return true;
+    }
+
+    public BigDecimal getCredit() {
+        GetCreditRes res = singleWalletApi.getCredit(GetCreditReqBuilder.build());
+        AssertUtil.assertNotNull(res, ErrorCode.ERR_NET);
+        AssertUtil.assertNotNull(res.getCredit(), ErrorCode.ERR_NET);
+        return res.getCredit();
+    }
+
     public BetSingleWalletResultDo betWithPayout(BetRecordDo betRecordDo) {
-        if (!invokeSingle || StringUtils.equals(betRecordDo.getGameId(), GameTypeEnum.MALAKAS.getId())) {
-            log.info("betWithPayout, mock");
+        if (!invokeSingle) {
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.SUCCESS)
                     .betId(String.valueOf(RandomUtils.nextInt()))
@@ -89,5 +107,12 @@ public class SingleWalletService {
 
     public BetStatusRes getBetStatus(BetStatusReq req) {
         return singleWalletApi.getBetStatus(req);
+    }
+
+    public boolean verifyHash(String channelId, String playerName, Date createTime, String refId, String hash) {
+        Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(channelId);
+        String verifyHash = singleWalletApi.hash(channelId, playerName, DateUtil.toUTC(createTime), refId, privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
+        AssertUtil.assertTrue(StringUtils.equals(hash, verifyHash), ErrorCode.ERR_PARAM);
+        return true;
     }
 }

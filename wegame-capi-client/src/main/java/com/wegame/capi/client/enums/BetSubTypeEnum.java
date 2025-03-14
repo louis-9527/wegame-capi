@@ -22,6 +22,7 @@ public enum BetSubTypeEnum {
     FREE_SPINS_NORMAL_BET("FREE_SPINS_NORMAL_BET", "免费轮正常投注", BetTypeEnum.NORMAL_BET),
     BUY_BET("BUY_BET", "购买投注", BetTypeEnum.BUY_BET),
     FREE_SPINS_BUY_BET("FREE_SPINS_BUY_BET", "免费轮购买投注", BetTypeEnum.BUY_BET),
+    EX_BET("EX_BET", "正常投注EX投注", BetTypeEnum.NORMAL_BET)
 
     ;
 

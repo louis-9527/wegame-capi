@@ -23,6 +23,8 @@ public class MongodbTemplateConfig {
     private static final String malakasMongoTemplate = "malakasMongoTemplate";
     private static final String malakasPrimaryMongoTemplate= "malakasPrimaryMongoTemplate";
 
+    private static final String ibongadarnaMongoTemplate = "ibongadarnaMongoTemplate";
+    private static final String ibongadarnaPrimaryMongoTemplate= "ibongadarnaPrimaryMongoTemplate";
 
     @Value("${spring.data.mongodb.dynamic.maria_makiling_mdb.uri}")
     String mariaMakilingMdbUri;
@@ -32,6 +34,10 @@ public class MongodbTemplateConfig {
     String malakasMdbUri;
     @Value("${spring.data.mongodb.dynamic.malakas_mdb.db}")
     String malakasMdb;
+    @Value("${spring.data.mongodb.dynamic.ibong_adarna_mdb.uri}")
+    String ibongAdarnaMdbUri;
+    @Value("${spring.data.mongodb.dynamic.ibong_adarna_mdb.db}")
+    String ibongAdarnaMdbDb;
 
     /**
      * bean格式，游戏名称小写 + MongoTemplate
@@ -63,6 +69,24 @@ public class MongodbTemplateConfig {
     @Bean(malakasPrimaryMongoTemplate)
     public MongoTemplate malakasPrimaryMongoTemplate() {
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(malakasMdbUri), malakasMdb);
+        mongoTemplate.setReadPreference(ReadPreference.primary());
+        return mongoTemplate;
+    }
+
+    /**
+     * bean格式，游戏名称小写 + MongoTemplate
+     */
+    @Bean(ibongadarnaMongoTemplate)
+    public MongoTemplate ibongadarnaMongoTemplate() {
+        return new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdbDb);
+    }
+
+    /**
+     * bean格式，游戏名称小写 + PrimaryMongoTemplate
+     */
+    @Bean(ibongadarnaPrimaryMongoTemplate)
+    public MongoTemplate ibongadarnaPrimaryMongoTemplate() {
+        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdbDb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
     }
