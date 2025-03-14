@@ -326,8 +326,8 @@ public abstract class AbstractDynamicOperationManager {
         return dynamicOperationEventConfigService.getConfigDetail(configQuery, getDynamicOperationGameEnum());
     }
 
-    public List<Double> getConfigMultipleArray(BetTypeEnum betType) {
-        return dynamicOperationEventConfigService.getConfigMultipleArray(betType,getDynamicOperationGameEnum());
+    public List<Double> getConfigMultipleArray() {
+        return dynamicOperationEventConfigService.getConfigMultipleArray(getDynamicOperationGameEnum());
     }
 
 

@@ -78,8 +78,8 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     public BetResultDo<BR> betForNonFreeWheel(BetDo<BD> betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        // 只有CP渠道
-        if (!Objects.equals(cpChannelId, userInfo.getChannelId())) {
+        // 只有CP渠道 和正常投注才需要干预
+        if (!Objects.equals(cpChannelId, userInfo.getChannelId()) && betDo.getBetType() != BetTypeEnum.NORMAL_BET) {
             BetRecordDo<R> betRecordDo = this.rBetRecordDo(betDo, null);
             BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
             return this.buildResult(betRecordDo, resultDo);
@@ -217,29 +217,16 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     public List<WheelDo<WD>> getWheelDos(BetDo<BD> betDo, Long interventionAmount) {
         // 计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
-        Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
-        Long betAmount = betAndPayAmount.getKey();
-        Long betPayAmount = betAndPayAmount.getValue();
+        Long betPayAmount = this.getBetAndPayAmount(betDo).getValue();
         long interveneBalance = interventionAmount + betPayAmount;
         //计算最大倍数
         double multiple = ((double) interveneBalance / betPayAmount);
-        if (BetTypeEnum.BUY_BET == betDo.getBetType()) {
-            // 购买投注, 购买金额*0.1>干预金额 返回null,使用正常投注去干预
-            if (betAmount <= this.getGame().getGameInfo().getGameType().getMinBetAmount()) {
-                // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
-                if (interventionAmount < 0.1 * betPayAmount) {
-                    return null;
-                }
-
-            }
-        }
-        // 否则随机
         // 根据倍数找最接近的
-        Double closest = findClosest(multiple, betDo.getBetType());
+        Double closest = findClosest(multiple);
         if (closest == null) {
             return null;
         }
-        return this.normalPayMultipleConfig(betDo.getBetType(), closest);
+        return this.normalPayMultipleConfig( closest);
     }
 
 
@@ -279,20 +266,19 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     public abstract List<WheelDo<WD>> convertWheelDoList(List<Object> wheelConfig);
 
-    private List<WheelDo<WD>> normalPayMultipleConfig(BetTypeEnum betTypeEnum, double multiple) {
+    private List<WheelDo<WD>> normalPayMultipleConfig(double multiple) {
         DynamicOperationConfigQuery configQuery = DynamicOperationConfigQuery.builder()
                 .gameId(this.getGame().getGameInfo().getGameType().getId())
-                .betType(betTypeEnum.getCode())
                 .multiple(multiple).build();
         List<List<DynamicOperationConfigDo>> configDetailGroup = getDynamicOperationManager().getConfigDetail(configQuery);
         if (CollectionUtils.isEmpty(configDetailGroup)) {
-            log.error("normalPayMultipleConfig result null,configType:{},multiple:{}", betTypeEnum.getCode(), multiple);
+            log.error("normalPayMultipleConfig result null,,multiple:{}", multiple);
             return null;
         }
         // 获取分组下config配置,避免玩家相同倍数连续命中同样的滚轮
         String incrementKey = String.format(Constants.DYNAMIC_OPERATION_CONFIG_INCREMENT_KEY,
                 this.getGame().getGameInfo().getId(),
-                UserInfoContext.getUserInfo().getId(), betTypeEnum.getCode(), multiple);
+                UserInfoContext.getUserInfo().getId(), multiple);
         Long increment = redisTemplate.opsForValue().increment(incrementKey);
         if (increment == null || increment >= configDetailGroup.size()) {
             increment = 1L;
@@ -304,11 +290,11 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
         return this.convertWheelDoList(dynamicOperationConfigDo.getDetail());
     }
 
-    public Double findClosest(double input, BetTypeEnum betTypeEnum) {
+    public Double findClosest(double input) {
         if (input < 1.1) {
             return null;
         }
-        List<Double> arr = getDynamicOperationManager().getConfigMultipleArray(betTypeEnum);
+        List<Double> arr = getDynamicOperationManager().getConfigMultipleArray();
         int left = 0;
         int right = arr.size() - 1;
         int result = -1;

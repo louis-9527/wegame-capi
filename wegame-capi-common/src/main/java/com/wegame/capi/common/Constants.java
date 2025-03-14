@@ -42,7 +42,7 @@ public class Constants {
 
     public static final String DYNAMIC_OPERATION_EVENT_DETAIL_KEY = "wegame:cuser:dynamic_operation_event_detail_key:%s_%s";
 
-    public static final String DYNAMIC_OPERATION_CONFIG_INCREMENT_KEY = "wegame:cuser:dynamic_operation_config_increment_key:%s_%s_%s_%s";
+    public static final String DYNAMIC_OPERATION_CONFIG_INCREMENT_KEY = "wegame:cuser:dynamic_operation_config_increment_key:%s_%s_%s";
 
 
 

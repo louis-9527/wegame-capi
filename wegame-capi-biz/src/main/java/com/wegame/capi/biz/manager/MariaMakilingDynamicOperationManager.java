@@ -33,8 +33,6 @@ public class MariaMakilingDynamicOperationManager extends AbstractDynamicOperati
     private static final Map<String, List<Double>> configMultipleArray = new ConcurrentHashMap<>();
     private static final Map<Double, List<List<DynamicOperationConfigDo>>> normalConfigDetailArray = new ConcurrentHashMap<>();
 
-    private static final Map<Double, List<List<DynamicOperationConfigDo>>> freeConfigDetailArray = new ConcurrentHashMap<>();
-
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager)
     public Long addEventDetail(DynamicOperationEventDetailDo eventDetailDo) {
@@ -56,20 +54,12 @@ public class MariaMakilingDynamicOperationManager extends AbstractDynamicOperati
     @Override
     public List<List<DynamicOperationConfigDo>> getConfigDetail(DynamicOperationConfigQuery configQuery) {
         Double multiple = configQuery.getMultiple();
-        if (BetTypeEnum.NORMAL_BET.getCode().equals(configQuery.getBetType())) {
-            return normalConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigDetail(configQuery));
-        } else if (BetTypeEnum.BUY_BET.getCode().equals(configQuery.getBetType())) {
-            return freeConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigDetail(configQuery));
-        }
-        return null;
+        return normalConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigDetail(configQuery));
     }
 
     @Override
-    public List<Double> getConfigMultipleArray(BetTypeEnum betType) {
-        // String gameId = this.getDynamicOperationGameEnum().getGameType().getId();
-        // 获取该 gameId 对应的 Map，如果不存在则创建
-        // Map<Integer, List<Double>> typeMap = configMultipleArray.computeIfAbsent(gameId, k -> new ConcurrentHashMap<>());
-        // 获取 gameType 对应的配置，如果不存在则查询数据库
-        return configMultipleArray.computeIfAbsent(betType.getCode(), type -> super.getConfigMultipleArray(betType));
+    public List<Double> getConfigMultipleArray() {
+        String key = this.getDynamicOperationGameEnum().getGameType().getId();
+        return configMultipleArray.computeIfAbsent(key, k -> super.getConfigMultipleArray());
     }
 }

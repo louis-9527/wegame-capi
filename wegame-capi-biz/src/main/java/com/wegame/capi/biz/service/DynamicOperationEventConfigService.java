@@ -60,11 +60,10 @@ public class DynamicOperationEventConfigService {
     }
 
 
-    public List<Double> getConfigMultipleArray(BetTypeEnum betType, DynamicOperationGameEnum dynamicOperationGame) {
+    public List<Double> getConfigMultipleArray(DynamicOperationGameEnum dynamicOperationGame) {
 
 
         Aggregation aggregation = Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("betType").is(betType.getCode())), // 添加 type 过滤
                 Aggregation.group().addToSet("multiple").as("values")
         );
         AggregationResults<Document> results = getMongoTemplate(dynamicOperationGame.getGameType())
