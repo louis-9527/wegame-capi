@@ -21,7 +21,7 @@ public class DailyMissionVo implements  Serializable {
     @ApiModelProperty(value = "刷新时间", required = true)
     private Long refreshTime;
     @ApiModelProperty(value = "任务列表", required = true)
-    private List<DailyMissionItemVo> daliyMissionList;
+    private List<DailyMissionItemVo> dailyMissionList;
 
     @Data
     @SuperBuilder

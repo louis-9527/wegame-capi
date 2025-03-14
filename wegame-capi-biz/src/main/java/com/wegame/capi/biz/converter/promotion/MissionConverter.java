@@ -12,7 +12,7 @@ public class MissionConverter {
     public static DailyMissionVo buildDailyMissionItemList(GetDailyMissionRes res) {
         return DailyMissionVo.builder()
                 .refreshTime(Objects.isNull(res.getRefreshTime()) ? null : res.getRefreshTime().getTime())
-                .daliyMissionList(buildDailyMissionItemList(res.getDailyMissionList()))
+                .dailyMissionList(buildDailyMissionItemList(res.getDailyMissionList()))
                 .build();
     }
 
