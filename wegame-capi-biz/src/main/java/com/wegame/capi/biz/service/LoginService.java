@@ -3,14 +3,11 @@ package com.wegame.capi.biz.service;
 import cn.hutool.crypto.SecureUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.api.SingleWalletApi;
-import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
-import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
-import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.common.Constants;
+import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,11 +24,10 @@ public class LoginService {
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
-    SingleWalletApi singleWalletApi;
+    SingleWalletService singleWalletService;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
-        AuthLoginTokenRes authLoginTokenRes = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.build(userLoginDo));
-        AssertUtil.assertNotNull(authLoginTokenRes, ErrorCode.ERR_MIDDLE_PLATFORM);
+        AssertUtil.assertTrue(singleWalletService.authLoginToken(userLoginDo), ErrorCode.ERR_MIDDLE_PLATFORM);
         String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);
         UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
