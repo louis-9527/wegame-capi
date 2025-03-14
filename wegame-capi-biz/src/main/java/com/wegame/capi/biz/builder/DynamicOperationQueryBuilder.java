@@ -67,14 +67,13 @@ public class DynamicOperationQueryBuilder {
     }
 
 
-    public static Query buildQueryEffectList(String playName, String gameId, BetTypeEnum betType) {
+    public static Query buildQueryEffectList(String playName, String gameId) {
         Criteria criteria = new Criteria();
         long currentMilli = DateUtil.getCurrentMilli();
         criteria.and("playerName").is(playName);
         criteria.and("gameId").is(gameId);
         criteria.and("eventStatus").in(Lists.newArrayList(DynamicOperationEventStatusEnum.NONE.getCode(), DynamicOperationEventStatusEnum.ING.getCode()));
         criteria.and("expiredTime").gte(currentMilli);
-        criteria.and("betType").is(betType.getCode());
         criteria.and("$expr").is(
                 new Document("lt", Arrays.asList("$finishBonus", "$minBonus"))
         );

@@ -217,27 +217,36 @@ public abstract class DynamicOperationBetStrategy<R extends ToVoConverter, BD, B
 
     public List<WheelDo<WD>> getWheelDos(BetDo<BD> betDo, Long interventionAmount) {
         // 计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
-
-
-        Long betPayAmount = this.getBetAndPayAmount(betDo).getValue();
-
+        Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
+        Long betAmount = betAndPayAmount.getKey();
+        Long betPayAmount = betAndPayAmount.getValue();
         long interveneBalance = interventionAmount + betPayAmount;
         //计算最大倍数
         double multiple = ((double) interveneBalance / betPayAmount);
+        if (BetTypeEnum.BUY_BET == betDo.getBetType()) {
+            // 购买投注, 购买金额*0.1>干预金额 返回null,使用正常投注去干预
+            if (betAmount <= this.getGame().getGameInfo().getGameType().getMinBetAmount()) {
+                // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
+                if (interventionAmount < 0.1 * betPayAmount) {
+                    return null;
+                }
+
+            }
+        }
+        // 否则随机
         // 根据倍数找最接近的
         Double closest = findClosest(multiple, betDo.getBetType());
         if (closest == null) {
             return null;
         }
         return this.normalPayMultipleConfig(betDo.getBetType(), closest);
-
     }
 
 
     private DynamicOperationEventDo getEventDo(BetDo<BD> betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
-        return getDynamicOperationManager().getEffectedEvent(userInfo.getPlayerName(), betDo.getBetType(), betAndPayAmount.getKey(), betAndPayAmount.getValue());
+        return getDynamicOperationManager().getEffectedEvent(userInfo.getPlayerName(), betAndPayAmount.getKey());
     }
 
 

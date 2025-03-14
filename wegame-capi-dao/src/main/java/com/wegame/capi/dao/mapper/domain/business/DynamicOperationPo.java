@@ -61,10 +61,6 @@ public class DynamicOperationPo implements Serializable {
      */
     private Integer eventKind;
 
-    /**
-     * 支持的投注类型
-     */
-    private String betType;
 
 
     /**

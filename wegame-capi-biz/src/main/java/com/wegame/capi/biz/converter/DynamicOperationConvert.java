@@ -35,7 +35,6 @@ public class DynamicOperationConvert {
             po.setPlayerName(msgDo.getPlayerName());
             po.setEventId(msgDo.getEventId());
             po.setEventKind(msgDo.getEventKind().getCode());
-            po.setBetType(msgDo.getBetType().getCode());
             po.setMinBonus(msgDo.getMinBonus());
             po.setMaxBonus(msgDo.getMaxBonus());
             po.setBonus(msgDo.getBonus());
@@ -80,7 +79,6 @@ public class DynamicOperationConvert {
         eventDo.setChannelId(eventPo.getChannelId());
         eventDo.setEffectedTime(eventPo.getEffectedTime());
         eventDo.setExpiredTime(eventPo.getExpiredTime());
-        eventDo.setBetType(BetTypeEnum.valueOfCode(eventPo.getBetType()));
         eventDo.setEventStatus(DynamicOperationEventStatusEnum.valueOfCode(eventPo.getEventStatus()));
         eventDo.setEventSubStatus(DynamicOperationEventSubStatusEnum.valueOfCode(eventPo.getEventSubStatus()));
         eventDo.setReportStatus(DynamicOperationReportStatusEnum.valueOfCode(eventPo.getReportStatus()));

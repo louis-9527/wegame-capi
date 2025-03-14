@@ -69,9 +69,9 @@ public abstract class AbstractDynamicOperationManager {
      *
      * @return
      */
-    public DynamicOperationEventDo getEffectedEvent(String playName, BetTypeEnum betType,Long betAmount,Long betPayAmount) {
+    public DynamicOperationEventDo getEffectedEvent(String playName, Long betAmount) {
         DynamicOperationGameEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
-        List<DynamicOperationEffectEventCatchDo> entries = dynamicOperationEventService.getEffectList(playName, betType, this.getDynamicOperationGameEnum());
+        List<DynamicOperationEffectEventCatchDo> entries = dynamicOperationEventService.getEffectList(playName, this.getDynamicOperationGameEnum());
 
         for (DynamicOperationEffectEventCatchDo entry : entries) {
             long recordId = entry.getId();
@@ -119,7 +119,7 @@ public abstract class AbstractDynamicOperationManager {
             // 如果投注金额小于系统最小的投注金额,需要判断是否可以赠送出去
             if (betAmount <= getDynamicOperationGameEnum().getGameType().getMinBetAmount()) {
                 // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
-                if (eventAmount < 0.1 * betPayAmount) {
+                if (eventAmount < 0.1 * betAmount) {
                     // 上报
                     this.asyncUpdateFinishEvent(recordId, DynamicOperationEventSubStatusEnum.FINISH_AMOUNT_ERROR);
                     continue;
@@ -261,7 +261,7 @@ public abstract class AbstractDynamicOperationManager {
             }
             //清除事件缓存
             String gameId = this.getDynamicOperationGameEnum().getGameType().getId();
-            String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, gameId, eventDo.getPlayerName(), eventDo.getBetType().getCode());
+            String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, gameId, eventDo.getPlayerName());
             redisTemplate.opsForHash().delete(catch_key, String.valueOf(recordId));
             // 获取事件下所有已完成订单
             DynamicOperationDetailQuery detailQuery = DynamicOperationDetailQuery.builder()

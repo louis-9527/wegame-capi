@@ -74,9 +74,6 @@ public class DynamicOperationEventDo {
      * 过期时间
      */
     private Long expiredTime;
-
-    private BetTypeEnum betType;
-
     /**
      * 干预状态
      */

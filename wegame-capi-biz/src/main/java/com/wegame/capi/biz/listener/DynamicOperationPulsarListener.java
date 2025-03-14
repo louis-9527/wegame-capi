@@ -71,14 +71,9 @@ public class DynamicOperationPulsarListener implements MessageListener {
         if (eventKindEnum == null) {
             return null;
         }
-        BetTypeEnum betType = convertBetType(eventKindEnum);
-        if (betType == null) {
-            return null;
-        }
         BigDecimal bonus = msgDo.getBonus();
         BigDecimal minBonus = bonus.multiply(new BigDecimal("0.9"));
         DynamicOperationEventDo eventDo = new DynamicOperationEventDo();
-
         eventDo.setPlayerName(msgDo.getPlayerName());
         eventDo.setBonus(AmountUtil.toLong(bonus));
         eventDo.setMinBonus(AmountUtil.toLong(minBonus));
@@ -88,7 +83,6 @@ public class DynamicOperationPulsarListener implements MessageListener {
         eventDo.setReportStatus(DynamicOperationReportStatusEnum.NONE);
         eventDo.setEventId(msgDo.getEventId());
         eventDo.setEventKind(eventKindEnum);
-        eventDo.setBetType(betType);
         eventDo.setGameId(msgDo.getGameId());
         eventDo.setChannelId(msgDo.getChannelId());
         eventDo.setEffectedTime(DateUtil.utcStringToEpochMilli(msgDo.getEffectedTime()));
@@ -97,15 +91,5 @@ public class DynamicOperationPulsarListener implements MessageListener {
         eventDo.setCreateTime(currentMilli);
         eventDo.setUpdateTime(currentMilli);
         return eventDo;
-    }
-
-    private BetTypeEnum convertBetType(DynamicOperationEventKindEnum eventKindEnum) {
-        if (DynamicOperationEventKindEnum.NORMAL_URGENT == eventKindEnum) {
-            return BetTypeEnum.NORMAL_BET;
-        }
-        if (DynamicOperationEventKindEnum.FREE_URGENT == eventKindEnum) {
-            return BetTypeEnum.BUY_BET;
-        }
-        return null;
     }
 }
