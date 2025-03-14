@@ -29,7 +29,7 @@ public class AchievementConverter {
                 .name(achievement.getName())
                 .description(achievement.getDescription())
                 .iconUrl(achievement.getIconUrl())
-                .progressVoList(Objects.isNull(achievement) ? null : AchievementVo.ProgressVo.builder().target(achievement.getProgressList().getTarget()).current(achievement.getProgressList().getCurrent()).build())
+                .progressList(Objects.isNull(achievement) ? null : AchievementVo.ProgressVo.builder().target(achievement.getProgressList().getTarget()).current(achievement.getProgressList().getCurrent()).build())
                 .completeAt(Objects.isNull(achievement.getCompleteAt()) ? null : achievement.getCompleteAt().getTime())
                 .status(achievement.getStatus())
                 .redeemId(achievement.getRedeemId())

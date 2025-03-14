@@ -21,7 +21,7 @@ public class AchievementVo implements  Serializable {
     private String name;
     private String description;
     private String iconUrl;
-    private ProgressVo progressVoList;
+    private ProgressVo progressList;
     private Long completeAt;
     private Integer status;
     private String redeemId;
