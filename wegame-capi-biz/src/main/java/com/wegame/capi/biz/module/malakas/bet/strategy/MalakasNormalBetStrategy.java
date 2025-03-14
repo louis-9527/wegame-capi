@@ -12,6 +12,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,7 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                     .rewardContent(String.format(Constants.WEGAME_REWARD_NOTIFY_CONTENT_FORMAT,
                             DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
                             userInfo.getUserName(),
-                            NumberUtil.div(totalRewardAmount, 100),
+                            AmountUtil.toBigDecimal(totalRewardAmount),
                             freeWheelCount))
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MALAKAS.getId());
