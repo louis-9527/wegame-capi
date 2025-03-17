@@ -7,7 +7,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @SuperBuilder
@@ -22,7 +21,7 @@ public class RedeemTreasureRes implements Serializable {
     private String level;
     private String refId;
     private String experience;
-    private List<Reward> reward;
+    private Reward reward;
 
     @Data
     @SuperBuilder

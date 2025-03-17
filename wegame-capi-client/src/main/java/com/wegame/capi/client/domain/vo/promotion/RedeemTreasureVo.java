@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @SuperBuilder
@@ -20,8 +19,8 @@ public class RedeemTreasureVo implements Serializable {
     private static final long serialVersionUID = 2423962589779617794L;
     @ApiModelProperty(value = "宝箱ID", required = true)
     private String treasureId;
-    @ApiModelProperty(value = "宝箱奖励列表", required = true)
-    private List<TreasureRewardVo> reward;
+    @ApiModelProperty(value = "宝箱奖励", required = true)
+    private TreasureRewardVo reward;
 
     @Data
     @SuperBuilder
