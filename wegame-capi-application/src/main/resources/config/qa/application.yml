@@ -116,6 +116,7 @@ knife4j:
 ## api
 api:
   game:
+    promotionDomain: http://reward-http.igo8.me
     singleDomain: http://sw-http-main-apisix.igo8.me
     invokeSingle: true
     cp:
