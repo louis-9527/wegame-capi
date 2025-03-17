@@ -28,12 +28,15 @@ public class StartCardUseRecordQueryBuilder {
         if (Objects.nonNull(recordDo.getUseStatus())) {
             update.set("useStatus", recordDo.getUseStatus().getCode());
         }
+        if (Objects.nonNull(recordDo.getPayOutAmount())) {
+            update.set("payOutAmount", recordDo.getPayOutAmount());
+        }
         if (Objects.nonNull(recordDo.getFailMsg())) {
             update.set("failMsg", recordDo.getFailMsg());
         }
         if (Objects.nonNull(recordDo.getUpdateTime())) {
             update.set("updateTime", recordDo.getUpdateTime());
-        }else {
+        } else {
             update.set("updateTime", DateUtil.getCurrentMilli());
         }
         return update;

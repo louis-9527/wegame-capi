@@ -13,7 +13,6 @@ import com.wegame.capi.biz.converter.DynamicOperationConvert;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationCheckResultDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEffectEventCatchDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;

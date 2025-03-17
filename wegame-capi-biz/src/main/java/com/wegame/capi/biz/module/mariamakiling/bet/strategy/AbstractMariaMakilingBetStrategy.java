@@ -13,7 +13,6 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
-import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -21,7 +20,7 @@ import com.wegame.capi.biz.manager.AbstractDynamicOperationManager;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.manager.MariaMakilingDynamicOperationManager;
 import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
-import com.wegame.capi.biz.module.base.bet.strategy.DynamicOperationBetStrategy;
+import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetPromotionStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -45,7 +44,7 @@ import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
  */
 @Slf4j
 public abstract class AbstractMariaMakilingBetStrategy
-        extends DynamicOperationBetStrategy<MariaMakilingGameRecordDo, MariaMakilingBetDo, MariaMakilingGameRecordDo, SymbolDo>
+        extends AbstractBetPromotionStrategy<MariaMakilingGameRecordDo, MariaMakilingBetDo, MariaMakilingGameRecordDo, SymbolDo>
         implements MariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
 
     @Autowired
@@ -72,16 +71,6 @@ public abstract class AbstractMariaMakilingBetStrategy
     public AbstractDynamicOperationManager getDynamicOperationManager() {
         return mariaMakilingDynamicOperationManager;
     }
-    //    @Override
-//    public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo<MariaMakilingBetDo> betDo) {
-//        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
-//            // 非免费轮投注
-//            return betForNonFreeWheel(betDo);
-//        } else {
-//            // 免费轮投注, 走查询
-//            return betForFreeWheel(betDo);
-//        }
-//    }
 
 
     /**
@@ -169,7 +158,6 @@ public abstract class AbstractMariaMakilingBetStrategy
         }
     }
 
-    @Override
     public List<WheelDo<SymbolDo>> convertWheelDoList(List<Object> wheelConfig) {
         return JSON.parseObject(JSON.toJSONString(wheelConfig), new TypeReference<List<WheelDo<SymbolDo>>>() {
         });

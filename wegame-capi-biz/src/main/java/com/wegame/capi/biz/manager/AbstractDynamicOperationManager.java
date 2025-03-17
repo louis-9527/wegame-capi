@@ -44,6 +44,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicEventThreadPoolExecutor;
@@ -71,6 +72,10 @@ public abstract class AbstractDynamicOperationManager {
     @Autowired
     @Qualifier(dynamicEventThreadPoolExecutor)
     private ThreadPoolExecutor dynamicEventThreadPool;
+
+    @Autowired
+    @Qualifier(dynamicEventThreadPoolExecutor)
+    private ThreadPoolExecutor threadPoolExecutor;
 
 
     @Autowired
@@ -248,54 +253,31 @@ public abstract class AbstractDynamicOperationManager {
 
     /**
      * 获取干预事件结果
-     * @param betDo
      * @return
-     * @param <R>
-     * @param <BD>
      */
-    public  <R,BD,WD extends SymbolDo> DynamicOperationCheckResultDo<R> getEventBetResult(BetDo<BD> betDo,Long payOutAmount) {
+    public <WD extends SymbolDo> GameEventDo<WD> getEventBetResult(Long payOutAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        String lockName = LockNameUtil.getDynamicOperationBetLockName(userInfo.getPlayerId(), betDo.getGameId());
-        return distributeLock.lockThenCall(lockName, () -> {
-            // 判断是否存在干预事件
-            DynamicOperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName(), payOutAmount);
-            if (eventDo == null) {
-                return DynamicOperationCheckResultDo.<R>builder()
-                        .eventResult(Boolean.FALSE)
-                        .build();
-            }
-            // 构建并获取Wheel
-            List<WheelDo<WD>> wheelDos = this.getWheelDos(betDo, eventDo.getInterventionAmount());
-            if (CollectionUtils.isEmpty(wheelDos)) {
-                log.warn("DynamicOperationBetStrategy.getWheelDos is null,eventRecordId:{},InterventionAmount:{}", eventDo.getId(), eventDo.getInterventionAmount());
-                return DynamicOperationCheckResultDo.<R>builder()
-                        .eventResult(Boolean.FALSE)
-                        .build();
-            }
-            GameEventDo<WD> gameEventDo = new GameEventDo<>();
-            gameEventDo.setWheelDos(wheelDos);
-            gameEventDo.setEventId(eventDo.getEventId());
-            gameEventDo.setOperatorRecordId(eventDo.getId());
-            gameEventDo.setChannelId(eventDo.getChannelId());
-            gameEventDo.setGameId(eventDo.getGameId());
-            return
-            // 生成投注记录
-            BetRecordDo<R> betRecordDo = this.rBetRecordDo(betDo, gameEventDo);
-            betRecordDo.setIeId(eventDo.getEventId());
-            // 构建并保存干预记录
-            Long detailId = this.saveEventDetail(userInfo, betRecordDo, gameEventDo);
-
-            return DynamicOperationCheckResultDo.<R>builder()
-                    .eventResult(Boolean.TRUE)
-                    .dynamicOperationEvent(eventDo)
-                    .operationRecordDetailId(detailId)
-                    .eventAmount(betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount())
-                    .betRecordDo(betRecordDo)
-                    .build();
-        }, String.format(LOCK_FAIL_TIP, lockName));
+        // 判断是否存在干预事件
+        DynamicOperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName(), payOutAmount);
+        if (eventDo == null) {
+            return GameEventDo.<WD>builder().eventResult(false).build();
+        }
+        // 构建并获取Wheel
+        List<WheelDo<WD>> wheelDos = this.getWheelDos(eventDo.getInterventionAmount(), payOutAmount);
+        if (CollectionUtils.isEmpty(wheelDos)) {
+            log.warn("DynamicOperationBetStrategy.getWheelDos is null,eventRecordId:{},InterventionAmount:{}", eventDo.getId(), eventDo.getInterventionAmount());
+            return GameEventDo.<WD>builder().eventResult(false).build();
+        }
+        GameEventDo<WD> gameEventDo = new GameEventDo<>();
+        gameEventDo.setEventResult(true);
+        gameEventDo.setWheelDos(wheelDos);
+        gameEventDo.setChannelId(eventDo.getChannelId());
+        gameEventDo.setGameId(eventDo.getGameId());
+        gameEventDo.setDynamicOperationEvent(eventDo);
+        return gameEventDo;
     }
 
-    public <WD extends SymbolDo,BD> List<WheelDo<WD>> getWheelDos(BetDo<BD> betDo, Long interventionAmount,Long betPayAmount) {
+    public <WD extends SymbolDo, BD> List<WheelDo<WD>> getWheelDos(Long interventionAmount, Long betPayAmount) {
         // 计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
         long interveneBalance = interventionAmount + betPayAmount;
         //计算最大倍数
@@ -305,8 +287,47 @@ public abstract class AbstractDynamicOperationManager {
         if (closest == null) {
             return null;
         }
-        return this.normalPayMultipleConfig( closest);
+        return this.normalPayMultipleConfig(closest);
     }
+
+    public void asyncEventDetailUpdate(DynamicOperationEventDo eventDo, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
+        threadPoolExecutor.execute(() -> {
+            // 判断是否完成
+            DynamicOperationEventSubStatusEnum eventSubStatusEnum = null;
+            DynamicOperationEventStatusEnum eventStatusEnum = DynamicOperationEventStatusEnum.NONE;
+            if (DateUtil.getCurrentMilli() > eventDo.getExpiredTime()) {
+                // 过期
+                eventSubStatusEnum = DynamicOperationEventSubStatusEnum.FINISH_EXPIRED;
+                eventStatusEnum = DynamicOperationEventStatusEnum.FINISH;
+            }
+            Long finishBonus = eventDo.getFinishBonus() + eventAmount;
+            if (eventDo.getMinBonus() <= finishBonus) {
+                eventSubStatusEnum = DynamicOperationEventSubStatusEnum.FINISH_NORMAL;
+                eventStatusEnum = DynamicOperationEventStatusEnum.FINISH;
+            }
+
+            DynamicOperationEventDetailDo eventDetailUpdate = DynamicOperationEventDetailDo.builder()
+                    .id(detailId)
+                    .betStatus(betStatus)
+                    .betId(betId)
+                    .build();
+            DynamicOperationEventDo eventDoUpdate = DynamicOperationEventDo.builder()
+                    .id(eventDo.getId())
+                    .finishBonus(BetStatusEnum.SUCCESS == betStatus ? finishBonus : null)
+                    .eventStatus(eventStatusEnum)
+                    .eventSubStatus(eventSubStatusEnum)
+                    .build();
+
+
+            this.updateEventDetail(eventDetailUpdate, eventDoUpdate);
+            // 执行上报
+            if (DynamicOperationEventSubStatusEnum.finish(eventSubStatusEnum)) {
+                // 如果完成执行上报
+                this.asyncReportEvent(eventDo.getId());
+            }
+        });
+    }
+
 
     public void asyncUpdateFinishEvent(Long recordId, DynamicOperationEventSubStatusEnum eventSubStatusEnum) {
         dynamicEventThreadPool.execute(() -> {
@@ -325,7 +346,7 @@ public abstract class AbstractDynamicOperationManager {
     /**
      * 异步上报,
      *
-     * @param recordId   事件ID
+     * @param recordId 事件ID
      */
     public void asyncReportEvent(Long recordId) {
         dynamicEventReportThreadPool.execute(() -> {
@@ -416,6 +437,30 @@ public abstract class AbstractDynamicOperationManager {
         return result == -1 ? null : arr.get(result);
     }
 
+    private <WD extends SymbolDo> List<WheelDo<WD>> normalPayMultipleConfig(double multiple) {
+        DynamicOperationConfigQuery configQuery = DynamicOperationConfigQuery.builder()
+                .gameId(this.getDynamicOperationGameEnum().getGameType().getId())
+                .multiple(multiple).build();
+        List<List<DynamicOperationConfigDo>> configDetailGroup = this.getConfigDetail(configQuery);
+        if (CollectionUtils.isEmpty(configDetailGroup)) {
+            log.error("normalPayMultipleConfig result null,,multiple:{}", multiple);
+            return null;
+        }
+        // 获取分组下config配置,避免玩家相同倍数连续命中同样的滚轮
+        String incrementKey = String.format(Constants.DYNAMIC_OPERATION_CONFIG_INCREMENT_KEY,
+                this.getDynamicOperationGameEnum().getGameType().getId(),
+                UserInfoContext.getUserInfo().getId(), multiple);
+        Long increment = redisTemplate.opsForValue().increment(incrementKey);
+        if (increment == null || increment >= configDetailGroup.size()) {
+            increment = 1L;
+            redisTemplate.opsForValue().set(incrementKey, increment);
+        }
+        List<DynamicOperationConfigDo> configDetail = configDetailGroup.get((int) (increment - 1));
+        int randomIndex = ThreadLocalRandom.current().nextInt(configDetail.size());
+        DynamicOperationConfigDo dynamicOperationConfigDo = configDetail.get(randomIndex);
+        return this.convertWheelDoList(dynamicOperationConfigDo.getDetail());
+    }
+
 
     public abstract DynamicOperationGameEnum getDynamicOperationGameEnum();
 
@@ -427,6 +472,8 @@ public abstract class AbstractDynamicOperationManager {
     public List<Double> getConfigMultipleArray() {
         return dynamicOperationEventConfigService.getConfigMultipleArray(getDynamicOperationGameEnum());
     }
+
+    public  abstract <WD extends SymbolDo> List<WheelDo<WD>> convertWheelDoList(List<Object> wheelConfig);
 
 
 }

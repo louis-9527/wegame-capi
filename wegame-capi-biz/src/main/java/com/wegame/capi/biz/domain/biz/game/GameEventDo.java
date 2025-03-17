@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.game;
 
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import lombok.AllArgsConstructor;
@@ -14,13 +15,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameEventDo<WD extends SymbolDo> {
+    /**
+     * 是否命中干预事件
+     */
+    private Boolean eventResult;
 
     private List<WheelDo<WD>> wheelDos;
 
     /**
-     * 干预事件ID(三方)
+     * 命中的干预事件
      */
-    private String eventId;
+    private DynamicOperationEventDo dynamicOperationEvent;
 
     /**
      * 渠道ID
@@ -32,8 +37,8 @@ public class GameEventDo<WD extends SymbolDo> {
      */
     private String gameId;
 
-    /**
-     * 干预事件记录ID(系统)
-     */
-    private Long operatorRecordId;
+//    /**
+//     * 干预事件记录ID(系统)
+//     */
+//    // private Long operatorRecordId;
 }

@@ -1,9 +1,13 @@
 package com.wegame.capi.biz.manager;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
@@ -61,5 +65,11 @@ public class MariaMakilingDynamicOperationManager extends AbstractDynamicOperati
     public List<Double> getConfigMultipleArray() {
         String key = this.getDynamicOperationGameEnum().getGameType().getId();
         return configMultipleArray.computeIfAbsent(key, k -> super.getConfigMultipleArray());
+    }
+
+    @Override
+    public <WD extends SymbolDo> List<WheelDo<WD>> convertWheelDoList(List<Object> wheelConfig) {
+        return JSON.parseObject(JSON.toJSONString(wheelConfig), new TypeReference<List<WheelDo<WD>>>() {
+        });
     }
 }
