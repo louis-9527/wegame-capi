@@ -6,15 +6,24 @@ import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.id.SnowflakeIdGenerator;
+import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationConvert;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.game.GameEventDo;
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationCheckResultDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEffectEventCatchDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
+import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
@@ -142,6 +151,7 @@ public class DynamicOperationEventService {
                 dynamicOperationGame.getEventCollectionName());
         return DynamicOperationConvert.convertDo(operationPo);
     }
+
 
 
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {

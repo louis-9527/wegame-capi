@@ -10,6 +10,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.domain.biz.bet.StarCardUseDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationCheckResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewordDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StartCardUseRecordDo;
@@ -19,11 +20,13 @@ import com.wegame.capi.biz.service.promotion.StartCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.StartCardReportStatusEnum;
 import com.wegame.capi.common.enums.StartCardUseStatusEnum;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +37,8 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
     private StartCardUseRecordService startCardUseRecordService;
     @Autowired
     private BagService bagService;
+    @Value("${api.game.cp.channelId}")
+    private String cpChannelId;
 
     @Override
     public BetResultDo<BR> bet(BetDo<BD> betDo) {
@@ -55,6 +60,17 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         BetRecordDo<R> rBetRecordDo = this.loadBetRecordDo(betDo);
         Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
         Long addId = null;
+        if(!useStartCard){
+            // 只有CP渠道 和正常投注才需要干预
+            if (Objects.equals(cpChannelId, userInfo.getChannelId()) && betDo.getBetType() != BetTypeEnum.NORMAL_BET) {
+                BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, null);
+                DynamicOperationCheckResultDo<R> checkResult = this.checkEventBet(betDo);
+
+                BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
+                return this.buildResult(betRecordDo, resultDo);
+            }
+        }
+
         if (useStartCard) {
             StarCardUseDo starCardUse = betDo.getStarCardUseDo();
             // 查询星卡详情

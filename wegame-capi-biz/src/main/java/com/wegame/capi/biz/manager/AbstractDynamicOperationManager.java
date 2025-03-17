@@ -2,6 +2,7 @@ package com.wegame.capi.biz.manager;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.DynamicOperationApi;
@@ -10,10 +11,17 @@ import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsStatusReq;
 import com.wegame.capi.api.domain.res.dynamicoperation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import com.wegame.capi.biz.builder.req.DynamicOperationStatusReportBuilder;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.operation.*;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.service.DynamicOperationEventConfigService;
 import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
 import com.wegame.capi.biz.service.DynamicOperationEventService;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventEncryptRequest;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -21,6 +29,7 @@ import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
@@ -62,6 +71,10 @@ public abstract class AbstractDynamicOperationManager {
     @Autowired
     @Qualifier(dynamicEventThreadPoolExecutor)
     private ThreadPoolExecutor dynamicEventThreadPool;
+
+
+    @Autowired
+    private DistributeLock distributeLock;
 
 
     /**
@@ -232,6 +245,69 @@ public abstract class AbstractDynamicOperationManager {
         }
     }
 
+
+    /**
+     * 获取干预事件结果
+     * @param betDo
+     * @return
+     * @param <R>
+     * @param <BD>
+     */
+    public  <R,BD,WD extends SymbolDo> DynamicOperationCheckResultDo<R> getEventBetResult(BetDo<BD> betDo,Long payOutAmount) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        String lockName = LockNameUtil.getDynamicOperationBetLockName(userInfo.getPlayerId(), betDo.getGameId());
+        return distributeLock.lockThenCall(lockName, () -> {
+            // 判断是否存在干预事件
+            DynamicOperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName(), payOutAmount);
+            if (eventDo == null) {
+                return DynamicOperationCheckResultDo.<R>builder()
+                        .eventResult(Boolean.FALSE)
+                        .build();
+            }
+            // 构建并获取Wheel
+            List<WheelDo<WD>> wheelDos = this.getWheelDos(betDo, eventDo.getInterventionAmount());
+            if (CollectionUtils.isEmpty(wheelDos)) {
+                log.warn("DynamicOperationBetStrategy.getWheelDos is null,eventRecordId:{},InterventionAmount:{}", eventDo.getId(), eventDo.getInterventionAmount());
+                return DynamicOperationCheckResultDo.<R>builder()
+                        .eventResult(Boolean.FALSE)
+                        .build();
+            }
+            GameEventDo<WD> gameEventDo = new GameEventDo<>();
+            gameEventDo.setWheelDos(wheelDos);
+            gameEventDo.setEventId(eventDo.getEventId());
+            gameEventDo.setOperatorRecordId(eventDo.getId());
+            gameEventDo.setChannelId(eventDo.getChannelId());
+            gameEventDo.setGameId(eventDo.getGameId());
+            return
+            // 生成投注记录
+            BetRecordDo<R> betRecordDo = this.rBetRecordDo(betDo, gameEventDo);
+            betRecordDo.setIeId(eventDo.getEventId());
+            // 构建并保存干预记录
+            Long detailId = this.saveEventDetail(userInfo, betRecordDo, gameEventDo);
+
+            return DynamicOperationCheckResultDo.<R>builder()
+                    .eventResult(Boolean.TRUE)
+                    .dynamicOperationEvent(eventDo)
+                    .operationRecordDetailId(detailId)
+                    .eventAmount(betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount())
+                    .betRecordDo(betRecordDo)
+                    .build();
+        }, String.format(LOCK_FAIL_TIP, lockName));
+    }
+
+    public <WD extends SymbolDo,BD> List<WheelDo<WD>> getWheelDos(BetDo<BD> betDo, Long interventionAmount,Long betPayAmount) {
+        // 计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
+        long interveneBalance = interventionAmount + betPayAmount;
+        //计算最大倍数
+        double multiple = ((double) interveneBalance / betPayAmount);
+        // 根据倍数找最接近的
+        Double closest = findClosest(multiple);
+        if (closest == null) {
+            return null;
+        }
+        return this.normalPayMultipleConfig( closest);
+    }
+
     public void asyncUpdateFinishEvent(Long recordId, DynamicOperationEventSubStatusEnum eventSubStatusEnum) {
         dynamicEventThreadPool.execute(() -> {
             DynamicOperationEventDo build = DynamicOperationEventDo.builder()
@@ -316,6 +392,28 @@ public abstract class AbstractDynamicOperationManager {
             }
             log.error("dynamicOperationEvent report error:{}", JSON.toJSONString(updateEventsStatusReq));
         });
+    }
+
+    private Double findClosest(double input) {
+        if (input < 1.1) {
+            return null;
+        }
+        List<Double> arr = this.getConfigMultipleArray();
+        int left = 0;
+        int right = arr.size() - 1;
+        int result = -1;
+
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (arr.get(mid) <= input) {
+                result = mid;
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        return result == -1 ? null : arr.get(result);
     }
 
 
