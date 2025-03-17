@@ -37,6 +37,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
 
     @Override
     public BetResultDo<BR> bet(BetDo<BD> betDo) {
+
         if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
             // 非免费轮投注
             return betForNonFreeWheel(betDo);
