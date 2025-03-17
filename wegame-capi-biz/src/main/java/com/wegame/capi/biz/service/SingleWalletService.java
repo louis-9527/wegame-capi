@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import static com.wegame.capi.biz.builder.req.BetStatusReqBuilder.buildStatusReq;
@@ -47,6 +48,7 @@ public class SingleWalletService {
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.SUCCESS)
                     .betId(String.valueOf(RandomUtils.nextInt()))
+                    .credit(1000L)
                     .build();
         }
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));

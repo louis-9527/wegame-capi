@@ -48,6 +48,11 @@ public class BetResultDo<R extends ToVoConverter> implements Serializable {
      * 总计派奖金额
      */
     private Long totalPayoutAmount;
+
+    /**
+     * 投注ID(单钱包)
+     */
+    private String betId;
     /**
      * 投注结果
      */

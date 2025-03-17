@@ -37,4 +37,13 @@ public class Constants {
     public static final int CONST_10000 = 10000;
     public static final int CONST_1000000 = 1000000;
 
+
+    public static final String DYNAMIC_OPERATION_EVENT_CATCH_KEY = "wegame:cuser:dynamic_operation_event_catch_key:%s_%s";
+
+    public static final String DYNAMIC_OPERATION_EVENT_DETAIL_KEY = "wegame:cuser:dynamic_operation_event_detail_key:%s_%s";
+
+    public static final String DYNAMIC_OPERATION_CONFIG_INCREMENT_KEY = "wegame:cuser:dynamic_operation_config_increment_key:%s_%s_%s";
+
+
+
 }

@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeEnum {
 
-    MARIA_MAKILING("zhumeng001", "MariaMakiling", "mariamakiling_bet_record", "mariamakiling_game_record");
+    MARIA_MAKILING("zhumeng001", "MariaMakiling", "mariamakiling_bet_record", "mariamakiling_game_record",500L);
 
     /**
      * 枚举码.
@@ -38,6 +38,11 @@ public enum GameTypeEnum {
      * 游戏记录集合名称.
      */
     private final String gameRecordCollectionName;
+
+    /**
+     * 最小投注金额
+     */
+    private final Long minBetAmount;
 
     public static GameTypeEnum valueOfId(String id) {
         for (GameTypeEnum item : GameTypeEnum.values()) {
