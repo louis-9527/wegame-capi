@@ -11,10 +11,6 @@ import static org.junit.Assert.*;
 public class SecureRandomUtilTest {
 
     @Test
-    public void testRandomInt() {
-    }
-
-    @Test
     public void test_randomInt() {
         // suc
         int max = 10;

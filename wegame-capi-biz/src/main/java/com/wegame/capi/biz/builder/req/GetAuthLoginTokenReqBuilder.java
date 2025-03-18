@@ -10,14 +10,14 @@ import java.util.Date;
 
 public class GetAuthLoginTokenReqBuilder {
 
-    public static GetAuthLoginTokenReq build(UserLoginDo request) {
+    public static GetAuthLoginTokenReq build(UserLoginDo userLoginDo) {
         return GetAuthLoginTokenReq.builder()
-                .pId(request.getPId())
-                .channelId(request.getChannelId())
-                .playerName(request.getPlayerName())
+                .pId(userLoginDo.getPId())
+                .channelId(userLoginDo.getChannelId())
+                .playerName(userLoginDo.getPlayerName())
                 .createTime(DateUtil.toUTC(new Date()))
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
-                .token(request.getToken())
+                .token(userLoginDo.getToken())
                 .build();
     }
 }

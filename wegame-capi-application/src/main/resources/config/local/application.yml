@@ -17,7 +17,7 @@ server:
     uri-encoding: UTF-8
     connection-timeout: 10000
     max-connections: 110000
-    keep-alive-timeout: 180000
+    keep-alive-timeout: 120000
     accept-count: 10000
     threads:
       max: 250000

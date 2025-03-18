@@ -6,26 +6,22 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.api.SingleWalletApi;
-import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
-import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
 import com.wegame.capi.biz.converter.user.UserConverter;
 import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.client.domain.dto.CreditChangeNotifyDto;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.domain.dto.CreditChangeNotifyDto;
 import com.wegame.capi.common.utils.AmountUtil;
-import com.wegame.capi.dao.mapper.user.UserManualMapper;
-import com.wegame.capi.dao.mapper.user.UserMapper;
 import com.wegame.capi.dao.mapper.domain.user.UserPo;
 import com.wegame.capi.dao.mapper.domain.user.UserQuery;
+import com.wegame.capi.dao.mapper.user.UserManualMapper;
+import com.wegame.capi.dao.mapper.user.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +42,7 @@ public class UserService {
     @Autowired
     UserManualMapper userManualMapper;
     @Autowired
-    SingleWalletApi singleWalletApi;
+    SingleWalletService singleWalletService;
     @Autowired
     RedisTemplate redisTemplate;
 
@@ -236,15 +232,14 @@ public class UserService {
         } catch (Exception e) {
             log.error("getCredit err, errMsg: {}", e.getMessage(), e);
         }
-        GetCreditRes res = singleWalletApi.getCredit(GetCreditReqBuilder.build());
-        AssertUtil.assertNotNull(res.getCredit(), ErrorCode.ERR_NET);
-        return AmountUtil.toLong(res.getCredit());
+        BigDecimal credit = singleWalletService.getCredit();
+        AssertUtil.assertNotNull(credit, ErrorCode.ERR_NET);
+        return AmountUtil.toLong(credit);
     }
 
     public void notifyCreditChange(CreditChangeNotifyDto dto) {
-        Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(dto.getChannelId());
-        String hash = singleWalletApi.hash(dto.getChannelId(), dto.getPlayerName(), DateUtil.toUTC(dto.getCreateTime()), dto.getRefId(), privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
-        AssertUtil.assertTrue(StringUtils.equals(hash, dto.getHash()), ErrorCode.ERR_PARAM);
+        boolean ret = singleWalletService.verifyHash(dto.getChannelId(), dto.getPlayerName(), dto.getCreateTime(), dto.getRefId(), dto.getHash());
+        AssertUtil.assertTrue(ret, ErrorCode.ERR_NET);
         redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, dto.getPlayerName()), 1);
     }
 }
