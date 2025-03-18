@@ -4,13 +4,10 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.api.base.BaseApi;
 import com.wegame.capi.api.base.PromotionBaseApi;
-import com.wegame.capi.api.domain.req.promotion.GetDailyMissionReq;
 import com.wegame.capi.api.domain.req.promotion.GetTreasureReq;
 import com.wegame.capi.api.domain.req.promotion.RedeemTreasureReq;
 import com.wegame.capi.api.domain.res.CommonRes;
-import com.wegame.capi.api.domain.res.promotion.GetDailyMissionRes;
 import com.wegame.capi.api.domain.res.promotion.GetTreasureRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemTreasureRes;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +55,7 @@ public class TreasureApi extends PromotionBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
+
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public RedeemTreasureRes redeemTreasure(RedeemTreasureReq req) {
         try {

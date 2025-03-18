@@ -10,8 +10,10 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class GetDailyMissionReq extends BaseReq {
+
+    private static final long serialVersionUID = 3776533680048879L;
 
 }

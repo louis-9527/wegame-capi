@@ -8,10 +8,11 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class RedeemAchievementReq extends BaseReq {
 
+    private static final long serialVersionUID = 377465336800879L;
     /**
      * achievementId<br/>
      * get from getAchiement Api

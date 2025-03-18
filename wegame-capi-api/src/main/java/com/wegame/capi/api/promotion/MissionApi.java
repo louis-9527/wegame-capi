@@ -51,5 +51,4 @@ public class MissionApi extends PromotionBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
-
 }

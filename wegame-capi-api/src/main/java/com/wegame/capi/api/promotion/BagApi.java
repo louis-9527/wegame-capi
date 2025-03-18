@@ -36,10 +36,7 @@ public class BagApi extends PromotionBaseApi {
     private static final String GET_REWARD_BAG = "%s/getRewardBag";
     private static final String GET_OTHER_GAME = "%s/getOtherGame";
     private static final String GET_REWARD_DETAIL= "%s/getRewardDetail";
-
-
     private static final String REDEEM_REWARD= "%s/redeemReward";
-
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public GetBagCurrentRewardRes getBagCurrentReward(GetBagCurrentRewardReq req) {
@@ -133,7 +130,6 @@ public class BagApi extends PromotionBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
-
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public GetRewardDetailRes getRewardById(GetBagRewardByIdReq req) {

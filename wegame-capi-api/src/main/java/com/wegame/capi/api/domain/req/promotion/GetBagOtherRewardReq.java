@@ -1,17 +1,15 @@
 package com.wegame.capi.api.domain.req.promotion;
 
 import com.wegame.capi.api.domain.req.BaseReq;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class GetBagOtherRewardReq extends BaseReq {
 
     private static final long serialVersionUID = 377465336780048879L;

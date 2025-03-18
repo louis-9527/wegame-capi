@@ -15,14 +15,10 @@ import java.util.Date;
 @AllArgsConstructor
 public class RedeemRewardRes implements Serializable {
     private static final long serialVersionUID = -2877868732659795305L;
-
     private String playerName;
     private String refId;
-
     private String channelId;
     private String pid;
-
-
     private RewardDetail detail;
     @Data
     @SuperBuilder
@@ -61,23 +57,21 @@ public class RedeemRewardRes implements Serializable {
          * 游戏内部ID
          */
         private String gameCode;
-
         /**
          * 游戏名称
          */
         private String gameName;
-
         /**
          * 奖励类型(来源)
          */
         private String rewardType;
-
         /**
          * 奖励投注金额
          */
         private BigDecimal betValue;
-
-
+        /**
+         * date
+         */
         private Date date;
 
     }

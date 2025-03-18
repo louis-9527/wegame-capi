@@ -7,7 +7,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @SuperBuilder
@@ -21,6 +20,7 @@ public class GetRewardDetailRes implements Serializable {
     private String rewardConfigId;
 
     private RewardDetail details;
+
     @Data
     @SuperBuilder
     @NoArgsConstructor
@@ -44,12 +44,10 @@ public class GetRewardDetailRes implements Serializable {
          * 奖励URL
          */
         private String imgUrl;
-
         /**
          * 游戏ID,需要传给前端,做游戏跳转
          */
         private String gameId;
-
         /**
          * 游戏内部ID
          */
@@ -81,7 +79,5 @@ public class GetRewardDetailRes implements Serializable {
          * Reward valid hour
          */
         private Integer PeriodHour;
-
-
     }
 }

@@ -7,8 +7,9 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class GetAchievementReq extends BaseReq {
+    private static final long serialVersionUID = 3774633680048879L;
 
 }
