@@ -53,7 +53,7 @@ public class RedeemTreasureVo implements Serializable {
         private BigDecimal betValue;
         @ApiModelProperty(value = "使用余额要求", required = true)
         private BigDecimal balanceRequired;
-        @ApiModelProperty(value = "", required = true)
+        @ApiModelProperty(value = "星级", required = true)
         private Integer starLevel;
     }
 }

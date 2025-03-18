@@ -67,6 +67,12 @@ public class TreasureConverter {
         }
         return RedeemTreasureVo.builder()
                 .treasureId(redeemTreasureRes.getTreasureId())
+                .playerName(redeemTreasureRes.getPlayerName())
+                .channelId(redeemTreasureRes.getChannelId())
+                .pId(redeemTreasureRes.getPId())
+                .level(redeemTreasureRes.getLevel())
+                .experience(redeemTreasureRes.getExperience())
+                .refId(redeemTreasureRes.getRefId())
                 .reward(toVo(redeemTreasureRes.getReward()))
                 .build();
     }
