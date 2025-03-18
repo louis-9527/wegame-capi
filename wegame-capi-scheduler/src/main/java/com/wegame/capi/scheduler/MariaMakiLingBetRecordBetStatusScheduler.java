@@ -26,9 +26,9 @@ public class MariaMakiLingBetRecordBetStatusScheduler
     public void schedule() {
         log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule start");
         try {
-            scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(this.getGameType()), this);
+            scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(getGameType()), this);
         } catch (LockException e) {
-            log.info("get lock fail");
+            log.info("MariaMakiLingBetRecordBetStatusScheduler#get lock fail");
         } catch (Exception e) {
             log.error("MariaMakiLingBetRecordBetStatusScheduler#schedule failed", e);
         }

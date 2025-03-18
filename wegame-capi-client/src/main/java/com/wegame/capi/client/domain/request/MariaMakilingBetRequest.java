@@ -21,6 +21,10 @@ import java.util.Objects;
 @AllArgsConstructor
 @ApiModel(description = "MariaMakiling正常投注请求参数")
 public class MariaMakilingBetRequest implements BetRequestValidate, Serializable {
+    private static final long MIN_BET_AMOUNT = 500L;
+    private static final long MAX_BET_AMOUNT = 1000000L;
+    private static final long MULTIPLE = 35;
+
     @ApiModelProperty(value = "投注金额", required = true)
     private Long betAmount;
     @ApiModelProperty(value = "支付金额/购买金额", required = true)
@@ -33,7 +37,8 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
     @Override
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
         if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
@@ -51,7 +56,7 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
         } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * 35), ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
             } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);

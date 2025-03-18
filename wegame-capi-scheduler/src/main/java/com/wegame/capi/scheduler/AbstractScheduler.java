@@ -15,25 +15,24 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class AbstractScheduler {
 
-    public static final int DEFAULT_PAGE_SIZE = 20;
-
+    public static final int DEFAULT_PAGE_SIZE = 100;
     private static final String LOCK_FAIL_TIP = "Get lock[%s] fail";
-
     @Autowired
     DistributeLock distributeLock;
 
     String taskName() {
-        return this.getClass().getSimpleName();
+        return getClass().getSimpleName();
     }
 
     protected void scheduleWithLock(String lockName, Runnable runnable) {
         distributeLock.lockThenRun(lockName, () -> {
             try {
+                log.info("{} schedule task, get lock suc, taskName: {}, lockName: {}", taskName(), lockName);
                 MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
                 OperatorContext.setOperator(Constants.SYSTEM_OPERATOR);
                 runnable.run();
             } catch (LockException e) {
-                log.warn("{} schedule task error, get lock fail, taskName: {}, lockName: {}", taskName(), lockName);
+                log.info("{} schedule task warn, get lock fail, taskName: {}, lockName: {}", taskName(), lockName);
             } catch (Exception e) {
                 log.error("{} schedule task error, errMsg: {}", taskName(), e.getMessage(), e);
             } finally {
@@ -42,6 +41,4 @@ public abstract class AbstractScheduler {
             }
         }, String.format(LOCK_FAIL_TIP, lockName));
     }
-
-
 }

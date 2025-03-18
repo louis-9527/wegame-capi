@@ -27,14 +27,16 @@ import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode
 
 
 /**
- * 投注记录兜底定时任务
+ * 投注记录兜底定时任务<br/>
+ * 扭转投注中 -> 投注成功/投注失败
  */
 @Slf4j
 @Component
-public abstract class AbstractBetRecordBetStatusScheduler extends AbstractScheduler implements Runnable {
+public abstract class AbstractBetRecordBetStatusScheduler
+        extends AbstractScheduler
+        implements Runnable {
 
     private static final long FIVE_MINUTES = 5 * 60 * 1000;
-
     @Autowired
     BetRecordService betRecordService;
     @Autowired
@@ -47,19 +49,18 @@ public abstract class AbstractBetRecordBetStatusScheduler extends AbstractSchedu
      */
     @Override
     public void run() {
-        log.info("schedule run start");
-        int pageNo = 1;
+        log.info("{} schedule run start...", taskName());
         Long gtLastId = null;
         List<Long> recordIdList;
         AtomicBoolean continueFlag = new AtomicBoolean(true);
         do {
-            recordIdList = betRecordService.listId(BetRecordQuery.builder().status(BetStatusEnum.ING.getCode())
+            recordIdList = betRecordService.listId(BetRecordQuery.builder()
+                    .status(BetStatusEnum.ING.getCode())
+                    .gtLastId(gtLastId)
                     .limit(DEFAULT_PAGE_SIZE)
-                    .offset((pageNo - 1) * DEFAULT_PAGE_SIZE)
                     .orderByClause("_id")
                     .direction(Sort.Direction.ASC)
-                    .gtLastId(gtLastId)
-                    .build(), this.getGameType());
+                    .build(), getGameType());
             if (CollectionUtil.isNotEmpty(recordIdList)) {
                 gtLastId = recordIdList.get(recordIdList.size() - 1);
             }
@@ -67,17 +68,19 @@ public abstract class AbstractBetRecordBetStatusScheduler extends AbstractSchedu
                 scheduleWithLock(LockNameUtil.getBetRecordIdSchedulerLockName(getGameType(), betRecordId), () -> {
                     BetRecordDo betRecordDo = betRecordService.get(betRecordId, getGameType());
                     if (Objects.isNull(betRecordDo)) {
-                        return;
+                        // do nothing
+                    } else {
+                        if (System.currentTimeMillis() - betRecordDo.getCreateTime() <= FIVE_MINUTES) {
+                            // 只处理5分钟以前的投注记录（投注中）
+                            continueFlag.set(false);
+                        } else {
+                            handle(betRecordDo);
+                        }
                     }
-                    if (System.currentTimeMillis() - betRecordDo.getCreateTime() <= FIVE_MINUTES) {
-                        continueFlag.set(false);
-                    }
-                    handle(betRecordDo);
                 });
             }
-            pageNo++;
         } while (CollectionUtils.isNotEmpty(recordIdList) && continueFlag.get());
-        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule run end");
+        log.info("{} schedule run end...", taskName());
     }
 
     public void handle(BetRecordDo betRecordDo) {
@@ -85,7 +88,7 @@ public abstract class AbstractBetRecordBetStatusScheduler extends AbstractSchedu
             if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
                 return;
             }
-            log.info("handle in betting BetRecordDo, betRecordId: {}", betRecordDo.getId());
+            log.info("{}, handle in betting BetRecordDo, betRecordId: {}", taskName(), betRecordDo.getId());
             // 获取当前订单状态
             BetStatusRes betStatusRes = singleWalletService.getBetStatus(buildStatusReq(betRecordDo));
             AssertUtil.assertNotNull(betStatusRes, ErrorCode.ERR_INTER);
@@ -108,13 +111,14 @@ public abstract class AbstractBetRecordBetStatusScheduler extends AbstractSchedu
                                 .build(),
                         getGameType());
             } else {
-                log.error("handle invalid betStatus: {}, betRecordId: {}, betStatusRes: {}",
+                log.error("{}, handle invalid betStatus: {}, betRecordId: {}, betStatusRes: {}",
+                        taskName(),
                         betStatus,
                         betRecordDo.getId(),
                         betStatusRes);
             }
         } catch (Exception e) {
-            log.error("handle in betting BetRecordDo error, betRecordId: {}, errMsg: {}", betRecordDo.getId(), e.getMessage(), e);
+            log.error("{}, handle in betting BetRecordDo error, betRecordId: {}, errMsg: {}", taskName(), betRecordDo.getId(), e.getMessage(), e);
         }
     }
 }
