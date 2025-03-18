@@ -116,8 +116,9 @@ public abstract class AbstractMariaMakilingBetStrategy
 
     @Override
     public Pair<Long, Long> getBetAndPayAmount(BetDo<MariaMakilingBetDo> betDo) {
-        return  Pair.of(betDo.getBetDetail().getBetAmount(), betDo.getBetDetail().getPayAmount());
+        return Pair.of(betDo.getBetDetail().getBetAmount(), betDo.getBetDetail().getPayAmount());
     }
+
     @Override
     public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(Long betRecordId, BetDo<MariaMakilingBetDo> betDo, List<MariaMakilingGameRecordDo> list) {
         // 构建投注记录
@@ -150,19 +151,16 @@ public abstract class AbstractMariaMakilingBetStrategy
                     .resultDetail(gameRecord)
                     .build();
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
-            throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getReason());
+            if (resultDo.getErrorCode() != null) {
+                throw new BusinessException(resultDo.getErrorCode());
+            }
+            throw new BusinessException(ErrorCode.ERR_INTER);
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
             throw new BusinessException(ErrorCode.ERR_NET);
         } else {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }
     }
-
-    public List<WheelDo<SymbolDo>> convertWheelDoList(List<Object> wheelConfig) {
-        return JSON.parseObject(JSON.toJSONString(wheelConfig), new TypeReference<List<WheelDo<SymbolDo>>>() {
-        });
-    }
-
     public void freeWheelAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
         // do nothing
     }
