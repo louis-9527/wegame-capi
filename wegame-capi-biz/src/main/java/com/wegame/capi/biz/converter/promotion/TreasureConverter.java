@@ -13,14 +13,16 @@ import java.util.stream.Collectors;
 
 public class TreasureConverter {
 
-    public static List<TreasureVo> getTreasureToVo(List<GetTreasureRes.Treasure> treasureList) {
+    public static List<TreasureVo> toVoList(List<GetTreasureRes.Treasure> treasureList) {
         if (CollectionUtils.isEmpty(treasureList)) {
             return Collections.emptyList();
         }
-        return treasureList.stream().map(TreasureConverter::getTreasureToVo).collect(Collectors.toList());
+        return treasureList.stream()
+                .map(TreasureConverter::toVo).
+                collect(Collectors.toList());
     }
 
-    public static TreasureVo getTreasureToVo(GetTreasureRes.Treasure treasure) {
+    public static TreasureVo toVo(GetTreasureRes.Treasure treasure) {
         if (Objects.isNull(treasure)) {
             return null;
         }
@@ -39,10 +41,12 @@ public class TreasureConverter {
         if (CollectionUtils.isEmpty(rewardList)) {
             return Collections.emptyList();
         }
-        return rewardList.stream().map(TreasureConverter::getTreasureRewardToVo).collect(Collectors.toList());
+        return rewardList.stream()
+                .map(TreasureConverter::toVo)
+                .collect(Collectors.toList());
     }
 
-    public static TreasureVo.RewardVo getTreasureRewardToVo(GetTreasureRes.Reward reward) {
+    public static TreasureVo.RewardVo toVo(GetTreasureRes.Reward reward) {
         if (Objects.isNull(reward)) {
             return null;
         }
@@ -57,23 +61,17 @@ public class TreasureConverter {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static RedeemTreasureVo redeemTreasureToVo(RedeemTreasureRes redeemTreasureRes) {
+    public static RedeemTreasureVo toVo(RedeemTreasureRes redeemTreasureRes) {
         if (Objects.isNull(redeemTreasureRes)) {
             return null;
         }
         return RedeemTreasureVo.builder()
                 .treasureId(redeemTreasureRes.getTreasureId())
-                .playerName(redeemTreasureRes.getPlayerName())
-                .channelId(redeemTreasureRes.getChannelId())
-                .pId(redeemTreasureRes.getPId())
-                .level(redeemTreasureRes.getLevel())
-                .refId(redeemTreasureRes.getRefId())
-                .experience(redeemTreasureRes.getExperience())
-                .reward(redeemTreasureRewardToVo(redeemTreasureRes.getReward()))
+                .reward(toVo(redeemTreasureRes.getReward()))
                 .build();
     }
 
-    public static RedeemTreasureVo.TreasureRewardVo redeemTreasureRewardToVo(RedeemTreasureRes.Reward reward) {
+    public static RedeemTreasureVo.TreasureRewardVo toVo(RedeemTreasureRes.Reward reward) {
         if (Objects.isNull(reward)) {
             return null;
         }
