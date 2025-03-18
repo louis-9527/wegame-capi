@@ -15,7 +15,7 @@ import java.io.Serializable;
 @ApiModel(description = "获取背包列表请求")
 public class QueryRewardDetailRequest implements Validate, Serializable {
     private static final long serialVersionUID = -4002950733224509502L;
-    @ApiModelProperty(value = "rewardConfigId", required = true)
+    @ApiModelProperty(value = "奖励配置id", required = true)
     private String rewardConfigId;
 
 }

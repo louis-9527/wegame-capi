@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @ApiModel(description = "startCard使用明细")
 public class StarCardUseDetail {
     /**
-     * Reward config id
+     * 奖励配置id
      */
     private String rewardConfigId;
 

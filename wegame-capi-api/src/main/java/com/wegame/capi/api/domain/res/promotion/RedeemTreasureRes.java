@@ -74,11 +74,11 @@ public class RedeemTreasureRes implements Serializable {
          */
         private String imgUrl;
         /**
-         * 下注金额
+         * 奖励投注金额
          */
         private BigDecimal betValue;
         /**
-         * balanceRequired
+         * 使用余额要求
          */
         private BigDecimal balanceRequired;
         /**

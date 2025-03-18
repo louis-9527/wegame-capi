@@ -19,7 +19,7 @@ public class BagCurrentRewordDetailDo {
     private String rewardId;
 
     /**
-     * Reward config Id
+     * 奖励配置id
      */
     private String rewardConfigId;
     /**
@@ -37,7 +37,7 @@ public class BagCurrentRewordDetailDo {
      */
     private String description;
     /**
-     * 余额要求
+     * 使用余额要求
      */
     private Long balanceRequired;
     /**
@@ -66,7 +66,7 @@ public class BagCurrentRewordDetailDo {
     private String rewardType;
 
     /**
-     * 投注基本金额
+     * 奖励投注金额
      */
     private Long betValue;
     /**
