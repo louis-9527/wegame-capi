@@ -7,17 +7,21 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.domain.req.promotion.GetBagCurrentRewardReq;
 import com.wegame.capi.api.domain.req.promotion.GetBagOtherRewardReq;
 import com.wegame.capi.api.domain.req.promotion.GetBagRewardByIdReq;
+import com.wegame.capi.api.domain.req.promotion.GetHistoryMessageReq;
 import com.wegame.capi.api.domain.res.promotion.GetBagCurrentRewardRes;
 import com.wegame.capi.api.domain.res.promotion.GetBagOtherRewardRes;
+import com.wegame.capi.api.domain.res.promotion.GetHistoryMessageRes;
 import com.wegame.capi.api.domain.res.promotion.GetRewardDetailRes;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
 import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewordDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.HistoryMessageDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewordDetailDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.domain.request.promotion.QueryHistoryMessageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -83,7 +87,22 @@ public class BagService {
                 .build();
         GetRewardDetailRes rewardBagRes = bagApi.getRewardById(rewardByIdReq);
         return RewordDetailConverter.resToDo(rewardBagRes.getDetails());
+    }
 
+    public List<HistoryMessageDo> getHistoryMessageList(QueryHistoryMessageRequest messageRequest){
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GetHistoryMessageReq messageReq = GetHistoryMessageReq.builder()
+                .playerName(userInfo.getPlayerName())
+                .pId(userInfo.getPId())
+                .refId(String.valueOf(snowflakeIdGenerator.nextId()))
+                .channelId(userInfo.getChannelId())
+                .createTime(DateUtil.toUTC(new Date()))
+                .page(messageRequest.getPageNo())
+                .limit(messageRequest.getOffset())
+                .build();
+        GetHistoryMessageRes messageRes = bagApi.getHistoryMessage(messageReq);
+        return BagRewordConverter.messageResToDos(messageRes.getMessages());
     }
 
 }
