@@ -18,20 +18,13 @@ public class TreasureReqBuilder {
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
-//        return GetTreasureReq.builder()
-//                .pId("50")
-//                .channelId("1050")
-//                .playerName("cpcpmstest01")
-//                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
-//                .createTime(DateUtil.toUTC(new Date()))
-//                .build();
     }
 
     public static RedeemTreasureReq buildRedeemTreasureReq(String treasureId, Integer level) {
         return RedeemTreasureReq.builder()
-                .pId("50")
-                .channelId("1050")
-                .playerName("cpcpmstest01")
+                .pId(UserInfoContext.getUserInfo().getPId())
+                .channelId(UserInfoContext.getUserInfo().getChannelId())
+                .playerName(UserInfoContext.getUserInfo().getPlayerName())
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .createTime(DateUtil.toUTC(new Date()))
                 .treasureId(treasureId)
