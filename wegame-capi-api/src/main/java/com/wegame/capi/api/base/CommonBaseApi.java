@@ -75,17 +75,4 @@ public class CommonBaseApi extends BaseApi {
         }
         throw new BusinessException(ErrorCode.ERR_PARAM);
     }
-
-    public static void main(String[] args) {
-        String channelId ="1050";
-        String createTime = "2025-03-13T10:30:01.768Z";
-        String key = "739cf125387017046c02d5610a122859844502203284d3509ff897dc54f7bc09";
-        String iv = "32f8e4c142810c8d9a75bce4666198ea";
-        String refId = "ad4b269c-22ac-4262-b305-56272ce52226711";
-        String playerName="slottest01";
-        String preSignature = String.format("%s%s%s%s", channelId, playerName, createTime, refId);
-        String hash = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
-
-        System.out.println(hash);
-    }
 }
