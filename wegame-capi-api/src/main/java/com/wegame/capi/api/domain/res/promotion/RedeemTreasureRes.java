@@ -66,15 +66,15 @@ public class RedeemTreasureRes implements Serializable {
          */
         private String name;
         /**
-         * count
+         * 奖励数量
          */
         private Integer count;
         /**
-         * imgUrl
+         * 奖励图片
          */
         private String imgUrl;
         /**
-         * betValue
+         * 下注金额
          */
         private BigDecimal betValue;
         /**
@@ -82,7 +82,7 @@ public class RedeemTreasureRes implements Serializable {
          */
         private BigDecimal balanceRequired;
         /**
-         * starLevel
+         * 星级
          */
         private Integer starLevel;
     }
