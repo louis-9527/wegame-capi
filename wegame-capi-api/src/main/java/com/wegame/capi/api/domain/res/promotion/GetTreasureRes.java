@@ -34,7 +34,7 @@ public class GetTreasureRes implements Serializable {
         private BigDecimal experience;
         private BigDecimal target;
         /**
-         * status 1 - in progress , 2 - redeemable , 3 - redeemed
+         * 状态 1进行种 2可兑换 3已兑换
          */
         private Integer status;
         private List<Reward> rewards;
@@ -45,8 +45,18 @@ public class GetTreasureRes implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Reward implements Serializable {
+        private static final long serialVersionUID = 1L;
+        /**
+         * 奖励配置id
+         */
         private String rewardConfigId;
+        /**
+         * 奖励名称
+         */
         private String name;
+        /**
+         * 奖励数量
+         */
         private Integer count;
         private String imgUrl;
         private BigDecimal betValue;
