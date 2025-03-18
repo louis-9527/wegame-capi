@@ -59,9 +59,7 @@ public class BagApi extends PromotionBaseApi {
     public GetBagOtherRewardRes getBagOtherReward(GetBagOtherRewardReq req) {
         try {
             assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("uid", req.getPlayerName());
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetBagOtherRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_OTHER_GAME, promotionDomain)));
             ResponseEntity<CommonRes<GetBagOtherRewardRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetBagOtherRewardRes>>() {
             });
@@ -106,9 +104,7 @@ public class BagApi extends PromotionBaseApi {
     public CommonRes<RedeemRewardRes> redeemReward(RedeemRewardReq req) {
         try {
             assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("uid", req.getPlayerName());
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<RedeemRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_REWARD, promotionDomain)));
             ResponseEntity<CommonRes<RedeemRewardRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemRewardRes>>() {
             });
@@ -128,9 +124,7 @@ public class BagApi extends PromotionBaseApi {
     public GetRewardDetailRes getRewardById(GetBagRewardByIdReq req) {
         try {
             assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("uid", req.getPlayerName());
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetBagRewardByIdReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REWARD_DETAIL, promotionDomain)));
             ResponseEntity<CommonRes<GetRewardDetailRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetRewardDetailRes>>() {
             });
@@ -151,9 +145,7 @@ public class BagApi extends PromotionBaseApi {
     public GetHistoryMessageRes getHistoryMessage(GetHistoryMessageReq req) {
         try {
             assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("uid", req.getPlayerName());
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetHistoryMessageReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_HISTORY_MESSAGE, promotionDomain)));
             ResponseEntity<CommonRes<GetHistoryMessageRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetHistoryMessageRes>>() {
             });
