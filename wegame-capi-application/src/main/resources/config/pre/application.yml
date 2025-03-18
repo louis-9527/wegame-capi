@@ -100,7 +100,7 @@ spring:
           uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/malakas?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           db: malakas
         ibong_adarna_mdb:
-          uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/ibong?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
+          uri: mongodb+srv://uatMakilingSERvice:vImchf4Zpgx20OJD@makiling-uat-pri.ac9hy.mongodb.net/ibong?retryWrites=false&w=majority
           db: ibong
 ## fastjson
 fastjson:
