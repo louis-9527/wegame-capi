@@ -32,9 +32,7 @@ public class MissionApi extends PromotionBaseApi {
     public GetDailyMissionRes getDailyMission(GetDailyMissionReq req) {
         try {
             assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("uid", req.getPlayerName());
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetDailyMissionReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_DAILY_MISSION, promotionDomain)));
             ResponseEntity<CommonRes<GetDailyMissionRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetDailyMissionRes>>() {
             });

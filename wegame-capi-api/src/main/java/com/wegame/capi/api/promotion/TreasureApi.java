@@ -36,9 +36,7 @@ public class TreasureApi extends PromotionBaseApi {
     public GetTreasureRes getTreasure(GetTreasureReq req) {
         try {
             assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("uid", req.getPlayerName());
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetTreasureReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_TREASURE, promotionDomain)));
             ResponseEntity<CommonRes<GetTreasureRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetTreasureRes>>() {
             });
@@ -60,9 +58,7 @@ public class TreasureApi extends PromotionBaseApi {
     public RedeemTreasureRes redeemTreasure(RedeemTreasureReq req) {
         try {
             assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("uid", req.getPlayerName());
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<RedeemTreasureReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_TREASURE, promotionDomain)));
             ResponseEntity<CommonRes<RedeemTreasureRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemTreasureRes>>() {
             });

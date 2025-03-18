@@ -36,9 +36,7 @@ public class AchievementApi extends PromotionBaseApi {
     public GetAchievementRes getAchievement(GetAchievementReq req) {
         try {
             assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("uid", req.getPlayerName());
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetAchievementReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_ACHIEVEMENT_URL_FORMAT, promotionDomain)));
             ResponseEntity<CommonRes<GetAchievementRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetAchievementRes>>() {
             });
@@ -57,9 +55,7 @@ public class AchievementApi extends PromotionBaseApi {
     public RedeemAchievementRes redeemAchievement(RedeemAchievementReq req) {
         try {
             assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("uid", req.getPlayerName());
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<RedeemAchievementReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_ACHIEVEMENT_URL_FORMAT, promotionDomain)));
             ResponseEntity<CommonRes<RedeemAchievementRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemAchievementRes>>() {
             });

@@ -37,9 +37,7 @@ public class BagApi extends PromotionBaseApi {
     public GetBagCurrentRewardRes getBagCurrentReward(GetBagCurrentRewardReq req) {
         try {
             assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("uid", req.getPlayerName());
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetBagCurrentRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REWARD_BAG, promotionDomain)));
             ResponseEntity<CommonRes<GetBagCurrentRewardRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetBagCurrentRewardRes>>() {
             });
