@@ -2,18 +2,23 @@ package com.wegame.capi.application.controller.promotion;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.base.domain.PageInfoVo;
+import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
 import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewordDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.HistoryMessageDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewordDetailDo;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.client.domain.request.promotion.QueryBagCurrentGameRewardRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryBagOtherGameRewardRequest;
+import com.wegame.capi.client.domain.request.promotion.QueryHistoryMessageRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryRewardDetailRequest;
+import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.promotion.BagCurrentRewordVo;
 import com.wegame.capi.client.domain.vo.promotion.BagOtherRewordVo;
-import com.wegame.capi.client.domain.vo.promotion.BagRewardDetailVo;
+import com.wegame.capi.client.domain.vo.promotion.HistoryMessageVo;
 import com.wegame.capi.client.domain.vo.promotion.RewardDetailVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -64,6 +69,18 @@ public class BagController {
         detailRequest.validate();
         RewordDetailDo byRewardConfigId = bagService.getByRewardConfigId(detailRequest.getRewardConfigId());
         return CommonResponse.build(RewordDetailConverter.doToVo(byRewardConfigId));
+    }
+
+    @LoginRequired
+    @ApiOperation(value = "获取历史消息", httpMethod = "POST")
+    @PostMapping("/getHistoryMessage")
+    public CommonResponse<PageInfoVo<HistoryMessageVo>>  getHistoryMessage(@RequestBody QueryHistoryMessageRequest request) {
+        request.validate();
+        List<HistoryMessageDo> messageDoList = bagService.getHistoryMessageList(request);
+        return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
+                request.getPageSize(),
+                BagRewordConverter.messageDoToVos(messageDoList),
+                0L));
     }
 
 }
