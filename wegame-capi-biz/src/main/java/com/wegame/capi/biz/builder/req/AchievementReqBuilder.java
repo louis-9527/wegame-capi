@@ -3,10 +3,7 @@ package com.wegame.capi.biz.builder.req;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.promotion.GetAchievementReq;
-import com.wegame.capi.api.domain.req.promotion.GetTreasureReq;
 import com.wegame.capi.api.domain.req.promotion.RedeemAchievementReq;
-import com.wegame.capi.api.domain.req.promotion.RedeemTreasureReq;
-import com.wegame.capi.api.domain.res.promotion.GetAchievementRes;
 import com.wegame.capi.client.context.UserInfoContext;
 import org.slf4j.MDC;
 
