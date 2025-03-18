@@ -18,9 +18,9 @@ public class DynamicOperationApiTest extends BaseTest {
     DynamicOperationApi dynamicOperationApi;
 
     @Test
-    public void updateEventsStatus() {
-        UpdateEventsStatusReq req = buildUpdateEventsStatusReq();
-        UpdateEventsStatusRes updateEventsStatusRes = dynamicOperationApi.updateEventsStatus(req);
+    public void test_updateEventsStatus() {
+        UpdateEventsStatusRes updateEventsStatusRes = dynamicOperationApi.updateEventsStatus(buildUpdateEventsStatusReq());
+        // todo 断言
         System.out.println(JSON.toJSONString(updateEventsStatusRes));
     }
 
@@ -41,6 +41,4 @@ public class DynamicOperationApiTest extends BaseTest {
         req.setBetRecords(Lists.newArrayList(recordReq));
         return req;
     }
-
-
 }
