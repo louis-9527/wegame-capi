@@ -19,11 +19,11 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordQuery.getLimit())) {
             query.limit(recordQuery.getLimit());
         }
-        if (Objects.nonNull(recordQuery.getLastId())) {
+        if (Objects.nonNull(recordQuery.getLastId())) { // todo
             query.addCriteria(Criteria.where("_id").lt(recordQuery.getLastId()));
         }
         if (Objects.nonNull(recordQuery.getGtLastId())) {
-            query.addCriteria(Criteria.where("_id").gt(recordQuery.getLastId()));
+            query.addCriteria(Criteria.where("_id").gt(recordQuery.getGtLastId()));
         }
         if (StringUtils.isNotBlank(recordQuery.getOrderByClause())) {
             if (Objects.isNull(recordQuery.getDirection())) {
@@ -39,9 +39,6 @@ public class BetRecordQueryBuilder {
         Criteria criteria = new Criteria();
         if (Objects.nonNull(recordQuery.getId())) {
             criteria.and("_id").is(recordQuery.getId());
-        }
-        if (Objects.nonNull(recordQuery.getLastId())) {
-            criteria.and("_id").gt(recordQuery.getLastId());
         }
         if (Objects.nonNull(recordQuery.getPlayerId())) {
             criteria.and("playerId").is(recordQuery.getPlayerId());
