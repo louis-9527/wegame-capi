@@ -56,9 +56,7 @@ public class BetRecordQuery extends BetRecordPo implements Serializable {
     /**
      * 小于最后一条的Id
      */
-    private Long lastId;
-
-
+    private Long ltLastId;
     /**
      * 大于最后一条的Id
      */

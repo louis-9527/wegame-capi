@@ -145,7 +145,7 @@ public class BetRecordConverter {
         query.setEndCreateTime(request.getEndCreateTime());
         query.setOrderByClause(orderClause);
         query.setLimit(request.getPageSize());
-        query.setLastId(Optional.ofNullable(request.getLastId()).map(Long::valueOf).orElse(null));
+        query.setLtLastId(Optional.ofNullable(request.getLastId()).map(Long::valueOf).orElse(null));
         query.setDirection(Sort.Direction.DESC);
         return query;
     }
