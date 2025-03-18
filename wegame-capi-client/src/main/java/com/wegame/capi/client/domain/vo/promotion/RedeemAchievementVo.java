@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @SuperBuilder
@@ -18,16 +17,16 @@ import java.util.List;
 @ApiModel(description = "成就")
 public class RedeemAchievementVo implements  Serializable {
     private static final long serialVersionUID = -1704382640858325682L;
-    @ApiModelProperty(value = "", required = true)
+    @ApiModelProperty(value = "玩家姓名", required = true)
     private String playerName;
-    @ApiModelProperty(value = "", required = true)
+    @ApiModelProperty(value = "渠道id", required = true)
     private String channelId;
-    @ApiModelProperty(value = "", required = true)
+    @ApiModelProperty(value = "平台id", required = true)
     private String pId;
-    @ApiModelProperty(value = "", required = true)
+    @ApiModelProperty(value = "refId", required = true)
     private String refId;
-    @ApiModelProperty(value = "", required = true)
-    private List<RedeemAchievementRewardVo> reward;
+    @ApiModelProperty(value = "成就奖励", required = true)
+    private RedeemAchievementRewardVo reward;
 
     @Data
     @SuperBuilder
@@ -40,11 +39,11 @@ public class RedeemAchievementVo implements  Serializable {
         private String rewardConfigId;
         @ApiModelProperty(value = "奖励名称", required = true)
         private String name;
-        @ApiModelProperty(value = "", required = true)
+        @ApiModelProperty(value = "奖励数量", required = true)
         private Integer count;
-        @ApiModelProperty(value = "", required = true)
+        @ApiModelProperty(value = "星级", required = true)
         private Integer starLevel;
-        @ApiModelProperty(value = "", required = true)
+        @ApiModelProperty(value = "奖励图标", required = true)
         private String imgUrl;
         @ApiModelProperty(value = "奖励投注金额", required = true)
         private BigDecimal betValue;

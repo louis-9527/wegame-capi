@@ -63,15 +63,14 @@ public class TreasureConverter {
         }
         return RedeemTreasureVo.builder()
                 .treasureId(redeemTreasureRes.getTreasureId())
+                .playerName(redeemTreasureRes.getPlayerName())
+                .channelId(redeemTreasureRes.getChannelId())
+                .pId(redeemTreasureRes.getPId())
+                .level(redeemTreasureRes.getLevel())
+                .refId(redeemTreasureRes.getRefId())
+                .experience(redeemTreasureRes.getExperience())
                 .reward(redeemTreasureRewardToVo(redeemTreasureRes.getReward()))
                 .build();
-    }
-
-    public static List<RedeemTreasureVo.TreasureRewardVo> redeemTreasureRewardToVo(List<RedeemTreasureRes.Reward> rewardList) {
-        if (CollectionUtils.isEmpty(rewardList)) {
-            return Collections.emptyList();
-        }
-        return rewardList.stream().map(TreasureConverter::redeemTreasureRewardToVo).collect(Collectors.toList());
     }
 
     public static RedeemTreasureVo.TreasureRewardVo redeemTreasureRewardToVo(RedeemTreasureRes.Reward reward) {

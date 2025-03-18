@@ -27,10 +27,6 @@ public class RedeemTreasureRes implements Serializable {
      */
     private String channelId;
     /**
-     * 玩家id
-     */
-    private String playerId;
-    /**
      * 平台id
      */
     private String pId;

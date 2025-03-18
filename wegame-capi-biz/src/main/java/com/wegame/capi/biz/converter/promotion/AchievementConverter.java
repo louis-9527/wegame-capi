@@ -29,7 +29,7 @@ public class AchievementConverter {
                 .name(achievement.getName())
                 .description(achievement.getDescription())
                 .iconUrl(achievement.getIconUrl())
-                .progressList(Objects.isNull(achievement) ? null : AchievementVo.ProgressVo.builder().target(achievement.getProgressList().getTarget()).current(achievement.getProgressList().getCurrent()).build())
+                .progressList(AchievementVo.ProgressVo.builder().target(achievement.getProgressList().getTarget()).current(achievement.getProgressList().getCurrent()).build())
                 .completeAt(Objects.isNull(achievement.getCompleteAt()) ? null : achievement.getCompleteAt().getTime())
                 .status(achievement.getStatus())
                 .redeemId(achievement.getRedeemId())
@@ -70,13 +70,6 @@ public class AchievementConverter {
                 .refId(res.getRefId())
                 .reward(redeemAchievementRewardToVo(res.getReward()))
                 .build();
-    }
-
-    public static List<RedeemAchievementVo.RedeemAchievementRewardVo> redeemAchievementRewardToVo(List<RedeemAchievementRes.RedeemAchievementReward> rewardList) {
-        if (CollectionUtils.isEmpty(rewardList)) {
-            return null;
-        }
-        return rewardList.stream().map(AchievementConverter::redeemAchievementRewardToVo).collect(Collectors.toList());
     }
 
     public static RedeemAchievementVo.RedeemAchievementRewardVo redeemAchievementRewardToVo(RedeemAchievementRes.RedeemAchievementReward reward) {

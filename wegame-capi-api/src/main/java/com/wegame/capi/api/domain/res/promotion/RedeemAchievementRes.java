@@ -7,7 +7,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @SuperBuilder
@@ -34,7 +33,7 @@ public class RedeemAchievementRes implements Serializable {
     /**
      * 奖励列表
      */
-    private List<RedeemAchievementReward> reward;
+    private RedeemAchievementReward reward;
 
     @Data
     @SuperBuilder
