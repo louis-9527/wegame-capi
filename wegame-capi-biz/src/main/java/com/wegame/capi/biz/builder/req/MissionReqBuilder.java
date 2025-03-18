@@ -17,12 +17,5 @@ public class MissionReqBuilder {
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
-//        return GetDailyMissionReq.builder()
-//                .pId("50")
-//                .channelId("1050")
-//                .playerName("cpcpmstest01")
-//                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
-//                .createTime(DateUtil.toUTC(new Date()))
-//                .build();
     }
 }

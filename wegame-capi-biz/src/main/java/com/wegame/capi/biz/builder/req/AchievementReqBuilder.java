@@ -21,13 +21,6 @@ public class AchievementReqBuilder {
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
-//        return GetAchievementReq.builder()
-//                .pId("50")
-//                .channelId("1050")
-//                .playerName("cpcpmstest01")
-//                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
-//                .createTime(DateUtil.toUTC(new Date()))
-//                .build();
     }
 
     public static RedeemAchievementReq buildRedeemAchievementReq(String achievementId, String redeemId) {
