@@ -4,7 +4,6 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.manager.MariaMakilingDynamicOperationManager;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventEncryptRequest;
-import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.domain.response.DynamicOperationResponse;
 import com.wegame.capi.client.domain.vo.StatusOfEventsResultVo;
 import io.swagger.annotations.Api;
@@ -39,6 +38,6 @@ public class DynamicOperationCallbackController {
         String encryptedIv = request.getHeader("iv");
         AssertUtil.assertStrNotEmpty(encryptedKey, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(encryptedIv, ErrorCode.ERR_PARAM);
-        return build(toVoList(mariaMakilingDynamicOperationManager.getStatusOfEvents(encryptRequest,encryptedKey,encryptedIv)));
+        return build(toVoList(mariaMakilingDynamicOperationManager.getStatusOfEvents(encryptRequest, encryptedKey, encryptedIv)));
     }
 }

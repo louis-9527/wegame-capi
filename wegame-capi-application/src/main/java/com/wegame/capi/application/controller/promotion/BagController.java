@@ -3,7 +3,6 @@ package com.wegame.capi.application.controller.promotion;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
-import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
 import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
@@ -15,7 +14,6 @@ import com.wegame.capi.client.domain.request.promotion.QueryBagCurrentGameReward
 import com.wegame.capi.client.domain.request.promotion.QueryBagOtherGameRewardRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryHistoryMessageRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryRewardDetailRequest;
-import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.domain.vo.promotion.BagCurrentRewordVo;
 import com.wegame.capi.client.domain.vo.promotion.BagOtherRewordVo;
 import com.wegame.capi.client.domain.vo.promotion.HistoryMessageVo;
@@ -45,7 +43,7 @@ public class BagController {
     @PostMapping("/queryBagCurrentGameReward")
     public CommonResponse<BagCurrentRewordVo> queryBagCurrentGameReward(@RequestBody QueryBagCurrentGameRewardRequest bagRequest) {
         bagRequest.validate();
-        List<BagCurrentRewordDetailDo> detailDos = bagService.ListCurrentRewordRecord();
+        List<BagCurrentRewordDetailDo> detailDos = bagService.listCurrentRewordRecord();
         return CommonResponse.build(BagCurrentRewordVo.builder()
                 .rewardDetails(BagRewordConverter.currentDoToVoList(detailDos))
                 .build());
@@ -56,7 +54,7 @@ public class BagController {
     @PostMapping("/queryBagOtherGameReward")
     public CommonResponse<BagOtherRewordVo> queryBagOtherGameReward(@RequestBody QueryBagOtherGameRewardRequest bagRequest) {
         bagRequest.validate();
-        List<BagOtherRewordDetailDo> detailDos = bagService.ListOtherRewordRecord();
+        List<BagOtherRewordDetailDo> detailDos = bagService.listOtherRewordRecord();
         return CommonResponse.build(BagOtherRewordVo.builder()
                 .rewardDetails(BagRewordConverter.otherDoToVoList(detailDos))
                 .build());
@@ -74,7 +72,7 @@ public class BagController {
     @LoginRequired
     @ApiOperation(value = "获取历史消息", httpMethod = "POST")
     @PostMapping("/getHistoryMessage")
-    public CommonResponse<PageInfoVo<HistoryMessageVo>>  getHistoryMessage(@RequestBody QueryHistoryMessageRequest request) {
+    public CommonResponse<PageInfoVo<HistoryMessageVo>> getHistoryMessage(@RequestBody QueryHistoryMessageRequest request) {
         request.validate();
         List<HistoryMessageDo> messageDoList = bagService.getHistoryMessageList(request);
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),

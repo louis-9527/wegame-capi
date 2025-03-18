@@ -29,7 +29,7 @@ public class TreasureController {
     @LoginRequired
     @ApiOperation(value = "获取宝箱列表", httpMethod = "POST")
     @PostMapping("/getTreasure")
-    public CommonResponse<List<TreasureVo>> list() {
+    public CommonResponse<List<TreasureVo>> getTreasure() {
         return CommonResponse.build(treasureService.getTreasure());
     }
 

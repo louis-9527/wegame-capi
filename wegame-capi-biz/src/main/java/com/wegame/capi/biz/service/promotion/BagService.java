@@ -42,7 +42,7 @@ public class BagService {
 
     private static final Integer BAG_CURRENT_REWORD_TYPE = 1;
 
-    public List<BagCurrentRewordDetailDo> ListCurrentRewordRecord() {
+    public List<BagCurrentRewordDetailDo> listCurrentRewordRecord() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GetBagCurrentRewardReq currentRewardReq = GetBagCurrentRewardReq.builder()
@@ -58,7 +58,7 @@ public class BagService {
         return BagRewordConverter.currentResToDoList(rewardBagRes.getRewardBag());
     }
 
-    public List<BagOtherRewordDetailDo> ListOtherRewordRecord(){
+    public List<BagOtherRewordDetailDo> listOtherRewordRecord() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GetBagOtherRewardReq currentRewardReq = GetBagOtherRewardReq.builder()
@@ -73,8 +73,7 @@ public class BagService {
         return BagRewordConverter.otherResToDoList(rewardBagRes.getRewardBag());
     }
 
-
-    public RewordDetailDo getByRewardConfigId(String rewardConfigId){
+    public RewordDetailDo getByRewardConfigId(String rewardConfigId) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GetBagRewardByIdReq rewardByIdReq = GetBagRewardByIdReq.builder()
@@ -89,7 +88,7 @@ public class BagService {
         return RewordDetailConverter.resToDo(rewardBagRes.getDetails());
     }
 
-    public List<HistoryMessageDo> getHistoryMessageList(QueryHistoryMessageRequest messageRequest){
+    public List<HistoryMessageDo> getHistoryMessageList(QueryHistoryMessageRequest messageRequest) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GetHistoryMessageReq messageReq = GetHistoryMessageReq.builder()
