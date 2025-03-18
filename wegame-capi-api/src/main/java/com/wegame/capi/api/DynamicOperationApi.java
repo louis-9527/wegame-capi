@@ -45,12 +45,7 @@ public class DynamicOperationApi extends SingleWalletBaseApi {
             String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateKey);
             String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateIv);
             // 构建header
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Connection", "Keep-Alive");
-            headers.add("Keep-Alive", "timeout=180");
-            headers.add("sign", sign);
-            headers.add("keyString", keyString);
-            headers.add("ivString", ivString);
+            MultiValueMap<String, String> headers = buildHeaders(sign, keyString, ivString);
             UpdateEventsStatusReq.DynamicOperationReq operationReq = UpdateEventsStatusReq.DynamicOperationReq.builder()
                     .agentCode(cpChannelId)
                     .message(dynamicOperationEncryptionHelper.encryptWithAES256CBC(reqString))
@@ -71,5 +66,15 @@ public class DynamicOperationApi extends SingleWalletBaseApi {
             log.error("updateEventsStatus err, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error, please retry again later", e);
         }
+    }
+
+    private MultiValueMap<String, String> buildHeaders(String sign, String keyString, String ivString) {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Connection", "Keep-Alive");
+        headers.add("Keep-Alive", "timeout=180");
+        headers.add("sign", sign);
+        headers.add("keyString", keyString);
+        headers.add("ivString", ivString);
+        return headers;
     }
 }
