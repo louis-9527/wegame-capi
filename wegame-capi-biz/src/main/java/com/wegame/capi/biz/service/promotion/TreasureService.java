@@ -17,16 +17,17 @@ import java.util.List;
  */
 @Component
 public class TreasureService {
+
     @Autowired
     TreasureApi treasureApi;
 
     public List<TreasureVo> getTreasure() {
         GetTreasureRes getTreasureRes = treasureApi.getTreasure(TreasureReqBuilder.buildGetTreasureReq());
-        return TreasureConverter.getTreasureToVo(getTreasureRes.getTreasure());
+        return TreasureConverter.toVoList(getTreasureRes.getTreasure());
     }
 
     public RedeemTreasureVo redeemTreasure(String treasureId, Integer level) {
         RedeemTreasureRes redeemTreasureRes = treasureApi.redeemTreasure(TreasureReqBuilder.buildRedeemTreasureReq(treasureId, level));
-        return TreasureConverter.redeemTreasureToVo(redeemTreasureRes);
+        return TreasureConverter.toVo(redeemTreasureRes);
     }
 }
