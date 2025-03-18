@@ -7,7 +7,6 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.base.SingleWalletBaseApi;
-import com.wegame.capi.api.domain.req.dynamicoperation.DynamicOperationReq;
 import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsStatusReq;
 import com.wegame.capi.api.domain.res.dynamicoperation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
@@ -48,14 +47,18 @@ public class DynamicOperationApi extends SingleWalletBaseApi {
             // 构建header
             MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
             headers.add("Connection", "Keep-Alive");
+            headers.add("Keep-Alive", "timeout=180");
             headers.add("sign", sign);
             headers.add("keyString", keyString);
             headers.add("ivString", ivString);
-            DynamicOperationReq operationReq = DynamicOperationReq.builder()
+            UpdateEventsStatusReq.DynamicOperationReq operationReq = UpdateEventsStatusReq.DynamicOperationReq.builder()
                     .agentCode(cpChannelId)
                     .message(dynamicOperationEncryptionHelper.encryptWithAES256CBC(reqString))
                     .build();
-            RequestEntity<DynamicOperationReq> requestEntity = new RequestEntity<>(operationReq, headers, HttpMethod.POST, URI.create(String.format(UPDATE_EVENTS_STATUS, dynamicOperationDomain)));
+            RequestEntity<UpdateEventsStatusReq.DynamicOperationReq> requestEntity = new RequestEntity<>(operationReq,
+                    headers,
+                    HttpMethod.POST,
+                    URI.create(String.format(UPDATE_EVENTS_STATUS, dynamicOperationDomain)));
             ResponseEntity<UpdateEventsStatusRes> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);

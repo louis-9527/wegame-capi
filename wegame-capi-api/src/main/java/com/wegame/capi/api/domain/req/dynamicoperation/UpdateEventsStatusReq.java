@@ -44,4 +44,23 @@ public class UpdateEventsStatusReq implements Serializable {
      * 只接受 1 / 2 【干预完成 / 干预完成因为事件超时】
      */
     private Integer eventStatus;
+
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class DynamicOperationReq implements Serializable {
+        private static final long serialVersionUID = -142579944391963747L;
+        /**
+         * 商户代码
+         */
+        private String agentCode;
+        /**
+         * 加密后数据
+         */
+        private String message;
+    }
 }
