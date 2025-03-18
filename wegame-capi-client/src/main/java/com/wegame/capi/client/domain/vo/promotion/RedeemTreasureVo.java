@@ -29,7 +29,7 @@ public class RedeemTreasureVo implements Serializable {
     @ApiModel(description = "宝箱奖励")
     public static class TreasureRewardVo implements Serializable {
         private static final long serialVersionUID = 7692352397871708565L;
-        @ApiModelProperty(value = "奖励ID", required = true)
+        @ApiModelProperty(value = "奖励配置id", required = true)
         private String rewardConfigId;
         @ApiModelProperty(value = "奖励名称", required = true)
         private String name;
@@ -37,9 +37,9 @@ public class RedeemTreasureVo implements Serializable {
         private Integer count;
         @ApiModelProperty(value = "", required = true)
         private String imgUrl;
-        @ApiModelProperty(value = "", required = true)
+        @ApiModelProperty(value = "奖励投注金额", required = true)
         private BigDecimal betValue;
-        @ApiModelProperty(value = "", required = true)
+        @ApiModelProperty(value = "使用余额要求", required = true)
         private BigDecimal balanceRequired;
         @ApiModelProperty(value = "", required = true)
         private Integer starLevel;

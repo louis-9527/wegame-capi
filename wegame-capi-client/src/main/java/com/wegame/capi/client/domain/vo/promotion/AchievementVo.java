@@ -67,9 +67,9 @@ public class AchievementVo implements  Serializable {
         private Integer count;
         @ApiModelProperty(value = "图片", required = true)
         private String imgUrl;
-        @ApiModelProperty(value = "下注金额", required = true)
+        @ApiModelProperty(value = "奖励投注金额", required = true)
         private BigDecimal betValue;
-        @ApiModelProperty(value = "余额", required = true)
+        @ApiModelProperty(value = "使用余额要求", required = true)
         private BigDecimal balanceRequired;
     }
 }

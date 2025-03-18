@@ -11,9 +11,9 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class GetBagRewardByIdReq extends BaseReq {
-    private static final long serialVersionUID = -281904288670268022L;
+    private static final long serialVersionUID = -2819042898670268022L;
     /**
-     * rewardConfigId
+     * 奖励配置id
      */
     private String rewardConfigId;
 }

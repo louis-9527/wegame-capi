@@ -9,7 +9,7 @@ import org.slf4j.MDC;
 import java.util.Date;
 
 public class MissionReqBuilder {
-    public static GetDailyMissionReq build() {
+    public static GetDailyMissionReq buildGetDailyMissionReq() {
         return GetDailyMissionReq.builder()
                 .pId(UserInfoContext.getUserInfo().getPId())
                 .channelId(UserInfoContext.getUserInfo().getChannelId())

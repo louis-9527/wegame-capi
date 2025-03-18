@@ -46,7 +46,7 @@ public class GetBagOtherRewardRes {
         private String rewardId;
 
         /**
-         * Reward config id
+         * 奖励配置id
          */
         private String rewardConfigId;
 

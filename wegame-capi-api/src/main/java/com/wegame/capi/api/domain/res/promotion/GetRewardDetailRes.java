@@ -16,7 +16,9 @@ public class GetRewardDetailRes implements Serializable {
     private static final long serialVersionUID = -2877868732659795305L;
 
     private String refId;
-
+    /**
+     * 奖励配置id
+     */
     private String rewardConfigId;
 
     private RewardDetail details;

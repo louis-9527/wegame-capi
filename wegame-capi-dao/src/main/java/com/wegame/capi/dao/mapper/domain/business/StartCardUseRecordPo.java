@@ -35,7 +35,7 @@ public class StartCardUseRecordPo implements Serializable {
     private String rewardId;
 
     /**
-     * Reward config Id
+     * 奖励配置id
      */
     private String rewardConfigId;
 

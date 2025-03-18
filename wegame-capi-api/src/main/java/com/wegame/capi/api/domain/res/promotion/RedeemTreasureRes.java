@@ -14,13 +14,41 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class RedeemTreasureRes implements Serializable {
     private static final long serialVersionUID = -63633463436518L;
+    /**
+     * 宝箱id
+     */
     private String treasureId;
+    /**
+     * 玩家姓名
+     */
     private String playerName;
+    /**
+     * 渠道id
+     */
     private String channelId;
+    /**
+     * 玩家id
+     */
+    private String playerId;
+    /**
+     * 平台id
+     */
     private String pId;
+    /**
+     * 等级
+     */
     private String level;
+    /**
+     * refId
+     */
     private String refId;
+    /**
+     * 经验值
+     */
     private String experience;
+    /**
+     * 奖励
+     */
     private Reward reward;
 
     @Data
@@ -28,12 +56,34 @@ public class RedeemTreasureRes implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Reward implements Serializable {
+        private static final long serialVersionUID = -63633463436518L;
+        /**
+         * 奖励配置id
+         */
         private String rewardConfigId;
+        /**
+         * 奖励名称
+         */
         private String name;
+        /**
+         * 奖励数量
+         */
         private Integer count;
+        /**
+         * 奖励图片
+         */
         private String imgUrl;
+        /**
+         * 奖励投注金额
+         */
         private BigDecimal betValue;
+        /**
+         * 使用余额要求
+         */
         private BigDecimal balanceRequired;
+        /**
+         * 星级
+         */
         private Integer starLevel;
     }
 }

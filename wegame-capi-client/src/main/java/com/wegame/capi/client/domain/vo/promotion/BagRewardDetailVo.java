@@ -16,7 +16,7 @@ public class BagRewardDetailVo implements Serializable {
     private static final long serialVersionUID = -2041608152456306530L;
     @ApiModelProperty(value = "奖励ID", required = true)
     private String rewardId;
-    @ApiModelProperty(value = "Reward config Id", required = true)
+    @ApiModelProperty(value = "奖励配置id", required = true)
     private String rewardConfigId;
     @ApiModelProperty(value = "奖励名称", required = true)
     private String name;
@@ -24,7 +24,7 @@ public class BagRewardDetailVo implements Serializable {
     private Integer starLevel;
     @ApiModelProperty(value = "奖励描述", required = true)
     private String description;
-    @ApiModelProperty(value = "余额要求", required = true)
+    @ApiModelProperty(value = "使用余额要求", required = true)
     private Long balanceRequired;
     @ApiModelProperty(value = "跳转时游戏ID", required = true)
     private String skipGameId;
@@ -38,7 +38,7 @@ public class BagRewardDetailVo implements Serializable {
     private Long expiredTime;
     @ApiModelProperty(value = "奖励类型,1:每日任务 2:宝箱 4:成就", required = true)
     private String rewardType;
-    @ApiModelProperty(value = "投注基本金额", required = true)
+    @ApiModelProperty(value = "奖励投注金额", required = true)
     private Long betValue;
     @ApiModelProperty(value = "图标URL", required = true)
     private String imgUrl;
