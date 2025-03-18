@@ -106,9 +106,4 @@ public class DynamicOperationEventDo {
      */
     private String reportFailMsg;
 
-    /**
-     * 本次干预金额
-     */
-    private Long interventionAmount;
-
 }

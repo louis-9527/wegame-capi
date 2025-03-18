@@ -26,16 +26,16 @@ public class GameEventDo<WD extends SymbolDo> {
      * 命中的干预事件
      */
     private DynamicOperationEventDo dynamicOperationEvent;
-
-    /**
-     * 渠道ID
-     */
-    private String channelId;
-
-    /**
-     * 游戏ID
-     */
-    private String gameId;
+//
+//    /**
+//     * 渠道ID
+//     */
+//    private String channelId;
+//
+//    /**
+//     * 游戏ID
+//     */
+//    private String gameId;
 
 //    /**
 //     * 干预事件记录ID(系统)

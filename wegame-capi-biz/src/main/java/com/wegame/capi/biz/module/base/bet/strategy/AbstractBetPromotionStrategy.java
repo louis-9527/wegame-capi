@@ -78,7 +78,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
 
 
 
-    public BetResultDo<BR> betForStartCard(BetDo<BD> betDo){
+    private BetResultDo<BR> betForStartCard(BetDo<BD> betDo){
         UserInfo userInfo = UserInfoContext.getUserInfo();
         Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
 
@@ -136,7 +136,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
     }
 
 
-    public BetResultDo<BR> betForDynamic(BetDo<BD> betDo) {
+    private BetResultDo<BR> betForDynamic(BetDo<BD> betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
         // 判断是否命中干预
@@ -151,7 +151,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
             // 构建并保存干预记录
             Long detailId = this.saveEventDetail(userInfo, generateBetRecordId(), betRecordDo, eventBetResult);
             // 投注并派奖
-            BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
+            BetSingleWalletResultDo resultDo = super.saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             // 命中干预事件,从结果中获取数据
             BetStatusEnum betStatusEnum = BetStatusEnum.FAIL;
@@ -218,8 +218,8 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         detailDo.setPlayerName(userInfo.getPlayerName());
         detailDo.setPlayerId(userInfo.getPlayerId());
         detailDo.setUserId(userInfo.getId());
-        detailDo.setGameId(eventDo.getGameId());
-        detailDo.setChannelId(eventDo.getChannelId());
+        detailDo.setGameId(eventDo.getDynamicOperationEvent().getGameId());
+        detailDo.setChannelId(eventDo.getDynamicOperationEvent().getChannelId());
         long currentMilli = DateUtil.getCurrentMilli();
         detailDo.setCreateTime(currentMilli);
         detailDo.setUpdateTime(currentMilli);

@@ -26,8 +26,4 @@ public class DynamicOperationEffectEventCatchDo {
      */
     private Long expiredTime;
 
-    /**
-     * 创建时间
-     */
-    private Long createTime;
 }

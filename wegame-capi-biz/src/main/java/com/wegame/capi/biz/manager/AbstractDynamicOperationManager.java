@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager;
 
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.lock.DistributeLock;
@@ -44,6 +45,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -78,10 +80,6 @@ public abstract class AbstractDynamicOperationManager {
     private ThreadPoolExecutor threadPoolExecutor;
 
 
-    @Autowired
-    private DistributeLock distributeLock;
-
-
     /**
      * 获取当前玩家在生效中的干预时间,并按时间取第一条
      *
@@ -114,11 +112,7 @@ public abstract class AbstractDynamicOperationManager {
             }
             if (DynamicOperationEventStatusEnum.FINISH == eventDo.getEventStatus()) {
                 //已完成 删除缓存并触发异步上报
-                this.asyncUpdateFinishEvent(recordId, eventDo.getEventSubStatus());
-                continue;
-            }
-            if (eventDo.getEventStatus() != DynamicOperationEventStatusEnum.NONE) {
-                // 当前事件有未完成的干预事件 不执行
+                this.asyncReportEvent(recordId);
                 continue;
             }
             // 判断金额
@@ -127,23 +121,11 @@ public abstract class AbstractDynamicOperationManager {
                 this.asyncUpdateFinishEvent(recordId, DynamicOperationEventSubStatusEnum.FINISH_NORMAL);
                 continue;
             }
-            // 判断需要干预金额
-            long eventAmount = eventDo.getBonus() - eventDo.getFinishBonus();
-            if ((eventDo.getFinishBonus() + eventAmount) > eventDo.getMaxBonus()) {
-                // 如果干预后的金额,比最大金额还大,取最小的
-                eventAmount = eventDo.getMaxBonus() - eventDo.getFinishBonus();
+            if (eventDo.getEventStatus() != DynamicOperationEventStatusEnum.NONE) {
+                // 当前事件有未完成的干预事件 不执行
+                continue;
             }
 
-            // 如果投注金额小于系统最小的投注金额,需要判断是否可以赠送出去
-            if (betAmount <= getDynamicOperationGameEnum().getGameType().getMinBetAmount()) {
-                // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
-                if (eventAmount < 0.1 * betAmount) {
-                    // 上报
-                    this.asyncUpdateFinishEvent(recordId, DynamicOperationEventSubStatusEnum.FINISH_AMOUNT_ERROR);
-                    continue;
-                }
-            }
-            eventDo.setInterventionAmount(eventAmount);
             return eventDo;
         }
 
@@ -253,6 +235,7 @@ public abstract class AbstractDynamicOperationManager {
 
     /**
      * 获取干预事件结果
+     *
      * @return
      */
     public <WD extends SymbolDo> GameEventDo<WD> getEventBetResult(Long payOutAmount) {
@@ -262,19 +245,48 @@ public abstract class AbstractDynamicOperationManager {
         if (eventDo == null) {
             return GameEventDo.<WD>builder().eventResult(false).build();
         }
+        // 获取需要干预的金额
+        Long interventionAmount = this.getInterventionAmount(eventDo, payOutAmount);
+        if(interventionAmount == null){
+            return GameEventDo.<WD>builder().eventResult(false).build();
+        }
         // 构建并获取Wheel
-        List<WheelDo<WD>> wheelDos = this.getWheelDos(eventDo.getInterventionAmount(), payOutAmount);
+        List<WheelDo<WD>> wheelDos = this.getWheelDos(interventionAmount, payOutAmount);
         if (CollectionUtils.isEmpty(wheelDos)) {
-            log.warn("DynamicOperationBetStrategy.getWheelDos is null,eventRecordId:{},InterventionAmount:{}", eventDo.getId(), eventDo.getInterventionAmount());
             return GameEventDo.<WD>builder().eventResult(false).build();
         }
         GameEventDo<WD> gameEventDo = new GameEventDo<>();
         gameEventDo.setEventResult(true);
         gameEventDo.setWheelDos(wheelDos);
-        gameEventDo.setChannelId(eventDo.getChannelId());
-        gameEventDo.setGameId(eventDo.getGameId());
         gameEventDo.setDynamicOperationEvent(eventDo);
         return gameEventDo;
+    }
+
+
+    /**
+     * 获取需要干预的金额
+     *
+     * @return
+     */
+    private Long getInterventionAmount(DynamicOperationEventDo eventDo, Long betAmount) {
+        // 判断需要干预金额
+        long eventAmount = eventDo.getBonus() - eventDo.getFinishBonus();
+
+        if ((eventDo.getFinishBonus() + eventAmount) > eventDo.getMaxBonus()) {
+            // 如果干预后的金额,比最大金额还大,取最小的
+            eventAmount = eventDo.getMaxBonus() - eventDo.getFinishBonus();
+        }
+
+        // 如果投注金额小于系统最小的投注金额,需要判断是否可以赠送出去
+        if (betAmount <= getDynamicOperationGameEnum().getGameType().getMinBetAmount()) {
+            // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
+            if (eventAmount < 0.1 * betAmount) {
+                // 上报
+                this.asyncUpdateFinishEvent(eventDo.getId(), DynamicOperationEventSubStatusEnum.FINISH_AMOUNT_ERROR);
+                return null;
+            }
+        }
+        return eventAmount;
     }
 
     public <WD extends SymbolDo, BD> List<WheelDo<WD>> getWheelDos(Long interventionAmount, Long betPayAmount) {
@@ -473,7 +485,7 @@ public abstract class AbstractDynamicOperationManager {
         return dynamicOperationEventConfigService.getConfigMultipleArray(getDynamicOperationGameEnum());
     }
 
-    public  abstract <WD extends SymbolDo> List<WheelDo<WD>> convertWheelDoList(List<Object> wheelConfig);
+    public abstract <WD extends SymbolDo> List<WheelDo<WD>> convertWheelDoList(List<Object> wheelConfig);
 
 
 }

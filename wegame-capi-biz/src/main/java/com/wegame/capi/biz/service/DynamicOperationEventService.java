@@ -99,7 +99,7 @@ public class DynamicOperationEventService {
      *
      * @return
      */
-    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName,DynamicOperationGameEnum dynamicOperationGame) {
+    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, DynamicOperationGameEnum dynamicOperationGame) {
         String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, dynamicOperationGame.getGameType().getId(), playName);
         Map<Object, Object> entries = redisTemplate.opsForHash().entries(catch_key);
         if (!entries.isEmpty()) {
@@ -110,7 +110,9 @@ public class DynamicOperationEventService {
             for (Map.Entry<Object, Object> entry : entries.entrySet()) {
                 resultList.add(JSON.parseObject((String) entry.getValue(), DynamicOperationEffectEventCatchDo.class));
             }
-            return resultList;
+            return resultList.stream()
+                    .sorted(Comparator.comparing(DynamicOperationEffectEventCatchDo::getEffectedTime))
+                    .collect(Collectors.toList());
         }
 
         List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId()), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
@@ -126,8 +128,7 @@ public class DynamicOperationEventService {
             DynamicOperationEffectEventCatchDo build = DynamicOperationEffectEventCatchDo.builder()
                     .id(operationPo.getId())
                     .effectedTime(operationPo.getEffectedTime())
-                    .expiredTime(operationPo.getExpiredTime())
-                    .createTime(operationPo.getCreateTime()).build();
+                    .expiredTime(operationPo.getExpiredTime()).build();
             resultList.add(build);
             catchMap.put(operationPo.getId(), JSON.toJSONString(build));
         }
@@ -150,7 +151,6 @@ public class DynamicOperationEventService {
                 dynamicOperationGame.getEventCollectionName());
         return DynamicOperationConvert.convertDo(operationPo);
     }
-
 
 
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
