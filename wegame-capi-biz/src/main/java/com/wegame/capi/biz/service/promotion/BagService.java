@@ -14,6 +14,7 @@ import com.wegame.capi.api.domain.res.promotion.GetHistoryMessageRes;
 import com.wegame.capi.api.domain.res.promotion.GetRewardDetailRes;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
+import com.wegame.capi.biz.converter.promotion.HistoryMessageConverter;
 import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewordDetailDo;
@@ -53,7 +54,7 @@ public class BagService {
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
         GetBagCurrentRewardRes rewardBagRes = bagApi.getBagCurrentReward(currentRewardReq);
-        return BagRewordConverter.currentResToDoList(rewardBagRes.getRewardBag());
+        return BagRewordConverter.toDoList(rewardBagRes.getRewardBag());
     }
 
     public List<BagOtherRewordDetailDo> listOtherRewordRecord() {
@@ -99,7 +100,7 @@ public class BagService {
                 .limit(messageRequest.getOffset())
                 .build();
         GetHistoryMessageRes messageRes = bagApi.getHistoryMessage(messageReq);
-        return BagRewordConverter.messageResToDos(messageRes.getMessages());
+        return HistoryMessageConverter.toDoList(messageRes.getMessages());
     }
 
 }

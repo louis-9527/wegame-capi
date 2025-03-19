@@ -4,6 +4,7 @@ import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
+import com.wegame.capi.biz.converter.promotion.HistoryMessageConverter;
 import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewordDetailDo;
@@ -77,7 +78,7 @@ public class BagController {
         List<HistoryMessageDo> messageDoList = bagService.getHistoryMessageList(request);
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                BagRewordConverter.messageDoToVos(messageDoList),
+                HistoryMessageConverter.toVoList(messageDoList),
                 0L));
     }
 
