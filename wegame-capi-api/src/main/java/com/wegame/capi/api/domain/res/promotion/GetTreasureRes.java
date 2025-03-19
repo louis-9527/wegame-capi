@@ -1,8 +1,6 @@
 package com.wegame.capi.api.domain.res.promotion;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -10,9 +8,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class GetTreasureRes implements Serializable {
     private static final long serialVersionUID = -63633463436518L;
     /**
@@ -37,9 +37,11 @@ public class GetTreasureRes implements Serializable {
     private List<Treasure> treasure;
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode
     public static class Treasure implements Serializable {
         private static final long serialVersionUID = 1L;
         /**
@@ -77,9 +79,11 @@ public class GetTreasureRes implements Serializable {
     }
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode
     public static class Reward implements Serializable {
         private static final long serialVersionUID = 1L;
         /**

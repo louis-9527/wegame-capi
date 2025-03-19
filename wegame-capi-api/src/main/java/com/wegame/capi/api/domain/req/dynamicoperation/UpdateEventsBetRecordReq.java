@@ -14,6 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class UpdateEventsBetRecordReq implements Serializable {
+    private static final long serialVersionUID = -4392682211806649L;
     /**
      * 订单号
      */

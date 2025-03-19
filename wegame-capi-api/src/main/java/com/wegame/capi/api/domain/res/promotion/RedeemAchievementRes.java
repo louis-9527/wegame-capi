@@ -1,17 +1,17 @@
 package com.wegame.capi.api.domain.res.promotion;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class RedeemAchievementRes implements Serializable {
     private static final long serialVersionUID = -63633463436518L;
     /**
@@ -36,9 +36,11 @@ public class RedeemAchievementRes implements Serializable {
     private RedeemAchievementReward reward;
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode
     public static class RedeemAchievementReward implements Serializable {
         private static final long serialVersionUID = 1L;
         /**

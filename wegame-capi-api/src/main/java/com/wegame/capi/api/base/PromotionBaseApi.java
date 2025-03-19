@@ -11,7 +11,6 @@ public class PromotionBaseApi extends CommonBaseApi {
     @Value("${api.game.promotionDomain}")
     public String promotionDomain;
 
-
     public MultiValueMap<String, String> buildHeaders(String uid) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Connection", "Keep-Alive");

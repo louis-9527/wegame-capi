@@ -14,12 +14,27 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GetBagCurrentRewardRes implements Serializable{
+public class GetBagCurrentRewardRes implements Serializable {
     private static final long serialVersionUID = 1165155893675353428L;
+    /**
+     * 玩家
+     */
     private String playerName;
+    /**
+     * refid
+     */
     private String refId;
+    /**
+     * 渠道id
+     */
     private String channelId;
+    /**
+     * 平台id
+     */
     private String pid;
+    /**
+     * rewardBag
+     */
     private List<GetBagCurrentRewardRecord> rewardBag;
 
     @Data

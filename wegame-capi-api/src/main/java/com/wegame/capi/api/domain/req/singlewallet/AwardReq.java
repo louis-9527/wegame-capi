@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AwardReq extends BaseReq {
-
     /**
      * 下注ID
      */

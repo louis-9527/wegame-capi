@@ -1,8 +1,6 @@
 package com.wegame.capi.api.domain.res.promotion;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -10,20 +8,40 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class RedeemRewardRes implements Serializable {
     private static final long serialVersionUID = -2877868732659795305L;
+    /**
+     * 玩家
+     */
     private String playerName;
+    /**
+     * refId
+     */
     private String refId;
+    /**
+     * 渠道id
+     */
     private String channelId;
+    /**
+     * 平台id
+     */
     private String pid;
+    /**
+     * 明细
+     */
     private RewardDetail detail;
+
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode
     public static class RewardDetail implements Serializable{
 
         private static final long serialVersionUID = 3399519039239876329L;
@@ -52,7 +70,6 @@ public class RedeemRewardRes implements Serializable {
          * 游戏ID,需要传给前端,做游戏跳转
          */
         private String gameId;
-
         /**
          * 游戏内部ID
          */
@@ -73,6 +90,5 @@ public class RedeemRewardRes implements Serializable {
          * date
          */
         private Date date;
-
     }
 }

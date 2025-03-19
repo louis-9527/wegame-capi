@@ -1,17 +1,17 @@
 package com.wegame.capi.api.domain.res.promotion;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class GetRewardDetailRes implements Serializable {
     private static final long serialVersionUID = -2877868732659795305L;
 
@@ -20,14 +20,18 @@ public class GetRewardDetailRes implements Serializable {
      * 奖励配置id
      */
     private String rewardConfigId;
-
+    /**
+     * 明细
+     */
     private RewardDetail details;
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class RewardDetail implements Serializable{
+    @EqualsAndHashCode
+    public static class RewardDetail implements Serializable {
 
         private static final long serialVersionUID = 3399519039239876329L;
         /**
@@ -54,17 +58,14 @@ public class GetRewardDetailRes implements Serializable {
          * 游戏内部ID
          */
         private String gameCode;
-
         /**
          * 游戏名称
          */
         private String gameName;
-
         /**
          * 奖励类型(来源)
          */
         private String rewardType;
-
         /**
          * 奖励投注金额
          */
@@ -78,7 +79,7 @@ public class GetRewardDetailRes implements Serializable {
          */
         private Integer periodDay;
         /**
-         * Reward valid hour
+         * Reward valid hour todo @TUTU
          */
         private Integer PeriodHour;
     }

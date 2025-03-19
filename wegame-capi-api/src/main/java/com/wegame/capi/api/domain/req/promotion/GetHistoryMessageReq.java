@@ -14,9 +14,13 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 public class GetHistoryMessageReq extends BaseReq {
     private static final long serialVersionUID = -2819042898670268022L;
-
+    /**
+     * 页码
+     */
     private Integer page;
-
+    /**
+     * 条数
+     */
     private Integer limit;
 
 }

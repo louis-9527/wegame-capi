@@ -1,8 +1,6 @@
 package com.wegame.capi.api.domain.res.promotion;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -10,9 +8,11 @@ import java.util.Date;
 import java.util.List;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class GetDailyMissionRes implements Serializable {
     private static final long serialVersionUID = -63633463436518L;
     /**
@@ -53,9 +53,11 @@ public class GetDailyMissionRes implements Serializable {
     private List<DailyMission> dailyMissionList;
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode
     public static class DailyMission implements Serializable {
         private static final long serialVersionUID = 1L;
         /**
