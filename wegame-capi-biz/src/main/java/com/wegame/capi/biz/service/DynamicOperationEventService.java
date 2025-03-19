@@ -6,29 +6,20 @@ import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.id.SnowflakeIdGenerator;
-import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationConvert;
-import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEffectEventCatchDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.DynamicOperationGameEnum;
+import com.wegame.capi.client.enums.OperationEventGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
-import com.wegame.capi.common.utils.LockNameUtil;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
+import com.wegame.capi.dao.mapper.domain.business.DynamicOperationEventPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
-import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -40,66 +31,67 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.MONGOTEMPLATE;
+import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMARY_MONGOTEMPLATE;
+
 @Slf4j
 @Service
-public class DynamicOperationEventService {
+public class DynamicOperationEventService implements InitializingBean {
 
     @Autowired
-    private SnowflakeIdGenerator snowflakeIdGenerator;
+    SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
-    private Map<String, MongoTemplate> mongoTemplateMap;
+    Map<String, MongoTemplate> mongoTemplateMap;
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    RedisTemplate<String, Object> redisTemplate;
 
+    @Override
+    public void afterPropertiesSet() {
+        Arrays.stream(GameTypeEnum.values()).forEach(gameType -> {
+            MongoTemplate mongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
+            AssertUtil.assertNotNull(mongoTemplate, ErrorCode.ERR_INTER);
+            MongoTemplate primaryMongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
+            AssertUtil.assertNotNull(primaryMongoTemplate, ErrorCode.ERR_INTER);
+        });
+    }
 
-    public Long add(DynamicOperationEventDo dynamicOperationMsgDo, DynamicOperationGameEnum dynamicOperationGame) {
-        dynamicOperationMsgDo.setId(snowflakeIdGenerator.nextId());
-        DynamicOperationPo dynamicOperationPo = DynamicOperationConvert.convertPo(dynamicOperationMsgDo, OptEnum.ADD);
+    public Long add(DynamicOperationEventDo eventDo, OperationEventGameEnum gameEnum) {
+        eventDo.setId(snowflakeIdGenerator.nextId());
+        DynamicOperationEventPo dynamicOperationPo = DynamicOperationConvert.doToPo(eventDo, OptEnum.ADD);
         if (Objects.isNull(dynamicOperationPo)) {
             return null;
         }
         try {
-            DynamicOperationPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(dynamicOperationPo, dynamicOperationGame.getEventCollectionName());
-            String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, dynamicOperationMsgDo.getGameId(), dynamicOperationMsgDo.getPlayerName());
+            DynamicOperationEventPo insert = getMongoTemplate(gameEnum.getGameType()).insert(dynamicOperationPo, gameEnum.getEventCollectionName());
+            String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, eventDo.getGameId(), eventDo.getPlayerName());
             redisTemplate.delete(catch_key);
             return insert.getId();
-        } catch (MongoWriteException error) {
-            if (error.getCode() == 11000) {
+        } catch (MongoWriteException e) {
+            if (e.getCode() == 11000) {
                 return null;
             }
-            throw error;
+            throw e;
         }
 
     }
 
-    public Boolean update(DynamicOperationEventDo eventDo, DynamicOperationGameEnum dynamicOperationGame) {
-
+    public Boolean update(DynamicOperationEventDo eventDo, OperationEventGameEnum dynamicOperationGame) {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(eventDo.getId());
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(dynamicOperationGame.getGameType()).updateFirst(query,
                 DynamicOperationQueryBuilder.buildUpdateById(eventDo),
-                DynamicOperationPo.class,
+                DynamicOperationEventPo.class,
                 dynamicOperationGame.getEventCollectionName());
         return result.getModifiedCount() > 0;
-
     }
 
-    public List<DynamicOperationEventDo> queryList(DynamicOperationQuery operationQuery, DynamicOperationGameEnum dynamicOperationGame) {
-
-        List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
-        // 判断干预金额
-        return DynamicOperationConvert.convertDos(operationPoList);
+    public List<DynamicOperationEventDo> queryList(DynamicOperationQuery operationQuery, OperationEventGameEnum dynamicOperationGame) {
+        List<DynamicOperationEventPo> poList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), DynamicOperationEventPo.class, dynamicOperationGame.getEventCollectionName());
+        return DynamicOperationConvert.toDoList(poList);
     }
 
-
-    /**
-     * 返回干预事件
-     * <id,pair<生效时间、过期时间></>></>
-     *
-     * @return
-     */
-    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, DynamicOperationGameEnum dynamicOperationGame) {
+    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, OperationEventGameEnum dynamicOperationGame) {
         String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, dynamicOperationGame.getGameType().getId(), playName);
         Map<Object, Object> entries = redisTemplate.opsForHash().entries(catch_key);
         if (!entries.isEmpty()) {
@@ -115,7 +107,7 @@ public class DynamicOperationEventService {
                     .collect(Collectors.toList());
         }
 
-        List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId()), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
+        List<DynamicOperationEventPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId()), DynamicOperationEventPo.class, dynamicOperationGame.getEventCollectionName());
         if (CollectionUtils.isEmpty(operationPoList)) {
             Map<Long, String> catchMap = new HashMap<>();
             catchMap.put(-1L, "-1");
@@ -124,7 +116,7 @@ public class DynamicOperationEventService {
         }
         List<DynamicOperationEffectEventCatchDo> resultList = new ArrayList<>(entries.size());
         Map<Long, String> catchMap = new HashMap<>();
-        for (DynamicOperationPo operationPo : operationPoList) {
+        for (DynamicOperationEventPo operationPo : operationPoList) {
             DynamicOperationEffectEventCatchDo build = DynamicOperationEffectEventCatchDo.builder()
                     .id(operationPo.getId())
                     .effectedTime(operationPo.getEffectedTime())
@@ -138,27 +130,19 @@ public class DynamicOperationEventService {
                 .collect(Collectors.toList());
     }
 
-    public DynamicOperationEventDo getById(Long id, DynamicOperationGameEnum dynamicOperationGame) {
+    public DynamicOperationEventDo getById(Long id, OperationEventGameEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
+        // todo fix @tutu
         query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus");
-        DynamicOperationPo operationPo = getMongoTemplate(dynamicOperationGame.getGameType()).findOne(
+        DynamicOperationEventPo operationPo = getMongoTemplate(gameEnum.getGameType()).findOne(
                 query,
-                DynamicOperationPo.class,
-                dynamicOperationGame.getEventCollectionName());
-        return DynamicOperationConvert.convertDo(operationPo);
+                DynamicOperationEventPo.class,
+                gameEnum.getEventCollectionName());
+        return DynamicOperationConvert.poToDo(operationPo);
     }
-
-
-    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
-        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-        return template;
-    }
-
 
     private void saveCatch(String catch_key, Map<Long, String> catchMap) {
         // 构造 Lua 脚本
@@ -178,8 +162,14 @@ public class DynamicOperationEventService {
                 Collections.singletonList(catch_key),
                 args.toArray() // 关键：转换为 String[]
         );
-
     }
 
+    ///////////////  above auto generated ///////////////
+    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
+        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
+    }
 
+    private MongoTemplate getPrimaryMongoTemplate(GameTypeEnum gameType) {
+        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
+    }
 }

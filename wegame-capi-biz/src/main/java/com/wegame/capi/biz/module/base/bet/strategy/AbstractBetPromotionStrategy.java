@@ -18,7 +18,7 @@ import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.manager.AbstractDynamicOperationManager;
+import com.wegame.capi.biz.manager.AbstractOperationEventManager;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
@@ -44,7 +44,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
     @Value("${api.game.cp.channelId}")
     private String cpChannelId;
 
-    public abstract AbstractDynamicOperationManager getDynamicOperationManager();
+    public abstract AbstractOperationEventManager getDynamicOperationManager();
 
     @Override
     public BetResultDo<BR> bet(BetDo<BD> betDo) {

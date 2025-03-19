@@ -7,11 +7,10 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationDetailQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationDetailConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
-import com.wegame.capi.client.enums.DynamicOperationGameEnum;
+import com.wegame.capi.client.enums.OperationEventGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
-import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,6 +34,7 @@ import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMAR
 @Slf4j
 @Component
 public class DynamicOperationEventDetailService implements InitializingBean {
+
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
@@ -48,7 +48,7 @@ public class DynamicOperationEventDetailService implements InitializingBean {
         });
     }
 
-    public Long add(DynamicOperationEventDetailDo detailDo, DynamicOperationGameEnum gameEnum) {
+    public Long add(DynamicOperationEventDetailDo detailDo, OperationEventGameEnum gameEnum) {
         DynamicOperationDetailPo detailPo = DynamicOperationDetailConvert.toPo(detailDo, OptEnum.ADD);
         if (Objects.isNull(detailPo)) {
             return null;
@@ -57,7 +57,7 @@ public class DynamicOperationEventDetailService implements InitializingBean {
         return insert.getId();
     }
 
-    public boolean update(DynamicOperationEventDetailDo detailDo, DynamicOperationGameEnum gameEnum) {
+    public boolean update(DynamicOperationEventDetailDo detailDo, OperationEventGameEnum gameEnum) {
         AssertUtil.assertNotNull(detailDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(detailDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
         Criteria criteria = new Criteria();
@@ -70,14 +70,19 @@ public class DynamicOperationEventDetailService implements InitializingBean {
         return result.getModifiedCount() > 0;
     }
 
-    public List<DynamicOperationEventDetailDo> queryList(DynamicOperationDetailQuery query, DynamicOperationGameEnum gameEnum) {
+    public List<DynamicOperationEventDetailDo> queryList(DynamicOperationDetailQuery query, OperationEventGameEnum gameEnum) {
         List<DynamicOperationDetailPo> dynamicOperationDetailPos = getMongoTemplate(gameEnum.getGameType()).find(DynamicOperationDetailQueryBuilder.buildQuery(query),
                 DynamicOperationDetailPo.class,
                 gameEnum.getEventDetailCollectionName());
         return DynamicOperationDetailConvert.toDoList(dynamicOperationDetailPos);
     }
 
+    ///////////////  above auto generated ///////////////
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
+        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
+    }
+
+    private MongoTemplate getPrimaryMongoTemplate(GameTypeEnum gameType) {
+        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
     }
 }

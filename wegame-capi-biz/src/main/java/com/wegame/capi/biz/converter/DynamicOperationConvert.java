@@ -4,65 +4,61 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
+import com.wegame.capi.common.enums.OperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
+import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.dao.mapper.domain.business.DynamicOperationEventPo;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DynamicOperationConvert {
 
-    public static DynamicOperationPo convertPo(DynamicOperationEventDo msgDo, OptEnum optEnum) {
-        if (Objects.isNull(msgDo)) {
+
+    public static DynamicOperationEventDo messageToDo(OperationEventMessageDo messageDo) {
+        long currentMilli = DateUtil.getCurrentMilli();
+        OperationEventKindEnum eventKindEnum = OperationEventKindEnum.valueOfCode(messageDo.getEventKind());
+        if (Objects.isNull(eventKindEnum)) {
             return null;
         }
-        DynamicOperationPo po = DynamicOperationPo.builder().build();
-        po.setUpdateTime(DateUtil.getCurrentMilli());
-        po.setId(msgDo.getId());
-        if (OptEnum.ADD.equals(optEnum)) {
-            long currentMilli = DateUtil.getCurrentMilli();
-            po.setEventStatus(DynamicOperationEventStatusEnum.NONE.getCode());
-            po.setEventSubStatus(DynamicOperationEventSubStatusEnum.NONE.getCode());
-            po.setReportStatus(DynamicOperationReportStatusEnum.NONE.getCode());
-            po.setEffectedTime(msgDo.getEffectedTime());
-            po.setExpiredTime(msgDo.getExpiredTime());
-            po.setPlayerName(msgDo.getPlayerName());
-            po.setEventId(msgDo.getEventId());
-            po.setEventKind(msgDo.getEventKind().getCode());
-            po.setMinBonus(msgDo.getMinBonus());
-            po.setMaxBonus(msgDo.getMaxBonus());
-            po.setBonus(msgDo.getBonus());
-            po.setFinishBonus(0L);
-            po.setChannelId(msgDo.getChannelId());
-            po.setGameId(msgDo.getGameId());
-            po.setEventMsgDetail(msgDo.getEventMsgDetail());
-            po.setCreateTime(currentMilli);
-        } else {
-            po.setEventStatus(msgDo.getEventStatus() == null ? null : msgDo.getEventStatus().getCode());
-            po.setEventSubStatus(msgDo.getEventSubStatus() == null ? null : msgDo.getEventSubStatus().getCode());
-            po.setReportStatus(msgDo.getReportStatus() == null ? null : msgDo.getReportStatus().getCode());
-        }
-        return po;
+        BigDecimal bonus = messageDo.getBonus();
+        BigDecimal minBonus = bonus.multiply(new BigDecimal("0.95"));
+        DynamicOperationEventDo eventDo = new DynamicOperationEventDo();
+        eventDo.setPlayerName(messageDo.getPlayerName());
+        eventDo.setBonus(AmountUtil.toLong(bonus));
+        eventDo.setMinBonus(AmountUtil.toLong(minBonus));
+        eventDo.setMaxBonus(AmountUtil.toLong(bonus));
+        eventDo.setFinishBonus(0L);
+        eventDo.setEventStatus(DynamicOperationEventStatusEnum.NONE);
+        eventDo.setReportStatus(DynamicOperationReportStatusEnum.NONE);
+        eventDo.setEventId(messageDo.getEventId());
+        eventDo.setEventKind(eventKindEnum);
+        eventDo.setGameId(messageDo.getGameId());
+        eventDo.setChannelId(messageDo.getChannelId());
+        eventDo.setEffectedTime(DateUtil.utcStringToEpochMilli(messageDo.getEffectedTime()));
+        eventDo.setExpiredTime(messageDo.getExpiredTime() == null ? DateUtil.getMaxMilli() : DateUtil.utcStringToEpochMilli(messageDo.getExpiredTime()));
+        eventDo.setEventMsgDetail(JSON.toJSONString(messageDo));
+        eventDo.setCreateTime(currentMilli);
+        eventDo.setUpdateTime(currentMilli);
+        return eventDo;
     }
 
-
-    public static List<DynamicOperationEventDo> convertDos(List<DynamicOperationPo> eventPos) {
-        if (eventPos == null) {
-            return Collections.emptyList();
-        }
-        return eventPos.stream()
-                .map(DynamicOperationConvert::convertDo) // 复用已有的 convertDo 方法
+    public static List<DynamicOperationEventDo> toDoList(List<DynamicOperationEventPo> poList) {
+        return Optional.ofNullable(poList).orElse(Collections.emptyList())
+                .stream()
+                .map(DynamicOperationConvert::poToDo)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-
     }
 
-    public static DynamicOperationEventDo convertDo(DynamicOperationPo eventPo) {
+    public static DynamicOperationEventDo poToDo(DynamicOperationEventPo eventPo) {
         if (Objects.isNull(eventPo)) {
             return null;
         }
@@ -74,7 +70,7 @@ public class DynamicOperationConvert {
         eventDo.setMaxBonus(eventPo.getMaxBonus());
         eventDo.setFinishBonus(eventPo.getFinishBonus());
         eventDo.setEventId(eventPo.getEventId());
-        eventDo.setEventKind(DynamicOperationEventKindEnum.valueOfCode(eventPo.getEventKind()));
+        eventDo.setEventKind(OperationEventKindEnum.valueOfCode(eventPo.getEventKind()));
         eventDo.setGameId(eventPo.getGameId());
         eventDo.setChannelId(eventPo.getChannelId());
         eventDo.setEffectedTime(eventPo.getEffectedTime());
@@ -83,5 +79,39 @@ public class DynamicOperationConvert {
         eventDo.setEventSubStatus(DynamicOperationEventSubStatusEnum.valueOfCode(eventPo.getEventSubStatus()));
         eventDo.setReportStatus(DynamicOperationReportStatusEnum.valueOfCode(eventPo.getReportStatus()));
         return eventDo;
+    }
+
+    public static DynamicOperationEventPo doToPo(DynamicOperationEventDo eventDo, OptEnum optEnum) {
+        if (Objects.isNull(eventDo)) {
+            return null;
+        }
+        long currentMilli = DateUtil.getCurrentMilli();
+        DynamicOperationEventPo po = DynamicOperationEventPo.builder().build();
+        po.setId(eventDo.getId());
+        if (OptEnum.ADD.equals(optEnum)) {
+            po.setEventStatus(DynamicOperationEventStatusEnum.NONE.getCode());
+            po.setEventSubStatus(DynamicOperationEventSubStatusEnum.NONE.getCode());
+            po.setReportStatus(DynamicOperationReportStatusEnum.NONE.getCode());
+            po.setEffectedTime(eventDo.getEffectedTime());
+            po.setExpiredTime(eventDo.getExpiredTime());
+            po.setPlayerName(eventDo.getPlayerName());
+            po.setEventId(eventDo.getEventId());
+            po.setEventKind(eventDo.getEventKind().getCode());
+            po.setMinBonus(eventDo.getMinBonus());
+            po.setMaxBonus(eventDo.getMaxBonus());
+            po.setBonus(eventDo.getBonus());
+            po.setFinishBonus(0L);
+            po.setChannelId(eventDo.getChannelId());
+            po.setGameId(eventDo.getGameId());
+            po.setEventMsgDetail(eventDo.getEventMsgDetail());
+            po.setCreateTime(currentMilli);
+            po.setUpdateTime(currentMilli);
+        } else {
+            po.setEventStatus(Objects.isNull(eventDo.getEventStatus()) ? null : eventDo.getEventStatus().getCode());
+            po.setEventSubStatus(Objects.isNull(eventDo.getEventSubStatus()) ? null : eventDo.getEventSubStatus().getCode());
+            po.setReportStatus(Objects.isNull(eventDo.getReportStatus()) ? null : eventDo.getReportStatus().getCode());
+            po.setUpdateTime(currentMilli);
+        }
+        return po;
     }
 }

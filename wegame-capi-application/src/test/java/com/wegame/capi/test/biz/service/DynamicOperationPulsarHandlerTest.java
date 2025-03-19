@@ -2,10 +2,10 @@ package com.wegame.capi.test.biz.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationMsgDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.listener.DynamicOperationPulsarListener;
+import com.wegame.capi.biz.listener.OperationEventPulsarListener;
 import com.wegame.capi.test.BaseTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.List;
 public class DynamicOperationPulsarHandlerTest extends BaseTest {
 
     @Autowired
-    DynamicOperationPulsarListener dynamicOperationPulsarHandler;
+    OperationEventPulsarListener dynamicOperationPulsarHandler;
 
     @Test
     public void handleMessage(){
@@ -34,7 +34,7 @@ public class DynamicOperationPulsarHandlerTest extends BaseTest {
                 "    \"settlementTime\": \"2025-02-27T07:31:10.000Z\",\n" +
                 "    \"timesOrSessionDuration\": 10\n" +
                 "}";
-        DynamicOperationMsgDo msgDo = JSON.parseObject(msgDoStr, DynamicOperationMsgDo.class);
+        OperationEventMessageDo msgDo = JSON.parseObject(msgDoStr, OperationEventMessageDo.class);
         dynamicOperationPulsarHandler.handleMessage(msgDo);
     }
 

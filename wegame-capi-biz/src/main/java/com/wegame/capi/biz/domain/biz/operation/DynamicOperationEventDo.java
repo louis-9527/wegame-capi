@@ -1,56 +1,49 @@
 package com.wegame.capi.biz.domain.biz.operation;
 
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
+import com.wegame.capi.common.enums.OperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DynamicOperationEventDo {
-
+@EqualsAndHashCode(callSuper = false)
+public class DynamicOperationEventDo implements Serializable {
+    /**
+     * id
+     */
     private Long id;
-
     /**
      * 玩家名称
      */
     private String playerName;
-
     /**
      * 干预金额
      */
     private Long bonus;
-
     /**
      * 最小干预金额
      */
     private Long minBonus;
-
     /**
      * 最大干预金额
      */
     private Long maxBonus;
-
     /**
      * 已完成干预金额
      */
     private Long finishBonus;
-
-
     /**
      * 干预事件ID
      */
     private String eventId;
-
     /**
      * 干预事件类型
      * 代码：1, 表示正常游戏紧急干预.
@@ -58,18 +51,19 @@ public class DynamicOperationEventDo {
      * 代码:  3,  表示免费游戏紧急干预
      * 代码:  4, 表示免费游戏普通干预
      */
-    private DynamicOperationEventKindEnum eventKind;
+    private OperationEventKindEnum eventKind;
     /**
      * 游戏ID
      */
     private String gameId;
-
+    /**
+     * channelId
+     */
     private String channelId;
     /**
      * 生效时间
      */
     private Long effectedTime;
-
     /**
      * 过期时间
      */
@@ -87,7 +81,6 @@ public class DynamicOperationEventDo {
      * 上报状态
      */
     private DynamicOperationReportStatusEnum reportStatus;
-
     /**
      * 干预事件快照
      */
@@ -100,10 +93,8 @@ public class DynamicOperationEventDo {
      * 更新时间
      */
     private Long updateTime;
-
     /**
      * 上报失败原因
      */
     private String reportFailMsg;
-
 }

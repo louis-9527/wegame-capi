@@ -14,7 +14,6 @@ import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GameMultipleRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.service.DynamicOperationEventConfigService;
 import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
 import com.wegame.capi.biz.service.DynamicOperationEventService;
@@ -22,7 +21,7 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventEncryptRequest;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
-import com.wegame.capi.client.enums.DynamicOperationGameEnum;
+import com.wegame.capi.client.enums.OperationEventGameEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
@@ -51,7 +50,7 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicEven
 
 @Slf4j
 @Component
-public abstract class AbstractDynamicOperationManager {
+public abstract class AbstractOperationEventManager {
 
     @Autowired
     DynamicOperationEventService dynamicOperationEventService;
@@ -83,7 +82,7 @@ public abstract class AbstractDynamicOperationManager {
      * @return
      */
     public DynamicOperationEventDo getEffectedEvent(String playName, Long betAmount) {
-        DynamicOperationGameEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
+        OperationEventGameEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
         List<DynamicOperationEffectEventCatchDo> entries = dynamicOperationEventService.getEffectList(playName, this.getDynamicOperationGameEnum());
 
         for (DynamicOperationEffectEventCatchDo entry : entries) {
@@ -140,7 +139,7 @@ public abstract class AbstractDynamicOperationManager {
 
 
     public Long addEventDetail(DynamicOperationEventDetailDo eventDetailDo) {
-        DynamicOperationGameEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
+        OperationEventGameEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
         Long addId = dynamicOperationEventDetailService.add(eventDetailDo, dynamicOperationGame);
         DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(eventDetailDo.getEventRecordId())
                 .eventStatus(DynamicOperationEventStatusEnum.ING).build();
@@ -472,7 +471,7 @@ public abstract class AbstractDynamicOperationManager {
     }
 
 
-    public abstract DynamicOperationGameEnum getDynamicOperationGameEnum();
+    public abstract OperationEventGameEnum getDynamicOperationGameEnum();
 
 
     public List<List<DynamicOperationConfigDo>> getConfigDetail(DynamicOperationConfigQuery configQuery) {

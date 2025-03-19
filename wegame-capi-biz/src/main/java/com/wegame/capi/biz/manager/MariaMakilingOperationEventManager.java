@@ -1,38 +1,23 @@
 package com.wegame.capi.biz.manager;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.google.common.collect.Lists;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.DynamicOperationGameEnum;
-import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventTypeEnum;
+import com.wegame.capi.client.enums.OperationEventGameEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
-import io.swagger.models.auth.In;
-import org.bson.Document;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.mariamakilingTransactionManager;
 
 @Service
-@Component("mariaMakilingDynamicOperationManager")
-public class MariaMakilingDynamicOperationManager extends AbstractDynamicOperationManager {
+@Component("mariaMakilingOperationEventManager")
+public class MariaMakilingOperationEventManager extends AbstractOperationEventManager {
     // 使用 ConcurrentHashMap 进行缓存
     private static final Map<String, List<Double>> configMultipleArray = new ConcurrentHashMap<>();
     private static final Map<Double, List<List<DynamicOperationConfigDo>>> normalConfigDetailArray = new ConcurrentHashMap<>();
@@ -51,8 +36,8 @@ public class MariaMakilingDynamicOperationManager extends AbstractDynamicOperati
     }
 
     @Override
-    public DynamicOperationGameEnum getDynamicOperationGameEnum() {
-        return DynamicOperationGameEnum.MARIA_MAKILING_DYNAMIC;
+    public OperationEventGameEnum getDynamicOperationGameEnum() {
+        return OperationEventGameEnum.MARIA_MAKILING_DYNAMIC;
     }
 
     @Override
