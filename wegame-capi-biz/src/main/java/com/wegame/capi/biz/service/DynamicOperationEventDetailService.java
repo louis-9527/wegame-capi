@@ -35,6 +35,7 @@ import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMAR
 @Slf4j
 @Component
 public class DynamicOperationEventDetailService implements InitializingBean {
+
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
@@ -77,7 +78,12 @@ public class DynamicOperationEventDetailService implements InitializingBean {
         return DynamicOperationDetailConvert.toDoList(dynamicOperationDetailPos);
     }
 
+    ///////////////  above auto generated ///////////////
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
+        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
+    }
+
+    private MongoTemplate getPrimaryMongoTemplate(GameTypeEnum gameType) {
+        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
     }
 }
