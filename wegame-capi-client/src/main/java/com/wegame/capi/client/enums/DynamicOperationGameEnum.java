@@ -12,7 +12,7 @@ import lombok.ToString;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum DynamicOperationGameEnum {
 
-    MARIA_MAKILING_DYNAMIC(GameTypeEnum.MARIA_MAKILING, "mariamakiling_dynamicOperation_event", "mariamakiling_dynamicOperation_event_detail", "mariamakiling_dynamicOperation_event_config");
+    MARIA_MAKILING_DYNAMIC(GameTypeEnum.MARIA_MAKILING, "mariamakiling_dynamicOperation_event", "mariamakiling_dynamicOperation_event_detail", "mariamakiling_dynamicOperation_event_config","mariamakiling_dynamicOperation_event_config_record");
 
 
     /**
@@ -33,6 +33,11 @@ public enum DynamicOperationGameEnum {
      * 集合名称(事件倍数配置)
      */
     private final String eventConfigCollectionName;
+
+    /**
+     * 集合名称(事件倍数配置)
+     */
+    private final String eventConfigRecordCollectionName;
 
 
     public static DynamicOperationGameEnum valueOfGameType(GameTypeEnum gameType) {

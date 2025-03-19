@@ -13,4 +13,11 @@ public class DynamicOperationConfigQueryBuilder {
         criteria.and("gameId").is(recordQuery.getGameId());
         return new Query(criteria);
     }
+
+
+    public static Query buildRecordQuery(Long recordId) {
+        Criteria criteria = new Criteria();
+        criteria.and("betRecordId").is(recordId);
+        return new Query(criteria);
+    }
 }

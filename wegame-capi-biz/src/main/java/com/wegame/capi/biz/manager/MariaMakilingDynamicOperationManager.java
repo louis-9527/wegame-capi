@@ -67,9 +67,4 @@ public class MariaMakilingDynamicOperationManager extends AbstractDynamicOperati
         return configMultipleArray.computeIfAbsent(key, k -> super.getConfigMultipleArray());
     }
 
-    @Override
-    public <WD extends SymbolDo> List<WheelDo<WD>> convertWheelDoList(List<Object> wheelConfig) {
-        return JSON.parseObject(JSON.toJSONString(wheelConfig), new TypeReference<List<WheelDo<WD>>>() {
-        });
-    }
 }

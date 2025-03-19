@@ -20,7 +20,7 @@ public class GameEventDo<WD extends SymbolDo> {
      */
     private Boolean eventResult;
 
-    private List<WheelDo<WD>> wheelDos;
+    private List<GameMultipleRecordDo<WD>> recordDoList;
 
     /**
      * 命中的干预事件

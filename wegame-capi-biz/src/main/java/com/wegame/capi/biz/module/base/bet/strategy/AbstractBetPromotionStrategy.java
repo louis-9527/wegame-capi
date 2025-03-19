@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, BR extends ToVoConverter, WD extends SymbolDo> extends AbstractBetStrategy<R, BD, BR>{
+public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, BR extends ToVoConverter, WD extends SymbolDo> extends AbstractBetStrategy<R, BD, BR> {
 
     @Autowired
     private StartCardUseRecordService startCardUseRecordService;
@@ -63,7 +63,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         boolean useStartCard = betDo.getStarCardUseDo() != null;
         if (useStartCard) {
             // 使用星卡投注
-          return this.betForStartCard(betDo);
+            return this.betForStartCard(betDo);
         }
         UserInfo userInfo = UserInfoContext.getUserInfo();
         if (Objects.equals(cpChannelId, userInfo.getChannelId()) && betDo.getBetType() == BetTypeEnum.NORMAL_BET) {
@@ -72,13 +72,12 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         }
         // 正常投注
         BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, null);
-        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
+        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, this.hasRewardFreeWheel(betRecordDo.getGameRecordList()));
         return this.buildResult(betRecordDo, resultDo);
     }
 
 
-
-    private BetResultDo<BR> betForStartCard(BetDo<BD> betDo){
+    private BetResultDo<BR> betForStartCard(BetDo<BD> betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
 
@@ -120,7 +119,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
                 .playName(userInfo.getPlayerName()).build();
         startCardUseRecordService.update(updateRecord, this.getGame().getGameInfo().getGameType());
         //调用投注
-        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(rBetRecordDo, rBetRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
+        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(rBetRecordDo, this.hasRewardFreeWheel(rBetRecordDo.getGameRecordList()));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             // 更新星卡上报状态->无需上报
@@ -143,7 +142,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         GameEventDo<WD> eventBetResult = getDynamicOperationManager().getEventBetResult(betAndPayAmount.getValue());
         if (!eventBetResult.getEventResult()) {
             BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, null);
-            BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
+            BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, this.hasRewardFreeWheel(betRecordDo.getGameRecordList()));
             return this.buildResult(betRecordDo, resultDo);
         } else {
             BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, eventBetResult);
@@ -151,7 +150,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
             // 构建并保存干预记录
             Long detailId = this.saveEventDetail(userInfo, generateBetRecordId(), betRecordDo, eventBetResult);
             // 投注并派奖
-            BetSingleWalletResultDo resultDo = super.saveBetRecordAndBetWithPayout(betRecordDo, betRecordDo.getGameRecordList().get(0).hasRewardFreeSpins());
+            BetSingleWalletResultDo resultDo = super.saveBetRecordAndBetWithPayout(betRecordDo, this.hasRewardFreeWheel(betRecordDo.getGameRecordList()));
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             // 命中干预事件,从结果中获取数据
             BetStatusEnum betStatusEnum = BetStatusEnum.FAIL;
@@ -166,7 +165,8 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
             return this.buildResult(betRecordDo, resultDo);
         }
     }
-        private BetRecordDo<R> loadBetRecordDo(BetDo<BD> betDo, GameEventDo<WD> gameEventDo) {
+
+    private BetRecordDo<R> loadBetRecordDo(BetDo<BD> betDo, GameEventDo<WD> gameEventDo) {
         //获取投注记录
         long betRecordId = generateBetRecordId();
         Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
@@ -188,7 +188,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         return loadBetRecordDo(betDo, null);
     }
 
-    private  Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(BetDo<BD> betDo) {
+    private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(BetDo<BD> betDo) {
         StarCardUseDo starCardUse = betDo.getStarCardUseDo();
         BetRecordDo<R> rBetRecordDo = null;
         int i = 10;
@@ -264,4 +264,8 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
     public abstract Pair<Long, Long> getBetAndPayAmount(BetDo<BD> betDo);
 
 
+    public abstract boolean hasRewardFreeWheel(List<R> gameRecordList);
 }
+
+
+

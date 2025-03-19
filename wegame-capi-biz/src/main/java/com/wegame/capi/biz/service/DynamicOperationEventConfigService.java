@@ -10,7 +10,9 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationConfigQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationConfigConvert;
 import com.wegame.capi.biz.converter.DynamicOperationConvert;
+import com.wegame.capi.biz.domain.biz.game.GameMultipleRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -20,6 +22,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
+import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigRecordPo;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,7 +42,6 @@ import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -76,6 +78,24 @@ public class DynamicOperationEventConfigService {
                 .collect(Collectors.toList());
     }
 
+
+    public <WD extends SymbolDo> List<GameMultipleRecordDo<WD>> listRecord(Long recordId, DynamicOperationGameEnum dynamicOperationGame) {
+        List<DynamicOperationConfigRecordPo> dynamicOperationConfigPos = getMongoTemplate(dynamicOperationGame.getGameType())
+                .find(DynamicOperationConfigQueryBuilder.buildRecordQuery(recordId), DynamicOperationConfigRecordPo.class, dynamicOperationGame.getEventConfigRecordCollectionName());
+
+        return DynamicOperationConfigConvert.convertRecordDos(dynamicOperationConfigPos);
+    }
+
+
+    public Long addConfig(DynamicOperationConfigPo configPo, DynamicOperationGameEnum dynamicOperationGame){
+        DynamicOperationConfigPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(configPo,dynamicOperationGame.getEventConfigCollectionName());
+        return insert.getId();
+    }
+
+    public Long addConfigRecord(DynamicOperationConfigRecordPo recordPo, DynamicOperationGameEnum dynamicOperationGame){
+        DynamicOperationConfigRecordPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(recordPo,dynamicOperationGame.getEventConfigRecordCollectionName());
+        return insert.getId();
+    }
 
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
         MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);

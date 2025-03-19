@@ -14,6 +14,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.manager.AbstractDynamicOperationManager;
@@ -30,6 +31,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -120,6 +122,12 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
+    public boolean hasRewardFreeWheel(List<MariaMakilingGameRecordDo> gameRecordList) {
+        RewardResultDo<SymbolDo> rewardResult = gameRecordList.get(0).getRewardResult();
+        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel();
+    }
+
+    @Override
     public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(Long betRecordId, BetDo<MariaMakilingBetDo> betDo, List<MariaMakilingGameRecordDo> list) {
         // 构建投注记录
         long totalRewardAmount = list.stream()
@@ -161,6 +169,7 @@ public abstract class AbstractMariaMakilingBetStrategy
             throw new BusinessException(ErrorCode.ERR_INTER);
         }
     }
+
     public void freeWheelAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
         // do nothing
     }

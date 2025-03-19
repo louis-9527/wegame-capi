@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DynamicOperationConfigDo {
-    private String id;
+    private Long id;
     /**
      * 游戏ID
      */
@@ -30,8 +30,4 @@ public class DynamicOperationConfigDo {
      */
     private Double multiple;
 
-    /**
-     * 配置明细
-     */
-    private List<Object> detail;
 }
