@@ -26,7 +26,7 @@ public class RedeemTreasureVo implements Serializable {
     @ApiModelProperty(value = "平台id", required = true)
     private String pId;
     @ApiModelProperty(value = "等级", required = true)
-    private String level;
+    private Integer level;
     @ApiModelProperty(value = "refId", required = true)
     private String refId;
     @ApiModelProperty(value = "经验值", required = true)
