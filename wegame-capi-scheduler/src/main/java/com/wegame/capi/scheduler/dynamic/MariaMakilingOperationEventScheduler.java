@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+/**
+ * MariaMakiling干预事件定时任务
+ */
 @Slf4j
 @Service
 public class MariaMakilingOperationEventScheduler
-        extends AbstractOperationEventScheduler
-        implements Runnable {
+        extends AbstractOperationEventScheduler {
 
     @Autowired
     MariaMakilingOperationEventManager mariaMakilingOperationEventManager;

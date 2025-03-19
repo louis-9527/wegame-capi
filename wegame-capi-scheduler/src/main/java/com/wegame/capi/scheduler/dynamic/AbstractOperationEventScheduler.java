@@ -102,41 +102,45 @@ public abstract class AbstractOperationEventScheduler
      * @param eventDetailDo
      */
     private void eventDetailFailHandle(DynamicOperationEventDetailDo eventDetailDo) {
-        GameTypeEnum gameType = operationEventGame().getGameType();
-        Long betRecordId = eventDetailDo.getBetRecordId();
-        // 查询原始订单的状态
-        BetRecordDo recordDo = betRecordService.get(betRecordId, gameType);
-        if (Objects.equals(BetStatusEnum.ING.getCode(), recordDo.getStatus())) {
-            return;
-        }
-        BetStatusEnum eventDetailStatus = null;
-        DynamicOperationEventStatusEnum newEventStatus = DynamicOperationEventStatusEnum.NONE;
-        DynamicOperationEventSubStatusEnum eventSubStatus = null;
-        // 获取事件信息
-        DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(betRecordId, operationEventGame());
-        if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
-            eventDetailStatus = BetStatusEnum.FAIL;
-        } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
-            eventDetailStatus = BetStatusEnum.SUCCESS;
-            if (eventDetailDo.getEventAmount() + eventDo.getFinishBonus() > eventDo.getMinBonus()) {
-                eventSubStatus = DynamicOperationEventSubStatusEnum.FINISH_NORMAL;
-                newEventStatus = DynamicOperationEventStatusEnum.FINISH;
+        try {
+            GameTypeEnum gameType = operationEventGame().getGameType();
+            Long betRecordId = eventDetailDo.getBetRecordId();
+            // 查询原始订单的状态
+            BetRecordDo recordDo = betRecordService.get(betRecordId, gameType);
+            if (Objects.equals(BetStatusEnum.ING.getCode(), recordDo.getStatus())) {
+                return;
             }
-        }
-        // 更新订单信息
-        DynamicOperationEventDetailDo eventDetailUpdate = DynamicOperationEventDetailDo.builder()
-                .id(eventDetailDo.getId())
-                .betStatus(eventDetailStatus)
-                .betId(recordDo.getBetId())
-                .build();
-        DynamicOperationEventDo eventDoUpdate = DynamicOperationEventDo.builder()
-                .id(eventDo.getId())
-                .eventSubStatus(eventSubStatus)
-                .finishBonus(eventDo.getFinishBonus() + eventDetailDo.getEventAmount())
-                .eventStatus(newEventStatus).build();
-        operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
-        if (DynamicOperationEventStatusEnum.FINISH == newEventStatus) {
-            operationEventManager().asyncReportEvent(eventDo.getId());
+            BetStatusEnum eventDetailStatus = null;
+            DynamicOperationEventStatusEnum newEventStatus = DynamicOperationEventStatusEnum.NONE;
+            DynamicOperationEventSubStatusEnum eventSubStatus = null;
+            // 获取事件信息
+            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(betRecordId, operationEventGame());
+            if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
+                eventDetailStatus = BetStatusEnum.FAIL;
+            } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
+                eventDetailStatus = BetStatusEnum.SUCCESS;
+                if (eventDetailDo.getEventAmount() + eventDo.getFinishBonus() > eventDo.getMinBonus()) {
+                    eventSubStatus = DynamicOperationEventSubStatusEnum.FINISH_NORMAL;
+                    newEventStatus = DynamicOperationEventStatusEnum.FINISH;
+                }
+            }
+            // 更新订单信息
+            DynamicOperationEventDetailDo eventDetailUpdate = DynamicOperationEventDetailDo.builder()
+                    .id(eventDetailDo.getId())
+                    .betStatus(eventDetailStatus)
+                    .betId(recordDo.getBetId())
+                    .build();
+            DynamicOperationEventDo eventDoUpdate = DynamicOperationEventDo.builder()
+                    .id(eventDo.getId())
+                    .eventSubStatus(eventSubStatus)
+                    .finishBonus(eventDo.getFinishBonus() + eventDetailDo.getEventAmount())
+                    .eventStatus(newEventStatus).build();
+            operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
+            if (DynamicOperationEventStatusEnum.FINISH == newEventStatus) {
+                operationEventManager().asyncReportEvent(eventDo.getId());
+            }
+        } catch (Exception e) {
+            log.error("{}#eventDetailFailHandle exception:{}", getClass().getSimpleName(), e.getMessage(), e);
         }
     }
 

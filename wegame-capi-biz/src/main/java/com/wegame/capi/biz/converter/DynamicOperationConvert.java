@@ -1,14 +1,18 @@
 package com.wegame.capi.biz.converter;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
-import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
+import com.wegame.capi.common.enums.OperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
+import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.dao.mapper.domain.business.DynamicOperationEventPo;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -17,15 +21,44 @@ import java.util.stream.Collectors;
 
 public class DynamicOperationConvert {
 
-    public static List<DynamicOperationEventDo> toDoList(List<DynamicOperationPo> poList) {
+
+    public static DynamicOperationEventDo messageToDo(OperationEventMessageDo messageDo) {
+        long currentMilli = DateUtil.getCurrentMilli();
+        OperationEventKindEnum eventKindEnum = OperationEventKindEnum.valueOfCode(messageDo.getEventKind());
+        if (Objects.isNull(eventKindEnum)) {
+            return null;
+        }
+        BigDecimal bonus = messageDo.getBonus();
+        BigDecimal minBonus = bonus.multiply(new BigDecimal("0.95"));
+        DynamicOperationEventDo eventDo = new DynamicOperationEventDo();
+        eventDo.setPlayerName(messageDo.getPlayerName());
+        eventDo.setBonus(AmountUtil.toLong(bonus));
+        eventDo.setMinBonus(AmountUtil.toLong(minBonus));
+        eventDo.setMaxBonus(AmountUtil.toLong(bonus));
+        eventDo.setFinishBonus(0L);
+        eventDo.setEventStatus(DynamicOperationEventStatusEnum.NONE);
+        eventDo.setReportStatus(DynamicOperationReportStatusEnum.NONE);
+        eventDo.setEventId(messageDo.getEventId());
+        eventDo.setEventKind(eventKindEnum);
+        eventDo.setGameId(messageDo.getGameId());
+        eventDo.setChannelId(messageDo.getChannelId());
+        eventDo.setEffectedTime(DateUtil.utcStringToEpochMilli(messageDo.getEffectedTime()));
+        eventDo.setExpiredTime(messageDo.getExpiredTime() == null ? DateUtil.getMaxMilli() : DateUtil.utcStringToEpochMilli(messageDo.getExpiredTime()));
+        eventDo.setEventMsgDetail(JSON.toJSONString(messageDo));
+        eventDo.setCreateTime(currentMilli);
+        eventDo.setUpdateTime(currentMilli);
+        return eventDo;
+    }
+
+    public static List<DynamicOperationEventDo> toDoList(List<DynamicOperationEventPo> poList) {
         return Optional.ofNullable(poList).orElse(Collections.emptyList())
                 .stream()
-                .map(DynamicOperationConvert::toDo)
+                .map(DynamicOperationConvert::poToDo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
-    public static DynamicOperationEventDo toDo(DynamicOperationPo eventPo) {
+    public static DynamicOperationEventDo poToDo(DynamicOperationEventPo eventPo) {
         if (Objects.isNull(eventPo)) {
             return null;
         }
@@ -37,7 +70,7 @@ public class DynamicOperationConvert {
         eventDo.setMaxBonus(eventPo.getMaxBonus());
         eventDo.setFinishBonus(eventPo.getFinishBonus());
         eventDo.setEventId(eventPo.getEventId());
-        eventDo.setEventKind(DynamicOperationEventKindEnum.valueOfCode(eventPo.getEventKind()));
+        eventDo.setEventKind(OperationEventKindEnum.valueOfCode(eventPo.getEventKind()));
         eventDo.setGameId(eventPo.getGameId());
         eventDo.setChannelId(eventPo.getChannelId());
         eventDo.setEffectedTime(eventPo.getEffectedTime());
@@ -48,12 +81,12 @@ public class DynamicOperationConvert {
         return eventDo;
     }
 
-    public static DynamicOperationPo toPo(DynamicOperationEventDo eventDo, OptEnum optEnum) {
+    public static DynamicOperationEventPo doToPo(DynamicOperationEventDo eventDo, OptEnum optEnum) {
         if (Objects.isNull(eventDo)) {
             return null;
         }
         long currentMilli = DateUtil.getCurrentMilli();
-        DynamicOperationPo po = DynamicOperationPo.builder().build();
+        DynamicOperationEventPo po = DynamicOperationEventPo.builder().build();
         po.setId(eventDo.getId());
         if (OptEnum.ADD.equals(optEnum)) {
             po.setEventStatus(DynamicOperationEventStatusEnum.NONE.getCode());

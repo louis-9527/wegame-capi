@@ -2,13 +2,12 @@ package com.wegame.capi.application.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationMsgDo;
-import com.wegame.capi.biz.listener.DynamicOperationPulsarListener;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
+import com.wegame.capi.biz.listener.OperationEventPulsarListener;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @Autowired
-    private DynamicOperationPulsarListener dynamicOperationPulsarHandler;
+    private OperationEventPulsarListener dynamicOperationPulsarHandler;
 
 
     @ApiOperation(value = "eventMsg", httpMethod = "GET")
@@ -43,7 +42,7 @@ public class TestController {
 //                "    \"settlementTime\": \"2025-02-27T07:31:10.000Z\",\n" +
 //                "    \"timesOrSessionDuration\": 10\n" +
 //                "}";
-        DynamicOperationMsgDo msgDo = JSON.parseObject(event, DynamicOperationMsgDo.class);
+        OperationEventMessageDo msgDo = JSON.parseObject(event, OperationEventMessageDo.class);
         dynamicOperationPulsarHandler.handleMessage(msgDo);
         return CommonResponse.build(true);
     }

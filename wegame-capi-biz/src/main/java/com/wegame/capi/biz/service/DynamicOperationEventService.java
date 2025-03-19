@@ -14,7 +14,7 @@ import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.client.enums.OperationEventGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationPo;
+import com.wegame.capi.dao.mapper.domain.business.DynamicOperationEventPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,12 +57,12 @@ public class DynamicOperationEventService implements InitializingBean {
 
     public Long add(DynamicOperationEventDo eventDo, OperationEventGameEnum gameEnum) {
         eventDo.setId(snowflakeIdGenerator.nextId());
-        DynamicOperationPo dynamicOperationPo = DynamicOperationConvert.toPo(eventDo, OptEnum.ADD);
+        DynamicOperationEventPo dynamicOperationPo = DynamicOperationConvert.doToPo(eventDo, OptEnum.ADD);
         if (Objects.isNull(dynamicOperationPo)) {
             return null;
         }
         try {
-            DynamicOperationPo insert = getMongoTemplate(gameEnum.getGameType()).insert(dynamicOperationPo, gameEnum.getEventCollectionName());
+            DynamicOperationEventPo insert = getMongoTemplate(gameEnum.getGameType()).insert(dynamicOperationPo, gameEnum.getEventCollectionName());
             String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, eventDo.getGameId(), eventDo.getPlayerName());
             redisTemplate.delete(catch_key);
             return insert.getId();
@@ -81,13 +81,13 @@ public class DynamicOperationEventService implements InitializingBean {
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(dynamicOperationGame.getGameType()).updateFirst(query,
                 DynamicOperationQueryBuilder.buildUpdateById(eventDo),
-                DynamicOperationPo.class,
+                DynamicOperationEventPo.class,
                 dynamicOperationGame.getEventCollectionName());
         return result.getModifiedCount() > 0;
     }
 
     public List<DynamicOperationEventDo> queryList(DynamicOperationQuery operationQuery, OperationEventGameEnum dynamicOperationGame) {
-        List<DynamicOperationPo> poList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
+        List<DynamicOperationEventPo> poList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), DynamicOperationEventPo.class, dynamicOperationGame.getEventCollectionName());
         return DynamicOperationConvert.toDoList(poList);
     }
 
@@ -107,7 +107,7 @@ public class DynamicOperationEventService implements InitializingBean {
                     .collect(Collectors.toList());
         }
 
-        List<DynamicOperationPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId()), DynamicOperationPo.class, dynamicOperationGame.getEventCollectionName());
+        List<DynamicOperationEventPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId()), DynamicOperationEventPo.class, dynamicOperationGame.getEventCollectionName());
         if (CollectionUtils.isEmpty(operationPoList)) {
             Map<Long, String> catchMap = new HashMap<>();
             catchMap.put(-1L, "-1");
@@ -116,7 +116,7 @@ public class DynamicOperationEventService implements InitializingBean {
         }
         List<DynamicOperationEffectEventCatchDo> resultList = new ArrayList<>(entries.size());
         Map<Long, String> catchMap = new HashMap<>();
-        for (DynamicOperationPo operationPo : operationPoList) {
+        for (DynamicOperationEventPo operationPo : operationPoList) {
             DynamicOperationEffectEventCatchDo build = DynamicOperationEffectEventCatchDo.builder()
                     .id(operationPo.getId())
                     .effectedTime(operationPo.getEffectedTime())
@@ -137,11 +137,11 @@ public class DynamicOperationEventService implements InitializingBean {
         Query query = new Query(criteria);
         // todo fix @tutu
         query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus");
-        DynamicOperationPo operationPo = getMongoTemplate(gameEnum.getGameType()).findOne(
+        DynamicOperationEventPo operationPo = getMongoTemplate(gameEnum.getGameType()).findOne(
                 query,
-                DynamicOperationPo.class,
+                DynamicOperationEventPo.class,
                 gameEnum.getEventCollectionName());
-        return DynamicOperationConvert.toDo(operationPo);
+        return DynamicOperationConvert.poToDo(operationPo);
     }
 
     private void saveCatch(String catch_key, Map<Long, String> catchMap) {

@@ -13,7 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class DynamicOperationPo implements Serializable {
+public class DynamicOperationEventPo implements Serializable {
     private static final long serialVersionUID = 4993596549150377985L;
     /**
      * 主键ID

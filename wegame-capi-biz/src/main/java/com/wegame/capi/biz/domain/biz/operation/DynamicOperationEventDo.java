@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.domain.biz.operation;
 
-import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
+import com.wegame.capi.common.enums.OperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
@@ -51,7 +51,7 @@ public class DynamicOperationEventDo implements Serializable {
      * 代码:  3,  表示免费游戏紧急干预
      * 代码:  4, 表示免费游戏普通干预
      */
-    private DynamicOperationEventKindEnum eventKind;
+    private OperationEventKindEnum eventKind;
     /**
      * 游戏ID
      */
