@@ -2,19 +2,20 @@ package com.wegame.capi.client.domain.vo.promotion;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
+@ToString
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@ApiModel(description = "背包VO")
-public class BagCurrentRewordVo {
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(description = "背包")
+public class BagCurrentRewordVo implements Serializable {
     @ApiModelProperty(value = "背包列表", required = true)
     private List<BagRewardDetailVo> rewardDetails;
 }

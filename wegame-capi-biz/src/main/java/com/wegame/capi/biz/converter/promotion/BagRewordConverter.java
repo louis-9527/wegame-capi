@@ -20,25 +20,25 @@ import java.util.stream.Collectors;
 
 public class BagRewordConverter {
 
-    public static BagCurrentRewordDetailDo currentResToDo(GetBagCurrentRewardRes.GetBagCurrentRewardRecord rewardBag) {
-        if (rewardBag == null) {
+    public static BagCurrentRewordDetailDo currentResToDo(GetBagCurrentRewardRes.GetBagCurrentRewardRecord rewardRecord) {
+        if (Objects.isNull(rewardRecord)) {
             return null;
         }
         BagCurrentRewordDetailDo rewordDetailDo = new BagCurrentRewordDetailDo();
-        rewordDetailDo.setRewardId(rewardBag.getRewardId());
-        rewordDetailDo.setRewardConfigId(rewardBag.getRewardConfigId());
-        rewordDetailDo.setName(rewardBag.getName());
-        rewordDetailDo.setStarLevel(rewardBag.getStarLevel());
-        rewordDetailDo.setDescription(rewardBag.getDescription());
-        rewordDetailDo.setBalanceRequired(AmountUtil.toLong(rewardBag.getBalanceRequired()));
-        rewordDetailDo.setSkipGameId(rewardBag.getGameId());
-        rewordDetailDo.setGameId(rewardBag.getGameCode());
-        rewordDetailDo.setGameName(rewardBag.getGameName());
-        rewordDetailDo.setEffectTime(rewardBag.getRewardDate().getTime());
-        rewordDetailDo.setExpiredTime(rewardBag.getExpiryDate().getTime());
-        rewordDetailDo.setRewardType(rewardBag.getRewardType());
-        rewordDetailDo.setBetValue(AmountUtil.toLong(rewardBag.getBetValue()));
-        rewordDetailDo.setImgUrl(rewardBag.getImgUrl());
+        rewordDetailDo.setRewardId(rewardRecord.getRewardId());
+        rewordDetailDo.setRewardConfigId(rewardRecord.getRewardConfigId());
+        rewordDetailDo.setName(rewardRecord.getName());
+        rewordDetailDo.setStarLevel(rewardRecord.getStarLevel());
+        rewordDetailDo.setDescription(rewardRecord.getDescription());
+        rewordDetailDo.setBalanceRequired(AmountUtil.toLong(rewardRecord.getBalanceRequired()));
+        rewordDetailDo.setSkipGameId(rewardRecord.getGameId());
+        rewordDetailDo.setGameId(rewardRecord.getGameCode());
+        rewordDetailDo.setGameName(rewardRecord.getGameName());
+        rewordDetailDo.setEffectTime(rewardRecord.getRewardDate().getTime());
+        rewordDetailDo.setExpiredTime(rewardRecord.getExpiryDate().getTime());
+        rewordDetailDo.setRewardType(rewardRecord.getRewardType());
+        rewordDetailDo.setBetValue(AmountUtil.toLong(rewardRecord.getBetValue()));
+        rewordDetailDo.setImgUrl(rewardRecord.getImgUrl());
         return rewordDetailDo;
     }
 
@@ -53,7 +53,7 @@ public class BagRewordConverter {
 
 
     public static BagRewardDetailVo currentDoToVo(BagCurrentRewordDetailDo detailDo) {
-        if (detailDo == null) {
+        if (Objects.isNull(detailDo)) {
             return null;
         }
         BagRewardDetailVo detailVo = new BagRewardDetailVo();
@@ -135,7 +135,6 @@ public class BagRewordConverter {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-
 
     public static HistoryMessageDo messageResToDo(GetHistoryMessageRes.MessageRes messageRes) {
         if (Objects.isNull(messageRes)) {

@@ -1,26 +1,26 @@
 package com.wegame.capi.biz.converter.promotion;
 
 import com.wegame.capi.api.domain.res.promotion.GetAchievementRes;
-import com.wegame.capi.api.domain.res.promotion.RedeemAchievementRes;
 import com.wegame.capi.client.domain.vo.promotion.AchievementVo;
-import com.wegame.capi.client.domain.vo.promotion.RedeemAchievementVo;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class AchievementConverter {
 
-    public static List<AchievementVo> getAchievementToVo(List<GetAchievementRes.Achievement> achievementList) {
-        if (CollectionUtils.isEmpty(achievementList)) {
-            return Collections.emptyList();
-        }
-        return achievementList.stream().map(AchievementConverter::getAchievementToVo).collect(Collectors.toList());
+    public static List<AchievementVo> toVoList(List<GetAchievementRes.Achievement> achievementList) {
+        return Optional.ofNullable(achievementList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(AchievementConverter::toVo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
-    public static AchievementVo getAchievementToVo(GetAchievementRes.Achievement achievement) {
+    public static AchievementVo toVo(GetAchievementRes.Achievement achievement) {
         if (Objects.isNull(achievement)) {
             return null;
         }
@@ -29,22 +29,27 @@ public class AchievementConverter {
                 .name(achievement.getName())
                 .description(achievement.getDescription())
                 .iconUrl(achievement.getIconUrl())
-                .progressList(AchievementVo.ProgressVo.builder().target(achievement.getProgressList().getTarget()).current(achievement.getProgressList().getCurrent()).build())
+                .progressList(AchievementVo.ProgressVo.builder()
+                        .target(achievement.getProgressList().getTarget())
+                        .current(achievement.getProgressList().getCurrent())
+                        .build())
                 .completeAt(Objects.isNull(achievement.getCompleteAt()) ? null : achievement.getCompleteAt().getTime())
                 .status(achievement.getStatus())
                 .redeemId(achievement.getRedeemId())
-                .rewards(getAchievementRewardToVo(achievement.getRewards()))
+                .rewards(achievementRewardToVoList(achievement.getRewards()))
                 .build();
     }
 
-    public static List<AchievementVo.RewardVo> getAchievementRewardToVo(List<GetAchievementRes.Reward> rewardList) {
-        if (CollectionUtils.isEmpty(rewardList)) {
-            return Collections.emptyList();
-        }
-        return rewardList.stream().map(AchievementConverter::getAchievementRewardToVo).collect(Collectors.toList());
+    public static List<AchievementVo.RewardVo> achievementRewardToVoList(List<GetAchievementRes.Reward> rewardList) {
+        return Optional.ofNullable(rewardList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(AchievementConverter::achievementRewardToVo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
-    public static AchievementVo.RewardVo getAchievementRewardToVo(GetAchievementRes.Reward reward) {
+    public static AchievementVo.RewardVo achievementRewardToVo(GetAchievementRes.Reward reward) {
         if (Objects.isNull(reward)) {
             return null;
         }
@@ -54,36 +59,6 @@ public class AchievementConverter {
                 .count(reward.getCount())
                 .starLevel(reward.getStarLevel())
                 .imgUrl(reward.getImgUrl())
-                .build();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static RedeemAchievementVo redeemAchievementRewardToVo(RedeemAchievementRes res) {
-        if (Objects.isNull(res)) {
-            return null;
-        }
-        return RedeemAchievementVo.builder()
-                .playerName(res.getPlayerName())
-                .channelId(res.getChannelId())
-                .pId(res.getPId())
-                .refId(res.getRefId())
-                .reward(redeemAchievementRewardToVo(res.getReward()))
-                .build();
-    }
-
-    public static RedeemAchievementVo.RedeemAchievementRewardVo redeemAchievementRewardToVo(RedeemAchievementRes.RedeemAchievementReward reward) {
-        if (Objects.isNull(reward)) {
-            return null;
-        }
-        return RedeemAchievementVo.RedeemAchievementRewardVo.builder()
-                .rewardConfigId(reward.getRewardConfigId())
-                .name(reward.getName())
-                .count(reward.getCount())
-                .imgUrl(reward.getImgUrl())
-                .betValue(reward.getBetValue())
-                .balanceRequired(reward.getBalanceRequired())
-                .starLevel(reward.getStarLevel())
                 .build();
     }
 }

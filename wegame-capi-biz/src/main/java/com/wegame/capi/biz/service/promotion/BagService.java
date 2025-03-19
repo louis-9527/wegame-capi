@@ -34,13 +34,11 @@ import java.util.List;
 @Component
 public class BagService {
 
-    @Autowired
-    private BagApi bagApi;
-    @Autowired
-    public SnowflakeIdGenerator snowflakeIdGenerator;
-
-
     private static final Integer BAG_CURRENT_REWORD_TYPE = 1;
+    @Autowired
+    BagApi bagApi;
+    @Autowired
+    SnowflakeIdGenerator snowflakeIdGenerator;
 
     public List<BagCurrentRewordDetailDo> listCurrentRewordRecord() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
@@ -85,7 +83,7 @@ public class BagService {
                 .rewardConfigId(rewardConfigId)
                 .build();
         GetRewardDetailRes rewardBagRes = bagApi.getRewardById(rewardByIdReq);
-        return RewordDetailConverter.resToDo(rewardBagRes.getDetails());
+        return RewordDetailConverter.toDo(rewardBagRes.getDetails());
     }
 
     public List<HistoryMessageDo> getHistoryMessageList(QueryHistoryMessageRequest messageRequest) {
