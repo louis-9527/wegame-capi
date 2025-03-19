@@ -6,9 +6,9 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.common.enums.OperationEventKindEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
+import com.wegame.capi.common.enums.OperationEventStatusEnum;
+import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
+import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationEventPo;
 
@@ -36,8 +36,8 @@ public class DynamicOperationConvert {
         eventDo.setMinBonus(AmountUtil.toLong(minBonus));
         eventDo.setMaxBonus(AmountUtil.toLong(bonus));
         eventDo.setFinishBonus(0L);
-        eventDo.setEventStatus(DynamicOperationEventStatusEnum.NONE);
-        eventDo.setReportStatus(DynamicOperationReportStatusEnum.NONE);
+        eventDo.setEventStatus(OperationEventStatusEnum.NONE);
+        eventDo.setReportStatus(OperationEventReportStatusEnum.NONE);
         eventDo.setEventId(messageDo.getEventId());
         eventDo.setEventKind(eventKindEnum);
         eventDo.setGameId(messageDo.getGameId());
@@ -75,9 +75,9 @@ public class DynamicOperationConvert {
         eventDo.setChannelId(eventPo.getChannelId());
         eventDo.setEffectedTime(eventPo.getEffectedTime());
         eventDo.setExpiredTime(eventPo.getExpiredTime());
-        eventDo.setEventStatus(DynamicOperationEventStatusEnum.valueOfCode(eventPo.getEventStatus()));
-        eventDo.setEventSubStatus(DynamicOperationEventSubStatusEnum.valueOfCode(eventPo.getEventSubStatus()));
-        eventDo.setReportStatus(DynamicOperationReportStatusEnum.valueOfCode(eventPo.getReportStatus()));
+        eventDo.setEventStatus(OperationEventStatusEnum.valueOfCode(eventPo.getEventStatus()));
+        eventDo.setEventSubStatus(OperationEventSubStatusEnum.valueOfCode(eventPo.getEventSubStatus()));
+        eventDo.setReportStatus(OperationEventReportStatusEnum.valueOfCode(eventPo.getReportStatus()));
         return eventDo;
     }
 
@@ -89,9 +89,9 @@ public class DynamicOperationConvert {
         DynamicOperationEventPo po = DynamicOperationEventPo.builder().build();
         po.setId(eventDo.getId());
         if (OptEnum.ADD.equals(optEnum)) {
-            po.setEventStatus(DynamicOperationEventStatusEnum.NONE.getCode());
-            po.setEventSubStatus(DynamicOperationEventSubStatusEnum.NONE.getCode());
-            po.setReportStatus(DynamicOperationReportStatusEnum.NONE.getCode());
+            po.setEventStatus(OperationEventStatusEnum.NONE.getCode());
+            po.setEventSubStatus(OperationEventSubStatusEnum.NONE.getCode());
+            po.setReportStatus(OperationEventReportStatusEnum.NONE.getCode());
             po.setEffectedTime(eventDo.getEffectedTime());
             po.setExpiredTime(eventDo.getExpiredTime());
             po.setPlayerName(eventDo.getPlayerName());

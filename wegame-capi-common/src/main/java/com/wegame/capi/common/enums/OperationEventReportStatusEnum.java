@@ -9,7 +9,7 @@ import java.util.Objects;
 @ToString
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum DynamicOperationReportStatusEnum {
+public enum OperationEventReportStatusEnum {
 
     NONE(0, "未上报(默认)"),
     FINISH(1, "已上报"),
@@ -31,13 +31,13 @@ public enum DynamicOperationReportStatusEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private DynamicOperationReportStatusEnum(Integer code, String desc) {
+    private OperationEventReportStatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public static DynamicOperationReportStatusEnum valueOfCode(Integer code) {
-        for (DynamicOperationReportStatusEnum item : DynamicOperationReportStatusEnum.values()) {
+    public static OperationEventReportStatusEnum valueOfCode(Integer code) {
+        for (OperationEventReportStatusEnum item : OperationEventReportStatusEnum.values()) {
             if (Objects.equals(item.getCode(), code)) {
                 return item;
             }

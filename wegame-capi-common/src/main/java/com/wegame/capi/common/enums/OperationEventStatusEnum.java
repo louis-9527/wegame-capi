@@ -9,7 +9,7 @@ import java.util.Objects;
 @ToString
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum DynamicOperationEventStatusEnum {
+public enum OperationEventStatusEnum {
 
     NONE(0, "可干预"),
     ING(1, "干预中"),
@@ -31,14 +31,14 @@ public enum DynamicOperationEventStatusEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private DynamicOperationEventStatusEnum(Integer code, String desc) {
+    private OperationEventStatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
 
-    public static DynamicOperationEventStatusEnum valueOfCode(Integer code) {
-        for (DynamicOperationEventStatusEnum item : DynamicOperationEventStatusEnum.values()) {
+    public static OperationEventStatusEnum valueOfCode(Integer code) {
+        for (OperationEventStatusEnum item : OperationEventStatusEnum.values()) {
             if (Objects.equals(item.getCode(), code)) {
                 return item;
             }

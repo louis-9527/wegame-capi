@@ -9,12 +9,12 @@ import com.wegame.capi.biz.manager.AbstractOperationEventManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
 import com.wegame.capi.biz.service.DynamicOperationEventService;
-import com.wegame.capi.client.enums.OperationEventGameEnum;
+import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
+import com.wegame.capi.common.enums.OperationEventStatusEnum;
+import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
+import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
@@ -47,7 +47,7 @@ public abstract class AbstractOperationEventScheduler
     @Autowired
     public BetRecordService betRecordService;
 
-    abstract OperationEventGameEnum operationEventGame();
+    abstract OperationEventTypeEnum operationEventGame();
 
     abstract AbstractOperationEventManager operationEventManager();
 
@@ -111,8 +111,8 @@ public abstract class AbstractOperationEventScheduler
                 return;
             }
             BetStatusEnum eventDetailStatus = null;
-            DynamicOperationEventStatusEnum newEventStatus = DynamicOperationEventStatusEnum.NONE;
-            DynamicOperationEventSubStatusEnum eventSubStatus = null;
+            OperationEventStatusEnum newEventStatus = OperationEventStatusEnum.NONE;
+            OperationEventSubStatusEnum eventSubStatus = null;
             // 获取事件信息
             DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(betRecordId, operationEventGame());
             if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
@@ -120,8 +120,8 @@ public abstract class AbstractOperationEventScheduler
             } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
                 eventDetailStatus = BetStatusEnum.SUCCESS;
                 if (eventDetailDo.getEventAmount() + eventDo.getFinishBonus() > eventDo.getMinBonus()) {
-                    eventSubStatus = DynamicOperationEventSubStatusEnum.FINISH_NORMAL;
-                    newEventStatus = DynamicOperationEventStatusEnum.FINISH;
+                    eventSubStatus = OperationEventSubStatusEnum.FINISH_NORMAL;
+                    newEventStatus = OperationEventStatusEnum.FINISH;
                 }
             }
             // 更新订单信息
@@ -136,7 +136,7 @@ public abstract class AbstractOperationEventScheduler
                     .finishBonus(eventDo.getFinishBonus() + eventDetailDo.getEventAmount())
                     .eventStatus(newEventStatus).build();
             operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
-            if (DynamicOperationEventStatusEnum.FINISH == newEventStatus) {
+            if (OperationEventStatusEnum.FINISH == newEventStatus) {
                 operationEventManager().asyncReportEvent(eventDo.getId());
             }
         } catch (Exception e) {
@@ -154,8 +154,8 @@ public abstract class AbstractOperationEventScheduler
         Long lastId = null;
         List<DynamicOperationEventDo> eventDetailDoList = null;
         DynamicOperationQuery query = DynamicOperationQuery.builder()
-                .reportStatus(DynamicOperationReportStatusEnum.NONE.getCode())
-                .eventStatus(DynamicOperationEventStatusEnum.FINISH.getCode())
+                .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
+                .eventStatus(OperationEventStatusEnum.FINISH.getCode())
                 .createTimeLt(fiveMinutesAgo)
                 .direction(Sort.Direction.ASC)
                 .orderByClause("_id")
@@ -193,7 +193,7 @@ public abstract class AbstractOperationEventScheduler
         List<DynamicOperationEventDo> eventDetailDoList = null;
 
         DynamicOperationQuery query = DynamicOperationQuery.builder()
-                .reportStatus(DynamicOperationReportStatusEnum.NONE.getCode())
+                .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                 .expiredTimeLt(DateUtil.getCurrentMilli())
                 .direction(Sort.Direction.ASC)
                 .orderByClause("_id")
@@ -214,7 +214,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventEventIngHandle(DynamicOperationEventDo eventDo) {
         if (eventDo.getExpiredTime() < DateUtil.getCurrentMilli()) {
             // 过期上报
-            operationEventManager().asyncUpdateFinishEvent(eventDo.getId(), DynamicOperationEventSubStatusEnum.FINISH_EXPIRED);
+            operationEventManager().asyncUpdateFinishEvent(eventDo.getId(), OperationEventSubStatusEnum.FINISH_EXPIRED);
         }
     }
 }

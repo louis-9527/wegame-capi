@@ -5,7 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.service.DynamicOperationEventConfigService;
-import com.wegame.capi.client.enums.OperationEventGameEnum;
+import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigRecordPo;
 import com.wegame.capi.test.BaseTest;
@@ -27,7 +27,7 @@ public class DynamicOperationEventConfigServiceTest  extends BaseTest {
         operationConfigPo.setGameId("zhumeng001");
         operationConfigPo.setMultiple(4.0);
         operationConfigPo.setBetType("BUY_BET");
-        dynamicOperationEventConfigService.addConfig(operationConfigPo, OperationEventGameEnum.MARIA_MAKILING_DYNAMIC);
+        dynamicOperationEventConfigService.addConfig(operationConfigPo, OperationEventTypeEnum.MARIA_MAKILING);
     }
     @Test
     public void addConfigRecord(){
@@ -45,6 +45,6 @@ public class DynamicOperationEventConfigServiceTest  extends BaseTest {
         ks.add(1002L);
         recordPo.setGameRecordIds(ks);
         recordPo.setFreeWheelFlag(false);
-        dynamicOperationEventConfigService.addConfigRecord(recordPo, OperationEventGameEnum.MARIA_MAKILING_DYNAMIC);
+        dynamicOperationEventConfigService.addConfigRecord(recordPo, OperationEventTypeEnum.MARIA_MAKILING);
     }
 }

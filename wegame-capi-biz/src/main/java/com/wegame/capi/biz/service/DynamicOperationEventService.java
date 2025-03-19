@@ -11,7 +11,7 @@ import com.wegame.capi.biz.builder.DynamicOperationQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEffectEventCatchDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
-import com.wegame.capi.client.enums.OperationEventGameEnum;
+import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationEventPo;
@@ -55,7 +55,7 @@ public class DynamicOperationEventService implements InitializingBean {
         });
     }
 
-    public Long add(DynamicOperationEventDo eventDo, OperationEventGameEnum gameEnum) {
+    public Long add(DynamicOperationEventDo eventDo, OperationEventTypeEnum gameEnum) {
         eventDo.setId(snowflakeIdGenerator.nextId());
         DynamicOperationEventPo dynamicOperationPo = DynamicOperationConvert.doToPo(eventDo, OptEnum.ADD);
         if (Objects.isNull(dynamicOperationPo)) {
@@ -75,7 +75,7 @@ public class DynamicOperationEventService implements InitializingBean {
 
     }
 
-    public Boolean update(DynamicOperationEventDo eventDo, OperationEventGameEnum dynamicOperationGame) {
+    public Boolean update(DynamicOperationEventDo eventDo, OperationEventTypeEnum dynamicOperationGame) {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(eventDo.getId());
         Query query = new Query(criteria);
@@ -86,12 +86,12 @@ public class DynamicOperationEventService implements InitializingBean {
         return result.getModifiedCount() > 0;
     }
 
-    public List<DynamicOperationEventDo> queryList(DynamicOperationQuery operationQuery, OperationEventGameEnum dynamicOperationGame) {
+    public List<DynamicOperationEventDo> queryList(DynamicOperationQuery operationQuery, OperationEventTypeEnum dynamicOperationGame) {
         List<DynamicOperationEventPo> poList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), DynamicOperationEventPo.class, dynamicOperationGame.getEventCollectionName());
         return DynamicOperationConvert.toDoList(poList);
     }
 
-    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, OperationEventGameEnum dynamicOperationGame) {
+    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, OperationEventTypeEnum dynamicOperationGame) {
         String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, dynamicOperationGame.getGameType().getId(), playName);
         Map<Object, Object> entries = redisTemplate.opsForHash().entries(catch_key);
         if (!entries.isEmpty()) {
@@ -130,7 +130,7 @@ public class DynamicOperationEventService implements InitializingBean {
                 .collect(Collectors.toList());
     }
 
-    public DynamicOperationEventDo getById(Long id, OperationEventGameEnum gameEnum) {
+    public DynamicOperationEventDo getById(Long id, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
