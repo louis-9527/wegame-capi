@@ -144,9 +144,9 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
         GameInfoDo gameInfo = getGameInfo();
         UserInfo userInfo = UserInfoContext.getUserInfo();
 
-        // 获取首轮(batchId ==0 and index =0)
+        // 获取首轮(parent ==0 and index =0)
         GameMultipleRecordDo<SymbolDo> firstRecord = gameMultipleRecordDos.stream()
-                .filter(record -> record.getBatchId() == 0L && record.getIndex() == 0L)
+                .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
 
