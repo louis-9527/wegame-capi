@@ -22,6 +22,6 @@ public class MissionService {
     public DailyMissionVo getDailyMission() {
         GetDailyMissionRes getDailyMissionRes = missionApi.getDailyMission(MissionReqBuilder.buildGetDailyMissionReq());
         AssertUtil.assertNotNull(getDailyMissionRes.getDailyMissionList(), ErrorCode.ERR_PARAM);
-        return MissionConverter.buildDailyMissionItemList(getDailyMissionRes);
+        return MissionConverter.toVoList(getDailyMissionRes);
     }
 }

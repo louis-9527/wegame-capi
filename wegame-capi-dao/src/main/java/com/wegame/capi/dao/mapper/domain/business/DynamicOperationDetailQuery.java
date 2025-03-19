@@ -1,15 +1,13 @@
 package com.wegame.capi.dao.mapper.domain.business;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.Sort;
 
 import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,16 +23,18 @@ public class DynamicOperationDetailQuery implements Serializable {
      * 订单状态
      */
     private Integer betStatus;
-
+    /**
+     * limit
+     */
     private Integer limit;
-
+    /**
+     * createTimeLt
+     */
     private Long createTimeLt;
-
     /**
      * 上一页最后一条的Id
      */
     private Long lastId;
-
     /**
      * 排序语句
      */
@@ -43,5 +43,4 @@ public class DynamicOperationDetailQuery implements Serializable {
      * 排序语句
      */
     private Sort.Direction direction;
-
 }

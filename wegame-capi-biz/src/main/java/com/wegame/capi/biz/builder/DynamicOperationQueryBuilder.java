@@ -5,8 +5,6 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventKindEnum;
 import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +20,6 @@ import java.util.Objects;
 
 public class DynamicOperationQueryBuilder {
 
-
     public static Query buildQuery(DynamicOperationQuery recordQuery) {
         Query query = new Query(buildCriteria(recordQuery));
         if (Objects.nonNull(recordQuery.getLimit())) {
@@ -36,11 +33,8 @@ public class DynamicOperationQueryBuilder {
             }
         }
         query.fields().include("_id", "eventId", "playerName", "minBonus", "maxBonus", "finishBonus", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "reportStatus");
-
         return query;
-
     }
-
 
     public static Criteria buildCriteria(DynamicOperationQuery recordQuery) {
         Criteria criteria = new Criteria();
@@ -50,7 +44,6 @@ public class DynamicOperationQueryBuilder {
         if (Objects.nonNull(recordQuery.getEventStatus())) {
             criteria.and("eventStatus").is(recordQuery.getEventStatus());
         }
-
         if (Objects.nonNull(recordQuery.getReportStatus())) {
             criteria.and("reportStatus").is(recordQuery.getReportStatus());
         }
@@ -60,8 +53,8 @@ public class DynamicOperationQueryBuilder {
         if (Objects.nonNull(recordQuery.getCreateTimeLt())) {
             criteria.and("createTime").lt(recordQuery.getCreateTimeLt());
         }
-        if (!Objects.isNull(recordQuery.getLastId())) {
-            criteria.and("_id").lt(recordQuery.getLastId());
+        if (!Objects.isNull(recordQuery.getLtLastId())) {
+            criteria.and("_id").lt(recordQuery.getLtLastId());
         }
         return criteria;
     }

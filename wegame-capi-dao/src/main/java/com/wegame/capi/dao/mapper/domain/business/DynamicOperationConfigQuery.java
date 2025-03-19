@@ -1,36 +1,32 @@
 package com.wegame.capi.dao.mapper.domain.business;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DynamicOperationConfigQuery {
+@EqualsAndHashCode(callSuper = false)
+public class DynamicOperationConfigQuery implements Serializable {
     private Long id;
-
     /**
      * 玩家id
      */
     private String playerId;
-
     /**
      * 游戏ID
      */
     private String gameId;
-
-
-
+    /**
+     * 投注类型
+     */
     private String betType;
-
     /**
      * 倍数
      */
     private Double multiple;
-
 }

@@ -13,8 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 public class DynamicOperationPulsarHandlerTest extends BaseTest {
+
     @Autowired
-    private DynamicOperationPulsarListener dynamicOperationPulsarHandler;
+    DynamicOperationPulsarListener dynamicOperationPulsarHandler;
 
     @Test
     public void handleMessage(){
@@ -40,8 +41,6 @@ public class DynamicOperationPulsarHandlerTest extends BaseTest {
 
     public static void main(String[] args) {
         String dd ="[{\"index\":0,\"symbolArr\":[[{\"_id\":\"3001\",\"name\":\"Scatter\",\"symbolType\":\"SCATTER\"},{\"_id\":\"1002\",\"name\":\"Symbol1002\",\"symbolType\":\"COMMON\"},{\"_id\":\"3001\",\"name\":\"Scatter\",\"symbolType\":\"SCATTER\"},{\"_id\":\"1002\",\"name\":\"Symbol1002\",\"symbolType\":\"COMMON\"},{\"_id\":\"1004\",\"name\":\"Symbol1004\",\"symbolType\":\"COMMON\"}]]}]";
-
-
         List<WheelDo<SymbolDo>> wheelDos = JSON.parseObject(dd, new TypeReference<List<WheelDo<SymbolDo>>>() {
         });
         System.out.println(wheelDos);

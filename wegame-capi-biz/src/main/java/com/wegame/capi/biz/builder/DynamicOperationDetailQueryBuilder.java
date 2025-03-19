@@ -27,7 +27,6 @@ public class DynamicOperationDetailQueryBuilder {
             }
         }
         return query;
-
     }
 
     public static Criteria buildCriteria(DynamicOperationDetailQuery detailQuery) {
@@ -44,9 +43,7 @@ public class DynamicOperationDetailQueryBuilder {
         return criteria;
     }
 
-
     public static Update buildUpdate(DynamicOperationEventDetailDo detailDo) {
-
         if (detailDo == null) {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }
@@ -57,13 +54,9 @@ public class DynamicOperationDetailQueryBuilder {
         if (Objects.nonNull(detailDo.getBetId())) {
             update.set("betId", detailDo.getBetId());
         }
-
         if (Objects.nonNull(detailDo.getUpdateTime())) {
             update.set("updateTime", detailDo.getUpdateTime());
         }
-
         return update;
-
     }
-
 }

@@ -1,17 +1,14 @@
 package com.wegame.capi.dao.mapper.domain.business;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,22 +29,18 @@ public class DynamicOperationPo implements Serializable {
      * 玩家名称
      */
     private String playerName;
-
     /**
      * 干预金额
      */
     private Long bonus;
-
     /**
      * 最小干预金额
      */
     private Long minBonus;
-
     /**
      * 最大干预金额
      */
     private Long maxBonus;
-
     /**
      * 已完成干预金额
      */
@@ -60,31 +53,22 @@ public class DynamicOperationPo implements Serializable {
      * 代码:  4, 表示免费游戏普通干预
      */
     private Integer eventKind;
-
-
-
     /**
      * 游戏ID
      */
     private String gameId;
-
-
     /**
      * 渠道ID
      */
     private String channelId;
-
-
     /**
      * 生效时间
      */
     private Long effectedTime;
-
     /**
      * 过期时间
      */
     private Long expiredTime;
-
     /**
      * 干预状态
      * com.wegame.capi.common.enums.DynamicOperationEventStatusEnum
@@ -103,10 +87,10 @@ public class DynamicOperationPo implements Serializable {
      * 干预事件消息快照
      */
     private String eventMsgDetail;
-
-
+    /**
+     * reportFailMsg
+     */
     private String reportFailMsg;
-
     /**
      * 创建时间
      */

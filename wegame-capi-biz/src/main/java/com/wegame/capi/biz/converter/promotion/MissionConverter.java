@@ -9,14 +9,15 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class MissionConverter {
-    public static DailyMissionVo buildDailyMissionItemList(GetDailyMissionRes res) {
+
+    public static DailyMissionVo toVoList(GetDailyMissionRes res) {
         return DailyMissionVo.builder()
                 .refreshTime(Objects.isNull(res.getRefreshTime()) ? null : res.getRefreshTime().getTime())
-                .dailyMissionList(buildDailyMissionItemList(res.getDailyMissionList()))
+                .dailyMissionList(toVoList(res.getDailyMissionList()))
                 .build();
     }
 
-    private static List<DailyMissionVo.DailyMissionItemVo> buildDailyMissionItemList(List<GetDailyMissionRes.DailyMission> dailyMissionList) {
+    private static List<DailyMissionVo.DailyMissionItemVo> toVoList(List<GetDailyMissionRes.DailyMission> dailyMissionList) {
         if (CollectionUtils.isEmpty(dailyMissionList)) {
             return null;
         }

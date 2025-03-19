@@ -160,7 +160,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
                 .limit(DEFAULT_PAGE_SIZE).build();
 
         do {
-            query.setLastId(lastId);
+            query.setLtLastId(lastId);
             eventDetailDoList = dynamicOperationEventService.queryList(query, getDynamicOperationGame());
             if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                 lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
@@ -201,7 +201,7 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
                 .limit(DEFAULT_PAGE_SIZE).build();
 
         do {
-            query.setLastId(lastId);
+            query.setLtLastId(lastId);
             eventDetailDoList = dynamicOperationEventService.queryList(query, getDynamicOperationGame());
             if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                 lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
@@ -218,7 +218,6 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
             // 过期上报
             getDynamicOperationManager().asyncUpdateFinishEvent(eventDo.getId(), DynamicOperationEventSubStatusEnum.FINISH_EXPIRED);
         }
-
     }
 
 }

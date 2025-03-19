@@ -1,8 +1,6 @@
 package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import lombok.Getter;
 import lombok.ToString;
 

@@ -40,6 +40,4 @@ public class DynamicOperationPulsarConfig {
                 .messageListener(dynamicOperationPulsarListener)
                 .subscribe();
     }
-
-
 }

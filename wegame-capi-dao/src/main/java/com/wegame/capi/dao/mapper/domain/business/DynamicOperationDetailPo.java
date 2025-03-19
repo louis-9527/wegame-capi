@@ -1,10 +1,7 @@
 package com.wegame.capi.dao.mapper.domain.business;
 
 import io.swagger.models.auth.In;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -12,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class BagApiTest extends BaseTest {
     @Autowired
-    private BagApi bagApi;
+    BagApi bagApi;
 
     @Test
     public void test_getRewardBag_SUCCESS(){

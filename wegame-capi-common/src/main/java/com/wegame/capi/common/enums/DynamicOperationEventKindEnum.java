@@ -10,6 +10,7 @@ import java.util.Objects;
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum DynamicOperationEventKindEnum {
+
     NORMAL_URGENT(1, "正常投注紧急干预"),
     NORMAL_NORMAL(2, "正常投注普通干预"),
     FREE_URGENT(3, "免费游戏紧急干预"),
@@ -31,7 +32,7 @@ public enum DynamicOperationEventKindEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private DynamicOperationEventKindEnum(Integer code, String desc) {
+    DynamicOperationEventKindEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
