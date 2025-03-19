@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(description = "任务")
+@ApiModel(description = "任务响应模型")
 public class DailyMissionVo implements  Serializable {
     private static final long serialVersionUID = -1704392640858325682L;
 
