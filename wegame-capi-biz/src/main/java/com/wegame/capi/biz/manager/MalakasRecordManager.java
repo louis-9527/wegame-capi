@@ -33,6 +33,8 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
 
     @Transactional(transactionManager = malakasTransactionManager)
     public Long add(BetRecordDo<MalakasGameRecordDo> betRecord, GameTypeEnum gameType) {
+        // todo delete @maidong
+        log.info("add: {}", betRecord.getId());
         Long id = betRecordService.add(betRecord, gameType);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> gameRecordList = betRecord.getGameRecordList();
@@ -47,6 +49,10 @@ public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecor
     @Override
     public boolean batchAdd(List<BetRecordDo<MalakasGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
+        // todo delete @maidong
+        for (int i = 0; i < betRecordList.size(); i++) {
+            log.info("batchAdd index: {} betRecordId:{}", i, betRecordList.get(0).getId());
+        }
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
         boolean ret = betRecordService.batchAdd(betRecordDos, gameType);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
