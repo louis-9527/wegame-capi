@@ -1,24 +1,23 @@
 package com.wegame.capi.biz.domain.biz.promotion;
 
-import com.wegame.capi.common.enums.StartCardReportStatusEnum;
-import com.wegame.capi.common.enums.StartCardUseStatusEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.wegame.capi.common.enums.StarCardReportStatusEnum;
+import com.wegame.capi.common.enums.StarCardUseStatusEnum;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Date;
+import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StartCardUseRecordDo {
+@EqualsAndHashCode(callSuper = false)
+public class StarCardUseRecordDo implements Serializable {
     /**
      * 主键ID
      */
     private Long id;
-
     /**
      * 奖励ID
      */
@@ -32,31 +31,26 @@ public class StartCardUseRecordDo {
      * 玩家ID
      */
     private String playerId;
-
     /**
      * 玩家名称
      */
     private String playName;
-
     /**
      * 游戏ID
      */
     private String gameId;
-
     /**
      * 投注金额
      */
     private Long betAmount;
-
     /**
      * 派奖金额
      */
     private Long payOutAmount;
-
     /**
      * 使用状态
      */
-    private StartCardUseStatusEnum useStatus;
+    private StarCardUseStatusEnum useStatus;
 
     /**
      * 核销失败原因
@@ -66,7 +60,7 @@ public class StartCardUseRecordDo {
     /**
      * 上报状态
      */
-    private StartCardReportStatusEnum reportStatus;
+    private StarCardReportStatusEnum reportStatus;
     /**
      * 创建时间
      */
@@ -75,6 +69,4 @@ public class StartCardUseRecordDo {
      * 更新时间
      */
     private Long updateTime;
-
-
 }

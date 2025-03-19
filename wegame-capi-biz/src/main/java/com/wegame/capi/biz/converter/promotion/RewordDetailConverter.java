@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.converter.promotion;
 
 import com.wegame.capi.api.domain.res.promotion.GetRewardDetailRes;
-import com.wegame.capi.biz.domain.biz.promotion.RewordDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.client.domain.vo.promotion.RewardDetailVo;
 import com.wegame.capi.common.utils.AmountUtil;
 
@@ -10,11 +10,11 @@ import java.util.Objects;
 
 public class RewordDetailConverter {
 
-    public static RewordDetailDo toDo(GetRewardDetailRes.RewardDetail rewardDetail) {
+    public static RewardDetailDo toDo(GetRewardDetailRes.RewardDetail rewardDetail) {
         if (Objects.isNull(rewardDetail)) {
             return null;
         }
-        RewordDetailDo rewordDetailDo = new RewordDetailDo();
+        RewardDetailDo rewordDetailDo = new RewardDetailDo();
         rewordDetailDo.setName(rewardDetail.getName());
         rewordDetailDo.setDescription(rewardDetail.getDescription());
         rewordDetailDo.setBalanceRequired(AmountUtil.toLong(rewardDetail.getBalanceRequired()));
@@ -30,7 +30,7 @@ public class RewordDetailConverter {
         return rewordDetailDo;
     }
 
-    public static RewardDetailVo doToVo(RewordDetailDo rewordDetailDo) {
+    public static RewardDetailVo doToVo(RewardDetailDo rewordDetailDo) {
         if (Objects.isNull(rewordDetailDo)) {
             return null;
         }

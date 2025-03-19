@@ -1,15 +1,17 @@
 package com.wegame.capi.biz.domain.biz.promotion;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
+
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RewordDetailDo {
+@EqualsAndHashCode(callSuper = false)
+public class RewardDetailDo implements Serializable {
     /**
      * 奖励名称
      */
@@ -26,27 +28,22 @@ public class RewordDetailDo {
      * 奖励URL
      */
     private String imgUrl;
-
     /**
      * 游戏ID,需要传给前端,做游戏跳转
      */
     private String gameId;
-
     /**
      * 游戏内部ID
      */
     private String gameCode;
-
     /**
      * 游戏名称
      */
     private String gameName;
-
     /**
      * 奖励类型(来源)
      */
     private String rewardType;
-
     /**
      * 奖励投注金额
      */

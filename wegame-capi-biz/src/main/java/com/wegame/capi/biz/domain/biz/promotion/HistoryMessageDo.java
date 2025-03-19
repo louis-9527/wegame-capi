@@ -1,17 +1,17 @@
 package com.wegame.capi.biz.domain.biz.promotion;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
+
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HistoryMessageDo {
-
+@EqualsAndHashCode(callSuper = false)
+public class HistoryMessageDo implements Serializable {
     /**
      * 玩家名称
      */

@@ -2,16 +2,16 @@ package com.wegame.capi.biz.converter.promotion;
 
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.biz.domain.biz.promotion.StartCardUseRecordDo;
-import com.wegame.capi.common.enums.StartCardReportStatusEnum;
-import com.wegame.capi.common.enums.StartCardUseStatusEnum;
+import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
+import com.wegame.capi.common.enums.StarCardReportStatusEnum;
+import com.wegame.capi.common.enums.StarCardUseStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.StartCardUseRecordPo;
 
 import java.util.Objects;
 
 public class StartCardUseRecordConvert {
 
-    public static StartCardUseRecordPo doToPo(StartCardUseRecordDo recordDo, OptEnum optEnum) {
+    public static StartCardUseRecordPo doToPo(StarCardUseRecordDo recordDo, OptEnum optEnum) {
         if (Objects.isNull(recordDo)) {
             return null;
         }
@@ -25,8 +25,8 @@ public class StartCardUseRecordConvert {
         recordPo.setBetAmount(recordDo.getBetAmount());
         recordPo.setPayOutAmount(recordDo.getPayOutAmount());
         if (OptEnum.ADD == optEnum) {
-            recordPo.setUseStatus(StartCardUseStatusEnum.ING.getCode());
-            recordPo.setReportStatus(StartCardReportStatusEnum.ING.getCode());
+            recordPo.setUseStatus(StarCardUseStatusEnum.ING.getCode());
+            recordPo.setReportStatus(StarCardReportStatusEnum.ING.getCode());
             long currentMilli = DateUtil.getCurrentMilli();
             recordPo.setCreateTime(currentMilli);
             recordPo.setUpdateTime(currentMilli);

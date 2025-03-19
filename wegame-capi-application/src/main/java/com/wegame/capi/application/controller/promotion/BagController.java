@@ -3,12 +3,14 @@ package com.wegame.capi.application.controller.promotion;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
+import com.wegame.capi.biz.converter.promotion.BagOtherRewordDetailConverter;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
+import com.wegame.capi.biz.converter.promotion.HistoryMessageConverter;
 import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
-import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
-import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewordDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewardDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.HistoryMessageDo;
-import com.wegame.capi.biz.domain.biz.promotion.RewordDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.client.domain.request.promotion.QueryBagCurrentGameRewardRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryBagOtherGameRewardRequest;
@@ -43,9 +45,9 @@ public class BagController {
     @PostMapping("/queryBagCurrentGameReward")
     public CommonResponse<BagCurrentRewordVo> queryBagCurrentGameReward(@RequestBody QueryBagCurrentGameRewardRequest bagRequest) {
         bagRequest.validate();
-        List<BagCurrentRewordDetailDo> detailDos = bagService.listCurrentRewordRecord();
+        List<BagCurrentRewardDetailDo> detailDos = bagService.listCurrentRewordRecord();
         return CommonResponse.build(BagCurrentRewordVo.builder()
-                .rewardDetails(BagRewordConverter.currentDoToVoList(detailDos))
+                .rewardDetails(BagRewordConverter.toVoList(detailDos))
                 .build());
     }
 
@@ -54,9 +56,9 @@ public class BagController {
     @PostMapping("/queryBagOtherGameReward")
     public CommonResponse<BagOtherRewordVo> queryBagOtherGameReward(@RequestBody QueryBagOtherGameRewardRequest bagRequest) {
         bagRequest.validate();
-        List<BagOtherRewordDetailDo> detailDos = bagService.listOtherRewordRecord();
+        List<BagOtherRewardDetailDo> detailDos = bagService.listOtherRewordRecord();
         return CommonResponse.build(BagOtherRewordVo.builder()
-                .rewardDetails(BagRewordConverter.otherDoToVoList(detailDos))
+                .rewardDetails(BagOtherRewordDetailConverter.toVoList(detailDos))
                 .build());
     }
 
@@ -65,7 +67,7 @@ public class BagController {
     @PostMapping("/getRewardDetail")
     public CommonResponse<RewardDetailVo> getRewardStarCardDetail(@RequestBody QueryRewardDetailRequest detailRequest) {
         detailRequest.validate();
-        RewordDetailDo byRewardConfigId = bagService.getByRewardConfigId(detailRequest.getRewardConfigId());
+        RewardDetailDo byRewardConfigId = bagService.getByRewardConfigId(detailRequest.getRewardConfigId());
         return CommonResponse.build(RewordDetailConverter.doToVo(byRewardConfigId));
     }
 
@@ -77,7 +79,7 @@ public class BagController {
         List<HistoryMessageDo> messageDoList = bagService.getHistoryMessageList(request);
         return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                BagRewordConverter.messageDoToVos(messageDoList),
+                HistoryMessageConverter.toVoList(messageDoList),
                 0L));
     }
 
