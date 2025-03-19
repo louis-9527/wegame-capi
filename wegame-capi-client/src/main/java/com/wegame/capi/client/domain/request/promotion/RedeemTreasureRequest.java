@@ -24,7 +24,7 @@ public class RedeemTreasureRequest implements Validate, Serializable {
 
     @Override
     public void validate() {
-        AssertUtil.assertNotNull(treasureId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(treasureId, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(level, ErrorCode.ERR_PARAM);
     }
 }

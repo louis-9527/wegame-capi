@@ -24,7 +24,7 @@ public class RedeemAchievementRequest implements Validate, Serializable {
 
     @Override
     public void validate() {
-        AssertUtil.assertNotNull(achievementId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(redeemId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(achievementId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(redeemId, ErrorCode.ERR_PARAM);
     }
 }
