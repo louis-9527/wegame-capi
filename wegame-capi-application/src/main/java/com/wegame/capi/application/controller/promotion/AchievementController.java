@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.wegame.base.domain.CommonResponse.build;
+
 @Slf4j
 @RestController
 @RequestMapping("achievement")
@@ -30,7 +32,7 @@ public class AchievementController {
     @ApiOperation(value = "成就列表", httpMethod = "POST")
     @PostMapping("/getAchievement")
     public CommonResponse<List<AchievementVo>> getAchievement() {
-        return CommonResponse.build(achievementService.getAchievement());
+        return build(achievementService.getAchievement());
     }
 
     @LoginRequired
@@ -38,6 +40,6 @@ public class AchievementController {
     @PostMapping("/redeemAchievement")
     public CommonResponse<RedeemAchievementVo> redeemAchievement(@RequestBody RedeemAchievementRequest request) {
         request.validate();
-        return CommonResponse.build(achievementService.redeemAchievement(request.getAchievementId(), request.getRedeemId()));
+        return build(achievementService.redeemAchievement(request.getAchievementId(), request.getRedeemId()));
     }
 }

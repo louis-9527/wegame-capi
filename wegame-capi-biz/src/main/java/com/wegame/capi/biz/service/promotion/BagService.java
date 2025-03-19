@@ -88,7 +88,7 @@ public class BagService {
         return RewordDetailConverter.toDo(rewardBagRes.getDetails());
     }
 
-    public List<HistoryMessageDo> getHistoryMessageList(QueryHistoryMessageRequest messageRequest) {
+    public List<HistoryMessageDo> getHistoryMessageList(QueryHistoryMessageRequest reqeust) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GetHistoryMessageReq messageReq = GetHistoryMessageReq.builder()
@@ -97,8 +97,8 @@ public class BagService {
                 .refId(String.valueOf(snowflakeIdGenerator.nextId()))
                 .channelId(userInfo.getChannelId())
                 .createTime(DateUtil.toUTC(new Date()))
-                .page(messageRequest.getPageNo())
-                .limit(messageRequest.getOffset())
+                .page(reqeust.getPageNo())
+                .limit(reqeust.getOffset())
                 .build();
         GetHistoryMessageRes messageRes = bagApi.getHistoryMessage(messageReq);
         return HistoryMessageConverter.toDoList(messageRes.getMessages());

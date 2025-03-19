@@ -23,8 +23,8 @@ public class RedeemTreasureRequest implements Validate, Serializable {
     private Integer level;
 
     @Override
-    public void validate() {
-        AssertUtil.assertNotNull(treasureId, ErrorCode.ERR_PARAM);
+    public void validateParam() {
+        AssertUtil.assertStrNotEmpty(treasureId, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(level, ErrorCode.ERR_PARAM);
     }
 }

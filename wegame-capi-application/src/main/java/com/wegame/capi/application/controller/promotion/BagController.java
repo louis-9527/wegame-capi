@@ -5,12 +5,8 @@ import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
 import com.wegame.capi.biz.converter.promotion.BagOtherRewordDetailConverter;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
-import com.wegame.capi.biz.converter.promotion.HistoryMessageConverter;
-import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewardDetailDo;
-import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.HistoryMessageDo;
-import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.client.domain.request.promotion.QueryBagCurrentGameRewardRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryBagOtherGameRewardRequest;
@@ -31,6 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.wegame.base.domain.CommonResponse.build;
+import static com.wegame.capi.biz.converter.promotion.HistoryMessageConverter.toVoList;
+import static com.wegame.capi.biz.converter.promotion.RewordDetailConverter.doToVo;
+
 @Slf4j
 @RestController
 @RequestMapping("bag")
@@ -38,15 +38,15 @@ import java.util.List;
 public class BagController {
 
     @Autowired
-    private BagService bagService;
+    BagService bagService;
 
     @LoginRequired
     @ApiOperation(value = "获取背包列表(当前游戏)", httpMethod = "POST")
     @PostMapping("/queryBagCurrentGameReward")
-    public CommonResponse<BagCurrentRewordVo> queryBagCurrentGameReward(@RequestBody QueryBagCurrentGameRewardRequest bagRequest) {
-        bagRequest.validate();
+    public CommonResponse<BagCurrentRewordVo> queryBagCurrentGameReward(@RequestBody QueryBagCurrentGameRewardRequest request) {
+        request.validate();
         List<BagCurrentRewardDetailDo> detailDos = bagService.listCurrentRewordRecord();
-        return CommonResponse.build(BagCurrentRewordVo.builder()
+        return build(BagCurrentRewordVo.builder()
                 .rewardDetails(BagRewordConverter.toVoList(detailDos))
                 .build());
     }
@@ -54,21 +54,19 @@ public class BagController {
     @LoginRequired
     @ApiOperation(value = "获取背包列表(其他游戏)", httpMethod = "POST")
     @PostMapping("/queryBagOtherGameReward")
-    public CommonResponse<BagOtherRewordVo> queryBagOtherGameReward(@RequestBody QueryBagOtherGameRewardRequest bagRequest) {
-        bagRequest.validate();
-        List<BagOtherRewardDetailDo> detailDos = bagService.listOtherRewordRecord();
-        return CommonResponse.build(BagOtherRewordVo.builder()
-                .rewardDetails(BagOtherRewordDetailConverter.toVoList(detailDos))
+    public CommonResponse<BagOtherRewordVo> queryBagOtherGameReward(@RequestBody QueryBagOtherGameRewardRequest request) {
+        request.validate();
+        return build(BagOtherRewordVo.builder()
+                .rewardDetails(BagOtherRewordDetailConverter.toVoList(bagService.listOtherRewordRecord()))
                 .build());
     }
 
     @LoginRequired
     @ApiOperation(value = "获取物品详情", httpMethod = "POST")
     @PostMapping("/getRewardDetail")
-    public CommonResponse<RewardDetailVo> getRewardStarCardDetail(@RequestBody QueryRewardDetailRequest detailRequest) {
-        detailRequest.validate();
-        RewardDetailDo byRewardConfigId = bagService.getByRewardConfigId(detailRequest.getRewardConfigId());
-        return CommonResponse.build(RewordDetailConverter.doToVo(byRewardConfigId));
+    public CommonResponse<RewardDetailVo> getRewardStarCardDetail(@RequestBody QueryRewardDetailRequest request) {
+        request.validate();
+        return build(doToVo(bagService.getByRewardConfigId(request.getRewardConfigId())));
     }
 
     @LoginRequired
@@ -77,9 +75,9 @@ public class BagController {
     public CommonResponse<PageInfoVo<HistoryMessageVo>> getHistoryMessage(@RequestBody QueryHistoryMessageRequest request) {
         request.validate();
         List<HistoryMessageDo> messageDoList = bagService.getHistoryMessageList(request);
-        return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
+        return build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                HistoryMessageConverter.toVoList(messageDoList),
+                toVoList(messageDoList),
                 0L));
     }
 
