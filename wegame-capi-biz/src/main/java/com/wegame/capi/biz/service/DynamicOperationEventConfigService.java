@@ -8,7 +8,7 @@ import com.wegame.capi.biz.converter.DynamicOperationConfigConvert;
 import com.wegame.capi.biz.domain.biz.game.GameMultipleRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.client.enums.DynamicOperationGameEnum;
+import com.wegame.capi.client.enums.OperationEventGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
@@ -52,7 +52,7 @@ public class DynamicOperationEventConfigService implements InitializingBean {
         });
     }
 
-    public List<List<DynamicOperationConfigDo>> getConfigDetail(DynamicOperationConfigQuery configQuery, DynamicOperationGameEnum dynamicOperationGame) {
+    public List<List<DynamicOperationConfigDo>> getConfigDetail(DynamicOperationConfigQuery configQuery, OperationEventGameEnum dynamicOperationGame) {
         List<DynamicOperationConfigPo> dynamicOperationConfigPos = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery), DynamicOperationConfigPo.class, dynamicOperationGame.getEventConfigCollectionName());
         List<DynamicOperationConfigDo> dynamicOperationConfigDos = DynamicOperationConfigConvert.convertDos(dynamicOperationConfigPos);
         if (CollectionUtils.isEmpty(dynamicOperationConfigDos)) {
@@ -62,7 +62,7 @@ public class DynamicOperationEventConfigService implements InitializingBean {
     }
 
 
-    public List<Double> getConfigMultipleArray(DynamicOperationGameEnum dynamicOperationGame) {
+    public List<Double> getConfigMultipleArray(OperationEventGameEnum dynamicOperationGame) {
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.group().addToSet("multiple").as("values")
         );
@@ -77,19 +77,19 @@ public class DynamicOperationEventConfigService implements InitializingBean {
     }
 
 
-    public <WD extends SymbolDo> List<GameMultipleRecordDo<WD>> listRecord(Long recordId, DynamicOperationGameEnum dynamicOperationGame) {
+    public <WD extends SymbolDo> List<GameMultipleRecordDo<WD>> listRecord(Long recordId, OperationEventGameEnum dynamicOperationGame) {
         List<DynamicOperationConfigRecordPo> dynamicOperationConfigPos = getMongoTemplate(dynamicOperationGame.getGameType())
                 .find(DynamicOperationConfigQueryBuilder.buildRecordQuery(recordId), DynamicOperationConfigRecordPo.class, dynamicOperationGame.getEventConfigRecordCollectionName());
         return DynamicOperationConfigConvert.convertRecordDos(dynamicOperationConfigPos);
     }
 
 
-    public Long addConfig(DynamicOperationConfigPo configPo, DynamicOperationGameEnum dynamicOperationGame) {
+    public Long addConfig(DynamicOperationConfigPo configPo, OperationEventGameEnum dynamicOperationGame) {
         DynamicOperationConfigPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(configPo, dynamicOperationGame.getEventConfigCollectionName());
         return insert.getId();
     }
 
-    public Long addConfigRecord(DynamicOperationConfigRecordPo recordPo, DynamicOperationGameEnum dynamicOperationGame) {
+    public Long addConfigRecord(DynamicOperationConfigRecordPo recordPo, OperationEventGameEnum dynamicOperationGame) {
         DynamicOperationConfigRecordPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(recordPo, dynamicOperationGame.getEventConfigRecordCollectionName());
         return insert.getId();
     }

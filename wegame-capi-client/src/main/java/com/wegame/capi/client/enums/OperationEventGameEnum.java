@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum DynamicOperationGameEnum {
+public enum OperationEventGameEnum {
 
     MARIA_MAKILING_DYNAMIC(
             GameTypeEnum.MARIA_MAKILING,
@@ -45,11 +45,11 @@ public enum DynamicOperationGameEnum {
     private final String eventConfigRecordCollectionName;
 
 
-    public static DynamicOperationGameEnum valueOfGameType(GameTypeEnum gameType) {
+    public static OperationEventGameEnum valueOfGameType(GameTypeEnum gameType) {
         if (gameType == null) {
             return null;
         }
-        for (DynamicOperationGameEnum item : DynamicOperationGameEnum.values()) {
+        for (OperationEventGameEnum item : OperationEventGameEnum.values()) {
             if (gameType == item.gameType) {
                 return item;
             }

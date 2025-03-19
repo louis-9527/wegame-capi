@@ -1,0 +1,46 @@
+package com.wegame.capi.scheduler.dynamic;
+
+import com.wegame.base.exception.LockException;
+import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.manager.AbstractOperationEventManager;
+import com.wegame.capi.biz.manager.MariaMakilingOperationEventManager;
+import com.wegame.capi.client.enums.OperationEventGameEnum;
+import com.wegame.capi.common.utils.LockNameUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+@Slf4j
+@Service
+public class MariaMakilingOperationEventScheduler
+        extends AbstractOperationEventScheduler
+        implements Runnable {
+
+    @Autowired
+    MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
+
+    @Scheduled(cron = "0 0/10 * * * ?")
+    public void schedule() {
+        long startTime = DateUtil.getCurrentMilli();
+        log.info("{}#schedule start", getClass().getSimpleName());
+        try {
+            scheduleWithLock(LockNameUtil.getDynamicOperationSchedulerLockName(this.operationEventGame().getGameType()), this);
+        } catch (LockException e) {
+            log.info("{}, get lock fail", getClass().getSimpleName());
+        } catch (Exception e) {
+            log.error("{}#schedule failed", getClass().getSimpleName(), e);
+        }
+        log.info("{}#schedule end, cost time:{}", getClass().getSimpleName(), DateUtil.getCurrentMilli() - startTime);
+    }
+
+    @Override
+    OperationEventGameEnum operationEventGame() {
+        return OperationEventGameEnum.MARIA_MAKILING_DYNAMIC;
+    }
+
+    @Override
+    AbstractOperationEventManager operationEventManager() {
+        return mariaMakilingOperationEventManager;
+    }
+}

@@ -1,7 +1,5 @@
 package com.wegame.capi.biz.module.mariamakiling.bet.strategy;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
@@ -16,10 +14,9 @@ import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.manager.AbstractDynamicOperationManager;
+import com.wegame.capi.biz.manager.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.manager.MariaMakilingDynamicOperationManager;
+import com.wegame.capi.biz.manager.MariaMakilingOperationEventManager;
 import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetPromotionStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
@@ -56,7 +53,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
-    MariaMakilingDynamicOperationManager mariaMakilingDynamicOperationManager;
+    MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
 
 
     @Override
@@ -70,8 +67,8 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
-    public AbstractDynamicOperationManager getDynamicOperationManager() {
-        return mariaMakilingDynamicOperationManager;
+    public AbstractOperationEventManager getDynamicOperationManager() {
+        return mariaMakilingOperationEventManager;
     }
 
 
