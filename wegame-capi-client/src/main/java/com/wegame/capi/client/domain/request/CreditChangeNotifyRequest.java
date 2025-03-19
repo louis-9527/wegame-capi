@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -26,6 +27,7 @@ public class CreditChangeNotifyRequest implements Validate, Serializable {
     private String hash;
     @ApiModelProperty(value = "request id", required = true)
     private String refId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSSX")
     @ApiModelProperty(value = "时间", required = true)
     private Date createTime;
     @ApiModelProperty(value = "余额", required = true)
