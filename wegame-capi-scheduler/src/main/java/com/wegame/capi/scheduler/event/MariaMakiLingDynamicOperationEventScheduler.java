@@ -13,14 +13,17 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class MariaMakiLingDynamicOperationEventScheduler extends AbstractDynamicOperationEventScheduler implements Runnable {
+public class MariaMakiLingDynamicOperationEventScheduler
+        extends AbstractDynamicOperationEventScheduler
+        implements Runnable {
+
     @Autowired
     MariaMakilingDynamicOperationManager mariaMakilingDynamicOperationManager;
 
     @Scheduled(cron = "0 0/10 * * * ?")
     public void schedule() {
         long startTime = DateUtil.getCurrentMilli();
-        log.info("MariaMakiLingDynamicOperationEventScheduler#schedule start");
+        log.info("{}#schedule start", getClass().getSimpleName());
         try {
             scheduleWithLock(LockNameUtil.getDynamicOperationSchedulerLockName(this.getDynamicOperationGame().getGameType()), this);
         } catch (LockException e) {

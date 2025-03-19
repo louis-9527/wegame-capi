@@ -9,65 +9,75 @@ import com.wegame.capi.biz.converter.DynamicOperationDetailConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.client.enums.DynamicOperationGameEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailPo;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.bson.Document;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.MONGOTEMPLATE;
+import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMARY_MONGOTEMPLATE;
+
+/**
+ * 动态运营事件明细服务
+ */
 @Slf4j
-@Service
-public class DynamicOperationEventDetailService {
+@Component
+public class DynamicOperationEventDetailService implements InitializingBean {
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
 
-    public Long add(DynamicOperationEventDetailDo detailDo, DynamicOperationGameEnum dynamicOperationGameEnum) {
-        DynamicOperationDetailPo detailPo = DynamicOperationDetailConvert.convertPo(detailDo, OptEnum.ADD);
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Arrays.stream(GameTypeEnum.values()).forEach(gameType -> {
+            MongoTemplate mongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
+            AssertUtil.assertNotNull(mongoTemplate, ErrorCode.ERR_INTER);
+            MongoTemplate primaryMongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
+            AssertUtil.assertNotNull(primaryMongoTemplate, ErrorCode.ERR_INTER);
+        });
+    }
+
+    public Long add(DynamicOperationEventDetailDo detailDo, DynamicOperationGameEnum gameEnum) {
+        DynamicOperationDetailPo detailPo = DynamicOperationDetailConvert.toPo(detailDo, OptEnum.ADD);
         if (Objects.isNull(detailPo)) {
             return null;
         }
-        DynamicOperationDetailPo insert = getMongoTemplate(dynamicOperationGameEnum.getGameType()).insert(detailPo, dynamicOperationGameEnum.getEventDetailCollectionName());
+        DynamicOperationDetailPo insert = getMongoTemplate(gameEnum.getGameType()).insert(detailPo, gameEnum.getEventDetailCollectionName());
         return insert.getId();
     }
 
-
-
-    public List<DynamicOperationEventDetailDo> queryList(DynamicOperationDetailQuery query, DynamicOperationGameEnum dynamicOperationGameEnum) {
-        List<DynamicOperationDetailPo> dynamicOperationDetailPos = getMongoTemplate(dynamicOperationGameEnum.getGameType()).find(DynamicOperationDetailQueryBuilder.buildQuery(query), DynamicOperationDetailPo.class, dynamicOperationGameEnum.getEventDetailCollectionName());
-        return DynamicOperationDetailConvert.convertDos(dynamicOperationDetailPos);
-
-    }
-
-
-    public Boolean update(DynamicOperationEventDetailDo detailDo, DynamicOperationGameEnum dynamicOperation) {
+    public boolean update(DynamicOperationEventDetailDo detailDo, DynamicOperationGameEnum gameEnum) {
         AssertUtil.assertNotNull(detailDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(detailDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
-
         Criteria criteria = new Criteria();
         criteria.and("_id").is(detailDo.getId());
         Query query = new Query(criteria);
-        UpdateResult result = getMongoTemplate(dynamicOperation.getGameType()).updateFirst(query,
+        UpdateResult result = getMongoTemplate(gameEnum.getGameType()).updateFirst(query,
                 DynamicOperationDetailQueryBuilder.buildUpdate(detailDo),
                 DynamicOperationDetailPo.class,
-                dynamicOperation.getEventDetailCollectionName());
+                gameEnum.getEventDetailCollectionName());
         return result.getModifiedCount() > 0;
     }
 
+    public List<DynamicOperationEventDetailDo> queryList(DynamicOperationDetailQuery query, DynamicOperationGameEnum gameEnum) {
+        List<DynamicOperationDetailPo> dynamicOperationDetailPos = getMongoTemplate(gameEnum.getGameType()).find(DynamicOperationDetailQueryBuilder.buildQuery(query),
+                DynamicOperationDetailPo.class,
+                gameEnum.getEventDetailCollectionName());
+        return DynamicOperationDetailConvert.toDoList(dynamicOperationDetailPos);
+    }
+
     private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
-        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-        return template;
+        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
     }
 }

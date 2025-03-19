@@ -31,66 +31,67 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-public abstract class AbstractDynamicOperationEventScheduler extends AbstractScheduler implements Runnable {
-    @Autowired
-    private DynamicOperationEventService dynamicOperationEventService;
-    @Autowired
-    private DynamicOperationEventDetailService dynamicOperationEventDetailService;
-    @Autowired
-    private BetRecordService betRecordService;
+public abstract class AbstractDynamicOperationEventScheduler
+        extends AbstractScheduler
+        implements Runnable {
 
     private final long fiveMinutesAgo = System.currentTimeMillis() - 10 * 60 * 1000;
 
+    @Autowired
+    public DynamicOperationEventService dynamicOperationEventService;
+    @Autowired
+    public DynamicOperationEventDetailService dynamicOperationEventDetailService;
+    @Autowired
+    public BetRecordService betRecordService;
 
     abstract DynamicOperationGameEnum getDynamicOperationGame();
 
     abstract AbstractDynamicOperationManager getDynamicOperationManager();
 
-
     @Override
     public void run() {
-        /**
-         * 1.事件明细中未处理成功
-         * 2.事件状态已完成,但未上报
-         * 3.事件已过期,但未上报
-         */
-        this.eventDetailIngExec();
-        this.eventReportFailExec();
-        this.eventEventExpiredExec();
+        // 事件明细中未处理成功
+        eventDetailIngExec();
+        // 事件状态已完成,但未上报
+        eventReportFailExec();
+        // 事件已过期,但未上报
+        eventEventExpiredExec();
     }
-
 
     /**
      * 处理中的事件明细
      */
     private void eventDetailIngExec() {
-        GameTypeEnum gameType = getDynamicOperationGame().getGameType();
-        log.info("AbstractDynamicOperationEventScheduler#eventDetailFailExec run start:{}", gameType.getId());
-        long startTime = DateUtil.getCurrentMilli();
-        Long lastId = null;
-        List<DynamicOperationEventDetailDo> eventDetailDoList = null;
-
-        DynamicOperationDetailQuery query = DynamicOperationDetailQuery.builder()
-                .betStatus(BetStatusEnum.ING.getCode())
-                .createTimeLt(fiveMinutesAgo)
-                .direction(Sort.Direction.ASC)
-                .orderByClause("_id")
-                .limit(DEFAULT_PAGE_SIZE).build();
-
-        do {
-            query.setLastId(lastId);
-            eventDetailDoList = dynamicOperationEventDetailService.queryList(query, getDynamicOperationGame());
-            if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
-                lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
-            }
-            Optional.ofNullable(eventDetailDoList)
-                    .orElse(Collections.emptyList())
-                    .forEach(this::eventDetailFailHandle);
-        } while (CollectionUtils.isNotEmpty(eventDetailDoList));
-        log.info("AbstractDynamicOperationEventScheduler#eventDetailFailExec run end:{},time:{}", gameType.getId(), DateUtil.getCurrentMilli() - startTime);
-
+        try {
+            GameTypeEnum gameType = getDynamicOperationGame().getGameType();
+            log.info("{}#eventDetailFailExec run start:{}", getClass().getSimpleName(), gameType.getId());
+            long startTime = DateUtil.getCurrentMilli();
+            Long lastId = null;
+            List<DynamicOperationEventDetailDo> eventDetailDoList = null;
+            DynamicOperationDetailQuery query = DynamicOperationDetailQuery.builder()
+                    .betStatus(BetStatusEnum.ING.getCode())
+                    .createTimeLt(fiveMinutesAgo)
+                    .direction(Sort.Direction.ASC)
+                    .orderByClause("_id")
+                    .limit(DEFAULT_PAGE_SIZE)
+                    .build();
+            do {
+                query.setLastId(lastId);
+                eventDetailDoList = dynamicOperationEventDetailService.queryList(query, getDynamicOperationGame());
+                if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
+                    lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
+                }
+                Optional.ofNullable(eventDetailDoList)
+                        .orElse(Collections.emptyList())
+                        .forEach(this::eventDetailFailHandle);
+            } while (CollectionUtils.isNotEmpty(eventDetailDoList));
+            log.info("{}#eventDetailFailExec run end:{},time:{}", getClass().getSimpleName(),
+                    gameType.getId(),
+                    DateUtil.getCurrentMilli() - startTime);
+        } catch (Exception e) {
+            log.error("{}#eventDetailFailExec run exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+        }
     }
-
 
     /**
      * 执行处理中事件
@@ -99,11 +100,9 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
      */
     private void eventDetailFailHandle(DynamicOperationEventDetailDo eventDetailDo) {
         GameTypeEnum gameType = getDynamicOperationGame().getGameType();
-
         Long betRecordId = eventDetailDo.getBetRecordId();
-        //查询原始订单的状态
+        // 查询原始订单的状态
         BetRecordDo recordDo = betRecordService.get(betRecordId, gameType);
-
         if (Objects.equals(BetStatusEnum.ING.getCode(), recordDo.getStatus())) {
             return;
         }
@@ -114,16 +113,13 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
         DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(betRecordId, getDynamicOperationGame());
         if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
             eventDetailStatus = BetStatusEnum.FAIL;
-
         } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
             eventDetailStatus = BetStatusEnum.SUCCESS;
             if (eventDetailDo.getEventAmount() + eventDo.getFinishBonus() > eventDo.getMinBonus()) {
                 eventSubStatus = DynamicOperationEventSubStatusEnum.FINISH_NORMAL;
                 newEventStatus = DynamicOperationEventStatusEnum.FINISH;
             }
-
         }
-
         // 更新订单信息
         DynamicOperationEventDetailDo eventDetailUpdate = DynamicOperationEventDetailDo.builder()
                 .id(eventDetailDo.getId())
@@ -158,7 +154,6 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
                 .direction(Sort.Direction.ASC)
                 .orderByClause("_id")
                 .limit(DEFAULT_PAGE_SIZE).build();
-
         do {
             query.setLtLastId(lastId);
             eventDetailDoList = dynamicOperationEventService.queryList(query, getDynamicOperationGame());
@@ -186,20 +181,17 @@ public abstract class AbstractDynamicOperationEventScheduler extends AbstractSch
      */
     private void eventEventExpiredExec() {
         GameTypeEnum gameType = getDynamicOperationGame().getGameType();
-
-        log.info("AbstractDynamicOperationEventScheduler#eventEventIngExec run start:{}", gameType.getId());
+        log.info("{}#eventEventIngExec run start:{}", getClass().getSimpleName(), gameType.getId());
         long startTime = DateUtil.getCurrentMilli();
         Long lastId = null;
         List<DynamicOperationEventDo> eventDetailDoList = null;
 
         DynamicOperationQuery query = DynamicOperationQuery.builder()
                 .reportStatus(DynamicOperationReportStatusEnum.NONE.getCode())
-               // .eventStatus(DynamicOperationEventStatusEnum.NONE.getCode())
                 .expiredTimeLt(DateUtil.getCurrentMilli())
                 .direction(Sort.Direction.ASC)
                 .orderByClause("_id")
                 .limit(DEFAULT_PAGE_SIZE).build();
-
         do {
             query.setLtLastId(lastId);
             eventDetailDoList = dynamicOperationEventService.queryList(query, getDynamicOperationGame());
