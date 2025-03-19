@@ -6,17 +6,14 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.api.domain.req.promotion.GetBagRewardByIdReq;
 import com.wegame.capi.api.domain.req.promotion.RedeemRewardReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemRewardRes;
 import com.wegame.capi.api.promotion.BagApi;
-import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.builder.StartCardUseRecordQueryBuilder;
-import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.converter.promotion.StartCardUseRecordConvert;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
-import com.wegame.capi.biz.domain.biz.promotion.StartCardUseRecordDo;
+import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -49,7 +46,7 @@ public class StartCardUseRecordService {
     private BagApi bagApi;
 
 
-    public Long add(StartCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
+    public Long add(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
         StartCardUseTypeEnum startCardUseType = StartCardUseTypeEnum.valueOfGameType(gameType);
         AssertUtil.assertNotNull(startCardUseType, ErrorCode.ERR_INTER);
         StartCardUseRecordPo po = getMongoTemplate(gameType).insert(StartCardUseRecordConvert.doToPo(useRecordDo, OptEnum.ADD),
@@ -57,7 +54,7 @@ public class StartCardUseRecordService {
         return po.getId();
     }
 
-    public Boolean update(StartCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
+    public Boolean update(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(useRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(useRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
         Criteria criteria = new Criteria();

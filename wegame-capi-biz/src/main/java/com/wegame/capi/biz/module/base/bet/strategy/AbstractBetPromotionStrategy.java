@@ -15,8 +15,8 @@ import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
-import com.wegame.capi.biz.domain.biz.promotion.RewordDetailDo;
-import com.wegame.capi.biz.domain.biz.promotion.StartCardUseRecordDo;
+import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.manager.AbstractDynamicOperationManager;
 import com.wegame.capi.biz.service.promotion.BagService;
@@ -26,8 +26,8 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.StartCardReportStatusEnum;
-import com.wegame.capi.common.enums.StartCardUseStatusEnum;
+import com.wegame.capi.common.enums.StarCardReportStatusEnum;
+import com.wegame.capi.common.enums.StarCardUseStatusEnum;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,11 +84,11 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         // 使用星卡
         StarCardUseDo starCardUse = betDo.getStarCardUseDo();
         // 查询星卡详情
-        RewordDetailDo rewordDetail = bagService.getByRewardConfigId(starCardUse.getRewardConfigId());
+        RewardDetailDo rewordDetail = bagService.getByRewardConfigId(starCardUse.getRewardConfigId());
         AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(Objects.equals(rewordDetail.getBetValue(), betAndPayAmount.getKey()), ErrorCode.ERR_PARAM);
         // 准备核销星卡
-        StartCardUseRecordDo recordDo = StartCardUseRecordDo.builder()
+        StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
                 .id(super.generateBetRecordId())
                 .gameId(this.getGame().getGameInfo().getGameType().getId())
                 .betAmount(betAndPayAmount.getKey())
@@ -103,19 +103,19 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         BetRecordDo<R> rBetRecordDo = redeemRewardResultDoBetRecord.getRight();
         if (!rewardResult.getSuccess()) {
             // 更新星卡使用状态-失败
-            StartCardUseRecordDo updateRecord = StartCardUseRecordDo.builder()
+            StarCardUseRecordDo updateRecord = StarCardUseRecordDo.builder()
                     .id(useRecordId)
-                    .useStatus(StartCardUseStatusEnum.FAIL)
+                    .useStatus(StarCardUseStatusEnum.FAIL)
                     .failMsg(rewardResult.getMessage())
                     .playName(userInfo.getPlayerName()).build();
             startCardUseRecordService.update(updateRecord, this.getGame().getGameInfo().getGameType());
             throw new BusinessException(ErrorCode.ERR_PARAM);
         }
         // 更新星卡使用状态-成功
-        StartCardUseRecordDo updateRecord = StartCardUseRecordDo.builder()
+        StarCardUseRecordDo updateRecord = StarCardUseRecordDo.builder()
                 .id(useRecordId)
                 .payOutAmount(rBetRecordDo.getPayOutAmount())
-                .useStatus(StartCardUseStatusEnum.SUCCESS)
+                .useStatus(StarCardUseStatusEnum.SUCCESS)
                 .playName(userInfo.getPlayerName()).build();
         startCardUseRecordService.update(updateRecord, this.getGame().getGameInfo().getGameType());
         //调用投注
@@ -123,9 +123,9 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             // 更新星卡上报状态->无需上报
-            StartCardUseRecordDo updateRecord2 = StartCardUseRecordDo.builder()
+            StarCardUseRecordDo updateRecord2 = StarCardUseRecordDo.builder()
                     .id(useRecordId)
-                    .reportStatus(StartCardReportStatusEnum.NONE)
+                    .reportStatus(StarCardReportStatusEnum.NONE)
                     .playName(userInfo.getPlayerName()).build();
             startCardUseRecordService.update(updateRecord2, this.getGame().getGameInfo().getGameType());
         } else {

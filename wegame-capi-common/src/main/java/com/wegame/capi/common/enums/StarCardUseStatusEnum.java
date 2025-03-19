@@ -9,11 +9,11 @@ import java.util.Objects;
 @ToString
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum StartCardReportStatusEnum {
+public enum StarCardUseStatusEnum {
 
-    ING(0, "待上报"),
-    NONE(1, "无须上报"),
-    SUCCESS(2, "上报成功");
+    ING(0, "使用中"),
+    SUCCESS(1, "核销成功"),
+    FAIL(2, "核销失败");
 
     /**
      * 枚举码.
@@ -31,13 +31,13 @@ public enum StartCardReportStatusEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private StartCardReportStatusEnum(Integer code, String desc) {
+    private StarCardUseStatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public static StartCardReportStatusEnum valueOfCode(Integer code) {
-        for (StartCardReportStatusEnum item : StartCardReportStatusEnum.values()) {
+    public static StarCardUseStatusEnum valueOfCode(Integer code) {
+        for (StarCardUseStatusEnum item : StarCardUseStatusEnum.values()) {
             if (Objects.equals(item.getCode(), code)) {
                 return item;
             }

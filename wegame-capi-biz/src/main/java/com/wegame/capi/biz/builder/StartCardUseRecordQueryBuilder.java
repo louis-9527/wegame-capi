@@ -3,14 +3,14 @@ package com.wegame.capi.biz.builder;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.biz.domain.biz.promotion.StartCardUseRecordDo;
+import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Objects;
 
 public class StartCardUseRecordQueryBuilder {
 
-    public static Update buildMongoUpdate(StartCardUseRecordDo recordDo) {
+    public static Update buildMongoUpdate(StarCardUseRecordDo recordDo) {
         if (recordDo == null) {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }

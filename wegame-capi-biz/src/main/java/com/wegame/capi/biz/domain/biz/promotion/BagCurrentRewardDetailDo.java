@@ -1,18 +1,20 @@
 package com.wegame.capi.biz.domain.biz.promotion;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
+
 /**
- * 背包当前奖励DO
+ * 背包中当前游戏奖励明细DO
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BagCurrentRewordDetailDo {
+@EqualsAndHashCode(callSuper = false)
+public class BagCurrentRewardDetailDo implements Serializable {
     /**
      * 奖励ID
      */

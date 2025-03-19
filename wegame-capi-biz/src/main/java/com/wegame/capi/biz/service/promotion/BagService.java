@@ -13,13 +13,14 @@ import com.wegame.capi.api.domain.res.promotion.GetBagOtherRewardRes;
 import com.wegame.capi.api.domain.res.promotion.GetHistoryMessageRes;
 import com.wegame.capi.api.domain.res.promotion.GetRewardDetailRes;
 import com.wegame.capi.api.promotion.BagApi;
+import com.wegame.capi.biz.converter.promotion.BagOtherRewordDetailConverter;
 import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
 import com.wegame.capi.biz.converter.promotion.HistoryMessageConverter;
 import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
-import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewordDetailDo;
-import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewordDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewardDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.HistoryMessageDo;
-import com.wegame.capi.biz.domain.biz.promotion.RewordDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.promotion.QueryHistoryMessageRequest;
@@ -41,7 +42,7 @@ public class BagService {
     @Autowired
     SnowflakeIdGenerator snowflakeIdGenerator;
 
-    public List<BagCurrentRewordDetailDo> listCurrentRewordRecord() {
+    public List<BagCurrentRewardDetailDo> listCurrentRewordRecord() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GetBagCurrentRewardReq currentRewardReq = GetBagCurrentRewardReq.builder()
@@ -57,7 +58,7 @@ public class BagService {
         return BagRewordConverter.toDoList(rewardBagRes.getRewardBag());
     }
 
-    public List<BagOtherRewordDetailDo> listOtherRewordRecord() {
+    public List<BagOtherRewardDetailDo> listOtherRewordRecord() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GetBagOtherRewardReq currentRewardReq = GetBagOtherRewardReq.builder()
@@ -69,10 +70,10 @@ public class BagService {
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
         GetBagOtherRewardRes rewardBagRes = bagApi.getBagOtherReward(currentRewardReq);
-        return BagRewordConverter.otherResToDoList(rewardBagRes.getRewardBag());
+        return BagOtherRewordDetailConverter.toDoList(rewardBagRes.getRewardBag());
     }
 
-    public RewordDetailDo getByRewardConfigId(String rewardConfigId) {
+    public RewardDetailDo getByRewardConfigId(String rewardConfigId) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GetBagRewardByIdReq rewardByIdReq = GetBagRewardByIdReq.builder()

@@ -20,7 +20,7 @@ public class AchievementConverter {
                 .collect(Collectors.toList());
     }
 
-    public static AchievementVo toVo(GetAchievementRes.Achievement achievement) {
+    private static AchievementVo toVo(GetAchievementRes.Achievement achievement) {
         if (Objects.isNull(achievement)) {
             return null;
         }
