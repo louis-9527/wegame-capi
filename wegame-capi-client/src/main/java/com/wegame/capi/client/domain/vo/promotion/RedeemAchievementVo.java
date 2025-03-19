@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "成就")
+@ApiModel(description = "领取成就响应模型")
 public class RedeemAchievementVo implements  Serializable {
     private static final long serialVersionUID = -1704382640858325682L;
     @ApiModelProperty(value = "玩家姓名", required = true)

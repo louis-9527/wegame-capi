@@ -15,7 +15,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "宝箱")
+@ApiModel(description = "宝箱响应模型")
 public class TreasureVo implements  Serializable {
     @ApiModelProperty(value = "宝箱ID", required = true)
     private String treasureId;

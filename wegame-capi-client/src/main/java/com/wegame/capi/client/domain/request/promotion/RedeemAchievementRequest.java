@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "领取成就请求")
+@ApiModel(description = "领取成就请求模型")
 public class RedeemAchievementRequest implements Validate, Serializable {
     private static final long serialVersionUID = -7035134323452916163L;
     @ApiModelProperty(value = "成就id", required = true)

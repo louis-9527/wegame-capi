@@ -15,7 +15,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "成就")
+@ApiModel(description = "成就响应模型")
 public class AchievementVo implements  Serializable {
     private static final long serialVersionUID = -1704382640858325682L;
     @ApiModelProperty(value = "成就id", required = true)

@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "使用宝箱返回")
+@ApiModel(description = "领取宝箱响应模型")
 public class RedeemTreasureVo implements Serializable {
     private static final long serialVersionUID = 2423962589779617794L;
     @ApiModelProperty(value = "宝箱ID", required = true)
