@@ -14,27 +14,29 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 public class OperationEventPulsarConfig {
-    private static final String dynamicOperationMariaMakilingPulsarClient = "dynamicOperationMariaMakilingPulsarClient";
-    private static final String dynamicOperationMariaMakilingConsumer = "dynamicOperationMariaMakilingConsumer";
+    private static final String operationEventPulsarClient = "operationEventPulsarClient";
+    private static final String mariaMakilingOperationEventConsumer = "mariaMakilingOperationEventConsumer";
+    // todo fix
     @Value("${dynamic.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
     @Value("${dynamic.operation.pulsar_topic}")
     String dynamicOperationTopic;
+
     @Value("${dynamic.operation.pulsar_group.maria_makiling}")
     String dynamicOperationGroupMariaMakiling;
 
-    @Bean(name = dynamicOperationMariaMakilingPulsarClient, destroyMethod = "close")
-    public PulsarClient dynamicOperationMariaMakilingPulsarClient() throws Exception {
+    @Bean(name = operationEventPulsarClient, destroyMethod = "close")
+    public PulsarClient operationEventPulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(dynamicOperationTopicUrl)
                 .build();
     }
 
-    @Bean(name = dynamicOperationMariaMakilingConsumer, destroyMethod = "close")
-    public Consumer<byte[]> dynamicOperationMariaMakilingConsumer(@Autowired PulsarClient dynamicOperationMariaMakilingPulsarClient,
+    @Bean(name = mariaMakilingOperationEventConsumer, destroyMethod = "close")
+    public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                   @Autowired OperationEventPulsarListener operationEventPulsarListener) throws PulsarClientException {
         String deadLetterTopic = dynamicOperationTopic;
-        return dynamicOperationMariaMakilingPulsarClient.newConsumer(Schema.BYTES)
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
                 .subscriptionName(dynamicOperationGroupMariaMakiling)
                 .subscriptionType(SubscriptionType.Shared)
