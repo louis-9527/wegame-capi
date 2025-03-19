@@ -2,19 +2,19 @@ package com.wegame.capi.client.domain.vo.promotion;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "领取成就响应模型")
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(description = "成就")
 public class RedeemAchievementVo implements  Serializable {
     private static final long serialVersionUID = -1704382640858325682L;
     @ApiModelProperty(value = "玩家姓名", required = true)
@@ -29,9 +29,11 @@ public class RedeemAchievementVo implements  Serializable {
     private RedeemAchievementRewardVo reward;
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
     @ApiModel(description = "宝箱奖励")
     public static class RedeemAchievementRewardVo implements Serializable {
         private static final long serialVersionUID = 7692352397871708565L;

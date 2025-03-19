@@ -4,6 +4,7 @@ import com.wegame.capi.api.domain.res.promotion.GetTreasureRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemTreasureRes;
 import com.wegame.capi.api.promotion.TreasureApi;
 import com.wegame.capi.biz.builder.req.TreasureReqBuilder;
+import com.wegame.capi.biz.converter.promotion.RedeemTreasureConverter;
 import com.wegame.capi.biz.converter.promotion.TreasureConverter;
 import com.wegame.capi.client.domain.vo.promotion.TreasureVo;
 import com.wegame.capi.client.domain.vo.promotion.RedeemTreasureVo;
@@ -28,6 +29,6 @@ public class TreasureService {
 
     public RedeemTreasureVo redeemTreasure(String treasureId, Integer level) {
         RedeemTreasureRes redeemTreasureRes = treasureApi.redeemTreasure(TreasureReqBuilder.buildRedeemTreasureReq(treasureId, level));
-        return TreasureConverter.toVo(redeemTreasureRes);
+        return RedeemTreasureConverter.toVo(redeemTreasureRes);
     }
 }

@@ -2,17 +2,19 @@ package com.wegame.capi.client.domain.vo.promotion;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
+@ToString
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "历史消息明细")
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(description = "历史消息")
 public class HistoryMessageVo implements Serializable {
     private static final long serialVersionUID = 590053783690069207L;
     @ApiModelProperty(value = "玩家名称", required = true)

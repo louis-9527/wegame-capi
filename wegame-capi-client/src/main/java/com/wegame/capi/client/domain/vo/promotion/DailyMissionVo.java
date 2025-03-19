@@ -2,19 +2,19 @@ package com.wegame.capi.client.domain.vo.promotion;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "任务响应模型")
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(description = "任务")
 public class DailyMissionVo implements  Serializable {
     private static final long serialVersionUID = -1704392640858325682L;
 
@@ -24,9 +24,11 @@ public class DailyMissionVo implements  Serializable {
     private List<DailyMissionItemVo> dailyMissionList;
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
     @ApiModel(description = "任务")
     public static class DailyMissionItemVo implements  Serializable {
         @ApiModelProperty(value = "任务ID", required = true)

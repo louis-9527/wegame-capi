@@ -2,15 +2,17 @@ package com.wegame.capi.client.domain.vo.promotion;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
 @Data
+@ToString
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @ApiModel(description = "奖励明细")
 public class BagOtherRewardDetailVo implements Serializable {
     private static final long serialVersionUID = -2041608152456306530L;

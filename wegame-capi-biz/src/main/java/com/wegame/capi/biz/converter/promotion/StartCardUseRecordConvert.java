@@ -7,10 +7,12 @@ import com.wegame.capi.common.enums.StartCardReportStatusEnum;
 import com.wegame.capi.common.enums.StartCardUseStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.StartCardUseRecordPo;
 
+import java.util.Objects;
+
 public class StartCardUseRecordConvert {
 
     public static StartCardUseRecordPo doToPo(StartCardUseRecordDo recordDo, OptEnum optEnum) {
-        if (recordDo == null) {
+        if (Objects.isNull(recordDo)) {
             return null;
         }
         StartCardUseRecordPo recordPo = new StartCardUseRecordPo();
@@ -22,13 +24,13 @@ public class StartCardUseRecordConvert {
         recordPo.setPlayName(recordDo.getPlayName());
         recordPo.setBetAmount(recordDo.getBetAmount());
         recordPo.setPayOutAmount(recordDo.getPayOutAmount());
-        if(OptEnum.ADD == optEnum){
+        if (OptEnum.ADD == optEnum) {
             recordPo.setUseStatus(StartCardUseStatusEnum.ING.getCode());
             recordPo.setReportStatus(StartCardReportStatusEnum.ING.getCode());
             long currentMilli = DateUtil.getCurrentMilli();
             recordPo.setCreateTime(currentMilli);
             recordPo.setUpdateTime(currentMilli);
-        }else {
+        } else {
             recordPo.setUpdateTime(DateUtil.getCurrentMilli());
         }
         return recordPo;

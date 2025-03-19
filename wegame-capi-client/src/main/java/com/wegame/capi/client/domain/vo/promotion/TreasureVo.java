@@ -2,9 +2,7 @@ package com.wegame.capi.client.domain.vo.promotion;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -12,10 +10,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "宝箱响应模型")
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(description = "宝箱")
 public class TreasureVo implements  Serializable {
     @ApiModelProperty(value = "宝箱ID", required = true)
     private String treasureId;
@@ -33,9 +33,11 @@ public class TreasureVo implements  Serializable {
     private List<RewardVo> rewards;
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
     @ApiModel(description = "宝箱奖励")
     public static class RewardVo implements Serializable {
         private static final long serialVersionUID = 7692352397871708565L;

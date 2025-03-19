@@ -2,9 +2,7 @@ package com.wegame.capi.client.domain.vo.promotion;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -12,10 +10,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "成就响应模型")
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(description = "成就")
 public class AchievementVo implements  Serializable {
     private static final long serialVersionUID = -1704382640858325682L;
     @ApiModelProperty(value = "成就id", required = true)
