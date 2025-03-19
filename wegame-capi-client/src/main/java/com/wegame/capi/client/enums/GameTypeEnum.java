@@ -11,9 +11,9 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author apple
  */
-@AllArgsConstructor
 @Getter
 @ToString
+@AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeEnum {
 
