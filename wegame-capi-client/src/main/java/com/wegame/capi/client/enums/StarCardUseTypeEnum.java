@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum StartCardUseTypeEnum {
+public enum StarCardUseTypeEnum {
     MARIA_MAKILING(GameTypeEnum.MARIA_MAKILING, "mariamakiling_startCard_record");
     /**
      * 枚举码.
@@ -21,8 +21,8 @@ public enum StartCardUseTypeEnum {
      */
     private final String collectionName;
 
-    public static StartCardUseTypeEnum valueOfGameType(GameTypeEnum gameType) {
-        for (StartCardUseTypeEnum item : StartCardUseTypeEnum.values()) {
+    public static StarCardUseTypeEnum valueOfGameType(GameTypeEnum gameType) {
+        for (StarCardUseTypeEnum item : StarCardUseTypeEnum.values()) {
             if (item.gameType == gameType) {
                 return item;
             }

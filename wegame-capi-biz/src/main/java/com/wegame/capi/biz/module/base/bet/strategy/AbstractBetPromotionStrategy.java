@@ -20,7 +20,7 @@ import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.manager.AbstractDynamicOperationManager;
 import com.wegame.capi.biz.service.promotion.BagService;
-import com.wegame.capi.biz.service.promotion.StartCardUseRecordService;
+import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -38,7 +38,7 @@ import java.util.Objects;
 public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, BR extends ToVoConverter, WD extends SymbolDo> extends AbstractBetStrategy<R, BD, BR> {
 
     @Autowired
-    private StartCardUseRecordService startCardUseRecordService;
+    private StarCardUseRecordService startCardUseRecordService;
     @Autowired
     private BagService bagService;
     @Value("${api.game.cp.channelId}")

@@ -10,14 +10,14 @@ import com.wegame.capi.api.domain.req.promotion.RedeemRewardReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemRewardRes;
 import com.wegame.capi.api.promotion.BagApi;
-import com.wegame.capi.biz.builder.StartCardUseRecordQueryBuilder;
+import com.wegame.capi.biz.builder.StarCardUseRecordQueryBuilder;
 import com.wegame.capi.biz.converter.promotion.StartCardUseRecordConvert;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.StartCardUseTypeEnum;
+import com.wegame.capi.client.enums.StarCardUseTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.StartCardUseRecordPo;
@@ -36,21 +36,20 @@ import java.util.Map;
  * 星卡service
  */
 @Service
-public class StartCardUseRecordService {
+public class StarCardUseRecordService {
 
-    @Autowired
+    @Autowired // todo fix @tutu
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
     @Autowired
-    private BagApi bagApi;
-
+    BagApi bagApi;
 
     public Long add(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
-        StartCardUseTypeEnum startCardUseType = StartCardUseTypeEnum.valueOfGameType(gameType);
-        AssertUtil.assertNotNull(startCardUseType, ErrorCode.ERR_INTER);
-        StartCardUseRecordPo po = getMongoTemplate(gameType).insert(StartCardUseRecordConvert.doToPo(useRecordDo, OptEnum.ADD),
-                startCardUseType.getCollectionName());
+        StarCardUseTypeEnum starCardUseType = StarCardUseTypeEnum.valueOfGameType(gameType);
+        AssertUtil.assertNotNull(starCardUseType, ErrorCode.ERR_INTER);
+        StartCardUseRecordPo poToInsert = StartCardUseRecordConvert.doToPo(useRecordDo, OptEnum.ADD);
+        StartCardUseRecordPo po = getMongoTemplate(gameType).insert(poToInsert, starCardUseType.getCollectionName());
         return po.getId();
     }
 
@@ -61,7 +60,7 @@ public class StartCardUseRecordService {
         criteria.and("_id").is(useRecordDo.getId());
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(gameType).updateFirst(query,
-                StartCardUseRecordQueryBuilder.buildMongoUpdate(useRecordDo),
+                StarCardUseRecordQueryBuilder.buildMongoUpdate(useRecordDo),
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         return result.getModifiedCount() > 0;

@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Objects;
 
-public class StartCardUseRecordQueryBuilder {
+public class StarCardUseRecordQueryBuilder {
 
     public static Update buildMongoUpdate(StarCardUseRecordDo recordDo) {
         if (recordDo == null) {
