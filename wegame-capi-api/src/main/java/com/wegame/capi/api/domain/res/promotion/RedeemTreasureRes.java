@@ -33,7 +33,7 @@ public class RedeemTreasureRes implements Serializable {
     /**
      * 等级
      */
-    private String level;
+    private Integer level;
     /**
      * refId
      */
