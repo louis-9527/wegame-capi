@@ -21,7 +21,7 @@ public class DailyMissionVo implements  Serializable {
     @ApiModelProperty(value = "刷新时间", required = true)
     private Long refreshTime;
     @ApiModelProperty(value = "任务列表", required = true)
-    private List<DailyMissionItemVo> dailyMissionList;
+    private List<DailyMission> dailyMissionList;
 
     @Data
     @ToString
@@ -30,7 +30,7 @@ public class DailyMissionVo implements  Serializable {
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
     @ApiModel(description = "任务")
-    public static class DailyMissionItemVo implements  Serializable {
+    public static class DailyMission implements  Serializable {
         @ApiModelProperty(value = "任务ID", required = true)
         private String dailyMissionId;
         @ApiModelProperty(value = "任务描述", required = true)

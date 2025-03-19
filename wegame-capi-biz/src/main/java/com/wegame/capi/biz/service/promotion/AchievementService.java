@@ -6,8 +6,8 @@ import com.wegame.capi.api.promotion.AchievementApi;
 import com.wegame.capi.biz.builder.req.AchievementReqBuilder;
 import com.wegame.capi.biz.converter.promotion.AchievementConverter;
 import com.wegame.capi.biz.converter.promotion.RedeemAchievementConverter;
-import com.wegame.capi.client.domain.vo.promotion.AchievementVo;
-import com.wegame.capi.client.domain.vo.promotion.RedeemAchievementVo;
+import com.wegame.capi.biz.domain.biz.promotion.AchievementDo;
+import com.wegame.capi.biz.domain.biz.promotion.RedeemAchievementDo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,13 +22,13 @@ public class AchievementService {
     @Autowired
     AchievementApi achievementApi;
 
-    public List<AchievementVo> getAchievement() {
+    public List<AchievementDo.Achievement> getAchievement() {
         GetAchievementRes getAchievementRes = achievementApi.getAchievement(AchievementReqBuilder.buildGetAchievementReq());
-        return AchievementConverter.toVoList(getAchievementRes.getAchievementList());
+        return AchievementConverter.toDoList(getAchievementRes.getAchievementList());
     }
 
-    public RedeemAchievementVo redeemAchievement(String achievementId, String redeemId) {
+    public RedeemAchievementDo redeemAchievement(String achievementId, String redeemId) {
         RedeemAchievementRes redeemAchievementRes = achievementApi.redeemAchievement(AchievementReqBuilder.buildRedeemAchievementReq(achievementId, redeemId));
-        return RedeemAchievementConverter.toVo(redeemAchievementRes);
+        return RedeemAchievementConverter.toDo(redeemAchievementRes);
     }
 }

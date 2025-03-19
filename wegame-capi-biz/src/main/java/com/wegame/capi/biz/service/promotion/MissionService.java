@@ -6,7 +6,7 @@ import com.wegame.capi.api.domain.res.promotion.GetDailyMissionRes;
 import com.wegame.capi.api.promotion.MissionApi;
 import com.wegame.capi.biz.builder.req.MissionReqBuilder;
 import com.wegame.capi.biz.converter.promotion.MissionConverter;
-import com.wegame.capi.client.domain.vo.promotion.DailyMissionVo;
+import com.wegame.capi.biz.domain.biz.promotion.DailyMissionDo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +19,9 @@ public class MissionService {
     @Autowired
     MissionApi missionApi;
 
-    public DailyMissionVo getDailyMission() {
+    public DailyMissionDo getDailyMission() {
         GetDailyMissionRes getDailyMissionRes = missionApi.getDailyMission(MissionReqBuilder.buildGetDailyMissionReq());
         AssertUtil.assertNotNull(getDailyMissionRes.getDailyMissionList(), ErrorCode.ERR_PARAM);
-        return MissionConverter.toVo(getDailyMissionRes);
+        return MissionConverter.toDo(getDailyMissionRes);
     }
 }

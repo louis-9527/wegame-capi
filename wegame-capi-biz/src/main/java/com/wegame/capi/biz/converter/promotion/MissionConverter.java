@@ -1,8 +1,8 @@
 package com.wegame.capi.biz.converter.promotion;
 
 import com.wegame.capi.api.domain.res.promotion.GetDailyMissionRes;
+import com.wegame.capi.biz.domain.biz.promotion.DailyMissionDo;
 import com.wegame.capi.client.domain.vo.promotion.DailyMissionVo;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,14 +12,41 @@ import java.util.stream.Collectors;
 
 public class MissionConverter {
 
-    public static DailyMissionVo toVo(GetDailyMissionRes missionRes) {
-        return DailyMissionVo.builder()
-                .refreshTime(Objects.isNull(missionRes.getRefreshTime()) ? null : missionRes.getRefreshTime().getTime())
-                .dailyMissionList(toVoList(missionRes.getDailyMissionList()))
+    public static DailyMissionDo toDo(GetDailyMissionRes missionRes) {
+        return com.wegame.capi.biz.domain.biz.promotion.DailyMissionDo.builder()
+                .refreshTime(missionRes.getRefreshTime())
+                .dailyMissionList(toDoList(missionRes.getDailyMissionList()))
+                .build();
+    }
+    private static List<DailyMissionDo.DailyMission> toDoList(List<GetDailyMissionRes.DailyMission> dailyMissionList) {
+        return Optional.ofNullable(dailyMissionList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(MissionConverter::toDo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+    private static DailyMissionDo.DailyMission toDo(GetDailyMissionRes.DailyMission dailyMission) {
+        if (Objects.isNull(dailyMission)) {
+            return null;
+        }
+        return com.wegame.capi.biz.domain.biz.promotion.DailyMissionDo.DailyMission.builder()
+                .dailyMissionId(dailyMission.getDailyMissionId())
+                .description(dailyMission.getDescription())
+                .experience(dailyMission.getExperience())
+                .target(dailyMission.getTarget())
+                .status(dailyMission.getStatus())
+                .starLevel(dailyMission.getStarLevel())
                 .build();
     }
 
-    private static List<DailyMissionVo.DailyMissionItemVo> toVoList(List<GetDailyMissionRes.DailyMission> dailyMissionList) {
+    public static DailyMissionVo toVo(DailyMissionDo dailyMissionDo) {
+        return DailyMissionVo.builder()
+                .refreshTime(Objects.isNull(dailyMissionDo.getRefreshTime()) ? null : dailyMissionDo.getRefreshTime().getTime())
+                .dailyMissionList(toVoList(dailyMissionDo.getDailyMissionList()))
+                .build();
+    }
+    private static List<DailyMissionVo.DailyMission> toVoList(List<DailyMissionDo.DailyMission> dailyMissionList) {
         return Optional.ofNullable(dailyMissionList)
                 .orElse(Collections.emptyList())
                 .stream()
@@ -27,12 +54,11 @@ public class MissionConverter {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-
-    private static DailyMissionVo.DailyMissionItemVo toVo(GetDailyMissionRes.DailyMission dailyMission) {
+    private static DailyMissionVo.DailyMission toVo(DailyMissionDo.DailyMission dailyMission) {
         if (Objects.isNull(dailyMission)) {
             return null;
         }
-        return DailyMissionVo.DailyMissionItemVo.builder()
+        return DailyMissionVo.DailyMission.builder()
                 .dailyMissionId(dailyMission.getDailyMissionId())
                 .description(dailyMission.getDescription())
                 .experience(dailyMission.getExperience())

@@ -27,7 +27,7 @@ public class AchievementVo implements  Serializable {
     @ApiModelProperty(value = "成就图标", required = true)
     private String iconUrl;
     @ApiModelProperty(value = "进度", required = true)
-    private ProgressVo progressList;
+    private Progress progressList;
     @ApiModelProperty(value = "完成时间", required = true)
     private Long completeAt;
     @ApiModelProperty(value = "状态 1进行中 2可兑换 3兑换", required = true)
@@ -35,13 +35,13 @@ public class AchievementVo implements  Serializable {
     @ApiModelProperty(value = "兑换id", required = true)
     private String redeemId;
     @ApiModelProperty(value = "奖励", required = true)
-    private List<RewardVo> rewards;
+    private List<Reward> rewards;
 
     @Data
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProgressVo implements Serializable {
+    public static class Progress implements Serializable {
         private static final long serialVersionUID = 1L;
         @ApiModelProperty(value = "目标值", required = true)
         private BigDecimal target;
@@ -53,7 +53,7 @@ public class AchievementVo implements  Serializable {
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class RewardVo implements Serializable {
+    public static class Reward implements Serializable {
         private static final long serialVersionUID = 1L;
         @ApiModelProperty(value = "奖励配置id", required = true)
         private String rewardConfigId;

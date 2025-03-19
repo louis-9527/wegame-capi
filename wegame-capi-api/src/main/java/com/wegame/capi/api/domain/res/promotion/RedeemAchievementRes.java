@@ -33,7 +33,7 @@ public class RedeemAchievementRes implements Serializable {
     /**
      * 奖励列表
      */
-    private RedeemAchievementReward reward;
+    private Reward reward;
 
     @Data
     @ToString
@@ -41,7 +41,7 @@ public class RedeemAchievementRes implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     @EqualsAndHashCode
-    public static class RedeemAchievementReward implements Serializable {
+    public static class Reward implements Serializable {
         private static final long serialVersionUID = 1L;
         /**
          * 奖励配置id

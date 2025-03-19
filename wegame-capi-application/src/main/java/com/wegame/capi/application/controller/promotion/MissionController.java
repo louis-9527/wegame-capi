@@ -2,6 +2,7 @@ package com.wegame.capi.application.controller.promotion;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.biz.converter.promotion.MissionConverter;
 import com.wegame.capi.biz.service.promotion.MissionService;
 import com.wegame.capi.client.domain.vo.promotion.DailyMissionVo;
 import io.swagger.annotations.Api;
@@ -27,7 +28,7 @@ public class MissionController {
     @ApiOperation(value = "任务列表", httpMethod = "POST")
     @PostMapping("/getDailyMission")
     public CommonResponse<DailyMissionVo> getDailyMission() {
-        return build(missionService.getDailyMission());
+        return build(MissionConverter.toVo(missionService.getDailyMission()));
     }
 
 }

@@ -13,7 +13,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
-public class RewardVoControllerTest extends BaseTest {
+public class RewardControllerTest extends BaseTest {
 
     @Autowired
     public RewardController rewardController;

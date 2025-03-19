@@ -2,6 +2,8 @@ package com.wegame.capi.application.controller.promotion;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.biz.converter.promotion.RedeemTreasureConverter;
+import com.wegame.capi.biz.converter.promotion.TreasureConverter;
 import com.wegame.capi.biz.service.promotion.TreasureService;
 import com.wegame.capi.client.domain.request.promotion.RedeemTreasureRequest;
 import com.wegame.capi.client.domain.vo.promotion.RedeemTreasureVo;
@@ -30,7 +32,7 @@ public class TreasureController {
     @ApiOperation(value = "获取宝箱列表", httpMethod = "POST")
     @PostMapping("/getTreasure")
     public CommonResponse<List<TreasureVo>> getTreasure() {
-        return CommonResponse.build(treasureService.getTreasure());
+        return CommonResponse.build(TreasureConverter.toVoList(treasureService.getTreasure()));
     }
 
     @LoginRequired
@@ -38,7 +40,7 @@ public class TreasureController {
     @PostMapping("/redeemTreasure")
     public CommonResponse<RedeemTreasureVo> redeemTreasure(@RequestBody RedeemTreasureRequest request) {
         request.validate();
-        return CommonResponse.build(treasureService.redeemTreasure(request.getTreasureId(), request.getLevel()));
+        return CommonResponse.build(RedeemTreasureConverter.toVo(treasureService.redeemTreasure(request.getTreasureId(), request.getLevel())));
     }
 
 }

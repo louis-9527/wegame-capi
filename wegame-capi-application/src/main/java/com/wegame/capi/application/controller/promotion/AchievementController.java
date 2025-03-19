@@ -2,6 +2,10 @@ package com.wegame.capi.application.controller.promotion;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.biz.converter.promotion.AchievementConverter;
+import com.wegame.capi.biz.converter.promotion.RedeemAchievementConverter;
+import com.wegame.capi.biz.domain.biz.promotion.AchievementDo;
+import com.wegame.capi.biz.domain.biz.promotion.RedeemAchievementDo;
 import com.wegame.capi.biz.service.promotion.AchievementService;
 import com.wegame.capi.client.domain.request.promotion.RedeemAchievementRequest;
 import com.wegame.capi.client.domain.vo.promotion.AchievementVo;
@@ -32,7 +36,8 @@ public class AchievementController {
     @ApiOperation(value = "成就列表", httpMethod = "POST")
     @PostMapping("/getAchievement")
     public CommonResponse<List<AchievementVo>> getAchievement() {
-        return build(achievementService.getAchievement());
+        List<AchievementDo.Achievement> achievement = achievementService.getAchievement();
+        return build(AchievementConverter.toVoList(achievement));
     }
 
     @LoginRequired
@@ -40,6 +45,7 @@ public class AchievementController {
     @PostMapping("/redeemAchievement")
     public CommonResponse<RedeemAchievementVo> redeemAchievement(@RequestBody RedeemAchievementRequest request) {
         request.validate();
-        return build(achievementService.redeemAchievement(request.getAchievementId(), request.getRedeemId()));
+        RedeemAchievementDo redeemAchievementDo = achievementService.redeemAchievement(request.getAchievementId(), request.getRedeemId());
+        return build(RedeemAchievementConverter.toVo(redeemAchievementDo));
     }
 }

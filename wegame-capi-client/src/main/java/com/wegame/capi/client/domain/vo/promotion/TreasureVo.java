@@ -30,7 +30,7 @@ public class TreasureVo implements  Serializable {
     @ApiModelProperty(value = "宝箱等级", required = true)
     private Integer vipLevel;
     @ApiModelProperty(value = "宝箱奖励列表", required = true)
-    private List<RewardVo> rewards;
+    private List<Reward> rewards;
 
     @Data
     @ToString
@@ -39,7 +39,7 @@ public class TreasureVo implements  Serializable {
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
     @ApiModel(description = "宝箱奖励")
-    public static class RewardVo implements Serializable {
+    public static class Reward implements Serializable {
         private static final long serialVersionUID = 7692352397871708565L;
         @ApiModelProperty(value = "奖励ID", required = true)
         private String rewardId;

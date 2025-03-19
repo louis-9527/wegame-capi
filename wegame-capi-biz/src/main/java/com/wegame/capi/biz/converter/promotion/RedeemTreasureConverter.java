@@ -1,17 +1,18 @@
 package com.wegame.capi.biz.converter.promotion;
 
 import com.wegame.capi.api.domain.res.promotion.RedeemTreasureRes;
+import com.wegame.capi.biz.domain.biz.promotion.RedeemTreasureDo;
 import com.wegame.capi.client.domain.vo.promotion.RedeemTreasureVo;
 
 import java.util.Objects;
 
 public class RedeemTreasureConverter {
 
-    public static RedeemTreasureVo toVo(RedeemTreasureRes res) {
+    public static RedeemTreasureDo toDo(RedeemTreasureRes res) {
         if (Objects.isNull(res)) {
             return null;
         }
-        return RedeemTreasureVo.builder()
+        return RedeemTreasureDo.builder()
                 .treasureId(res.getTreasureId())
                 .playerName(res.getPlayerName())
                 .channelId(res.getChannelId())
@@ -19,15 +20,46 @@ public class RedeemTreasureConverter {
                 .level(res.getLevel())
                 .experience(res.getExperience())
                 .refId(res.getRefId())
-                .reward(treasureRewardToVo(res.getReward()))
+                .reward(rewardToDo(res.getReward()))
                 .build();
     }
 
-    private static RedeemTreasureVo.TreasureRewardVo treasureRewardToVo(RedeemTreasureRes.Reward reward) {
+    private static RedeemTreasureDo.Reward rewardToDo(RedeemTreasureRes.Reward reward) {
         if (Objects.isNull(reward)) {
             return null;
         }
-        return RedeemTreasureVo.TreasureRewardVo.builder()
+        return RedeemTreasureDo.Reward.builder()
+                .rewardConfigId(reward.getRewardConfigId())
+                .name(reward.getName())
+                .count(reward.getCount())
+                .imgUrl(reward.getImgUrl())
+                .betValue(reward.getBetValue())
+                .balanceRequired(reward.getBalanceRequired())
+                .starLevel(reward.getStarLevel())
+                .build();
+    }
+
+    public static RedeemTreasureVo toVo(RedeemTreasureDo redeemTreasureDo) {
+        if (Objects.isNull(redeemTreasureDo)) {
+            return null;
+        }
+        return RedeemTreasureVo.builder()
+                .treasureId(redeemTreasureDo.getTreasureId())
+                .playerName(redeemTreasureDo.getPlayerName())
+                .channelId(redeemTreasureDo.getChannelId())
+                .pId(redeemTreasureDo.getPId())
+                .level(redeemTreasureDo.getLevel())
+                .experience(redeemTreasureDo.getExperience())
+                .refId(redeemTreasureDo.getRefId())
+                .reward(rewardToVo(redeemTreasureDo.getReward()))
+                .build();
+    }
+
+    private static RedeemTreasureVo.Reward rewardToVo(RedeemTreasureDo.Reward reward) {
+        if (Objects.isNull(reward)) {
+            return null;
+        }
+        return RedeemTreasureVo.Reward.builder()
                 .rewardConfigId(reward.getRewardConfigId())
                 .name(reward.getName())
                 .count(reward.getCount())
