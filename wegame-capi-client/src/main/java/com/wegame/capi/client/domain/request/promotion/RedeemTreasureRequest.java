@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "使用宝箱请求")
+@ApiModel(description = "领取宝箱请求模型")
 public class RedeemTreasureRequest implements Validate, Serializable {
     private static final long serialVersionUID = -7035134333452916163L;
     @ApiModelProperty(value = "宝箱ID", required = true)
