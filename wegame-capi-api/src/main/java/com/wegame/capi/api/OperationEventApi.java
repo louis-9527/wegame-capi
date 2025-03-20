@@ -24,9 +24,12 @@ import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
 
+/**
+ * 干预事件Api
+ */
 @Slf4j
 @Component
-public class DynamicOperationApi extends SingleWalletBaseApi {
+public class OperationEventApi extends SingleWalletBaseApi {
     private static final String UPDATE_EVENTS_STATUS = "%s/updateEventsStatus";
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;

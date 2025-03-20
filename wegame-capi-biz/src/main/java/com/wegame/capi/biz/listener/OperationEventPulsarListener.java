@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.capi.biz.converter.DynamicOperationConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
-import com.wegame.capi.biz.service.DynamicOperationEventService;
+import com.wegame.capi.biz.service.OperationEventService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 public class OperationEventPulsarListener implements MessageListener {
 
     @Autowired
-    DynamicOperationEventService dynamicOperationEventService;
+    OperationEventService operationEventService;
 
     @Override
     public void received(Consumer consumer, Message msg) {
@@ -48,7 +48,7 @@ public class OperationEventPulsarListener implements MessageListener {
                     log.warn("dynamicOperation msg content error:{}", JSON.toJSONString(messageDo));
                     return true;
                 }
-                dynamicOperationEventService.add(eventDo, OperationEventTypeEnum.MARIA_MAKILING);
+                operationEventService.add(eventDo, OperationEventTypeEnum.MARIA_MAKILING);
             }
             return true;
         } catch (Exception e) {

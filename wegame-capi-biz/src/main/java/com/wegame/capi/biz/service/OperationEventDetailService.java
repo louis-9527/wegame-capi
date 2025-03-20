@@ -33,7 +33,7 @@ import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMAR
  */
 @Slf4j
 @Component
-public class DynamicOperationEventDetailService implements InitializingBean {
+public class OperationEventDetailService implements InitializingBean {
 
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
