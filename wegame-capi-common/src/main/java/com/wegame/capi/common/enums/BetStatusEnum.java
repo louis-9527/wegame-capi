@@ -3,10 +3,8 @@ package com.wegame.capi.common.enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Objects;
 
