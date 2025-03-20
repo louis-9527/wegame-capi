@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.dynamic;
+package com.wegame.capi.scheduler.operation;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.utils.DateUtil;
