@@ -163,7 +163,7 @@ public abstract class AbstractOperationEventScheduler
                     .limit(DEFAULT_PAGE_SIZE).build();
             do {
                 query.setLtLastId(lastId);
-                eventDetailDoList = dynamicOperationEventService.queryList(query, operationEventGame());
+                eventDetailDoList = dynamicOperationEventService.queryList(query, operationEventType());
                 if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                     lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
                 }
@@ -206,7 +206,7 @@ public abstract class AbstractOperationEventScheduler
                     .limit(DEFAULT_PAGE_SIZE).build();
             do {
                 query.setLtLastId(lastId);
-                eventDetailDoList = dynamicOperationEventService.queryList(query, operationEventGame());
+                eventDetailDoList = dynamicOperationEventService.queryList(query, operationEventType());
                 if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                     lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
                 }
