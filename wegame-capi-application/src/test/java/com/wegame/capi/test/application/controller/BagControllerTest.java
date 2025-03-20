@@ -7,7 +7,7 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.promotion.QueryBagCurrentGameRewardRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryBagOtherGameRewardRequest;
-import com.wegame.capi.client.domain.vo.promotion.BagCurrentRewordVo;
+import com.wegame.capi.client.domain.vo.promotion.BagCurrentRewardVo;
 import com.wegame.capi.client.domain.vo.promotion.BagOtherRewardVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.test.BaseTest;
@@ -29,7 +29,7 @@ public class BagControllerTest extends BaseTest {
         UserInfoContext.setUserInfo(userInfo);
 
         QueryBagCurrentGameRewardRequest request = new QueryBagCurrentGameRewardRequest();
-        CommonResponse<BagCurrentRewordVo> response = bagController.queryBagCurrentGameReward(request);
+        CommonResponse<BagCurrentRewardVo> response = bagController.queryBagCurrentGameReward(request);
 
         System.out.println("result:" + JSON.toJSONString(response));
     }
