@@ -27,9 +27,13 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 干预事件服务
+ */
 @Slf4j
 @Service
 public class OperationEventService extends AbstractService {
+
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 

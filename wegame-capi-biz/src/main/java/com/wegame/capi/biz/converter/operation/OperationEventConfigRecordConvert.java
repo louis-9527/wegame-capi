@@ -11,13 +11,11 @@ import java.util.stream.Collectors;
 
 public class OperationEventConfigRecordConvert {
 
-
     public static List<OperationEventConfigRecordDo> poToDoList(List<OperationEventConfigRecordPo> poList) {
         return Optional.ofNullable(poList).orElse(Collections.emptyList())
                 .stream()
                 .map(OperationEventConfigRecordConvert::poToDo)
                 .collect(Collectors.toList());
-
     }
 
     public static OperationEventConfigRecordDo poToDo(OperationEventConfigRecordPo po) {

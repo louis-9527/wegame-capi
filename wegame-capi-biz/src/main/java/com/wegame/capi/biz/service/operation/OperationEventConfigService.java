@@ -22,13 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 干预事件配置服务
+ */
 @Slf4j
 @Service
 public class OperationEventConfigService extends AbstractService {
 
     private static final int partitionSize = 10;
 
-    public Long addConfig(OperationEventConfigDo configDo, OperationEventTypeEnum dynamicOperationGame) {
+    public Long add(OperationEventConfigDo configDo, OperationEventTypeEnum dynamicOperationGame) {
         OperationEventConfigPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(OperationEventConfigConvert.doToPo(configDo),
                 dynamicOperationGame.getEventConfigCollectionName());
         return insert.getId();
@@ -61,17 +64,6 @@ public class OperationEventConfigService extends AbstractService {
                 // **保证升序排序**
                 .sorted()
                 .collect(Collectors.toList());
-    }
-
-
-
-
-    //////////////////// config_record ///////////////////
-
-    public Long addConfigRecord(OperationEventConfigRecordDo recordDo, OperationEventTypeEnum dynamicOperationGame) {
-        OperationEventConfigRecordPo insertPo = getMongoTemplate(dynamicOperationGame.getGameType())
-                .insert(OperationEventConfigRecordConvert.doToPo(recordDo), dynamicOperationGame.getEventConfigRecordCollectionName());
-        return insertPo.getId();
     }
 
     public List<OperationEventConfigRecordDo> listRecord(Long recordId, OperationEventTypeEnum typeEnum) {
