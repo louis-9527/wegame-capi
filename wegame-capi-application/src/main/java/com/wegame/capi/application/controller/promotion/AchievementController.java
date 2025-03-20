@@ -2,8 +2,6 @@ package com.wegame.capi.application.controller.promotion;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.biz.converter.promotion.AchievementConverter;
-import com.wegame.capi.biz.converter.promotion.RedeemAchievementConverter;
 import com.wegame.capi.biz.domain.biz.promotion.AchievementDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemAchievementDo;
 import com.wegame.capi.biz.service.promotion.AchievementService;
@@ -22,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import static com.wegame.base.domain.CommonResponse.build;
+import static com.wegame.capi.biz.converter.promotion.AchievementConverter.toVoList;
+import static com.wegame.capi.biz.converter.promotion.RedeemAchievementConverter.toVo;
 
 @Slf4j
 @RestController
@@ -37,7 +37,7 @@ public class AchievementController {
     @PostMapping("/getAchievement")
     public CommonResponse<List<AchievementVo>> getAchievement() {
         List<AchievementDo.Achievement> achievement = achievementService.getAchievement();
-        return build(AchievementConverter.toVoList(achievement));
+        return build(toVoList(achievement));
     }
 
     @LoginRequired
@@ -46,6 +46,6 @@ public class AchievementController {
     public CommonResponse<RedeemAchievementVo> redeemAchievement(@RequestBody RedeemAchievementRequest request) {
         request.validate();
         RedeemAchievementDo redeemAchievementDo = achievementService.redeemAchievement(request.getAchievementId(), request.getRedeemId());
-        return build(RedeemAchievementConverter.toVo(redeemAchievementDo));
+        return build(toVo(redeemAchievementDo));
     }
 }
