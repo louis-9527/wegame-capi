@@ -67,7 +67,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
-    public AbstractOperationEventManager getDynamicOperationManager() {
+    public AbstractOperationEventManager<SymbolDo> getDynamicOperationManager() {
         return mariaMakilingOperationEventManager;
     }
 

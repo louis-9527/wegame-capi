@@ -41,7 +41,11 @@ public class OperationEventPulsarListener implements MessageListener {
 
     public boolean handleMessage(OperationEventMessageDo messageDo) {
         try {
-            // todo 支持通用
+            GameTypeEnum gameTypeEnum = GameTypeEnum.valueOfId(messageDo.getGameId());
+            if( gameTypeEnum ==null){
+                log.warn("dynamicOperation msg content error:{}", JSON.toJSONString(messageDo));
+                return true;
+            }
             if (messageDo.getGameId().equals(GameTypeEnum.MARIA_MAKILING.getId())) {
                 DynamicOperationEventDo eventDo = DynamicOperationConvert.messageToDo(messageDo);
                 if (eventDo == null) {
