@@ -42,7 +42,7 @@ public class OperationEventDetailQuery implements Serializable {
      */
     private String orderByClause;
     /**
-     * 排序语句
+     * 排序方向
      */
     private Sort.Direction direction;
 }
