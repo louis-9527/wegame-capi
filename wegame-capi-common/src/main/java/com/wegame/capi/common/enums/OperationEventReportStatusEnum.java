@@ -44,7 +44,4 @@ public enum OperationEventReportStatusEnum {
         }
         return null;
     }
-
-
-
 }

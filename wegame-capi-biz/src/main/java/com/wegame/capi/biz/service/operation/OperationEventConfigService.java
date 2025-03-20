@@ -1,19 +1,17 @@
-package com.wegame.capi.biz.service;
+package com.wegame.capi.biz.service.operation;
 
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationConfigQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationConfigConvert;
-import com.wegame.capi.biz.domain.biz.game.GameMultipleRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigRecordDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigPo;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigRecordPo;
+import com.wegame.capi.client.enums.OperationEventTypeEnum;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigPo;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigQuery;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigRecordPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +34,7 @@ import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMAR
 
 @Slf4j
 @Service
-public class DynamicOperationEventConfigService implements InitializingBean {
+public class OperationEventConfigService implements InitializingBean {
 
     @Autowired
     Map<String, MongoTemplate> mongoTemplateMap;
@@ -53,22 +51,24 @@ public class DynamicOperationEventConfigService implements InitializingBean {
         });
     }
 
-    public List<List<DynamicOperationConfigDo>> getConfigDetail(DynamicOperationConfigQuery configQuery, OperationEventTypeEnum dynamicOperationGame) {
-        List<DynamicOperationConfigPo> dynamicOperationConfigPos = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery), DynamicOperationConfigPo.class, dynamicOperationGame.getEventConfigCollectionName());
-        List<DynamicOperationConfigDo> dynamicOperationConfigDos = DynamicOperationConfigConvert.convertDos(dynamicOperationConfigPos);
-        if (CollectionUtils.isEmpty(dynamicOperationConfigDos)) {
+    public List<List<DynamicOperationConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery, OperationEventTypeEnum typeEnum) {
+        List<OperationEventConfigPo> dynamicOperationConfigPos = getMongoTemplate(typeEnum.getGameType()).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery),
+                OperationEventConfigPo.class,
+                typeEnum.getEventConfigCollectionName());
+        List<DynamicOperationConfigDo> doList = DynamicOperationConfigConvert.convertDos(dynamicOperationConfigPos);
+        if (CollectionUtils.isEmpty(doList)) {
             return new ArrayList<>();
         }
-        return Lists.partition(dynamicOperationConfigDos, partitionSize);
+        return Lists.partition(doList, partitionSize);
     }
 
 
-    public List<Double> getConfigMultipleArray(OperationEventTypeEnum dynamicOperationGame) {
+    public List<Double> getConfigMultipleArray(OperationEventTypeEnum typeEnum) {
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.group().addToSet("multiple").as("values")
         );
-        AggregationResults<Document> results = getMongoTemplate(dynamicOperationGame.getGameType())
-                .aggregate(aggregation, dynamicOperationGame.getEventConfigCollectionName(), Document.class);
+        AggregationResults<Document> results = getMongoTemplate(typeEnum.getGameType())
+                .aggregate(aggregation, typeEnum.getEventConfigCollectionName(), Document.class);
         return results.getMappedResults().stream()
                 .flatMap(doc -> ((List<?>) doc.get("values")).stream()) // 提取 "values" 数组
                 .map(o -> ((Number) o).doubleValue()) // 转换为 Double
@@ -78,20 +78,22 @@ public class DynamicOperationEventConfigService implements InitializingBean {
     }
 
 
-    public List<DynamicOperationConfigRecordDo> listRecord(Long recordId, OperationEventTypeEnum dynamicOperationGame) {
-        List<DynamicOperationConfigRecordPo> dynamicOperationConfigPos = getMongoTemplate(dynamicOperationGame.getGameType())
-                .find(DynamicOperationConfigQueryBuilder.buildRecordQuery(recordId), DynamicOperationConfigRecordPo.class, dynamicOperationGame.getEventConfigRecordCollectionName());
+    public List<DynamicOperationConfigRecordDo> listRecord(Long recordId, OperationEventTypeEnum typeEnum) {
+        List<OperationEventConfigRecordPo> dynamicOperationConfigPos = getMongoTemplate(typeEnum.getGameType())
+                .find(DynamicOperationConfigQueryBuilder.buildRecordQuery(recordId),
+                        OperationEventConfigRecordPo.class,
+                        typeEnum.getEventConfigRecordCollectionName());
         return DynamicOperationConfigConvert.convertRecordDos(dynamicOperationConfigPos);
     }
 
 
-    public Long addConfig(DynamicOperationConfigPo configPo, OperationEventTypeEnum dynamicOperationGame) {
-        DynamicOperationConfigPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(configPo, dynamicOperationGame.getEventConfigCollectionName());
+    public Long addConfig(OperationEventConfigPo configPo, OperationEventTypeEnum dynamicOperationGame) {
+        OperationEventConfigPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(configPo, dynamicOperationGame.getEventConfigCollectionName());
         return insert.getId();
     }
 
-    public Long addConfigRecord(DynamicOperationConfigRecordPo recordPo, OperationEventTypeEnum dynamicOperationGame) {
-        DynamicOperationConfigRecordPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(recordPo, dynamicOperationGame.getEventConfigRecordCollectionName());
+    public Long addConfigRecord(OperationEventConfigRecordPo recordPo, OperationEventTypeEnum dynamicOperationGame) {
+        OperationEventConfigRecordPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(recordPo, dynamicOperationGame.getEventConfigRecordCollectionName());
         return insert.getId();
     }
 

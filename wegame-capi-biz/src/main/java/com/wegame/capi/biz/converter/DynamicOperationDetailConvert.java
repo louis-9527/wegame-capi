@@ -4,7 +4,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailPo;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailPo;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 
 public class DynamicOperationDetailConvert {
 
-    public static DynamicOperationDetailPo toPo(DynamicOperationEventDetailDo detailDo, OptEnum optEnum) {
+    public static OperationEventDetailPo toPo(DynamicOperationEventDetailDo detailDo, OptEnum optEnum) {
         if (Objects.isNull(detailDo)) {
             return null;
         }
-        DynamicOperationDetailPo po = new DynamicOperationDetailPo();
+        OperationEventDetailPo po = new OperationEventDetailPo();
         po.setId(detailDo.getId());
         if (OptEnum.ADD.equals(optEnum)) {
             po.setEventId(detailDo.getEventId());
@@ -45,7 +45,7 @@ public class DynamicOperationDetailConvert {
         return po;
     }
 
-    public static DynamicOperationEventDetailDo toDo(DynamicOperationDetailPo po) {
+    public static DynamicOperationEventDetailDo toDo(OperationEventDetailPo po) {
         if (Objects.isNull(po)) {
             return null;
         }
@@ -70,7 +70,7 @@ public class DynamicOperationDetailConvert {
         return detailDo;
     }
 
-    public static List<DynamicOperationEventDetailDo> toDoList(List<DynamicOperationDetailPo> poList) {
+    public static List<DynamicOperationEventDetailDo> toDoList(List<OperationEventDetailPo> poList) {
         return Optional.ofNullable(poList).orElse(Collections.emptyList())
                 .stream()
                 .map(DynamicOperationDetailConvert::toDo)

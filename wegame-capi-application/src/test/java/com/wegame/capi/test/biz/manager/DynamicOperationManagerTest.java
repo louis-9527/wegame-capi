@@ -1,4 +1,4 @@
-package com.wegame.capi.test.biz.service;
+package com.wegame.capi.test.biz.manager;
 
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;

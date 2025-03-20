@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class DynamicOperationConfigRecordPo implements Serializable {
+public class OperationEventConfigRecordPo implements Serializable {
     private static final long serialVersionUID = -2044839391564867115L;
     @Id
     @Field("_id")

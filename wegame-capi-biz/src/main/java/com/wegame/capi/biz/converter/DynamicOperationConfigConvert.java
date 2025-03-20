@@ -1,24 +1,18 @@
 package com.wegame.capi.biz.converter;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.wegame.capi.biz.domain.biz.game.GameMultipleRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigRecordDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigPo;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigRecordPo;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigPo;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigRecordPo;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class DynamicOperationConfigConvert {
-    public static List<DynamicOperationConfigDo> convertDos(List<DynamicOperationConfigPo> configPos) {
+    public static List<DynamicOperationConfigDo> convertDos(List<OperationEventConfigPo> configPos) {
         if (configPos == null) {
             return Collections.emptyList();
         }
@@ -28,7 +22,7 @@ public class DynamicOperationConfigConvert {
 
     }
 
-    public static DynamicOperationConfigDo convertDo(DynamicOperationConfigPo configPo) {
+    public static DynamicOperationConfigDo convertDo(OperationEventConfigPo configPo) {
         if (Objects.isNull(configPo)) {
             return null;
         }
@@ -42,7 +36,7 @@ public class DynamicOperationConfigConvert {
     }
 
 
-    public static List<DynamicOperationConfigRecordDo> convertRecordDos(List<DynamicOperationConfigRecordPo> configPos) {
+    public static List<DynamicOperationConfigRecordDo> convertRecordDos(List<OperationEventConfigRecordPo> configPos) {
         if (configPos == null) {
             return Collections.emptyList();
         }
@@ -52,7 +46,7 @@ public class DynamicOperationConfigConvert {
 
     }
 
-    public static DynamicOperationConfigRecordDo convertRecordDo(DynamicOperationConfigRecordPo configRecordPo) {
+    public static DynamicOperationConfigRecordDo convertRecordDo(OperationEventConfigRecordPo configRecordPo) {
         if (Objects.isNull(configRecordPo)) {
             return null;
         }

@@ -8,7 +8,7 @@ import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigQuery;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +50,7 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
     }
 
     @Override
-    public List<List<DynamicOperationConfigDo>> getConfigDetail(DynamicOperationConfigQuery configQuery) {
+    public List<List<DynamicOperationConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery) {
         Double multiple = configQuery.getMultiple();
         return normalConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigDetail(configQuery));
     }

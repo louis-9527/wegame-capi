@@ -7,13 +7,16 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
+/**
+ * 干预事件Po
+ */
 @Data
 @ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class DynamicOperationEventPo implements Serializable {
+public class OperationEventPo implements Serializable {
     private static final long serialVersionUID = 4993596549150377985L;
     /**
      * 主键ID

@@ -15,9 +15,9 @@ import com.wegame.capi.biz.domain.biz.game.GameMultipleRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.service.DynamicOperationEventConfigService;
-import com.wegame.capi.biz.service.OperationEventDetailService;
-import com.wegame.capi.biz.service.OperationEventService;
+import com.wegame.capi.biz.service.operation.OperationEventConfigService;
+import com.wegame.capi.biz.service.operation.OperationEventDetailService;
+import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
@@ -27,7 +27,7 @@ import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigQuery;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailQuery;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     @Autowired
     OperationEventDetailService operationEventDetailService;
     @Autowired
-    DynamicOperationEventConfigService dynamicOperationEventConfigService;
+    OperationEventConfigService dynamicOperationEventConfigService;
     @Autowired
     OperationEventApi operationEventApi;
     @Autowired
@@ -427,7 +427,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     }
 
     private List<GameMultipleRecordDo<WD>> normalPayMultipleConfig(double multiple) {
-        DynamicOperationConfigQuery configQuery = DynamicOperationConfigQuery.builder()
+        OperationEventConfigQuery configQuery = OperationEventConfigQuery.builder()
                 .gameId(this.getDynamicOperationGameEnum().getGameType().getId())
                 .multiple(multiple).build();
         List<List<DynamicOperationConfigDo>> configDetailGroup = this.getConfigDetail(configQuery);
@@ -478,7 +478,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
     public abstract WheelDo<WD> convertWheel(Object obj);
 
-    public List<List<DynamicOperationConfigDo>> getConfigDetail(DynamicOperationConfigQuery configQuery) {
+    public List<List<DynamicOperationConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery) {
         return dynamicOperationEventConfigService.getConfigDetail(configQuery, getDynamicOperationGameEnum());
     }
 

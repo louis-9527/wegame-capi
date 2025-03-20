@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.service;
+package com.wegame.capi.biz.service.operation;
 
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
@@ -9,7 +9,7 @@ import com.wegame.capi.biz.converter.DynamicOperationDetailConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailPo;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailPo;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -49,11 +49,11 @@ public class OperationEventDetailService implements InitializingBean {
     }
 
     public Long add(DynamicOperationEventDetailDo detailDo, OperationEventTypeEnum gameEnum) {
-        DynamicOperationDetailPo detailPo = DynamicOperationDetailConvert.toPo(detailDo, OptEnum.ADD);
+        OperationEventDetailPo detailPo = DynamicOperationDetailConvert.toPo(detailDo, OptEnum.ADD);
         if (Objects.isNull(detailPo)) {
             return null;
         }
-        DynamicOperationDetailPo insert = getMongoTemplate(gameEnum.getGameType()).insert(detailPo, gameEnum.getEventDetailCollectionName());
+        OperationEventDetailPo insert = getMongoTemplate(gameEnum.getGameType()).insert(detailPo, gameEnum.getEventDetailCollectionName());
         return insert.getId();
     }
 
@@ -65,14 +65,14 @@ public class OperationEventDetailService implements InitializingBean {
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(gameEnum.getGameType()).updateFirst(query,
                 DynamicOperationDetailQueryBuilder.buildUpdate(detailDo),
-                DynamicOperationDetailPo.class,
+                OperationEventDetailPo.class,
                 gameEnum.getEventDetailCollectionName());
         return result.getModifiedCount() > 0;
     }
 
     public List<DynamicOperationEventDetailDo> queryList(OperationEventDetailQuery query, OperationEventTypeEnum gameEnum) {
-        List<DynamicOperationDetailPo> dynamicOperationDetailPos = getMongoTemplate(gameEnum.getGameType()).find(DynamicOperationDetailQueryBuilder.buildQuery(query),
-                DynamicOperationDetailPo.class,
+        List<OperationEventDetailPo> dynamicOperationDetailPos = getMongoTemplate(gameEnum.getGameType()).find(DynamicOperationDetailQueryBuilder.buildQuery(query),
+                OperationEventDetailPo.class,
                 gameEnum.getEventDetailCollectionName());
         return DynamicOperationDetailConvert.toDoList(dynamicOperationDetailPos);
     }

@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.capi.biz.converter.DynamicOperationConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
-import com.wegame.capi.biz.service.OperationEventService;
+import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import lombok.extern.slf4j.Slf4j;

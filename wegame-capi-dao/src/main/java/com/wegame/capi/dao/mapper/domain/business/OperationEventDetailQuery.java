@@ -6,6 +6,9 @@ import org.springframework.data.domain.Sort;
 
 import java.io.Serializable;
 
+/**
+ * 干预事件明细查询模型
+ */
 @Data
 @ToString
 @SuperBuilder

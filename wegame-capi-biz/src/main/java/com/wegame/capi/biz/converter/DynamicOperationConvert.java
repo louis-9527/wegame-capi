@@ -10,7 +10,7 @@ import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationEventPo;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventPo;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -50,7 +50,7 @@ public class DynamicOperationConvert {
         return eventDo;
     }
 
-    public static List<DynamicOperationEventDo> toDoList(List<DynamicOperationEventPo> poList) {
+    public static List<DynamicOperationEventDo> toDoList(List<OperationEventPo> poList) {
         return Optional.ofNullable(poList).orElse(Collections.emptyList())
                 .stream()
                 .map(DynamicOperationConvert::poToDo)
@@ -58,7 +58,7 @@ public class DynamicOperationConvert {
                 .collect(Collectors.toList());
     }
 
-    public static DynamicOperationEventDo poToDo(DynamicOperationEventPo eventPo) {
+    public static DynamicOperationEventDo poToDo(OperationEventPo eventPo) {
         if (Objects.isNull(eventPo)) {
             return null;
         }
@@ -81,12 +81,12 @@ public class DynamicOperationConvert {
         return eventDo;
     }
 
-    public static DynamicOperationEventPo doToPo(DynamicOperationEventDo eventDo, OptEnum optEnum) {
+    public static OperationEventPo doToPo(DynamicOperationEventDo eventDo, OptEnum optEnum) {
         if (Objects.isNull(eventDo)) {
             return null;
         }
         long currentMilli = DateUtil.getCurrentMilli();
-        DynamicOperationEventPo po = DynamicOperationEventPo.builder().build();
+        OperationEventPo po = OperationEventPo.builder().build();
         po.setId(eventDo.getId());
         if (OptEnum.ADD.equals(optEnum)) {
             po.setEventStatus(OperationEventStatusEnum.NONE.getCode());
