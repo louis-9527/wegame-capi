@@ -12,20 +12,16 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.MONGOTEMPLATE;
-import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMARY_MONGOTEMPLATE;
 
 /**
  * 投注记录服务
@@ -34,20 +30,7 @@ import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMAR
  */
 @Slf4j
 @Service
-public class BetRecordService implements InitializingBean {
-
-    @Autowired
-    Map<String, MongoTemplate> mongoTemplateMap;
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        Arrays.stream(GameTypeEnum.values()).forEach(gameType -> {
-            MongoTemplate mongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
-            AssertUtil.assertNotNull(mongoTemplate, ErrorCode.ERR_INTER);
-            MongoTemplate primaryMongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
-            AssertUtil.assertNotNull(primaryMongoTemplate, ErrorCode.ERR_INTER);
-        });
-    }
+public class BetRecordService extends AbstractService {
 
     public Long add(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         BetRecordPo po = getMongoTemplate(gameType).insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD),
@@ -174,14 +157,5 @@ public class BetRecordService implements InitializingBean {
         return getMongoTemplate(gameType).count(BetRecordQueryBuilder.buildMongodbQuery(query),
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
-    }
-
-    ///////////////  above auto generated ///////////////
-    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
-    }
-
-    private MongoTemplate getPrimaryMongoTemplate(GameTypeEnum gameType) {
-        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
     }
 }
