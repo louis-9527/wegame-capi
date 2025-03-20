@@ -44,7 +44,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
     @Value("${api.game.cp.channelId}")
     private String cpChannelId;
 
-    public abstract AbstractOperationEventManager getDynamicOperationManager();
+    public abstract AbstractOperationEventManager<WD> getDynamicOperationManager();
 
     @Override
     public BetResultDo<BR> bet(BetDo<BD> betDo) {
