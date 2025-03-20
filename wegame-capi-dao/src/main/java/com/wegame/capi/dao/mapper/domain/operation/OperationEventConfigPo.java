@@ -1,12 +1,14 @@
-package com.wegame.capi.dao.mapper.domain.business;
+package com.wegame.capi.dao.mapper.domain.operation;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
 /**
- * 干预事件配置（模版）查询模型
+ * 干预事件配置（模版）
  */
 @Data
 @ToString
@@ -14,12 +16,14 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class OperationEventConfigQuery implements Serializable {
-    private Long id;
+public class OperationEventConfigPo implements Serializable {
+    private static final long serialVersionUID = 3508760048909770673L;
     /**
-     * 玩家id
+     * 主键ID
      */
-    private String playerId;
+    @Id
+    @Field("_id")
+    private Long id;
     /**
      * 游戏ID
      */

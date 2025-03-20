@@ -15,8 +15,8 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailQuery;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventDetailQuery;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -73,13 +73,13 @@ public abstract class AbstractOperationEventScheduler
             List<DynamicOperationEventDetailDo> detailList;
             OperationEventDetailQuery query = OperationEventDetailQuery.builder()
                     .betStatus(BetStatusEnum.ING.getCode())
-                    .createTimeLt(FIVE_MINUTES_AGO)
+                    .ltCreateTime(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE)
                     .build();
             do {
-                query.setLastId(lastId);
+                query.setGtLastId(lastId);
                 detailList = operationEventDetailService.list(query, operationEventType());
                 if (CollectionUtil.isNotEmpty(detailList)) {
                     lastId = detailList.get(detailList.size() - 1).getId();

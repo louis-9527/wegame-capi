@@ -6,6 +6,9 @@ import lombok.ToString;
 
 import java.util.Objects;
 
+/**
+ * 星卡上报状态枚举
+ */
 @ToString
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -19,19 +22,17 @@ public enum StarCardReportStatusEnum {
      * 枚举码.
      */
     private final Integer code;
-
     /**
      * 描述信息.
      */
     private final String desc;
-
     /**
      * 私有构造方法.
      *
      * @param code code值
      * @param desc 描述信息
      */
-    private StarCardReportStatusEnum(Integer code, String desc) {
+    StarCardReportStatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }

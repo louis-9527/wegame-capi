@@ -3,7 +3,7 @@ package com.wegame.capi.biz.builder.operation;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailQuery;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventDetailQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -18,6 +18,9 @@ public class OperationEventDetailQueryBuilder {
         Query query = new Query(buildCriteria(detailQuery));
         if (Objects.nonNull(detailQuery.getLimit())) {
             query.limit(detailQuery.getLimit());
+        }
+        if (Objects.nonNull(detailQuery.getGtLastId())) {
+            query.addCriteria(Criteria.where("_id").gt(detailQuery.getGtLastId()));
         }
         if (StringUtils.isNotEmpty(detailQuery.getOrderByClause())) {
             if (Objects.isNull(detailQuery.getDirection())) {
@@ -37,8 +40,8 @@ public class OperationEventDetailQueryBuilder {
         if (Objects.nonNull(detailQuery.getBetStatus())) {
             criteria.and("betStatus").is(detailQuery.getBetStatus());
         }
-        if (Objects.nonNull(detailQuery.getCreateTimeLt())) {
-            criteria.and("createTime").lt(detailQuery.getCreateTimeLt());
+        if (Objects.nonNull(detailQuery.getLtCreateTime())) {
+            criteria.and("createTime").lt(detailQuery.getLtCreateTime());
         }
         return criteria;
     }

@@ -1,4 +1,4 @@
-package com.wegame.capi.dao.mapper.domain.business;
+package com.wegame.capi.dao.mapper.domain.operation;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -17,7 +17,6 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class OperationEventDetailQuery implements Serializable {
     private static final long serialVersionUID = -3185563006843737525L;
-    private Long id;
     /**
      * 干预事件ID(系统)
      */
@@ -31,19 +30,19 @@ public class OperationEventDetailQuery implements Serializable {
      */
     private Integer limit;
     /**
-     * createTimeLt
+     * 小于createTime
      */
-    private Long createTimeLt;
+    private Long ltCreateTime;
     /**
-     * 上一页最后一条的Id
+     * 大于最后一条的Id
      */
-    private Long lastId;
+    private Long gtLastId;
     /**
      * 排序语句
      */
     private String orderByClause;
     /**
-     * 排序语句
+     * 排序方向
      */
     private Sort.Direction direction;
 }

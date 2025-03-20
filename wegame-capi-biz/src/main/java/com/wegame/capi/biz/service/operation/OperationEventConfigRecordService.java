@@ -4,7 +4,7 @@ import com.wegame.capi.biz.builder.operation.OperationEventConfigRecordQueryBuil
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigRecordPo;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventConfigRecordPo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

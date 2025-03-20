@@ -6,7 +6,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.springframework.data.domain.Sort;

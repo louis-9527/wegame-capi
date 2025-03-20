@@ -19,7 +19,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.StarCardUseTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import com.wegame.capi.dao.mapper.domain.business.StarCardUseRecordPo;
+import com.wegame.capi.dao.mapper.domain.star.StarCardUseRecordPo;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -6,6 +6,9 @@ import lombok.ToString;
 
 import java.util.Objects;
 
+/**
+ * 干预事件子状态枚举
+ */
 @ToString
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -20,19 +23,17 @@ public enum OperationEventSubStatusEnum {
      * 枚举码.
      */
     private final Integer code;
-
     /**
      * 描述信息.
      */
     private final String desc;
-
     /**
      * 私有构造方法.
      *
      * @param code code值
      * @param desc 描述信息
      */
-    private OperationEventSubStatusEnum(Integer code, String desc) {
+    OperationEventSubStatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -46,17 +47,15 @@ public enum OperationEventSubStatusEnum {
         return null;
     }
 
-
-    public static Boolean finish(OperationEventSubStatusEnum subStatus) {
-        if(subStatus == null){
-            return Boolean.FALSE;
+    public static boolean isFinish(OperationEventSubStatusEnum subStatus) {
+        if(Objects.isNull(subStatus)){
+            return false;
         }
         if (OperationEventSubStatusEnum.FINISH_NORMAL == subStatus
                 || OperationEventSubStatusEnum.FINISH_EXPIRED == subStatus
                 || OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR == subStatus) {
-            return Boolean.TRUE;
+            return true;
         }
-        return Boolean.FALSE;
+        return false;
     }
-
 }

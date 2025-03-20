@@ -18,15 +18,11 @@ import java.util.concurrent.TimeUnit;
 public class ThreadPoolConfig {
 
     public static final String defaultThreadPoolExecutor = "defaultThreadPoolExecutor";
-
     public static final String betRecordThreadPoolExecutor = "betRecordThreadPoolExecutor";
-
-    public static final String dynamicEventThreadPoolExecutor = "dynamicEventThreadPoolExecutor";
-    public static final String dynamicEventReportThreadPoolExecutor = "dynamicEventReportThreadPoolExecutor";
-
     public static final String sendMessageThreadPoolExecutor = "sendMessageThreadPoolExecutor";
-
     public static final String gameRecordPutCacheThreadPoolExecutor = "gameRecordPutCacheThreadPoolExecutor";
+    public static final String operationEventThreadPoolExecutor = "operationEventThreadPoolExecutor";
+    public static final String operationEventReportThreadPoolExecutor = "operationEventReportThreadPoolExecutor";
 
     /**
      * 默认模块-线程池
@@ -77,14 +73,26 @@ public class ThreadPoolConfig {
         return executor;
     }
 
+    @Bean(gameRecordPutCacheThreadPoolExecutor)
+    public ThreadPoolExecutor gameRecordPutCacheThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                50,
+                60L,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue(100000),
+                new CustomizableThreadFactory("game-record-cache-put-thread-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        return executor;
+    }
 
     /**
      * 动态运营-线程池
      *
      * @return
      */
-    @Bean(dynamicEventThreadPoolExecutor)
-    public ThreadPoolExecutor dynamicOperationThreadPoolExecutor() {
+    @Bean(operationEventThreadPoolExecutor)
+    public ThreadPoolExecutor operationEventThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
                 100,
                 60L,
@@ -96,8 +104,8 @@ public class ThreadPoolConfig {
         return executor;
     }
 
-    @Bean(dynamicEventReportThreadPoolExecutor)
-    public ThreadPoolExecutor dynamicEventReportThreadPoolExecutor() {
+    @Bean(operationEventReportThreadPoolExecutor)
+    public ThreadPoolExecutor operationEventReportThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
                 100,
                 60L,
@@ -105,19 +113,6 @@ public class ThreadPoolConfig {
                 new ArrayBlockingQueue(10000),
                 new CustomizableThreadFactory("dynamic-event-report-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
-        executor.allowCoreThreadTimeOut(true);
-        return executor;
-    }
-
-    @Bean(gameRecordPutCacheThreadPoolExecutor)
-    public ThreadPoolExecutor gameRecordPutCacheThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
-                50,
-                60L,
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue(100000),
-                new CustomizableThreadFactory("game-record-cache-put-thread-pool-"),
-                new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
         return executor;
     }

@@ -28,13 +28,12 @@ import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigQuery;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailQuery;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventConfigQuery;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventDetailQuery;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -44,9 +43,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ThreadPoolExecutor;
-
-import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicEventReportThreadPoolExecutor;
-import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicEventThreadPoolExecutor;
 
 /**
  * 抽象干预事件Manager
@@ -72,14 +68,9 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
-    @Qualifier(dynamicEventReportThreadPoolExecutor)
-    public ThreadPoolExecutor dynamicEventReportThreadPool;
+    public ThreadPoolExecutor operationEventReportThreadPoolExecutor;
     @Autowired
-    @Qualifier(dynamicEventThreadPoolExecutor)
-    private ThreadPoolExecutor dynamicEventThreadPool;
-    @Autowired
-    @Qualifier(dynamicEventThreadPoolExecutor)
-    private ThreadPoolExecutor threadPoolExecutor;
+    public ThreadPoolExecutor operationEventThreadPoolExecutor;
 
     /**
      * 获取当前玩家在生效中的干预时间,并按时间取第一条
@@ -282,7 +273,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     }
 
     public void asyncEventDetailUpdate(OperationEventDo eventDo, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
-        threadPoolExecutor.execute(() -> {
+        operationEventThreadPoolExecutor.execute(() -> {
             // 判断是否完成
             OperationEventSubStatusEnum eventSubStatusEnum = null;
             OperationEventStatusEnum eventStatusEnum = OperationEventStatusEnum.NONE;
@@ -312,7 +303,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
             this.updateEventDetail(eventDetailUpdate, eventDoUpdate);
             // 执行上报
-            if (OperationEventSubStatusEnum.finish(eventSubStatusEnum)) {
+            if (OperationEventSubStatusEnum.isFinish(eventSubStatusEnum)) {
                 // 如果完成执行上报
                 this.asyncReportEvent(eventDo.getId());
             }
@@ -321,7 +312,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
 
     public void asyncUpdateFinishEvent(Long recordId, OperationEventSubStatusEnum eventSubStatusEnum) {
-        dynamicEventThreadPool.execute(() -> {
+        operationEventThreadPoolExecutor.execute(() -> {
             OperationEventDo build = OperationEventDo.builder()
                     .id(recordId)
                     .eventStatus(OperationEventStatusEnum.FINISH)
@@ -340,7 +331,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
      * @param recordId 事件ID
      */
     public void asyncReportEvent(Long recordId) {
-        dynamicEventReportThreadPool.execute(() -> {
+        operationEventReportThreadPoolExecutor.execute(() -> {
             OperationEventDo eventDo = operationEventService.getById(recordId, this.getDynamicOperationGameEnum());
             AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
             if (OperationEventStatusEnum.FINISH != eventDo.getEventStatus()) {
