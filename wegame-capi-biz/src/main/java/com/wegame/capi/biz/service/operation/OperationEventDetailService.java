@@ -5,7 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.operation.OperationEventDetailConvert;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.dao.mapper.domain.operation.OperationEventDetailPo;
@@ -28,14 +28,14 @@ import static com.wegame.capi.biz.converter.operation.OperationEventDetailConver
 @Component
 public class OperationEventDetailService extends AbstractService {
 
-    public Long add(DynamicOperationEventDetailDo detailDo, OperationEventTypeEnum gameEnum) {
+    public Long add(OperationEventDetailDo detailDo, OperationEventTypeEnum gameEnum) {
         OperationEventDetailPo po = OperationEventDetailConvert.doToPo(detailDo, OptEnum.ADD);
         AssertUtil.assertNotNull(po, ErrorCode.ERR_INTER);
         OperationEventDetailPo insertPo = getMongoTemplate(gameEnum.getGameType()).insert(po, gameEnum.getEventDetailCollectionName());
         return insertPo.getId();
     }
 
-    public boolean update(DynamicOperationEventDetailDo detailDo, OperationEventTypeEnum gameEnum) {
+    public boolean update(OperationEventDetailDo detailDo, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(detailDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(detailDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
         Criteria criteria = new Criteria();
@@ -48,7 +48,7 @@ public class OperationEventDetailService extends AbstractService {
         return result.getModifiedCount() > 0;
     }
 
-    public List<DynamicOperationEventDetailDo> list(OperationEventDetailQuery query, OperationEventTypeEnum gameEnum) {
+    public List<OperationEventDetailDo> list(OperationEventDetailQuery query, OperationEventTypeEnum gameEnum) {
         List<OperationEventDetailPo> poList = getMongoTemplate(gameEnum.getGameType()).find(buildQuery(query),
                 OperationEventDetailPo.class,
                 gameEnum.getEventDetailCollectionName());

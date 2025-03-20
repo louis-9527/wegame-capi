@@ -3,7 +3,7 @@ package com.wegame.capi.scheduler.operation;
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.manager.AbstractOperationEventManager;
 import com.wegame.capi.biz.service.BetRecordService;
@@ -70,7 +70,7 @@ public abstract class AbstractOperationEventScheduler
             log.info("{}#eventDetailFailExec run start. gameId: {}", getClass().getSimpleName(), gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
-            List<DynamicOperationEventDetailDo> detailList;
+            List<OperationEventDetailDo> detailList;
             OperationEventDetailQuery query = OperationEventDetailQuery.builder()
                     .betStatus(BetStatusEnum.ING.getCode())
                     .ltCreateTime(FIVE_MINUTES_AGO)
@@ -99,7 +99,7 @@ public abstract class AbstractOperationEventScheduler
     /**
      * 执行处理中事件
      */
-    private void eventDetailFailHandle(DynamicOperationEventDetailDo eventDetailDo) {
+    private void eventDetailFailHandle(OperationEventDetailDo eventDetailDo) {
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
             Long betRecordId = eventDetailDo.getBetRecordId();
@@ -124,7 +124,7 @@ public abstract class AbstractOperationEventScheduler
                 }
             }
             // 更新订单信息
-            DynamicOperationEventDetailDo eventDetailUpdate = DynamicOperationEventDetailDo.builder()
+            OperationEventDetailDo eventDetailUpdate = OperationEventDetailDo.builder()
                     .id(eventDetailDo.getId())
                     .betStatus(eventDetailStatus)
                     .betId(recordDo.getBetId())

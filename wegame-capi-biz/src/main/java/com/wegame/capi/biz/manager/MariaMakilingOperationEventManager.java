@@ -3,7 +3,7 @@ package com.wegame.capi.biz.manager;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -28,14 +28,14 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
 
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager)
-    public Long addEventDetail(DynamicOperationEventDetailDo eventDetailDo) {
+    public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
         return super.addEventDetail(eventDetailDo);
     }
 
 
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager)
-    public void updateEventDetail(DynamicOperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
+    public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
         super.updateEventDetail(eventDetailDo, eventDo);
     }
 

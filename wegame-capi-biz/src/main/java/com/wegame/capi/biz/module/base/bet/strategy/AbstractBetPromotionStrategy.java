@@ -12,7 +12,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.domain.biz.bet.StarCardUseDo;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
@@ -192,22 +192,21 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
 
     private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(BetDo<BD> betDo) {
         StarCardUseDo starCardUse = betDo.getStarCardUseDo();
-        BetRecordDo<R> rBetRecordDo = null;
+        BetRecordDo<R> rBetRecordDo;
         int i = 0;
-        RedeemRewardResultDo rewardResult = null;
+        RedeemRewardResultDo rewardResult;
         do {
-            rBetRecordDo = this.loadBetRecordDo(betDo);
-            rewardResult = startCardUseRecordService.use(starCardUse.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
+            rBetRecordDo = loadBetRecordDo(betDo);
+            rewardResult = bagService.use(starCardUse.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
             i++;
         } while (rewardResult.getSuccess() || i > 10);
-
         return Pair.of(rewardResult, rBetRecordDo);
     }
 
 
     private Long saveEventDetail(UserInfo userInfo, Long recordId, BetRecordDo betRecordDo, GameEventDo eventDo) {
-        //扣减流水
-        DynamicOperationEventDetailDo detailDo = new DynamicOperationEventDetailDo();
+        // 扣减流水
+        OperationEventDetailDo detailDo = new OperationEventDetailDo();
         detailDo.setId(recordId);
         detailDo.setEventRecordId(eventDo.getDynamicOperationEvent().getId());
         detailDo.setEventId(eventDo.getDynamicOperationEvent().getEventId());

@@ -125,14 +125,14 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     /**
      * 结果上报
      */
-    public void updateEventDetail(DynamicOperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
+    public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
         // 更新 订单状态
         operationEventDetailService.update(eventDetailDo, this.getDynamicOperationGameEnum());
         operationEventService.update(eventDo, this.getDynamicOperationGameEnum());
     }
 
 
-    public Long addEventDetail(DynamicOperationEventDetailDo eventDetailDo) {
+    public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
         OperationEventTypeEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
         Long addId = operationEventDetailService.add(eventDetailDo, dynamicOperationGame);
         OperationEventDo eventUpdate = OperationEventDo.builder().id(eventDetailDo.getEventRecordId())
@@ -151,7 +151,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         }
         List<StatusOfEventsResultDo> resultList = new ArrayList<>();
         eventDoList.forEach(eventDo -> {
-            List<DynamicOperationEventDetailDo> eventDetailDos = operationEventDetailService.list(OperationEventDetailQuery.builder()
+            List<OperationEventDetailDo> eventDetailDos = operationEventDetailService.list(OperationEventDetailQuery.builder()
                     .recordId(eventDo.getId())
                     .betStatus(BetStatusEnum.SUCCESS.getCode())
                     .build(), this.getDynamicOperationGameEnum());
@@ -161,7 +161,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     }
 
 
-    private StatusOfEventsResultDo getStatusOfEvents(OperationEventDo eventDo, List<DynamicOperationEventDetailDo> eventDetailDos) {
+    private StatusOfEventsResultDo getStatusOfEvents(OperationEventDo eventDo, List<OperationEventDetailDo> eventDetailDos) {
         if (CollectionUtils.isEmpty(eventDetailDos)) {
             // 过期从未使用
             return StatusOfEventsResultDo.builder()
@@ -177,7 +177,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
             List<StatusOfEventsRecordDo> betRecords = new ArrayList<>();
 
             for (int i = 0; i < eventDetailDos.size(); i++) {
-                DynamicOperationEventDetailDo eventDetail = eventDetailDos.get(i);
+                OperationEventDetailDo eventDetail = eventDetailDos.get(i);
                 if (i == 0) {
                     executeTime = eventDetail.getCreateTime();
                 }
@@ -289,7 +289,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                 eventStatusEnum = OperationEventStatusEnum.FINISH;
             }
 
-            DynamicOperationEventDetailDo eventDetailUpdate = DynamicOperationEventDetailDo.builder()
+            OperationEventDetailDo eventDetailUpdate = OperationEventDetailDo.builder()
                     .id(detailId)
                     .betStatus(betStatus)
                     .betId(betId)
@@ -351,14 +351,14 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                     .direction(Sort.Direction.ASC)
                     .build();
 
-            List<DynamicOperationEventDetailDo> eventDetailDos = operationEventDetailService.list(detailQuery, this.getDynamicOperationGameEnum());
+            List<OperationEventDetailDo> eventDetailDos = operationEventDetailService.list(detailQuery, this.getDynamicOperationGameEnum());
             List<String> betNos = new ArrayList<>();
             long totalAmount = 0L;
             Long startTime = null;
             List<UpdateEventsBetRecordReq> betRecords = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(eventDetailDos)) {
                 for (int i = 0; i < eventDetailDos.size(); i++) {
-                    DynamicOperationEventDetailDo eventDetail = eventDetailDos.get(i);
+                    OperationEventDetailDo eventDetail = eventDetailDos.get(i);
                     if (i == 0) {
                         startTime = eventDetail.getCreateTime();
                     }

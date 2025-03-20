@@ -8,19 +8,14 @@ import com.wegame.capi.api.domain.req.promotion.GetBagCurrentRewardReq;
 import com.wegame.capi.api.domain.req.promotion.GetBagOtherRewardReq;
 import com.wegame.capi.api.domain.req.promotion.GetBagRewardByIdReq;
 import com.wegame.capi.api.domain.req.promotion.GetHistoryMessageReq;
-import com.wegame.capi.api.domain.res.promotion.GetBagCurrentRewardRes;
-import com.wegame.capi.api.domain.res.promotion.GetBagOtherRewardRes;
-import com.wegame.capi.api.domain.res.promotion.GetHistoryMessageRes;
-import com.wegame.capi.api.domain.res.promotion.GetRewardDetailRes;
+import com.wegame.capi.api.domain.res.CommonRes;
+import com.wegame.capi.api.domain.res.promotion.*;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.converter.promotion.BagOtherRewardDetailConverter;
 import com.wegame.capi.biz.converter.promotion.BagRewardConverter;
 import com.wegame.capi.biz.converter.promotion.HistoryMessageConverter;
 import com.wegame.capi.biz.converter.promotion.RewardDetailConverter;
-import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewardDetailDo;
-import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewardDetailDo;
-import com.wegame.capi.biz.domain.biz.promotion.HistoryMessageDo;
-import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
+import com.wegame.capi.biz.domain.biz.promotion.*;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.promotion.QueryHistoryMessageRequest;
@@ -30,6 +25,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+
+import static com.wegame.capi.biz.builder.req.RedeemRewardReqBuilder.build;
 
 /**
  * 背包service
@@ -103,4 +100,15 @@ public class BagService {
         return HistoryMessageConverter.toDoList(messageRes.getMessages());
     }
 
+    /**
+     * 核销-使用星卡
+     */
+    public RedeemRewardResultDo use(String rewardId, Long payoutAmount, Long betWithPayoutRefId) {
+        CommonRes<RedeemRewardRes> res = bagApi.redeemReward(build(rewardId, payoutAmount, betWithPayoutRefId));
+        return RedeemRewardResultDo.builder()
+                .success(res.isSuc())
+                .status(res.getStatus())
+                .message(res.getMessage())
+                .build();
+    }
 }

@@ -2,7 +2,7 @@ package com.wegame.capi.biz.builder.operation;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.dao.mapper.domain.operation.OperationEventDetailQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
@@ -46,7 +46,7 @@ public class OperationEventDetailQueryBuilder {
         return criteria;
     }
 
-    public static Update buildUpdate(DynamicOperationEventDetailDo detailDo) {
+    public static Update buildUpdate(OperationEventDetailDo detailDo) {
         if (detailDo == null) {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }

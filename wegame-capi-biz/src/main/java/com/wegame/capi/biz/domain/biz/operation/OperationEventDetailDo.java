@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class DynamicOperationEventDetailDo implements Serializable {
+public class OperationEventDetailDo implements Serializable {
     /**
      * id
      */
