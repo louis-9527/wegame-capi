@@ -8,6 +8,7 @@ import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +17,10 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class MariaMakilingOperationEventScheduler
-        extends AbstractOperationEventScheduler {
+public class MariaMakilingOperationEventScheduler extends AbstractOperationEventScheduler {
 
     @Autowired
+    @Qualifier("mariaMakilingOperationEventManager")
     MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
 
     @Scheduled(cron = "0 0/10 * * * ?")
@@ -27,7 +28,7 @@ public class MariaMakilingOperationEventScheduler
         long startTime = DateUtil.getCurrentMilli();
         log.info("{}#schedule start", getClass().getSimpleName());
         try {
-            scheduleWithLock(LockNameUtil.getDynamicOperationSchedulerLockName(this.operationEventGame().getGameType()), this);
+            scheduleWithLock(LockNameUtil.getDynamicOperationSchedulerLockName(this.operationEventType().getGameType()), this);
         } catch (LockException e) {
             log.info("{}, get lock fail", getClass().getSimpleName());
         } catch (Exception e) {
@@ -37,7 +38,7 @@ public class MariaMakilingOperationEventScheduler
     }
 
     @Override
-    OperationEventTypeEnum operationEventGame() {
+    OperationEventTypeEnum operationEventType() {
         return OperationEventTypeEnum.MARIA_MAKILING;
     }
 
