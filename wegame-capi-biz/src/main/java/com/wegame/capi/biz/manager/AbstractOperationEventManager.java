@@ -340,7 +340,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
             }
             //清除事件缓存
             String gameId = this.getDynamicOperationGameEnum().getGameType().getId();
-            String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, gameId, eventDo.getPlayerName());
+            String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, gameId, eventDo.getPlayerName());
             redisTemplate.opsForHash().delete(catch_key, String.valueOf(recordId));
             // 获取事件下所有已完成订单
             OperationEventDetailQuery detailQuery = OperationEventDetailQuery.builder()
@@ -429,7 +429,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
             return null;
         }
         // 获取分组下config配置,避免玩家相同倍数连续命中同样的滚轮
-        String incrementKey = String.format(Constants.DYNAMIC_OPERATION_CONFIG_INCREMENT_KEY,
+        String incrementKey = String.format(Constants.OPERATION_EVENT_CONFIG_INCREMENT_CACHE_KEY,
                 this.getDynamicOperationGameEnum().getGameType().getId(),
                 UserInfoContext.getUserInfo().getId(), multiple);
         Long increment = redisTemplate.opsForValue().increment(incrementKey);
