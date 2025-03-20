@@ -38,7 +38,7 @@ public abstract class AbstractOperationEventScheduler
         extends AbstractScheduler
         implements Runnable {
 
-    private final long fiveMinutesAgo = System.currentTimeMillis() - 10 * 60 * 1000;
+    private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 10 * 60 * 1000;
 
     @Autowired
     public DynamicOperationEventService dynamicOperationEventService;
@@ -70,10 +70,10 @@ public abstract class AbstractOperationEventScheduler
             log.info("{}#eventDetailFailExec run start. gameId: {}", getClass().getSimpleName(), gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
-            List<DynamicOperationEventDetailDo> detailList = null;
+            List<DynamicOperationEventDetailDo> detailList;
             DynamicOperationDetailQuery query = DynamicOperationDetailQuery.builder()
                     .betStatus(BetStatusEnum.ING.getCode())
-                    .createTimeLt(fiveMinutesAgo)
+                    .createTimeLt(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE)
@@ -98,8 +98,6 @@ public abstract class AbstractOperationEventScheduler
 
     /**
      * 执行处理中事件
-     *
-     * @param eventDetailDo
      */
     private void eventDetailFailHandle(DynamicOperationEventDetailDo eventDetailDo) {
         try {
@@ -153,11 +151,11 @@ public abstract class AbstractOperationEventScheduler
             log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run start:{}", gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
-            List<DynamicOperationEventDo> eventDetailDoList = null;
+            List<DynamicOperationEventDo> eventDetailDoList;
             DynamicOperationQuery query = DynamicOperationQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .eventStatus(OperationEventStatusEnum.FINISH.getCode())
-                    .createTimeLt(fiveMinutesAgo)
+                    .createTimeLt(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE).build();
@@ -180,8 +178,6 @@ public abstract class AbstractOperationEventScheduler
 
     /**
      * 事件处理成功,但未上报
-     *
-     * @param eventDo
      */
     private void eventReportFailHandle(DynamicOperationEventDo eventDo) {
         operationEventManager().asyncReportEvent(eventDo.getId());
@@ -196,8 +192,7 @@ public abstract class AbstractOperationEventScheduler
             log.info("{}#eventEventIngExec run start:{}", getClass().getSimpleName(), gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
-            List<DynamicOperationEventDo> eventDetailDoList = null;
-
+            List<DynamicOperationEventDo> eventDetailDoList;
             DynamicOperationQuery query = DynamicOperationQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .expiredTimeLt(DateUtil.getCurrentMilli())

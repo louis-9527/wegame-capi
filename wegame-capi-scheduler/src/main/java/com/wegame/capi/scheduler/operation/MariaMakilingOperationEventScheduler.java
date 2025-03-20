@@ -28,7 +28,7 @@ public class MariaMakilingOperationEventScheduler extends AbstractOperationEvent
         long startTime = DateUtil.getCurrentMilli();
         log.info("{}#schedule start", getClass().getSimpleName());
         try {
-            scheduleWithLock(LockNameUtil.getDynamicOperationSchedulerLockName(this.operationEventType().getGameType()), this);
+            scheduleWithLock(LockNameUtil.getOperationEventSchedulerLockName(operationEventType().getGameType()), this);
         } catch (LockException e) {
             log.info("{}, get lock fail", getClass().getSimpleName());
         } catch (Exception e) {

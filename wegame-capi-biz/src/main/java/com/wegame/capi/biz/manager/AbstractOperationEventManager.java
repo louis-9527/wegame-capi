@@ -79,8 +79,6 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
     /**
      * 获取当前玩家在生效中的干预时间,并按时间取第一条
-     *
-     * @return
      */
     public DynamicOperationEventDo getEffectedEvent(String playName) {
         OperationEventTypeEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
@@ -232,8 +230,6 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
     /**
      * 获取干预事件结果
-     *
-     * @return
      */
     public  GameEventDo<WD> getEventBetResult(Long payOutAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
@@ -262,8 +258,6 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
     /**
      * 获取需要干预的金额
-     *
-     * @return
      */
     private Long getInterventionAmount(DynamicOperationEventDo eventDo, Long betAmount) {
         // 判断需要干预金额
