@@ -92,5 +92,9 @@ public class DailyMissionDo implements Serializable {
          * starLevel
          */
         private Integer starLevel;
+        /**
+         * rewardConfigId
+         */
+        private String rewardConfigId;
     }
 }

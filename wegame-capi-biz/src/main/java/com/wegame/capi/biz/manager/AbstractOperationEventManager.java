@@ -106,7 +106,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                 continue;
             }
             // 判断金额
-            if (eventDo.getFinishBonus() >= eventDo.getMinBonus()) {
+            if (eventDo.getFinishBonus() != null && (eventDo.getFinishBonus() >= eventDo.getMinBonus())) {
                 // 干预完成,删除缓存并触发异步上报
                 this.asyncUpdateFinishEvent(recordId, OperationEventSubStatusEnum.FINISH_NORMAL);
                 continue;
@@ -240,11 +240,12 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
      */
     private Long getInterventionAmount(OperationEventDo eventDo, Long betAmount) {
         // 判断需要干预金额
-        long eventAmount = eventDo.getBonus() - eventDo.getFinishBonus();
+        long finishBonus = eventDo.getFinishBonus() == null ? 0L : eventDo.getFinishBonus();
+        long eventAmount = eventDo.getBonus() - finishBonus;
 
-        if ((eventDo.getFinishBonus() + eventAmount) > eventDo.getMaxBonus()) {
+        if ((finishBonus + eventAmount) > eventDo.getMaxBonus()) {
             // 如果干预后的金额,比最大金额还大,取最小的
-            eventAmount = eventDo.getMaxBonus() - eventDo.getFinishBonus();
+            eventAmount = eventDo.getMaxBonus() - finishBonus;
         }
 
         // 如果投注金额小于系统最小的投注金额,需要判断是否可以赠送出去
@@ -282,7 +283,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                 eventSubStatusEnum = OperationEventSubStatusEnum.FINISH_EXPIRED;
                 eventStatusEnum = OperationEventStatusEnum.FINISH;
             }
-            Long finishBonus = eventDo.getFinishBonus() + eventAmount;
+            Long finishBonus = eventDo.getFinishBonus() == null ? 0 : eventDo.getFinishBonus() + eventAmount;
             if (eventDo.getMinBonus() <= finishBonus) {
                 eventSubStatusEnum = OperationEventSubStatusEnum.FINISH_NORMAL;
                 eventStatusEnum = OperationEventStatusEnum.FINISH;

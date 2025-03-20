@@ -33,17 +33,21 @@ public class DailyMissionVo implements  Serializable {
     public static class DailyMission implements  Serializable {
         @ApiModelProperty(value = "任务ID", required = true)
         private String dailyMissionId;
-        @ApiModelProperty(value = "任务描述", required = true)
-        private String description;
-        @ApiModelProperty(value = "当前进度", required = true)
-        private String experience;
         @ApiModelProperty(value = "目标进度", required = true)
         private String target;
+        @ApiModelProperty(value = "奖励", required = true)
+        private String reward;
+        @ApiModelProperty(value = "任务描述", required = true)
+        private String description;
         @ApiModelProperty(value = "icon地址", required = true)
         private String iconUrl;
+        @ApiModelProperty(value = "当前进度", required = true)
+        private String experience;
         @ApiModelProperty(value = "状态 1锁定 2进行中 3完成", required = true)
         private String status;
         @ApiModelProperty(value = "星级", required = true)
         private Integer starLevel;
+        @ApiModelProperty(value = "奖励id", required = true)
+        private String rewardConfigId;
     }
 }

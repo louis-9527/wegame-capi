@@ -27,7 +27,6 @@ public class OperationEventConfigRecordConvert {
         configRecordDo.setParentId(po.getParentId());
         configRecordDo.setBatchId(po.getBatchId());
         configRecordDo.setBetRecordId(po.getBetRecordId());
-        configRecordDo.setFreeWheelFlag(po.getFreeWheelFlag());
         configRecordDo.setIndex(po.getIndex());
         configRecordDo.setGameRecordIds(po.getGameRecordIds());
         configRecordDo.setWheel(po.getWheel());
@@ -43,7 +42,6 @@ public class OperationEventConfigRecordConvert {
         po.setParentId(recordDo.getParentId());
         po.setBatchId(recordDo.getBatchId());
         po.setBetRecordId(recordDo.getBetRecordId());
-        po.setFreeWheelFlag(recordDo.getFreeWheelFlag());
         po.setIndex(recordDo.getIndex());
         po.setGameRecordIds(recordDo.getGameRecordIds());
         po.setWheel(recordDo.getWheel());

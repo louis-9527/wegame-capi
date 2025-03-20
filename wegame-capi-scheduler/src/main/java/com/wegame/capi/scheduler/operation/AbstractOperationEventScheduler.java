@@ -113,11 +113,12 @@ public abstract class AbstractOperationEventScheduler
             OperationEventSubStatusEnum eventSubStatus = null;
             // 获取事件信息
             OperationEventDo eventDo = operationEventService.getById(betRecordId, operationEventType());
+            long finishBonus = eventDo.getFinishBonus() == null ? 0L : eventDo.getFinishBonus();
             if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
                 eventDetailStatus = BetStatusEnum.FAIL;
             } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
                 eventDetailStatus = BetStatusEnum.SUCCESS;
-                if (eventDetailDo.getEventAmount() + eventDo.getFinishBonus() > eventDo.getMinBonus()) {
+                if (eventDetailDo.getEventAmount() + finishBonus > eventDo.getMinBonus()) {
                     eventSubStatus = OperationEventSubStatusEnum.FINISH_NORMAL;
                     newEventStatus = OperationEventStatusEnum.FINISH;
                 }
@@ -131,7 +132,7 @@ public abstract class AbstractOperationEventScheduler
             OperationEventDo eventDoUpdate = OperationEventDo.builder()
                     .id(eventDo.getId())
                     .eventSubStatus(eventSubStatus)
-                    .finishBonus(eventDo.getFinishBonus() + eventDetailDo.getEventAmount())
+                    .finishBonus(finishBonus + eventDetailDo.getEventAmount())
                     .eventStatus(newEventStatus).build();
             operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
             if (OperationEventStatusEnum.FINISH == newEventStatus) {
@@ -170,7 +171,7 @@ public abstract class AbstractOperationEventScheduler
                         .forEach(this::eventReportFailHandle);
             } while (CollectionUtils.isNotEmpty(eventDetailDoList));
             log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run end:{},time:{}", gameType.getId(), DateUtil.getCurrentMilli() - startTime);
-        }catch (Throwable e) {
+        } catch (Throwable e) {
             log.error("{}#eventReportFailExec exception:{}", getClass().getSimpleName(), e.getMessage(), e);
 
         }
@@ -210,7 +211,7 @@ public abstract class AbstractOperationEventScheduler
                         .forEach(this::eventEventIngHandle);
             } while (CollectionUtils.isNotEmpty(eventDetailDoList));
             log.info("{}#eventEventExpiredExec run end:{}, cost time:{}", getClass().getSimpleName(), gameType.getId(), DateUtil.getCurrentMilli() - startTime);
-        }catch (Throwable e) {
+        } catch (Throwable e) {
             log.error("{}#eventEventExpiredExec exception:{}", getClass().getSimpleName(), e.getMessage(), e);
 
         }
