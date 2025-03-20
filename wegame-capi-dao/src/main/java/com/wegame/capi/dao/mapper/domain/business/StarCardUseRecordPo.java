@@ -18,7 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class StartCardUseRecordPo implements Serializable {
+public class StarCardUseRecordPo implements Serializable {
     private static final long serialVersionUID = -3591247100811702013L;
     /**
      * 主键ID

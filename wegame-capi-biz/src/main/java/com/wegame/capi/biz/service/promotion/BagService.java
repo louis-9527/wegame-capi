@@ -1,9 +1,9 @@
 package com.wegame.capi.biz.service.promotion;
 
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.promotion.GetBagCurrentRewardReq;
 import com.wegame.capi.api.domain.req.promotion.GetBagOtherRewardReq;
 import com.wegame.capi.api.domain.req.promotion.GetBagRewardByIdReq;
@@ -13,10 +13,10 @@ import com.wegame.capi.api.domain.res.promotion.GetBagOtherRewardRes;
 import com.wegame.capi.api.domain.res.promotion.GetHistoryMessageRes;
 import com.wegame.capi.api.domain.res.promotion.GetRewardDetailRes;
 import com.wegame.capi.api.promotion.BagApi;
-import com.wegame.capi.biz.converter.promotion.BagOtherRewordDetailConverter;
-import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
+import com.wegame.capi.biz.converter.promotion.BagOtherRewardDetailConverter;
+import com.wegame.capi.biz.converter.promotion.BagRewardConverter;
 import com.wegame.capi.biz.converter.promotion.HistoryMessageConverter;
-import com.wegame.capi.biz.converter.promotion.RewordDetailConverter;
+import com.wegame.capi.biz.converter.promotion.RewardDetailConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.BagOtherRewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.HistoryMessageDo;
@@ -24,6 +24,7 @@ import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.promotion.QueryHistoryMessageRequest;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,8 +40,6 @@ public class BagService {
     private static final Integer BAG_CURRENT_REWORD_TYPE = 1;
     @Autowired
     BagApi bagApi;
-    @Autowired
-    SnowflakeIdGenerator snowflakeIdGenerator;
 
     public List<BagCurrentRewardDetailDo> listCurrentRewordRecord() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
@@ -50,12 +49,12 @@ public class BagService {
                 .playerName(userInfo.getPlayerName())
                 .gameCode(userInfo.getGameId())
                 .pId(userInfo.getPId())
-                .refId(String.valueOf(snowflakeIdGenerator.nextId()))
+                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .channelId(userInfo.getChannelId())
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
         GetBagCurrentRewardRes rewardBagRes = bagApi.getBagCurrentReward(currentRewardReq);
-        return BagRewordConverter.toDoList(rewardBagRes.getRewardBag());
+        return BagRewardConverter.toDoList(rewardBagRes.getRewardBag());
     }
 
     public List<BagOtherRewardDetailDo> listOtherRewordRecord() {
@@ -65,12 +64,12 @@ public class BagService {
                 .playerName(userInfo.getPlayerName())
                 .gameCode(userInfo.getGameId())
                 .pId(userInfo.getPId())
-                .refId(String.valueOf(snowflakeIdGenerator.nextId()))
+                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .channelId(userInfo.getChannelId())
                 .createTime(DateUtil.toUTC(new Date()))
                 .build();
         GetBagOtherRewardRes rewardBagRes = bagApi.getBagOtherReward(currentRewardReq);
-        return BagOtherRewordDetailConverter.toDoList(rewardBagRes.getRewardBag());
+        return BagOtherRewardDetailConverter.toDoList(rewardBagRes.getRewardBag());
     }
 
     public RewardDetailDo getByRewardConfigId(String rewardConfigId) {
@@ -79,13 +78,13 @@ public class BagService {
         GetBagRewardByIdReq rewardByIdReq = GetBagRewardByIdReq.builder()
                 .playerName(userInfo.getPlayerName())
                 .pId(userInfo.getPId())
-                .refId(String.valueOf(snowflakeIdGenerator.nextId()))
+                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .channelId(userInfo.getChannelId())
                 .createTime(DateUtil.toUTC(new Date()))
                 .rewardConfigId(rewardConfigId)
                 .build();
         GetRewardDetailRes rewardBagRes = bagApi.getRewardById(rewardByIdReq);
-        return RewordDetailConverter.toDo(rewardBagRes.getDetails());
+        return RewardDetailConverter.toDo(rewardBagRes.getDetails());
     }
 
     public List<HistoryMessageDo> getHistoryMessageList(QueryHistoryMessageRequest reqeust) {
@@ -94,7 +93,7 @@ public class BagService {
         GetHistoryMessageReq messageReq = GetHistoryMessageReq.builder()
                 .playerName(userInfo.getPlayerName())
                 .pId(userInfo.getPId())
-                .refId(String.valueOf(snowflakeIdGenerator.nextId()))
+                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .channelId(userInfo.getChannelId())
                 .createTime(DateUtil.toUTC(new Date()))
                 .page(reqeust.getPageNo())

@@ -8,7 +8,7 @@ import com.wegame.capi.common.utils.AmountUtil;
 import java.util.Objects;
 
 
-public class RewordDetailConverter {
+public class RewardDetailConverter {
 
     public static RewardDetailDo toDo(GetRewardDetailRes.RewardDetail rewardDetail) {
         if (Objects.isNull(rewardDetail)) {

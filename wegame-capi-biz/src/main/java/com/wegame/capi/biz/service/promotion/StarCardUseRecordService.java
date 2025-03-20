@@ -19,8 +19,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.StarCardUseTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
-import com.wegame.capi.dao.mapper.domain.business.StartCardUseRecordPo;
+import com.wegame.capi.dao.mapper.domain.business.StarCardUseRecordPo;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +47,8 @@ public class StarCardUseRecordService {
     public Long add(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
         StarCardUseTypeEnum starCardUseType = StarCardUseTypeEnum.valueOfGameType(gameType);
         AssertUtil.assertNotNull(starCardUseType, ErrorCode.ERR_INTER);
-        StartCardUseRecordPo poToInsert = StartCardUseRecordConvert.doToPo(useRecordDo, OptEnum.ADD);
-        StartCardUseRecordPo po = getMongoTemplate(gameType).insert(poToInsert, starCardUseType.getCollectionName());
+        StarCardUseRecordPo poToInsert = StartCardUseRecordConvert.doToPo(useRecordDo, OptEnum.ADD);
+        StarCardUseRecordPo po = getMongoTemplate(gameType).insert(poToInsert, starCardUseType.getCollectionName());
         return po.getId();
     }
 
@@ -61,7 +60,7 @@ public class StarCardUseRecordService {
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(gameType).updateFirst(query,
                 StarCardUseRecordQueryBuilder.buildMongoUpdate(useRecordDo),
-                BetRecordPo.class,
+                StarCardUseRecordPo.class,
                 gameType.getBetRecordCollectionName());
         return result.getModifiedCount() > 0;
     }
