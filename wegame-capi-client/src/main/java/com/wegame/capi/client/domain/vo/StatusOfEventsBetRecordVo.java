@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ApiModel("干预事件订单信息")
 @EqualsAndHashCode(callSuper = false)
-public class StatusOfEventsRecordVo {
+public class StatusOfEventsBetRecordVo {
     @ApiModelProperty(value = "订单号", required = true)
     private String betNo;
     @ApiModelProperty(value = "下注时间", required = true)
