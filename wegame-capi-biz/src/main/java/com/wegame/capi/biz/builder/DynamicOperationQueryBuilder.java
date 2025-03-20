@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +77,7 @@ public class DynamicOperationQueryBuilder {
     }
 
 
-    public static Update buildUpdateById(DynamicOperationEventDo eventDo) {
+    public static Update buildUpdateById(OperationEventDo eventDo) {
         if (eventDo == null) {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }

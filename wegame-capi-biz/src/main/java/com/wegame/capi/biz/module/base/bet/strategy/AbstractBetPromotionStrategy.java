@@ -13,7 +13,7 @@ import com.wegame.capi.biz.domain.biz.bet.StarCardUseDo;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
@@ -158,7 +158,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
                 betStatusEnum = BetStatusEnum.SUCCESS;
             }
             // 命中的事件信息
-            DynamicOperationEventDo eventDo = eventBetResult.getDynamicOperationEvent();
+            OperationEventDo eventDo = eventBetResult.getDynamicOperationEvent();
             // 异步上报、更新状态
             long eventAmount = betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount();
             getDynamicOperationManager().asyncEventDetailUpdate(eventDo, betStatusEnum, detailId, resultDo.getBetId(), eventAmount);

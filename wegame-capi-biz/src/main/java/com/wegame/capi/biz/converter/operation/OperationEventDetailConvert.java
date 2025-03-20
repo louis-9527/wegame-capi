@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.converter;
+package com.wegame.capi.biz.converter.operation;
 
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class OperationEventDetailConvert {
 
-    public static OperationEventDetailPo toPo(DynamicOperationEventDetailDo detailDo, OptEnum optEnum) {
+    public static OperationEventDetailPo doToPo(DynamicOperationEventDetailDo detailDo, OptEnum optEnum) {
         if (Objects.isNull(detailDo)) {
             return null;
         }
@@ -45,7 +45,14 @@ public class OperationEventDetailConvert {
         return po;
     }
 
-    public static DynamicOperationEventDetailDo toDo(OperationEventDetailPo po) {
+    public static List<DynamicOperationEventDetailDo> poToDoList(List<OperationEventDetailPo> poList) {
+        return Optional.ofNullable(poList).orElse(Collections.emptyList())
+                .stream()
+                .map(OperationEventDetailConvert::poToDo)
+                .collect(Collectors.toList());
+    }
+
+    public static DynamicOperationEventDetailDo poToDo(OperationEventDetailPo po) {
         if (Objects.isNull(po)) {
             return null;
         }
@@ -68,12 +75,5 @@ public class OperationEventDetailConvert {
         detailDo.setCreateTime(po.getCreateTime());
         detailDo.setUpdateTime(po.getUpdateTime());
         return detailDo;
-    }
-
-    public static List<DynamicOperationEventDetailDo> toDoList(List<OperationEventDetailPo> poList) {
-        return Optional.ofNullable(poList).orElse(Collections.emptyList())
-                .stream()
-                .map(OperationEventDetailConvert::toDo)
-                .collect(Collectors.toList());
     }
 }

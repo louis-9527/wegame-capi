@@ -2,9 +2,9 @@ package com.wegame.capi.biz.manager;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
@@ -24,7 +24,7 @@ import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.mar
 public class MariaMakilingOperationEventManager extends AbstractOperationEventManager<SymbolDo> {
     // 使用 ConcurrentHashMap 进行缓存
     private static final Map<String, List<Double>> configMultipleArray = new ConcurrentHashMap<>();
-    private static final Map<Double, List<List<DynamicOperationConfigDo>>> normalConfigDetailArray = new ConcurrentHashMap<>();
+    private static final Map<Double, List<List<OperationEventConfigDo>>> normalConfigDetailArray = new ConcurrentHashMap<>();
 
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager)
@@ -35,7 +35,7 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
 
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager)
-    public void updateEventDetail(DynamicOperationEventDetailDo eventDetailDo, DynamicOperationEventDo eventDo) {
+    public void updateEventDetail(DynamicOperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
         super.updateEventDetail(eventDetailDo, eventDo);
     }
 
@@ -50,7 +50,7 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
     }
 
     @Override
-    public List<List<DynamicOperationConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery) {
+    public List<List<OperationEventConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery) {
         Double multiple = configQuery.getMultiple();
         return normalConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigDetail(configQuery));
     }

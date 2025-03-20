@@ -1,67 +1,49 @@
 package com.wegame.capi.biz.service.operation;
 
 import com.google.common.collect.Lists;
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationConfigQueryBuilder;
-import com.wegame.capi.biz.converter.DynamicOperationConfigConvert;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigRecordDo;
-import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.biz.converter.operation.OperationEventConfigConvert;
+import com.wegame.capi.biz.converter.operation.OperationEventConfigRecordConvert;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
+import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigPo;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigQuery;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigRecordPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.MONGOTEMPLATE;
-import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMARY_MONGOTEMPLATE;
 
 @Slf4j
 @Service
-public class OperationEventConfigService implements InitializingBean {
-
-    @Autowired
-    Map<String, MongoTemplate> mongoTemplateMap;
+public class OperationEventConfigService extends AbstractService {
 
     private static final int partitionSize = 10;
 
-    @Override
-    public void afterPropertiesSet() {
-        Arrays.stream(GameTypeEnum.values()).forEach(gameType -> {
-            MongoTemplate mongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
-            AssertUtil.assertNotNull(mongoTemplate, ErrorCode.ERR_INTER);
-            MongoTemplate primaryMongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
-            AssertUtil.assertNotNull(primaryMongoTemplate, ErrorCode.ERR_INTER);
-        });
+    public Long addConfig(OperationEventConfigDo configDo, OperationEventTypeEnum dynamicOperationGame) {
+        OperationEventConfigPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(OperationEventConfigConvert.doToPo(configDo),
+                dynamicOperationGame.getEventConfigCollectionName());
+        return insert.getId();
     }
 
-    public List<List<DynamicOperationConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery, OperationEventTypeEnum typeEnum) {
-        List<OperationEventConfigPo> dynamicOperationConfigPos = getMongoTemplate(typeEnum.getGameType()).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery),
+    public List<List<OperationEventConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery, OperationEventTypeEnum typeEnum) {
+        List<OperationEventConfigPo> poList = getMongoTemplate(typeEnum.getGameType()).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery),
                 OperationEventConfigPo.class,
                 typeEnum.getEventConfigCollectionName());
-        List<DynamicOperationConfigDo> doList = DynamicOperationConfigConvert.convertDos(dynamicOperationConfigPos);
+        List<OperationEventConfigDo> doList = OperationEventConfigConvert.poToDoList(poList);
         if (CollectionUtils.isEmpty(doList)) {
             return new ArrayList<>();
         }
         return Lists.partition(doList, partitionSize);
     }
-
 
     public List<Double> getConfigMultipleArray(OperationEventTypeEnum typeEnum) {
         Aggregation aggregation = Aggregation.newAggregation(
@@ -70,39 +52,33 @@ public class OperationEventConfigService implements InitializingBean {
         AggregationResults<Document> results = getMongoTemplate(typeEnum.getGameType())
                 .aggregate(aggregation, typeEnum.getEventConfigCollectionName(), Document.class);
         return results.getMappedResults().stream()
-                .flatMap(doc -> ((List<?>) doc.get("values")).stream()) // 提取 "values" 数组
-                .map(o -> ((Number) o).doubleValue()) // 转换为 Double
-                .distinct() // 去重
-                .sorted() // **保证升序排序**
+                // 提取 "values" 数组
+                .flatMap(doc -> ((List<?>) doc.get("values")).stream())
+                // 转换为 Double
+                .map(o -> ((Number) o).doubleValue())
+                // 去重
+                .distinct()
+                // **保证升序排序**
+                .sorted()
                 .collect(Collectors.toList());
     }
 
 
-    public List<DynamicOperationConfigRecordDo> listRecord(Long recordId, OperationEventTypeEnum typeEnum) {
-        List<OperationEventConfigRecordPo> dynamicOperationConfigPos = getMongoTemplate(typeEnum.getGameType())
+
+
+    //////////////////// config_record ///////////////////
+
+    public Long addConfigRecord(OperationEventConfigRecordDo recordDo, OperationEventTypeEnum dynamicOperationGame) {
+        OperationEventConfigRecordPo insertPo = getMongoTemplate(dynamicOperationGame.getGameType())
+                .insert(OperationEventConfigRecordConvert.doToPo(recordDo), dynamicOperationGame.getEventConfigRecordCollectionName());
+        return insertPo.getId();
+    }
+
+    public List<OperationEventConfigRecordDo> listRecord(Long recordId, OperationEventTypeEnum typeEnum) {
+        List<OperationEventConfigRecordPo> poList = getMongoTemplate(typeEnum.getGameType())
                 .find(DynamicOperationConfigQueryBuilder.buildRecordQuery(recordId),
                         OperationEventConfigRecordPo.class,
                         typeEnum.getEventConfigRecordCollectionName());
-        return DynamicOperationConfigConvert.convertRecordDos(dynamicOperationConfigPos);
-    }
-
-
-    public Long addConfig(OperationEventConfigPo configPo, OperationEventTypeEnum dynamicOperationGame) {
-        OperationEventConfigPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(configPo, dynamicOperationGame.getEventConfigCollectionName());
-        return insert.getId();
-    }
-
-    public Long addConfigRecord(OperationEventConfigRecordPo recordPo, OperationEventTypeEnum dynamicOperationGame) {
-        OperationEventConfigRecordPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(recordPo, dynamicOperationGame.getEventConfigRecordCollectionName());
-        return insert.getId();
-    }
-
-    ///////////////  above auto generated ///////////////
-    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
-    }
-
-    private MongoTemplate getPrimaryMongoTemplate(GameTypeEnum gameType) {
-        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
+        return OperationEventConfigRecordConvert.poToDoList(poList);
     }
 }

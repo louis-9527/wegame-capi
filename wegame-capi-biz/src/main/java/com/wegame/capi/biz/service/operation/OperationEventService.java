@@ -5,23 +5,19 @@ import com.mongodb.MongoWriteException;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
-import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.DynamicOperationQueryBuilder;
-import com.wegame.capi.biz.converter.DynamicOperationConvert;
+import com.wegame.capi.biz.converter.operation.OperationEventConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEffectEventCatchDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
+import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventPo;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,38 +27,17 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.MONGOTEMPLATE;
-import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMARY_MONGOTEMPLATE;
-
 @Slf4j
 @Service
-public class OperationEventService implements InitializingBean {
-
-    @Autowired
-    SnowflakeIdGenerator snowflakeIdGenerator;
-    @Autowired
-    Map<String, MongoTemplate> mongoTemplateMap;
+public class OperationEventService extends AbstractService {
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
 
-    @Override
-    public void afterPropertiesSet() {
-        Arrays.stream(GameTypeEnum.values()).forEach(gameType -> {
-            MongoTemplate mongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
-            AssertUtil.assertNotNull(mongoTemplate, ErrorCode.ERR_INTER);
-            MongoTemplate primaryMongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
-            AssertUtil.assertNotNull(primaryMongoTemplate, ErrorCode.ERR_INTER);
-        });
-    }
-
-    public Long add(DynamicOperationEventDo eventDo, OperationEventTypeEnum gameEnum) {
-        eventDo.setId(snowflakeIdGenerator.nextId());
-        OperationEventPo dynamicOperationPo = DynamicOperationConvert.doToPo(eventDo, OptEnum.ADD);
-        if (Objects.isNull(dynamicOperationPo)) {
-            return null;
-        }
+    public Long add(OperationEventDo eventDo, OperationEventTypeEnum gameEnum) {
+        OperationEventPo po = OperationEventConvert.doToPo(eventDo, OptEnum.ADD);
+        AssertUtil.assertNotNull(po, ErrorCode.ERR_INTER);
         try {
-            OperationEventPo insert = getMongoTemplate(gameEnum.getGameType()).insert(dynamicOperationPo, gameEnum.getEventCollectionName());
+            OperationEventPo insert = getMongoTemplate(gameEnum.getGameType()).insert(po, gameEnum.getEventCollectionName());
             String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, eventDo.getGameId(), eventDo.getPlayerName());
             redisTemplate.delete(catch_key);
             return insert.getId();
@@ -75,7 +50,7 @@ public class OperationEventService implements InitializingBean {
 
     }
 
-    public Boolean update(DynamicOperationEventDo eventDo, OperationEventTypeEnum dynamicOperationGame) {
+    public Boolean update(OperationEventDo eventDo, OperationEventTypeEnum dynamicOperationGame) {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(eventDo.getId());
         Query query = new Query(criteria);
@@ -86,9 +61,9 @@ public class OperationEventService implements InitializingBean {
         return result.getModifiedCount() > 0;
     }
 
-    public List<DynamicOperationEventDo> queryList(OperationEventQuery operationQuery, OperationEventTypeEnum dynamicOperationGame) {
+    public List<OperationEventDo> queryList(OperationEventQuery operationQuery, OperationEventTypeEnum dynamicOperationGame) {
         List<OperationEventPo> poList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), OperationEventPo.class, dynamicOperationGame.getEventCollectionName());
-        return DynamicOperationConvert.toDoList(poList);
+        return OperationEventConvert.poToDoList(poList);
     }
 
     public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, OperationEventTypeEnum dynamicOperationGame) {
@@ -130,7 +105,7 @@ public class OperationEventService implements InitializingBean {
                 .collect(Collectors.toList());
     }
 
-    public DynamicOperationEventDo getById(Long id, OperationEventTypeEnum gameEnum) {
+    public OperationEventDo getById(Long id, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
@@ -141,7 +116,7 @@ public class OperationEventService implements InitializingBean {
                 query,
                 OperationEventPo.class,
                 gameEnum.getEventCollectionName());
-        return DynamicOperationConvert.poToDo(operationPo);
+        return OperationEventConvert.poToDo(operationPo);
     }
 
     private void saveCatch(String catch_key, Map<Long, String> catchMap) {
@@ -162,14 +137,5 @@ public class OperationEventService implements InitializingBean {
                 Collections.singletonList(catch_key),
                 args.toArray() // 关键：转换为 String[]
         );
-    }
-
-    ///////////////  above auto generated ///////////////
-    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
-    }
-
-    private MongoTemplate getPrimaryMongoTemplate(GameTypeEnum gameType) {
-        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
     }
 }

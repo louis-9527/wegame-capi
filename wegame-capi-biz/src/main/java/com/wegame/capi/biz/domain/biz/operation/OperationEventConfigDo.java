@@ -6,28 +6,28 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
-import java.util.List;
-
+/**
+ * 干预事件配置Do
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DynamicOperationConfigDo {
+public class OperationEventConfigDo {
+    /**
+     * 主键id
+     */
     private Long id;
     /**
      * 游戏ID
      */
     private String gameId;
-
     /**
      * 投注类型
      */
     private BetTypeEnum betType;
-
     /**
      * 倍数
      */
     private Double multiple;
-
 }

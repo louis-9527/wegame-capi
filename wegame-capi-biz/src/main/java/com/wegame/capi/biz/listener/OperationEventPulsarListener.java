@@ -1,8 +1,9 @@
 package com.wegame.capi.biz.listener;
 
 import com.alibaba.fastjson.JSON;
-import com.wegame.capi.biz.converter.DynamicOperationConvert;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.base.id.SnowflakeIdGenerator;
+import com.wegame.capi.biz.converter.operation.OperationEventConvert;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -24,11 +25,12 @@ import java.util.Objects;
 @Service
 public class OperationEventPulsarListener implements MessageListener {
 
+    @Value("${api.game.cp.channelId}")
+    String cpChannelId;
     @Autowired
     OperationEventService operationEventService;
-
-    @Value("${api.game.cp.channelId}")
-    private String cpChannelId;
+    @Autowired
+    SnowflakeIdGenerator snowflakeIdGenerator;
 
     @Override
     public void received(Consumer consumer, Message msg) {
@@ -55,7 +57,7 @@ public class OperationEventPulsarListener implements MessageListener {
                 log.warn("dynamicOperation msg content error:{}", JSON.toJSONString(messageDo));
                 return true;
             }
-            DynamicOperationEventDo eventDo = DynamicOperationConvert.messageToDo(messageDo);
+            OperationEventDo eventDo = OperationEventConvert.messageToDo(snowflakeIdGenerator.nextId(), messageDo);
             if (eventDo == null) {
                 log.warn("dynamicOperation msg content error:{}", JSON.toJSONString(messageDo));
                 return true;
@@ -66,7 +68,6 @@ public class OperationEventPulsarListener implements MessageListener {
                 return true;
             }
             operationEventService.add(eventDo, operationEventType);
-
             return true;
         } catch (Exception e) {
             log.error("Message moved acknowledge error:", e);

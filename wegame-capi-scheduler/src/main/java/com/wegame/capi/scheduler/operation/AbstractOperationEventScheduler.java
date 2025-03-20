@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.manager.AbstractOperationEventManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.operation.OperationEventDetailService;
@@ -112,7 +112,7 @@ public abstract class AbstractOperationEventScheduler
             OperationEventStatusEnum newEventStatus = OperationEventStatusEnum.NONE;
             OperationEventSubStatusEnum eventSubStatus = null;
             // 获取事件信息
-            DynamicOperationEventDo eventDo = operationEventService.getById(betRecordId, operationEventType());
+            OperationEventDo eventDo = operationEventService.getById(betRecordId, operationEventType());
             if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
                 eventDetailStatus = BetStatusEnum.FAIL;
             } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
@@ -128,7 +128,7 @@ public abstract class AbstractOperationEventScheduler
                     .betStatus(eventDetailStatus)
                     .betId(recordDo.getBetId())
                     .build();
-            DynamicOperationEventDo eventDoUpdate = DynamicOperationEventDo.builder()
+            OperationEventDo eventDoUpdate = OperationEventDo.builder()
                     .id(eventDo.getId())
                     .eventSubStatus(eventSubStatus)
                     .finishBonus(eventDo.getFinishBonus() + eventDetailDo.getEventAmount())
@@ -151,7 +151,7 @@ public abstract class AbstractOperationEventScheduler
             log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run start:{}", gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
-            List<DynamicOperationEventDo> eventDetailDoList;
+            List<OperationEventDo> eventDetailDoList;
             OperationEventQuery query = OperationEventQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .eventStatus(OperationEventStatusEnum.FINISH.getCode())
@@ -179,7 +179,7 @@ public abstract class AbstractOperationEventScheduler
     /**
      * 事件处理成功,但未上报
      */
-    private void eventReportFailHandle(DynamicOperationEventDo eventDo) {
+    private void eventReportFailHandle(OperationEventDo eventDo) {
         operationEventManager().asyncReportEvent(eventDo.getId());
     }
 
@@ -192,7 +192,7 @@ public abstract class AbstractOperationEventScheduler
             log.info("{}#eventEventIngExec run start:{}", getClass().getSimpleName(), gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
-            List<DynamicOperationEventDo> eventDetailDoList;
+            List<OperationEventDo> eventDetailDoList;
             OperationEventQuery query = OperationEventQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .expiredTimeLt(DateUtil.getCurrentMilli())
@@ -217,7 +217,7 @@ public abstract class AbstractOperationEventScheduler
 
     }
 
-    private void eventEventIngHandle(DynamicOperationEventDo eventDo) {
+    private void eventEventIngHandle(OperationEventDo eventDo) {
         if (eventDo.getExpiredTime() < DateUtil.getCurrentMilli()) {
             // 过期上报
             operationEventManager().asyncUpdateFinishEvent(eventDo.getId(), OperationEventSubStatusEnum.FINISH_EXPIRED);

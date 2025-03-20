@@ -1,8 +1,7 @@
 package com.wegame.capi.biz.domain.biz.game;
 
-import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +24,7 @@ public class GameEventDo<WD extends SymbolDo> {
     /**
      * 命中的干预事件
      */
-    private DynamicOperationEventDo dynamicOperationEvent;
+    private OperationEventDo dynamicOperationEvent;
 //
 //    /**
 //     * 渠道ID

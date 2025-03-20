@@ -15,7 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class DynamicOperationEventDo implements Serializable {
+public class OperationEventDo implements Serializable {
     /**
      * id
      */

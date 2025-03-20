@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class DynamicOperationConfigRecordDo implements Serializable {
+public class OperationEventConfigRecordDo implements Serializable {
 
     private static final long serialVersionUID = -5059259536926510662L;
 
@@ -33,6 +31,10 @@ public class DynamicOperationConfigRecordDo implements Serializable {
      * betRecordId
      */
     private Long betRecordId;
+    /**
+     * 免费轮标识 false否 true是
+     */
+    private Boolean freeWheelFlag;
     /**
      * 序号
      */

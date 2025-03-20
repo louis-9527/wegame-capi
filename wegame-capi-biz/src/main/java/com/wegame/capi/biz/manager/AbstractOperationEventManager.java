@@ -82,7 +82,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     /**
      * 获取当前玩家在生效中的干预时间,并按时间取第一条
      */
-    public DynamicOperationEventDo getEffectedEvent(String playName) {
+    public OperationEventDo getEffectedEvent(String playName) {
         OperationEventTypeEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
         List<DynamicOperationEffectEventCatchDo> entries = dynamicOperationEventService.getEffectList(playName, this.getDynamicOperationGameEnum());
 
@@ -102,7 +102,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                 continue;
             }
             //查询事件详情
-            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(recordId, dynamicOperationGame);
+            OperationEventDo eventDo = dynamicOperationEventService.getById(recordId, dynamicOperationGame);
             if (eventDo == null) {
                 log.warn("dynamicOperationEventService.getById is null:{}", recordId);
                 continue;
@@ -132,7 +132,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     /**
      * 结果上报
      */
-    public void updateEventDetail(DynamicOperationEventDetailDo eventDetailDo, DynamicOperationEventDo eventDo) {
+    public void updateEventDetail(DynamicOperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
         // 更新 订单状态
         operationEventDetailService.update(eventDetailDo, this.getDynamicOperationGameEnum());
         dynamicOperationEventService.update(eventDo, this.getDynamicOperationGameEnum());
@@ -142,7 +142,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     public Long addEventDetail(DynamicOperationEventDetailDo eventDetailDo) {
         OperationEventTypeEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
         Long addId = operationEventDetailService.add(eventDetailDo, dynamicOperationGame);
-        DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(eventDetailDo.getEventRecordId())
+        OperationEventDo eventUpdate = OperationEventDo.builder().id(eventDetailDo.getEventRecordId())
                 .eventStatus(OperationEventStatusEnum.ING).build();
         dynamicOperationEventService.update(eventUpdate, dynamicOperationGame);
         return addId;
@@ -151,7 +151,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
     public List<StatusOfEventsResultDo> getStatusOfEvents(OperationEventQuery operationEventQuery) {
         // 根据条件查询已完成的事件信息
-        List<DynamicOperationEventDo> eventDoList = dynamicOperationEventService.queryList(operationEventQuery, this.getDynamicOperationGameEnum());
+        List<OperationEventDo> eventDoList = dynamicOperationEventService.queryList(operationEventQuery, this.getDynamicOperationGameEnum());
         // 获取事件明细
         if (CollectionUtils.isEmpty(eventDoList)) {
             return new ArrayList<>();
@@ -168,7 +168,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     }
 
 
-    private StatusOfEventsResultDo getStatusOfEvents(DynamicOperationEventDo eventDo, List<DynamicOperationEventDetailDo> eventDetailDos) {
+    private StatusOfEventsResultDo getStatusOfEvents(OperationEventDo eventDo, List<DynamicOperationEventDetailDo> eventDetailDos) {
         if (CollectionUtils.isEmpty(eventDetailDos)) {
             // 过期从未使用
             return StatusOfEventsResultDo.builder()
@@ -220,7 +220,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     public GameEventDo<WD> getEventBetResult(Long payOutAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 判断是否存在干预事件
-        DynamicOperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName());
+        OperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName());
         if (eventDo == null) {
             return GameEventDo.<WD>builder().eventResult(false).build();
         }
@@ -245,7 +245,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     /**
      * 获取需要干预的金额
      */
-    private Long getInterventionAmount(DynamicOperationEventDo eventDo, Long betAmount) {
+    private Long getInterventionAmount(OperationEventDo eventDo, Long betAmount) {
         // 判断需要干预金额
         long eventAmount = eventDo.getBonus() - eventDo.getFinishBonus();
 
@@ -279,7 +279,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         return this.normalPayMultipleConfig(closest);
     }
 
-    public void asyncEventDetailUpdate(DynamicOperationEventDo eventDo, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
+    public void asyncEventDetailUpdate(OperationEventDo eventDo, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
         threadPoolExecutor.execute(() -> {
             // 判断是否完成
             OperationEventSubStatusEnum eventSubStatusEnum = null;
@@ -300,7 +300,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                     .betStatus(betStatus)
                     .betId(betId)
                     .build();
-            DynamicOperationEventDo eventDoUpdate = DynamicOperationEventDo.builder()
+            OperationEventDo eventDoUpdate = OperationEventDo.builder()
                     .id(eventDo.getId())
                     .finishBonus(BetStatusEnum.SUCCESS == betStatus ? finishBonus : null)
                     .eventStatus(eventStatusEnum)
@@ -320,7 +320,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
     public void asyncUpdateFinishEvent(Long recordId, OperationEventSubStatusEnum eventSubStatusEnum) {
         dynamicEventThreadPool.execute(() -> {
-            DynamicOperationEventDo build = DynamicOperationEventDo.builder()
+            OperationEventDo build = OperationEventDo.builder()
                     .id(recordId)
                     .eventStatus(OperationEventStatusEnum.FINISH)
                     .eventSubStatus(eventSubStatusEnum)
@@ -339,7 +339,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
      */
     public void asyncReportEvent(Long recordId) {
         dynamicEventReportThreadPool.execute(() -> {
-            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(recordId, this.getDynamicOperationGameEnum());
+            OperationEventDo eventDo = dynamicOperationEventService.getById(recordId, this.getDynamicOperationGameEnum());
             AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
             if (OperationEventStatusEnum.FINISH != eventDo.getEventStatus()) {
                 log.warn("event not finish,report fail:{}", recordId);
@@ -386,14 +386,14 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
             UpdateEventsStatusRes updateEventsStatusRes = operationEventApi.updateEventsStatus(updateEventsStatusReq);
             if (updateEventsStatusRes.isSuccess()) {
                 // 更新事件状态为已上报
-                DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(recordId)
+                OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
                         .reportStatus(OperationEventReportStatusEnum.FINISH).build();
                 dynamicOperationEventService.update(eventReportUpdate, this.getDynamicOperationGameEnum());
                 return;
             }
             if (updateEventsStatusRes.isFail()) {
                 // 如果失败(特定情况)
-                DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(recordId)
+                OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
                         .reportStatus(OperationEventReportStatusEnum.FAIL)
                         .reportFailMsg(updateEventsStatusRes.getMessage())
                         .build();
@@ -430,7 +430,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         OperationEventConfigQuery configQuery = OperationEventConfigQuery.builder()
                 .gameId(this.getDynamicOperationGameEnum().getGameType().getId())
                 .multiple(multiple).build();
-        List<List<DynamicOperationConfigDo>> configDetailGroup = this.getConfigDetail(configQuery);
+        List<List<OperationEventConfigDo>> configDetailGroup = this.getConfigDetail(configQuery);
         if (CollectionUtils.isEmpty(configDetailGroup)) {
             log.error("normalPayMultipleConfig result null,,multiple:{}", multiple);
             return null;
@@ -444,11 +444,11 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
             increment = 1L;
             redisTemplate.opsForValue().set(incrementKey, increment);
         }
-        List<DynamicOperationConfigDo> configDetail = configDetailGroup.get((int) (increment - 1));
+        List<OperationEventConfigDo> configDetail = configDetailGroup.get((int) (increment - 1));
         int randomIndex = ThreadLocalRandom.current().nextInt(configDetail.size());
-        DynamicOperationConfigDo dynamicOperationConfigDo = configDetail.get(randomIndex);
+        OperationEventConfigDo dynamicOperationConfigDo = configDetail.get(randomIndex);
         // todo 查询记录
-        List<DynamicOperationConfigRecordDo> gameMultipleRecordDos = dynamicOperationEventConfigService.listRecord(dynamicOperationConfigDo.getId(), getDynamicOperationGameEnum());
+        List<OperationEventConfigRecordDo> gameMultipleRecordDos = dynamicOperationEventConfigService.listRecord(dynamicOperationConfigDo.getId(), getDynamicOperationGameEnum());
 
         return convertGameMultipleRecordDo(gameMultipleRecordDos);
     }
@@ -457,9 +457,9 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     public abstract OperationEventTypeEnum getDynamicOperationGameEnum();
 
 
-    private List<GameMultipleRecordDo<WD>> convertGameMultipleRecordDo(List<DynamicOperationConfigRecordDo> recordDos) {
+    private List<GameMultipleRecordDo<WD>> convertGameMultipleRecordDo(List<OperationEventConfigRecordDo> recordDos) {
         List<GameMultipleRecordDo<WD>> recordDoList = new ArrayList<>();
-        for (DynamicOperationConfigRecordDo recordDo : recordDos) {
+        for (OperationEventConfigRecordDo recordDo : recordDos) {
             WheelDo<WD> wdWheelDo = convertWheel(recordDo.getWheel());
             GameMultipleRecordDo<WD> build = GameMultipleRecordDo.<WD>builder()
                     .id(recordDo.getId())
@@ -478,7 +478,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
     public abstract WheelDo<WD> convertWheel(Object obj);
 
-    public List<List<DynamicOperationConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery) {
+    public List<List<OperationEventConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery) {
         return dynamicOperationEventConfigService.getConfigDetail(configQuery, getDynamicOperationGameEnum());
     }
 
