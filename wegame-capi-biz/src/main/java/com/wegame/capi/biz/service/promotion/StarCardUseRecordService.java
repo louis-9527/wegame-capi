@@ -57,7 +57,7 @@ public class StarCardUseRecordService extends AbstractService {
 
     public Boolean update(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(useRecordDo, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(useRecordDo.getId(), ErrorCode.ERR_PARAM, "request param \'id\' is null");
+        AssertUtil.assertNotNull(useRecordDo.getId(), ErrorCode.ERR_PARAM, "param \'id\' is null");
         Criteria criteria = new Criteria();
         criteria.and("_id").is(useRecordDo.getId());
         Query query = new Query(criteria);

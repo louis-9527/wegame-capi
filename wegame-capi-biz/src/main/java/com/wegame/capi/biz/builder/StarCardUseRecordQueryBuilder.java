@@ -2,6 +2,7 @@ package com.wegame.capi.biz.builder;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import org.springframework.data.mongodb.core.query.Update;
@@ -11,9 +12,7 @@ import java.util.Objects;
 public class StarCardUseRecordQueryBuilder {
 
     public static Update buildMongoUpdate(StarCardUseRecordDo recordDo) {
-        if (recordDo == null) {
-            throw new BusinessException(ErrorCode.ERR_INTER);
-        }
+        AssertUtil.assertNotNull(recordDo, ErrorCode.ERR_INTER);
         Update update = new Update();
         if (Objects.nonNull(recordDo.getReportStatus())) {
             update.set("reportStatus", recordDo.getReportStatus().getCode());
