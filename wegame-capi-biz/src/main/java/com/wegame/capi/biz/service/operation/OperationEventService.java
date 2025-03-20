@@ -6,7 +6,7 @@ import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.DynamicOperationQueryBuilder;
+import com.wegame.capi.biz.builder.operation.OperationEventQueryBuilder;
 import com.wegame.capi.biz.converter.operation.OperationEventConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEffectEventCatchDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
@@ -59,14 +59,14 @@ public class OperationEventService extends AbstractService {
         criteria.and("_id").is(eventDo.getId());
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(dynamicOperationGame.getGameType()).updateFirst(query,
-                DynamicOperationQueryBuilder.buildUpdateById(eventDo),
+                OperationEventQueryBuilder.buildUpdateById(eventDo),
                 OperationEventPo.class,
                 dynamicOperationGame.getEventCollectionName());
         return result.getModifiedCount() > 0;
     }
 
     public List<OperationEventDo> queryList(OperationEventQuery operationQuery, OperationEventTypeEnum dynamicOperationGame) {
-        List<OperationEventPo> poList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), OperationEventPo.class, dynamicOperationGame.getEventCollectionName());
+        List<OperationEventPo> poList = getMongoTemplate(dynamicOperationGame.getGameType()).find(OperationEventQueryBuilder.buildQuery(operationQuery), OperationEventPo.class, dynamicOperationGame.getEventCollectionName());
         return OperationEventConvert.poToDoList(poList);
     }
 
@@ -86,7 +86,7 @@ public class OperationEventService extends AbstractService {
                     .collect(Collectors.toList());
         }
 
-        List<OperationEventPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId()), OperationEventPo.class, dynamicOperationGame.getEventCollectionName());
+        List<OperationEventPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(OperationEventQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId()), OperationEventPo.class, dynamicOperationGame.getEventCollectionName());
         if (CollectionUtils.isEmpty(operationPoList)) {
             Map<Long, String> catchMap = new HashMap<>();
             catchMap.put(-1L, "-1");

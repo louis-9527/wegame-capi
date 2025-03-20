@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.builder;
+package com.wegame.capi.biz.builder.operation;
 
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 
-public class DynamicOperationQueryBuilder {
+public class OperationEventQueryBuilder {
 
     public static Query buildQuery(OperationEventQuery recordQuery) {
         Query query = new Query(buildCriteria(recordQuery));

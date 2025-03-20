@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.wegame.capi.biz.builder.DynamicOperationDetailQueryBuilder.buildQuery;
-import static com.wegame.capi.biz.builder.DynamicOperationDetailQueryBuilder.buildUpdate;
+import static com.wegame.capi.biz.builder.operation.OperationEventDetailQueryBuilder.buildQuery;
+import static com.wegame.capi.biz.builder.operation.OperationEventDetailQueryBuilder.buildUpdate;
 import static com.wegame.capi.biz.converter.operation.OperationEventDetailConvert.poToDoList;
 
 /**

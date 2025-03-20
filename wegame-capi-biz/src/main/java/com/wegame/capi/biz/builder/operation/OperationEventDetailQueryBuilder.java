@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.builder;
+package com.wegame.capi.biz.builder.operation;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Objects;
 
-public class DynamicOperationDetailQueryBuilder {
+public class OperationEventDetailQueryBuilder {
 
     public static Query buildQuery(OperationEventDetailQuery detailQuery) {
         Query query = new Query(buildCriteria(detailQuery));

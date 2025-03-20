@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.service.operation;
 
-import com.wegame.capi.biz.builder.DynamicOperationConfigQueryBuilder;
-import com.wegame.capi.biz.converter.operation.OperationEventConfigRecordConvert;
+import com.wegame.capi.biz.builder.operation.OperationEventConfigRecordQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
@@ -10,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.wegame.capi.biz.converter.operation.OperationEventConfigRecordConvert.doToPo;
+import static com.wegame.capi.biz.converter.operation.OperationEventConfigRecordConvert.poToDoList;
 
 /**
  * 干预事件配置记录服务
@@ -20,15 +22,15 @@ public class OperationEventConfigRecordService extends AbstractService {
 
     public Long add(OperationEventConfigRecordDo recordDo, OperationEventTypeEnum dynamicOperationGame) {
         OperationEventConfigRecordPo insertPo = getMongoTemplate(dynamicOperationGame.getGameType())
-                .insert(OperationEventConfigRecordConvert.doToPo(recordDo), dynamicOperationGame.getEventConfigRecordCollectionName());
+                .insert(doToPo(recordDo), dynamicOperationGame.getEventConfigRecordCollectionName());
         return insertPo.getId();
     }
 
     public List<OperationEventConfigRecordDo> listByBetRecordId(Long betRecordId, OperationEventTypeEnum typeEnum) {
         List<OperationEventConfigRecordPo> poList = getMongoTemplate(typeEnum.getGameType())
-                .find(DynamicOperationConfigQueryBuilder.buildRecordQuery(betRecordId),
+                .find(OperationEventConfigRecordQueryBuilder.buildQuery(betRecordId),
                         OperationEventConfigRecordPo.class,
                         typeEnum.getEventConfigRecordCollectionName());
-        return OperationEventConfigRecordConvert.poToDoList(poList);
+        return poToDoList(poList);
     }
 }

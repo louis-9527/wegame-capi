@@ -1,16 +1,13 @@
 package com.wegame.capi.biz.service.operation;
 
 import com.google.common.collect.Lists;
-import com.wegame.capi.biz.builder.DynamicOperationConfigQueryBuilder;
+import com.wegame.capi.biz.builder.operation.OperationEventConfigQueryBuilder;
 import com.wegame.capi.biz.converter.operation.OperationEventConfigConvert;
-import com.wegame.capi.biz.converter.operation.OperationEventConfigRecordConvert;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigDo;
-import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigPo;
 import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigQuery;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigRecordPo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.Document;
@@ -22,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.converter.operation.OperationEventConfigConvert.doToPo;
+
 /**
  * 干预事件配置服务
  */
@@ -32,13 +31,13 @@ public class OperationEventConfigService extends AbstractService {
     private static final int partitionSize = 10;
 
     public Long add(OperationEventConfigDo configDo, OperationEventTypeEnum dynamicOperationGame) {
-        OperationEventConfigPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(OperationEventConfigConvert.doToPo(configDo),
+        OperationEventConfigPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(doToPo(configDo),
                 dynamicOperationGame.getEventConfigCollectionName());
         return insert.getId();
     }
 
     public List<List<OperationEventConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery, OperationEventTypeEnum typeEnum) {
-        List<OperationEventConfigPo> poList = getMongoTemplate(typeEnum.getGameType()).find(DynamicOperationConfigQueryBuilder.buildQuery(configQuery),
+        List<OperationEventConfigPo> poList = getMongoTemplate(typeEnum.getGameType()).find(OperationEventConfigQueryBuilder.buildQuery(configQuery),
                 OperationEventConfigPo.class,
                 typeEnum.getEventConfigCollectionName());
         List<OperationEventConfigDo> doList = OperationEventConfigConvert.poToDoList(poList);
@@ -64,13 +63,5 @@ public class OperationEventConfigService extends AbstractService {
                 // **保证升序排序**
                 .sorted()
                 .collect(Collectors.toList());
-    }
-
-    public List<OperationEventConfigRecordDo> listRecord(Long recordId, OperationEventTypeEnum typeEnum) {
-        List<OperationEventConfigRecordPo> poList = getMongoTemplate(typeEnum.getGameType())
-                .find(DynamicOperationConfigQueryBuilder.buildRecordQuery(recordId),
-                        OperationEventConfigRecordPo.class,
-                        typeEnum.getEventConfigRecordCollectionName());
-        return OperationEventConfigRecordConvert.poToDoList(poList);
     }
 }
