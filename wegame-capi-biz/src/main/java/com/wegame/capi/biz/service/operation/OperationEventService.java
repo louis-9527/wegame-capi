@@ -42,7 +42,7 @@ public class OperationEventService extends AbstractService {
         AssertUtil.assertNotNull(po, ErrorCode.ERR_INTER);
         try {
             OperationEventPo insert = getMongoTemplate(gameEnum.getGameType()).insert(po, gameEnum.getEventCollectionName());
-            String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, eventDo.getGameId(), eventDo.getPlayerName());
+            String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, eventDo.getGameId(), eventDo.getPlayerName());
             redisTemplate.delete(catch_key);
             return insert.getId();
         } catch (MongoWriteException e) {
@@ -71,7 +71,7 @@ public class OperationEventService extends AbstractService {
     }
 
     public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, OperationEventTypeEnum dynamicOperationGame) {
-        String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, dynamicOperationGame.getGameType().getId(), playName);
+        String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, dynamicOperationGame.getGameType().getId(), playName);
         Map<Object, Object> entries = redisTemplate.opsForHash().entries(catch_key);
         if (!entries.isEmpty()) {
             if (entries.containsKey("-1")) {
