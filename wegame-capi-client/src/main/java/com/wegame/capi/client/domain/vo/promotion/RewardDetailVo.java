@@ -16,6 +16,7 @@ import java.io.Serializable;
 @ApiModel(description = "奖励明细")
 public class RewardDetailVo implements Serializable {
 
+    private static final long serialVersionUID = 6500143231638833380L;
     @ApiModelProperty(value = "奖励名称", required = true)
     private String name;
     @ApiModelProperty(value = "奖励描述", required = true)
