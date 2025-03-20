@@ -30,6 +30,10 @@ public class OperationEventDetailDo implements Serializable {
      */
     private String  operatorGameId;
     /**
+     * 配置ID,命中那条倍数
+     */
+    private Long configId;
+    /**
      * 渠道ID
      */
     private String channelId;

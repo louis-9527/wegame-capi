@@ -25,6 +25,11 @@ public class GameEventDo<WD extends SymbolDo> {
      * 命中的干预事件
      */
     private OperationEventDo dynamicOperationEvent;
+
+    /**
+     * 命中那条倍数ID
+     */
+    private Long configId;
 //
 //    /**
 //     * 渠道ID

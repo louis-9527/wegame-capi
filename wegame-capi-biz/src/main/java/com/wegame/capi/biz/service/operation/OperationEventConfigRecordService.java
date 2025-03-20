@@ -27,7 +27,7 @@ public class OperationEventConfigRecordService extends AbstractService {
                 .insert(doToPo(recordDo), dynamicOperationGame.getEventConfigRecordCollectionName());
         return insertPo.getId();
     }
-    @Cacheable(value = CacheConstants.GAME_DYNAMIC_OPERATION, key = "#typeEnum.name() + '_' + #betRecordId")
+    @Cacheable(value = CacheConstants.OPERATION_EVENT_CONFIG, key = "#typeEnum.name() + '_' + #betRecordId")
     public List<OperationEventConfigRecordDo> listByBetRecordId(Long betRecordId, OperationEventTypeEnum typeEnum) {
         List<OperationEventConfigRecordPo> poList = getMongoTemplate(typeEnum.getGameType())
                 .find(OperationEventConfigRecordQueryBuilder.buildQuery(betRecordId),

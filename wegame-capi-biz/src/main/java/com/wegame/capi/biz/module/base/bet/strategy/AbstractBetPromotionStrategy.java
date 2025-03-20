@@ -211,6 +211,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         detailDo.setEventRecordId(eventDo.getDynamicOperationEvent().getId());
         detailDo.setEventId(eventDo.getDynamicOperationEvent().getEventId());
         detailDo.setBetRecordId(betRecordDo.getId());
+        detailDo.setConfigId(eventDo.getConfigId());
         detailDo.setBetAmount(betRecordDo.getPayAmount());
         detailDo.setPayOutAmount(betRecordDo.getPayOutAmount());
         detailDo.setEventAmount(betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount());

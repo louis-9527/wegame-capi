@@ -33,6 +33,7 @@ import com.wegame.capi.dao.mapper.domain.operation.OperationEventDetailQuery;
 import com.wegame.capi.dao.mapper.domain.operation.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -223,13 +224,14 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
             return GameEventDo.<WD>builder().eventResult(false).build();
         }
         // 构建并获取Wheel
-        List<GameMultipleRecordDo<WD>> wheelDos = this.getWheelDos(interventionAmount, payOutAmount);
-        if (CollectionUtils.isEmpty(wheelDos)) {
+        Pair<Long,List<GameMultipleRecordDo<WD>>> wheelDoPair = this.getWheelDos(interventionAmount, payOutAmount);
+        if (wheelDoPair == null || CollectionUtils.isEmpty(wheelDoPair.getValue())) {
             return GameEventDo.<WD>builder().eventResult(false).build();
         }
         GameEventDo<WD> gameEventDo = new GameEventDo<>();
         gameEventDo.setEventResult(true);
-        gameEventDo.setRecordDoList(wheelDos);
+        gameEventDo.setRecordDoList(wheelDoPair.getValue());
+        gameEventDo.setConfigId(wheelDoPair.getKey());
         gameEventDo.setDynamicOperationEvent(eventDo);
         return gameEventDo;
     }
@@ -260,7 +262,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         return eventAmount;
     }
 
-    public List<GameMultipleRecordDo<WD>> getWheelDos(Long interventionAmount, Long betPayAmount) {
+    public Pair<Long,List<GameMultipleRecordDo<WD>>> getWheelDos(Long interventionAmount, Long betPayAmount) {
         // 计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
         long interveneBalance = interventionAmount + betPayAmount;
         //计算最大倍数
@@ -420,7 +422,8 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         return result == -1 ? null : arr.get(result);
     }
 
-    private List<GameMultipleRecordDo<WD>> normalPayMultipleConfig(double multiple) {
+
+    private Pair<Long,List<GameMultipleRecordDo<WD>>> normalPayMultipleConfig(double multiple) {
         OperationEventConfigQuery configQuery = OperationEventConfigQuery.builder()
                 .gameId(this.getDynamicOperationGameEnum().getGameType().getId())
                 .multiple(multiple).build();
@@ -443,7 +446,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         OperationEventConfigDo dynamicOperationConfigDo = configDetail.get(randomIndex);
         // todo 查询记录
         List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(dynamicOperationConfigDo.getId(), getDynamicOperationGameEnum());
-        return convertGameMultipleRecordDo(gameMultipleRecordDos);
+       return Pair.of(dynamicOperationConfigDo.getId(),convertGameMultipleRecordDo(gameMultipleRecordDos)) ;
     }
 
 
