@@ -38,7 +38,7 @@ public abstract class AbstractOperationEventScheduler
         extends AbstractScheduler
         implements Runnable {
 
-    private final long fiveMinutesAgo = System.currentTimeMillis() - 10 * 60 * 1000;
+    private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 10 * 60 * 1000;
 
     @Autowired
     public DynamicOperationEventService dynamicOperationEventService;
@@ -73,7 +73,7 @@ public abstract class AbstractOperationEventScheduler
             List<DynamicOperationEventDetailDo> detailList = null;
             DynamicOperationDetailQuery query = DynamicOperationDetailQuery.builder()
                     .betStatus(BetStatusEnum.ING.getCode())
-                    .createTimeLt(fiveMinutesAgo)
+                    .createTimeLt(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE)
@@ -156,7 +156,7 @@ public abstract class AbstractOperationEventScheduler
         DynamicOperationQuery query = DynamicOperationQuery.builder()
                 .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                 .eventStatus(OperationEventStatusEnum.FINISH.getCode())
-                .createTimeLt(fiveMinutesAgo)
+                .createTimeLt(FIVE_MINUTES_AGO)
                 .direction(Sort.Direction.ASC)
                 .orderByClause("_id")
                 .limit(DEFAULT_PAGE_SIZE).build();
