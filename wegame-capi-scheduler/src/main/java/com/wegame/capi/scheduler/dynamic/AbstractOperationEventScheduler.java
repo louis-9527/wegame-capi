@@ -47,7 +47,7 @@ public abstract class AbstractOperationEventScheduler
     @Autowired
     public BetRecordService betRecordService;
 
-    abstract OperationEventTypeEnum operationEventGame();
+    abstract OperationEventTypeEnum operationEventType();
 
     abstract AbstractOperationEventManager operationEventManager();
 
@@ -66,7 +66,7 @@ public abstract class AbstractOperationEventScheduler
      */
     private void eventDetailIngExec() {
         try {
-            GameTypeEnum gameType = operationEventGame().getGameType();
+            GameTypeEnum gameType = operationEventType().getGameType();
             log.info("{}#eventDetailFailExec run start. gameId: {}", getClass().getSimpleName(), gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
@@ -80,7 +80,7 @@ public abstract class AbstractOperationEventScheduler
                     .build();
             do {
                 query.setLastId(lastId);
-                detailList = dynamicOperationEventDetailService.queryList(query, operationEventGame());
+                detailList = dynamicOperationEventDetailService.queryList(query, operationEventType());
                 if (CollectionUtil.isNotEmpty(detailList)) {
                     lastId = detailList.get(detailList.size() - 1).getId();
                 }
@@ -103,7 +103,7 @@ public abstract class AbstractOperationEventScheduler
      */
     private void eventDetailFailHandle(DynamicOperationEventDetailDo eventDetailDo) {
         try {
-            GameTypeEnum gameType = operationEventGame().getGameType();
+            GameTypeEnum gameType = operationEventType().getGameType();
             Long betRecordId = eventDetailDo.getBetRecordId();
             // 查询原始订单的状态
             BetRecordDo recordDo = betRecordService.get(betRecordId, gameType);
@@ -114,7 +114,7 @@ public abstract class AbstractOperationEventScheduler
             OperationEventStatusEnum newEventStatus = OperationEventStatusEnum.NONE;
             OperationEventSubStatusEnum eventSubStatus = null;
             // 获取事件信息
-            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(betRecordId, operationEventGame());
+            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(betRecordId, operationEventType());
             if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
                 eventDetailStatus = BetStatusEnum.FAIL;
             } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
@@ -139,7 +139,7 @@ public abstract class AbstractOperationEventScheduler
             if (OperationEventStatusEnum.FINISH == newEventStatus) {
                 operationEventManager().asyncReportEvent(eventDo.getId());
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.error("{}#eventDetailFailHandle exception:{}", getClass().getSimpleName(), e.getMessage(), e);
         }
     }
@@ -149,7 +149,7 @@ public abstract class AbstractOperationEventScheduler
      */
     private void eventReportFailExec() {
         try {
-            GameTypeEnum gameType = operationEventGame().getGameType();
+            GameTypeEnum gameType = operationEventType().getGameType();
             log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run start:{}", gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
@@ -192,7 +192,7 @@ public abstract class AbstractOperationEventScheduler
      */
     private void eventEventExpiredExec() {
         try {
-            GameTypeEnum gameType = operationEventGame().getGameType();
+            GameTypeEnum gameType = operationEventType().getGameType();
             log.info("{}#eventEventIngExec run start:{}", getClass().getSimpleName(), gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
