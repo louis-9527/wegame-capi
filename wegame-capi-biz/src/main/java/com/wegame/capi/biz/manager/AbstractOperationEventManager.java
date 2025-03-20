@@ -158,7 +158,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         }
         List<StatusOfEventsResultDo> resultList = new ArrayList<>();
         eventDoList.forEach(eventDo -> {
-            List<DynamicOperationEventDetailDo> eventDetailDos = operationEventDetailService.queryList(OperationEventDetailQuery.builder()
+            List<DynamicOperationEventDetailDo> eventDetailDos = operationEventDetailService.list(OperationEventDetailQuery.builder()
                     .recordId(eventDo.getId())
                     .betStatus(BetStatusEnum.SUCCESS.getCode())
                     .build(), this.getDynamicOperationGameEnum());
@@ -357,7 +357,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                     .direction(Sort.Direction.ASC)
                     .build();
 
-            List<DynamicOperationEventDetailDo> eventDetailDos = operationEventDetailService.queryList(detailQuery, this.getDynamicOperationGameEnum());
+            List<DynamicOperationEventDetailDo> eventDetailDos = operationEventDetailService.list(detailQuery, this.getDynamicOperationGameEnum());
             List<String> betNos = new ArrayList<>();
             long totalAmount = 0L;
             Long startTime = null;

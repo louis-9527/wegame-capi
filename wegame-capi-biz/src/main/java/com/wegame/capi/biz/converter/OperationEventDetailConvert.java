@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class DynamicOperationDetailConvert {
+public class OperationEventDetailConvert {
 
     public static OperationEventDetailPo toPo(DynamicOperationEventDetailDo detailDo, OptEnum optEnum) {
         if (Objects.isNull(detailDo)) {
@@ -73,7 +73,7 @@ public class DynamicOperationDetailConvert {
     public static List<DynamicOperationEventDetailDo> toDoList(List<OperationEventDetailPo> poList) {
         return Optional.ofNullable(poList).orElse(Collections.emptyList())
                 .stream()
-                .map(DynamicOperationDetailConvert::toDo)
+                .map(OperationEventDetailConvert::toDo)
                 .collect(Collectors.toList());
     }
 }

@@ -41,9 +41,9 @@ public abstract class AbstractOperationEventScheduler
     private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 10 * 60 * 1000;
 
     @Autowired
-    public OperationEventService dynamicOperationEventService;
+    public OperationEventService operationEventService;
     @Autowired
-    public OperationEventDetailService dynamicOperationEventDetailService;
+    public OperationEventDetailService operationEventDetailService;
     @Autowired
     public BetRecordService betRecordService;
 
@@ -80,7 +80,7 @@ public abstract class AbstractOperationEventScheduler
                     .build();
             do {
                 query.setLastId(lastId);
-                detailList = dynamicOperationEventDetailService.queryList(query, operationEventType());
+                detailList = operationEventDetailService.list(query, operationEventType());
                 if (CollectionUtil.isNotEmpty(detailList)) {
                     lastId = detailList.get(detailList.size() - 1).getId();
                 }
@@ -112,7 +112,7 @@ public abstract class AbstractOperationEventScheduler
             OperationEventStatusEnum newEventStatus = OperationEventStatusEnum.NONE;
             OperationEventSubStatusEnum eventSubStatus = null;
             // 获取事件信息
-            DynamicOperationEventDo eventDo = dynamicOperationEventService.getById(betRecordId, operationEventType());
+            DynamicOperationEventDo eventDo = operationEventService.getById(betRecordId, operationEventType());
             if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
                 eventDetailStatus = BetStatusEnum.FAIL;
             } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
@@ -161,7 +161,7 @@ public abstract class AbstractOperationEventScheduler
                     .limit(DEFAULT_PAGE_SIZE).build();
             do {
                 query.setLtLastId(lastId);
-                eventDetailDoList = dynamicOperationEventService.queryList(query, operationEventType());
+                eventDetailDoList = operationEventService.queryList(query, operationEventType());
                 if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                     lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
                 }
@@ -201,7 +201,7 @@ public abstract class AbstractOperationEventScheduler
                     .limit(DEFAULT_PAGE_SIZE).build();
             do {
                 query.setLtLastId(lastId);
-                eventDetailDoList = dynamicOperationEventService.queryList(query, operationEventType());
+                eventDetailDoList = operationEventService.queryList(query, operationEventType());
                 if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                     lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
                 }
