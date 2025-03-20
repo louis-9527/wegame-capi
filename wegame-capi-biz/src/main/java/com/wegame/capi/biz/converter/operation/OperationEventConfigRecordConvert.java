@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.converter.operation;
 
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventConfigRecordPo;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventConfigRecordPo;
 
 import java.util.Collections;
 import java.util.List;

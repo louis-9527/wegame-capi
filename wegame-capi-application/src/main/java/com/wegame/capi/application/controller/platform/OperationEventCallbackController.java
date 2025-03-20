@@ -10,7 +10,7 @@ import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.domain.response.DynamicOperationResponse;
 import com.wegame.capi.client.domain.vo.StatusOfEventsResultVo;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

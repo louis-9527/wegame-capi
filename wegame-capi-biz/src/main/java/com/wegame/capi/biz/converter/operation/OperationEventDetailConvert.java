@@ -4,7 +4,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailPo;
+import com.wegame.capi.dao.mapper.domain.operation.OperationEventDetailPo;
 
 import java.util.Collections;
 import java.util.List;
