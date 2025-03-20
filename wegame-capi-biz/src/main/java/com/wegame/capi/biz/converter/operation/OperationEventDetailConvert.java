@@ -25,6 +25,7 @@ public class OperationEventDetailConvert {
             po.setOperatorRecordId(detailDo.getEventRecordId());
             po.setOperatorGameId(detailDo.getOperatorGameId());
             po.setBetTime(detailDo.getBetTime());
+            po.setConfigId(detailDo.getConfigId());
             po.setBetAmount(detailDo.getBetAmount());
             po.setEventAmount(detailDo.getEventAmount());
             po.setPlayerId(detailDo.getPlayerId());

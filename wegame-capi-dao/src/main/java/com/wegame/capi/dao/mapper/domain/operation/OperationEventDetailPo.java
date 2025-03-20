@@ -37,6 +37,10 @@ public class OperationEventDetailPo implements Serializable {
      */
     private String  operatorGameId;
     /**
+     * 配置ID,命中那条倍数
+     */
+    private Long configId;
+    /**
      * 玩家ID(三方)
      */
     private String playerId;
