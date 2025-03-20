@@ -303,7 +303,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
             this.updateEventDetail(eventDetailUpdate, eventDoUpdate);
             // 执行上报
-            if (OperationEventSubStatusEnum.finish(eventSubStatusEnum)) {
+            if (OperationEventSubStatusEnum.isFinish(eventSubStatusEnum)) {
                 // 如果完成执行上报
                 this.asyncReportEvent(eventDo.getId());
             }
