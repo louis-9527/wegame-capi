@@ -4,10 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.api.DynamicOperationApi;
-import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsBetRecordReq;
-import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsStatusReq;
-import com.wegame.capi.api.domain.res.dynamicoperation.UpdateEventsStatusRes;
+import com.wegame.capi.api.operation.OperationEventApi;
+import com.wegame.capi.api.domain.req.operation.UpdateEventsBetRecordReq;
+import com.wegame.capi.api.domain.req.operation.UpdateEventsStatusReq;
+import com.wegame.capi.api.domain.res.operation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import com.wegame.capi.biz.builder.req.DynamicOperationStatusReportBuilder;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
@@ -16,12 +16,11 @@ import com.wegame.capi.biz.domain.biz.operation.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.service.DynamicOperationEventConfigService;
-import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
-import com.wegame.capi.biz.service.DynamicOperationEventService;
+import com.wegame.capi.biz.service.OperationEventDetailService;
+import com.wegame.capi.biz.service.OperationEventService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventEncryptRequest;
-import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BetStatusEnum;
@@ -49,18 +48,22 @@ import java.util.concurrent.ThreadPoolExecutor;
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicEventReportThreadPoolExecutor;
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicEventThreadPoolExecutor;
 
+/**
+ * 抽象干预事件Manager
+ * @param <WD> 元素
+ */
 @Slf4j
 @Component
 public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
     @Autowired
-    DynamicOperationEventService dynamicOperationEventService;
+    OperationEventService dynamicOperationEventService;
     @Autowired
-    DynamicOperationEventDetailService dynamicOperationEventDetailService;
+    OperationEventDetailService operationEventDetailService;
     @Autowired
     DynamicOperationEventConfigService dynamicOperationEventConfigService;
     @Autowired
-    DynamicOperationApi dynamicOperationApi;
+    OperationEventApi operationEventApi;
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
     @Autowired
@@ -71,7 +74,6 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     @Autowired
     @Qualifier(dynamicEventThreadPoolExecutor)
     private ThreadPoolExecutor dynamicEventThreadPool;
-
     @Autowired
     @Qualifier(dynamicEventThreadPoolExecutor)
     private ThreadPoolExecutor threadPoolExecutor;
@@ -132,14 +134,14 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
      */
     public void updateEventDetail(DynamicOperationEventDetailDo eventDetailDo, DynamicOperationEventDo eventDo) {
         // 更新 订单状态
-        dynamicOperationEventDetailService.update(eventDetailDo, this.getDynamicOperationGameEnum());
+        operationEventDetailService.update(eventDetailDo, this.getDynamicOperationGameEnum());
         dynamicOperationEventService.update(eventDo, this.getDynamicOperationGameEnum());
     }
 
 
     public Long addEventDetail(DynamicOperationEventDetailDo eventDetailDo) {
         OperationEventTypeEnum dynamicOperationGame = this.getDynamicOperationGameEnum();
-        Long addId = dynamicOperationEventDetailService.add(eventDetailDo, dynamicOperationGame);
+        Long addId = operationEventDetailService.add(eventDetailDo, dynamicOperationGame);
         DynamicOperationEventDo eventUpdate = DynamicOperationEventDo.builder().id(eventDetailDo.getEventRecordId())
                 .eventStatus(OperationEventStatusEnum.ING).build();
         dynamicOperationEventService.update(eventUpdate, dynamicOperationGame);
@@ -174,7 +176,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                     .recordId(eventDo.getId())
                     .betStatus(BetStatusEnum.SUCCESS.getCode())
                     .build();
-            List<DynamicOperationEventDetailDo> eventDetailDos = dynamicOperationEventDetailService.queryList(detailQuery, this.getDynamicOperationGameEnum());
+            List<DynamicOperationEventDetailDo> eventDetailDos = operationEventDetailService.queryList(detailQuery, this.getDynamicOperationGameEnum());
 
             resultList.add(this.getStatusOfEvents(eventDo, eventDetailDos));
         });
@@ -371,7 +373,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                     .direction(Sort.Direction.ASC)
                     .build();
 
-            List<DynamicOperationEventDetailDo> eventDetailDos = dynamicOperationEventDetailService.queryList(detailQuery, this.getDynamicOperationGameEnum());
+            List<DynamicOperationEventDetailDo> eventDetailDos = operationEventDetailService.queryList(detailQuery, this.getDynamicOperationGameEnum());
             List<String> betNos = new ArrayList<>();
             long totalAmount = 0L;
             Long startTime = null;
@@ -397,7 +399,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                     .eventStatus(eventDo.getEventSubStatus().getCode())
                     .build();
             // 上报
-            UpdateEventsStatusRes updateEventsStatusRes = dynamicOperationApi.updateEventsStatus(updateEventsStatusReq);
+            UpdateEventsStatusRes updateEventsStatusRes = operationEventApi.updateEventsStatus(updateEventsStatusReq);
             if (updateEventsStatusRes.isSuccess()) {
                 // 更新事件状态为已上报
                 DynamicOperationEventDo eventReportUpdate = DynamicOperationEventDo.builder().id(recordId)
@@ -499,8 +501,4 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     public List<Double> getConfigMultipleArray() {
         return dynamicOperationEventConfigService.getConfigMultipleArray(getDynamicOperationGameEnum());
     }
-
-
-
-
 }

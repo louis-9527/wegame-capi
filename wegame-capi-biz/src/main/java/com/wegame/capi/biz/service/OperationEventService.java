@@ -36,7 +36,7 @@ import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMAR
 
 @Slf4j
 @Service
-public class DynamicOperationEventService implements InitializingBean {
+public class OperationEventService implements InitializingBean {
 
     @Autowired
     SnowflakeIdGenerator snowflakeIdGenerator;

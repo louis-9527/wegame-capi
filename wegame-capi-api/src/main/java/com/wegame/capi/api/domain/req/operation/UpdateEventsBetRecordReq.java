@@ -1,4 +1,4 @@
-package com.wegame.capi.api.domain.req.dynamicoperation;
+package com.wegame.capi.api.domain.req.operation;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;

@@ -15,7 +15,6 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
@@ -27,18 +26,18 @@ import java.net.URI;
 @Component
 public class BagApi extends PromotionBaseApi {
 
-    private static final String GET_REWARD_BAG = "%s/getRewardBag";
-    private static final String GET_OTHER_GAME = "%s/getOtherGame";
-    private static final String GET_REWARD_DETAIL= "%s/getRewardDetail";
-    private static final String REDEEM_REWARD= "%s/redeemReward";
-    private static final String GET_HISTORY_MESSAGE= "%s/getHistoryMessage";
+    private static final String GET_REWARD_BAG_URL_FORMAT = "%s/getRewardBag";
+    private static final String GET_OTHER_GAME_URL_FORMAT = "%s/getOtherGame";
+    private static final String GET_REWARD_DETAIL_URL_FORMAT = "%s/getRewardDetail";
+    private static final String REDEEM_REWARD_URL_FORMAT = "%s/redeemReward";
+    private static final String GET_HISTORY_MESSAGE_URL_FORMAT = "%s/getHistoryMessage";
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public GetBagCurrentRewardRes getBagCurrentReward(GetBagCurrentRewardReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<GetBagCurrentRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REWARD_BAG, promotionDomain)));
+            RequestEntity<GetBagCurrentRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REWARD_BAG_URL_FORMAT, promotionDomain)));
             ResponseEntity<CommonRes<GetBagCurrentRewardRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetBagCurrentRewardRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -60,7 +59,7 @@ public class BagApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<GetBagOtherRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_OTHER_GAME, promotionDomain)));
+            RequestEntity<GetBagOtherRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_OTHER_GAME_URL_FORMAT, promotionDomain)));
             ResponseEntity<CommonRes<GetBagOtherRewardRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetBagOtherRewardRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -97,7 +96,7 @@ public class BagApi extends PromotionBaseApi {
      * 	•	5015 无效的交换游戏，玩家不在同一提供者游戏中
      * 	•	5016 无交换游戏权限
      * 	•	5017 无效的奖励支付
-     * @param req
+     * @param req 请求参数
      * @return
      */
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
@@ -105,7 +104,7 @@ public class BagApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<RedeemRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_REWARD, promotionDomain)));
+            RequestEntity<RedeemRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_REWARD_URL_FORMAT, promotionDomain)));
             ResponseEntity<CommonRes<RedeemRewardRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemRewardRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -125,7 +124,7 @@ public class BagApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<GetBagRewardByIdReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REWARD_DETAIL, promotionDomain)));
+            RequestEntity<GetBagRewardByIdReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REWARD_DETAIL_URL_FORMAT, promotionDomain)));
             ResponseEntity<CommonRes<GetRewardDetailRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetRewardDetailRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -146,7 +145,7 @@ public class BagApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<GetHistoryMessageReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_HISTORY_MESSAGE, promotionDomain)));
+            RequestEntity<GetHistoryMessageReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_HISTORY_MESSAGE_URL_FORMAT, promotionDomain)));
             ResponseEntity<CommonRes<GetHistoryMessageRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetHistoryMessageRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);

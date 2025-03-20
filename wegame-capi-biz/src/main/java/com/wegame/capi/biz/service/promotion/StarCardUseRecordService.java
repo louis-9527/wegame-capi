@@ -81,11 +81,11 @@ public class StarCardUseRecordService {
                 .payoutAmount(AmountUtil.toBigDecimal(payoutAmount))
                 .betWIthPayoutRefId(String.valueOf(betWIthPayoutRefId))
                 .build();
-        CommonRes<RedeemRewardRes> redeemRewardResCommonRes = bagApi.redeemReward(redeemRewardReq);
+        CommonRes<RedeemRewardRes> res = bagApi.redeemReward(redeemRewardReq);
         return RedeemRewardResultDo.builder()
-                .success(redeemRewardResCommonRes.isSuc())
-                .status(redeemRewardResCommonRes.getStatus())
-                .message(redeemRewardResCommonRes.getMessage())
+                .success(res.isSuc())
+                .status(res.getStatus())
+                .message(res.getMessage())
                 .build();
     }
 

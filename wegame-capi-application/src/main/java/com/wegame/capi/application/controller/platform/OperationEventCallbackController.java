@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,16 +24,18 @@ import static com.wegame.capi.client.domain.response.DynamicOperationResponse.bu
 @Slf4j
 @RestController
 @Api(value = "干预事件回调模块", tags = {"干预事件回调模块"})
-public class DynamicOperationCallbackController {
+public class OperationEventCallbackController {
 
     @Autowired
+    @Qualifier("mariaMakilingOperationEventManager")
     MariaMakilingOperationEventManager mariaMakilingDynamicOperationManager;
 
     // todo 支持多游戏
 
     @ApiOperation(value = "获取干预事件结果", httpMethod = "POST")
     @PostMapping("/getStatusOfEvents")
-    public DynamicOperationResponse<List<StatusOfEventsResultVo>> getStatusOfEvents(HttpServletRequest request, @RequestBody GetStatusOfEventEncryptRequest encryptRequest) {
+    public DynamicOperationResponse<List<StatusOfEventsResultVo>> getStatusOfEvents(HttpServletRequest request,
+                                                                                    @RequestBody GetStatusOfEventEncryptRequest encryptRequest) {
         encryptRequest.validate();
         String encryptedKey = request.getHeader("keyString");
         String encryptedIv = request.getHeader("iv");

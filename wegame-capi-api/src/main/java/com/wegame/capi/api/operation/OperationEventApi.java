@@ -1,4 +1,4 @@
-package com.wegame.capi.api;
+package com.wegame.capi.api.operation;
 
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
@@ -7,8 +7,8 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.base.SingleWalletBaseApi;
-import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsStatusReq;
-import com.wegame.capi.api.domain.res.dynamicoperation.UpdateEventsStatusRes;
+import com.wegame.capi.api.domain.req.operation.UpdateEventsStatusReq;
+import com.wegame.capi.api.domain.res.operation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +24,22 @@ import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
 
+/**
+ * 干预事件Api
+ */
 @Slf4j
 @Component
-public class DynamicOperationApi extends SingleWalletBaseApi {
-    private static final String UPDATE_EVENTS_STATUS = "%s/updateEventsStatus";
+public class OperationEventApi extends SingleWalletBaseApi {
+    private static final String UPDATE_EVENTS_STATUS_URL_FORMAT = "%s/updateEventsStatus";
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
     @Value("${dynamic.operation.domain}")
     String dynamicOperationDomain;
 
     /**
-     * 游戏状态上报
+     * 更新事件状态
+     * @param req 请求参数
+     * @return 更新结果
      */
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public UpdateEventsStatusRes updateEventsStatus(UpdateEventsStatusReq req) {
@@ -53,7 +58,7 @@ public class DynamicOperationApi extends SingleWalletBaseApi {
             RequestEntity<UpdateEventsStatusReq.DynamicOperationReq> requestEntity = new RequestEntity<>(operationReq,
                     headers,
                     HttpMethod.POST,
-                    URI.create(String.format(UPDATE_EVENTS_STATUS, dynamicOperationDomain)));
+                    URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, dynamicOperationDomain)));
             ResponseEntity<UpdateEventsStatusRes> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);

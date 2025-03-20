@@ -2,10 +2,7 @@ package com.wegame.capi.client.domain.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -14,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,16 +19,16 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class StatusOfEventsResultVo implements Serializable {
     private static final long serialVersionUID = 7891252423487716266L;
-    @ApiModelProperty("事件ID")
+    @ApiModelProperty("干预事件ID")
     private String eventId;
+    @ApiModelProperty("干预事件状态码")
+    private Integer eventStatus;
     @ApiModelProperty("干预事件游戏金额")
     private BigDecimal executeBouns;
-    @ApiModelProperty("执行时间")
-    private Date executeTime;
     @ApiModelProperty("干预事件订单号")
     private List<String> betNos;
     @ApiModelProperty("干预事件订单信息")
-    private List<StatusOfEventsRecordVo> betRecords;
-    @ApiModelProperty("干预事件状态码")
-    private Integer eventStatus;
+    private List<StatusOfEventsBetRecordVo> betRecords;
+    @ApiModelProperty("执行时间")
+    private Date executeTime;
 }

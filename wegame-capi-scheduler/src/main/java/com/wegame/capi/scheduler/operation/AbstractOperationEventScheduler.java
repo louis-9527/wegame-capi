@@ -7,8 +7,8 @@ import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.manager.AbstractOperationEventManager;
 import com.wegame.capi.biz.service.BetRecordService;
-import com.wegame.capi.biz.service.DynamicOperationEventDetailService;
-import com.wegame.capi.biz.service.DynamicOperationEventService;
+import com.wegame.capi.biz.service.OperationEventDetailService;
+import com.wegame.capi.biz.service.OperationEventService;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
@@ -41,9 +41,9 @@ public abstract class AbstractOperationEventScheduler
     private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 10 * 60 * 1000;
 
     @Autowired
-    public DynamicOperationEventService dynamicOperationEventService;
+    public OperationEventService dynamicOperationEventService;
     @Autowired
-    public DynamicOperationEventDetailService dynamicOperationEventDetailService;
+    public OperationEventDetailService dynamicOperationEventDetailService;
     @Autowired
     public BetRecordService betRecordService;
 
