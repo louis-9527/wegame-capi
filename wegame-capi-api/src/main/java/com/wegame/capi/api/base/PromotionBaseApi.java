@@ -18,5 +18,4 @@ public class PromotionBaseApi extends CommonBaseApi {
         headers.add("uid", uid);
         return headers;
     }
-
 }

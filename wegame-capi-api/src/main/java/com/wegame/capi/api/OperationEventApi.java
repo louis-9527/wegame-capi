@@ -30,14 +30,16 @@ import java.net.URI;
 @Slf4j
 @Component
 public class OperationEventApi extends SingleWalletBaseApi {
-    private static final String UPDATE_EVENTS_STATUS = "%s/updateEventsStatus";
+    private static final String UPDATE_EVENTS_STATUS_URL_FORMAT = "%s/updateEventsStatus";
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
     @Value("${dynamic.operation.domain}")
     String dynamicOperationDomain;
 
     /**
-     * 游戏状态上报
+     * 更新事件状态
+     * @param req 请求参数
+     * @return 更新结果
      */
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public UpdateEventsStatusRes updateEventsStatus(UpdateEventsStatusReq req) {
@@ -56,7 +58,7 @@ public class OperationEventApi extends SingleWalletBaseApi {
             RequestEntity<UpdateEventsStatusReq.DynamicOperationReq> requestEntity = new RequestEntity<>(operationReq,
                     headers,
                     HttpMethod.POST,
-                    URI.create(String.format(UPDATE_EVENTS_STATUS, dynamicOperationDomain)));
+                    URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, dynamicOperationDomain)));
             ResponseEntity<UpdateEventsStatusRes> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
