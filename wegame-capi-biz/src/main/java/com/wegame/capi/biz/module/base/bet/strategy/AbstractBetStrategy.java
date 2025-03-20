@@ -84,6 +84,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
     }
 
     public BetSingleWalletResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+        // todo delete @maidong
+        log.info("asyncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordDo.getId());
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
         //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
