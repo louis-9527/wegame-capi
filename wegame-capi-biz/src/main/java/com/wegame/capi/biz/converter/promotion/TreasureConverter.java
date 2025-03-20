@@ -19,7 +19,6 @@ public class TreasureConverter {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-
     public static TreasureDo toDo(GetTreasureRes.Treasure treasure) {
         if (Objects.isNull(treasure)) {
             return null;
@@ -34,7 +33,6 @@ public class TreasureConverter {
                 .rewards(rewardToDoList(treasure.getRewards()))
                 .build();
     }
-
     public static List<TreasureDo.Reward> rewardToDoList(List<GetTreasureRes.Reward> rewardList) {
         return Optional.ofNullable(rewardList)
                 .orElse(Collections.emptyList())
@@ -43,7 +41,6 @@ public class TreasureConverter {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-
     public static TreasureDo.Reward rewardToDo(GetTreasureRes.Reward reward) {
         if (Objects.isNull(reward)) {
             return null;
@@ -67,7 +64,6 @@ public class TreasureConverter {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-
     public static TreasureVo toVo(TreasureDo treasure) {
         if (Objects.isNull(treasure)) {
             return null;
@@ -82,7 +78,6 @@ public class TreasureConverter {
                 .rewards(rewardToVoList(treasure.getRewards()))
                 .build();
     }
-
     public static List<TreasureVo.Reward> rewardToVoList(List<TreasureDo.Reward> rewardList) {
         return Optional.ofNullable(rewardList)
                 .orElse(Collections.emptyList())
@@ -91,7 +86,6 @@ public class TreasureConverter {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-
     public static TreasureVo.Reward rewardToVo(TreasureDo.Reward reward) {
         if (Objects.isNull(reward)) {
             return null;
