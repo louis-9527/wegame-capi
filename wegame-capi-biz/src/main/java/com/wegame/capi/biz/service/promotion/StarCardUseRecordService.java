@@ -12,9 +12,11 @@ import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemRewardRes;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.builder.StarCardUseRecordQueryBuilder;
+import com.wegame.capi.biz.builder.req.RedeemRewardReqBuilder;
 import com.wegame.capi.biz.converter.promotion.StartCardUseRecordConvert;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
+import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -33,23 +35,21 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.Map;
 
+import static com.wegame.capi.biz.converter.promotion.StartCardUseRecordConvert.doToPo;
+
 /**
  * 星卡service
  */
 @Service
-public class StarCardUseRecordService {
+public class StarCardUseRecordService extends AbstractService {
 
-    @Autowired // todo fix @tutu
-    public SnowflakeIdGenerator snowflakeIdGenerator;
-    @Autowired
-    Map<String, MongoTemplate> mongoTemplateMap;
     @Autowired
     BagApi bagApi;
 
     public Long add(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
         StarCardUseTypeEnum starCardUseType = StarCardUseTypeEnum.valueOfGameType(gameType);
         AssertUtil.assertNotNull(starCardUseType, ErrorCode.ERR_INTER);
-        StarCardUseRecordPo poToInsert = StartCardUseRecordConvert.doToPo(useRecordDo, OptEnum.ADD);
+        StarCardUseRecordPo poToInsert = doToPo(useRecordDo, OptEnum.ADD);
         StarCardUseRecordPo po = getMongoTemplate(gameType).insert(poToInsert, starCardUseType.getCollectionName());
         return po.getId();
     }
@@ -70,30 +70,12 @@ public class StarCardUseRecordService {
     /**
      * 核销-使用星卡
      */
-    public RedeemRewardResultDo use(String rewardId, Long payoutAmount, Long betWIthPayoutRefId) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        RedeemRewardReq redeemRewardReq = RedeemRewardReq.builder()
-                .playerName(userInfo.getPlayerName())
-                .pId(userInfo.getPId())
-                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
-                .channelId(userInfo.getChannelId())
-                .createTime(DateUtil.toUTC(new Date()))
-                .rewardId(rewardId)
-                .payoutAmount(AmountUtil.toBigDecimal(payoutAmount))
-                .betWIthPayoutRefId(String.valueOf(betWIthPayoutRefId))
-                .build();
-        CommonRes<RedeemRewardRes> res = bagApi.redeemReward(redeemRewardReq);
+    public RedeemRewardResultDo use(String rewardId, Long payoutAmount, Long betWithPayoutRefId) {
+        CommonRes<RedeemRewardRes> res = bagApi.redeemReward(RedeemRewardReqBuilder.build(rewardId, payoutAmount, betWithPayoutRefId));
         return RedeemRewardResultDo.builder()
                 .success(res.isSuc())
                 .status(res.getStatus())
                 .message(res.getMessage())
                 .build();
-    }
-
-    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        MongoTemplate template = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MongodbTemplateConfig.MONGOTEMPLATE);
-        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-        return template;
     }
 }

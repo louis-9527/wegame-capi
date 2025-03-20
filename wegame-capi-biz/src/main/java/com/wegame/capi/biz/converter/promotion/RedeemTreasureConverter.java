@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class RedeemTreasureConverter {
 
-    public static RedeemTreasureDo toDo(RedeemTreasureRes res) {
+    public static RedeemTreasureDo resToDo(RedeemTreasureRes res) {
         if (Objects.isNull(res)) {
             return null;
         }
@@ -39,7 +39,7 @@ public class RedeemTreasureConverter {
                 .build();
     }
 
-    public static RedeemTreasureVo toVo(RedeemTreasureDo redeemTreasureDo) {
+    public static RedeemTreasureVo doToVo(RedeemTreasureDo redeemTreasureDo) {
         if (Objects.isNull(redeemTreasureDo)) {
             return null;
         }

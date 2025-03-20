@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import static com.wegame.base.domain.CommonResponse.build;
-import static com.wegame.capi.biz.converter.promotion.RedeemTreasureConverter.toVo;
+import static com.wegame.capi.biz.converter.promotion.RedeemTreasureConverter.doToVo;
 import static com.wegame.capi.biz.converter.promotion.TreasureConverter.toVoList;
 
 @Slf4j
@@ -44,7 +44,7 @@ public class TreasureController {
     public CommonResponse<RedeemTreasureVo> redeemTreasure(@RequestBody RedeemTreasureRequest request) {
         request.validate();
         RedeemTreasureDo redeemTreasureDo = treasureService.redeemTreasure(request.getTreasureId(), request.getLevel());
-        return build(toVo(redeemTreasureDo));
+        return build(doToVo(redeemTreasureDo));
     }
 
 }
