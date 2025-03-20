@@ -30,13 +30,16 @@ public class MissionConverter {
         if (Objects.isNull(dailyMission)) {
             return null;
         }
-        return com.wegame.capi.biz.domain.biz.promotion.DailyMissionDo.DailyMission.builder()
+        return DailyMissionDo.DailyMission.builder()
                 .dailyMissionId(dailyMission.getDailyMissionId())
-                .description(dailyMission.getDescription())
-                .experience(dailyMission.getExperience())
                 .target(dailyMission.getTarget())
+                .reward(dailyMission.getReward())
+                .description(dailyMission.getDescription())
+                .iconUrl(dailyMission.getIconUrl())
+                .experience(dailyMission.getExperience())
                 .status(dailyMission.getStatus())
                 .starLevel(dailyMission.getStarLevel())
+                .rewardConfigId(dailyMission.getRewardConfigId())
                 .build();
     }
 
@@ -60,11 +63,14 @@ public class MissionConverter {
         }
         return DailyMissionVo.DailyMission.builder()
                 .dailyMissionId(dailyMission.getDailyMissionId())
-                .description(dailyMission.getDescription())
-                .experience(dailyMission.getExperience())
                 .target(dailyMission.getTarget())
+                .reward(dailyMission.getReward())
+                .description(dailyMission.getDescription())
+                .iconUrl(dailyMission.getIconUrl())
+                .experience(dailyMission.getExperience())
                 .status(dailyMission.getStatus())
                 .starLevel(dailyMission.getStarLevel())
+                .rewardConfigId(dailyMission.getRewardConfigId())
                 .build();
     }
 }
