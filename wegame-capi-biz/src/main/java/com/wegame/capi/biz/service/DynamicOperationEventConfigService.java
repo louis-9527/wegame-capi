@@ -7,6 +7,7 @@ import com.wegame.capi.biz.builder.DynamicOperationConfigQueryBuilder;
 import com.wegame.capi.biz.converter.DynamicOperationConfigConvert;
 import com.wegame.capi.biz.domain.biz.game.GameMultipleRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
+import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -77,7 +78,7 @@ public class DynamicOperationEventConfigService implements InitializingBean {
     }
 
 
-    public <WD extends SymbolDo> List<GameMultipleRecordDo<WD>> listRecord(Long recordId, OperationEventTypeEnum dynamicOperationGame) {
+    public List<DynamicOperationConfigRecordDo> listRecord(Long recordId, OperationEventTypeEnum dynamicOperationGame) {
         List<DynamicOperationConfigRecordPo> dynamicOperationConfigPos = getMongoTemplate(dynamicOperationGame.getGameType())
                 .find(DynamicOperationConfigQueryBuilder.buildRecordQuery(recordId), DynamicOperationConfigRecordPo.class, dynamicOperationGame.getEventConfigRecordCollectionName());
         return DynamicOperationConfigConvert.convertRecordDos(dynamicOperationConfigPos);

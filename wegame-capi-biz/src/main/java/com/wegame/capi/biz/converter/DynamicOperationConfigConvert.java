@@ -42,32 +42,28 @@ public class DynamicOperationConfigConvert {
     }
 
 
-    public static <WD extends SymbolDo> List<GameMultipleRecordDo<WD>> convertRecordDos(List<DynamicOperationConfigRecordPo> configPos) {
+    public static List<DynamicOperationConfigRecordDo> convertRecordDos(List<DynamicOperationConfigRecordPo> configPos) {
         if (configPos == null) {
             return Collections.emptyList();
         }
-        List<GameMultipleRecordDo<WD>> recordDos = new ArrayList<>();
-        for (DynamicOperationConfigRecordPo config : configPos) {
-            recordDos.add(convertRecordDo(config));
-        }
-        return recordDos;
+        return configPos.stream()
+                .map(DynamicOperationConfigConvert::convertRecordDo) // 复用已有的 convertDo 方法
+                .collect(Collectors.toList());
 
     }
 
-    public static <WD extends SymbolDo> GameMultipleRecordDo<WD> convertRecordDo(DynamicOperationConfigRecordPo configRecordPo) {
+    public static DynamicOperationConfigRecordDo convertRecordDo(DynamicOperationConfigRecordPo configRecordPo) {
         if (Objects.isNull(configRecordPo)) {
             return null;
         }
-        GameMultipleRecordDo<WD> configRecordDo = new GameMultipleRecordDo<WD>();
+        DynamicOperationConfigRecordDo configRecordDo = new DynamicOperationConfigRecordDo();
         configRecordDo.setId(configRecordPo.getId());
         configRecordDo.setParentId(configRecordPo.getParentId());
         configRecordDo.setBatchId(configRecordPo.getBatchId());
         configRecordDo.setBetRecordId(configRecordPo.getBetRecordId());
         configRecordDo.setIndex(configRecordPo.getIndex());
-        configRecordDo.setFreeWheelFlag(configRecordPo.getFreeWheelFlag());
         configRecordDo.setGameRecordIds(configRecordPo.getGameRecordIds());
-        configRecordDo.setWheelDo(JSON.parseObject(JSON.toJSONString(configRecordPo.getWheel()), new TypeReference<WheelDo<WD>>() {
-        }));
+        configRecordDo.setWheel(configRecordPo.getWheel());
 
         return configRecordDo;
     }

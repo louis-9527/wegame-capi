@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -37,12 +38,13 @@ public class DynamicOperationConfigRecordDo implements Serializable {
      */
     private Integer index;
     /**
-     * 免费轮标识 false否 true是
-     */
-    private Boolean freeWheelFlag;
-    /**
      * 滚轮
      */
     private Object wheel;
+
+    /**
+     * 免费轮
+     */
+    private List<Long> gameRecordIds;
 
 }

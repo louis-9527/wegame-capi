@@ -1,8 +1,12 @@
 package com.wegame.capi.biz.manager;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
 import org.springframework.stereotype.Component;
@@ -17,7 +21,7 @@ import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.mar
 
 @Service
 @Component("mariaMakilingOperationEventManager")
-public class MariaMakilingOperationEventManager extends AbstractOperationEventManager {
+public class MariaMakilingOperationEventManager extends AbstractOperationEventManager<SymbolDo> {
     // 使用 ConcurrentHashMap 进行缓存
     private static final Map<String, List<Double>> configMultipleArray = new ConcurrentHashMap<>();
     private static final Map<Double, List<List<DynamicOperationConfigDo>>> normalConfigDetailArray = new ConcurrentHashMap<>();
@@ -38,6 +42,11 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
     @Override
     public OperationEventTypeEnum getDynamicOperationGameEnum() {
         return OperationEventTypeEnum.MARIA_MAKILING;
+    }
+
+    @Override
+    public WheelDo<SymbolDo> convertWheel(Object obj) {
+        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<SymbolDo>>() {});
     }
 
     @Override
