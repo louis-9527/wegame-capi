@@ -84,7 +84,7 @@ public class BagService {
                 .rewardConfigId(rewardConfigId)
                 .build();
         GetRewardDetailRes rewardBagRes = bagApi.getRewardById(rewardByIdReq);
-        return RewardDetailConverter.toDo(rewardBagRes.getDetails());
+        return RewardDetailConverter.toDo(rewardBagRes);
     }
 
     public List<HistoryMessageDo> getHistoryMessageList(QueryHistoryMessageRequest reqeust) {

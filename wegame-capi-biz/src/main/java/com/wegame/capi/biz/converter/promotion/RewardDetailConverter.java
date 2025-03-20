@@ -10,23 +10,33 @@ import java.util.Objects;
 
 public class RewardDetailConverter {
 
-    public static RewardDetailDo toDo(GetRewardDetailRes.RewardDetail rewardDetail) {
-        if (Objects.isNull(rewardDetail)) {
+    public static RewardDetailDo toDo(GetRewardDetailRes detailRes) {
+        if (Objects.isNull(detailRes)) {
             return null;
         }
         RewardDetailDo rewordDetailDo = new RewardDetailDo();
-        rewordDetailDo.setName(rewardDetail.getName());
-        rewordDetailDo.setDescription(rewardDetail.getDescription());
-        rewordDetailDo.setBalanceRequired(AmountUtil.toLong(rewardDetail.getBalanceRequired()));
-        rewordDetailDo.setImgUrl(rewardDetail.getImgUrl());
-        rewordDetailDo.setGameId(rewardDetail.getGameId());
-        rewordDetailDo.setGameCode(rewardDetail.getGameCode());
-        rewordDetailDo.setGameName(rewardDetail.getGameName());
-        rewordDetailDo.setRewardType(rewardDetail.getRewardType());
-        rewordDetailDo.setBetValue(AmountUtil.toLong(rewardDetail.getBetValue()));
-        rewordDetailDo.setStarLevel(rewardDetail.getStarLevel());
-        rewordDetailDo.setPeriodDay(rewardDetail.getPeriodDay());
-        rewordDetailDo.setPeriodHour(rewardDetail.getPeriodHour());
+        rewordDetailDo.setRewardConfigId(detailRes.getRewardConfigId());
+        rewordDetailDo.setRefId(detailRes.getRefId());
+
+        GetRewardDetailRes.RewardDetail resDetails = detailRes.getDetails();
+        if (Objects.isNull(resDetails)) {
+            return rewordDetailDo;
+        }
+
+        RewardDetailDo.RewardDetail rewordDetail = new RewardDetailDo.RewardDetail();
+        rewordDetail.setName(resDetails.getName());
+        rewordDetail.setDescription(resDetails.getDescription());
+        rewordDetail.setBalanceRequired(AmountUtil.toLong(resDetails.getBalanceRequired()));
+        rewordDetail.setImgUrl(resDetails.getImgUrl());
+        rewordDetail.setGameId(resDetails.getGameId());
+        rewordDetail.setGameCode(resDetails.getGameCode());
+        rewordDetail.setGameName(resDetails.getGameName());
+        rewordDetail.setRewardType(resDetails.getRewardType());
+        rewordDetail.setBetValue(AmountUtil.toLong(resDetails.getBetValue()));
+        rewordDetail.setStarLevel(resDetails.getStarLevel());
+        rewordDetail.setPeriodDay(resDetails.getPeriodDay());
+        rewordDetail.setPeriodHour(resDetails.getPeriodHour());
+        rewordDetailDo.setDetails(rewordDetail);
         return rewordDetailDo;
     }
 
@@ -35,18 +45,26 @@ public class RewardDetailConverter {
             return null;
         }
         RewardDetailVo detailVo = new RewardDetailVo();
-        detailVo.setName(rewordDetailDo.getName());
-        detailVo.setDescription(rewordDetailDo.getDescription());
-        detailVo.setBalanceRequired(rewordDetailDo.getBalanceRequired());
-        detailVo.setImgUrl(rewordDetailDo.getImgUrl());
-        detailVo.setSkipGameId(rewordDetailDo.getGameId());
-        detailVo.setGameId(rewordDetailDo.getGameCode());
-        detailVo.setGameName(rewordDetailDo.getGameName());
-        detailVo.setRewardType(rewordDetailDo.getRewardType());
-        detailVo.setBetValue(rewordDetailDo.getBetValue());
-        detailVo.setStarLevel(rewordDetailDo.getStarLevel());
-        detailVo.setPeriodDay(rewordDetailDo.getPeriodDay());
-        detailVo.setPeriodHour(rewordDetailDo.getPeriodHour());
+        detailVo.setRefId(rewordDetailDo.getRefId());
+        detailVo.setRewardConfigId(rewordDetailDo.getRewardConfigId());
+        RewardDetailDo.RewardDetail details = rewordDetailDo.getDetails();
+        if(Objects.isNull(details)){
+            return detailVo;
+        }
+        RewardDetailVo.Detail vo = new RewardDetailVo.Detail();
+        vo.setName(details.getName());
+        vo.setDescription(details.getDescription());
+        vo.setBalanceRequired(details.getBalanceRequired());
+        vo.setImgUrl(details.getImgUrl());
+        vo.setSkipGameId(details.getGameId());
+        vo.setGameId(details.getGameCode());
+        vo.setGameName(details.getGameName());
+        vo.setRewardType(details.getRewardType());
+        vo.setBetValue(details.getBetValue());
+        vo.setStarLevel(details.getStarLevel());
+        vo.setPeriodDay(details.getPeriodDay());
+        vo.setPeriodHour(details.getPeriodHour());
+        detailVo.setDetails(vo);
         return detailVo;
     }
 }

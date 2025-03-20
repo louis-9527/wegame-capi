@@ -86,7 +86,9 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
         // 查询星卡详情
         RewardDetailDo rewordDetail = bagService.getByRewardConfigId(starCardUse.getRewardConfigId());
         AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(Objects.equals(rewordDetail.getBetValue(), betAndPayAmount.getKey()), ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.ERR_PARAM);
+
+        AssertUtil.assertTrue(Objects.equals(rewordDetail.getDetails().getBetValue(), betAndPayAmount.getKey()), ErrorCode.ERR_PARAM);
         // 准备核销星卡
         StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
                 .id(super.generateBetRecordId())
