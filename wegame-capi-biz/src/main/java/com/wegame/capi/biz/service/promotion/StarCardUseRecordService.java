@@ -6,6 +6,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.promotion.RedeemRewardReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemRewardRes;
@@ -22,6 +23,7 @@ import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.star.StarCardUseRecordPo;
 import com.wegame.capi.infrastructure.config.MongodbTemplateConfig;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -74,7 +76,7 @@ public class StarCardUseRecordService {
         RedeemRewardReq redeemRewardReq = RedeemRewardReq.builder()
                 .playerName(userInfo.getPlayerName())
                 .pId(userInfo.getPId())
-                .refId(String.valueOf(snowflakeIdGenerator.nextId()))
+                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .channelId(userInfo.getChannelId())
                 .createTime(DateUtil.toUTC(new Date()))
                 .rewardId(rewardId)

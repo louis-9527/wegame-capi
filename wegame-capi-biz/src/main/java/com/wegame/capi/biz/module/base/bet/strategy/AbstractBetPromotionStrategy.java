@@ -193,7 +193,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
     private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(BetDo<BD> betDo) {
         StarCardUseDo starCardUse = betDo.getStarCardUseDo();
         BetRecordDo<R> rBetRecordDo = null;
-        int i = 10;
+        int i = 0;
         RedeemRewardResultDo rewardResult = null;
         do {
             rBetRecordDo = this.loadBetRecordDo(betDo);
