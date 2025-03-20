@@ -92,5 +92,9 @@ public class GetDailyMissionRes implements Serializable {
          * starLevel
          */
         private Integer starLevel;
+        /**
+         * rewardConfigId
+         */
+        private String rewardConfigId;
     }
 }
