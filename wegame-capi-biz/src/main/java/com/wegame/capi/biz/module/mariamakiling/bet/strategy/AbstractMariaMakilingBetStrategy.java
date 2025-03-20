@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,6 +54,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
+    @Qualifier("mariaMakilingOperationEventManager")
     MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
 
 
