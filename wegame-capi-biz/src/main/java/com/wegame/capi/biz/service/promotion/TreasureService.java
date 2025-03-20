@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.wegame.capi.biz.converter.promotion.RedeemTreasureConverter.toDo;
+import static com.wegame.capi.biz.converter.promotion.TreasureConverter.toDoList;
+
 /**
  * 宝箱service
  */
@@ -24,11 +27,11 @@ public class TreasureService {
 
     public List<TreasureDo> getTreasure() {
         GetTreasureRes getTreasureRes = treasureApi.getTreasure(TreasureReqBuilder.buildGetTreasureReq());
-        return TreasureConverter.toDoList(getTreasureRes.getTreasure());
+        return toDoList(getTreasureRes.getTreasure());
     }
 
     public RedeemTreasureDo redeemTreasure(String treasureId, Integer level) {
         RedeemTreasureRes redeemTreasureRes = treasureApi.redeemTreasure(TreasureReqBuilder.buildRedeemTreasureReq(treasureId, level));
-        return RedeemTreasureConverter.toDo(redeemTreasureRes);
+        return toDo(redeemTreasureRes);
     }
 }
