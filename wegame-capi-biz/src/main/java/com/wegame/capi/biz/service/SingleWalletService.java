@@ -93,14 +93,17 @@ public class SingleWalletService {
                     .betStatus(BetStatusEnum.valueOfSingleWalletBetStatus(singleWalletBetStatus))
                     .credit(AmountUtil.toLong(creditRes.getCredit()))
                     .build();
-        } else {
+        } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INSUFFICIENT_CREDIT.getCode())) {
             // 获取余额
             // GetCreditRes creditRes = singleWalletApi.getCredit(GetCreditReqBuilder.build());
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.FAIL)
-                    .reason(Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INSUFFICIENT_CREDIT.getCode())
-                            ? "Insufficient credit,  please recharge"
-                            : commonRes.getMessage())
+                    .errorCode(ErrorCode.INSUFFICIENT_CREDIT)
+                    .build();
+        } else {
+            return BetSingleWalletResultDo.builder()
+                    .betStatus(BetStatusEnum.FAIL)
+                    .errorCode(ErrorCode.ERR_NET)
                     .build();
         }
     }

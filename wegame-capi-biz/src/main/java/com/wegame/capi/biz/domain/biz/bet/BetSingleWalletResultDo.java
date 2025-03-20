@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.bet;
 
+import com.wegame.base.enums.ErrorCode;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,8 +30,10 @@ public class BetSingleWalletResultDo {
      * 投注状态
      */
     private BetStatusEnum betStatus;
+
     /**
      * 投注失败原因
      */
-    private String reason;
+    private ErrorCode errorCode;
+
 }
