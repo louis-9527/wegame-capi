@@ -6,7 +6,6 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
-import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
@@ -23,6 +22,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.converter.BetRecordConverter.*;
+
 /**
  * 投注记录服务
  *
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 public class BetRecordService extends AbstractService {
 
     public Long add(BetRecordDo betRecordDo, GameTypeEnum gameType) {
-        BetRecordPo po = getMongoTemplate(gameType).insert(BetRecordConverter.doToPo(betRecordDo, OptEnum.ADD),
+        BetRecordPo po = getMongoTemplate(gameType).insert(doToPo(betRecordDo, OptEnum.ADD),
                 gameType.getBetRecordCollectionName());
         return po.getId();
     }
@@ -42,7 +43,7 @@ public class BetRecordService extends AbstractService {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_INTER);
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM, "betRecordList is empty");
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
-        List<BetRecordPo> poList = BetRecordConverter.doToPoList(betRecordList, OptEnum.ADD);
+        List<BetRecordPo> poList = doToPoList(betRecordList, OptEnum.ADD);
         BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
@@ -90,7 +91,7 @@ public class BetRecordService extends AbstractService {
                 query,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
-        return BetRecordConverter.poToDo(betRecordPo);
+        return poToDo(betRecordPo);
     }
 
     // @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #playerId + '_'  + #id")
@@ -114,7 +115,7 @@ public class BetRecordService extends AbstractService {
                 log.error("get betRecord ret is null, id: {}, playerId: {}", id, playerId);
             }
         }
-        return BetRecordConverter.poToDo(betRecordPo);
+        return poToDo(betRecordPo);
     }
 
     public List<BetRecordDo> list(BetRecordQuery query, GameTypeEnum gameType) {
@@ -122,7 +123,7 @@ public class BetRecordService extends AbstractService {
         List<BetRecordPo> recordPoList = getMongoTemplate(gameType).find(BetRecordQueryBuilder.buildMongodbQuery(query),
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
-        return BetRecordConverter.poToDoList(recordPoList);
+        return poToDoList(recordPoList);
     }
 
     public List<Long> listId(BetRecordQuery query, GameTypeEnum gameType) {
