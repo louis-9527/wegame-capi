@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.dynamic;
+package com.wegame.capi.scheduler.operation;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
