@@ -236,10 +236,4 @@ public class UserService {
         AssertUtil.assertNotNull(credit, ErrorCode.ERR_NET);
         return AmountUtil.toLong(credit);
     }
-
-    public void notifyCreditChange(CreditChangeNotifyDto dto) {
-        boolean ret = singleWalletService.verifyHash(dto.getChannelId(), dto.getPlayerName(), dto.getCreateTime(), dto.getRefId(), dto.getHash());
-        AssertUtil.assertTrue(ret, ErrorCode.ERR_NET);
-        redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, dto.getPlayerName()), 1);
-    }
 }
