@@ -1,9 +1,9 @@
 package com.wegame.capi.biz.domain.biz.operation;
 
 import com.wegame.capi.common.enums.OperationEventKindEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum;
-import com.wegame.capi.common.enums.DynamicOperationReportStatusEnum;
+import com.wegame.capi.common.enums.OperationEventStatusEnum;
+import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
+import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -71,16 +71,16 @@ public class DynamicOperationEventDo implements Serializable {
     /**
      * 干预状态
      */
-    private DynamicOperationEventStatusEnum eventStatus;
+    private OperationEventStatusEnum eventStatus;
     /**
      * 干预子状态
      */
-    private DynamicOperationEventSubStatusEnum eventSubStatus;
+    private OperationEventSubStatusEnum eventSubStatus;
 
     /**
      * 上报状态
      */
-    private DynamicOperationReportStatusEnum reportStatus;
+    private OperationEventReportStatusEnum reportStatus;
     /**
      * 干预事件快照
      */

@@ -9,7 +9,7 @@ import java.util.Objects;
 @ToString
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum DynamicOperationEventSubStatusEnum {
+public enum OperationEventSubStatusEnum {
 
     NONE(0, "处理中"),
     FINISH_NORMAL(1, "干预完成(正常)"),
@@ -32,13 +32,13 @@ public enum DynamicOperationEventSubStatusEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private DynamicOperationEventSubStatusEnum(Integer code, String desc) {
+    private OperationEventSubStatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public static DynamicOperationEventSubStatusEnum valueOfCode(Integer code) {
-        for (DynamicOperationEventSubStatusEnum item : DynamicOperationEventSubStatusEnum.values()) {
+    public static OperationEventSubStatusEnum valueOfCode(Integer code) {
+        for (OperationEventSubStatusEnum item : OperationEventSubStatusEnum.values()) {
             if (Objects.equals(item.getCode(), code)) {
                 return item;
             }
@@ -47,13 +47,13 @@ public enum DynamicOperationEventSubStatusEnum {
     }
 
 
-    public static Boolean finish(DynamicOperationEventSubStatusEnum subStatus) {
+    public static Boolean finish(OperationEventSubStatusEnum subStatus) {
         if(subStatus == null){
             return Boolean.FALSE;
         }
-        if (DynamicOperationEventSubStatusEnum.FINISH_NORMAL == subStatus
-                || DynamicOperationEventSubStatusEnum.FINISH_EXPIRED == subStatus
-                || DynamicOperationEventSubStatusEnum.FINISH_AMOUNT_ERROR == subStatus) {
+        if (OperationEventSubStatusEnum.FINISH_NORMAL == subStatus
+                || OperationEventSubStatusEnum.FINISH_EXPIRED == subStatus
+                || OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR == subStatus) {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;

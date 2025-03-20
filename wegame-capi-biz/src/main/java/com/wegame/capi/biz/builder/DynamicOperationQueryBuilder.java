@@ -5,7 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
-import com.wegame.capi.common.enums.DynamicOperationEventStatusEnum;
+import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
@@ -65,7 +65,7 @@ public class DynamicOperationQueryBuilder {
         long currentMilli = DateUtil.getCurrentMilli();
         criteria.and("playerName").is(playName);
         criteria.and("gameId").is(gameId);
-        criteria.and("eventStatus").in(Lists.newArrayList(DynamicOperationEventStatusEnum.NONE.getCode(), DynamicOperationEventStatusEnum.ING.getCode()));
+        criteria.and("eventStatus").in(Lists.newArrayList(OperationEventStatusEnum.NONE.getCode(), OperationEventStatusEnum.ING.getCode()));
         criteria.and("expiredTime").gte(currentMilli);
         criteria.and("$expr").is(
                 new Document("lt", Arrays.asList("$finishBonus", "$minBonus"))

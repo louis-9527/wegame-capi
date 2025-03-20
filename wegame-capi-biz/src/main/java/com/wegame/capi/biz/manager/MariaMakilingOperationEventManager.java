@@ -3,7 +3,7 @@ package com.wegame.capi.biz.manager;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationConfigDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
-import com.wegame.capi.client.enums.OperationEventGameEnum;
+import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -36,8 +36,8 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
     }
 
     @Override
-    public OperationEventGameEnum getDynamicOperationGameEnum() {
-        return OperationEventGameEnum.MARIA_MAKILING_DYNAMIC;
+    public OperationEventTypeEnum getDynamicOperationGameEnum() {
+        return OperationEventTypeEnum.MARIA_MAKILING;
     }
 
     @Override

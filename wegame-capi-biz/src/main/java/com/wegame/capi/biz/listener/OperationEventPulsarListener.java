@@ -6,7 +6,7 @@ import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.biz.service.DynamicOperationEventService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.OperationEventGameEnum;
+import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
@@ -48,7 +48,7 @@ public class OperationEventPulsarListener implements MessageListener {
                     log.warn("dynamicOperation msg content error:{}", JSON.toJSONString(messageDo));
                     return true;
                 }
-                dynamicOperationEventService.add(eventDo, OperationEventGameEnum.MARIA_MAKILING_DYNAMIC);
+                dynamicOperationEventService.add(eventDo, OperationEventTypeEnum.MARIA_MAKILING);
             }
             return true;
         } catch (Exception e) {

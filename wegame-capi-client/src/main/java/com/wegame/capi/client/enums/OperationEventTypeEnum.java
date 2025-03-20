@@ -6,13 +6,16 @@ import lombok.Getter;
 import lombok.ToString;
 
 
+/**
+ * 干预事件类型枚举
+ */
 @Getter
 @ToString
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum OperationEventGameEnum {
+public enum OperationEventTypeEnum {
 
-    MARIA_MAKILING_DYNAMIC(
+    MARIA_MAKILING(
             GameTypeEnum.MARIA_MAKILING,
             "mariamakiling_dynamicOperation_event",
             "mariamakiling_dynamicOperation_event_detail",
@@ -36,20 +39,20 @@ public enum OperationEventGameEnum {
      */
     private final String eventDetailCollectionName;
     /**
-     * 集合名称(事件倍数配置)
+     * 集合名称(投注记录模版配置)
      */
     private final String eventConfigCollectionName;
     /**
-     * 集合名称(事件倍数配置)
+     * 集合名称(游戏记录模版配置)
      */
     private final String eventConfigRecordCollectionName;
 
 
-    public static OperationEventGameEnum valueOfGameType(GameTypeEnum gameType) {
+    public static OperationEventTypeEnum valueOfGameType(GameTypeEnum gameType) {
         if (gameType == null) {
             return null;
         }
-        for (OperationEventGameEnum item : OperationEventGameEnum.values()) {
+        for (OperationEventTypeEnum item : OperationEventTypeEnum.values()) {
             if (gameType == item.gameType) {
                 return item;
             }

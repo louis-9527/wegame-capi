@@ -4,7 +4,7 @@ import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.manager.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.MariaMakilingOperationEventManager;
-import com.wegame.capi.client.enums.OperationEventGameEnum;
+import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,8 @@ public class MariaMakilingOperationEventScheduler
     }
 
     @Override
-    OperationEventGameEnum operationEventGame() {
-        return OperationEventGameEnum.MARIA_MAKILING_DYNAMIC;
+    OperationEventTypeEnum operationEventGame() {
+        return OperationEventTypeEnum.MARIA_MAKILING;
     }
 
     @Override

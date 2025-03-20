@@ -1,7 +1,6 @@
 package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import lombok.Getter;
 import lombok.ToString;
@@ -11,7 +10,7 @@ import java.util.Objects;
 @ToString
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum DynamicOperationEventTypeEnum {
+public enum OperationEventTypeEnum {
 
     NORMAL(0, "正常投注"),
     FREE(1, "购买免费轮");
@@ -32,13 +31,13 @@ public enum DynamicOperationEventTypeEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private DynamicOperationEventTypeEnum(Integer code, String desc) {
+    private OperationEventTypeEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public static DynamicOperationEventTypeEnum valueOfCode(Integer code) {
-        for (DynamicOperationEventTypeEnum item : DynamicOperationEventTypeEnum.values()) {
+    public static OperationEventTypeEnum valueOfCode(Integer code) {
+        for (OperationEventTypeEnum item : OperationEventTypeEnum.values()) {
             if (Objects.equals(item.getCode(), code)) {
                 return item;
             }
@@ -46,11 +45,11 @@ public enum DynamicOperationEventTypeEnum {
         return null;
     }
 
-    public static DynamicOperationEventTypeEnum valueOfBetType(BetTypeEnum betTypeEnum){
+    public static OperationEventTypeEnum valueOfBetType(BetTypeEnum betTypeEnum){
         if(BetTypeEnum.NORMAL_BET == betTypeEnum){
-            return DynamicOperationEventTypeEnum.NORMAL;
+            return OperationEventTypeEnum.NORMAL;
         }else if(BetTypeEnum.BUY_BET == betTypeEnum) {
-            return DynamicOperationEventTypeEnum.FREE;
+            return OperationEventTypeEnum.FREE;
         }
         return null;
     }
