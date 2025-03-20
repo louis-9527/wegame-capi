@@ -56,6 +56,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
      * @return 玩家余额
      */
     public BetSingleWalletResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
+        // todo delete @maidong
+        log.info("saveBetRecordAndBetWithPayout betRecordId:{}; syncOpt:{}", betRecordDo.getId(), syncOpt);
         if (syncOpt) {
             return syncSaveBetRecordAndBetWithPayout(betRecordDo);
         } else {
