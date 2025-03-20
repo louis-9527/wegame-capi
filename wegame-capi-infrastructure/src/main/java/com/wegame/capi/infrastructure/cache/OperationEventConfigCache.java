@@ -4,18 +4,18 @@ import com.wegame.base.CacheConstants;
 import com.wegame.base.cache.AbstractCache;
 import org.springframework.stereotype.Component;
 
-import static com.wegame.base.enums.CommonCacheEnvEnum.GAME_DYNAMIC_OPERATION;
+import static com.wegame.base.enums.CommonCacheEnvEnum.OPERATION_EVENT_CONFIG;
 
-
-@Component(CacheConstants.GAME_DYNAMIC_OPERATION)
+@Component(CacheConstants.OPERATION_EVENT_CONFIG)
 public class OperationEventConfigCache extends AbstractCache {
+
     @Override
     public String getName() {
-        return GAME_DYNAMIC_OPERATION.cacheName();
+        return OPERATION_EVENT_CONFIG.cacheName();
     }
 
     public OperationEventConfigCache() {
-        super(GAME_DYNAMIC_OPERATION.cacheKeyPrefixName(), 60*60*24);
+        super(OPERATION_EVENT_CONFIG.cacheKeyPrefixName(), 60 * 60 * 24);
     }
 
 }

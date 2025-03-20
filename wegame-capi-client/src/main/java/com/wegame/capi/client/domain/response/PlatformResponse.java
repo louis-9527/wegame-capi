@@ -12,9 +12,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("动态运营通用返回")
+@ApiModel("中台通用返回")
 @EqualsAndHashCode(callSuper = false)
-public class DynamicOperationResponse<T> {
+public class PlatformResponse<T> {
     private static final String SUC_CODE = "200";
     private static final String SUC_MESSAGE = "success";
 
@@ -25,8 +25,8 @@ public class DynamicOperationResponse<T> {
     @ApiModelProperty("返回结果")
     private T results;
 
-    public static <T> DynamicOperationResponse<T> build(T results) {
-        return DynamicOperationResponse.<T>builder()
+    public static <T> PlatformResponse<T> build(T results) {
+        return PlatformResponse.<T>builder()
                 .status(SUC_CODE)
                 .message(null)
                 .results(results)

@@ -38,9 +38,11 @@ public class AchievementVo implements  Serializable {
     private List<Reward> rewards;
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
     public static class Progress implements Serializable {
         private static final long serialVersionUID = 1L;
         @ApiModelProperty(value = "目标值", required = true)
@@ -50,9 +52,11 @@ public class AchievementVo implements  Serializable {
     }
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
     public static class Reward implements Serializable {
         private static final long serialVersionUID = 1L;
         @ApiModelProperty(value = "奖励配置id", required = true)

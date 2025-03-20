@@ -6,7 +6,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 
 public interface BetRequestValidate {
 
-    default void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType,Boolean startCardUse) {
+    default void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType, Boolean startCardUse) {
         // do nothing
     }
 }

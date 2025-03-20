@@ -7,7 +7,7 @@ import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import com.wegame.capi.biz.manager.MariaMakilingOperationEventManager;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventEncryptRequest;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
-import com.wegame.capi.client.domain.response.DynamicOperationResponse;
+import com.wegame.capi.client.domain.response.PlatformResponse;
 import com.wegame.capi.client.domain.vo.StatusOfEventsResultVo;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.dao.mapper.domain.operation.OperationEventQuery;
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static com.wegame.capi.biz.converter.StatusOfEventsConverter.toVoList;
-import static com.wegame.capi.client.domain.response.DynamicOperationResponse.build;
+import static com.wegame.capi.client.domain.response.PlatformResponse.build;
 
 @Slf4j
 @RestController
@@ -42,8 +42,8 @@ public class OperationEventCallbackController {
 
     @ApiOperation(value = "获取干预事件结果", httpMethod = "POST")
     @PostMapping("/getStatusOfEvents")
-    public DynamicOperationResponse<List<StatusOfEventsResultVo>> getStatusOfEvents(HttpServletRequest request,
-                                                                                    @RequestBody GetStatusOfEventEncryptRequest encryptRequest) {
+    public PlatformResponse<List<StatusOfEventsResultVo>> getStatusOfEvents(HttpServletRequest request,
+                                                                            @RequestBody GetStatusOfEventEncryptRequest encryptRequest) {
         encryptRequest.validate();
         String encryptedKey = request.getHeader("keyString");
         String encryptedIv = request.getHeader("iv");
