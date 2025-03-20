@@ -6,7 +6,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDo;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.springframework.data.domain.Sort;
@@ -20,7 +20,7 @@ import java.util.Objects;
 
 public class DynamicOperationQueryBuilder {
 
-    public static Query buildQuery(DynamicOperationQuery recordQuery) {
+    public static Query buildQuery(OperationEventQuery recordQuery) {
         Query query = new Query(buildCriteria(recordQuery));
         if (Objects.nonNull(recordQuery.getLimit())) {
             query.limit(recordQuery.getLimit());
@@ -36,7 +36,7 @@ public class DynamicOperationQueryBuilder {
         return query;
     }
 
-    public static Criteria buildCriteria(DynamicOperationQuery recordQuery) {
+    public static Criteria buildCriteria(OperationEventQuery recordQuery) {
         Criteria criteria = new Criteria();
         if (Objects.nonNull(recordQuery.getGameId())) {
             criteria.and("gameId").is(recordQuery.getGameId());

@@ -7,13 +7,16 @@ import org.springframework.data.domain.Sort;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 干预事件查询模型
+ */
 @Data
 @ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class DynamicOperationQuery implements Serializable {
+public class OperationEventQuery implements Serializable {
     private static final long serialVersionUID = 6879761477910223464L;
     /**
      * id

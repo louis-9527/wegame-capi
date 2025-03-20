@@ -15,7 +15,7 @@ import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationEventPo;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -86,7 +86,7 @@ public class OperationEventService implements InitializingBean {
         return result.getModifiedCount() > 0;
     }
 
-    public List<DynamicOperationEventDo> queryList(DynamicOperationQuery operationQuery, OperationEventTypeEnum dynamicOperationGame) {
+    public List<DynamicOperationEventDo> queryList(OperationEventQuery operationQuery, OperationEventTypeEnum dynamicOperationGame) {
         List<DynamicOperationEventPo> poList = getMongoTemplate(dynamicOperationGame.getGameType()).find(DynamicOperationQueryBuilder.buildQuery(operationQuery), DynamicOperationEventPo.class, dynamicOperationGame.getEventCollectionName());
         return DynamicOperationConvert.toDoList(poList);
     }

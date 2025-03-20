@@ -3,7 +3,7 @@ package com.wegame.capi.biz.builder;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -14,7 +14,7 @@ import java.util.Objects;
 
 public class DynamicOperationDetailQueryBuilder {
 
-    public static Query buildQuery(DynamicOperationDetailQuery detailQuery) {
+    public static Query buildQuery(OperationEventDetailQuery detailQuery) {
         Query query = new Query(buildCriteria(detailQuery));
         if (Objects.nonNull(detailQuery.getLimit())) {
             query.limit(detailQuery.getLimit());
@@ -29,7 +29,7 @@ public class DynamicOperationDetailQueryBuilder {
         return query;
     }
 
-    public static Criteria buildCriteria(DynamicOperationDetailQuery detailQuery) {
+    public static Criteria buildCriteria(OperationEventDetailQuery detailQuery) {
         Criteria criteria = new Criteria();
         if (Objects.nonNull(detailQuery.getRecordId())) {
             criteria.and("operatorRecordId").is(detailQuery.getRecordId());

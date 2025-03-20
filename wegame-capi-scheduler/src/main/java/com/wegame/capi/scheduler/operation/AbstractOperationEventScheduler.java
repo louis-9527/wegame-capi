@@ -15,8 +15,8 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailQuery;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -71,7 +71,7 @@ public abstract class AbstractOperationEventScheduler
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<DynamicOperationEventDetailDo> detailList;
-            DynamicOperationDetailQuery query = DynamicOperationDetailQuery.builder()
+            OperationEventDetailQuery query = OperationEventDetailQuery.builder()
                     .betStatus(BetStatusEnum.ING.getCode())
                     .createTimeLt(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
@@ -152,7 +152,7 @@ public abstract class AbstractOperationEventScheduler
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<DynamicOperationEventDo> eventDetailDoList;
-            DynamicOperationQuery query = DynamicOperationQuery.builder()
+            OperationEventQuery query = OperationEventQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .eventStatus(OperationEventStatusEnum.FINISH.getCode())
                     .createTimeLt(FIVE_MINUTES_AGO)
@@ -193,7 +193,7 @@ public abstract class AbstractOperationEventScheduler
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<DynamicOperationEventDo> eventDetailDoList;
-            DynamicOperationQuery query = DynamicOperationQuery.builder()
+            OperationEventQuery query = OperationEventQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .expiredTimeLt(DateUtil.getCurrentMilli())
                     .direction(Sort.Direction.ASC)

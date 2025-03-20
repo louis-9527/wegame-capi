@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class DynamicOperationDetailQuery implements Serializable {
+public class OperationEventDetailQuery implements Serializable {
     private static final long serialVersionUID = -3185563006843737525L;
     private Long id;
     /**

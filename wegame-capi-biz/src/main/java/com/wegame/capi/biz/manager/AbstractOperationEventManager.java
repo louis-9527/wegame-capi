@@ -4,11 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.api.operation.OperationEventApi;
 import com.wegame.capi.api.domain.req.operation.UpdateEventsBetRecordReq;
 import com.wegame.capi.api.domain.req.operation.UpdateEventsStatusReq;
 import com.wegame.capi.api.domain.res.operation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
+import com.wegame.capi.api.operation.OperationEventApi;
 import com.wegame.capi.biz.builder.req.DynamicOperationStatusReportBuilder;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GameMultipleRecordDo;
@@ -20,17 +20,16 @@ import com.wegame.capi.biz.service.OperationEventDetailService;
 import com.wegame.capi.biz.service.OperationEventService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.domain.request.query.GetStatusOfEventEncryptRequest;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
-import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.DynamicOperationConfigQuery;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationDetailQuery;
-import com.wegame.capi.dao.mapper.domain.business.DynamicOperationQuery;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventDetailQuery;
+import com.wegame.capi.dao.mapper.domain.business.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +49,7 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.dynamicEven
 
 /**
  * 抽象干预事件Manager
+ *
  * @param <WD> 元素
  */
 @Slf4j
@@ -149,35 +149,19 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     }
 
 
-    public List<StatusOfEventsResultDo> getStatusOfEvents(GetStatusOfEventEncryptRequest encryptRequest, String encryptedKey, String encryptedIv) {
-        //使用私钥解密encryptedKey 和 encryptedIv
-        String keyString = dynamicOperationEncryptionHelper.decrypt(encryptedKey);
-        String ivString = dynamicOperationEncryptionHelper.decrypt(encryptedIv);
-        //String key 和iv 解密message
-        String messageBody = dynamicOperationEncryptionHelper.decryptWithAES256CBC(encryptRequest.getMessage(), keyString, ivString);
-
-        GetStatusOfEventRequest request = JSON.parseObject(messageBody, GetStatusOfEventRequest.class);
-        request.validate();
+    public List<StatusOfEventsResultDo> getStatusOfEvents(OperationEventQuery operationEventQuery) {
         // 根据条件查询已完成的事件信息
-        DynamicOperationQuery operationQuery = DynamicOperationQuery.builder()
-                .eventIdList(request.getEventIds())
-                .eventStatus(OperationEventStatusEnum.FINISH.getCode())
-                .effectedStartTime(request.getStartTime().toInstant().toEpochMilli())
-                .effectedEndTime(request.getEndTime().toInstant().toEpochMilli())
-                .build();
-        List<DynamicOperationEventDo> eventDoList = dynamicOperationEventService.queryList(operationQuery, this.getDynamicOperationGameEnum());
+        List<DynamicOperationEventDo> eventDoList = dynamicOperationEventService.queryList(operationEventQuery, this.getDynamicOperationGameEnum());
         // 获取事件明细
         if (CollectionUtils.isEmpty(eventDoList)) {
             return new ArrayList<>();
         }
         List<StatusOfEventsResultDo> resultList = new ArrayList<>();
         eventDoList.forEach(eventDo -> {
-            DynamicOperationDetailQuery detailQuery = DynamicOperationDetailQuery.builder()
+            List<DynamicOperationEventDetailDo> eventDetailDos = operationEventDetailService.queryList(OperationEventDetailQuery.builder()
                     .recordId(eventDo.getId())
                     .betStatus(BetStatusEnum.SUCCESS.getCode())
-                    .build();
-            List<DynamicOperationEventDetailDo> eventDetailDos = operationEventDetailService.queryList(detailQuery, this.getDynamicOperationGameEnum());
-
+                    .build(), this.getDynamicOperationGameEnum());
             resultList.add(this.getStatusOfEvents(eventDo, eventDetailDos));
         });
         return resultList;
@@ -233,7 +217,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     /**
      * 获取干预事件结果
      */
-    public  GameEventDo<WD> getEventBetResult(Long payOutAmount) {
+    public GameEventDo<WD> getEventBetResult(Long payOutAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 判断是否存在干预事件
         DynamicOperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName());
@@ -282,7 +266,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         return eventAmount;
     }
 
-    public  List<GameMultipleRecordDo<WD>> getWheelDos(Long interventionAmount, Long betPayAmount) {
+    public List<GameMultipleRecordDo<WD>> getWheelDos(Long interventionAmount, Long betPayAmount) {
         // 计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
         long interveneBalance = interventionAmount + betPayAmount;
         //计算最大倍数
@@ -366,7 +350,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
             String catch_key = String.format(Constants.DYNAMIC_OPERATION_EVENT_CATCH_KEY, gameId, eventDo.getPlayerName());
             redisTemplate.opsForHash().delete(catch_key, String.valueOf(recordId));
             // 获取事件下所有已完成订单
-            DynamicOperationDetailQuery detailQuery = DynamicOperationDetailQuery.builder()
+            OperationEventDetailQuery detailQuery = OperationEventDetailQuery.builder()
                     .recordId(recordId)
                     .betStatus(BetStatusEnum.SUCCESS.getCode())
                     .orderByClause("createTime")
@@ -442,7 +426,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         return result == -1 ? null : arr.get(result);
     }
 
-    private  List<GameMultipleRecordDo<WD>> normalPayMultipleConfig(double multiple) {
+    private List<GameMultipleRecordDo<WD>> normalPayMultipleConfig(double multiple) {
         DynamicOperationConfigQuery configQuery = DynamicOperationConfigQuery.builder()
                 .gameId(this.getDynamicOperationGameEnum().getGameType().getId())
                 .multiple(multiple).build();
