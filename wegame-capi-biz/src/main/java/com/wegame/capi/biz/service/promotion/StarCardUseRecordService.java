@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.Map;
 
+import static com.wegame.capi.biz.builder.req.RedeemRewardReqBuilder.build;
 import static com.wegame.capi.biz.converter.promotion.StartCardUseRecordConvert.doToPo;
 
 /**
@@ -71,7 +72,7 @@ public class StarCardUseRecordService extends AbstractService {
      * 核销-使用星卡
      */
     public RedeemRewardResultDo use(String rewardId, Long payoutAmount, Long betWithPayoutRefId) {
-        CommonRes<RedeemRewardRes> res = bagApi.redeemReward(RedeemRewardReqBuilder.build(rewardId, payoutAmount, betWithPayoutRefId));
+        CommonRes<RedeemRewardRes> res = bagApi.redeemReward(build(rewardId, payoutAmount, betWithPayoutRefId));
         return RedeemRewardResultDo.builder()
                 .success(res.isSuc())
                 .status(res.getStatus())
