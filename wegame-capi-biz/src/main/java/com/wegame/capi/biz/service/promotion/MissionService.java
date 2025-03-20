@@ -5,10 +5,11 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.domain.res.promotion.GetDailyMissionRes;
 import com.wegame.capi.api.promotion.MissionApi;
 import com.wegame.capi.biz.builder.req.MissionReqBuilder;
-import com.wegame.capi.biz.converter.promotion.MissionConverter;
 import com.wegame.capi.biz.domain.biz.promotion.DailyMissionDo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import static com.wegame.capi.biz.converter.promotion.MissionConverter.toDo;
 
 /**
  * 任务service
@@ -22,6 +23,6 @@ public class MissionService {
     public DailyMissionDo getDailyMission() {
         GetDailyMissionRes getDailyMissionRes = missionApi.getDailyMission(MissionReqBuilder.buildGetDailyMissionReq());
         AssertUtil.assertNotNull(getDailyMissionRes.getDailyMissionList(), ErrorCode.ERR_PARAM);
-        return MissionConverter.toDo(getDailyMissionRes);
+        return toDo(getDailyMissionRes);
     }
 }
