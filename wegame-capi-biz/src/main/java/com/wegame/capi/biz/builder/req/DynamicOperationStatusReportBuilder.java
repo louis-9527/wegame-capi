@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.builder.req;
 
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsBetRecordReq;
+import com.wegame.capi.api.domain.req.operation.UpdateEventsBetRecordReq;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEventDetailDo;
 import com.wegame.capi.common.utils.AmountUtil;
 

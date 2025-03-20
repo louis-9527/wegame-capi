@@ -2,10 +2,10 @@ package com.wegame.capi.test.api;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import com.wegame.capi.api.OperationEventApi;
-import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsBetRecordReq;
-import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsStatusReq;
-import com.wegame.capi.api.domain.res.dynamicoperation.UpdateEventsStatusRes;
+import com.wegame.capi.api.operation.OperationEventApi;
+import com.wegame.capi.api.domain.req.operation.UpdateEventsBetRecordReq;
+import com.wegame.capi.api.domain.req.operation.UpdateEventsStatusReq;
+import com.wegame.capi.api.domain.res.operation.UpdateEventsStatusRes;
 import com.wegame.capi.test.BaseTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

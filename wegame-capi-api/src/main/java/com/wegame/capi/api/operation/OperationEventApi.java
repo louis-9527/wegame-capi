@@ -1,4 +1,4 @@
-package com.wegame.capi.api;
+package com.wegame.capi.api.operation;
 
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
@@ -7,8 +7,8 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.base.SingleWalletBaseApi;
-import com.wegame.capi.api.domain.req.dynamicoperation.UpdateEventsStatusReq;
-import com.wegame.capi.api.domain.res.dynamicoperation.UpdateEventsStatusRes;
+import com.wegame.capi.api.domain.req.operation.UpdateEventsStatusReq;
+import com.wegame.capi.api.domain.res.operation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
