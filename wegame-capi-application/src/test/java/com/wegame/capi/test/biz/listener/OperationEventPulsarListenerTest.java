@@ -1,4 +1,4 @@
-package com.wegame.capi.test.biz.service;
+package com.wegame.capi.test.biz.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -7,19 +7,24 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.listener.OperationEventPulsarListener;
 import com.wegame.capi.test.BaseTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public class DynamicOperationPulsarHandlerTest extends BaseTest {
+public class OperationEventPulsarListenerTest extends BaseTest {
 
     @Autowired
-    OperationEventPulsarListener dynamicOperationPulsarHandler;
+    OperationEventPulsarListener operationEventPulsarListener;
 
     @Test
-    public void handleMessage(){
+    public void test_handleMessage(){
+        boolean ret = operationEventPulsarListener.handleMessage(buildMessageDo());
+        Assert.assertTrue(ret);
+    }
 
+    private OperationEventMessageDo buildMessageDo() {
         String msgDoStr = "{\n" +
                 "    \"playerName\": \"slottest01\",\n" +
                 "    \"bonus\": 100,\n" +
@@ -34,15 +39,13 @@ public class DynamicOperationPulsarHandlerTest extends BaseTest {
                 "    \"settlementTime\": \"2025-02-27T07:31:10.000Z\",\n" +
                 "    \"timesOrSessionDuration\": 10\n" +
                 "}";
-        OperationEventMessageDo msgDo = JSON.parseObject(msgDoStr, OperationEventMessageDo.class);
-        dynamicOperationPulsarHandler.handleMessage(msgDo);
+        return JSON.parseObject(msgDoStr, OperationEventMessageDo.class);
     }
 
-
-    public static void main(String[] args) {
-        String dd ="[{\"index\":0,\"symbolArr\":[[{\"_id\":\"3001\",\"name\":\"Scatter\",\"symbolType\":\"SCATTER\"},{\"_id\":\"1002\",\"name\":\"Symbol1002\",\"symbolType\":\"COMMON\"},{\"_id\":\"3001\",\"name\":\"Scatter\",\"symbolType\":\"SCATTER\"},{\"_id\":\"1002\",\"name\":\"Symbol1002\",\"symbolType\":\"COMMON\"},{\"_id\":\"1004\",\"name\":\"Symbol1004\",\"symbolType\":\"COMMON\"}]]}]";
-        List<WheelDo<SymbolDo>> wheelDos = JSON.parseObject(dd, new TypeReference<List<WheelDo<SymbolDo>>>() {
-        });
-        System.out.println(wheelDos);
-    }
+    //    public static void main(String[] args) {
+    //        String dd ="[{\"index\":0,\"symbolArr\":[[{\"_id\":\"3001\",\"name\":\"Scatter\",\"symbolType\":\"SCATTER\"},{\"_id\":\"1002\",\"name\":\"Symbol1002\",\"symbolType\":\"COMMON\"},{\"_id\":\"3001\",\"name\":\"Scatter\",\"symbolType\":\"SCATTER\"},{\"_id\":\"1002\",\"name\":\"Symbol1002\",\"symbolType\":\"COMMON\"},{\"_id\":\"1004\",\"name\":\"Symbol1004\",\"symbolType\":\"COMMON\"}]]}]";
+    //        List<WheelDo<SymbolDo>> wheelDos = JSON.parseObject(dd, new TypeReference<List<WheelDo<SymbolDo>>>() {
+    //        });
+    //        System.out.println(wheelDos);
+    //    }
 }
