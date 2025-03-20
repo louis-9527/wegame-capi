@@ -11,13 +11,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class BagRewordConverter {
+public class BagRewardConverter {
 
     public static List<BagRewardDetailVo> toVoList(List<BagCurrentRewardDetailDo> detailDoList) {
         return Optional.ofNullable(detailDoList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(BagRewordConverter::toVo)
+                .map(BagRewardConverter::toVo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -48,7 +48,7 @@ public class BagRewordConverter {
         return Optional.ofNullable(rewardBagList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(BagRewordConverter::toDo)
+                .map(BagRewardConverter::toDo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

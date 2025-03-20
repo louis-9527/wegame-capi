@@ -3,8 +3,8 @@ package com.wegame.capi.application.controller.promotion;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
-import com.wegame.capi.biz.converter.promotion.BagOtherRewordDetailConverter;
-import com.wegame.capi.biz.converter.promotion.BagRewordConverter;
+import com.wegame.capi.biz.converter.promotion.BagOtherRewardDetailConverter;
+import com.wegame.capi.biz.converter.promotion.BagRewardConverter;
 import com.wegame.capi.biz.domain.biz.promotion.BagCurrentRewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.HistoryMessageDo;
 import com.wegame.capi.biz.service.promotion.BagService;
@@ -12,8 +12,8 @@ import com.wegame.capi.client.domain.request.promotion.QueryBagCurrentGameReward
 import com.wegame.capi.client.domain.request.promotion.QueryBagOtherGameRewardRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryHistoryMessageRequest;
 import com.wegame.capi.client.domain.request.promotion.QueryRewardDetailRequest;
-import com.wegame.capi.client.domain.vo.promotion.BagCurrentRewordVo;
-import com.wegame.capi.client.domain.vo.promotion.BagOtherRewordVo;
+import com.wegame.capi.client.domain.vo.promotion.BagCurrentRewardVo;
+import com.wegame.capi.client.domain.vo.promotion.BagOtherRewardVo;
 import com.wegame.capi.client.domain.vo.promotion.HistoryMessageVo;
 import com.wegame.capi.client.domain.vo.promotion.RewardDetailVo;
 import io.swagger.annotations.Api;
@@ -29,7 +29,7 @@ import java.util.List;
 
 import static com.wegame.base.domain.CommonResponse.build;
 import static com.wegame.capi.biz.converter.promotion.HistoryMessageConverter.toVoList;
-import static com.wegame.capi.biz.converter.promotion.RewordDetailConverter.doToVo;
+import static com.wegame.capi.biz.converter.promotion.RewardDetailConverter.doToVo;
 
 @Slf4j
 @RestController
@@ -43,21 +43,21 @@ public class BagController {
     @LoginRequired
     @ApiOperation(value = "获取背包列表(当前游戏)", httpMethod = "POST")
     @PostMapping("/queryBagCurrentGameReward")
-    public CommonResponse<BagCurrentRewordVo> queryBagCurrentGameReward(@RequestBody QueryBagCurrentGameRewardRequest request) {
+    public CommonResponse<BagCurrentRewardVo> queryBagCurrentGameReward(@RequestBody QueryBagCurrentGameRewardRequest request) {
         request.validate();
         List<BagCurrentRewardDetailDo> detailDos = bagService.listCurrentRewordRecord();
-        return build(BagCurrentRewordVo.builder()
-                .rewardDetails(BagRewordConverter.toVoList(detailDos))
+        return build(BagCurrentRewardVo.builder()
+                .rewardDetails(BagRewardConverter.toVoList(detailDos))
                 .build());
     }
 
     @LoginRequired
     @ApiOperation(value = "获取背包列表(其他游戏)", httpMethod = "POST")
     @PostMapping("/queryBagOtherGameReward")
-    public CommonResponse<BagOtherRewordVo> queryBagOtherGameReward(@RequestBody QueryBagOtherGameRewardRequest request) {
+    public CommonResponse<BagOtherRewardVo> queryBagOtherGameReward(@RequestBody QueryBagOtherGameRewardRequest request) {
         request.validate();
-        return build(BagOtherRewordVo.builder()
-                .rewardDetails(BagOtherRewordDetailConverter.toVoList(bagService.listOtherRewordRecord()))
+        return build(BagOtherRewardVo.builder()
+                .rewardDetails(BagOtherRewardDetailConverter.toVoList(bagService.listOtherRewordRecord()))
                 .build());
     }
 

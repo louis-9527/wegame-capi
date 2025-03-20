@@ -139,7 +139,7 @@ public abstract class AbstractOperationEventScheduler
             if (OperationEventStatusEnum.FINISH == newEventStatus) {
                 operationEventManager().asyncReportEvent(eventDo.getId());
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("{}#eventDetailFailHandle exception:{}", getClass().getSimpleName(), e.getMessage(), e);
         }
     }
@@ -148,29 +148,34 @@ public abstract class AbstractOperationEventScheduler
      * 事件已经完成,但未上报
      */
     private void eventReportFailExec() {
-        GameTypeEnum gameType = operationEventGame().getGameType();
-        log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run start:{}", gameType.getId());
-        long startTime = DateUtil.getCurrentMilli();
-        Long lastId = null;
-        List<DynamicOperationEventDo> eventDetailDoList = null;
-        DynamicOperationQuery query = DynamicOperationQuery.builder()
-                .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
-                .eventStatus(OperationEventStatusEnum.FINISH.getCode())
-                .createTimeLt(fiveMinutesAgo)
-                .direction(Sort.Direction.ASC)
-                .orderByClause("_id")
-                .limit(DEFAULT_PAGE_SIZE).build();
-        do {
-            query.setLtLastId(lastId);
-            eventDetailDoList = dynamicOperationEventService.queryList(query, operationEventGame());
-            if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
-                lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
-            }
-            Optional.ofNullable(eventDetailDoList)
-                    .orElse(Collections.emptyList())
-                    .forEach(this::eventReportFailHandle);
-        } while (CollectionUtils.isNotEmpty(eventDetailDoList));
-        log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run end:{},time:{}", gameType.getId(), DateUtil.getCurrentMilli() - startTime);
+        try {
+            GameTypeEnum gameType = operationEventGame().getGameType();
+            log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run start:{}", gameType.getId());
+            long startTime = DateUtil.getCurrentMilli();
+            Long lastId = null;
+            List<DynamicOperationEventDo> eventDetailDoList = null;
+            DynamicOperationQuery query = DynamicOperationQuery.builder()
+                    .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
+                    .eventStatus(OperationEventStatusEnum.FINISH.getCode())
+                    .createTimeLt(fiveMinutesAgo)
+                    .direction(Sort.Direction.ASC)
+                    .orderByClause("_id")
+                    .limit(DEFAULT_PAGE_SIZE).build();
+            do {
+                query.setLtLastId(lastId);
+                eventDetailDoList = dynamicOperationEventService.queryList(query, operationEventGame());
+                if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
+                    lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
+                }
+                Optional.ofNullable(eventDetailDoList)
+                        .orElse(Collections.emptyList())
+                        .forEach(this::eventReportFailHandle);
+            } while (CollectionUtils.isNotEmpty(eventDetailDoList));
+            log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run end:{},time:{}", gameType.getId(), DateUtil.getCurrentMilli() - startTime);
+        }catch (Throwable e) {
+            log.error("{}#eventReportFailExec exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+
+        }
     }
 
     /**
@@ -186,29 +191,35 @@ public abstract class AbstractOperationEventScheduler
      * 事件已过期
      */
     private void eventEventExpiredExec() {
-        GameTypeEnum gameType = operationEventGame().getGameType();
-        log.info("{}#eventEventIngExec run start:{}", getClass().getSimpleName(), gameType.getId());
-        long startTime = DateUtil.getCurrentMilli();
-        Long lastId = null;
-        List<DynamicOperationEventDo> eventDetailDoList = null;
+        try {
+            GameTypeEnum gameType = operationEventGame().getGameType();
+            log.info("{}#eventEventIngExec run start:{}", getClass().getSimpleName(), gameType.getId());
+            long startTime = DateUtil.getCurrentMilli();
+            Long lastId = null;
+            List<DynamicOperationEventDo> eventDetailDoList = null;
 
-        DynamicOperationQuery query = DynamicOperationQuery.builder()
-                .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
-                .expiredTimeLt(DateUtil.getCurrentMilli())
-                .direction(Sort.Direction.ASC)
-                .orderByClause("_id")
-                .limit(DEFAULT_PAGE_SIZE).build();
-        do {
-            query.setLtLastId(lastId);
-            eventDetailDoList = dynamicOperationEventService.queryList(query, operationEventGame());
-            if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
-                lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
-            }
-            Optional.ofNullable(eventDetailDoList)
-                    .orElse(Collections.emptyList())
-                    .forEach(this::eventEventIngHandle);
-        } while (CollectionUtils.isNotEmpty(eventDetailDoList));
-        log.info("{}#eventEventIngExec run end:{}, cost time:{}", getClass().getSimpleName(), gameType.getId(), DateUtil.getCurrentMilli() - startTime);
+            DynamicOperationQuery query = DynamicOperationQuery.builder()
+                    .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
+                    .expiredTimeLt(DateUtil.getCurrentMilli())
+                    .direction(Sort.Direction.ASC)
+                    .orderByClause("_id")
+                    .limit(DEFAULT_PAGE_SIZE).build();
+            do {
+                query.setLtLastId(lastId);
+                eventDetailDoList = dynamicOperationEventService.queryList(query, operationEventGame());
+                if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
+                    lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
+                }
+                Optional.ofNullable(eventDetailDoList)
+                        .orElse(Collections.emptyList())
+                        .forEach(this::eventEventIngHandle);
+            } while (CollectionUtils.isNotEmpty(eventDetailDoList));
+            log.info("{}#eventEventExpiredExec run end:{}, cost time:{}", getClass().getSimpleName(), gameType.getId(), DateUtil.getCurrentMilli() - startTime);
+        }catch (Throwable e) {
+            log.error("{}#eventEventExpiredExec exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+
+        }
+
     }
 
     private void eventEventIngHandle(DynamicOperationEventDo eventDo) {

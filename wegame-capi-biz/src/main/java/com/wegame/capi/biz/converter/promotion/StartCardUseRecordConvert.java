@@ -5,17 +5,17 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.common.enums.StarCardReportStatusEnum;
 import com.wegame.capi.common.enums.StarCardUseStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.StartCardUseRecordPo;
+import com.wegame.capi.dao.mapper.domain.business.StarCardUseRecordPo;
 
 import java.util.Objects;
 
 public class StartCardUseRecordConvert {
 
-    public static StartCardUseRecordPo doToPo(StarCardUseRecordDo recordDo, OptEnum optEnum) {
+    public static StarCardUseRecordPo doToPo(StarCardUseRecordDo recordDo, OptEnum optEnum) {
         if (Objects.isNull(recordDo)) {
             return null;
         }
-        StartCardUseRecordPo recordPo = new StartCardUseRecordPo();
+        StarCardUseRecordPo recordPo = new StarCardUseRecordPo();
         recordPo.setId(recordDo.getId());
         recordPo.setRewardId(recordDo.getRewardId());
         recordPo.setRewardConfigId(recordDo.getRewardConfigId());

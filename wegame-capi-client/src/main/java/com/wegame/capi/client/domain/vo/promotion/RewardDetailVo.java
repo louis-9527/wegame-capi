@@ -39,5 +39,5 @@ public class RewardDetailVo implements Serializable {
     @ApiModelProperty(value = "Reward valid day", required = true)
     private Integer periodDay;
     @ApiModelProperty(value = "Reward valid hour", required = true)
-    private Integer PeriodHour;
+    private Integer periodHour;
 }

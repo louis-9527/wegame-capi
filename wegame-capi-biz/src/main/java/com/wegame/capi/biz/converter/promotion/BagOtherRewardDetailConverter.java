@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class BagOtherRewordDetailConverter {
+public class BagOtherRewardDetailConverter {
 
     public static BagOtherRewardDetailVo toVo(BagOtherRewardDetailDo detailDo) {
         if (detailDo == null) {
@@ -32,7 +32,7 @@ public class BagOtherRewordDetailConverter {
         return Optional.ofNullable(doList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(BagOtherRewordDetailConverter::toVo)
+                .map(BagOtherRewardDetailConverter::toVo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -41,7 +41,7 @@ public class BagOtherRewordDetailConverter {
         return Optional.ofNullable(rewardBagList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(BagOtherRewordDetailConverter::toDo)
+                .map(BagOtherRewardDetailConverter::toDo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

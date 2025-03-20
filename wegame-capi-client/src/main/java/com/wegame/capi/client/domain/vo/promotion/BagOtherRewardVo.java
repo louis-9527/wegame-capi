@@ -14,8 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(description = "背包")
-public class BagCurrentRewordVo implements Serializable {
+@ApiModel(description = "其他游戏背包")
+public class BagOtherRewardVo implements Serializable {
+    private static final long serialVersionUID = 7086533516429702626L;
     @ApiModelProperty(value = "背包列表", required = true)
-    private List<BagRewardDetailVo> rewardDetails;
+    private List<BagOtherRewardDetailVo> rewardDetails;
 }

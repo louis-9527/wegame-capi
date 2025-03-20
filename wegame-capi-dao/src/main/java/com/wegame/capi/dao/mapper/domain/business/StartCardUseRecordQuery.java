@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 //@NoArgsConstructor
 //@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class StartCardUseRecordQuery extends StartCardUseRecordPo {
+public class StartCardUseRecordQuery extends StarCardUseRecordPo {
     private static final long serialVersionUID = -8901404698671384297L;
 
 }
