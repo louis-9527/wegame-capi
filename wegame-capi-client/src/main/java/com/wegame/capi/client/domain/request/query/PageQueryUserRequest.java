@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-
 /**
  * 分页查询用户请求参数
  * @author genereate
@@ -16,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "分页查询用户请求参数", parent = PageQueryRequest.class)
 public class PageQueryUserRequest extends PageQueryRequest implements Validate {

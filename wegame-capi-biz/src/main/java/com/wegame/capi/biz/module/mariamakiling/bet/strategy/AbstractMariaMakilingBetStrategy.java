@@ -9,8 +9,8 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
-import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
-import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
+import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
@@ -21,15 +21,14 @@ import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetPromotionStrategy;
 import com.wegame.capi.biz.module.base.game.Game;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -44,8 +43,10 @@ import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
  */
 @Slf4j
 public abstract class AbstractMariaMakilingBetStrategy
-        extends AbstractBetPromotionStrategy<MariaMakilingGameRecordDo, MariaMakilingBetDo, MariaMakilingGameRecordDo, SymbolDo>
-        implements MariaMakilingBetStrategy<MariaMakilingBetDo, MariaMakilingGameRecordDo> {
+        //        extends AbstractBetStrategy<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo>
+        //        implements MariaMakilingBetStrategy<MariaMakilingGameRecordDo> {
+        extends AbstractBetPromotionStrategy<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo, SymbolDo>
+        implements MariaMakilingBetStrategy<MariaMakilingGameRecordDo> {
 
     @Autowired
     MariaMakilingGame mariaMakilingGame;
@@ -56,7 +57,6 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     @Qualifier("mariaMakilingOperationEventManager")
     MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
-
 
     @Override
     public Game<MariaMakilingGameRecordDo> getGame() {
@@ -72,19 +72,28 @@ public abstract class AbstractMariaMakilingBetStrategy
     public AbstractOperationEventManager<SymbolDo> getDynamicOperationManager() {
         return mariaMakilingOperationEventManager;
     }
+    //    public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo betDo) {
+    //        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+    //            // 非免费轮投注
+    //            return betForNonFreeWheel(betDo);
+    //        } else {
+    //            // 免费轮投注, 走查询
+    //            return betForFreeWheel(betDo);
+    //        }
+    //    }
 
 
     /**
      * 免费轮投注
      */
     @Override
-    public BetResultDo<MariaMakilingGameRecordDo> betForFreeWheel(BetDo<MariaMakilingBetDo> betDo) {
-        MariaMakilingBetDo betDetail = betDo.getBetDetail();
+    public BetResultDo<MariaMakilingGameRecordDo> betForFreeWheel(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         List<MariaMakilingGameRecordDo> gameRecordList = mariaMakilingRecordManager.listGameRecordWithCache(GameRecordQuery.builder()
-                        .betRecordId(betDo.getBetDetail().getBetRecordId())
-                        .cacheKey(String.format("%s_%s", betDo.getBetDetail().getBetRecordId(), userInfo.getPlayerId()))
+                        .betRecordId(betDo.getBetRecordId())
+                        .cacheKey(String.format("%s_%s", betDo.getBetRecordId(), userInfo.getPlayerId()))
+                        .fromPrimary(true)
                         .build(),
                 getGame().getGameInfo().getGameType());
         // 按照index升序排列
@@ -95,7 +104,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         // 匹配-免费轮游戏记录 todo 可直接查询游戏记录
         MariaMakilingGameRecordDo matchGameRecord = gameRecordList
                 .stream()
-                .filter(item -> Objects.equals(item.getId(), betDetail.getGameRecordId()))
+                .filter(item -> Objects.equals(item.getId(), betDo.getGameRecordId()))
                 .findFirst()
                 .orElse(null);
         AssertUtil.assertNotNull(matchGameRecord, ErrorCode.ERR_PARAM, "NOT FOUND GAME RECORD");
@@ -106,7 +115,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         freeWheelAfterHandle(betDo, detailDo, matchGameRecord.getOverallRewardAmount());
         // 返回
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
-                .betRecordId(betDetail.getBetRecordId())
+                .betRecordId(betDo.getBetRecordId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
@@ -116,18 +125,13 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
-    public Pair<Long, Long> getBetAndPayAmount(BetDo<MariaMakilingBetDo> betDo) {
-        return Pair.of(betDo.getBetDetail().getBetAmount(), betDo.getBetDetail().getPayAmount());
-    }
-
-    @Override
     public boolean hasRewardFreeWheel(List<MariaMakilingGameRecordDo> gameRecordList) {
         RewardResultDo<SymbolDo> rewardResult = gameRecordList.get(0).getRewardResult();
         return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel();
     }
 
     @Override
-    public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(Long betRecordId, BetDo<MariaMakilingBetDo> betDo, List<MariaMakilingGameRecordDo> list) {
+    public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(Long betRecordId, BetDo betDo, List<MariaMakilingGameRecordDo> list) {
         // 构建投注记录
         long totalRewardAmount = list.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
@@ -135,15 +139,13 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .sum();
         return BetRecordBuilder.build(betRecordId,
                 betDo,
-                betDo.getBetDetail().getBetAmount(),
-                betDo.getBetDetail().getPayAmount(),
-                maxAmountControl(totalRewardAmount, betDo.getBetDetail().getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 list);
     }
 
     @Override
-    public BetResultDo<MariaMakilingGameRecordDo> buildResult(BetRecordDo<MariaMakilingGameRecordDo> betRecord, BetSingleWalletResultDo resultDo) {
+    public BetResultDo<MariaMakilingGameRecordDo> buildResult(BetRecordDo<MariaMakilingGameRecordDo> betRecord, SingleWalletBetResultDo resultDo) {
         MariaMakilingGameRecordDo gameRecord = betRecord.getGameRecordList().get(0);
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
@@ -169,7 +171,18 @@ public abstract class AbstractMariaMakilingBetStrategy
         }
     }
 
-    public void freeWheelAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
+    public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
         // do nothing
+    }
+
+    private GamePlayDo buildGamePlay(BetDo betDo, long betRecordId) {
+        return GamePlayDo.builder()
+                .gameType(betDo.getGameType())
+                .betType(betDo.getBetType())
+                .betSubType(betDo.getBetSubType())
+                .betAmount(betDo.getBetAmount())
+                .payAmount(betDo.getPayAmount())
+                .betRecordId(betRecordId)
+                .build();
     }
 }

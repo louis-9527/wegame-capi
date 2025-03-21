@@ -64,11 +64,6 @@ public class GameRecordService<T> extends AbstractService {
         }
     }
 
-    /**
-     * 统计
-     *
-     * @return 数量
-     */
     public Long count(GameRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         if (!query.isFromPrimary()) {

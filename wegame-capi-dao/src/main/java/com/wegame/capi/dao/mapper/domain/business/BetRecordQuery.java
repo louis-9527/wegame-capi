@@ -15,9 +15,10 @@ import java.io.Serializable;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class BetRecordQuery extends BetRecordPo implements Serializable {
-    private static final long serialVersionUID = -6976052604957607936L;
+    private static final long serialVersionUID = -69760526957607936L;
     /**
      * limit
      */

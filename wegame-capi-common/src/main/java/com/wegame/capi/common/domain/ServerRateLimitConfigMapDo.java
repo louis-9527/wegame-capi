@@ -42,10 +42,7 @@ public class ServerRateLimitConfigMapDo implements Serializable {
         if (Objects.isNull(rateLimitConfigDo)) {
             return new ServerRateLimitConfigMapDo();
         }
-
-
         return new ServerRateLimitConfigMapDo();
     }
-
 
 }

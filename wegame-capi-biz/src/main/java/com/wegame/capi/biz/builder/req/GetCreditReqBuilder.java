@@ -9,7 +9,8 @@ import org.slf4j.MDC;
 import java.util.Date;
 
 public class GetCreditReqBuilder {
-    public static GetCreditReq build() {
+
+    public static GetCreditReq buildReq() {
         return GetCreditReq.builder()
                 .pId(UserInfoContext.getUserInfo().getPId())
                 .channelId(UserInfoContext.getUserInfo().getChannelId())

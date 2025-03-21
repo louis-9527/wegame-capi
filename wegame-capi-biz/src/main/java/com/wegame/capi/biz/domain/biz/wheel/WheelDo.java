@@ -1,10 +1,7 @@
 package com.wegame.capi.biz.domain.biz.wheel;
 
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,6 +13,7 @@ import java.io.Serializable;
  */
 @Slf4j
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

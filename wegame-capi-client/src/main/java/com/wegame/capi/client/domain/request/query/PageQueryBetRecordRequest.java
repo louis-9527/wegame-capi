@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "分页查询投注记录请求参数", parent = PageQueryRequest.class)
 public class PageQueryBetRecordRequest extends PageQueryRequest implements Validate {

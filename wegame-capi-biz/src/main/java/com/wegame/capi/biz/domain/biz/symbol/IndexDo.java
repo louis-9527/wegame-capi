@@ -9,6 +9,7 @@ import java.io.Serializable;
  * 元素坐标
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

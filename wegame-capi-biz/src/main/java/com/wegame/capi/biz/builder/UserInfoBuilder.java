@@ -10,9 +10,6 @@ import java.util.Optional;
 
 public class UserInfoBuilder {
 
-    private UserInfoBuilder() {
-    }
-
     public static UserInfo buildUserInfo(UserLoginDo userLoginDo, Long userId, String token) {
         return UserInfo.builder()
                 .id(String.valueOf(userId))
@@ -44,5 +41,4 @@ public class UserInfoBuilder {
                 .updateTime(new Date())
                 .build();
     }
-
 }

@@ -3,9 +3,7 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
 
@@ -17,10 +15,12 @@ import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MariaMakilingConfig {
+@EqualsAndHashCode(callSuper = false)
+public class MariaMakilingConfig implements Serializable {
 
     /**
      * 赔率配置
@@ -37,9 +37,11 @@ public class MariaMakilingConfig {
     private Integer rewardMaxMultiple;
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
     public static class OddsConfig implements Serializable {
         /**
          * TreeMap<元素ID，<赔率类型，具体赔率>>
@@ -48,9 +50,11 @@ public class MariaMakilingConfig {
     }
 
     @Data
+    @ToString
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
     public static class ProbabilisticConfig implements Serializable {
         /**
          * 正常玩滚轮生成概率配置

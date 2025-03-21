@@ -26,7 +26,6 @@ public enum OddsTypeEnum {
      * 枚举码.
      */
     private final String code;
-
     /**
      * 描述信息.
      */
@@ -38,7 +37,7 @@ public enum OddsTypeEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    private OddsTypeEnum(String code, String desc) {
+    OddsTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }

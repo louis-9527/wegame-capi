@@ -345,8 +345,8 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
         return wheels;
     }
 
-    public TreeMap<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay, boolean isFreeSpinsFlag) {
-        if (isFreeSpinsFlag) {
+    public TreeMap<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay, boolean isFreeWheelFlag) {
+        if (isFreeWheelFlag) {
             return mariaMakilingConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
         } else {
             switch (gamePlay.getBetSubType()) {

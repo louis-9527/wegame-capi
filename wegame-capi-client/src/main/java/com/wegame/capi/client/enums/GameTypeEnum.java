@@ -17,7 +17,12 @@ import org.apache.commons.lang3.StringUtils;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeEnum {
 
-    MARIA_MAKILING("zhumeng001", "MariaMakiling", "mariamakiling_bet_record", "mariamakiling_game_record",500L);
+    MARIA_MAKILING("zhumeng001",
+            "MariaMakiling",
+            "mariamakiling_bet_record",
+            "mariamakiling_game_record", 500L)
+
+    ;
 
     /**
      * 枚举码.

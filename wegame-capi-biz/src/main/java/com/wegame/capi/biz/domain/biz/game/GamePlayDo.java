@@ -1,23 +1,19 @@
 package com.wegame.capi.biz.domain.biz.game;
 
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
- * 玩游戏模型
+ * 游戏模型
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,9 +46,5 @@ public class GamePlayDo<WD extends SymbolDo> implements Serializable {
     private Long betRecordId;
 
     private GameEventDo<WD> gameEventDo;
-    //    /**
-    //     * 免费轮次标识：是则生产10-15次滚轮结果
-    //     */
-    //    private boolean freeSpinsFlag = false;
 }
 

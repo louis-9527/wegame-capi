@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
 public class BetRecordControllerTest extends BaseTest {
+
     @Autowired
     public BetRecordController betRecordController;
 

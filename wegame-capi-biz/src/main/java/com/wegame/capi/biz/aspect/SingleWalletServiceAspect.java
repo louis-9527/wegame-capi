@@ -2,7 +2,7 @@ package com.wegame.capi.biz.aspect;
 
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
-import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
+import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -66,7 +66,7 @@ public class SingleWalletServiceAspect {
             if (Objects.isNull(userInfo) || !StringUtils.equals(userInfo.getGameId(), GameTypeEnum.MARIA_MAKILING.getId())) {
                 return joinPoint.proceed();
             } else {
-                return BetSingleWalletResultDo.builder()
+                return SingleWalletBetResultDo.builder()
                         .betStatus(BetStatusEnum.SUCCESS)
                         .betId(String.valueOf(RandomUtils.nextInt()))
                         .credit(10000000L)

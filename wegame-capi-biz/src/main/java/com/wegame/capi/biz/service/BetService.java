@@ -31,11 +31,10 @@ public class BetService {
     @Autowired
     Map<String, AbstractBetContext> contextMap;
 
-    public BetResultDo bet(BetDo<T> betDo) {
+    public BetResultDo bet(BetDo betDo) {
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_PARAM);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(betDo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(betDo.getBetDetail(), ErrorCode.ERR_PARAM);
         String betContextName = contextNameMap.get(gameType);
         AssertUtil.assertStrNotEmpty(betContextName, ErrorCode.ERR_PARAM, "Not Support Game");
         AbstractBetContext betContext = contextMap.get(betContextName);
