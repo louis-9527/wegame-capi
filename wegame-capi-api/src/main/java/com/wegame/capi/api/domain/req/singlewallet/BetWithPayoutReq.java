@@ -10,10 +10,11 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class BetWithPayoutReq extends BaseReq {
     private static final long serialVersionUID = 2474046915423606033L;
+    private static final BigDecimal zero = BigDecimal.ZERO;
 
     private BigDecimal betAmount;
 
@@ -21,13 +22,11 @@ public class BetWithPayoutReq extends BaseReq {
 
     private BetDetails betDetails;
 
-
     @Data
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BetDetails {
-        private  static final BigDecimal zero = BigDecimal.ZERO;
         private String gameId;
         private String roundNo;
         private Long wagersDate;
@@ -42,7 +41,6 @@ public class BetWithPayoutReq extends BaseReq {
         public static class JackpotDetails {
             private JackpotPool jackpotPool = new JackpotPool();
             private JackpotContributionDetails jackpotContributionDetails = new JackpotContributionDetails();
-
         }
 
         @Data
@@ -56,7 +54,6 @@ public class BetWithPayoutReq extends BaseReq {
             private MinorPool minorPool = new MinorPool();
             private MiniPool miniPool = new MiniPool();
             private BetBonusPool betBonusPool = new BetBonusPool();
-
         }
 
         @Data
@@ -69,7 +66,6 @@ public class BetWithPayoutReq extends BaseReq {
             private BigDecimal minorContributionAmount = zero;
             private BigDecimal miniContributionAmount = zero;
             private BigDecimal betBonusContributionAmount = zero;
-
         }
 
         @Data
@@ -79,7 +75,6 @@ public class BetWithPayoutReq extends BaseReq {
         public static class GrandPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
-
         }
 
         @Data
@@ -98,7 +93,6 @@ public class BetWithPayoutReq extends BaseReq {
         public static class MinorPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
-
         }
 
         @Data
@@ -119,20 +113,4 @@ public class BetWithPayoutReq extends BaseReq {
             private BigDecimal amount = zero;
         }
     }
-//
-//    public static void main(String[] args) {
-//        BetWithPayoutReq payoutReq = BetWithPayoutReq.builder()
-//                .createTime(DateUtil.toUTC(new Date()))
-//                .betDetails(BetWithPayoutReq.BetDetails.builder()
-//                        .gameId("111")
-//                        .wagersDate(DateUtil.getCurrentTimestamp())
-//                        .settlementDate(DateUtil.getCurrentTimestamp())
-//                        .isFreeRound(false)
-//                        .jackpotDetails(new BetDetails.JackpotDetails())
-//                        .build())
-//                .build();
-//
-//        System.out.println(JSON.toJSONString(payoutReq));
-//    }
-
 }

@@ -30,10 +30,8 @@ public class BetSingleWalletResultDo {
      * 投注状态
      */
     private BetStatusEnum betStatus;
-
     /**
      * 投注失败原因
      */
     private ErrorCode errorCode;
-
 }
