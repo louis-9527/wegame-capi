@@ -63,16 +63,16 @@ public class ServerRateLimitConfigDo implements Serializable {
 
     }
 
-//    public List<ServerRateLimitConfigCellDo> allConfigDoList() {
-//        if (){
-//
-//
-//
-//        }
-//
-//
-//        return Lists.newArrayList();
-//    }
+    //    public List<ServerRateLimitConfigCellDo> allConfigDoList() {
+    //        if (){
+    //
+    //
+    //
+    //        }
+    //
+    //
+    //        return Lists.newArrayList();
+    //    }
 
 
 }

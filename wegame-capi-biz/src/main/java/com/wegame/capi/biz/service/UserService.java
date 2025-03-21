@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wegame.capi.common.Constants.CUSER_CREDIT_CHANGE;
 
 /**
  * po服务
