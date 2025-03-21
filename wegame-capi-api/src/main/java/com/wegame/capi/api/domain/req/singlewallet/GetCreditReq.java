@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
-@ToString
+@ToString(callSuper = true)
 @ApiModel("获取用户余额请求模型")
 public class GetCreditReq extends BaseReq {
 

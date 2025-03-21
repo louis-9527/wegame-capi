@@ -45,8 +45,6 @@ import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode
 @Service
 public class SingleWalletService {
 
-    @Value("${api.game.invokeSingle:true}")
-    boolean invokeSingle;
     @Autowired
     SingleWalletApi singleWalletApi;
 
@@ -64,16 +62,15 @@ public class SingleWalletService {
     }
 
     public BetSingleWalletResultDo betWithPayout(BetRecordDo betRecordDo) {
-        if (!invokeSingle) {
-            return BetSingleWalletResultDo.builder()
-                    .betStatus(BetStatusEnum.SUCCESS)
-                    .betId(String.valueOf(RandomUtils.nextInt()))
-                    .build();
-        }
-        CommonRes<SingleWalletBetWithPayoutRes> commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
-        // 成功或者重复的refId都当作成功处理
-        if (commonRes.isSuc()) {
+        CommonRes<SingleWalletBetWithPayoutRes> commonRes = null;
+        try {
+            commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
+            AssertUtil.assertNotNull(commonRes, ErrorCode.ERR_NET);
             AssertUtil.assertNotNull(commonRes.getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
+        } catch (Exception e) {
+            // todo 接口异常， 则异步线程处理（通过查询投注状态，去扭转投注状态）
+        }
+        if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.SUCCESS.getCode())) {
             return BetSingleWalletResultDo.builder()
                     .betId(commonRes.getData().getBetId())
                     .refId(commonRes.getData().getRefId())
@@ -81,26 +78,35 @@ public class SingleWalletService {
                     .betStatus(BetStatusEnum.SUCCESS)
                     .build();
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
-            log.warn("betWithPayout, duplicate reference id. betRecordDo: {}, commonRes: {}", betRecordDo, commonRes);
-            // 获取投注状态
+            // 重复的refId当作成功处理
+            log.warn("betWithPayout, duplicate reference id. commonRes: {}", commonRes);
+            // todo duplicate， 则异步线程处理（通过查询投注状态，去扭转投注状态）
             BetStatusRes betStatusRes = getBetStatus(buildStatusReq(betRecordDo));
             SingleWalletBetStatusEnum singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
             AssertUtil.assertNotNull(singleWalletBetStatus, ErrorCode.ERR_PARAM, "invalid bet status code");
             // 获取余额
-            GetCreditRes creditRes = singleWalletApi.getCredit(GetCreditReqBuilder.build());
+            BigDecimal credit = null;
+            try {
+                credit = getCredit();
+            } catch (Exception e) {
+                log.error("getCredit error, errMsg: {}", e, e.getMessage());
+            }
             return BetSingleWalletResultDo.builder()
                     .betId(betStatusRes.getBetId())
-                    .betStatus(BetStatusEnum.valueOfSingleWalletBetStatus(singleWalletBetStatus))
-                    .credit(AmountUtil.toLong(creditRes.getCredit()))
+                    .betStatus(BetStatusEnum.SUCCESS)
+                    .credit(Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null)
                     .build();
-        } else {
-            // 获取余额
-            // GetCreditRes creditRes = singleWalletApi.getCredit(GetCreditReqBuilder.build());
+        } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INSUFFICIENT_CREDIT.getCode())) {
             return BetSingleWalletResultDo.builder()
                     .betStatus(BetStatusEnum.FAIL)
-                    .reason(Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INSUFFICIENT_CREDIT.getCode())
-                            ? "Insufficient credit,  please recharge"
-                            : commonRes.getMessage())
+                    .errorCode(ErrorCode.INSUFFICIENT_CREDIT)
+                    .errorMsg(commonRes.getErrorMessage())
+                    .build();
+        } else {
+            return BetSingleWalletResultDo.builder()
+                    .betStatus(BetStatusEnum.FAIL)
+                    .errorCode(ErrorCode.ERR_NET)
+                    .errorMsg(commonRes.getErrorMessage())
                     .build();
         }
     }
@@ -109,10 +115,10 @@ public class SingleWalletService {
         return singleWalletApi.getBetStatus(req);
     }
 
-    public boolean verifyHash(String channelId, String playerName, Date createTime, String refId, String hash) {
-        Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(channelId);
-        String verifyHash = singleWalletApi.hash(channelId, playerName, DateUtil.toUTC(createTime), refId, privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
-        AssertUtil.assertTrue(StringUtils.equals(hash, verifyHash), ErrorCode.ERR_PARAM);
-        return true;
-    }
+    //    public boolean verifyHash(String channelId, String playerName, Date createTime, String refId, String hash) {
+    //        Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(channelId);
+    //        String verifyHash = singleWalletApi.hash(channelId, playerName, DateUtil.toUTC(createTime), refId, privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
+    //        AssertUtil.assertTrue(StringUtils.equals(hash, verifyHash), ErrorCode.ERR_PARAM);
+    //        return true;
+    //    }
 }

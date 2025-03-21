@@ -1,18 +1,19 @@
 package com.wegame.capi.biz.domain.biz.bet;
 
+import com.wegame.base.enums.ErrorCode;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BetSingleWalletResultDo {
+@EqualsAndHashCode(callSuper = false)
+public class BetSingleWalletResultDo implements Serializable {
     /**
      * 投注id
      */
@@ -30,7 +31,11 @@ public class BetSingleWalletResultDo {
      */
     private BetStatusEnum betStatus;
     /**
-     * 投注失败原因
+     * 错误码
      */
-    private String reason;
+    private ErrorCode errorCode;
+    /**
+     * 错误信息
+     */
+    private String errorMsg;
 }
