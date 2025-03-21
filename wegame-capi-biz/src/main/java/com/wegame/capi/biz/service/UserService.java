@@ -9,7 +9,6 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.converter.user.UserConverter;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.domain.dto.CreditChangeNotifyDto;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.UserPo;
 import com.wegame.capi.dao.mapper.domain.user.UserQuery;
@@ -227,19 +226,8 @@ public class UserService {
     }
 
     public Long getCredit() {
-        try {
-            redisTemplate.opsForSet().remove(CUSER_CREDIT_CHANGE, UserInfoContext.getUserInfo().getPlayerName());
-        } catch (Exception e) {
-            log.error("getCredit err, errMsg: {}", e.getMessage(), e);
-        }
         BigDecimal credit = singleWalletService.getCredit();
         AssertUtil.assertNotNull(credit, ErrorCode.ERR_NET);
         return AmountUtil.toLong(credit);
-    }
-
-    public void notifyCreditChange(CreditChangeNotifyDto dto) {
-        boolean ret = singleWalletService.verifyHash(dto.getChannelId(), dto.getPlayerName(), dto.getCreateTime(), dto.getRefId(), dto.getHash());
-        AssertUtil.assertTrue(ret, ErrorCode.ERR_NET);
-        redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, dto.getPlayerName()), 1);
     }
 }

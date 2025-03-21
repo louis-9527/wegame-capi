@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler;
+package com.wegame.capi.scheduler.biz;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -7,13 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-
 /**
  * 投注记录兜底定时任务
  */
 @Slf4j
 @Service
-public class MariaMakiLingBetRecordBetStatusScheduler
+public class MariaMakilingBetRecordBetStatusScheduler
         extends AbstractBetRecordBetStatusScheduler
         implements Runnable {
 
@@ -22,16 +21,19 @@ public class MariaMakiLingBetRecordBetStatusScheduler
         return GameTypeEnum.MARIA_MAKILING;
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    /**
+     * 每分钟0秒执行
+     */
+    @Scheduled(cron = "0 * * * * ?")
     public void schedule() {
-        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule start");
+        log.info("MariaMakilingBetRecordBetStatusScheduler#schedule start");
         try {
             scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(getGameType()), this);
         } catch (LockException e) {
-            log.info("MariaMakiLingBetRecordBetStatusScheduler#get lock fail");
+            log.info("MariaMakilingBetRecordBetStatusScheduler#get lock fail");
         } catch (Exception e) {
-            log.error("MariaMakiLingBetRecordBetStatusScheduler#schedule failed", e);
+            log.error("MariaMakilingBetRecordBetStatusScheduler#schedule failed", e);
         }
-        log.info("MariaMakiLingBetRecordBetStatusScheduler#schedule end");
+        log.info("MariaMakilingBetRecordBetStatusScheduler#schedule end");
     }
 }

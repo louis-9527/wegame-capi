@@ -19,6 +19,7 @@ public class ThreadPoolConfig {
 
     public static final String defaultThreadPoolExecutor = "defaultThreadPoolExecutor";
     public static final String betRecordThreadPoolExecutor = "betRecordThreadPoolExecutor";
+    public static final String betRecordStatusThreadPoolExecutor = "betRecordStatusThreadPoolExecutor";
     public static final String sendMessageThreadPoolExecutor = "sendMessageThreadPoolExecutor";
     public static final String gameRecordPutCacheThreadPoolExecutor = "gameRecordPutCacheThreadPoolExecutor";
     public static final String operationEventThreadPoolExecutor = "operationEventThreadPoolExecutor";
@@ -55,6 +56,24 @@ public class ThreadPoolConfig {
                 TimeUnit.SECONDS,
                 new ArrayBlockingQueue(10000),
                 new CustomizableThreadFactory("bet-record-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        return executor;
+    }
+
+    /**
+     * 投注模块-线程池
+     *
+     * @return
+     */
+    @Bean(betRecordStatusThreadPoolExecutor)
+    public ThreadPoolExecutor betRecordStatusThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
+                1000,
+                60L,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue(100000),
+                new CustomizableThreadFactory("bet-record-status-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
         return executor;

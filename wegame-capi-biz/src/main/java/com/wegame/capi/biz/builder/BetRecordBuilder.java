@@ -21,11 +21,9 @@ public class BetRecordBuilder {
                                            Long payOutAmount,
                                            Boolean reachMaxMultiple,
                                            List<T> gameRecordList) {
-
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         long currentMilli = DateUtil.getCurrentMilli();
-
         return BetRecordDo.<T>builder()
                 .id(betRecordId)
                 .pId(UserInfoContext.getUserInfo().getPId())
