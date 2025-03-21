@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
 public abstract class AbstractScheduler {
 
     public static final int DEFAULT_PAGE_SIZE = 100;

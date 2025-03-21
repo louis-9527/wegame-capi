@@ -12,17 +12,16 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
+import java.util.List;
 
 /**
- * 告警定时任务<br/>
- * 扭转投注中 -> 投注成功/投注失败
+ * 告警定时任务
  */
 @Slf4j
-@Component
 public abstract class AbstractAlertScheduler
         extends AbstractScheduler
         implements Runnable {
@@ -48,13 +47,13 @@ public abstract class AbstractAlertScheduler
         if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
             return;
         }
-        long count = betRecordService.count(BetRecordQuery.builder()
+        List<Long> idList = betRecordService.listId(BetRecordQuery.builder()
                 .status(BetStatusEnum.ING.getCode())
-                .limit(1)
                 .startCreateTime(DateUtil.getYesterdayBegin().getTime())
                 .endCreateTime(DateUtil.getYesterdayEnd().getTime())
+                .limit(1)
                 .build(), getGameType());
-        if (count > 0L) {
+        if (CollectionUtils.isNotEmpty(idList)) {
             LarkUtil.sendTextMsg(robot, BizAlertMessage.builder()
                     .applicationName(appName)
                     .env(env)

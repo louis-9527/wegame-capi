@@ -32,7 +32,6 @@ import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode
  * 扭转投注中 -> 投注成功/投注失败
  */
 @Slf4j
-@Component
 public abstract class AbstractBetRecordBetStatusScheduler
         extends AbstractScheduler
         implements Runnable {
