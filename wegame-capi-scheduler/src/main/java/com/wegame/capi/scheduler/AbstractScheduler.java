@@ -20,7 +20,7 @@ public abstract class AbstractScheduler {
     @Autowired
     DistributeLock distributeLock;
 
-    String taskName() {
+    public String taskName() {
         return getClass().getSimpleName();
     }
 

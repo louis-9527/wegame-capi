@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler;
+package com.wegame.capi.scheduler.biz;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.capi.client.enums.GameTypeEnum;

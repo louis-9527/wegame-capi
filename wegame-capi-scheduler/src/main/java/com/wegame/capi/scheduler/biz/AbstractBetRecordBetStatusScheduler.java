@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler;
+package com.wegame.capi.scheduler.biz;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
@@ -12,6 +12,7 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
+import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
