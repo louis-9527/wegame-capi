@@ -3,7 +3,6 @@ package com.wegame.capi.scheduler.alert;
 import com.wegame.base.exception.LockException;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
-import com.wegame.capi.scheduler.biz.AbstractBetRecordBetStatusScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,10 @@ public class MariaMakilingBetRecordBetStatusAlertScheduler
         return GameTypeEnum.MARIA_MAKILING;
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    /**
+     * 每天8点运行
+     */
+    @Scheduled(cron = "0 0 8 * * ?")
     public void schedule() {
         log.info("MariaMakilingBetRecordBetStatusAlertScheduler#schedule start");
         try {
