@@ -29,7 +29,7 @@ import static com.wegame.capi.common.enums.SymbolEnum.Symbol1000;
 @Slf4j
 public class MalakasRewardHandlerTest extends BaseTest {
 
-    @Resource()
+    @Resource
     MalakasRewardHandler malakasRewardHandler;
 
     @Test

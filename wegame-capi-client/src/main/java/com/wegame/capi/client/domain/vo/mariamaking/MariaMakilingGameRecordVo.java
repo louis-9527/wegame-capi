@@ -3,10 +3,7 @@ package com.wegame.capi.client.domain.vo.mariamaking;
 import com.wegame.base.Validate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -14,11 +11,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("MariaMakiling游戏记录")
 @EqualsAndHashCode(callSuper = false)
+@ApiModel("MariaMakiling游戏记录")
 public class MariaMakilingGameRecordVo implements Validate, Serializable {
     private static final long serialVersionUID = -5835715678741184L;
     @ApiModelProperty("游戏记录id")

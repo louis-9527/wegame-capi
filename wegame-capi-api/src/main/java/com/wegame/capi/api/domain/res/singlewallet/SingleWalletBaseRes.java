@@ -1,22 +1,20 @@
 package com.wegame.capi.api.domain.res.singlewallet;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class SingleWalletBaseRes implements Serializable {
-    static final long serialVersionUID = -8519013691660936626L;
-
-    @ApiModelProperty("refId")
+    static final long serialVersionUID = -851901361660936626L;
+    /**
+     * refId
+     */
     private String refId;
-
 }

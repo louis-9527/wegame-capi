@@ -3,10 +3,7 @@ package com.wegame.capi.client.domain.vo.mariamaking;
 import com.wegame.capi.client.domain.vo.IndexVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -15,11 +12,12 @@ import java.util.List;
 import java.util.Set;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("MariaMakiling投注结果")
 @EqualsAndHashCode(callSuper = false)
+@ApiModel("MariaMakiling投注结果")
 public class MariaMakilingBetResultVo implements Serializable {
     private static final long serialVersionUID = -4792907227811616042L;
     @ApiModelProperty("中奖类型: NONE未中奖，SINGLE单奖励，MULTIPLE多奖励 ")

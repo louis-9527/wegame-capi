@@ -1,16 +1,13 @@
 package com.wegame.capi.api.domain.res;
 
-import com.wegame.base.domain.PageInfoVo;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -39,15 +36,6 @@ public class CommonRes<T> implements Serializable {
     public boolean isSuc() {
         return Objects.nonNull(status) && status == SUC_CODE;
     }
-
-    public static <T> CommonRes<PageInfoVo<T>> pageSuccess(PageInfoVo<T> pageInfo) {
-        CommonRes<PageInfoVo<T>> result = new CommonRes<>();
-        result.setStatus(200);
-        result.setErrorMessage("");
-        result.setData(pageInfo);
-        return result;
-    }
-
 }
 
 

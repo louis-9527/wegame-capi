@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.service;
 
-import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.exception.BusinessException;
@@ -8,8 +7,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.converter.user.UserConverter;
 import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.domain.dto.CreditChangeNotifyDto;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.UserPo;
 import com.wegame.capi.dao.mapper.domain.user.UserQuery;
@@ -18,7 +15,6 @@ import com.wegame.capi.dao.mapper.user.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wegame.capi.common.Constants.CUSER_CREDIT_CHANGE;
 
 /**
  * po服务
@@ -43,8 +38,6 @@ public class UserService {
     UserManualMapper userManualMapper;
     @Autowired
     SingleWalletService singleWalletService;
-    @Autowired
-    RedisTemplate redisTemplate;
 
     /**
      * 新增
@@ -199,17 +192,11 @@ public class UserService {
 
     ///////////////  above auto generated ///////////////
 
-    /**
-     * 新增
-     *
-     * @param userDo
-     * @return
-     */
-    @DSTransactional
     public Long insert(UserDo userDo) {
         long startTime = DateUtil.getCurrentMilli();
         try {
             UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
+            AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
             Long id = userManualMapper.selectIdByPlayerId(userPo.getPlayerId());
             if (Objects.isNull(id)) {
                 // 新增
@@ -227,19 +214,8 @@ public class UserService {
     }
 
     public Long getCredit() {
-        try {
-            redisTemplate.opsForSet().remove(CUSER_CREDIT_CHANGE, UserInfoContext.getUserInfo().getPlayerName());
-        } catch (Exception e) {
-            log.error("getCredit err, errMsg: {}", e.getMessage(), e);
-        }
         BigDecimal credit = singleWalletService.getCredit();
         AssertUtil.assertNotNull(credit, ErrorCode.ERR_NET);
         return AmountUtil.toLong(credit);
-    }
-
-    public void notifyCreditChange(CreditChangeNotifyDto dto) {
-        boolean ret = singleWalletService.verifyHash(dto.getChannelId(), dto.getPlayerName(), dto.getCreateTime(), dto.getRefId(), dto.getHash());
-        AssertUtil.assertTrue(ret, ErrorCode.ERR_NET);
-        redisTemplate.opsForSet().add(String.format(CUSER_CREDIT_CHANGE, dto.getPlayerName()), 1);
     }
 }

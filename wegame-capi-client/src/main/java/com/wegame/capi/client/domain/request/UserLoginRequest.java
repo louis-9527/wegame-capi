@@ -6,9 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -17,8 +15,10 @@ import java.io.Serializable;
  * 用户登录请求参数
  */
 @Data
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @ApiModel(description = "用户登录请求参数")
 public class UserLoginRequest implements Validate, Serializable {
     @ApiModelProperty(value = "平台id", required = true)

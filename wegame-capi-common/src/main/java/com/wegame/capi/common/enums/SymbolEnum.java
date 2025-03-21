@@ -50,12 +50,10 @@ public enum SymbolEnum {
      * 元素id.
      */
     private final String id;
-
     /**
      * 元素名称.
      */
     private final String name;
-
     /**
      * 私有构造方法.
      *

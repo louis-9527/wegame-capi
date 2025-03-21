@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler;
+package com.wegame.capi.scheduler.biz;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -22,7 +22,10 @@ public class MalakasBetRecordBetStatusScheduler
         return GameTypeEnum.MALAKAS;
     }
 
-    @Scheduled(cron = "0 0/4 * * * ?")
+    /**
+     * 每分钟15秒执行
+     */
+    @Scheduled(cron = "15 * * * * ?")
     public void schedule() {
         log.info("MalakasBetRecordBetStatusScheduler#schedule start");
         try {

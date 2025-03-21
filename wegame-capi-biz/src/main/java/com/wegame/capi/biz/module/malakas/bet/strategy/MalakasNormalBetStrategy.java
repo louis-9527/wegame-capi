@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.module.malakas.bet.strategy;
 
-import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
@@ -12,6 +11,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,12 +65,12 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                     .gameName(GameTypeEnum.MALAKAS.getName())
                     .userId(Long.valueOf(userInfo.getId()))
                     .userName(userInfo.getUserName())
-                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_SPINS.name())
+                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
                     .rewardTime(DateUtil.getCurrentMilli())
                     .rewardContent(String.format(Constants.WEGAME_REWARD_NOTIFY_CONTENT_FORMAT,
                             DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
                             userInfo.getUserName(),
-                            NumberUtil.div(totalRewardAmount, 100),
+                            AmountUtil.toBigDecimal(totalRewardAmount),
                             freeWheelCount))
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MALAKAS.getId());

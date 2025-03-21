@@ -25,7 +25,7 @@ public class MariaMakilingBetRecordDetailDo {
      */
     private List<MariaMakilingGameRecordDo> gameRecordList;
 
-    public boolean isLastFreeSpins(long freeWheelGameRecordId) {
+    public boolean isLastFreeWheel(long freeWheelGameRecordId) {
         MariaMakilingGameRecordDo recordDo = CollectionUtils.isEmpty(gameRecordList) ? null : gameRecordList.get(gameRecordList.size() - 1);
         return Objects.isNull(recordDo) ? false : Objects.equals(recordDo.getId(), freeWheelGameRecordId);
     }

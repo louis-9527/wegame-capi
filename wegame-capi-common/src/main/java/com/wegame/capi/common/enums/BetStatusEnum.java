@@ -3,10 +3,8 @@ package com.wegame.capi.common.enums;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Objects;
 
@@ -28,14 +26,13 @@ public enum BetStatusEnum {
      * 描述信息.
      */
     private final String desc;
-
     /**
      * 私有构造方法.
      *
      * @param code code值
      * @param desc 描述信息
      */
-    private BetStatusEnum(Integer code, String desc) {
+    BetStatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }

@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class GetAuthLoginTokenReqBuilder {
 
-    public static GetAuthLoginTokenReq build(UserLoginDo userLoginDo) {
+    public static GetAuthLoginTokenReq buildReq(UserLoginDo userLoginDo) {
         return GetAuthLoginTokenReq.builder()
                 .pId(userLoginDo.getPId())
                 .channelId(userLoginDo.getChannelId())

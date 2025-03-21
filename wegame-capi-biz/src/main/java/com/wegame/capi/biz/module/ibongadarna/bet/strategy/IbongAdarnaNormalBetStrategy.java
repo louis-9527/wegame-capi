@@ -32,8 +32,8 @@ public class IbongAdarnaNormalBetStrategy extends AbstractIbongAdarnaBetStrategy
     IbongAdarnaConfig ibongAdarnaConfig;
 
     @Override
-    public void rewardAfterHandle(BetDo<IbongAdarnaBetDo> betDo, Long totalRewardAmount) {
-        Integer multiple = rewardMultiple(betDo.getBetDetail().getBetAmount(), totalRewardAmount);
+    public void rewardAfterHandle(BetDo betDo, Long totalRewardAmount) {
+        Integer multiple = rewardMultiple(betDo.getBetAmount(), totalRewardAmount);
         Integer rewardNotifyMinMultiple = ibongAdarnaConfig.getRewardNotifyMinMultiple();
         if (multiple >= rewardNotifyMinMultiple) {
             updateRewardNotifyInfo(betDo.getGameType(), multiple, totalRewardAmount);

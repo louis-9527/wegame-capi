@@ -13,10 +13,6 @@ import static com.wegame.base.enums.CommonCacheEnvEnum.GAME_RECORD;
 @Component(CacheConstants.GAME_RECORD)
 public class GameRecordCache extends AbstractCache {
 
-    //    public BetRecordCache() {
-    //        super(BET_RECORD.cacheKeyPrefixName(), 60, 15, 10000L);
-    //    }
-
     public GameRecordCache() {
         super(GAME_RECORD.cacheKeyPrefixName(), 60);
     }

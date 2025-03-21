@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetStatusEnum;
 
@@ -16,29 +17,27 @@ public class BetRecordBuilder {
 
     public static <T> BetRecordDo<T> build(Long betRecordId,
                                            BetDo betDo,
-                                           Long betAmount,
-                                           Long payAmount,
                                            Long payOutAmount,
                                            Boolean reachMaxMultiple,
                                            List<T> gameRecordList) {
-
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         long currentMilli = DateUtil.getCurrentMilli();
-
         return BetRecordDo.<T>builder()
                 .id(betRecordId)
-                .pId(UserInfoContext.getUserInfo().getPId())
-                .channelId(UserInfoContext.getUserInfo().getChannelId())
-                .playerId(UserInfoContext.getUserInfo().getPlayerId())
-                .userId(Long.valueOf(UserInfoContext.getUserInfo().getId()))
-                .playerName(UserInfoContext.getUserInfo().getPlayerName())
+                .pId(userInfo.getPId())
+                .channelId(userInfo.getChannelId())
+                .playerId(userInfo.getPlayerId())
+                .userId(Long.valueOf(userInfo.getId()))
+                .playerName(userInfo.getPlayerName())
                 .gameId(betDo.getGameId())
                 .betSerialNo(String.valueOf(betRecordId))
                 .betType(betDo.getBetType().getCode())
                 .betSubType(betDo.getBetSubType().getCode())
-                .betAmount(betAmount)
-                .payAmount(payAmount)
+                .betAmount(betDo.getBetAmount())
+                .payAmount(betDo.getPayAmount())
                 .payOutAmount(payOutAmount)
                 .reachMaxMultiple(reachMaxMultiple)
                 .status(BetStatusEnum.ING.getCode())

@@ -22,19 +22,17 @@ public enum BetTypeEnum {
      * 枚举码.
      */
     private final String code;
-
     /**
      * 描述信息.
      */
     private final String desc;
-
     /**
      * 私有构造方法.
      *
      * @param code code值
      * @param desc 描述信息
      */
-    private BetTypeEnum(String code, String desc) {
+    BetTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }

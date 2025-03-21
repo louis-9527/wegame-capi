@@ -3,20 +3,18 @@ package com.wegame.capi.client.domain.vo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaBetResultVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("投注结果")
 @EqualsAndHashCode(callSuper = false)
+@ApiModel("投注结果")
 public class BetResultVo implements Serializable {
     private static final long serialVersionUID = -3682602438304369095L;
     @ApiModelProperty("投注记录Id")

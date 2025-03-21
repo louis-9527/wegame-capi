@@ -2,7 +2,6 @@ package com.wegame.capi.common.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -16,8 +15,9 @@ import lombok.ToString;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum NotifyRewardTypeEnum {
 
-    NORMAL_FREE_SPINS,
+    NORMAL_FREE_WHEEL,
     MULTIPLE,
+
     ;
 
 

@@ -25,26 +25,13 @@ import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMAR
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.gameRecordPutCacheThreadPoolExecutor;
 
 /**
- * 投注记录服务
+ * 游戏记录服务
  *
  * @author genereate
  */
 @Slf4j
 @Service
-public class GameRecordService<T> implements InitializingBean {
-
-    @Autowired
-    Map<String, MongoTemplate> mongoTemplateMap;
-
-    @Override
-    public void afterPropertiesSet() {
-        Arrays.stream(GameTypeEnum.values()).forEach(gameType -> {
-            MongoTemplate mongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
-            AssertUtil.assertNotNull(mongoTemplate, ErrorCode.ERR_INTER);
-            MongoTemplate primaryMongoTemplate = mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
-            AssertUtil.assertNotNull(primaryMongoTemplate, ErrorCode.ERR_INTER);
-        });
-    }
+public class GameRecordService<T> extends AbstractService {
 
     public boolean batchAdd(List<T> gameRecordList, GameTypeEnum gameType, Class<T> tClass) {
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
@@ -77,11 +64,6 @@ public class GameRecordService<T> implements InitializingBean {
         }
     }
 
-    /**
-     * 统计
-     *
-     * @return 数量
-     */
     public Long count(GameRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         if (!query.isFromPrimary()) {
@@ -89,14 +71,5 @@ public class GameRecordService<T> implements InitializingBean {
         } else {
             return getPrimaryMongoTemplate(gameType).count(GameRecordQueryBuilder.buildMongodbQuery(query), gameType.getGameRecordCollectionName());
         }
-    }
-
-    ///////////////  above auto generated ///////////////
-    private MongoTemplate getMongoTemplate(GameTypeEnum gameType) {
-        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + MONGOTEMPLATE);
-    }
-
-    private MongoTemplate getPrimaryMongoTemplate(GameTypeEnum gameType) {
-        return mongoTemplateMap.get(StringUtils.lowerCase(gameType.getName()) + PRIMARY_MONGOTEMPLATE);
     }
 }

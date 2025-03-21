@@ -1,9 +1,6 @@
 package com.wegame.capi.dao.mapper.domain.business;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Sort;
@@ -18,13 +15,13 @@ import java.util.List;
  * @author genereate
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class GameRecordQuery implements Serializable {
     private static final long serialVersionUID = -6976052604957607936L;
-
     @Id
     @Field("_id")
     private Long id;
@@ -72,7 +69,6 @@ public class GameRecordQuery implements Serializable {
      * 更新时间
      */
     private Long updateTime;
-
     /**
      * 开始创建时间
      */
@@ -89,8 +85,6 @@ public class GameRecordQuery implements Serializable {
      * 结束更新时间
      */
     private Long endUpdateTime;
-
-
     /**
      * limit
      */
@@ -109,7 +103,6 @@ public class GameRecordQuery implements Serializable {
     private Sort.Direction direction;
 
     ///////////////  above auto generated ///////////////
-
     /**
      * 缓存key
      */
