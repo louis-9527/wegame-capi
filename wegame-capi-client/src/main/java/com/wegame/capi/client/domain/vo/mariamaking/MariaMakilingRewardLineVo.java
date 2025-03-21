@@ -2,21 +2,19 @@ package com.wegame.capi.client.domain.vo.mariamaking;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("MariaMakiling中奖线详情")
 @EqualsAndHashCode(callSuper = false)
+@ApiModel("MariaMakiling中奖线详情")
 public class MariaMakilingRewardLineVo implements Serializable {
     private static final long serialVersionUID = 6487808344235380369L;
     @ApiModelProperty("中奖线元素Id: 中奖线第一个中奖元素id")

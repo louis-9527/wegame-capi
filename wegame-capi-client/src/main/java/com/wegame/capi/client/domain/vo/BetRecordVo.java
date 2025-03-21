@@ -4,10 +4,7 @@ import com.wegame.base.Validate;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -20,11 +17,12 @@ import java.util.List;
  * @author genereate
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("投注记录")
 @EqualsAndHashCode(callSuper = false)
+@ApiModel("投注记录")
 public class BetRecordVo implements Validate, Serializable {
     private static final long serialVersionUID = -5835716727611741184L;
     @ApiModelProperty("主键ID/投注记录id")

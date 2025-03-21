@@ -3,9 +3,7 @@ package com.wegame.capi.client.context;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -16,9 +14,11 @@ import java.io.Serializable;
  * @author apple
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @ApiModel("用户信息")
 public class UserInfo implements Serializable {
     private static final long serialVersionUID = -701740428094376475L;

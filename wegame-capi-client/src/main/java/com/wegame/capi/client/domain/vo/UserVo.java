@@ -18,8 +18,8 @@ import java.io.Serializable;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("用户")
 @EqualsAndHashCode(callSuper = false)
+@ApiModel("用户")
 public class UserVo implements Validate, Serializable {
     private static final long serialVersionUID = -5262605043879432192L;
     @ApiModelProperty("主键ID")
