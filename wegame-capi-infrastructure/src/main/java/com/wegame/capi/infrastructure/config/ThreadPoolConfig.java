@@ -18,13 +18,9 @@ import java.util.concurrent.TimeUnit;
 public class ThreadPoolConfig {
 
     public static final String defaultThreadPoolExecutor = "defaultThreadPoolExecutor";
-
     public static final String betRecordThreadPoolExecutor = "betRecordThreadPoolExecutor";
-
     public static final String betRecordStatusThreadPoolExecutor = "betRecordStatusThreadPoolExecutor";
-
     public static final String sendMessageThreadPoolExecutor = "sendMessageThreadPoolExecutor";
-
     public static final String gameRecordPutCacheThreadPoolExecutor = "gameRecordPutCacheThreadPoolExecutor";
 
     /**
