@@ -31,7 +31,7 @@ public class BetService {
     @Autowired
     Map<String, AbstractBetContext> contextMap;
 
-    public BetResultDo bet(BetDo<T> betDo) {
+    public BetResultDo bet(BetDo betDo) {
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_PARAM);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(betDo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);

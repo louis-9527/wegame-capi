@@ -9,7 +9,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
-import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
+import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
@@ -76,6 +76,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         List<MariaMakilingGameRecordDo> gameRecordList = mariaMakilingRecordManager.listGameRecordWithCache(GameRecordQuery.builder()
                         .betRecordId(betDo.getBetRecordId())
                         .cacheKey(String.format("%s_%s", betDo.getBetRecordId(), userInfo.getPlayerId()))
+                        .fromPrimary(true)
                         .build(),
                 getGame().getGameInfo().getGameType());
         // 按照index升序排列
@@ -126,7 +127,7 @@ public abstract class AbstractMariaMakilingBetStrategy
                 list);
         // 保存投注记录并派奖
         MariaMakilingGameRecordDo gameRecord = list.get(0);
-        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeWheel());
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeWheel());
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             return BetResultDo.<MariaMakilingGameRecordDo>builder()

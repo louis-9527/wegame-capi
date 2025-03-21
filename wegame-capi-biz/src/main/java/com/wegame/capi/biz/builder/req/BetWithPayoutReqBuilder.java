@@ -30,21 +30,4 @@ public class BetWithPayoutReqBuilder {
                         .build())
                 .build();
     }
-
-    //    public static BetStatusReq buildStatusReq(BetRecordDo betRecordDo) {
-    //        return BetStatusReq.builder()
-    //                .pId(betRecordDo.getPId())
-    //                .channelId(betRecordDo.getChannelId())
-    //                .playerName(betRecordDo.getPlayerName())
-    //                .refId(betRecordDo.getBetSerialNo())
-    //                .betType(BET_WITH_PAYOUT_BET_TYPE)
-    //                .wagersDate(betRecordDo.getCreateTime() / 1000)
-    //                .createTime(DateUtil.toUTC(new Date()))
-    //                .build();
-    //    }
-
-    //    public static void main(String[] args) {
-    //        long date = DateUtil.getCurrentMilli();
-    //        System.out.println(date);
-    //    }
 }

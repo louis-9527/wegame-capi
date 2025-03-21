@@ -1,10 +1,7 @@
 package com.wegame.capi.biz.domain.biz.reward;
 
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -15,6 +12,7 @@ import java.io.Serializable;
  * @author generate
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

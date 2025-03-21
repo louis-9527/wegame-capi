@@ -14,7 +14,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetDo<R> implements Serializable {
+public class BetDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 游戏Id
@@ -32,11 +32,6 @@ public class BetDo<R> implements Serializable {
      * 投注子类型
      */
     private BetSubTypeEnum betSubType;
-    /**
-     * 投注详情 todo deletet
-     */
-    private R betDetail;
-
     /////////////////
     /**
      * 投注金额
@@ -54,5 +49,6 @@ public class BetDo<R> implements Serializable {
      * 免费轮游戏记录id
      */
     private Long gameRecordId;
+    ////////////////
 }
 

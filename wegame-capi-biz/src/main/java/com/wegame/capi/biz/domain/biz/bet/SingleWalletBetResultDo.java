@@ -13,7 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetSingleWalletResultDo implements Serializable {
+public class SingleWalletBetResultDo implements Serializable {
     /**
      * 投注id
      */

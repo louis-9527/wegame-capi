@@ -11,6 +11,7 @@ import java.util.Date;
  * @author generate
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor

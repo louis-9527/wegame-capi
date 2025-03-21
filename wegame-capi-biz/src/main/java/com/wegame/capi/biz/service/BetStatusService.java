@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-import static com.wegame.capi.biz.builder.req.BetStatusReqBuilder.buildStatusReq;
+import static com.wegame.capi.biz.builder.req.BetStatusReqBuilder.buildReq;
 import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode;
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.betRecordStatusThreadPoolExecutor;
 
@@ -74,7 +74,7 @@ public class BetStatusService {
                 rateLimiter.acquire();
                 log.info("convertBetStatus info, betRecordId: {}", betRecordDo.getId());
                 // 查询投注记录的投注状态
-                BetStatusRes betStatusRes = singleWalletApi.getBetStatus(buildStatusReq(betRecordDo));
+                BetStatusRes betStatusRes = singleWalletApi.getBetStatus(buildReq(betRecordDo));
                 AssertUtil.assertNotNull(betStatusRes, ErrorCode.ERR_INTER);
                 SingleWalletBetStatusEnum singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
                 AssertUtil.assertNotNull(singleWalletBetStatus, ErrorCode.ERR_PARAM, "invalid single wallet bet status code");

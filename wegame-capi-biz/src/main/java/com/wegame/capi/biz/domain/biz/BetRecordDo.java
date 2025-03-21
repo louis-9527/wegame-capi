@@ -12,6 +12,7 @@ import java.util.List;
  * @author generate
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
