@@ -226,11 +226,6 @@ public class UserService {
     }
 
     public Long getCredit() {
-        try {
-            redisTemplate.opsForSet().remove(CUSER_CREDIT_CHANGE, UserInfoContext.getUserInfo().getPlayerName());
-        } catch (Exception e) {
-            log.error("getCredit err, errMsg: {}", e.getMessage(), e);
-        }
         BigDecimal credit = singleWalletService.getCredit();
         AssertUtil.assertNotNull(credit, ErrorCode.ERR_NET);
         return AmountUtil.toLong(credit);
