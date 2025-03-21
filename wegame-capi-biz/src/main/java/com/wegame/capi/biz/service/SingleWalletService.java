@@ -68,8 +68,7 @@ public class SingleWalletService {
             AssertUtil.assertNotNull(commonRes, ErrorCode.ERR_NET);
             AssertUtil.assertNotNull(commonRes.getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
         } catch (Exception e) {
-            // 接口异常， 则异步线程处理（通过查询投注状态，去扭转投注状态）
-            // todo
+            // todo 接口异常， 则异步线程处理（通过查询投注状态，去扭转投注状态）
         }
         if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.SUCCESS.getCode())) {
             return BetSingleWalletResultDo.builder()
@@ -81,7 +80,7 @@ public class SingleWalletService {
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
             // 重复的refId当作成功处理
             log.warn("betWithPayout, duplicate reference id. commonRes: {}", commonRes);
-            // 获取投注状态 todo
+            // todo duplicate， 则异步线程处理（通过查询投注状态，去扭转投注状态）
             BetStatusRes betStatusRes = getBetStatus(buildStatusReq(betRecordDo));
             SingleWalletBetStatusEnum singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
             AssertUtil.assertNotNull(singleWalletBetStatus, ErrorCode.ERR_PARAM, "invalid bet status code");
@@ -90,11 +89,11 @@ public class SingleWalletService {
             try {
                 credit = getCredit();
             } catch (Exception e) {
-                log.error("getCredit error", e);
+                log.error("getCredit error, errMsg: {}", e, e.getMessage());
             }
             return BetSingleWalletResultDo.builder()
                     .betId(betStatusRes.getBetId())
-                    .betStatus(BetStatusEnum.valueOfSingleWalletBetStatus(singleWalletBetStatus))
+                    .betStatus(BetStatusEnum.SUCCESS)
                     .credit(Objects.nonNull(credit) ? AmountUtil.toLong(credit) : null)
                     .build();
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INSUFFICIENT_CREDIT.getCode())) {
