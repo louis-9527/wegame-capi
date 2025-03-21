@@ -9,7 +9,6 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
-import com.wegame.capi.biz.domain.biz.bet.StarCardUseDo;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
@@ -60,7 +59,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
 
     public BetResultDo<BR> betForNonFreeWheel(BetDo<BD> betDo) {
         // 判断是否使用星卡
-        boolean useStartCard = betDo.getStarCardUseDo() != null;
+        boolean useStartCard = betDo.isUseStarCart();
         if (useStartCard) {
             // 使用星卡投注
             return this.betForStartCard(betDo);
@@ -80,11 +79,8 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
     private BetResultDo<BR> betForStartCard(BetDo<BD> betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         Pair<Long, Long> betAndPayAmount = this.getBetAndPayAmount(betDo);
-
-        // 使用星卡
-        StarCardUseDo starCardUse = betDo.getStarCardUseDo();
         // 查询星卡详情
-        RewardDetailDo rewordDetail = bagService.getByRewardConfigId(starCardUse.getRewardConfigId());
+        RewardDetailDo rewordDetail = bagService.getByRewardConfigId(betDo.getRewardConfigId());
         AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.ERR_PARAM);
 
@@ -191,13 +187,12 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BD, 
     }
 
     private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(BetDo<BD> betDo) {
-        StarCardUseDo starCardUse = betDo.getStarCardUseDo();
         BetRecordDo<R> rBetRecordDo;
         int i = 0;
         RedeemRewardResultDo rewardResult;
         do {
             rBetRecordDo = loadBetRecordDo(betDo);
-            rewardResult = bagService.use(starCardUse.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
+            rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
             i++;
         } while (rewardResult.getSuccess() || i > 10);
         return Pair.of(rewardResult, rBetRecordDo);

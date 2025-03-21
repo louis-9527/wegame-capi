@@ -1,18 +1,13 @@
 package com.wegame.capi.biz.converter;
 
-import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.bet.StarCardUseDo;
 import com.wegame.capi.client.domain.request.BetRequest;
-import com.wegame.capi.client.domain.request.BetRequestValidate;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-
-import java.util.Map;
-import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * BetConverter
@@ -21,36 +16,25 @@ import java.util.Optional;
  */
 public class BetConverter {
 
-    // 定义转换模型
-    private static final Map<GameTypeEnum, BetToDoConvert<?, ?>> GAME_BET_CLASS_MAP = ImmutableMap.<GameTypeEnum, BetToDoConvert<?, ?>>builder()
-            .put(GameTypeEnum.MARIA_MAKILING, new MariaMakilingBetRequestConvert<>())
-            .build();
-
-    public static <T extends BetRequestValidate, R> BetDo<R> requestToDo(BetRequest betRequest) {GameTypeEnum gameType = GameTypeEnum.valueOfId(betRequest.getGameId());
+    public static BetDo requestToDo(BetRequest betRequest) {
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(betRequest.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
-        BetToDoConvert<T, R> converter = (BetToDoConvert<T, R>) GAME_BET_CLASS_MAP.get(gameType);
-        AssertUtil.assertNotNull(converter, ErrorCode.ERR_PARAM);
-        //入参转换
-        T detail = converter.toDetail(betRequest);
-        detail.validateParam(
-                gameType,
-                BetTypeEnum.valueOfCode(betRequest.getBetType()),
-                BetSubTypeEnum.valueOfCode(betRequest.getBetSubType()),
-                betRequest.getStarCardUseDetail()!=null
-        );
-        R betDetail = converter.toDo(detail);
-        return BetDo.<R>builder()
+        return BetDo.builder()
                 .gameId(betRequest.getGameId())
                 .gameType(gameType)
                 .betType(BetTypeEnum.valueOfCode(betRequest.getBetType()))
                 .betSubType(BetSubTypeEnum.valueOfCode(betRequest.getBetSubType()))
-                .betDetail(betDetail)
-                .starCardUseDo(Optional.ofNullable(betRequest.getStarCardUseDetail())
-                        .map(cardUseReq -> StarCardUseDo.builder().rewardId(cardUseReq.getRewardId()).rewardConfigId(cardUseReq.getRewardConfigId()).build())
-                        .orElse(null))
+                .betAmount(betRequest.getBetDetail().getBetAmount())
+                .payAmount(betRequest.getBetDetail().getPayAmount())
+                .betRecordId(StringUtils.isNotEmpty(betRequest.getBetDetail().getBetRecordId())
+                        ? Long.valueOf(betRequest.getBetDetail().getBetRecordId())
+                        : null)
+                .gameRecordId(StringUtils.isNotEmpty(betRequest.getBetDetail().getGameRecordId())
+                        ? Long.valueOf(betRequest.getBetDetail().getGameRecordId())
+                        : null)
+                .useStarCart(betRequest.getBetDetail().isUserStarCart())
+                .rewardConfigId(betRequest.getBetDetail().getRewardConfigId())
+                .rewardId(betRequest.getBetDetail().getRewardId())
                 .build();
     }
-
-
-
 }

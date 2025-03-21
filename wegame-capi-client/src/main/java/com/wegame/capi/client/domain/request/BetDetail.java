@@ -19,8 +19,8 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "MariaMakiling正常投注请求参数")
-public class MariaMakilingBetRequest implements BetRequestValidate, Serializable {
+@ApiModel(description = "投注详情")
+public class BetDetail implements BetRequestValidate, Serializable {
     private static final long MIN_BET_AMOUNT = 500L;
     private static final long MAX_BET_AMOUNT = 1000000L;
     private static final long MULTIPLE = 35;
@@ -33,9 +33,22 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
     private String betRecordId;
     @ApiModelProperty(value = "免费轮游戏记录ID, 非必填", required = false)
     private String gameRecordId;
+    // 星卡投注
+    @ApiModelProperty(value = "使用星卡, 非必填", required = false)
+    private boolean userStarCart;
+    @ApiModelProperty(value = "奖励配置id", required = true)
+    private String rewardConfigId;
+    @ApiModelProperty(value = "奖励id", required = true)
+    private String rewardId;
 
     @Override
-    public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType, Boolean startCardUse) {
+    public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
+            mariaMakilingValidate(gameType, betType, betSubType);
+        }
+    }
+
+    private void mariaMakilingValidate(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
@@ -56,7 +69,7 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
         } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-                if (startCardUse) {
+                if (userStarCart) {
                     AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
                 } else {
                     AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
@@ -71,6 +84,17 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
+        }
+        validateStartCartBet(gameType, betType, betSubType);
+    }
+
+    private void validateStartCartBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        // 判断是否使用星卡
+        if (userStarCart) {
+            AssertUtil.assertNotNull(rewardConfigId, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(rewardId, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType, ErrorCode.ERR_PARAM);
         }
     }
 }

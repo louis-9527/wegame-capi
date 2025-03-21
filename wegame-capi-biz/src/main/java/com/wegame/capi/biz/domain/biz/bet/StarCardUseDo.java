@@ -8,14 +8,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 public class StarCardUseDo {
-    /**
-     * 奖励配置id
-     */
-    private String rewardConfigId;
 
-    /**
-     * Reward id
-     */
-    private String rewardId;
 
 }

@@ -3,16 +3,14 @@ package com.wegame.capi.biz.domain.biz.bet;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.swing.*;
 import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,15 +34,41 @@ public class BetDo<R> implements Serializable {
      */
     private BetSubTypeEnum betSubType;
 
+    //
     /**
-     * 星卡ID
-     */
-    private StarCardUseDo starCardUseDo;
-    /**
-     * 投注详情
+     * 投注详情 todo delete
      */
     private R betDetail;
+    /////
+    /**
+     * 投注金额
+     */
+    private Long betAmount;
+    /**
+     * 支付金额
+     */
+    private Long payAmount;
+    /**
+     * 投注记录id
+     */
+    private Long betRecordId;
+    /**
+     * 免费轮游戏记录id
+     */
+    private Long gameRecordId;
 
-
+    /////////////// 星卡投注 ///////////////
+    /**
+     * 使用星卡
+     */
+    private boolean useStarCart;
+    /**
+     * 奖励配置id
+     */
+    private String rewardConfigId;
+    /**
+     * Reward id
+     */
+    private String rewardId;
 }
 
