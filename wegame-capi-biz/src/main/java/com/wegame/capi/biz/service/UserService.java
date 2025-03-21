@@ -9,7 +9,6 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.converter.user.UserConverter;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.domain.dto.CreditChangeNotifyDto;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.UserPo;
 import com.wegame.capi.dao.mapper.domain.user.UserQuery;
