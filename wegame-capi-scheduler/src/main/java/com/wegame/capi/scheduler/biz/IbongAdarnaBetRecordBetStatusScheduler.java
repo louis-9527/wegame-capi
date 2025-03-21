@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler;
+package com.wegame.capi.scheduler.biz;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -21,7 +21,10 @@ public class IbongAdarnaBetRecordBetStatusScheduler
         return GameTypeEnum.IBONG_ADARNA;
     }
 
-    @Scheduled(cron = "0 0/6 * * * ?")
+    /**
+     * 每分钟30秒执行
+     */
+    @Scheduled(cron = "30 * * * * ?")
     public void schedule() {
         log.info("IbongAdarnaBetRecordBetStatusScheduler#schedule start");
         try {
