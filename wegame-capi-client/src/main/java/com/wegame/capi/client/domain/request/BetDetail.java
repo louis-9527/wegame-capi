@@ -12,6 +12,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 @Data
@@ -38,6 +40,12 @@ public class BetDetail implements BetRequestValidate, Serializable {
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
         if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
             mariaMakilingValidateParam(gameType, betType, betSubType);
+        } else if (Objects.equals(gameType, GameTypeEnum.MALAKAS)) {
+            malakasValidateParam(gameType, betType, betSubType);
+        } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
+            ibongAdarnaValidateParam(gameType, betType, betSubType);
+        } else {
+            throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORT");
         }
     }
 
@@ -73,6 +81,58 @@ public class BetDetail implements BetRequestValidate, Serializable {
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
+        }
+    }
+
+    public void malakasValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
+        if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
+            if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {
+                AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
+            } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_NORMAL_BET)) {
+                AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
+                AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(NumberUtil.isLong(betRecordId), ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(NumberUtil.isLong(gameRecordId), ErrorCode.ERR_PARAM);
+            } else {
+                throw new BusinessException(ErrorCode.ERR_PARAM);
+            }
+        } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
+            if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
+                AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * 35), ErrorCode.ERR_PARAM);
+            } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
+                AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
+                AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(NumberUtil.isLong(betRecordId), ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(NumberUtil.isLong(gameRecordId), ErrorCode.ERR_PARAM);
+            } else {
+                throw new BusinessException(ErrorCode.ERR_PARAM);
+            }
+        }
+    }
+
+    public void ibongAdarnaValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(betAmount > 0L, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
+        // 投注类型只能正常投注
+        AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET.equals(betType), ErrorCode.ERR_PARAM, "not support betType");
+        // 投注子类型只能是正常投注/ex投注
+        AssertUtil.assertTrue(BetSubTypeEnum.NORMAL_BET.equals(betSubType) || BetSubTypeEnum.EX_BET.equals(betSubType), ErrorCode.ERR_PARAM, "not support betSubType");
+        // ex类型，支付金额必须是投注金额的1.5倍
+        if (Objects.equals(BetSubTypeEnum.EX_BET, betSubType)) {
+            BigDecimal payAmountDecimal = BigDecimal.valueOf(payAmount);
+            BigDecimal betAmountDecimal = BigDecimal.valueOf(betAmount);
+            BigDecimal exceptPayAmount = betAmountDecimal.multiply(new BigDecimal("1.5")).setScale(0, RoundingMode.FLOOR);
+            AssertUtil.assertTrue(exceptPayAmount.compareTo(payAmountDecimal) == 0, ErrorCode.ERR_PARAM, "ex bet payAmount must be 1.5 times of betAmount");
         }
     }
 }
