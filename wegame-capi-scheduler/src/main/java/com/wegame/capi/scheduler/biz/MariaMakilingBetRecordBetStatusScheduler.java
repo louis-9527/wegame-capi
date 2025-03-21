@@ -21,7 +21,10 @@ public class MariaMakilingBetRecordBetStatusScheduler
         return GameTypeEnum.MARIA_MAKILING;
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    /**
+     * 每分钟0秒执行
+     */
+    @Scheduled(cron = "0 * * * * ?")
     public void schedule() {
         log.info("MariaMakilingBetRecordBetStatusScheduler#schedule start");
         try {
