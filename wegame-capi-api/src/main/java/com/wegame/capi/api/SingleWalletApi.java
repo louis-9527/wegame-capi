@@ -25,10 +25,17 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
+import java.util.Objects;
+import java.util.concurrent.locks.LockSupport;
+
+import static com.wegame.capi.common.enums.SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID;
 
 @Slf4j
 @Component
 public class SingleWalletApi extends SingleWalletBaseApi {
+
+    private static final long FIVE_SECONDS = 5000L;
+    private static final int MAX_DUPLICATE_COUNT = 2;
 
     private static final String AUTH_LOGIN_TOKEN_URL_FORMAT = "%s/authLoginToken";
     private static final String GET_CREDIT_URL_FORMAT = "%s/getCredit";
@@ -82,29 +89,61 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         }
     }
 
-//    @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public CommonRes<SingleWalletBetWithPayoutRes> betWithPayout(BetWithPayoutReq req) {
-        try {
-            // 参数签名
-            assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = buildHeaders();
-            RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
-                    URI.create(String.format(BET_WITH_PAYOUT_URL_FORMAT, singleDomain)));
-            // log.info("before request betWithPayout, timeStamp: {}", System.currentTimeMillis());
-            ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
-                    new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
-                    });
-            // log.info("after request betWithPayout, timeStamp: {}", System.currentTimeMillis());
-            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
-            return responseEntity.getBody();
-        } catch (BusinessException e) {
-            log.error("betWithPayout BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            log.error("betWithPayout Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
+        // 参数签名
+        assembleSingleSignature(req);
+        RequestEntity<BetWithPayoutReq> requestEntity = new RequestEntity<>(req,
+                buildHeaders(),
+                HttpMethod.POST,
+                URI.create(String.format(BET_WITH_PAYOUT_URL_FORMAT, singleDomain)));
+        long requestStartTime = System.currentTimeMillis();
+        boolean canContinueExecute = true;
+        int duplicateIdCount = 0;
+        while (canContinueExecute) {
+            try {
+                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
+                        new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
+                        });
+                if (Objects.isNull(responseEntity) || Objects.isNull(responseEntity.getBody())) {
+                    canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                    continue;
+                }
+                CommonRes<SingleWalletBetWithPayoutRes> commonRes = responseEntity.getBody();
+                if (commonRes.isSuc()) {
+                    // 成功，则直接返回
+                    return commonRes;
+                } else if (Objects.equals(commonRes.getStatus(), DUPLICATE_REFERENCE_ID.getCode())) {
+                    duplicateIdCount = duplicateIdCount + 1;
+                    // 重复id，则判断能否继续重试(重试次数小于2 || 未达到重试时间上限)。
+                    // （单钱包认为3s后的重复id为成功）通过duplicateCount次数 + 每次重试sleep1.5s控制
+                    canContinueExecute = duplicateIdCount < MAX_DUPLICATE_COUNT;
+                    if (canContinueExecute) {
+                        // 能继续重试
+                        log.warn("betWithPayout continue retry when DUPLICATE_REFERENCE_ID, sleep 1.5 seconds");
+                        // 暂停1.5秒（1500000000纳秒）
+                        LockSupport.parkNanos(1500000000L);
+                    } else {
+                        // 不能继续重试，此时则认为成功
+                        log.warn("betWithPayout stop retry when DUPLICATE_REFERENCE_ID，reach max retry：{} count, See it as a success", duplicateIdCount);
+                        return commonRes;
+                    }
+                } else {
+                    // 其他状态码，则直接返回
+                    return commonRes;
+                }
+            } catch (Exception e) {
+                log.error("betWithPayout Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
+                // 发生异常，判断是否达到最大重试时限（重试的最大时限：请求时间 + 5s）
+                canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                if (!canContinueExecute) {
+                    log.error("betWithPayout BusinessException, reach max retry time limit");
+                    throw e;
+                } else {
+                    log.warn("betWithPayout immediately retry when error");
+                }
+            }
         }
+        throw new BusinessException(ErrorCode.ERR_NET);
     }
 
     /**

@@ -18,6 +18,8 @@ public enum SingleWalletBetStatusEnum {
     COMPLETED_CANCEL_REQUEST(6, "completed cancel request"),
     DATA_NOT_FOUND(7, "data not found");
 
+    // 目前只会涉及到 3，4，7状态码
+
     private final Integer code;
     private final String desc;
 

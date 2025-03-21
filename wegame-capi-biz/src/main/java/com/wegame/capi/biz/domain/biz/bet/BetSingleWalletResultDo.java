@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
-
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -34,4 +32,5 @@ public class BetSingleWalletResultDo {
      * 投注失败原因
      */
     private ErrorCode errorCode;
+    private String errorMsg;
 }
