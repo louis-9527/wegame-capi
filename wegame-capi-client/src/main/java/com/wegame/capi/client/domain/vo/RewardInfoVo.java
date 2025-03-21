@@ -15,9 +15,10 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("中奖信息")
 @EqualsAndHashCode(callSuper = false)
+@ApiModel("中奖信息")
 public class RewardInfoVo implements Serializable {
+    private static final long serialVersionUID = -368238304369095L;
     @ApiModelProperty("中奖信息列表")
     private List<String> rewardMessageList;
     @ApiModelProperty("当前用户余额是否变动 0否 1是")

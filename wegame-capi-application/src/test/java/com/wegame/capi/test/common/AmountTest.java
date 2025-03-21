@@ -2,12 +2,11 @@ package com.wegame.capi.test.common;
 
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -44,10 +43,12 @@ public class AmountTest {
         });
     }
 
+    @Data
     @Getter
     @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
-    private static class AmountMockerModel {
+    public static class AmountMockerModel implements Serializable {
         private Long payAmount;
         private Long betAmount;
     }

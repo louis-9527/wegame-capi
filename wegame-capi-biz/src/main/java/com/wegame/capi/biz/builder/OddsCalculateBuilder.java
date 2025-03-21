@@ -9,7 +9,9 @@ import java.util.Objects;
 
 public class OddsCalculateBuilder {
 
-    public static OddsCalculateDo build(RewardHandleDo rewardDo, SymbolDo symbolDo, RewardLineTypeEnum rewardLineType) {
+    public static OddsCalculateDo build(RewardHandleDo rewardDo,
+                                        SymbolDo symbolDo,
+                                        RewardLineTypeEnum rewardLineType) {
         if (Objects.isNull(rewardDo) || Objects.isNull(symbolDo) || Objects.isNull(rewardLineType)) {
             return null;
         }

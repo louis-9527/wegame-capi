@@ -9,8 +9,8 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
-import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
 import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
+import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
@@ -39,8 +39,9 @@ import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
  * Malakas游戏投注抽象接口
  */
 @Slf4j
-public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<MalakasGameRecordDo, MalakasBetDo, MalakasBetRecordDetailDo>
-        implements MalakasBetStrategy<MalakasBetDo, MalakasBetRecordDetailDo> {
+public abstract class AbstractMalakasBetStrategy
+        extends AbstractBetStrategy<MalakasGameRecordDo, MalakasBetRecordDetailDo>
+        implements MalakasBetStrategy<MalakasBetRecordDetailDo> {
 
     @Autowired
     MalakasGame malakasGame;
@@ -60,7 +61,7 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
     }
 
     @Override
-    public BetResultDo<MalakasBetRecordDetailDo> bet(BetDo<MalakasBetDo> betDo) {
+    public BetResultDo<MalakasBetRecordDetailDo> bet(BetDo betDo) {
         if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
             // 非免费轮投注(正常投注、购买投注)
             return betForNonFreeWheel(betDo);
@@ -73,15 +74,15 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
     /**
      * 非免费轮投注(正常投注、购买投注)
      */
-    private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeWheel(BetDo<MalakasBetDo> betDo) {
+    private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
         List<MalakasGameRecordDo> list = getGame().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
-                .betAmount(betDo.getBetDetail().getBetAmount())
-                .payAmount(betDo.getBetDetail().getPayAmount())
+                .betAmount(betDo.getBetAmount())
+                .payAmount(betDo.getPayAmount())
                 .betRecordId(betRecordId)
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
@@ -94,12 +95,10 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                 .sum();
         BetRecordDo<MalakasGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
                 betDo,
-                betDo.getBetDetail().getBetAmount(),
-                betDo.getBetDetail().getPayAmount(),
-                maxAmountControl(totalRewardAmount, betDo.getBetDetail().getBetAmount(), malakasConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetDetail().getBetAmount(), malakasConfig.getRewardMaxMultiple()),
+                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
                 list);
-        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
 
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
@@ -115,15 +114,15 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
                     .betType(betDo.getBetType())
                     .betSubType(betDo.getBetSubType())
                     .credit(resultDo.getCredit())
-                    .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetDetail().getBetAmount(), malakasConfig.getRewardMaxMultiple()))
+                    .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()))
                     .totalPayoutAmount(betRecord.getPayOutAmount())
                     .resultDetail(MalakasBetRecordDetailDo.builder()
-                            .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetDetail().getBetAmount(), overallRewardAmount))
+                            .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetAmount(), overallRewardAmount))
                             .gameRecordList(firstBatchList)
                             .build())
                     .build();
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
-            throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getReason());
+            throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getErrorMsg());
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
             throw new BusinessException(ErrorCode.ERR_NET);
         } else {
@@ -134,14 +133,13 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
     /**
      * 免费轮投注
      */
-    private BetResultDo<MalakasBetRecordDetailDo> betForFreeWheel(BetDo<MalakasBetDo> betDo) {
-        MalakasBetDo betDetail = betDo.getBetDetail();
+    private BetResultDo<MalakasBetRecordDetailDo> betForFreeWheel(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         List<MalakasGameRecordDo> gameRecordList = getRecordManager().listGameRecord(
                 GameRecordQuery.builder()
-                        .betRecordId(betDo.getBetDetail().getBetRecordId())
+                        .betRecordId(betDo.getBetRecordId())
                         .playerId(userInfo.getPlayerId())
-                        .batchId(betDo.getBetDetail().getGameRecordId())
+                        .batchId(betDo.getGameRecordId())
                         .build(), getGame().getGameInfo().getGameType());
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
         // 按照index升序排列
@@ -162,14 +160,14 @@ public abstract class AbstractMalakasBetStrategy extends AbstractBetStrategy<Mal
             }
         }
         return BetResultDo.<MalakasBetRecordDetailDo>builder()
-                .betRecordId(betDetail.getBetRecordId())
+                .betRecordId(betDo.getBetRecordId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
                 .overallRewardAmount(overallRewardAmount)
                 .totalPayoutAmount(0L)
                 .resultDetail(MalakasBetRecordDetailDo.builder()
-                        .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetDetail().getBetAmount(), overallRewardAmount))
+                        .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetAmount(), overallRewardAmount))
                         .gameRecordList(gameRecordList)
                         .build())
                 .build();

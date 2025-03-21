@@ -140,7 +140,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             Integer currentColum = column;
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
-                Integer currentRow = row;
+                int currentRow = row;
                 MalakasSymbolDo currentSymbol = symbolArr[row][currentColum];
                 if (StringUtils.equals(currentSymbol.getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId())) {
                     continue;

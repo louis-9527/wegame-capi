@@ -25,7 +25,6 @@ public enum RewardTypeEnum {
      * 枚举码.
      */
     private final String code;
-
     /**
      * 描述信息.
      */

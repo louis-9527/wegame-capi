@@ -54,6 +54,4 @@ public enum SingleWalletResStatusEnum {
         }
         return null;
     }
-
-
 }

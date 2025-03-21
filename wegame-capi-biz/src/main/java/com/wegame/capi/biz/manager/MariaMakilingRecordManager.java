@@ -84,8 +84,6 @@ public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakil
         //            query.setFromPrimary(true);
         //            recordDos = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
         //        }
-        // todo 审核后，  query.setFromPrimary(true); 迁移到调用层
-        query.setFromPrimary(true);
         return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
     }
 

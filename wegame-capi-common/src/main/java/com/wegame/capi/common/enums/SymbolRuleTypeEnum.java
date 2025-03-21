@@ -22,12 +22,10 @@ public enum SymbolRuleTypeEnum {
      * 枚举码.
      */
     private final String code;
-
     /**
      * 描述信息.
      */
     private final String desc;
-
     /**
      * 私有构造方法.
      *

@@ -10,7 +10,7 @@ import static com.wegame.capi.api.domain.req.singlewallet.BetStatusReq.BET_WITH_
 
 public class BetStatusReqBuilder {
 
-    public static BetStatusReq buildStatusReq(BetRecordDo betRecordDo) {
+    public static BetStatusReq buildReq(BetRecordDo betRecordDo) {
         return BetStatusReq.builder()
                 .pId(betRecordDo.getPId())
                 .channelId(betRecordDo.getChannelId())

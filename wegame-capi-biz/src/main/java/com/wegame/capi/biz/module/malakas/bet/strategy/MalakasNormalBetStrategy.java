@@ -65,7 +65,7 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                     .gameName(GameTypeEnum.MALAKAS.getName())
                     .userId(Long.valueOf(userInfo.getId()))
                     .userName(userInfo.getUserName())
-                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_SPINS.name())
+                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
                     .rewardTime(DateUtil.getCurrentMilli())
                     .rewardContent(String.format(Constants.WEGAME_REWARD_NOTIFY_CONTENT_FORMAT,
                             DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),

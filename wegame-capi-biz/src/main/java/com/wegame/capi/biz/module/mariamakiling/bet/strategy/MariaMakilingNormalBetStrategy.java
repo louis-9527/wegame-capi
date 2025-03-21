@@ -6,7 +6,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.bet.MariaMakilingBetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -34,13 +33,13 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
     RewardService rewardService;
 
     @Override
-    public void freeWheelAfterHandle(BetDo<MariaMakilingBetDo> betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
-        if (detailDo.isLastFreeSpins(betDo.getBetDetail().getGameRecordId())) {
+    public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
+        if (detailDo.isLastFreeWheel(betDo.getGameRecordId())) {
             updateRewardNotifyInfo(betDo.getGameType(), detailDo.freeWheelCount(), totalRewardAmount);
         }
     }
 
-    private void updateRewardNotifyInfo(GameTypeEnum gameType, long freeSpinsCount, long totalRewardAmount) {
+    private void updateRewardNotifyInfo(GameTypeEnum gameType, long freeWheelCount, long totalRewardAmount) {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
@@ -49,13 +48,13 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
                     .gameName(GameTypeEnum.MARIA_MAKILING.getName())
                     .userId(Long.valueOf(userInfo.getId()))
                     .userName(userInfo.getUserName())
-                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_SPINS.name())
+                    .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
                     .rewardTime(DateUtil.getCurrentMilli())
                     .rewardContent(String.format(Constants.IBONG_REWARD_NOTIFY_CONTENT_FORMAT,
                             DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
                             userInfo.getUserName(),
                             NumberUtil.decimalFormat("#,##0.000", AmountUtil.toBigDecimal(totalRewardAmount)),
-                            freeSpinsCount))
+                            freeWheelCount))
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);

@@ -6,7 +6,7 @@ import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
+import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.module.base.game.Game;
@@ -29,8 +29,8 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 @Component
-public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extends ToVoConverter>
-        implements BetStrategy<BD, RD> {
+public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends ToVoConverter>
+        implements BetStrategy<RD> {
     @Autowired
     public SingleWalletService singleWalletService;
     @Autowired
@@ -51,13 +51,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
 
     /**
      * 保存投注记录并投注派彩
-     * @param betRecordDo 投注记录
-     * @param syncOpt 是否同步写库
-     * @return 玩家余额
      */
-    public BetSingleWalletResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
-        // todo delete @maidong
-        log.info("saveBetRecordAndBetWithPayout betRecordId:{}; syncOpt:{}", betRecordDo.getId(), syncOpt);
+    public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
         if (syncOpt) {
             return syncSaveBetRecordAndBetWithPayout(betRecordDo);
         } else {
@@ -65,11 +60,11 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         }
     }
 
-    private BetSingleWalletResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+    private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         Long betRecordId = getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
         log.info("syncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordId);
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
-        BetSingleWalletResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
+        SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
             // 异步更新：更新为->投注成功
             getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult),
@@ -83,7 +78,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         return betSingleWalletResult;
     }
 
-    public BetSingleWalletResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+    public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         // todo delete @maidong
         log.info("asyncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordDo.getId());
         // 发送消息(新增)
@@ -91,7 +86,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
         //        AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
         CompletableFuture<MessageId> future = pulsarProducer.asyncSendMessage(getGame().getGameInfo().getGameType(), addMqMessage);
-        BetSingleWalletResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
+        SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
             MessageId messageId;
             try {
@@ -118,7 +113,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
         return betSingleWalletResult;
     }
 
-    private MQMessage<BetRecordDo> buildUpdateMessage(BetRecordDo<R> betRecordDo, BetStatusEnum status, BetSingleWalletResultDo betSingleWalletResult) {
+    private MQMessage<BetRecordDo> buildUpdateMessage(BetRecordDo<R> betRecordDo, BetStatusEnum status, SingleWalletBetResultDo betSingleWalletResult) {
         return MQMessage.buildMsg(String.valueOf(betRecordDo.getId()),
                 MessageTypeEnum.UPDATE.getCode(),
                 BetRecordDo.<R>builder()
@@ -128,7 +123,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extend
                         .build());
     }
 
-    private BetRecordDo<R> buildUpdateRecord(BetRecordDo<R> betRecordDo, BetStatusEnum status, BetSingleWalletResultDo betSingleWalletResult) {
+    private BetRecordDo<R> buildUpdateRecord(BetRecordDo<R> betRecordDo, BetStatusEnum status, SingleWalletBetResultDo betSingleWalletResult) {
         return BetRecordDo.<R>builder()
                 .id(betRecordDo.getId())
                 .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)

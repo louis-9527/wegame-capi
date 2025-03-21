@@ -8,8 +8,7 @@ import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
-import com.wegame.capi.biz.domain.biz.bet.BetSingleWalletResultDo;
-import com.wegame.capi.biz.domain.biz.bet.IbongAdarnaBetDo;
+import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
@@ -24,16 +23,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
-
 /**
  * IbongAdarna类游戏投注抽象接口
  */
 @Slf4j
 public abstract class AbstractIbongAdarnaBetStrategy
-        extends AbstractBetStrategy<IbongAdarnaGameRecordDo, IbongAdarnaBetDo, IbongAdarnaGameRecordDo>
-        implements IbongAdarnaBetStrategy<IbongAdarnaBetDo, IbongAdarnaGameRecordDo> {
+        extends AbstractBetStrategy<IbongAdarnaGameRecordDo, IbongAdarnaGameRecordDo>
+        implements IbongAdarnaBetStrategy<IbongAdarnaGameRecordDo> {
 
     @Autowired
     IbongAdarnaGame ibongAdarnaGame;
@@ -53,13 +49,13 @@ public abstract class AbstractIbongAdarnaBetStrategy
     }
 
     @Override
-    public BetResultDo<IbongAdarnaGameRecordDo> bet(BetDo<IbongAdarnaBetDo> betDo) {
+    public BetResultDo<IbongAdarnaGameRecordDo> bet(BetDo betDo) {
         long betRecordId = generateBetRecordId();
         List<IbongAdarnaGameRecordDo> list = getGame().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
-                .betAmount(betDo.getBetDetail().getBetAmount())
+                .betAmount(betDo.getBetAmount())
                 .betRecordId(betRecordId)
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
@@ -68,14 +64,12 @@ public abstract class AbstractIbongAdarnaBetStrategy
         // 构建投注记录
         BetRecordDo<IbongAdarnaGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
                 betDo,
-                betDo.getBetDetail().getBetAmount(),
-                betDo.getBetDetail().getPayAmount(),
                 gameRecord.getRewardResult().getTotalRewardAmount(),
                 false,
                 list);
 
         // 保存投注记录并派奖
-        BetSingleWalletResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         // 中大奖处理
         this.rewardAfterHandle(betDo, gameRecord.getRewardResult().getTotalRewardAmount());
@@ -92,7 +86,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
                     .resultDetail(gameRecord)
                     .build();
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
-            throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getReason());
+            throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getErrorMsg());
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
             throw new BusinessException(ErrorCode.ERR_NET);
         } else {
@@ -101,7 +95,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
     }
 
 
-    public void rewardAfterHandle(BetDo<IbongAdarnaBetDo> betDo, Long totalRewardAmount) {
+    public void rewardAfterHandle(BetDo betDo, Long totalRewardAmount) {
         // do nothing
     }
 }

@@ -43,7 +43,6 @@ public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
     @Autowired
     RewardHandler ibongAdarnaRewardHandler;
 
-
     @Override
     public GameInfoDo getGameInfo() {
         return IBONG_ADARNA_GAME_INFO;

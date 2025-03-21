@@ -11,10 +11,7 @@ import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingRewardLineVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.annotation.Id;
@@ -33,12 +30,14 @@ import java.util.stream.Collectors;
  * MariaMakiling游戏记录
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "mariamakiling_game_record")
-public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<MariaMakilingBetResultVo, MariaMakilingGameRecordVo> {
+public class MariaMakilingGameRecordDo
+        implements Serializable, ToVoConverter<MariaMakilingBetResultVo, MariaMakilingGameRecordVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * id
@@ -106,7 +105,7 @@ public class MariaMakilingGameRecordDo implements Serializable, ToVoConverter<Ma
      */
     @Transient
     @JsonIgnore
-    public boolean hasRewardFreeSpins() {
+    public boolean hasRewardFreeWheel() {
         return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel();
     }
 

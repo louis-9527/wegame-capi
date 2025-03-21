@@ -173,12 +173,6 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongAdarnaS
                 .build();
     }
 
-    /**
-     * 判断是中奖线
-     *
-     * @param rewardSymbolDoSet
-     * @return
-     */
     private boolean hasReward(Set<String> rewardSymbolDoSet, GameInfoDo gameInfo) {
         if (CollectionUtil.isEmpty(rewardSymbolDoSet)) {
             return false;

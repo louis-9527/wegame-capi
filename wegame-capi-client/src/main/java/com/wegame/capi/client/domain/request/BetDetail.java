@@ -9,18 +9,18 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Data
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "MariaMakiling正常投注请求参数")
-public class MariaMakilingBetRequest implements BetRequestValidate, Serializable {
+@EqualsAndHashCode(callSuper = false)
+@ApiModel(description = "投注详情")
+public class BetDetail implements BetRequestValidate, Serializable {
     private static final long MIN_BET_AMOUNT = 500L;
     private static final long MAX_BET_AMOUNT = 1000000L;
     private static final long MULTIPLE = 35;
@@ -36,6 +36,12 @@ public class MariaMakilingBetRequest implements BetRequestValidate, Serializable
 
     @Override
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
+            mariaMakilingValidateParam(gameType, betType, betSubType);
+        }
+    }
+
+    private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);

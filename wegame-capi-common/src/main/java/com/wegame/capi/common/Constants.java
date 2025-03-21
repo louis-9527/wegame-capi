@@ -2,8 +2,6 @@ package com.wegame.capi.common;
 
 public class Constants {
     public static final String CUSER_LOGIN_TOKEN = "wegame:cuser:login:token:%s";
-    public static final String CUSER_CREDIT_CHANGE = "wegame:cuser:credit:change:%s";
-    public static final String REWARD_MESSAGE = "wegame:reward:message:%s";
     public static final String SYSTEM = "system";
     public static final Integer TOKEN_EXPIRED = 60;
 
@@ -13,7 +11,6 @@ public class Constants {
     public static final String APP_SECRET = "MIIEowIBAAKCAQEAmP8M8b1C12VA9hB3iIHjvQYnda1QovLp+zKTbY2WRRAIGPfT";
     public static final Long REQUEST_TIME_OUT = 5 * 60 * 1000L;
 
-    public static final String BUSY_OPT_TIP = "please try again later";
 
     // 推送中大奖redis key
     public static final String WEGAME_REWARD_NOTIFY_KEY_FORMAT = "wegame:reward.notify:%s";
