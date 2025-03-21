@@ -29,8 +29,8 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 @Component
-public abstract class AbstractBetStrategy<R extends ToVoConverter, BD, RD extends ToVoConverter>
-        implements BetStrategy<BD, RD> {
+public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends ToVoConverter>
+        implements BetStrategy<RD> {
     @Autowired
     public SingleWalletService singleWalletService;
     @Autowired

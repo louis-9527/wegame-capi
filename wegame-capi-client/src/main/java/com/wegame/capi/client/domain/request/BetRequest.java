@@ -8,15 +8,15 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Data
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @ApiModel(description = "投注请求参数")
 public class BetRequest implements Validate, Serializable {
     private static final long serialVersionUID = 1L;
@@ -24,14 +24,10 @@ public class BetRequest implements Validate, Serializable {
     private String gameId;
     @ApiModelProperty(value = "投注类型:NORMAL_BET,购买投注:BUY_BET", required = true)
     private String betType;
-    @ApiModelProperty(value = "投注子类型:" +
-            "NORMAL_BET:正常投注, " +
-            "FREE_SPINS_NORMAL_BET: 正常免费轮投注，" +
-            "BUY_BET:购买投注, " +
-            "FREE_SPINS_BUY_BET: 免费轮购买投注", required = true)
+    @ApiModelProperty(value = "投注子类型:" + "NORMAL_BET:正常投注, " + "FREE_SPINS_NORMAL_BET: 正常免费轮投注，" + "BUY_BET:购买投注, " + "FREE_SPINS_BUY_BET: 免费轮购买投注", required = true)
     private String betSubType;
     @ApiModelProperty(value = "投注明细,根据投注类型不同,明细不同", required = true)
-    private Object betDetail;
+    private BetDetail betDetail;
 
     @Override
     public void validateParam() {
@@ -42,8 +38,8 @@ public class BetRequest implements Validate, Serializable {
         AssertUtil.assertStrNotEmpty(betSubType, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(BetSubTypeEnum.valueOfCode(betSubType), ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betDetail, ErrorCode.ERR_PARAM);
-        //        betDetail.validateParam(GameTypeEnum.valueOfId(gameId),
-        //                BetTypeEnum.valueOfCode(betType),
-        //                BetSubTypeEnum.valueOfCode(betSubType));
+        betDetail.validateParam(GameTypeEnum.valueOfId(gameId),
+                BetTypeEnum.valueOfCode(betType),
+                BetSubTypeEnum.valueOfCode(betSubType));
     }
 }

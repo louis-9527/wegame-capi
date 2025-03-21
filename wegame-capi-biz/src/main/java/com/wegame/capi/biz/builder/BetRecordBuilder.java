@@ -16,8 +16,6 @@ public class BetRecordBuilder {
 
     public static <T> BetRecordDo<T> build(Long betRecordId,
                                            BetDo betDo,
-                                           Long betAmount,
-                                           Long payAmount,
                                            Long payOutAmount,
                                            Boolean reachMaxMultiple,
                                            List<T> gameRecordList) {
@@ -35,8 +33,8 @@ public class BetRecordBuilder {
                 .betSerialNo(String.valueOf(betRecordId))
                 .betType(betDo.getBetType().getCode())
                 .betSubType(betDo.getBetSubType().getCode())
-                .betAmount(betAmount)
-                .payAmount(payAmount)
+                .betAmount(betDo.getBetAmount())
+                .payAmount(betDo.getPayAmount())
                 .payOutAmount(payOutAmount)
                 .reachMaxMultiple(reachMaxMultiple)
                 .status(BetStatusEnum.ING.getCode())

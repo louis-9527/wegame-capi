@@ -3,15 +3,13 @@ package com.wegame.capi.biz.domain.biz.bet;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,10 +33,26 @@ public class BetDo<R> implements Serializable {
      */
     private BetSubTypeEnum betSubType;
     /**
-     * 投注详情
+     * 投注详情 todo deletet
      */
     private R betDetail;
 
-
+    /////////////////
+    /**
+     * 投注金额
+     */
+    private Long betAmount;
+    /**
+     * 支付金额
+     */
+    private Long payAmount;
+    /**
+     * 投注记录id
+     */
+    private Long betRecordId;
+    /**
+     * 免费轮游戏记录id
+     */
+    private Long gameRecordId;
 }
 
