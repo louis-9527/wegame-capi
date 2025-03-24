@@ -30,6 +30,7 @@ public class OperationEventConfigRecordConvert {
         configRecordDo.setIndex(po.getIndex());
         configRecordDo.setGameRecordIds(po.getGameRecordIds());
         configRecordDo.setWheel(po.getWheel());
+        configRecordDo.setTotalMultiple(po.getTotalMultiple());
         return configRecordDo;
     }
 
@@ -45,6 +46,7 @@ public class OperationEventConfigRecordConvert {
         po.setIndex(recordDo.getIndex());
         po.setGameRecordIds(recordDo.getGameRecordIds());
         po.setWheel(recordDo.getWheel());
+        po.setTotalMultiple(recordDo.getTotalMultiple());
         return po;
     }
 }

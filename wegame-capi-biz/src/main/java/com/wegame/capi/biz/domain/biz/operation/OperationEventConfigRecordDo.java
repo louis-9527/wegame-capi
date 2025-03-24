@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -32,10 +33,6 @@ public class OperationEventConfigRecordDo implements Serializable {
      */
     private Long betRecordId;
     /**
-     * 免费轮标识 false否 true是
-     */
-    private Boolean freeWheelFlag;
-    /**
      * 序号
      */
     private Integer index;
@@ -43,6 +40,10 @@ public class OperationEventConfigRecordDo implements Serializable {
      * 滚轮
      */
     private Object wheel;
+    /**
+     * 滚轮总倍数
+     */
+    private BigDecimal totalMultiple;
 
     /**
      * 免费轮

@@ -464,6 +464,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                     .index(recordDo.getIndex())
                     .parentId(recordDo.getParentId())
                     .wheelDo(wdWheelDo)
+                    .totalMultiple(recordDo.getTotalMultiple())
                     .build();
             recordDoList.add(build);
 
