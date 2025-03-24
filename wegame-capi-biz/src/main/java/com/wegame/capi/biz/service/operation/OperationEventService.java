@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.service.operation;
 
 import com.alibaba.fastjson.JSON;
-import com.mongodb.MongoWriteException;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
@@ -18,6 +17,7 @@ import com.wegame.capi.dao.mapper.domain.operation.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,21 +38,24 @@ public class OperationEventService extends AbstractService {
     RedisTemplate<String, Object> redisTemplate;
 
     public Long add(OperationEventDo eventDo, OperationEventTypeEnum gameEnum) {
-        OperationEventPo po = OperationEventConvert.doToPo(eventDo, OptEnum.ADD);
-        AssertUtil.assertNotNull(po, ErrorCode.ERR_INTER);
         try {
+            OperationEventPo po = OperationEventConvert.doToPo(eventDo, OptEnum.ADD);
+            AssertUtil.assertNotNull(po, ErrorCode.ERR_INTER);
             OperationEventPo insertPo = getMongoTemplate(gameEnum.getGameType()).insert(po, gameEnum.getEventCollectionName());
             String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, eventDo.getGameId(), eventDo.getPlayerName());
             redisTemplate.delete(catch_key);
             return insertPo.getId();
-        } catch (MongoWriteException e) {
-            // 11000: 重复写入
-            if (e.getCode() == 11000) {
-                return null;
-            }
+        } catch (DuplicateKeyException e) {
+            //            // 11000: 重复写入
+            //            if (e.getCode() == 11000) {
+            //                return null;
+            //            }
+            //            throw e;
+            return eventDo.getId();
+        } catch (Exception e) {
+            log.error("add error, errMsg: {}", e.getMessage(), e);
             throw e;
         }
-
     }
 
     public Boolean update(OperationEventDo eventDo, OperationEventTypeEnum dynamicOperationGame) {
