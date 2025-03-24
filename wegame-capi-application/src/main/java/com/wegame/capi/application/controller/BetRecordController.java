@@ -33,6 +33,8 @@ public class BetRecordController {
 
     public static final Map<GameTypeEnum, String> RECORD_MANAGER_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingRecordManager")
+            .put(GameTypeEnum.MALAKAS, "malakasRecordManager")
+            .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaRecordManager")
             .build();
 
     @Autowired

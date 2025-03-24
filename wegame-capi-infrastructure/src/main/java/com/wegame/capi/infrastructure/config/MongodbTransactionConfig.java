@@ -18,12 +18,38 @@ import java.util.concurrent.TimeUnit;
 public class MongodbTransactionConfig {
 
     public static final String mariamakilingTransactionManager = "mariamakilingTransactionManager";
+    public static final String malakasTransactionManager = "malakasTransactionManager";
+    public static final String ibongadarnaTransactionManager = "ibongadarnaTransactionManager";
     @Autowired
     MongoTemplate mariamakilingMongoTemplate;
+    @Autowired
+    MongoTemplate malakasMongoTemplate;
+    @Autowired
+    MongoTemplate ibongadarnaMongoTemplate;
 
     @Bean(name = mariamakilingTransactionManager)
     public MongoTransactionManager mariamakilingTransactionManager() {
         MongoTransactionManager manager = new MongoTransactionManager(mariamakilingMongoTemplate.getMongoDbFactory());
+        TransactionOptions options = TransactionOptions.builder()
+                .maxCommitTime(20L, TimeUnit.SECONDS)
+                .build();
+        manager.setOptions(options);
+        return manager;
+    }
+
+    @Bean(name = malakasTransactionManager)
+    public MongoTransactionManager malakasTransactionManager() {
+        MongoTransactionManager manager = new MongoTransactionManager(mariamakilingMongoTemplate.getMongoDbFactory());
+        TransactionOptions options = TransactionOptions.builder()
+                .maxCommitTime(20L, TimeUnit.SECONDS)
+                .build();
+        manager.setOptions(options);
+        return manager;
+    }
+
+    @Bean(name = ibongadarnaTransactionManager)
+    public MongoTransactionManager ibongadarnaTransactionManager() {
+        MongoTransactionManager manager = new MongoTransactionManager(ibongadarnaMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)
                 .build();

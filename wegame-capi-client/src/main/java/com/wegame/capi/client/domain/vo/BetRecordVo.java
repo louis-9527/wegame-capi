@@ -1,6 +1,7 @@
 package com.wegame.capi.client.domain.vo;
 
 import com.wegame.base.Validate;
+import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaGameRecordVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -96,6 +96,12 @@ spring:
         maria_makiling_mdb:
           uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/makiling?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           db: makiling
+        malakas_mdb:
+          uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/malakas?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
+          db: malakas
+        ibong_adarna_mdb:
+          uri: mongodb+srv://uatMakilingSERvice:vImchf4Zpgx20OJD@makiling-uat-pri.ac9hy.mongodb.net/ibong?retryWrites=false&w=majority
+          db: ibong
 ## fastjson
 fastjson:
   parser:
@@ -134,6 +140,18 @@ pulsar:
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
+    malakas:
+      url: pulsar://pulsar.makillingslot.net:6650
+      tenant: ${spring.application.name}_Malakas
+      namespace: ${spring.application.env}
+      bet_topic: Malakas_topic
+      bet_deadLetter_topic: Malakas_deadLetter_topic
+    ibong_adarna:
+      url: pulsar://pulsar.makillingslot.net:6650
+      tenant: ${spring.application.name}_IbongAdarna
+      namespace: ${spring.application.env}
+      bet_topic: IbongAdarna_topic
+      bet_deadLetter_topic: IbongAdarna_deadLetter_topic
 #lark
 lark:
   robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

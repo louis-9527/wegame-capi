@@ -23,14 +23,24 @@ public class Constants {
             "if redis.call('LLEN', key) > maxSize then\n" +
             "    redis.call('LTRIM', key, -maxSize, -1)\n" +
             "end";
+    public static final Integer WEGAME_MARIA_REWARD_NOTIFY_SIZE = 10;
+    public static final Integer WEGAME_MALAKA_REWARD_NOTIFY_SIZE = 10;
+    public static final Integer WEGAME_IBONG_REWARD_NOTIFY_SIZE = 10;
     public static final Integer WEGAME_REWARD_NOTIFY_SIZE = 10;
+    // maria推送大奖tips内容
+    public static final String MARIA_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+    public static final String MALAKA_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
     // 推送大奖tips内容
     public static final String WEGAME_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+
+    // ibong推送大奖tips内容 XXXX won 20x rewards ，₱ 99999
+    public static final String IBONG_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
 
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
 
+    public static final int CONST_100 = 100;
     public static final int CONST_10000 = 10000;
     public static final int CONST_1000000 = 1000000;
 

@@ -14,10 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum SymbolSizeEnum {
 
-    S("S", "小"),
-    M("M", "中"),
-    L("L", "大"),
-    XL("XL", "超大"),
+    S("S", "小", 1),
+    M("M", "中", 2),
+    L("L", "大", 3),
+    XL("XL", "超大", 4),
 
 
     ;
@@ -26,21 +26,27 @@ public enum SymbolSizeEnum {
      * 元素id.
      */
     private final String code;
-
     /**
-     * 元素名称.
+     * 元素大小名称.
      */
     private final String name;
+    /**
+     * 元素跨行
+     */
+    private final int rowSpan;
+
 
     /**
      * 私有构造方法.
      *
-     * @param code code
-     * @param name 名称
+     * @param code      code
+     * @param name      名称
+     * @param rowSpan 跨行
      */
-    SymbolSizeEnum(String code, String name) {
+    SymbolSizeEnum(String code, String name, int rowSpan) {
         this.code = code;
         this.name = name;
+        this.rowSpan = rowSpan;
     }
 
     public static SymbolSizeEnum valueOfCode(String code) {
@@ -58,5 +64,23 @@ public enum SymbolSizeEnum {
 
     public String getName() {
         return name;
+    }
+
+    public int getRowSpan() {
+        return rowSpan;
+    }
+
+    public static int getSymbolClearTimes(SymbolSizeEnum symbolSize) {
+        switch (symbolSize) {
+            case S:
+                return 1;
+            case M:
+                return 2;
+            case L:
+                return 3;
+            case XL:
+                return 4;
+        }
+        return 0;
     }
 }

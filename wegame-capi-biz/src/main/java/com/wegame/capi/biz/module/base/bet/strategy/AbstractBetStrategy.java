@@ -44,6 +44,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
 
     public long generateBetRecordId() {
         long betRecordId = snowflakeIdGenerator.nextId();
+        // todo delete @maidong
+        log.info("generateBetRecordId: {}", betRecordId);
         return betRecordId;
     }
 
@@ -60,6 +62,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
 
     private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         Long betRecordId = getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
+        log.info("syncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordId);
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
@@ -76,6 +79,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     }
 
     public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+        // todo delete @maidong
+        log.info("asyncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordDo.getId());
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
         //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
