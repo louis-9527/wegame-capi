@@ -41,11 +41,12 @@ public class OperationEventService extends AbstractService {
         OperationEventPo po = OperationEventConvert.doToPo(eventDo, OptEnum.ADD);
         AssertUtil.assertNotNull(po, ErrorCode.ERR_INTER);
         try {
-            OperationEventPo insert = getMongoTemplate(gameEnum.getGameType()).insert(po, gameEnum.getEventCollectionName());
+            OperationEventPo insertPo = getMongoTemplate(gameEnum.getGameType()).insert(po, gameEnum.getEventCollectionName());
             String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, eventDo.getGameId(), eventDo.getPlayerName());
             redisTemplate.delete(catch_key);
-            return insert.getId();
+            return insertPo.getId();
         } catch (MongoWriteException e) {
+            // 11000: 重复写入
             if (e.getCode() == 11000) {
                 return null;
             }
