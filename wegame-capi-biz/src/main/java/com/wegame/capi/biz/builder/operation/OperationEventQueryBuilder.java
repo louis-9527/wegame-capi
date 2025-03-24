@@ -53,7 +53,7 @@ public class OperationEventQueryBuilder {
         if (Objects.nonNull(recordQuery.getCreateTimeLt())) {
             criteria.and("createTime").lt(recordQuery.getCreateTimeLt());
         }
-        if (!Objects.isNull(recordQuery.getLtLastId())) {
+        if (Objects.nonNull(recordQuery.getLtLastId())) {
             criteria.and("_id").lt(recordQuery.getLtLastId());
         }
         return criteria;
