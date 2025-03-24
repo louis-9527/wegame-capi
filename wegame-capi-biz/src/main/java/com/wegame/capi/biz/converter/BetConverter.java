@@ -32,8 +32,9 @@ public class BetConverter {
                 .gameRecordId(StringUtils.isNotEmpty(betRequest.getBetDetail().getGameRecordId())
                         ? Long.valueOf(betRequest.getBetDetail().getGameRecordId())
                         : null)
+                .useStarCart(betRequest.getBetDetail().isUserStarCart())
+                .rewardConfigId(betRequest.getBetDetail().getRewardConfigId())
+                .rewardId(betRequest.getBetDetail().getRewardId())
                 .build();
     }
-
-
 }

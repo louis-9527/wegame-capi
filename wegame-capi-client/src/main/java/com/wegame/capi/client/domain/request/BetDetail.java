@@ -35,6 +35,13 @@ public class BetDetail implements BetRequestValidate, Serializable {
     private String betRecordId;
     @ApiModelProperty(value = "免费轮游戏记录ID, 非必填", required = false)
     private String gameRecordId;
+    // 星卡投注
+    @ApiModelProperty(value = "使用星卡, 非必填", required = false)
+    private boolean userStarCart;
+    @ApiModelProperty(value = "奖励配置id", required = true)
+    private String rewardConfigId;
+    @ApiModelProperty(value = "奖励id", required = true)
+    private String rewardId;
 
     @Override
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
@@ -70,7 +77,11 @@ public class BetDetail implements BetRequestValidate, Serializable {
         } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
+                if (userStarCart) {
+                    AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
+                } else {
+                    AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
+                }
             } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
@@ -81,6 +92,17 @@ public class BetDetail implements BetRequestValidate, Serializable {
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
+        }
+        validateStartCartBet(gameType, betType, betSubType);
+    }
+
+    private void validateStartCartBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        // 判断是否使用星卡
+        if (userStarCart) {
+            AssertUtil.assertNotNull(rewardConfigId, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(rewardId, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType, ErrorCode.ERR_PARAM);
         }
     }
 

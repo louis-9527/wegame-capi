@@ -49,6 +49,18 @@ public class BetDo implements Serializable {
      * 免费轮游戏记录id
      */
     private Long gameRecordId;
-    ////////////////
+    /////////////// 星卡投注 ///////////////
+    /**
+     * 使用星卡
+     */
+    private boolean useStarCart;
+    /**
+     * 奖励配置id
+     */
+    private String rewardConfigId;
+    /**
+     * Reward id
+     */
+    private String rewardId;
 }
 
