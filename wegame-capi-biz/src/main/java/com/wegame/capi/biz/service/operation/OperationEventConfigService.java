@@ -6,6 +6,7 @@ import com.wegame.capi.biz.converter.operation.OperationEventConfigConvert;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
+import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.operation.OperationEventConfigPo;
 import com.wegame.capi.dao.mapper.domain.operation.OperationEventConfigQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +14,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.converter.operation.OperationEventConfigConvert.doToPo;
@@ -36,11 +40,18 @@ public class OperationEventConfigService extends AbstractService {
         return insert.getId();
     }
 
-    public List<List<OperationEventConfigDo>> getConfigDetail(OperationEventConfigQuery query, OperationEventTypeEnum typeEnum) {
-        List<OperationEventConfigPo> poList = getMongoTemplate(typeEnum.getGameType()).find(OperationEventConfigQueryBuilder.buildQuery(query),
+    public List<List<Long>> getConfigIds(OperationEventConfigQuery query, OperationEventTypeEnum typeEnum) {
+        Query recordQuery = OperationEventConfigQueryBuilder.buildQuery(query);
+        recordQuery.fields().include("_id");
+        List<OperationEventConfigPo> poList = getMongoTemplate(typeEnum.getGameType()).find(recordQuery,
                 OperationEventConfigPo.class,
                 typeEnum.getEventConfigCollectionName());
-        List<OperationEventConfigDo> doList = OperationEventConfigConvert.poToDoList(poList);
+
+        List<Long> doList = Optional.of(poList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(OperationEventConfigPo::getId)
+                .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(doList)) {
             return new ArrayList<>();
         }

@@ -24,7 +24,7 @@ import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.mar
 public class MariaMakilingOperationEventManager extends AbstractOperationEventManager<SymbolDo> {
     // 使用 ConcurrentHashMap 进行缓存
     private static final Map<String, List<Double>> configMultipleArray = new ConcurrentHashMap<>();
-    private static final Map<Double, List<List<OperationEventConfigDo>>> normalConfigDetailArray = new ConcurrentHashMap<>();
+    private static final Map<Double, List<List<Long>>> normalConfigDetailArray = new ConcurrentHashMap<>();
 
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager)
@@ -50,9 +50,9 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
     }
 
     @Override
-    public List<List<OperationEventConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery) {
+    public List<List<Long>> getConfigIds(OperationEventConfigQuery configQuery) {
         Double multiple = configQuery.getMultiple();
-        return normalConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigDetail(configQuery));
+        return normalConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigIds(configQuery));
     }
 
     @Override

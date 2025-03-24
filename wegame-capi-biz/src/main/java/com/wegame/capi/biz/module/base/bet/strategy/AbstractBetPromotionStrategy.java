@@ -143,7 +143,6 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
 
 
     private BetResultDo<BR> betForDynamic(BetDo betDo) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
         // 判断是否命中干预
         GameEventDo<WD> eventBetResult = getDynamicOperationManager().getEventBetResult(betDo.getPayAmount());
         if (!eventBetResult.getEventResult()) {
