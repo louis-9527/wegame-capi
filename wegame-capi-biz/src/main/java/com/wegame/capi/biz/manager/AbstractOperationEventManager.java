@@ -105,6 +105,9 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                 //已完成 删除缓存并触发异步上报
                 this.asyncReportEvent(recordId);
                 continue;
+            }else if (eventDo.getEventStatus() == OperationEventStatusEnum.ING) {
+                // 当前事件有未完成的干预事件 不执行
+                continue;
             }
             // 判断金额
             if (eventDo.getFinishBonus() != null && (eventDo.getFinishBonus() >= eventDo.getMinBonus())) {
@@ -112,10 +115,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                 this.asyncUpdateFinishEvent(recordId, OperationEventSubStatusEnum.FINISH_NORMAL);
                 continue;
             }
-            if (eventDo.getEventStatus() != OperationEventStatusEnum.NONE) {
-                // 当前事件有未完成的干预事件 不执行
-                continue;
-            }
+
 
             return eventDo;
         }
@@ -444,7 +444,6 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         List<OperationEventConfigDo> configDetail = configDetailGroup.get((int) (increment - 1));
         int randomIndex = ThreadLocalRandom.current().nextInt(configDetail.size());
         OperationEventConfigDo dynamicOperationConfigDo = configDetail.get(randomIndex);
-        // todo 查询记录
         List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(dynamicOperationConfigDo.getId(), getDynamicOperationGameEnum());
        return Pair.of(dynamicOperationConfigDo.getId(),convertGameMultipleRecordDo(gameMultipleRecordDos)) ;
     }

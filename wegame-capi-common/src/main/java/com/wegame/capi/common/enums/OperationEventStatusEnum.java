@@ -15,7 +15,7 @@ import java.util.Objects;
 public enum OperationEventStatusEnum {
 
     NONE(0, "可干预"),
-    ING(1, "干预中"),
+    ING(1, "干预中(锁定状态)"),
     FINISH(2, "干预完成");
 
     /**
