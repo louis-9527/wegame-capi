@@ -2,7 +2,6 @@ package com.wegame.capi.biz.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.id.SnowflakeIdGenerator;
-import com.wegame.capi.biz.converter.operation.OperationEventConvert;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.biz.service.operation.OperationEventService;
@@ -17,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+
+import static com.wegame.capi.biz.converter.operation.OperationEventConvert.messageToDo;
 
 /**
  * 干预事件消息监听
@@ -35,14 +36,14 @@ public class OperationEventPulsarListener implements MessageListener {
     @Override
     public void received(Consumer consumer, Message msg) {
         String msgStr = new String(msg.getData());
-        log.info("accept operation event msg:{}", msgStr);
+        log.info("received operation event msg: {}", msgStr);
         OperationEventMessageDo messageDo = JSON.parseObject(msgStr, OperationEventMessageDo.class);
         boolean result = handleMessage(messageDo);
         if (result) {
             try {
                 consumer.acknowledge(msg);
             } catch (Exception e) {
-                log.error("operation event msg ack error:", e);
+                log.error("operation event msg ack error, errMsg: {}", e.getMessage(), e);
             }
         }
     }
@@ -52,25 +53,25 @@ public class OperationEventPulsarListener implements MessageListener {
             if (!Objects.equals(cpChannelId, messageDo.getChannelId())) {
                 return true;
             }
-            GameTypeEnum gameTypeEnum = GameTypeEnum.valueOfId(messageDo.getGameId());
-            if (gameTypeEnum == null) {
-                log.warn("dynamicOperation msg content error:{}", JSON.toJSONString(messageDo));
+            GameTypeEnum gameType = GameTypeEnum.valueOfId(messageDo.getGameId());
+            if (Objects.isNull(gameType)) {
+                log.warn("handleMessage error, un support gameType: {}", messageDo);
                 return true;
             }
-            OperationEventDo eventDo = OperationEventConvert.messageToDo(snowflakeIdGenerator.nextId(), messageDo);
-            if (eventDo == null) {
-                log.warn("dynamicOperation msg content error:{}", JSON.toJSONString(messageDo));
+            OperationEventDo eventDo = messageToDo(snowflakeIdGenerator.nextId(), messageDo);
+            if (Objects.isNull(eventDo)) {
+                log.warn("handleMessage error, convert error: {}", messageDo);
                 return true;
             }
-            OperationEventTypeEnum operationEventType = OperationEventTypeEnum.valueOfGameType(gameTypeEnum);
-            if(operationEventType ==null){
-                log.warn("dynamicOperation operationEventType error error:{}", JSON.toJSONString(messageDo));
+            OperationEventTypeEnum operationEventType = OperationEventTypeEnum.valueOfGameType(gameType);
+            if (Objects.isNull(operationEventType)) {
+                log.warn("handleMessage error, un support operationEventType, errMsg: {}", messageDo);
                 return true;
             }
             operationEventService.add(eventDo, operationEventType);
             return true;
         } catch (Exception e) {
-            log.error("Message moved acknowledge error:", e);
+            log.error("handleMessage error, errMsg: {}", e.getMessage(), e);
             return false;
         }
     }

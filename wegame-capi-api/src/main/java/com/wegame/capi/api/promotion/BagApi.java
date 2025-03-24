@@ -120,11 +120,11 @@ public class BagApi extends PromotionBaseApi {
     }
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
-    public GetRewardDetailRes getRewardById(GetBagRewardByIdReq req) {
+    public GetRewardDetailRes getRewardDetail(GetRewardDetailReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<GetBagRewardByIdReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REWARD_DETAIL_URL_FORMAT, promotionDomain)));
+            RequestEntity<GetRewardDetailReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REWARD_DETAIL_URL_FORMAT, promotionDomain)));
             ResponseEntity<CommonRes<GetRewardDetailRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetRewardDetailRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);

@@ -21,7 +21,7 @@ public class MissionService {
     MissionApi missionApi;
 
     public DailyMissionDo getDailyMission() {
-        GetDailyMissionRes getDailyMissionRes = missionApi.getDailyMission(MissionReqBuilder.buildGetDailyMissionReq());
+        GetDailyMissionRes getDailyMissionRes = missionApi.getDailyMission(MissionReqBuilder.buildReq());
         AssertUtil.assertNotNull(getDailyMissionRes.getDailyMissionList(), ErrorCode.ERR_PARAM);
         return toDo(getDailyMissionRes);
     }

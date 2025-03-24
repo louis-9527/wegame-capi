@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class MissionReqBuilder {
 
-    public static GetDailyMissionReq buildGetDailyMissionReq() {
+    public static GetDailyMissionReq buildReq() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         return GetDailyMissionReq.builder()

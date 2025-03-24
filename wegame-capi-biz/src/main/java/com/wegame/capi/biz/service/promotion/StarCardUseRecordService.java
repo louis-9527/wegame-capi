@@ -4,11 +4,8 @@ import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.api.domain.res.CommonRes;
-import com.wegame.capi.api.domain.res.promotion.RedeemRewardRes;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.builder.StarCardUseRecordQueryBuilder;
-import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -19,7 +16,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.biz.builder.req.RedeemRewardReqBuilder.build;
 import static com.wegame.capi.biz.converter.promotion.StartCardUseRecordConvert.doToPo;
 
 /**
