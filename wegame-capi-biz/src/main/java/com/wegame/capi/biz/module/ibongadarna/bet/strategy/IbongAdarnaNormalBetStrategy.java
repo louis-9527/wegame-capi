@@ -13,6 +13,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -57,7 +58,7 @@ public class IbongAdarnaNormalBetStrategy extends AbstractIbongAdarnaBetStrategy
                     .rewardContent(String.format(Constants.IBONG_REWARD_NOTIFY_CONTENT_FORMAT,
                             userInfo.getUserName(),
                             multiple,
-                            NumberUtil.decimalFormat("#,##0.00", NumberUtil.div(totalRewardAmount, 100))))
+                            NumberUtil.decimalFormat("#,##0.000", AmountUtil.toBigDecimal(totalRewardAmount))))
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
