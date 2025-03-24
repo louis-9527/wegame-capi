@@ -5,7 +5,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
-import com.wegame.capi.biz.manager.AbstractOperationEventManager;
+import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.operation.OperationEventDetailService;
 import com.wegame.capi.biz.service.operation.OperationEventService;
