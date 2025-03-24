@@ -4,12 +4,11 @@ import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.converter.RewardInfoConverter;
 import com.wegame.capi.biz.service.RewardService;
-import com.wegame.capi.client.domain.vo.RewardInfoVo;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.domain.vo.RewardInfoVo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static com.wegame.base.domain.CommonResponse.build;
+import static com.wegame.capi.biz.converter.RewardInfoConverter.doToVo;
+
 /**
  * 中奖模块
  */
 @Slf4j
 @RestController
 @RequestMapping("reward")
-@Api(value = "中奖模块", tags = {"中奖模块"})
+@Api(value = "奖励模块", tags = {"奖励模块"})
 public class RewardController extends AbstractController {
 
     @Autowired
@@ -41,6 +43,6 @@ public class RewardController extends AbstractController {
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         noCacheControl(response);
-        return CommonResponse.build(RewardInfoConverter.doToVo(rewardService.getWithCache(gameType)));
+        return build(doToVo(rewardService.getWithCache(gameType)));
     }
 }
