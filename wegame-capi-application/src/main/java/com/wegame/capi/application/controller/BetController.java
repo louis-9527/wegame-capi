@@ -2,9 +2,6 @@ package com.wegame.capi.application.controller;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.biz.converter.BetConverter;
-import com.wegame.capi.biz.converter.BetResultConverter;
-import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.service.BetService;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.vo.BetResultVo;
@@ -16,6 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.wegame.base.domain.CommonResponse.build;
+import static com.wegame.capi.biz.converter.BetConverter.requestToDo;
+import static com.wegame.capi.biz.converter.BetResultConverter.doToVo;
 
 @Slf4j
 @RestController
@@ -29,9 +30,8 @@ public class BetController {
     @LoginRequired
     @ApiOperation(value = "投注", httpMethod = "POST")
     @PostMapping("/bet")
-    public CommonResponse<BetResultVo> bet(@RequestBody BetRequest betRequest) {
-        betRequest.validate();
-        BetResultDo betResultDo = betService.bet(BetConverter.requestToDo(betRequest));
-        return CommonResponse.build(BetResultConverter.doToVo(betResultDo));
+    public CommonResponse<BetResultVo> bet(@RequestBody BetRequest request) {
+        request.validate();
+        return build(doToVo(betService.bet(requestToDo(request))));
     }
 }

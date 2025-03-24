@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Data
 @ToString

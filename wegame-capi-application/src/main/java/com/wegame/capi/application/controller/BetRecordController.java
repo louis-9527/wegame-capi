@@ -71,7 +71,7 @@ public class BetRecordController {
         BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id), userInfo.getPlayerId(), gameType);
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
-        betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(Long.parseLong(id), GameTypeEnum.valueOfId(userInfo.getGameId())));
+        betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(Long.parseLong(id), gameType));
         return CommonResponse.build(betRecordVo);
     }
 
