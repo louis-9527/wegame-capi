@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -46,6 +47,7 @@ public class UserLoginRequest implements Validate, Serializable {
         AssertUtil.assertStrNotEmpty(pId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(channelId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(gameId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(GameTypeEnum.valueOfId(gameId), ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(playerName.length() <= 50, ErrorCode.ERR_PARAM);
         if (StringUtils.isNotBlank(nickName)) {
