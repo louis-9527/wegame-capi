@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.builder.operation.OperationEventDetailBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -145,7 +146,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
             BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, eventBetResult);
             betRecordDo.setIeId(eventBetResult.getDynamicOperationEvent().getEventId());
             // 构建并保存干预记录
-            Long detailId = this.saveEventDetail(userInfo, generateBetRecordId(), betRecordDo, eventBetResult);
+            Long detailId = this.saveEventDetail(generateBetRecordId(), betRecordDo, eventBetResult);
             // 投注并派奖
             SingleWalletBetResultDo resultDo = super.saveBetRecordAndBetWithPayout(betRecordDo, this.hasRewardFreeWheel(betRecordDo.getGameRecordList()));
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
@@ -197,29 +198,8 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
     }
 
 
-    private Long saveEventDetail(UserInfo userInfo, Long recordId, BetRecordDo betRecordDo, GameEventDo eventDo) {
-        // 扣减流水
-        OperationEventDetailDo detailDo = new OperationEventDetailDo();
-        detailDo.setId(recordId);
-        detailDo.setEventRecordId(eventDo.getDynamicOperationEvent().getId());
-        detailDo.setEventId(eventDo.getDynamicOperationEvent().getEventId());
-        detailDo.setBetRecordId(betRecordDo.getId());
-        detailDo.setConfigId(eventDo.getConfigId());
-        detailDo.setBetAmount(betRecordDo.getPayAmount());
-        detailDo.setPayOutAmount(betRecordDo.getPayOutAmount());
-        detailDo.setEventAmount(betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount());
-        detailDo.setBetTime(betRecordDo.getCreateTime());
-        detailDo.setPayOutTime(betRecordDo.getCreateTime());
-        detailDo.setPlayerName(userInfo.getPlayerName());
-        detailDo.setPlayerId(userInfo.getPlayerId());
-        detailDo.setUserId(userInfo.getId());
-        detailDo.setGameId(eventDo.getDynamicOperationEvent().getGameId());
-        detailDo.setChannelId(eventDo.getDynamicOperationEvent().getChannelId());
-        long currentMilli = DateUtil.getCurrentMilli();
-        detailDo.setCreateTime(currentMilli);
-        detailDo.setUpdateTime(currentMilli);
-        detailDo.setBetStatus(BetStatusEnum.ING);
-        return getDynamicOperationManager().addEventDetail(detailDo);
+    private Long saveEventDetail(Long eventDetailId, BetRecordDo betRecordDo, GameEventDo eventDo) {
+        return getDynamicOperationManager().addEventDetail(OperationEventDetailBuilder.build(eventDetailId, betRecordDo, eventDo));
     }
 
     /**

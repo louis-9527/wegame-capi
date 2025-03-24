@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static com.wegame.capi.biz.converter.operation.OperationEventConfigConvert.doToPo;
 
 /**
- * 干预事件配置服务
+ * 干预事件配置服务：投注记录模版
  */
 @Slf4j
 @Service
@@ -30,14 +30,14 @@ public class OperationEventConfigService extends AbstractService {
 
     private static final int partitionSize = 10;
 
-    public Long add(OperationEventConfigDo configDo, OperationEventTypeEnum dynamicOperationGame) {
-        OperationEventConfigPo insert = getMongoTemplate(dynamicOperationGame.getGameType()).insert(doToPo(configDo),
-                dynamicOperationGame.getEventConfigCollectionName());
+    public Long add(OperationEventConfigDo configDo, OperationEventTypeEnum typeEnum) {
+        OperationEventConfigPo insert = getMongoTemplate(typeEnum.getGameType()).insert(doToPo(configDo),
+                typeEnum.getEventConfigCollectionName());
         return insert.getId();
     }
 
-    public List<List<OperationEventConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery, OperationEventTypeEnum typeEnum) {
-        List<OperationEventConfigPo> poList = getMongoTemplate(typeEnum.getGameType()).find(OperationEventConfigQueryBuilder.buildQuery(configQuery),
+    public List<List<OperationEventConfigDo>> getConfigDetail(OperationEventConfigQuery query, OperationEventTypeEnum typeEnum) {
+        List<OperationEventConfigPo> poList = getMongoTemplate(typeEnum.getGameType()).find(OperationEventConfigQueryBuilder.buildQuery(query),
                 OperationEventConfigPo.class,
                 typeEnum.getEventConfigCollectionName());
         List<OperationEventConfigDo> doList = OperationEventConfigConvert.poToDoList(poList);
