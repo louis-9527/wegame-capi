@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -25,6 +26,10 @@ public class GameMultipleRecordDo<WD extends SymbolDo> {
     private Integer index;
 
     private WheelDo<WD> wheelDo;
+    /**
+     * 滚轮总倍数
+     */
+    private BigDecimal totalMultiple;
     /**
      * 免费轮ID
      */
