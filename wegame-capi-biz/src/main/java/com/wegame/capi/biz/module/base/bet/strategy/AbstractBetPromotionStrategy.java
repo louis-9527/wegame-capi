@@ -95,6 +95,8 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
                 .gameId(this.getGame().getGameInfo().getGameType().getId())
                 .betAmount(betDo.getBetAmount())
                 .playerId(userInfo.getPlayerId())
+                .rewardId(betDo.getRewardId())
+                .rewardConfigId(betDo.getRewardConfigId())
                 .playName(userInfo.getPlayerName()).build();
         Long useRecordId = startCardUseRecordService.add(recordDo, this.getGame().getGameInfo().getGameType());
 
@@ -107,6 +109,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
             StarCardUseRecordDo updateRecord = StarCardUseRecordDo.builder()
                     .id(useRecordId)
                     .useStatus(StarCardUseStatusEnum.FAIL)
+                    .reportStatus(StarCardReportStatusEnum.NONE)
                     .failMsg(rewardResult.getMessage())
                     .playName(userInfo.getPlayerName()).build();
             startCardUseRecordService.update(updateRecord, this.getGame().getGameInfo().getGameType());
@@ -197,7 +200,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
 
     private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(BetDo betDo) {
         BetRecordDo<R> rBetRecordDo = loadBetRecordDo(betDo);
-        RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
+        RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), betDo.getPayAmount(), rBetRecordDo.getId());
         if (rewardResult.getSuccess()) {
             return Pair.of(rewardResult, rBetRecordDo);
         } else if (Objects.equals(RedeemRewardResStatusEnum.INSUFFICIENT_CREDIT.getCode(), rewardResult.getStatus())) {

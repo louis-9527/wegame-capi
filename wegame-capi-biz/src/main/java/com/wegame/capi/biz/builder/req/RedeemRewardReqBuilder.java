@@ -24,8 +24,8 @@ public class RedeemRewardReqBuilder {
                 .channelId(userInfo.getChannelId())
                 .createTime(DateUtil.toUTC(new Date()))
                 .rewardId(rewardId)
-                .payoutAmount(AmountUtil.toBigDecimal(payoutAmount))
-                .betWIthPayoutRefId(String.valueOf(betWithPayoutRefId))
+                .payoutAmount(AmountUtil.toBigDecimal(payoutAmount).toString())
+                .betWithPayoutRefId(String.valueOf(betWithPayoutRefId))
                 .build();
     }
 }

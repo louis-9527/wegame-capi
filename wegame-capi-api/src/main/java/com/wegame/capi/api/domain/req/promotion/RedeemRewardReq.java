@@ -21,9 +21,9 @@ public class RedeemRewardReq extends BaseReq {
     /**
      * 派奖金额
      */
-    private BigDecimal payoutAmount;
+    private String payoutAmount;
     /**
      * 投注ID(三方游戏)
      */
-    private String betWIthPayoutRefId;
+    private String betWithPayoutRefId;
 }
