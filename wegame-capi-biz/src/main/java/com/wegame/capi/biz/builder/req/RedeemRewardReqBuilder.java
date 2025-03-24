@@ -14,7 +14,7 @@ import java.util.Date;
 
 public class RedeemRewardReqBuilder {
 
-    public static RedeemRewardReq build(String rewardId, Long payoutAmount, Long betWithPayoutRefId) {
+    public static RedeemRewardReq buildReq(String rewardId, Long payoutAmount, Long betWithPayoutRefId) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         return RedeemRewardReq.builder()

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.List;
 
-import static com.wegame.capi.biz.builder.req.RedeemRewardReqBuilder.build;
+import static com.wegame.capi.biz.builder.req.RedeemRewardReqBuilder.buildReq;
 
 /**
  * 背包service
@@ -104,7 +104,7 @@ public class BagService {
      * 核销-使用星卡
      */
     public RedeemRewardResultDo use(String rewardId, Long payoutAmount, Long betWithPayoutRefId) {
-        CommonRes<RedeemRewardRes> res = bagApi.redeemReward(build(rewardId, payoutAmount, betWithPayoutRefId));
+        CommonRes<RedeemRewardRes> res = bagApi.redeemReward(buildReq(rewardId, payoutAmount, betWithPayoutRefId));
         return RedeemRewardResultDo.builder()
                 .success(res.isSuc())
                 .status(res.getStatus())

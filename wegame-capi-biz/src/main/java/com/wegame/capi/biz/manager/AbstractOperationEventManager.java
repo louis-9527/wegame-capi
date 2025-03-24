@@ -9,7 +9,7 @@ import com.wegame.capi.api.domain.req.operation.UpdateEventsStatusReq;
 import com.wegame.capi.api.domain.res.operation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import com.wegame.capi.api.operation.OperationEventApi;
-import com.wegame.capi.biz.builder.req.DynamicOperationStatusReportBuilder;
+import com.wegame.capi.biz.builder.req.UpdateEventsBetRecordReqBuilder;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GameMultipleRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.*;
@@ -366,7 +366,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
                     }
                     betNos.add(eventDetail.getBetId());
                     totalAmount += eventDetail.getPayOutAmount();
-                    betRecords.add(DynamicOperationStatusReportBuilder.updateEventsBetRecordReqBuild(eventDetail));
+                    betRecords.add(UpdateEventsBetRecordReqBuilder.buildReq(eventDetail));
                 }
             }
             UpdateEventsStatusReq updateEventsStatusReq = UpdateEventsStatusReq.builder()
