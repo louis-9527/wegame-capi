@@ -30,8 +30,8 @@ public class BetController {
     @LoginRequired
     @ApiOperation(value = "投注", httpMethod = "POST")
     @PostMapping("/bet")
-    public CommonResponse<BetResultVo> bet(@RequestBody BetRequest reqest) {
-        reqest.validate();
-        return build(doToVo(betService.bet(requestToDo(reqest))));
+    public CommonResponse<BetResultVo> bet(@RequestBody BetRequest request) {
+        request.validate();
+        return build(doToVo(betService.bet(requestToDo(request))));
     }
 }
