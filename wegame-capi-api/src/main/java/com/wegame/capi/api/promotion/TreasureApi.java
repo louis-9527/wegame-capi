@@ -59,20 +59,21 @@ public class TreasureApi extends PromotionBaseApi {
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public RedeemTreasureRes redeemTreasure(RedeemTreasureReq req) {
         try {
-            assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<RedeemTreasureReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_TREASURE, promotionDomain)));
-            ResponseEntity<CommonRes<RedeemTreasureRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemTreasureRes>>() {
-            });
-            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            // todo 麦冬：特殊处理，后续单钱包接口支持幂等后移除
-            if (Objects.equals(responseEntity.getBody().getStatus(), SingleWalletPromotionResStatusEnum.TREASURE_ALREADY_REDEEMED.getCode())) {
-                throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_TREASURE_REDEEMED, responseEntity.getBody().getMessage());
-            }
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
+            throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_TREASURE_REDEEMED);
+//            assembleSingleSignature(req);
+//            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
+//            RequestEntity<RedeemTreasureReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_TREASURE, promotionDomain)));
+//            ResponseEntity<CommonRes<RedeemTreasureRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemTreasureRes>>() {
+//            });
+//            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
+//            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
+//            // todo 麦冬：特殊处理，后续单钱包接口支持幂等后移除
+//            if (Objects.equals(responseEntity.getBody().getStatus(), SingleWalletPromotionResStatusEnum.TREASURE_ALREADY_REDEEMED.getCode())) {
+//                throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_TREASURE_REDEEMED, responseEntity.getBody().getMessage());
+//            }
+//            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+//            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+//            return responseEntity.getBody().getData();
         } catch (BusinessException e) {
             log.error("redeemTreasure BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw e;
