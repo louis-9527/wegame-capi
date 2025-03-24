@@ -79,7 +79,7 @@ public class BagApi extends PromotionBaseApi {
 
     /**
      * 核销星卡
-     *    00 成功
+     *  •   00 成功
      * 	•	5001 无效的奖励
      * 	•	5002 未找到成就
      * 	•	5003 无效的兑换 ID

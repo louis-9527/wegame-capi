@@ -26,12 +26,15 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.RedeemRewardResStatusEnum;
 import com.wegame.capi.common.enums.StarCardReportStatusEnum;
 import com.wegame.capi.common.enums.StarCardUseStatusEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -91,7 +94,6 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
                 .id(super.generateBetRecordId())
                 .gameId(this.getGame().getGameInfo().getGameType().getId())
                 .betAmount(betDo.getBetAmount())
-                // .payOutAmount(rBetRecordDo.getPayOutAmount())
                 .playerId(userInfo.getPlayerId())
                 .playName(userInfo.getPlayerName()).build();
         Long useRecordId = startCardUseRecordService.add(recordDo, this.getGame().getGameInfo().getGameType());
@@ -108,7 +110,10 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
                     .failMsg(rewardResult.getMessage())
                     .playName(userInfo.getPlayerName()).build();
             startCardUseRecordService.update(updateRecord, this.getGame().getGameInfo().getGameType());
-            throw new BusinessException(ErrorCode.ERR_PARAM);
+            if(rewardResult.getErrorCode() !=null) {
+                throw new BusinessException(rewardResult.getErrorCode());
+            }
+            throw new BusinessException(ErrorCode.ERR_INTER);
         }
         // 更新星卡使用状态-成功
         StarCardUseRecordDo updateRecord = StarCardUseRecordDo.builder()
@@ -122,13 +127,13 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             // 更新星卡上报状态->无需上报
-            StarCardUseRecordDo updateRecord2 = StarCardUseRecordDo.builder()
+            StarCardUseRecordDo updateSuccessRecord = StarCardUseRecordDo.builder()
                     .id(useRecordId)
                     .reportStatus(StarCardReportStatusEnum.NONE)
                     .playName(userInfo.getPlayerName()).build();
-            startCardUseRecordService.update(updateRecord2, this.getGame().getGameInfo().getGameType());
+            startCardUseRecordService.update(updateSuccessRecord, this.getGame().getGameInfo().getGameType());
         } else {
-            // todo 调用单钱包失败需要上报
+            // todo 调用单钱包失败需要上报,待成就系统开发完成接入
         }
         return this.buildResult(rBetRecordDo, resultDo);
     }
@@ -185,15 +190,36 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
         return loadBetRecordDo(betDo, null);
     }
 
+    /**
+     * 核销星卡
+     * 如果第一次返回5017(超过最大限额度),需要重试
+     */
+
     private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(BetDo betDo) {
-        BetRecordDo<R> rBetRecordDo;
-        int i = 0;
-        RedeemRewardResultDo rewardResult;
-        do {
-            rBetRecordDo = loadBetRecordDo(betDo);
+        BetRecordDo<R> rBetRecordDo = loadBetRecordDo(betDo);
+        RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
+        if (rewardResult.getSuccess()) {
+            return Pair.of(rewardResult, rBetRecordDo);
+        } else if (Objects.equals(RedeemRewardResStatusEnum.INSUFFICIENT_CREDIT.getCode(), rewardResult.getStatus())) {
+            // 余额-不足
+            rewardResult.setErrorCode(ErrorCode.INSUFFICIENT_CREDIT);
+            return Pair.of(rewardResult, rBetRecordDo);
+        } else if (Objects.equals(RedeemRewardResStatusEnum.INVALID_REWARD_PAYOUT.getCode(), rewardResult.getStatus())) {
+            // 派奖金额超过限制
+            long maxPay = AmountUtil.toLong(new BigDecimal(rewardResult.getMessage()));
+            for (int i = 1; i <= 10; i++) {
+                rBetRecordDo = loadBetRecordDo(betDo);
+                if (rBetRecordDo.getPayAmount() < maxPay) {
+                    break;
+                }
+                // 如果重试10次都未获取到结果,返回异常
+                if (i == 10) {
+                    rewardResult.setErrorCode(ErrorCode.ERR_MIDDLE_PLATFORM);
+                    return Pair.of(rewardResult, rBetRecordDo);                }
+            }
             rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
-            i++;
-        } while (rewardResult.getSuccess() || i > 10);
+            return Pair.of(rewardResult, rBetRecordDo);
+        }
         return Pair.of(rewardResult, rBetRecordDo);
     }
 
