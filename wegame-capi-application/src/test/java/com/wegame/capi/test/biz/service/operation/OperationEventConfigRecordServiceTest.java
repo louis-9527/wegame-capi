@@ -35,7 +35,7 @@ public class OperationEventConfigRecordServiceTest extends BaseTest {
         List<Long> ks = new ArrayList<>();
         ks.add(1002L);
         recordDo.setGameRecordIds(ks);
-        recordDo.setFreeWheelFlag(false);
+        // recordDo.setFreeWheelFlag(false);
         Long id = operationEventConfigRecordService.add(recordDo, OperationEventTypeEnum.MARIA_MAKILING);
         Assert.assertNotNull(id);
     }

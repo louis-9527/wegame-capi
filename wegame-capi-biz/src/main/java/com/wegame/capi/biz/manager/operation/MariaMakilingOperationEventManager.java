@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.manager;
+package com.wegame.capi.biz.manager.operation;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -40,7 +40,7 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
     }
 
     @Override
-    public OperationEventTypeEnum getDynamicOperationGameEnum() {
+    public OperationEventTypeEnum operationEventType() {
         return OperationEventTypeEnum.MARIA_MAKILING;
     }
 
@@ -57,7 +57,7 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
 
     @Override
     public List<Double> getConfigMultipleArray() {
-        String key = this.getDynamicOperationGameEnum().getGameType().getId();
+        String key = this.operationEventType().getGameType().getId();
         return configMultipleArray.computeIfAbsent(key, k -> super.getConfigMultipleArray());
     }
 

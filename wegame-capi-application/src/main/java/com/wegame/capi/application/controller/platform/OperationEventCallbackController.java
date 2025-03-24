@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
-import com.wegame.capi.biz.manager.MariaMakilingOperationEventManager;
+import com.wegame.capi.biz.manager.operation.MariaMakilingOperationEventManager;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventEncryptRequest;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.domain.response.PlatformResponse;

@@ -17,7 +17,7 @@ import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.manager.AbstractOperationEventManager;
+import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;

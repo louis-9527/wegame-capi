@@ -47,7 +47,7 @@ public class OperationEventConfigService extends AbstractService {
         return Lists.partition(doList, partitionSize);
     }
 
-    public List<Double> getConfigMultipleArray(OperationEventTypeEnum typeEnum) {
+    public List<Double> listMultiple(OperationEventTypeEnum typeEnum) {
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.group().addToSet("multiple").as("values")
         );
