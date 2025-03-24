@@ -12,16 +12,16 @@ import java.util.stream.Collectors;
 
 public class HistoryMessageConverter {
 
-    public static List<HistoryMessageVo> toVoList(List<HistoryMessageDo> messageDoList) {
+    public static List<HistoryMessageVo> doToVoList(List<HistoryMessageDo> messageDoList) {
         return Optional.ofNullable(messageDoList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(HistoryMessageConverter::toVo)
+                .map(HistoryMessageConverter::doToVo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
-    public static HistoryMessageVo toVo(HistoryMessageDo messageDo) {
+    public static HistoryMessageVo doToVo(HistoryMessageDo messageDo) {
         if (Objects.isNull(messageDo)) {
             return null;
         }
@@ -39,7 +39,7 @@ public class HistoryMessageConverter {
         return messageVo;
     }
 
-    public static HistoryMessageDo toDo(GetHistoryMessageRes.MessageRes messageRes) {
+    public static HistoryMessageDo resToDo(GetHistoryMessageRes.MessageRes messageRes) {
         if (Objects.isNull(messageRes)) {
             return null;
         }
@@ -57,11 +57,11 @@ public class HistoryMessageConverter {
         return messageDo;
     }
 
-    public static List<HistoryMessageDo> toDoList(List<GetHistoryMessageRes.MessageRes> messageResList) {
+    public static List<HistoryMessageDo> resToDoList(List<GetHistoryMessageRes.MessageRes> messageResList) {
         return Optional.ofNullable(messageResList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(HistoryMessageConverter::toDo)
+                .map(HistoryMessageConverter::resToDo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

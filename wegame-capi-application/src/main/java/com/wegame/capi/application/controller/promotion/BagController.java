@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import static com.wegame.base.domain.CommonResponse.build;
-import static com.wegame.capi.biz.converter.promotion.HistoryMessageConverter.toVoList;
+import static com.wegame.capi.biz.converter.promotion.HistoryMessageConverter.doToVoList;
 import static com.wegame.capi.biz.converter.promotion.RewardDetailConverter.doToVo;
 
 @Slf4j
@@ -66,7 +66,7 @@ public class BagController {
     @PostMapping("/getRewardDetail")
     public CommonResponse<RewardDetailVo> getRewardStarCardDetail(@RequestBody QueryRewardDetailRequest request) {
         request.validate();
-        return build(doToVo(bagService.getByRewardConfigId(request.getRewardConfigId())));
+        return build(doToVo(bagService.getRewardDetail(request.getRewardConfigId())));
     }
 
     @LoginRequired
@@ -74,10 +74,10 @@ public class BagController {
     @PostMapping("/getHistoryMessage")
     public CommonResponse<PageInfoVo<HistoryMessageVo>> getHistoryMessage(@RequestBody QueryHistoryMessageRequest request) {
         request.validate();
-        List<HistoryMessageDo> messageDoList = bagService.getHistoryMessageList(request);
+        List<HistoryMessageDo> messageDoList = bagService.getHistoryMessage(request.getPageNo(), request.getPageSize());
         return build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                toVoList(messageDoList),
+                doToVoList(messageDoList),
                 0L));
     }
 

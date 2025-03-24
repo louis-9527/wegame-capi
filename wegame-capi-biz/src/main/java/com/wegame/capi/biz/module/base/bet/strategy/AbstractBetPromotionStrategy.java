@@ -80,7 +80,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
     private BetResultDo<BR> betForStartCard(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 查询星卡详情
-        RewardDetailDo rewordDetail = bagService.getByRewardConfigId(betDo.getRewardConfigId());
+        RewardDetailDo rewordDetail = bagService.getRewardDetail(betDo.getRewardConfigId());
         AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.ERR_PARAM);
 
