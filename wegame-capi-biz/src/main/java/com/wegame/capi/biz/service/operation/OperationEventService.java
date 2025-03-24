@@ -46,11 +46,6 @@ public class OperationEventService extends AbstractService {
             redisTemplate.delete(catch_key);
             return insertPo.getId();
         } catch (DuplicateKeyException e) {
-            //            // 11000: 重复写入
-            //            if (e.getCode() == 11000) {
-            //                return null;
-            //            }
-            //            throw e;
             return eventDo.getId();
         } catch (Exception e) {
             log.error("add error, errMsg: {}", e.getMessage(), e);

@@ -1,17 +1,15 @@
 package com.wegame.capi.test.biz.listener;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.listener.OperationEventPulsarListener;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.OperationEventKindEnum;
 import com.wegame.capi.test.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 public class OperationEventPulsarListenerTest extends BaseTest {
 
@@ -19,33 +17,27 @@ public class OperationEventPulsarListenerTest extends BaseTest {
     OperationEventPulsarListener operationEventPulsarListener;
 
     @Test
-    public void test_handleMessage(){
-        boolean ret = operationEventPulsarListener.handleMessage(buildMessageDo());
-        Assert.assertTrue(ret);
+    public void test_handleMessage() {
+        for (int i = 0; i < 2; i++) {
+            boolean ret = operationEventPulsarListener.handleMessage(buildMessageDo());
+            Assert.assertTrue(ret);
+        }
     }
 
     private OperationEventMessageDo buildMessageDo() {
-        String msgDoStr = "{\n" +
-                "    \"playerName\": \"slottest01\",\n" +
-                "    \"bonus\": 100,\n" +
-                "    \"eventId\": \"2-0692-4dc5-9f08-4a383b5d311a\",\n" +
-                "    \"eventKind\": 1,\n" +
-                "    \"gameId\": \"zhumeng001\",\n" +
-                "    \"operatorGameId\": \"d596da1e-81a7-4010-9d22-749b9c30c69c\",\n" +
-                "    \"channelId\": \"1050\",\n" +
-                "    \"strategyId\": 3,\n" +
-                "    \"orderNo\": \"Sss123\",\n" +
-                "    \"effectedTime\": \"2025-02-27T07:31:13.357Z\",\n" +
-                "    \"settlementTime\": \"2025-02-27T07:31:10.000Z\",\n" +
-                "    \"timesOrSessionDuration\": 10\n" +
-                "}";
-        return JSON.parseObject(msgDoStr, OperationEventMessageDo.class);
+        return OperationEventMessageDo.builder()
+                .playerName("slottest01")
+                .bonus(new BigDecimal(100))
+                .eventId("2-0692-4dc5-9f08-4a383b5d311a")
+                .eventKind(OperationEventKindEnum.NORMAL_URGENT.getCode())
+                .gameId(GameTypeEnum.MARIA_MAKILING.getId())
+                .operatorGameId("d596da1e-81a7-4010-9d22-749b9c30c69c")
+                .channelId("1050")
+                .strategyId("3")
+                .orderNo("Sss123")
+                .effectedTime("2025-02-27T07:31:13.357Z")
+                .settlementTime("2025-02-27T07:31:10.000Z")
+                .timesOrSessionDuration(new BigDecimal(10))
+                .build();
     }
-
-    //    public static void main(String[] args) {
-    //        String dd ="[{\"index\":0,\"symbolArr\":[[{\"_id\":\"3001\",\"name\":\"Scatter\",\"symbolType\":\"SCATTER\"},{\"_id\":\"1002\",\"name\":\"Symbol1002\",\"symbolType\":\"COMMON\"},{\"_id\":\"3001\",\"name\":\"Scatter\",\"symbolType\":\"SCATTER\"},{\"_id\":\"1002\",\"name\":\"Symbol1002\",\"symbolType\":\"COMMON\"},{\"_id\":\"1004\",\"name\":\"Symbol1004\",\"symbolType\":\"COMMON\"}]]}]";
-    //        List<WheelDo<SymbolDo>> wheelDos = JSON.parseObject(dd, new TypeReference<List<WheelDo<SymbolDo>>>() {
-    //        });
-    //        System.out.println(wheelDos);
-    //    }
 }
