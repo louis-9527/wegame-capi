@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
+import com.wegame.capi.biz.builder.GamePlayBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
@@ -32,8 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
 import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
+import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
  * Malakas游戏投注抽象接口
@@ -77,15 +80,7 @@ public abstract class AbstractMalakasBetStrategy
     private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<MalakasGameRecordDo> list = gameContext().play(GamePlayDo.builder()
-                .gamePlayType(GamePlayTypeEnum.NORMAL_PLAY)
-                .gameType(betDo.getGameType())
-                .betType(betDo.getBetType())
-                .betSubType(betDo.getBetSubType())
-                .betAmount(betDo.getBetAmount())
-                .payAmount(betDo.getPayAmount())
-                .betRecordId(betRecordId)
-                .build());
+        List<MalakasGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
@@ -123,7 +118,10 @@ public abstract class AbstractMalakasBetStrategy
                             .build())
                     .build();
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
-            throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getErrorMsg());
+            if (resultDo.getErrorCode() != null) {
+                throw new BusinessException(resultDo.getErrorCode());
+            }
+            throw new BusinessException(ErrorCode.ERR_INTER);
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
             throw new BusinessException(ErrorCode.ERR_NET);
         } else {
