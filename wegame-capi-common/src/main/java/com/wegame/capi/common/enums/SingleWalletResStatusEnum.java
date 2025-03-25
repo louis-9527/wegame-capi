@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * 盘口状态
+ * 单钱包状态
  */
 @Getter
 @ToString

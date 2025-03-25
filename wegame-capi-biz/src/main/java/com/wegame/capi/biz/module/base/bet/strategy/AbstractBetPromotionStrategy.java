@@ -92,13 +92,13 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
         // 准备核销星卡
         StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
                 .id(super.generateBetRecordId())
-                .gameId(this.getGame().getGameInfo().getGameType().getId())
+                .gameId(this.gameContext().gameInfo().getGameType().getId())
                 .betAmount(betDo.getBetAmount())
                 .playerId(userInfo.getPlayerId())
                 .rewardId(betDo.getRewardId())
                 .rewardConfigId(betDo.getRewardConfigId())
                 .playName(userInfo.getPlayerName()).build();
-        Long useRecordId = startCardUseRecordService.add(recordDo, this.getGame().getGameInfo().getGameType());
+        Long useRecordId = startCardUseRecordService.add(recordDo, this.gameContext().gameInfo().getGameType());
 
         // 核销星卡
         Pair<RedeemRewardResultDo, BetRecordDo<R>> redeemRewardResultDoBetRecord = this.rewardResult(betDo);
@@ -112,7 +112,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
                     .reportStatus(StarCardReportStatusEnum.NONE)
                     .failMsg(rewardResult.getMessage())
                     .playName(userInfo.getPlayerName()).build();
-            startCardUseRecordService.update(updateRecord, this.getGame().getGameInfo().getGameType());
+            startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
             if(rewardResult.getErrorCode() !=null) {
                 throw new BusinessException(rewardResult.getErrorCode());
             }
@@ -124,7 +124,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
                 .payOutAmount(rBetRecordDo.getPayOutAmount())
                 .useStatus(StarCardUseStatusEnum.SUCCESS)
                 .playName(userInfo.getPlayerName()).build();
-        startCardUseRecordService.update(updateRecord, this.getGame().getGameInfo().getGameType());
+        startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
         //调用投注
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(rBetRecordDo, this.hasRewardFreeWheel(rBetRecordDo.getGameRecordList()));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
@@ -134,7 +134,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
                     .id(useRecordId)
                     .reportStatus(StarCardReportStatusEnum.NONE)
                     .playName(userInfo.getPlayerName()).build();
-            startCardUseRecordService.update(updateSuccessRecord, this.getGame().getGameInfo().getGameType());
+            startCardUseRecordService.update(updateSuccessRecord, this.gameContext().gameInfo().getGameType());
         } else {
             // todo 调用单钱包失败需要上报,待成就系统开发完成接入
         }
@@ -174,7 +174,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
     private BetRecordDo<R> loadBetRecordDo(BetDo betDo, GameEventDo<WD> gameEventDo) {
         //获取投注记录
         long betRecordId = generateBetRecordId();
-        List<R> list = getGame().play(GamePlayDo.<WD>builder()
+        List<R> list = gameContext().play(GamePlayDo.<WD>builder()
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())

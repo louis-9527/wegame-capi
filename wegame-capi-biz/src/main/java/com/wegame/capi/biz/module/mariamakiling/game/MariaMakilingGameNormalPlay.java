@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
@@ -34,8 +33,8 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
-@Component
-public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilingGameRecordDo, SymbolDo> {
+@Component("mariaMakilingGameNormalPlay")
+public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameRecordDo> {
 
     // ONE_COLUM_INDEX,THREE_COLUM_INDEX,FIVE_COLUM_INDEX顺序不可更改
     private static final List<Integer> SCATTER_COLUM_INDEX_LIST = Arrays.asList(
@@ -50,16 +49,16 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
 
-    @Override
-    public GameInfoDo getGameInfo() {
-        return MARIA_MAKILING_GAME_INFO;
-    }
+    // @Override
+    //    public GameInfoDo getGameInfo() {
+    //        return MARIA_MAKILING_GAME_INFO;
+    //    }
 
     @Override
-    public List<MariaMakilingGameRecordDo> normalPlay(GamePlayDo gamePlay) {
+    public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 获取-游戏基础信息
-        GameInfoDo gameInfo = getGameInfo();
+        GameInfoDo gameInfo = MARIA_MAKILING_GAME_INFO;
         List<MariaMakilingGameRecordDo> ret = new ArrayList<>();
         WheelDo<SymbolDo> firstWheel;
         long firstGameRecordId = generateGameRecordId();
@@ -138,96 +137,6 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
             ret.addAll(freeWheelGameRecordList);
         }
         return ret;
-    }
-
-
-    @Override
-    public List<MariaMakilingGameRecordDo> eventPlay(GamePlayDo gamePlay, List<GameMultipleRecordDo<SymbolDo>> gameMultipleRecordDos) {
-        GameInfoDo gameInfo = getGameInfo();
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-
-        // 获取首轮(parent ==0 and index =0)
-        GameMultipleRecordDo<SymbolDo> firstRecord = gameMultipleRecordDos.stream()
-                .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
-
-
-        // 生成首轮结果
-        long firstGameRecordId = generateGameRecordId();
-        RewardResultDo<SymbolDo> firstWheelRewardResult = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, firstRecord.getWheelDo(), BigDecimal.ZERO));
-        long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
-        List<MariaMakilingGameRecordDo> freeWheelGameRecordList = new ArrayList<>();
-        List<Long> freeWheelGameRecordIds = new ArrayList<>();
-
-        if(CollectionUtils.isNotEmpty(firstRecord.getGameRecordIds())){
-            List<Long> gameRecordIds = firstRecord.getGameRecordIds();
-            Map<Long, GameMultipleRecordDo<SymbolDo>> multipleRecordMap = gameMultipleRecordDos.stream().collect(Collectors.toMap(GameMultipleRecordDo::getId, p -> p));
-            for (Long recordId : gameRecordIds) {
-                GameMultipleRecordDo<SymbolDo> multipleRecordDo = multipleRecordMap.get(recordId);
-                RewardResultDo<SymbolDo> rewardResultDo = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, multipleRecordDo.getWheelDo(), BigDecimal.ZERO));
-                overallRewardAmount = overallRewardAmount + rewardResultDo.getTotalRewardAmount();
-                MariaMakilingGameRecordDo gameRecord = this.buildGameRecord(
-                        userInfo,
-                        generateGameRecordId(),
-                        gamePlay.getBetRecordId(),
-                        multipleRecordDo.getWheelDo(),
-                        rewardResultDo,
-                        null,
-                        overallRewardAmount,
-                        false,
-                        false);
-                freeWheelGameRecordList.add(gameRecord);
-                freeWheelGameRecordIds.add(gameRecord.getId());
-            }
-        }
-
-
-        // 构建首轮
-        MariaMakilingGameRecordDo firstGameRecord = this.buildGameRecord(userInfo,
-                firstGameRecordId,
-                gamePlay.getBetRecordId(),
-                firstRecord.getWheelDo(),
-                firstWheelRewardResult,
-                freeWheelGameRecordIds,
-                firstWheelRewardResult.getTotalRewardAmount(),
-                false,
-                firstWheelRewardResult.isHasRewardFreeWheel()
-        );
-        List<MariaMakilingGameRecordDo> ret = new ArrayList<>();
-        ret.add(firstGameRecord);
-        if (CollectionUtils.isNotEmpty(freeWheelGameRecordList)) {
-            ret.addAll(freeWheelGameRecordList);
-        }
-
-        return ret;
-    }
-
-
-    public MariaMakilingGameRecordDo buildGameRecord(UserInfo userInfo,
-                                                     Long gameRecordId,
-                                                     Long betRecordId,
-                                                     WheelDo<SymbolDo> wheel,
-                                                     RewardResultDo<SymbolDo> rewardResult,
-                                                     List<Long> freeSpinGameRecordIds,
-                                                     Long TotalRewardAmount,
-                                                     Boolean accumulateReachMaxMultiple,
-                                                     Boolean lastGameFlag) {
-        return MariaMakilingGameRecordDo.builder()
-                .id(gameRecordId)
-                .parentId(GAME_RECORD_DEFAULT_PARENT_ID)
-                .betRecordId(betRecordId)
-                .batchId(0L)
-                .playerId(userInfo.getPlayerId())
-                .playerName(userInfo.getPlayerName())
-                .index(wheel.getIndex())
-                .wheel(wheel)
-                .rewardResult(rewardResult)
-                .gameRecordIds(freeSpinGameRecordIds)
-                .overallRewardAmount(TotalRewardAmount)
-                .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
-                .lastGameFlag(lastGameFlag)
-                .build();
     }
 
     /**
