@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.domain.biz.game;
 
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
@@ -49,7 +48,11 @@ public class GamePlayDo implements Serializable {
      * 投注记录id
      */
     private Long betRecordId;
-
-    private GameEventDo gameEventDo;
+    ///////////////
+    /**
+     * 干预事件配置-投注记录ID
+     */
+    private Long operationEventConfigBetRecordId;
+    //    private GameEventDo gameEventDo;
 }
 

@@ -1,15 +1,10 @@
 package com.wegame.capi.biz.module.base.bet.strategy;
 
-import cn.hutool.core.lang.UUID;
-import com.wegame.base.Constants;
-import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.LockException;
 import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.DateUtil;
-import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.builder.operation.OperationEventDetailBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -18,7 +13,6 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
-import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
@@ -40,12 +34,10 @@ import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
-import java.net.BindException;
 import java.util.List;
 import java.util.Objects;
 
@@ -106,7 +98,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
         AssertUtil.assertTrue(Objects.equals(rewordDetail.getDetails().getBetValue(), betDo.getBetAmount()), ErrorCode.ERR_PARAM);
         // 准备核销星卡
         StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
-                .id(super.generateBetRecordId())
+                .id(super.generateId())
                 .gameId(this.gameContext().gameInfo().getGameType().getId())
                 .betAmount(betDo.getBetAmount())
                 .playerId(userInfo.getPlayerId())
@@ -223,7 +215,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
                 .payAmount(betDo.getPayAmount())
                 .betRecordId(betRecordId)
                 .gamePlayType(playTypeEnum)
-                .gameEventDo(gameEventDo)
+                .operationEventConfigBetRecordId(gameEventDo.getConfigId())
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
