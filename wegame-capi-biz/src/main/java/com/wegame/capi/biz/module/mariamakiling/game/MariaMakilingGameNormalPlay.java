@@ -47,11 +47,6 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
 
-    // @Override
-    //    public GameInfoDo getGameInfo() {
-    //        return MARIA_MAKILING_GAME_INFO;
-    //    }
-
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();

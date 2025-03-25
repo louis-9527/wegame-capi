@@ -7,7 +7,7 @@ import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.module.malakas.MalakasSymbolUtil;
-import com.wegame.capi.biz.module.malakas.game.MalakasGame;
+import com.wegame.capi.biz.module.malakas.game.MalakasGameNormalPlay;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -33,7 +33,7 @@ import static com.wegame.capi.common.constants.GameConstants.*;
 public class MalakasGameTest extends BaseTest {
 
     @Autowired
-    MalakasGame malakasGame;
+    MalakasGameNormalPlay malakasGame;
 
     @Before
     public void beforeTest() {
