@@ -9,7 +9,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.module.base.game.Game;
+import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
@@ -38,7 +38,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     @Autowired
     public PulsarProducer pulsarProducer;
 
-    public abstract Game<R> getGame();
+    public abstract AbstractGameContext<R> gameContext();
 
     public abstract AbstractRecordManager<R> getRecordManager();
 
@@ -61,19 +61,19 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     }
 
     private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
-        Long betRecordId = getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
+        Long betRecordId = getRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
         log.info("syncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordId);
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
             // 异步更新：更新为->投注成功
             getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult),
-                    getGame().getGameInfo().getGameType());
+                    gameContext().gameInfo().getGameType());
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("syncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步更新：更新为->投注失败
             getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult),
-                    getGame().getGameInfo().getGameType());
+                    gameContext().gameInfo().getGameType());
         }
         return betSingleWalletResult;
     }
@@ -83,9 +83,9 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         log.info("asyncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordDo.getId());
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
-        //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
+        //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGameContext().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
         //        AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
-        CompletableFuture<MessageId> future = pulsarProducer.asyncSendMessage(getGame().getGameInfo().getGameType(), addMqMessage);
+        CompletableFuture<MessageId> future = pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(), addMqMessage);
         SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
             MessageId messageId;
@@ -93,21 +93,21 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 messageId = future.get();
             } catch (Exception e) {
                 log.error("asyncSendMessage send fail, to syncSendMessage, betRecordId: {}", betRecordDo.getId());
-                messageId = pulsarProducer.syncSendMessage(getGame().getGameInfo().getGameType(), addMqMessage);
+                messageId = pulsarProducer.syncSendMessage(gameContext().gameInfo().getGameType(), addMqMessage);
             }
             if (Objects.isNull(messageId)) {
                 log.error("syncSendMessage send fail, sync add data, betRecordId: {}", betRecordDo.getId());
                 // 新增消息发送失败，则转同步写db
-                getRecordManager().add(betRecordDo, getGame().getGameInfo().getGameType());
+                getRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
             }
             // 异步发送更新消息: 更新为投注成功
-            pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(),
+            pulsarProducer.asyncSendMessageThenRetry(gameContext().gameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
             return betSingleWalletResult;
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("asyncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步发送更新消息: 更新为投注成功
-            pulsarProducer.asyncSendMessageThenRetry(getGame().getGameInfo().getGameType(),
+            pulsarProducer.asyncSendMessageThenRetry(gameContext().gameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult));
         }
         return betSingleWalletResult;

@@ -33,29 +33,24 @@ import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 
 @Slf4j
-@Component
-public class IbongAdarnaGame extends AbstractGame<IbongAdarnaGameRecordDo> {
+@Component("ibongAdarnaGameNormalPlay")
+public class IbongAdarnaGameNormalPlay extends AbstractGame<IbongAdarnaGameRecordDo> {
 
     private static final Integer DEFAULT_WHEEL_INDEX = 0;
-
+    private static final GameInfoDo gameInfo = IBONG_ADARNA_GAME_INFO;
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
     @Autowired
     RewardHandler ibongAdarnaRewardHandler;
 
     @Override
-    public GameInfoDo getGameInfo() {
-        return IBONG_ADARNA_GAME_INFO;
-    }
-
-    @Override
     public List<IbongAdarnaGameRecordDo> play(GamePlayDo gamePlay) {
         List<IbongAdarnaGameRecordDo> ret = new ArrayList<>();
         // 生成滚轮
-        WheelDo<IbongAdarnaSymbolDo> wheel = generateNormalWheel(getGameInfo());
+        WheelDo<IbongAdarnaSymbolDo> wheel = generateNormalWheel(gameInfo);
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
         // 中奖处理
-        RewardResultDo<IbongAdarnaSymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(getGameInfo(), gamePlay, wheel, BigDecimal.ZERO));
+        RewardResultDo<IbongAdarnaSymbolDo> rewardResult = ibongAdarnaRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, BigDecimal.ZERO));
         // 构建返回
         IbongAdarnaGameRecordDo record = buildGameRecord(generateGameRecordId(),
                 gamePlay.getBetRecordId(),

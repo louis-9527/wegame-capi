@@ -4,12 +4,12 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
+import com.wegame.capi.biz.builder.GamePlayBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
-import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
@@ -17,11 +17,12 @@ import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.manager.MalakasRecordManager;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
-import com.wegame.capi.biz.module.base.game.Game;
-import com.wegame.capi.biz.module.malakas.game.MalakasGame;
+import com.wegame.capi.biz.module.base.game.AbstractGameContext;
+import com.wegame.capi.biz.module.malakas.game.MalakasGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
 import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
+import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
  * Malakas游戏投注抽象接口
@@ -44,15 +47,15 @@ public abstract class AbstractMalakasBetStrategy
         implements MalakasBetStrategy<MalakasBetRecordDetailDo> {
 
     @Autowired
-    MalakasGame malakasGame;
+    MalakasGameContext malakasGameContext;
     @Autowired
     MalakasRecordManager malakasRecordManager;
     @Autowired
     MalakasConfig malakasConfig;
 
     @Override
-    public Game<MalakasGameRecordDo> getGame() {
-        return malakasGame;
+    public AbstractGameContext<MalakasGameRecordDo> gameContext() {
+        return malakasGameContext;
     }
 
     @Override
@@ -77,14 +80,7 @@ public abstract class AbstractMalakasBetStrategy
     private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<MalakasGameRecordDo> list = getGame().play(GamePlayDo.builder()
-                .gameType(betDo.getGameType())
-                .betType(betDo.getBetType())
-                .betSubType(betDo.getBetSubType())
-                .betAmount(betDo.getBetAmount())
-                .payAmount(betDo.getPayAmount())
-                .betRecordId(betRecordId)
-                .build());
+        List<MalakasGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
@@ -122,7 +118,10 @@ public abstract class AbstractMalakasBetStrategy
                             .build())
                     .build();
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
-            throw new BusinessException(ErrorCode.ERR_INTER, resultDo.getErrorMsg());
+            if (resultDo.getErrorCode() != null) {
+                throw new BusinessException(resultDo.getErrorCode());
+            }
+            throw new BusinessException(ErrorCode.ERR_INTER);
         } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
             throw new BusinessException(ErrorCode.ERR_NET);
         } else {
@@ -140,7 +139,7 @@ public abstract class AbstractMalakasBetStrategy
                         .betRecordId(betDo.getBetRecordId())
                         .playerId(userInfo.getPlayerId())
                         .batchId(betDo.getGameRecordId())
-                        .build(), getGame().getGameInfo().getGameType());
+                        .build(), gameContext().gameInfo().getGameType());
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
         // 按照index升序排列
         gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()

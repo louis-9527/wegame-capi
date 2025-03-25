@@ -1,7 +1,7 @@
 package com.wegame.capi.test.biz.module.ibongadarna.game;
 
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
-import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGame;
+import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGameNormalPlay;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class IbongAdarnaGameTest extends BaseTest {
 
     @Autowired
-    IbongAdarnaGame ibongAdarnaGame;
+    IbongAdarnaGameNormalPlay ibongAdarnaGame;
 
     @Before
     public void before() {

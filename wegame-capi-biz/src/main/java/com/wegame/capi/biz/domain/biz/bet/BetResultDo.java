@@ -41,7 +41,6 @@ public class BetResultDo<R extends ToVoConverter> implements Serializable {
      * （从开始到当前轮）合计中奖总金额
      */
     private Long overallRewardAmount;
-
     /**
      * 总计派奖金额
      */
@@ -52,7 +51,7 @@ public class BetResultDo<R extends ToVoConverter> implements Serializable {
      */
     private String betId;
     /**
-     * 投注结果
+     * 投注结果详情
      */
     private R resultDetail;
 }
