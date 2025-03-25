@@ -31,8 +31,8 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
-@Component
-public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
+@Component("mariaMakilingGameNormalPlay")
+public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameRecordDo> {
 
     // ONE_COLUM_INDEX,THREE_COLUM_INDEX,FIVE_COLUM_INDEX顺序不可更改
     private static final List<Integer> SCATTER_COLUM_INDEX_LIST = Arrays.asList(
@@ -47,16 +47,16 @@ public class MariaMakilingGame extends AbstractGame<MariaMakilingGameRecordDo> {
     @Autowired
     RewardHandler mariaMakilingRewardHandler;
 
-    @Override
-    public GameInfoDo getGameInfo() {
-        return MARIA_MAKILING_GAME_INFO;
-    }
+    // @Override
+    //    public GameInfoDo getGameInfo() {
+    //        return MARIA_MAKILING_GAME_INFO;
+    //    }
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 获取-游戏基础信息
-        GameInfoDo gameInfo = getGameInfo();
+        GameInfoDo gameInfo = MARIA_MAKILING_GAME_INFO;
         List<MariaMakilingGameRecordDo> ret = new ArrayList<>();
         WheelDo<SymbolDo> firstWheel;
         long firstGameRecordId = generateGameRecordId();

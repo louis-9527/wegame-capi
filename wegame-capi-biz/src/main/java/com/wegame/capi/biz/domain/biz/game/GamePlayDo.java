@@ -2,6 +2,7 @@ package com.wegame.capi.biz.domain.biz.game;
 
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -19,6 +20,10 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class GamePlayDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
+    /**
+     * 游戏Play类型
+     */
+    private GamePlayTypeEnum gamePlayType;
     /**
      * 游戏类型
      */

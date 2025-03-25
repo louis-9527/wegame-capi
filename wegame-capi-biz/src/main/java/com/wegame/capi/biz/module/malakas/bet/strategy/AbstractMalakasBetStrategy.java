@@ -9,7 +9,6 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
-import com.wegame.capi.biz.domain.biz.bet.MalakasBetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
@@ -17,11 +16,12 @@ import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.manager.MalakasRecordManager;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
-import com.wegame.capi.biz.module.base.game.Game;
-import com.wegame.capi.biz.module.malakas.game.MalakasGame;
+import com.wegame.capi.biz.module.base.game.AbstractGameContext;
+import com.wegame.capi.biz.module.malakas.game.MalakasGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -44,15 +44,15 @@ public abstract class AbstractMalakasBetStrategy
         implements MalakasBetStrategy<MalakasBetRecordDetailDo> {
 
     @Autowired
-    MalakasGame malakasGame;
+    MalakasGameContext malakasGameContext;
     @Autowired
     MalakasRecordManager malakasRecordManager;
     @Autowired
     MalakasConfig malakasConfig;
 
     @Override
-    public Game<MalakasGameRecordDo> getGame() {
-        return malakasGame;
+    public AbstractGameContext<MalakasGameRecordDo> gameContext() {
+        return malakasGameContext;
     }
 
     @Override
@@ -77,7 +77,8 @@ public abstract class AbstractMalakasBetStrategy
     private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<MalakasGameRecordDo> list = getGame().play(GamePlayDo.builder()
+        List<MalakasGameRecordDo> list = gameContext().play(GamePlayDo.builder()
+                .gamePlayType(GamePlayTypeEnum.NORMAL_PLAY)
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
@@ -140,7 +141,7 @@ public abstract class AbstractMalakasBetStrategy
                         .betRecordId(betDo.getBetRecordId())
                         .playerId(userInfo.getPlayerId())
                         .batchId(betDo.getGameRecordId())
-                        .build(), getGame().getGameInfo().getGameType());
+                        .build(), gameContext().gameInfo().getGameType());
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
         // 按照index升序排列
         gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()
