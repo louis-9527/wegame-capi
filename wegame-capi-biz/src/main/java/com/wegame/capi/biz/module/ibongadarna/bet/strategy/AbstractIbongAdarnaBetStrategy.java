@@ -14,8 +14,9 @@ import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
 import com.wegame.capi.biz.manager.IbongAdarnaRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
-import com.wegame.capi.biz.module.base.game.Game;
-import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGame;
+import com.wegame.capi.biz.module.base.game.AbstractGameContext;
+import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGameContext;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +33,15 @@ public abstract class AbstractIbongAdarnaBetStrategy
         implements IbongAdarnaBetStrategy<IbongAdarnaGameRecordDo> {
 
     @Autowired
-    IbongAdarnaGame ibongAdarnaGame;
+    IbongAdarnaGameContext ibongAdarnaGameContext;
     @Autowired
     IbongAdarnaRecordManager ibongAdarnaRecordManager;
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
 
     @Override
-    public Game<IbongAdarnaGameRecordDo> getGame() {
-        return ibongAdarnaGame;
+    public AbstractGameContext<IbongAdarnaGameRecordDo> gameContext() {
+        return ibongAdarnaGameContext;
     }
 
     @Override
@@ -51,7 +52,8 @@ public abstract class AbstractIbongAdarnaBetStrategy
     @Override
     public BetResultDo<IbongAdarnaGameRecordDo> bet(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<IbongAdarnaGameRecordDo> list = getGame().play(GamePlayDo.builder()
+        List<IbongAdarnaGameRecordDo> list = gameContext().play(GamePlayDo.builder()
+                .gamePlayType(GamePlayTypeEnum.NORMAL_PLAY)
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())

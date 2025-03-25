@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.wegame.base.domain.CommonResponse.build;
+
 /**
  * 用户模块
  * @author generate
@@ -40,7 +42,7 @@ public class UserController extends AbstractController {
     @PostMapping("/login")
     public CommonResponse<UserInfo> login(HttpServletResponse response, @RequestBody UserLoginRequest request) {
         request.validateParam();
-        return CommonResponse.build(loginService.login(response, UserLoginConvert.requestToDo(request)));
+        return build(loginService.login(response, UserLoginConvert.requestToDo(request)));
     }
 
     @LoginRequired
@@ -48,7 +50,7 @@ public class UserController extends AbstractController {
     @GetMapping("/logout")
     public CommonResponse<Boolean> logout(HttpServletRequest request) {
         String token = request.getHeader(Constants._TOKEN_);
-        return CommonResponse.build(loginService.logout(token));
+        return build(loginService.logout(token));
     }
 
     @LoginRequired
@@ -56,7 +58,7 @@ public class UserController extends AbstractController {
     @GetMapping("/me")
     public CommonResponse<UserInfo> me(HttpServletResponse response) {
         noCacheControl(response);
-        return CommonResponse.build(UserInfoContext.getUserInfo());
+        return build(UserInfoContext.getUserInfo());
     }
 
     @LoginRequired
@@ -64,6 +66,6 @@ public class UserController extends AbstractController {
     @GetMapping("/getCredit")
     public CommonResponse<Long> getCredit(HttpServletResponse response) {
         noCacheControl(response);
-        return CommonResponse.build(userService.getCredit());
+        return build(userService.getCredit());
     }
 }

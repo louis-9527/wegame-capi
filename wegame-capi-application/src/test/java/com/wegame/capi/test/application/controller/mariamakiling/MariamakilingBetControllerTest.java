@@ -88,8 +88,8 @@ public class MariamakilingBetControllerTest extends BetControllerTest {
         betRequest.setBetType(BetTypeEnum.NORMAL_BET.getCode());
         betRequest.setBetSubType(BetSubTypeEnum.NORMAL_BET.getCode());
         BetDetail betDetail = new BetDetail();
-        betDetail.setBetAmount(100L);
-        betDetail.setPayAmount(100L);
+        betDetail.setBetAmount(500L);
+        betDetail.setPayAmount(500L);
         betRequest.setBetDetail(betDetail);
         return betRequest;
     }
