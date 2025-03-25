@@ -37,6 +37,14 @@ public abstract class AbstractBetContext {
      */
     public abstract Map<String, BetStrategy> betStrategyMap();
 
+    public void beforeBet(BetDo betDo) {
+        // do nothing
+    }
+
+    public void afterBet(BetDo betDo, BetResultDo betResultDo) {
+        // do nothing
+    }
+
     public BetResultDo bet(BetDo betDo) {
         String betStrategyName = betStrategyNameMap().get(betDo.getBetType());
         AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");
@@ -44,6 +52,9 @@ public abstract class AbstractBetContext {
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_PARAM, "Not Login");
-        return betStrategy.bet(betDo);
+        beforeBet(betDo);
+        BetResultDo betResultDo = betStrategy.bet(betDo);
+        afterBet(betDo, betResultDo);
+        return betResultDo;
     }
 }
