@@ -136,6 +136,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
         StarCardUseRecordDo updateRecord = StarCardUseRecordDo.builder()
                 .id(useRecordId)
                 .payOutAmount(rBetRecordDo.getPayOutAmount())
+                .betRecordId(rBetRecordDo.getId())
                 .useStatus(StarCardUseStatusEnum.SUCCESS)
                 .playName(userInfo.getPlayerName()).build();
         startCardUseRecordService.update(updateRecord, this.getGame().getGameInfo().getGameType());
