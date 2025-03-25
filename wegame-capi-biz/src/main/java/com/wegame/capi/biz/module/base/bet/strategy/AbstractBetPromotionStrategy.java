@@ -42,12 +42,11 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR extends ToVoConverter, WD extends SymbolDo>
+public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR extends ToVoConverter>
         extends AbstractBetStrategy<R, DR> {
 
     @Autowired
     DistributeLock distributeLock;
-
     @Autowired
     private StarCardUseRecordService startCardUseRecordService;
     @Autowired
@@ -55,7 +54,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
     @Value("${api.game.cp.channelId}")
     private String cpChannelId;
 
-    public abstract AbstractOperationEventManager<WD> getDynamicOperationManager();
+    public abstract AbstractOperationEventManager operationEventManager();
 
     @Override
     public BetResultDo<DR> bet(BetDo betDo) {
@@ -172,7 +171,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
         OperationEventDo eventDo = eventBetResult.getDynamicOperationEvent();
         // 异步上报、更新状态
         long eventAmount = betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount();
-        getDynamicOperationManager().asyncEventDetailUpdate(eventDo, betStatusEnum, eventBetResult.getOperatorRecordId(), resultDo.getBetId(), eventAmount);
+        operationEventManager().asyncEventDetailUpdate(eventDo, betStatusEnum, eventBetResult.getOperatorRecordId(), resultDo.getBetId(), eventAmount);
         return this.buildResult(betRecordDo, resultDo);
     }
 
@@ -182,7 +181,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
         String operationEventBetLockName = LockNameUtil.getOperationEventBetLockName(this.gameContext().gameInfo().getGameType(), userInfo.getPlayerId());
         return distributeLock.tryLockThenCall(operationEventBetLockName, 500L, 1000L, () -> {
             try {
-                GameEventDo eventBetResult = getDynamicOperationManager().getEventBetResult(betDo.getPayAmount());
+                GameEventDo eventBetResult = operationEventManager().getEventBetResult(betDo.getPayAmount());
                 if (eventBetResult.getEventResult()) {
                     BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, eventBetResult);
                     betRecordDo.setIeId(eventBetResult.getDynamicOperationEvent().getEventId());
@@ -262,7 +261,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
 
 
     private Long saveEventDetail(Long eventDetailId, BetRecordDo betRecordDo, GameEventDo eventDo) {
-        return getDynamicOperationManager().addEventDetail(OperationEventDetailBuilder.build(eventDetailId, betRecordDo, eventDo));
+        return operationEventManager().addEventDetail(OperationEventDetailBuilder.build(eventDetailId, betRecordDo, eventDo));
     }
 
     /**

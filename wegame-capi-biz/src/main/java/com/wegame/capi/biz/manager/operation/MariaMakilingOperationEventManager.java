@@ -17,7 +17,7 @@ import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.mar
 
 @Service
 @Component("mariaMakilingOperationEventManager")
-public class MariaMakilingOperationEventManager extends AbstractOperationEventManager<SymbolDo> {
+public class MariaMakilingOperationEventManager extends AbstractOperationEventManager {
     // 使用 ConcurrentHashMap 进行缓存
     private static final Map<String, List<Double>> configMultipleArray = new ConcurrentHashMap<>();
     private static final Map<Double, List<List<Long>>> normalConfigDetailArray = new ConcurrentHashMap<>();

@@ -46,7 +46,7 @@ import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 public abstract class AbstractMariaMakilingBetStrategy
         //        extends AbstractBetStrategy<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo>
         //        implements MariaMakilingBetStrategy<MariaMakilingGameRecordDo> {
-        extends AbstractBetPromotionStrategy<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo, SymbolDo>
+        extends AbstractBetPromotionStrategy<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo>
         implements MariaMakilingBetStrategy<MariaMakilingGameRecordDo> {
 
     @Autowired
@@ -70,7 +70,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
-    public AbstractOperationEventManager<SymbolDo> getDynamicOperationManager() {
+    public AbstractOperationEventManager operationEventManager() {
         return mariaMakilingOperationEventManager;
     }
     //    public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo betDo) {
