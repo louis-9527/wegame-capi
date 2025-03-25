@@ -99,6 +99,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         freeWheelAfterHandle(betDo, detailDo, matchGameRecord.getOverallRewardAmount());
         // 返回
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
+                .betStatus(BetStatusEnum.SUCCESS)
                 .betRecordId(betDo.getBetRecordId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
@@ -132,6 +133,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             return BetResultDo.<MariaMakilingGameRecordDo>builder()
+                    .betStatus(BetStatusEnum.SUCCESS)
                     .betRecordId(betRecord.getId())
                     .gameId(betDo.getGameId())
                     .betType(betDo.getBetType())
