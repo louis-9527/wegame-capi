@@ -18,7 +18,6 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
@@ -60,21 +59,20 @@ public class AchievementApi extends PromotionBaseApi {
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public RedeemAchievementRes redeemAchievement(RedeemAchievementReq req) {
         try {
-            throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_ACHIEVEMENT_REDEEMED);
-//            assembleSingleSignature(req);
-//            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-//            RequestEntity<RedeemAchievementReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_ACHIEVEMENT_URL_FORMAT, promotionDomain)));
-//            ResponseEntity<CommonRes<RedeemAchievementRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemAchievementRes>>() {
-//            });
-//            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
-//            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-//            // todo 麦冬：特殊处理，后续单钱包接口支持幂等后移除
-//            if (Objects.equals(responseEntity.getBody().getStatus(), SingleWalletPromotionResStatusEnum.TREASURE_ALREADY_REDEEMED.getCode())) {
-//                throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_ACHIEVEMENT_REDEEMED, responseEntity.getBody().getMessage());
-//            }
-//            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-//            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-//            return responseEntity.getBody().getData();
+            assembleSingleSignature(req);
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
+            RequestEntity<RedeemAchievementReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_ACHIEVEMENT_URL_FORMAT, promotionDomain)));
+            ResponseEntity<CommonRes<RedeemAchievementRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemAchievementRes>>() {
+            });
+            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
+            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            // todo 麦冬：特殊处理，后续单钱包接口支持幂等后移除
+            if (Objects.equals(responseEntity.getBody().getStatus(), SingleWalletPromotionResStatusEnum.TREASURE_ALREADY_REDEEMED.getCode())) {
+                throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_ACHIEVEMENT_REDEEMED, responseEntity.getBody().getMessage());
+            }
+            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            return responseEntity.getBody().getData();
         } catch (BusinessException e) {
             log.error("redeemAchievement BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw e;
