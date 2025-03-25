@@ -34,8 +34,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
 import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
+import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
  * MariaMakiling类游戏投注抽象接口
@@ -114,6 +116,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         freeWheelAfterHandle(betDo, detailDo, matchGameRecord.getOverallRewardAmount());
         // 返回
         return BetResultDo.<MariaMakilingGameRecordDo>builder()
+                .betStatus(BetStatusEnum.SUCCESS)
                 .betRecordId(betDo.getBetRecordId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
@@ -149,6 +152,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             return BetResultDo.<MariaMakilingGameRecordDo>builder()
+                    .betStatus(BetStatusEnum.SUCCESS)
                     .betRecordId(betRecord.getId())
                     .gameId(betRecord.getGameId())
                     .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
