@@ -53,7 +53,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Slf4j
 @Component
-public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
+public abstract class AbstractOperationEventManager {
 
     @Autowired
     OperationEventService operationEventService;
