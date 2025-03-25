@@ -49,8 +49,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR extends ToVoConverter, WD extends SymbolDo>
-        extends AbstractBetStrategy<R, BR> {
+public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR extends ToVoConverter, WD extends SymbolDo>
+        extends AbstractBetStrategy<R, DR> {
 
     @Autowired
     DistributeLock distributeLock;
@@ -65,7 +65,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
     public abstract AbstractOperationEventManager<WD> getDynamicOperationManager();
 
     @Override
-    public BetResultDo<R> bet(BetDo betDo) {
+    public BetResultDo<DR> bet(BetDo betDo) {
         if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
             // 非免费轮投注
             return betForNonFreeWheel(betDo);
@@ -76,7 +76,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
     }
 
 
-    public BetResultDo<R> betForNonFreeWheel(BetDo betDo) {
+    public BetResultDo<DR> betForNonFreeWheel(BetDo betDo) {
         // 判断是否使用星卡
         boolean useStartCard = betDo.isUseStarCart();
         if (useStartCard) {
@@ -95,7 +95,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
     }
 
 
-    private BetResultDo<R> betForStartCard(BetDo betDo) {
+    private BetResultDo<DR> betForStartCard(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 查询星卡详情
         RewardDetailDo rewordDetail = bagService.getRewardDetail(betDo.getRewardConfigId());
@@ -157,7 +157,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
     }
 
 
-    private BetResultDo<R> betForDynamic(BetDo betDo) {
+    private BetResultDo<DR> betForDynamic(BetDo betDo) {
         // 判断是否命中干预
         Pair<GameEventDo<WD>, BetRecordDo<R>> eventBetRecordPair = this.getEventBetRecordPair(betDo);
         if (Objects.isNull(eventBetRecordPair)) {
@@ -275,7 +275,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
      * @param resultDo
      * @return
      */
-    public abstract BetResultDo<R> buildResult(BetRecordDo<R> rBetRecordDo, SingleWalletBetResultDo resultDo);
+    public abstract BetResultDo<DR> buildResult(BetRecordDo<R> rBetRecordDo, SingleWalletBetResultDo resultDo);
 
     /**
      * 构建投注记录
@@ -292,7 +292,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, BR e
      * @param betDo
      * @return
      */
-    public abstract BetResultDo<R> betForFreeWheel(BetDo betDo);
+    public abstract BetResultDo<DR> betForFreeWheel(BetDo betDo);
 
     public abstract boolean hasRewardFreeWheel(List<R> gameRecordList);
 }
