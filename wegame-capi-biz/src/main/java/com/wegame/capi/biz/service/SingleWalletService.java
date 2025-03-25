@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service;
 
+import cn.hutool.core.util.RandomUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.SingleWalletApi;
@@ -22,6 +23,7 @@ import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -40,6 +42,8 @@ import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode
 @Service
 public class SingleWalletService {
 
+    @Value("${api.game.invokeSingle}")
+    boolean invokeSingle;
     @Autowired
     SingleWalletApi singleWalletApi;
     @Autowired
@@ -59,6 +63,14 @@ public class SingleWalletService {
     }
 
     public SingleWalletBetResultDo betWithPayout(BetRecordDo betRecordDo) {
+        if (!invokeSingle) {
+            return SingleWalletBetResultDo.builder()
+                    .betId(RandomUtil.randomNumbers(8))
+                    .refId(RandomUtil.randomString(10))
+                    .credit(RandomUtil.randomLong())
+                    .betStatus(BetStatusEnum.SUCCESS)
+                    .build();
+        }
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = null;
         try {
             commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));

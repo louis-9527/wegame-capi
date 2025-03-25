@@ -7,9 +7,10 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 
 /**
  * 投注策略
- * @param <RD> 投注结果详情
+ *
+ * @param <R> 投注结果详情
  */
-public interface BetStrategy<RD extends ToVoConverter> {
+public interface BetStrategy<R extends ToVoConverter> {
 
     /**
      * 投注
@@ -17,5 +18,5 @@ public interface BetStrategy<RD extends ToVoConverter> {
      * @param betDo 投注请求
      * @return 投注结果
      */
-    BetResultDo<RD> bet(BetDo betDo);
+    BetResultDo<R> bet(BetDo betDo);
 }

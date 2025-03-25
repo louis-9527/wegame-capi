@@ -14,17 +14,18 @@ import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.manager.operation.MariaMakilingOperationEventManager;
 import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
+import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
+import com.wegame.capi.biz.manager.operation.MariaMakilingOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetPromotionStrategy;
-import com.wegame.capi.biz.module.base.game.Game;
-import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGame;
+import com.wegame.capi.biz.module.base.game.AbstractGameContext;
+import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         implements MariaMakilingBetStrategy<MariaMakilingGameRecordDo> {
 
     @Autowired
-    MariaMakilingGame mariaMakilingGame;
+    MariaMakilingGameContext mariaMakilingGameContext;
     @Autowired
     MariaMakilingRecordManager mariaMakilingRecordManager;
     @Autowired
@@ -59,8 +60,8 @@ public abstract class AbstractMariaMakilingBetStrategy
     MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
 
     @Override
-    public Game<MariaMakilingGameRecordDo> getGame() {
-        return mariaMakilingGame;
+    public AbstractGameContext<MariaMakilingGameRecordDo> gameContext() {
+        return mariaMakilingGameContext;
     }
 
     @Override
@@ -95,7 +96,7 @@ public abstract class AbstractMariaMakilingBetStrategy
                         .cacheKey(String.format("%s_%s", betDo.getBetRecordId(), userInfo.getPlayerId()))
                         .fromPrimary(true)
                         .build(),
-                getGame().getGameInfo().getGameType());
+                gameContext().gameInfo().getGameType());
         // 按照index升序排列
         gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()
                 .filter(Objects::nonNull)
@@ -177,6 +178,7 @@ public abstract class AbstractMariaMakilingBetStrategy
 
     private GamePlayDo buildGamePlay(BetDo betDo, long betRecordId) {
         return GamePlayDo.builder()
+                .gamePlayType(GamePlayTypeEnum.NORMAL_PLAY)
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
