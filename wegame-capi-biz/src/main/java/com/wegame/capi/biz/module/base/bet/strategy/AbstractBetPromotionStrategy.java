@@ -190,7 +190,13 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
         String operationEventBetLockName = LockNameUtil.getOperationEventBetLockName(this.gameContext().gameInfo().getGameType(), userInfo.getPlayerId());
         return distributeLock.tryLockThenCall(operationEventBetLockName, 500L, 1000L, () -> {
             try {
-                GameEventDo eventBetResult = getDynamicOperationManager().getEventBetResult(betDo.getPayAmount());
+                GameEventDo eventBetResult =  GameEventDo.builder()
+                        .eventResult(true)
+                        // .operatorRecordId(12L)
+                        .dynamicOperationEvent(OperationEventDo.builder().eventId("21313131313").channelId("1050").id(100L).gameId("zhumeng001").build())
+                        .build();
+
+                //getDynamicOperationManager().getEventBetResult(betDo.getPayAmount());
                 if (eventBetResult.getEventResult()) {
                     BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, eventBetResult);
                     betRecordDo.setIeId(eventBetResult.getDynamicOperationEvent().getEventId());

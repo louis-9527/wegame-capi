@@ -43,6 +43,23 @@ public class MalakasSymbolUtil {
         return newSymbolArr;
     }
 
+
+    public static MalakasSymbolDo[][] handleSymbolNullArr(MalakasSymbolDo[][] symbolArr) {
+        int row = symbolArr.length;
+        int col = symbolArr[0].length;
+        MalakasSymbolDo[][] newSymbolArr = new MalakasSymbolDo[row][col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (Objects.isNull(symbolArr[i][j])) {
+                    newSymbolArr[i][j] = MALAKAS_SYMBOL_PLACEHOLDER;
+                }else {
+                    newSymbolArr[i][j] = symbolArr[i][j].copy();
+                }
+            }
+        }
+        return newSymbolArr;
+    }
+
     /**
      * 重建元素数组：（非空元素按行（第一行）左移，按列下移处理）
      *

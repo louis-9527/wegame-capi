@@ -1,14 +1,18 @@
 package com.wegame.capi.biz.module.malakas.game;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
+import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
@@ -17,8 +21,10 @@ import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.module.malakas.MalakasProbabilisticUtil;
 import com.wegame.capi.biz.module.malakas.MalakasSymbolUtil;
+import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
@@ -34,25 +40,15 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
-import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
-import static com.wegame.capi.biz.module.malakas.MalakasProbabilisticUtil.getWheelProbabilisticConfig;
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.*;
-import static com.wegame.capi.common.Constants.CONST_10000;
-import static com.wegame.capi.common.Constants.CONST_1000000;
-import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
-import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
-@Component("malakasGameNormalPlay")
+@Component("malakasGameEventPlay")
 public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
 
-    private static final int MAX_SCATTER_NUMBER_IN_REEL = 2;
-    private static final int MAX_SCATTER_NUMBER_IN_WHEEL = 6;
-    private static final Integer WHEEL_DEFAULT_INDEX = 0;
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final GameInfoDo gameInfo = MALAKAS_GAME_INFO;
 
@@ -63,295 +59,127 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
     @Autowired
     SnowflakeIdGenerator snowflakeIdGenerator;
 
+    @Autowired
+    OperationEventConfigRecordService operationEventConfigRecordService;
 
     @Override
     public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
         List<MalakasGameRecordDo> ret = new ArrayList<>();
-        AtomicLong totalRewardAmount = new AtomicLong(0L);
-        // 生成-游戏滚轮
-        WheelDo<MalakasSymbolDo> wheel;
-        long gameRecordId = generateGameRecordId();
-        switch (gamePlay.getBetType()) {
-            // 正常投注
-            case NORMAL_BET:
-                wheel = generateNormalWheel(gameInfo, getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false), false);
-                break;
-            // 购买投注
-            case BUY_BET:
-                wheel = generateRewardFreeWheel(gameInfo, getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false), false);
-                break;
-            default:
-                throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
+        GameEventDo gameEventDo = gamePlay.getGameEventDo();
+        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(1902971398703054848L, OperationEventTypeEnum.MALAKAS_DYNAMIC);
+
+
+        // 获取首轮(batchId == 0 and index == 0)
+        OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
+                .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
+
+        // 处理首轮
+        long firstGameRecordId = super.generateGameRecordId();
+        MalakasGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord,BigDecimal.ONE);
+        ret.add(firstGameRecord);
+        // 按 batchId 分组 & 记录 ID 映射
+        Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId = gameMultipleRecordDos.stream()
+                .collect(Collectors.groupingBy(OperationEventConfigRecordDo::getBatchId));
+
+        Map<Long, OperationEventConfigRecordDo> multipleRecordMap = gameMultipleRecordDos.stream()
+                .collect(Collectors.toMap(OperationEventConfigRecordDo::getId, record -> record));
+
+        // 获取首批次并排序
+        List<OperationEventConfigRecordDo> recordBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
+                .stream()
+                .sorted(Comparator.comparing(OperationEventConfigRecordDo::getIndex))
+                .collect(Collectors.toList());
+        // 处理每个批次
+        MalakasGameRecordDo lastGameRecord = firstGameRecord;
+
+        for (OperationEventConfigRecordDo recordDo : recordBatchList) {
+            if (recordDo.getParentId() != 0L) {
+                // 处理首轮普通轮
+                long gameRecordId = generateGameRecordId();
+                MalakasGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo,BigDecimal.ONE);
+                ret.add(gameRecord);
+                lastGameRecord = gameRecord;
+            }
+
+            if (CollectionUtils.isEmpty(recordDo.getGameRecordIds())) {
+                continue;
+            }
+            // 处理免费轮
+            processFreeRounds(ret, gamePlay, recordDo, multipleRecordMap, firstGameRecord, groupedByBatchId);
         }
-        // 判奖-根据游戏滚轮和中奖线算法判断
-        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, BigDecimal.ONE));
-        AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
-        // 组装-游戏记录
-        MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
-        ret.add(gameRecord);
-        totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-        // loop play
-        LinkedList<FreeWheelHandleDo> freeWheelList = new LinkedList<>();
-        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
-        if (CollectionUtils.isNotEmpty(freeWheelList)) {
-            handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeWheelList);
-        }
-        if (CollectionUtils.isNotEmpty(ret)) {
-            ret.get(ret.size() - 1).setLastGameFlag(true);
-        }
-        // 占位元素-将占位元素设置为空:
-        postPlaceholderSymbol(ret);
-        // 返回-游戏记录列表
         return ret;
     }
 
-    public void loopPlayOnPreGameRecord(GamePlayDo gamePlay,
-                                        List<MalakasGameRecordDo> ret,
-                                        AtomicLong totalRewardAmount,
-                                        MalakasGameRecordDo preGameRecord,
-                                        LinkedList<FreeWheelHandleDo> freeWheelList) {
-        if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
-            WheelDo<MalakasSymbolDo> wheel = generateNormalWheelFromPreWheel(
-                    gameInfo,
-                    getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false),
-                    preGameRecord);
-            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
-            long gameRecordId = generateGameRecordId();
-            MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
-            ret.add(gameRecord);
-            totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
-        } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
-            if (!reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), malakasConfig.getRewardMaxMultiple())) {
-                for (int times = 1; times <= preGameRecord.getRewardResult().getRewardFreeWheelTimes(); times++) {
-                    freeWheelList.addLast(FreeWheelHandleDo.builder()
-                            .parentGameRecordId(preGameRecord.getId())
-                            .build());
-                }
-            } else {
-                // help gc
-                freeWheelList.clear();
-                // preGameRecord.setGameRecordIds(null);
-            }
-        }
-    }
-
-    private void handleFreeWheelGamePlay(GamePlayDo gamePlay,
-                                         List<MalakasGameRecordDo> ret,
-                                         AtomicLong totalRewardAmount,
-                                         LinkedList<FreeWheelHandleDo> freeWheelList) {
-        BigDecimal totalMultipleAmount = new BigDecimal("1");
-        while (!freeWheelList.isEmpty()) {
-            FreeWheelHandleDo freeWheel = freeWheelList.removeFirst();
-            MalakasGameRecordDo parentGameRecord = ret.stream().filter(item -> Objects.equals(freeWheel.getParentGameRecordId(), item.getId())).findFirst().orElse(null);
-            AssertUtil.assertNotNull(parentGameRecord, ErrorCode.ERR_INTER);
-            WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(gameInfo, getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), true), true);
-            wheel.setFreeFlag(true);
-            // 判奖-根据游戏滚轮和中奖线算法判断
-            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, totalMultipleAmount));
-            AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
-            // 组装-游戏记录
-            long gameRecordId = generateGameRecordId();
-            MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, freeWheel.getParentGameRecordId(), gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
-            ret.add(gameRecord);
-            totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            if (CollectionUtils.isEmpty(parentGameRecord.getGameRecordIds())) {
-                parentGameRecord.setGameRecordIds(new ArrayList<>());
-            }
-            parentGameRecord.getGameRecordIds().add(gameRecordId);
-            // loop play
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
-            if (CollectionUtils.isNotEmpty(ret)) {
-                totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
-            }
-        }
-    }
-
-    private WheelDo<MalakasSymbolDo> generateNormalWheelFromPreWheel(GameInfoDo gameInfo,
-                                                                     MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
-                                                                     MalakasGameRecordDo preGameRecord) {
-        WheelDo<MalakasSymbolDo> preWheel = preGameRecord.getWheel();
-        RewardResultDo<MalakasSymbolDo> preRewardResult = preGameRecord.getRewardResult();
-        // 复制：元素数组
-        MalakasSymbolDo[][] symbolArr = copySymbolArr(preWheel.getSymbolArr());
-        // 消除：中奖元素
-        clearRewardSymbol(symbolArr, preRewardResult);
-        // 重建：元素数组（非空元素按列下落处理：第1-6Reel非空元素向下移动，第7Reel非空元素向左移动）
-        rebuildSymbolArr(symbolArr, gameInfo);
-        // 生产：缺失元素(填补剩余元素)
-        int scatterNumberInWheel = countIndexSymbol(symbolArr, SymbolEnum.Scatter);
-        return generateCommonNormalWheel(gameInfo,
-                symbolArr,
-                scatterNumberInWheel,
-                playProbabilisticConfig,
-                preWheel.getIndex() + 1,
-                preGameRecord.getFreeWheelFlag());
-    }
 
     /**
-     * 生成正常滚轮：生成逻辑无任何限制
-     *
-     * @param gameInfo 游戏信息
-     * @return 滚轮
+     * 递归处理免费轮，确保同层级先处理完，再进入下一层
      */
-    private WheelDo<MalakasSymbolDo> generateNormalWheel(GameInfoDo gameInfo,
-                                                         MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
-                                                         boolean freeWheelFlag) {
-        MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-        // 第一行（第一列 && 最后一列）： 不生成元素,使用占位元素
-        symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
-        symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
-        return generateCommonNormalWheel(gameInfo,
-                symbolArr,
-                0,
-                playProbabilisticConfig,
-                WHEEL_DEFAULT_INDEX,
-                freeWheelFlag);
-    }
+    private void processFreeRounds(
+            List<MalakasGameRecordDo> ret,
+            GamePlayDo gamePlay,
+            OperationEventConfigRecordDo recordDo,
+            Map<Long, OperationEventConfigRecordDo> multipleRecordMap,
+            MalakasGameRecordDo parent,
+            Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId) {
+        Map<OperationEventConfigRecordDo, MalakasGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
 
-    /**
-     * 生成中奖免费轮滚轮: 需要满足4-6个Scatter
-     *
-     * @param gameInfo 游戏信息
-     * @return 滚轮
-     */
-    private WheelDo<MalakasSymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo,
-                                                             MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
-                                                             boolean freeWheelFlag) {
-        MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-        // 第一行（第一列 && 最后一列）： 不生成元素,使用占位元素
-        symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
-        symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
-        WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(gameInfo, symbolArr, 0, playProbabilisticConfig, WHEEL_DEFAULT_INDEX, freeWheelFlag);
-        int scatterSymbolCount = countIndexSymbol(wheel.getSymbolArr(), SymbolEnum.Scatter);
-        int randomScatterSymbolCount = randomService.randomInt(4, 6);
-        int needAddCount = randomScatterSymbolCount - scatterSymbolCount;
-        if (needAddCount <= 0) {
-            return wheel;
-        }
-        int tempCount = 0;
-        while (tempCount < needAddCount) {
-            // 注意：第一行不能出现scatter
-            int row = randomService.randomInt(1, gameInfo.getRow() - 1);
-            int column = randomService.randomInt(0, gameInfo.getColumn() - 1);
-            AssertUtil.assertNotNull(wheel.getSymbolArr()[row][column], ErrorCode.ERR_INTER);
-            if (StringUtils.equals(wheel.getSymbolArr()[row][column].getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId())
-                    || StringUtils.equals(wheel.getSymbolArr()[row][column].getId(), SymbolEnum.Scatter.getId())) {
-                // 为占位元素或者scatter元素，则继续
-                // do nothing;
-            } else {
-                int columnScatterNum = countIndexSymbol(wheel.getSymbolArr(), SymbolEnum.Scatter, column);
-                if (columnScatterNum >= MAX_SCATTER_NUMBER_IN_REEL) {
-                    continue;
-                }
-                wheel.getSymbolArr()[row][column].setId(SymbolEnum.Scatter.getId());
-                wheel.getSymbolArr()[row][column].setName(SymbolEnum.Scatter.getName());
-                wheel.getSymbolArr()[row][column].setSymbolType(SymbolTypeEnum.SCATTER);
-                tempCount = tempCount + 1;
-            }
-        }
-        return wheel;
-    }
-
-    private WheelDo<MalakasSymbolDo> generateCommonNormalWheel(GameInfoDo gameInfo,
-                                                               MalakasSymbolDo[][] symbolArr,
-                                                               int totalScatterNumberInWheel,
-                                                               MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
-                                                               int wheelIndex,
-                                                               boolean freeFlag) {
-        // 生成整盘随机数(row*column)
-        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
-        int scatterNumberInWheel = totalScatterNumberInWheel;
-        int randomNumberIndex = 0;
-        for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
-            // 一列只能包含两个scatter
-            int scatterNumberInColumn = countIndexSymbol(symbolArr, SymbolEnum.Scatter, column);
-            TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
-            for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
-                if (Objects.nonNull(symbolArr[row][column])) {
-                    // 当前元素非空，则不生成
-                    continue;
-                }
-                Integer randomNumber = randomNumberList.get(randomNumberIndex);
-                if (Objects.equals(row, ONE_ROW_INDEX) || scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL) {
-                    // 第一行 || 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
-                    // 生成元素：非scatter元素
-                    SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
-                    SymbolSizeEnum symbolSize = generateSymbolSize(row, MalakasSymbolUtil.getMaxRow(symbolArr, row, column), column, gameInfo, playProbabilisticConfig);
-                    MalakasSymbolUtil.handlePlaceholderSymbol(symbolArr, row, column, symbolSize);
-                    // 构建元素金边
-                    boolean symbolGoldBorder = generateSymbolGoldBorder(gameInfo, playProbabilisticConfig, row, column);
-                    MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
-                    symbolArr[row][column] = malakasSymbolDo;
+        List<Long> gameRecordIds = new ArrayList<>();
+        for (Long batchId : recordDo.getGameRecordIds()) {
+            List<OperationEventConfigRecordDo> currentLevelRecords = groupedByBatchId.get(batchId);
+            currentLevelRecords.sort(Comparator.comparing(OperationEventConfigRecordDo::getIndex));
+            // 处理当前层级的每个记录
+            MalakasGameRecordDo preGameRecord = null;
+            for (OperationEventConfigRecordDo record : currentLevelRecords) {
+                BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
+                long gameRecordId = generateGameRecordId();
+                MalakasGameRecordDo gameRecord = null;
+                if (record.getIndex() == 0) {
+                    gameRecordIds.add(gameRecordId);
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record,totalMultipleAmount);
+                    ret.add(gameRecord);
                 } else {
-                    // 生成元素：随机生成
-                    SymbolDo symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
-                    SymbolSizeEnum symbolSize = generateSymbolSize(row, MalakasSymbolUtil.getMaxRow(symbolArr, row, column), column, gameInfo, playProbabilisticConfig);
-                    MalakasSymbolUtil.handlePlaceholderSymbol(symbolArr, row, column, symbolSize);
-                    // 构建元素金边
-                    boolean symbolGoldBorder = generateSymbolGoldBorder(gameInfo, playProbabilisticConfig, row, column);
-                    MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
-                    symbolArr[row][column] = malakasSymbolDo;
-                    if (symbolDo.isScatterSymbol()) {
-                        scatterNumberInColumn = scatterNumberInColumn + 1;
-                        scatterNumberInWheel = scatterNumberInWheel + 1;
-                    }
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record,totalMultipleAmount);
+                    ret.add(gameRecord);
                 }
-                randomNumberIndex = randomNumberIndex + 1;
+                preGameRecord = gameRecord;
+                if (CollectionUtils.isNotEmpty(record.getGameRecordIds())) {
+                    nextLevelGameRecordMap.put(record, gameRecord);
+                }
             }
         }
-        // 返回：滚轮
-        return WheelDo.<MalakasSymbolDo>builder()
-                .index(wheelIndex)
-                .freeFlag(freeFlag)
-                .symbolArr(symbolArr)
-                .build();
+        parent.setGameRecordIds(gameRecordIds);
+        for (Map.Entry<OperationEventConfigRecordDo, MalakasGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
+            OperationEventConfigRecordDo key = entry.getKey();
+            MalakasGameRecordDo value = entry.getValue();
+            processFreeRounds(ret, gamePlay, key, multipleRecordMap, value, groupedByBatchId);
+        }
     }
 
-    private boolean canContinuePlayOnPreWheel(GamePlayDo gamePlay, RewardResultDo<MalakasSymbolDo> rewardResult, AtomicLong totalRewardAmount) {
-        if (Objects.isNull(rewardResult)) {
-            return false;
-        }
-        if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
-            return false;
-        }
-        if (reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), malakasConfig.getRewardMaxMultiple())) {
-            log.warn("reach max reward multiple bet. totalRewardAmount: {}, payAmount: {}", totalRewardAmount.get(), gamePlay.getPayAmount());
-            return false;
-        }
-        return CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
-    }
+    /**
+     * 构建并处理投注记录
+     */
+    private MalakasGameRecordDo processGameRecord(
+            GamePlayDo gamePlay,
+            long gameRecordId,
+            long parentId,
+            long batchId,
+            OperationEventConfigRecordDo recordDo,
+            BigDecimal totalMultiple) {
 
-    private SymbolSizeEnum generateSymbolSize(int currentRow, int maxRow, int currentColum, GameInfoDo gameInfo, MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig) {
-        if (Objects.equals(currentRow, ONE_ROW_INDEX)
-                || Objects.equals(currentColum, ONE_COLUM_INDEX)
-                || Objects.equals(currentColum, gameInfo.getColumn() - 1)) {
-            // 第一行，第一列，最后一列：只能为小元素
-            return SymbolSizeEnum.S;
-        }
-        Map<String, Integer> map = MalakasProbabilisticUtil.buildColumSymboleSizeProbabilisticMap(currentColum, maxRow - currentRow + 1, playProbabilisticConfig);
-        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
-        return randomSymbolSize(map, randomService.randomInt(1, map.values()
-                .stream()
-                .reduce(0, Integer::sum)));
-    }
+        // 确定 `TotalMultiple` 参数
+        WheelDo<MalakasSymbolDo> malakasSymbolWheel = this.convertWheel(recordDo.getWheel());
+        MalakasSymbolDo[][] symbolArr = malakasSymbolWheel.getSymbolArr();
 
-    private boolean generateSymbolGoldBorder(GameInfoDo gameInfo, MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig, int row, int column) {
-        List<BigDecimal> goldBoarderProbabilisticConfig = playProbabilisticConfig.getGoldBoarderProbabilisticConfig();
-        BigDecimal goldBoarderProbabilistic = null;
-        if (Objects.equals(row, ONE_ROW_INDEX)) {
-            goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(gameInfo.getColumn() - 1);
-        } else {
-            goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(column);
-        }
-        AssertUtil.assertNotNull(goldBoarderProbabilistic, ErrorCode.ERR_INTER);
-        int probabilisticVal = goldBoarderProbabilistic.multiply(new BigDecimal(100)).intValue();
-        if (Objects.equals(probabilisticVal, 0)) {
-            return false;
-        } else {
-            int randomVal = randomService.randomInt(1, CONST_10000);
-            return randomVal > 0 && randomVal <= probabilisticVal;
-        }
+        malakasSymbolWheel.setSymbolArr(handleSymbolNullArr(symbolArr));
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(
+                RewardHandlerBuilder.build(gameInfo, gamePlay, malakasSymbolWheel, totalMultiple)
+        );
+        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, malakasSymbolWheel, rewardResult);
+
+
     }
 
     private MalakasGameRecordDo buildGameRecord(Long id,
@@ -378,9 +206,19 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
                 .build();
     }
 
-    @Data
-    @SuperBuilder
-    private static class FreeWheelHandleDo {
-        private long parentGameRecordId;
+    private WheelDo<MalakasSymbolDo> convertWheel(Object obj) {
+        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<MalakasSymbolDo>>() {
+        });
     }
+
+    private boolean canContinuePlayOnPreWheel(RewardResultDo<MalakasSymbolDo> rewardResult) {
+        if (Objects.isNull(rewardResult)) {
+            return false;
+        }
+        if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
+            return false;
+        }
+        return CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
+    }
+
 }
