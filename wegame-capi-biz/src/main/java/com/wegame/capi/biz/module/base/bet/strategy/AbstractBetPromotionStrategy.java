@@ -31,6 +31,7 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.RedeemRewardResStatusEnum;
 import com.wegame.capi.common.enums.StarCardReportStatusEnum;
@@ -159,14 +160,14 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
 
     private BetResultDo<DR> betForDynamic(BetDo betDo) {
         // 判断是否命中干预
-        Pair<GameEventDo<WD>, BetRecordDo<R>> eventBetRecordPair = this.getEventBetRecordPair(betDo);
+        Pair<GameEventDo, BetRecordDo<R>> eventBetRecordPair = this.getEventBetRecordPair(betDo);
         if (Objects.isNull(eventBetRecordPair)) {
             BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, null);
             SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, this.hasRewardFreeWheel(betRecordDo.getGameRecordList()));
             return this.buildResult(betRecordDo, resultDo);
         }
         BetRecordDo<R> betRecordDo = eventBetRecordPair.getValue();
-        GameEventDo<WD> eventBetResult = eventBetRecordPair.getKey();
+        GameEventDo eventBetResult = eventBetRecordPair.getKey();
         // 投注并派奖
         SingleWalletBetResultDo resultDo = super.saveBetRecordAndBetWithPayout(betRecordDo, this.hasRewardFreeWheel(betRecordDo.getGameRecordList()));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
@@ -184,19 +185,19 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
     }
 
 
-    private Pair<GameEventDo<WD>, BetRecordDo<R>> getEventBetRecordPair(BetDo betDo){
+    private Pair<GameEventDo, BetRecordDo<R>> getEventBetRecordPair(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         String operationEventBetLockName = LockNameUtil.getOperationEventBetLockName(this.gameContext().gameInfo().getGameType(), userInfo.getPlayerId());
-        return distributeLock.tryLockThenCall(operationEventBetLockName, 500L,1000L,() -> {
+        return distributeLock.tryLockThenCall(operationEventBetLockName, 500L, 1000L, () -> {
             try {
-                GameEventDo<WD> eventBetResult = getDynamicOperationManager().getEventBetResult(betDo.getPayAmount());
-                if(eventBetResult.getEventResult()){
+                GameEventDo eventBetResult = getDynamicOperationManager().getEventBetResult(betDo.getPayAmount());
+                if (eventBetResult.getEventResult()) {
                     BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, eventBetResult);
                     betRecordDo.setIeId(eventBetResult.getDynamicOperationEvent().getEventId());
                     // 构建并保存干预记录
-                    Long detailId =  this.saveEventDetail(generateBetRecordId(), betRecordDo, eventBetResult);
+                    Long detailId = this.saveEventDetail(generateBetRecordId(), betRecordDo, eventBetResult);
                     eventBetResult.setOperatorRecordId(detailId);
-                    return Pair.of(eventBetResult,betRecordDo);
+                    return Pair.of(eventBetResult, betRecordDo);
                 }
                 return null;
 
@@ -207,16 +208,21 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
         });
     }
 
-    private BetRecordDo<R> loadBetRecordDo(BetDo betDo, GameEventDo<WD> gameEventDo) {
+    private BetRecordDo<R> loadBetRecordDo(BetDo betDo, GameEventDo gameEventDo) {
         //获取投注记录
         long betRecordId = generateBetRecordId();
-        List<R> list = gameContext().play(GamePlayDo.<WD>builder()
+        GamePlayTypeEnum playTypeEnum = GamePlayTypeEnum.NORMAL_PLAY;
+        if (gameEventDo != null && gameEventDo.getEventResult()) {
+            playTypeEnum = GamePlayTypeEnum.EVENT_PLAY;
+        }
+        List<R> list = gameContext().play(GamePlayDo.builder()
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
                 .betAmount(betDo.getBetAmount())
                 .payAmount(betDo.getPayAmount())
                 .betRecordId(betRecordId)
+                .gamePlayType(playTypeEnum)
                 .gameEventDo(gameEventDo)
                 .build());
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
@@ -286,6 +292,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
      * @return
      */
     public abstract BetRecordDo<R> buildBetRecord(Long betRecordId, BetDo betDo, List<R> list);
+
     /**
      * 免费轮查询
      *

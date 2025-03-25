@@ -11,7 +11,6 @@ import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import com.wegame.capi.api.operation.OperationEventApi;
 import com.wegame.capi.biz.builder.req.UpdateEventsBetRecordReqBuilder;
 import com.wegame.capi.biz.domain.biz.game.GameEventDo;
-import com.wegame.capi.biz.domain.biz.game.GameMultipleRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.*;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -43,6 +42,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -218,27 +218,26 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
     /**
      * 获取干预事件结果
      */
-    public GameEventDo<WD> getEventBetResult(Long payOutAmount) {
+    public GameEventDo getEventBetResult(Long payOutAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 判断是否存在干预事件
         OperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName());
         if (eventDo == null) {
-            return GameEventDo.<WD>builder().eventResult(false).build();
+            return GameEventDo.builder().eventResult(false).build();
         }
         // 获取需要干预的金额
         Long interventionAmount = this.getInterventionAmount(eventDo, payOutAmount);
         if (interventionAmount == null) {
-            return GameEventDo.<WD>builder().eventResult(false).build();
+            return GameEventDo.builder().eventResult(false).build();
         }
         // 构建并获取Wheel
-        Pair<Long,List<GameMultipleRecordDo<WD>>> wheelDoPair = this.getWheelDos(interventionAmount, payOutAmount);
-        if (wheelDoPair == null || CollectionUtils.isEmpty(wheelDoPair.getValue())) {
-            return GameEventDo.<WD>builder().eventResult(false).build();
+        Long wheelId = this.getWheelId(interventionAmount, payOutAmount);
+        if (Objects.isNull(wheelId)) {
+            return GameEventDo.builder().eventResult(false).build();
         }
-        GameEventDo<WD> gameEventDo = new GameEventDo<>();
+        GameEventDo gameEventDo = new GameEventDo();
         gameEventDo.setEventResult(true);
-        gameEventDo.setRecordDoList(wheelDoPair.getValue());
-        gameEventDo.setConfigId(wheelDoPair.getKey());
+        gameEventDo.setConfigId(wheelId);
         gameEventDo.setDynamicOperationEvent(eventDo);
         return gameEventDo;
     }
@@ -269,7 +268,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         return eventAmount;
     }
 
-    public Pair<Long,List<GameMultipleRecordDo<WD>>> getWheelDos(Long interventionAmount, Long betPayAmount) {
+    public Long getWheelId(Long interventionAmount, Long betPayAmount) {
         // 计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
         long interveneBalance = interventionAmount + betPayAmount;
         //计算最大倍数
@@ -279,7 +278,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         if (closestMultiple == null) {
             return null;
         }
-        return this.normalPayMultipleConfig(closestMultiple);
+        return this.getPayMultipleConfigId(closestMultiple);
     }
 
     public void asyncEventDetailUpdate(OperationEventDo eventDo, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
@@ -410,7 +409,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
 
 
-    private Pair<Long,List<GameMultipleRecordDo<WD>>> normalPayMultipleConfig(double multiple) {
+    private Long getPayMultipleConfigId(double multiple) {
         OperationEventConfigQuery configQuery = OperationEventConfigQuery.builder()
                 .gameId(this.operationEventType().getGameType().getId())
                 .multiple(multiple).build();
@@ -430,35 +429,9 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         }
         List<Long> configDetail = configDetailGroup.get((int) (increment - 1));
         int randomIndex = ThreadLocalRandom.current().nextInt(configDetail.size());
-        Long configId = configDetail.get(randomIndex);
-        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(configId, operationEventType());
-       return Pair.of(configId,convertGameMultipleRecordDo(gameMultipleRecordDos)) ;
+        return configDetail.get(randomIndex);
     }
 
-
-
-
-    private List<GameMultipleRecordDo<WD>> convertGameMultipleRecordDo(List<OperationEventConfigRecordDo> recordDos) {
-        List<GameMultipleRecordDo<WD>> recordDoList = new ArrayList<>();
-        for (OperationEventConfigRecordDo recordDo : recordDos) {
-            WheelDo<WD> wdWheelDo = convertWheel(recordDo.getWheel());
-            GameMultipleRecordDo<WD> build = GameMultipleRecordDo.<WD>builder()
-                    .id(recordDo.getId())
-                    .batchId(recordDo.getBatchId())
-                    .betRecordId(recordDo.getBetRecordId())
-                    .gameRecordIds(recordDo.getGameRecordIds())
-                    .index(recordDo.getIndex())
-                    .parentId(recordDo.getParentId())
-                    .wheelDo(wdWheelDo)
-                    .totalMultiple(recordDo.getTotalMultiple())
-                    .build();
-            recordDoList.add(build);
-
-        }
-        return recordDoList;
-    }
-
-    public abstract WheelDo<WD> convertWheel(Object obj);
 
     public List<List<Long>> getConfigIds(OperationEventConfigQuery configQuery) {
         return operationEventConfigService.getConfigIds(configQuery, operationEventType());

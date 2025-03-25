@@ -13,14 +13,11 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameEventDo<WD extends SymbolDo> {
+public class GameEventDo {
     /**
      * 是否命中干预事件
      */
     private Boolean eventResult;
-
-    private List<GameMultipleRecordDo<WD>> recordDoList;
-
     /**
      * 命中的干预事件
      */
