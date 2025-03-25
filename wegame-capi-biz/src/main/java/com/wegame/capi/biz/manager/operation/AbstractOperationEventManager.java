@@ -10,10 +10,8 @@ import com.wegame.capi.api.domain.res.operation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import com.wegame.capi.api.operation.OperationEventApi;
 import com.wegame.capi.biz.builder.req.UpdateEventsBetRecordReqBuilder;
-import com.wegame.capi.biz.domain.biz.game.GameEventDo;
+import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.operation.*;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.biz.service.operation.OperationEventConfigService;
 import com.wegame.capi.biz.service.operation.OperationEventDetailService;
@@ -33,7 +31,6 @@ import com.wegame.capi.dao.mapper.domain.operation.OperationEventDetailQuery;
 import com.wegame.capi.dao.mapper.domain.operation.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -218,27 +215,27 @@ public abstract class AbstractOperationEventManager {
     /**
      * 获取干预事件结果
      */
-    public GameEventDo getEventBetResult(Long payOutAmount) {
+    public GameOperationEventDo getEventBetResult(Long payOutAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 判断是否存在干预事件
         OperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName());
         if (eventDo == null) {
-            return GameEventDo.builder().eventResult(false).build();
+            return GameOperationEventDo.builder().eventResult(false).build();
         }
         // 获取需要干预的金额
         Long interventionAmount = this.getInterventionAmount(eventDo, payOutAmount);
         if (interventionAmount == null) {
-            return GameEventDo.builder().eventResult(false).build();
+            return GameOperationEventDo.builder().eventResult(false).build();
         }
         // 构建并获取Wheel
         Long wheelId = this.getWheelId(interventionAmount, payOutAmount);
         if (Objects.isNull(wheelId)) {
-            return GameEventDo.builder().eventResult(false).build();
+            return GameOperationEventDo.builder().eventResult(false).build();
         }
-        GameEventDo gameEventDo = new GameEventDo();
+        GameOperationEventDo gameEventDo = new GameOperationEventDo();
         gameEventDo.setEventResult(true);
         gameEventDo.setConfigId(wheelId);
-        gameEventDo.setDynamicOperationEvent(eventDo);
+        gameEventDo.setOperationEvent(eventDo);
         return gameEventDo;
     }
 

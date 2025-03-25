@@ -53,6 +53,6 @@ public class GamePlayDo implements Serializable {
      * 干预事件配置-投注记录ID
      */
     private Long operationEventConfigBetRecordId;
-    //    private GameEventDo gameEventDo;
+    private GameOperationEventDo gameEventDo;
 }
 
