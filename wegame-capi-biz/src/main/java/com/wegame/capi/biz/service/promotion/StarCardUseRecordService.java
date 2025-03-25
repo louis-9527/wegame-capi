@@ -38,13 +38,15 @@ public class StarCardUseRecordService extends AbstractService {
     public Boolean update(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(useRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(useRecordDo.getId(), ErrorCode.ERR_PARAM, "param \'id\' is null");
+        StarCardUseTypeEnum starCardUseType = StarCardUseTypeEnum.valueOfGameType(gameType);
+        AssertUtil.assertNotNull(starCardUseType, ErrorCode.ERR_INTER);
         Criteria criteria = new Criteria();
         criteria.and("_id").is(useRecordDo.getId());
         Query query = new Query(criteria);
         UpdateResult result = getMongoTemplate(gameType).updateFirst(query,
                 StarCardUseRecordQueryBuilder.buildMongoUpdate(useRecordDo),
                 StarCardUseRecordPo.class,
-                gameType.getBetRecordCollectionName());
+                starCardUseType.getCollectionName());
         return result.getModifiedCount() > 0;
     }
 }

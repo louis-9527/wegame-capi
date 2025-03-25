@@ -16,17 +16,18 @@ import static com.wegame.capi.biz.converter.operation.OperationEventConfigRecord
 import static com.wegame.capi.biz.converter.operation.OperationEventConfigRecordConvert.poToDoList;
 
 /**
- * 干预事件配置记录服务
+ * 干预事件配置记录服务: 游戏记录模版
  */
 @Slf4j
 @Service
 public class OperationEventConfigRecordService extends AbstractService {
 
-    public Long add(OperationEventConfigRecordDo recordDo, OperationEventTypeEnum dynamicOperationGame) {
-        OperationEventConfigRecordPo insertPo = getMongoTemplate(dynamicOperationGame.getGameType())
-                .insert(doToPo(recordDo), dynamicOperationGame.getEventConfigRecordCollectionName());
+    public Long add(OperationEventConfigRecordDo recordDo, OperationEventTypeEnum typeEnum) {
+        OperationEventConfigRecordPo insertPo = getMongoTemplate(typeEnum.getGameType())
+                .insert(doToPo(recordDo), typeEnum.getEventConfigRecordCollectionName());
         return insertPo.getId();
     }
+
     @Cacheable(value = CacheConstants.OPERATION_EVENT_CONFIG, key = "#typeEnum.name() + '_' + #betRecordId")
     public List<OperationEventConfigRecordDo> listByBetRecordId(Long betRecordId, OperationEventTypeEnum typeEnum) {
         List<OperationEventConfigRecordPo> poList = getMongoTemplate(typeEnum.getGameType())

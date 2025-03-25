@@ -34,8 +34,5 @@ public class GameMultipleRecordDo<WD extends SymbolDo> {
      * 免费轮ID
      */
     private List<Long> gameRecordIds;
-    /**
-     * 免费轮标识 false否 true是
-     */
-    private Boolean freeWheelFlag;
+
 }

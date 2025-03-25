@@ -160,7 +160,7 @@ public class MariaMakilingGame extends AbstractDynamicOperationGame<MariaMakilin
         List<MariaMakilingGameRecordDo> freeWheelGameRecordList = new ArrayList<>();
         List<Long> freeWheelGameRecordIds = new ArrayList<>();
 
-        if (firstRecord.getFreeWheelFlag()) {
+        if(CollectionUtils.isNotEmpty(firstRecord.getGameRecordIds())){
             List<Long> gameRecordIds = firstRecord.getGameRecordIds();
             Map<Long, GameMultipleRecordDo<SymbolDo>> multipleRecordMap = gameMultipleRecordDos.stream().collect(Collectors.toMap(GameMultipleRecordDo::getId, p -> p));
             for (Long recordId : gameRecordIds) {

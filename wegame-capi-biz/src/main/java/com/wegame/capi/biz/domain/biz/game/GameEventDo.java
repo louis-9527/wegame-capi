@@ -30,19 +30,10 @@ public class GameEventDo<WD extends SymbolDo> {
      * 命中那条倍数ID
      */
     private Long configId;
-//
-//    /**
-//     * 渠道ID
-//     */
-//    private String channelId;
-//
-//    /**
-//     * 游戏ID
-//     */
-//    private String gameId;
 
-//    /**
-//     * 干预事件记录ID(系统)
-//     */
-//    // private Long operatorRecordId;
+    /**
+     * 干预事件记录ID
+     */
+    private Long operatorRecordId;
+
 }

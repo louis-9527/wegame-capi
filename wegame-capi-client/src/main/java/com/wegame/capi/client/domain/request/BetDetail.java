@@ -45,6 +45,7 @@ public class BetDetail implements BetRequestValidate, Serializable {
 
     @Override
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        validateStartCartBet(gameType, betType, betSubType);
         if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
             mariaMakilingValidateParam(gameType, betType, betSubType);
         } else if (Objects.equals(gameType, GameTypeEnum.MALAKAS)) {
@@ -58,8 +59,10 @@ public class BetDetail implements BetRequestValidate, Serializable {
 
     private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
+        if(!userStarCart) {
+            AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
+        }
         if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
@@ -93,7 +96,6 @@ public class BetDetail implements BetRequestValidate, Serializable {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         }
-        validateStartCartBet(gameType, betType, betSubType);
     }
 
     private void validateStartCartBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {

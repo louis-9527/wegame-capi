@@ -414,7 +414,7 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
         OperationEventConfigQuery configQuery = OperationEventConfigQuery.builder()
                 .gameId(this.operationEventType().getGameType().getId())
                 .multiple(multiple).build();
-        List<List<OperationEventConfigDo>> configDetailGroup = this.getConfigDetail(configQuery);
+        List<List<Long>> configDetailGroup = this.getConfigIds(configQuery);
         if (CollectionUtils.isEmpty(configDetailGroup)) {
             log.error("normalPayMultipleConfig result null,,multiple:{}", multiple);
             return null;
@@ -428,11 +428,11 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
             increment = 1L;
             redisTemplate.opsForValue().set(incrementKey, increment);
         }
-        List<OperationEventConfigDo> configDetail = configDetailGroup.get((int) (increment - 1));
+        List<Long> configDetail = configDetailGroup.get((int) (increment - 1));
         int randomIndex = ThreadLocalRandom.current().nextInt(configDetail.size());
-        OperationEventConfigDo dynamicOperationConfigDo = configDetail.get(randomIndex);
-        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(dynamicOperationConfigDo.getId(), operationEventType());
-       return Pair.of(dynamicOperationConfigDo.getId(),convertGameMultipleRecordDo(gameMultipleRecordDos)) ;
+        Long configId = configDetail.get(randomIndex);
+        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(configId, operationEventType());
+       return Pair.of(configId,convertGameMultipleRecordDo(gameMultipleRecordDos)) ;
     }
 
 
@@ -460,8 +460,8 @@ public abstract class AbstractOperationEventManager<WD extends SymbolDo> {
 
     public abstract WheelDo<WD> convertWheel(Object obj);
 
-    public List<List<OperationEventConfigDo>> getConfigDetail(OperationEventConfigQuery configQuery) {
-        return operationEventConfigService.getConfigDetail(configQuery, operationEventType());
+    public List<List<Long>> getConfigIds(OperationEventConfigQuery configQuery) {
+        return operationEventConfigService.getConfigIds(configQuery, operationEventType());
     }
 
     public List<Double> getConfigMultipleArray() {
