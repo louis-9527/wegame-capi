@@ -42,7 +42,7 @@ CREATE TABLE `user_login_info`
     `create_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `updater`     varchar(100) NOT NULL DEFAULT '' COMMENT '更新人',
     `update_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`user_id`),
+    PRIMARY KEY (`id`),
     UNIQUE KEY (`user_id`, `channel_id`,`game_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
