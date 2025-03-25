@@ -45,11 +45,6 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
     }
 
     @Override
-    public WheelDo<SymbolDo> convertWheel(Object obj) {
-        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<SymbolDo>>() {});
-    }
-
-    @Override
     public List<List<Long>> getConfigIds(OperationEventConfigQuery configQuery) {
         Double multiple = configQuery.getMultiple();
         return normalConfigDetailArray.computeIfAbsent(multiple, k -> super.getConfigIds(configQuery));

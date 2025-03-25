@@ -19,7 +19,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class GamePlayDo<WD extends SymbolDo> implements Serializable {
+public class GamePlayDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 游戏Play类型
@@ -50,6 +50,6 @@ public class GamePlayDo<WD extends SymbolDo> implements Serializable {
      */
     private Long betRecordId;
 
-    private GameEventDo<WD> gameEventDo;
+    private GameEventDo gameEventDo;
 }
 

@@ -27,6 +27,11 @@ public class StarCardUseRecordDo implements Serializable {
      * 奖励配置id
      */
     private String rewardConfigId;
+
+    /**
+     * 投注记录ID
+     */
+    private Long betRecordId;
     /**
      * 玩家ID
      */
