@@ -12,8 +12,7 @@ import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
-import com.wegame.capi.biz.module.mariamakiling.bet.function.MariaMakilingBetRecordFunction;
-import com.wegame.capi.biz.module.mariamakiling.bet.function.MariaMakilingBetResultHandleFunction;
+import com.wegame.capi.biz.module.mariamakiling.bet.MariaMakilingBetHelper;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -42,9 +41,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     MariaMakilingBetRecordManager mariaMakilingBetRecordManager;
     @Autowired
-    MariaMakilingBetRecordFunction mariaMakilingBetRecordFunction;
-    @Autowired
-    MariaMakilingBetResultHandleFunction mariaMakilingBetResultHandleFunction;
+    MariaMakilingBetHelper mariaMakilingBetHelper;
 
     @Override
     public AbstractGameContext<MariaMakilingGameRecordDo> gameContext() {
@@ -116,11 +113,11 @@ public abstract class AbstractMariaMakilingBetStrategy
         List<MariaMakilingGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
-        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetRecordFunction.build(betRecordId, betDo, list);
+        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.buildBetRecord(betRecordId, betDo, list);
         // 保存投注记录并派奖
-        MariaMakilingGameRecordDo gameRecord = list.get(0);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeWheel());
-        return mariaMakilingBetResultHandleFunction.handle(betRecord, resultDo);
+        boolean syncOpt = mariaMakilingBetHelper.hasRewardFreeWheel(list);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, syncOpt);
+        return mariaMakilingBetHelper.handleBetResult(betRecord, resultDo);
     }
 
     public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
