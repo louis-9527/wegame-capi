@@ -67,8 +67,8 @@ public class BetStatusService {
             // 只处理3分钟以内的投注记录
             return;
         }
-        // 控制3s不超过1个请求
-        RateLimiter rateLimiter = RateLimiter.create(1.0 / 3.0);
+        // 控制20s不超过1个请求
+        RateLimiter rateLimiter = RateLimiter.create(1.0 / 20.0);
         while (System.currentTimeMillis() - betRecordDo.getCreateTime() <= THREE_MINUTES - 800) {
             try {
                 rateLimiter.acquire();

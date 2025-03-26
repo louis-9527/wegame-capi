@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.mariamakilingTransactionManager;
 
 @Slf4j
-@Component("mariaMakilingRecordManager")
-public class MariaMakilingRecordManager extends AbstractRecordManager<MariaMakilingGameRecordDo> {
+@Component("mariaMakilingBetRecordManager")
+public class MariaMakilingBetRecordManager extends AbstractBetRecordManager<MariaMakilingGameRecordDo> {
 
     @Autowired
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;

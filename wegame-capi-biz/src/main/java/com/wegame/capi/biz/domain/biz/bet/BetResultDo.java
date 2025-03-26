@@ -3,6 +3,7 @@ package com.wegame.capi.biz.domain.biz.bet;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -17,6 +18,10 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class BetResultDo<R extends ToVoConverter> implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
+    /**
+     * 投注结果
+     */
+    private BetStatusEnum betStatus;
     /**
      * 游戏记录id
      */

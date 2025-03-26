@@ -10,8 +10,8 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.manager.IbongAdarnaRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.IbongAdarnaBetRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGameContext;
@@ -36,7 +36,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
     @Autowired
     IbongAdarnaGameContext ibongAdarnaGameContext;
     @Autowired
-    IbongAdarnaRecordManager ibongAdarnaRecordManager;
+    IbongAdarnaBetRecordManager ibongAdarnaBetRecordManager;
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
 
@@ -46,8 +46,8 @@ public abstract class AbstractIbongAdarnaBetStrategy
     }
 
     @Override
-    public AbstractRecordManager<IbongAdarnaGameRecordDo> getRecordManager() {
-        return ibongAdarnaRecordManager;
+    public AbstractBetRecordManager<IbongAdarnaGameRecordDo> betRecordManager() {
+        return ibongAdarnaBetRecordManager;
     }
 
     @Override
