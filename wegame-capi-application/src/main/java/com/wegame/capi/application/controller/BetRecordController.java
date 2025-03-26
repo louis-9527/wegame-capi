@@ -9,7 +9,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
@@ -31,16 +31,16 @@ import java.util.Map;
 @Api(value = "投注记录模块", tags = {"投注记录模块"})
 public class BetRecordController {
 
-    public static final Map<GameTypeEnum, String> RECORD_MANAGER_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
+    public static final Map<GameTypeEnum, String> BET_RECORD_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingRecordManager")
-            .put(GameTypeEnum.MALAKAS, "malakasRecordManager")
-            .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaRecordManager")
+            .put(GameTypeEnum.MALAKAS, "malakasBetRecordManager")
+            .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaBetRecordManager")
             .build();
 
     @Autowired
     BetRecordService betRecordService;
     @Autowired
-    Map<String, AbstractRecordManager> recordManagerMap;
+    Map<String, AbstractBetRecordManager> betRecordManagerMap;
 
     @LoginRequired
     @ApiOperation(value = "分页查询", httpMethod = "POST")
@@ -71,12 +71,12 @@ public class BetRecordController {
         BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id), userInfo.getPlayerId(), gameType);
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
-        betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(Long.parseLong(id), gameType));
+        betRecordVo.setGameRecordList(betRecordManager(gameType).listGameRecordVo(Long.parseLong(id), gameType));
         return CommonResponse.build(betRecordVo);
     }
 
-    private AbstractRecordManager getRecordManager(GameTypeEnum gameType) {
-        AbstractRecordManager recordManager = recordManagerMap.get(RECORD_MANAGER_MAP.get(gameType));
+    private AbstractBetRecordManager betRecordManager(GameTypeEnum gameType) {
+        AbstractBetRecordManager recordManager = betRecordManagerMap.get(BET_RECORD_MANAGER_NAME_MAP.get(gameType));
         AssertUtil.assertNotNull(recordManager, ErrorCode.ERR_INTER);
         return recordManager;
     }

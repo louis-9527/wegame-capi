@@ -1,7 +1,7 @@
 package com.wegame.capi.test.biz.manager;
 
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
-import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
+import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -16,10 +16,10 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 @Slf4j
-public class MariaMakilingRecordManagerTest extends BaseTest {
+public class MariaMakilingBetRecordManagerTest extends BaseTest {
 
     @Autowired
-    MariaMakilingRecordManager mariaMakilingRecordManager;
+    MariaMakilingBetRecordManager mariaMakilingBetRecordManager;
 
     @BeforeAll
     public static void beforeTest() {
@@ -38,7 +38,7 @@ public class MariaMakilingRecordManagerTest extends BaseTest {
                     .direction(Sort.Direction.ASC)
                     .cacheKey(String.format("%s_%s", 1887415334551220224L, "123456"))
                     .build();
-            List<MariaMakilingGameRecordDo> makilingGameRecordDoList = mariaMakilingRecordManager.listGameRecordWithCache(query, GameTypeEnum.MARIA_MAKILING);
+            List<MariaMakilingGameRecordDo> makilingGameRecordDoList = mariaMakilingBetRecordManager.listGameRecordWithCache(query, GameTypeEnum.MARIA_MAKILING);
             log.info("makilingGameRecordDoList: {}", makilingGameRecordDoList.size());
         }
     }

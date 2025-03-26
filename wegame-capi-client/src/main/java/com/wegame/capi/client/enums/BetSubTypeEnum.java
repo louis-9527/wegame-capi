@@ -17,22 +17,23 @@ import java.util.List;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum BetSubTypeEnum {
 
+    // 正常投注
     NORMAL_BET("NORMAL_BET",
             "正常投注",
             BetTypeEnum.NORMAL_BET),
     FREE_SPINS_NORMAL_BET("FREE_SPINS_NORMAL_BET",
             "免费轮正常投注",
             BetTypeEnum.NORMAL_BET),
+    EX_BET("EX_BET",
+            "正常投注EX投注",
+            BetTypeEnum.NORMAL_BET),
+    // 免费轮投注
     BUY_BET("BUY_BET",
             "购买投注",
             BetTypeEnum.BUY_BET),
     FREE_SPINS_BUY_BET("FREE_SPINS_BUY_BET",
             "免费轮购买投注",
             BetTypeEnum.BUY_BET),
-    EX_BET("EX_BET",
-            "正常投注EX投注",
-            BetTypeEnum.NORMAL_BET)
-
     ;
 
     /**

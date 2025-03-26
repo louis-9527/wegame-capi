@@ -14,7 +14,7 @@ import java.util.List;
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.betRecordThreadPoolExecutor;
 
 @Component
-public abstract class AbstractRecordManager<T extends ToVoConverter> {
+public abstract class AbstractBetRecordManager<T extends ToVoConverter> {
     @Autowired
     BetRecordService betRecordService;
 

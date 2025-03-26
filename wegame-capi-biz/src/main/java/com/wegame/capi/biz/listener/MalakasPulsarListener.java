@@ -4,8 +4,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.manager.MalakasRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.MalakasBetRecordManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class MalakasPulsarListener extends AbstractPulsarListener<MalakasGameRec
     @Autowired
     BetRecordService betRecordService;
     @Autowired
-    MalakasRecordManager malakasRecordManager;
+    MalakasBetRecordManager malakasBetRecordManager;
     @Autowired
     Consumer<byte[]> malakasConsumer;
 
@@ -43,8 +43,8 @@ public class MalakasPulsarListener extends AbstractPulsarListener<MalakasGameRec
     }
 
     @Override
-    public AbstractRecordManager<MalakasGameRecordDo> getRecordManager() {
-        return malakasRecordManager;
+    public AbstractBetRecordManager<MalakasGameRecordDo> betRecordManager() {
+        return malakasBetRecordManager;
     }
 
     @Override
