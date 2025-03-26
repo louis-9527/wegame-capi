@@ -72,7 +72,6 @@ public abstract class AbstractMariaMakilingBetStrategy
         return mariaMakilingBetHelper;
     }
 
-
     @Override
     public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo betDo) {
         if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
@@ -156,18 +155,5 @@ public abstract class AbstractMariaMakilingBetStrategy
 
     public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
         // do nothing
-    }
-
-    private boolean isCanOperationEventBet(BetDo betDo) {
-        boolean canOperationEventBet = false;
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        if (Objects.equals(cpChannelId, userInfo.getChannelId()) && betDo.getBetType() == BetTypeEnum.NORMAL_BET) {
-            GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount());
-            canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
-            if (canOperationEventBet) {
-                betDo.setGameOperationEvent(gameOperationEvent);
-            }
-        }
-        return canOperationEventBet;
     }
 }

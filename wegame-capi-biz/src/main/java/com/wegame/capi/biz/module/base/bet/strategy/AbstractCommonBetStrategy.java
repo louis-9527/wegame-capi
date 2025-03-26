@@ -20,6 +20,7 @@ import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.RedeemRewardResStatusEnum;
@@ -63,6 +64,19 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     public abstract AbstractOperationEventManager operationEventManager();
 
     public abstract BetHelper<RD, R> betHelper();
+
+    public boolean isCanOperationEventBet(BetDo betDo) {
+        boolean canOperationEventBet = false;
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        if (Objects.equals(cpChannelId, userInfo.getChannelId()) && Objects.equals(betDo.getBetType(), BetTypeEnum.NORMAL_BET)) {
+            GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount());
+            canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
+            if (canOperationEventBet) {
+                betDo.setGameOperationEvent(gameOperationEvent);
+            }
+        }
+        return canOperationEventBet;
+    }
 
     /**
      * 干预事件投注-通用投注流程
