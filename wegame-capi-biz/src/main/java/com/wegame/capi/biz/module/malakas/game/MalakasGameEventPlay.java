@@ -64,12 +64,8 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
 
     @Override
     public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
         List<MalakasGameRecordDo> ret = new ArrayList<>();
-        GameEventDo gameEventDo = gamePlay.getGameEventDo();
-        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(1902971398703054848L, OperationEventTypeEnum.MALAKAS_DYNAMIC);
-
-
+        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.MALAKAS_DYNAMIC);
         // 获取首轮(batchId == 0 and index == 0)
         OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
@@ -83,9 +79,6 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
         // 按 batchId 分组 & 记录 ID 映射
         Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId = gameMultipleRecordDos.stream()
                 .collect(Collectors.groupingBy(OperationEventConfigRecordDo::getBatchId));
-
-        Map<Long, OperationEventConfigRecordDo> multipleRecordMap = gameMultipleRecordDos.stream()
-                .collect(Collectors.toMap(OperationEventConfigRecordDo::getId, record -> record));
 
         // 获取首批次并排序
         List<OperationEventConfigRecordDo> recordBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
@@ -108,7 +101,7 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
                 continue;
             }
             // 处理免费轮
-            processFreeRounds(ret, gamePlay, recordDo, multipleRecordMap, firstGameRecord, groupedByBatchId);
+            processFreeRounds(ret, gamePlay, recordDo, firstGameRecord, groupedByBatchId);
         }
         return ret;
     }
@@ -121,7 +114,6 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
             List<MalakasGameRecordDo> ret,
             GamePlayDo gamePlay,
             OperationEventConfigRecordDo recordDo,
-            Map<Long, OperationEventConfigRecordDo> multipleRecordMap,
             MalakasGameRecordDo parent,
             Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId) {
         Map<OperationEventConfigRecordDo, MalakasGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
@@ -154,7 +146,7 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
         for (Map.Entry<OperationEventConfigRecordDo, MalakasGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
             OperationEventConfigRecordDo key = entry.getKey();
             MalakasGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key, multipleRecordMap, value, groupedByBatchId);
+            processFreeRounds(ret, gamePlay, key,value, groupedByBatchId);
         }
     }
 
