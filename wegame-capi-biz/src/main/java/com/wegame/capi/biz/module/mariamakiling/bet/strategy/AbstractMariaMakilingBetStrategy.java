@@ -13,11 +13,12 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.operation.MariaMakilingOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetPromotionStrategy;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
+import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGameContext;
 import com.wegame.capi.client.context.UserInfo;
@@ -52,7 +53,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     MariaMakilingGameContext mariaMakilingGameContext;
     @Autowired
-    MariaMakilingRecordManager mariaMakilingRecordManager;
+    MariaMakilingBetRecordManager mariaMakilingBetRecordManager;
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
@@ -65,8 +66,8 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
-    public AbstractRecordManager<MariaMakilingGameRecordDo> getRecordManager() {
-        return mariaMakilingRecordManager;
+    public AbstractBetRecordManager<MariaMakilingGameRecordDo> betRecordManager() {
+        return mariaMakilingBetRecordManager;
     }
 
     @Override
@@ -91,7 +92,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     public BetResultDo<MariaMakilingGameRecordDo> betForFreeWheel(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        List<MariaMakilingGameRecordDo> gameRecordList = mariaMakilingRecordManager.listGameRecordWithCache(GameRecordQuery.builder()
+        List<MariaMakilingGameRecordDo> gameRecordList = mariaMakilingBetRecordManager.listGameRecordWithCache(GameRecordQuery.builder()
                         .betRecordId(betDo.getBetRecordId())
                         .cacheKey(String.format("%s_%s", betDo.getBetRecordId(), userInfo.getPlayerId()))
                         .fromPrimary(true)

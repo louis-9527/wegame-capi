@@ -9,7 +9,7 @@ import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
@@ -45,7 +45,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
 
     public abstract TypeReference<MQMessage<BetRecordDo<T>>> getTypeReference();
 
-    public abstract AbstractRecordManager<T> getRecordManager();
+    public abstract AbstractBetRecordManager<T> betRecordManager();
 
     public abstract int getCorePoolSize();
 
@@ -149,7 +149,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
             return;
         }
         try {
-            boolean ret = getRecordManager().batchAdd(recordList, getGameType());
+            boolean ret = betRecordManager().batchAdd(recordList, getGameType());
             if (ret) {
                 getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
             }
@@ -221,7 +221,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
     private void add(List<BetRecordDo<T>> recordList, Map<Long, MessageId> messageIdMap) {
         for (BetRecordDo<T> betRecordDo : CollectionUtils.emptyIfNull(recordList)) {
             try {
-                getRecordManager().add(betRecordDo, getGameType());
+                betRecordManager().add(betRecordDo, getGameType());
                 getConsumer().acknowledge(messageIdMap.get(betRecordDo.getId()));
             } catch (Exception e) {
                 log.error("{} add error, betRecordId: {}, errMsg: {}", getGameType().getName(), betRecordDo.getId(), e.getMessage(), e);
