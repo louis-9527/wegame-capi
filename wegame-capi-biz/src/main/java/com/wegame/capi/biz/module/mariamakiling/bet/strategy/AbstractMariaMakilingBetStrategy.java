@@ -13,10 +13,10 @@ import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.operation.MariaMakilingOperationEventManager;
+import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractCommonBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
-import com.wegame.capi.biz.module.mariamakiling.bet.function.MariaMakilingBetRecordFunction;
-import com.wegame.capi.biz.module.mariamakiling.bet.function.MariaMakilingBetResultHandleFunction;
+import com.wegame.capi.biz.module.mariamakiling.bet.MariaMakilingBetHelper;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -47,9 +47,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     MariaMakilingBetRecordManager mariaMakilingBetRecordManager;
     @Autowired
-    MariaMakilingBetRecordFunction mariaMakilingBetRecordFunction;
-    @Autowired
-    MariaMakilingBetResultHandleFunction mariaMakilingBetResultHandleFunction;
+    MariaMakilingBetHelper mariaMakilingBetHelper;
     @Autowired
     @Qualifier("mariaMakilingOperationEventManager")
     MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
@@ -68,6 +66,12 @@ public abstract class AbstractMariaMakilingBetStrategy
     public AbstractOperationEventManager operationEventManager() {
         return mariaMakilingOperationEventManager;
     }
+    @Override
+
+    public  BetHelper<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo> betHelper() {
+        return mariaMakilingBetHelper;
+    }
+
 
     @Override
     public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo betDo) {
@@ -75,14 +79,14 @@ public abstract class AbstractMariaMakilingBetStrategy
             // 非免费轮投注流程
             //// 1、是否使用星卡
             if (betDo.isUseStarCart()) {
-                // 1.1 是，则星卡投注流程 // todo 处理 syncOpt
-                return betForStartCard(betDo, true, mariaMakilingBetRecordFunction, mariaMakilingBetResultHandleFunction);
+                // 1.1 是，则星卡投注流程
+                return betForStartCard(betDo);
             } else {
                 // 1.2 否，则走其他投注流程
                 // 1.2.1、判断能否走干预事件投注
                 if (isCanOperationEventBet(betDo)) {
-                    // 1.2.11 命中干预事件：走干预事件投注 // todo 处理 syncOpt
-                    return betForOperationEvent(betDo, true, mariaMakilingBetRecordFunction, mariaMakilingBetResultHandleFunction);
+                    // 1.2.11 命中干预事件：走干预事件投注
+                    return betForOperationEvent(betDo);
                 } else {
                     // 1.2.12 未命中干预事件：走正常投注。
                     return betForNonFreeWheel(betDo); // todo 重命名
@@ -143,11 +147,11 @@ public abstract class AbstractMariaMakilingBetStrategy
         List<MariaMakilingGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
-        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetRecordFunction.build(betRecordId, betDo, list, null);
+        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.buildBetRecord(betRecordId, betDo, list, null);
         // 保存投注记录并派奖
-        MariaMakilingGameRecordDo gameRecord = list.get(0);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeWheel());
-        return mariaMakilingBetResultHandleFunction.handle(betRecord, resultDo);
+        boolean syncOpt = mariaMakilingBetHelper.hasRewardFreeWheel(list);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, syncOpt);
+        return mariaMakilingBetHelper.handleBetResult(betRecord, resultDo);
     }
 
     public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
