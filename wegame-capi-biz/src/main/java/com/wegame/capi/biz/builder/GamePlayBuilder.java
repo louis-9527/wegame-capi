@@ -5,6 +5,8 @@ import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 
+import java.util.Objects;
+
 public class GamePlayBuilder {
 
     public static GamePlayDo build(GamePlayTypeEnum gamePlayType, BetDo betDo, long betRecordId, GameOperationEventDo gameEventDo) {
@@ -16,7 +18,7 @@ public class GamePlayBuilder {
                 .betAmount(betDo.getBetAmount())
                 .payAmount(betDo.getPayAmount())
                 .betRecordId(betRecordId)
-                .operationEventConfigBetRecordId(gameEventDo.getConfigId())
+                .operationEventConfigBetRecordId(Objects.nonNull(gameEventDo) ? gameEventDo.getConfigId() : null)
                 .gameEventDo(gameEventDo)
                 .build();
     }

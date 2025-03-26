@@ -8,6 +8,6 @@ import java.util.List;
 @FunctionalInterface
 public interface BetRecordFunction<T> {
 
-    BetRecordDo<T> build(long betRecordId, BetDo betDo, List<T> gameRecordList);
+    BetRecordDo<T> build(long betRecordId, BetDo betDo, List<T> gameRecordList, String ieId);
 
 }

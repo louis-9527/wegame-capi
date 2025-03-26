@@ -18,7 +18,7 @@ public class GameOperationEventDo implements Serializable {
     /**
      * 是否命中干预事件
      */
-    private Boolean eventResult;
+    private boolean eventResult;
     /**
      * 命中的干预事件
      */
@@ -27,8 +27,4 @@ public class GameOperationEventDo implements Serializable {
      * 命中那条倍数ID
      */
     private Long configId;
-    /**
-     * 干预事件记录ID
-     */
-    private Long operatorRecordId;
 }

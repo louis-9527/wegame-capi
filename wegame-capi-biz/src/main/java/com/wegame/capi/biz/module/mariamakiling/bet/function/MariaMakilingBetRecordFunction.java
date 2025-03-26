@@ -22,7 +22,7 @@ public class MariaMakilingBetRecordFunction implements BetRecordFunction<MariaMa
     MariaMakilingConfig mariaMakilingConfig;
 
     @Override
-    public BetRecordDo<MariaMakilingGameRecordDo> build(long betRecordId, BetDo betDo, List<MariaMakilingGameRecordDo> gameRecordList) {
+    public BetRecordDo<MariaMakilingGameRecordDo> build(long betRecordId, BetDo betDo, List<MariaMakilingGameRecordDo> gameRecordList, String ieId) {
         // 构建投注记录
         long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
@@ -32,6 +32,7 @@ public class MariaMakilingBetRecordFunction implements BetRecordFunction<MariaMa
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
-                gameRecordList);
+                gameRecordList,
+                ieId);
     }
 }

@@ -7,10 +7,13 @@ import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
+import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
-import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
+import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
+import com.wegame.capi.biz.manager.operation.MariaMakilingOperationEventManager;
+import com.wegame.capi.biz.module.base.bet.strategy.AbstractCommonBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.module.mariamakiling.bet.function.MariaMakilingBetRecordFunction;
 import com.wegame.capi.biz.module.mariamakiling.bet.function.MariaMakilingBetResultHandleFunction;
@@ -18,10 +21,12 @@ import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,7 +39,7 @@ import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
  */
 @Slf4j
 public abstract class AbstractMariaMakilingBetStrategy
-        extends AbstractBetStrategy<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo>
+        extends AbstractCommonBetStrategy<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo>
         implements MariaMakilingBetStrategy<MariaMakilingGameRecordDo> {
 
     @Autowired
@@ -45,6 +50,9 @@ public abstract class AbstractMariaMakilingBetStrategy
     MariaMakilingBetRecordFunction mariaMakilingBetRecordFunction;
     @Autowired
     MariaMakilingBetResultHandleFunction mariaMakilingBetResultHandleFunction;
+    @Autowired
+    @Qualifier("mariaMakilingOperationEventManager")
+    MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
 
     @Override
     public AbstractGameContext<MariaMakilingGameRecordDo> gameContext() {
@@ -57,10 +65,29 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
+    public AbstractOperationEventManager operationEventManager() {
+        return mariaMakilingOperationEventManager;
+    }
+
+    @Override
     public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo betDo) {
         if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
-            // 非免费轮投注
-            return betForNonFreeWheel(betDo);
+            // 非免费轮投注流程
+            //// 1、是否使用星卡
+            if (betDo.isUseStarCart()) {
+                // 1.1 是，则星卡投注流程 // todo 处理 syncOpt
+                return betForStartCard(betDo, true, mariaMakilingBetRecordFunction, mariaMakilingBetResultHandleFunction);
+            } else {
+                // 1.2 否，则走其他投注流程
+                // 1.2.1、判断能否走干预事件投注
+                if (isCanOperationEventBet(betDo)) {
+                    // 1.2.11 命中干预事件：走干预事件投注 // todo 处理 syncOpt
+                    return betForOperationEvent(betDo, true, mariaMakilingBetRecordFunction, mariaMakilingBetResultHandleFunction);
+                } else {
+                    // 1.2.12 未命中干预事件：走正常投注。
+                    return betForNonFreeWheel(betDo); // todo 重命名
+                }
+            }
         } else {
             // 免费轮投注, 走查询
             return betForFreeWheel(betDo);
@@ -116,7 +143,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         List<MariaMakilingGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
-        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetRecordFunction.build(betRecordId, betDo, list);
+        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetRecordFunction.build(betRecordId, betDo, list, null);
         // 保存投注记录并派奖
         MariaMakilingGameRecordDo gameRecord = list.get(0);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeWheel());
@@ -125,5 +152,18 @@ public abstract class AbstractMariaMakilingBetStrategy
 
     public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
         // do nothing
+    }
+
+    private boolean isCanOperationEventBet(BetDo betDo) {
+        boolean canOperationEventBet = false;
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        if (Objects.equals(cpChannelId, userInfo.getChannelId()) && betDo.getBetType() == BetTypeEnum.NORMAL_BET) {
+            GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount());
+            canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
+            if (canOperationEventBet) {
+                betDo.setGameOperationEvent(gameOperationEvent);
+            }
+        }
+        return canOperationEventBet;
     }
 }
