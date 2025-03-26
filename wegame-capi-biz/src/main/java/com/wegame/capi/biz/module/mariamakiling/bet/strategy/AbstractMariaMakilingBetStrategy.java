@@ -1,43 +1,32 @@
 package com.wegame.capi.biz.module.mariamakiling.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.BetRecordBuilder;
-import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
-import com.wegame.capi.biz.manager.operation.MariaMakilingOperationEventManager;
-import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetPromotionStrategy;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
+import com.wegame.capi.biz.module.mariamakiling.bet.function.MariaMakilingBetRecordFunction;
+import com.wegame.capi.biz.module.mariamakiling.bet.function.MariaMakilingBetResultHandleFunction;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
@@ -45,9 +34,7 @@ import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
  */
 @Slf4j
 public abstract class AbstractMariaMakilingBetStrategy
-        //        extends AbstractBetStrategy<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo>
-        //        implements MariaMakilingBetStrategy<MariaMakilingGameRecordDo> {
-        extends AbstractBetPromotionStrategy<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo>
+        extends AbstractBetStrategy<MariaMakilingGameRecordDo, MariaMakilingGameRecordDo>
         implements MariaMakilingBetStrategy<MariaMakilingGameRecordDo> {
 
     @Autowired
@@ -55,10 +42,9 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     MariaMakilingBetRecordManager mariaMakilingBetRecordManager;
     @Autowired
-    MariaMakilingConfig mariaMakilingConfig;
+    MariaMakilingBetRecordFunction mariaMakilingBetRecordFunction;
     @Autowired
-    @Qualifier("mariaMakilingOperationEventManager")
-    MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
+    MariaMakilingBetResultHandleFunction mariaMakilingBetResultHandleFunction;
 
     @Override
     public AbstractGameContext<MariaMakilingGameRecordDo> gameContext() {
@@ -71,25 +57,20 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
-    public AbstractOperationEventManager operationEventManager() {
-        return mariaMakilingOperationEventManager;
+    public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo betDo) {
+        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+            // 非免费轮投注
+            return betForNonFreeWheel(betDo);
+        } else {
+            // 免费轮投注, 走查询
+            return betForFreeWheel(betDo);
+        }
     }
-    //    public BetResultDo<MariaMakilingGameRecordDo> bet(BetDo betDo) {
-    //        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
-    //            // 非免费轮投注
-    //            return betForNonFreeWheel(betDo);
-    //        } else {
-    //            // 免费轮投注, 走查询
-    //            return betForFreeWheel(betDo);
-    //        }
-    //    }
-
 
     /**
      * 免费轮投注
      */
-    @Override
-    public BetResultDo<MariaMakilingGameRecordDo> betForFreeWheel(BetDo betDo) {
+    private BetResultDo<MariaMakilingGameRecordDo> betForFreeWheel(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         List<MariaMakilingGameRecordDo> gameRecordList = mariaMakilingBetRecordManager.listGameRecordWithCache(GameRecordQuery.builder()
@@ -103,7 +84,7 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparingInt(MariaMakilingGameRecordDo::getIndex))
                 .collect(Collectors.toList());
-        // 匹配-免费轮游戏记录 todo 可直接查询游戏记录
+        // 匹配-免费轮游戏记录
         MariaMakilingGameRecordDo matchGameRecord = gameRecordList
                 .stream()
                 .filter(item -> Objects.equals(item.getId(), betDo.getGameRecordId()))
@@ -127,52 +108,19 @@ public abstract class AbstractMariaMakilingBetStrategy
                 .build();
     }
 
-    @Override
-    public boolean hasRewardFreeWheel(List<MariaMakilingGameRecordDo> gameRecordList) {
-        RewardResultDo<SymbolDo> rewardResult = gameRecordList.get(0).getRewardResult();
-        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel();
-    }
-
-    @Override
-    public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(Long betRecordId, BetDo betDo, List<MariaMakilingGameRecordDo> list) {
+    /**
+     * 非免费轮投注
+     */
+    private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeWheel(BetDo betDo) {
+        long betRecordId = generateBetRecordId();
+        List<MariaMakilingGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
+        AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
-        long totalRewardAmount = list.stream()
-                .filter(item -> Objects.nonNull(item.getRewardResult()))
-                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                .sum();
-        return BetRecordBuilder.build(betRecordId,
-                betDo,
-                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
-                list);
-    }
-
-    @Override
-    public BetResultDo<MariaMakilingGameRecordDo> buildResult(BetRecordDo<MariaMakilingGameRecordDo> betRecord, SingleWalletBetResultDo resultDo) {
-        MariaMakilingGameRecordDo gameRecord = betRecord.getGameRecordList().get(0);
-        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-        if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            return BetResultDo.<MariaMakilingGameRecordDo>builder()
-                    .betStatus(BetStatusEnum.SUCCESS)
-                    .betRecordId(betRecord.getId())
-                    .gameId(betRecord.getGameId())
-                    .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
-                    .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
-                    .credit(resultDo.getCredit())
-                    .overallRewardAmount(gameRecord.getOverallRewardAmount())
-                    .totalPayoutAmount(betRecord.getPayOutAmount())
-                    .resultDetail(gameRecord)
-                    .build();
-        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
-            if (resultDo.getErrorCode() != null) {
-                throw new BusinessException(resultDo.getErrorCode());
-            }
-            throw new BusinessException(ErrorCode.ERR_INTER);
-        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
-            throw new BusinessException(ErrorCode.ERR_NET);
-        } else {
-            throw new BusinessException(ErrorCode.ERR_INTER);
-        }
+        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetRecordFunction.build(betRecordId, betDo, list);
+        // 保存投注记录并派奖
+        MariaMakilingGameRecordDo gameRecord = list.get(0);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeWheel());
+        return mariaMakilingBetResultHandleFunction.handle(betRecord, resultDo);
     }
 
     public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
