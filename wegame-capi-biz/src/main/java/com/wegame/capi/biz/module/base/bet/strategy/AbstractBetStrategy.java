@@ -40,7 +40,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
 
     public abstract AbstractGameContext<R> gameContext();
 
-    public abstract AbstractRecordManager<R> getRecordManager();
+    public abstract AbstractRecordManager<R> betRecordManager();
 
     public long generateBetRecordId() {
         long betRecordId = snowflakeIdGenerator.nextId();
@@ -59,17 +59,17 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     }
 
     private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
-        Long betRecordId = getRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
+        Long betRecordId = betRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
             // 异步更新：更新为->投注成功
-            getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult),
+            betRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult),
                     gameContext().gameInfo().getGameType());
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("syncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步更新：更新为->投注失败
-            getRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult),
+            betRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult),
                     gameContext().gameInfo().getGameType());
         }
         return betSingleWalletResult;
@@ -93,7 +93,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             if (Objects.isNull(messageId)) {
                 log.error("syncSendMessage send fail, sync add data, betRecordId: {}", betRecordDo.getId());
                 // 新增消息发送失败，则转同步写db
-                getRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
+                betRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
             }
             // 异步发送更新消息: 更新为投注成功
             pulsarProducer.asyncSendMessageThenRetry(gameContext().gameInfo().getGameType(),

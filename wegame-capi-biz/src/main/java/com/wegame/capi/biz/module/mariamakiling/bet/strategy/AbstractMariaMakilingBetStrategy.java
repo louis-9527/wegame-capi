@@ -53,7 +53,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
-    public AbstractRecordManager<MariaMakilingGameRecordDo> getRecordManager() {
+    public AbstractRecordManager<MariaMakilingGameRecordDo> betRecordManager() {
         return mariaMakilingRecordManager;
     }
 
