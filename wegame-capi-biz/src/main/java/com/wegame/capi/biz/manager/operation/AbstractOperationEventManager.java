@@ -270,7 +270,7 @@ public abstract class AbstractOperationEventManager {
         return getPayMultipleConfigId(closestMultiple);
     }
 
-    public void asyncEventDetailUpdate(OperationEventDo eventDo, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
+    public void asyncUpdateEventDetail(OperationEventDo eventDo, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
         operationEventThreadPoolExecutor.execute(() -> {
             // 判断是否完成
             OperationEventSubStatusEnum eventSubStatusEnum = null;

@@ -5,7 +5,6 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.LockException;
 import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.GamePlayBuilder;
 import com.wegame.capi.biz.builder.operation.OperationEventDetailBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -13,7 +12,6 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
-import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
@@ -173,7 +171,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
         OperationEventDo eventDo = eventBetResult.getOperationEvent();
         // 异步上报、更新状态
         long eventAmount = betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount();
-        operationEventManager().asyncEventDetailUpdate(eventDo, betStatusEnum, eventBetResult.getOperatorRecordId(), resultDo.getBetId(), eventAmount);
+        operationEventManager().asyncUpdateEventDetail(eventDo, betStatusEnum, eventBetResult.getOperatorRecordId(), resultDo.getBetId(), eventAmount);
         return this.buildResult(betRecordDo, resultDo);
     }
 
@@ -181,7 +179,7 @@ public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR e
     private Pair<GameOperationEventDo, BetRecordDo<R>> getEventBetRecordPair(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         String operationEventBetLockName = LockNameUtil.getOperationEventBetLockName(this.gameContext().gameInfo().getGameType(), userInfo.getPlayerId());
-        return distributeLock.tryLockThenCall(operationEventBetLockName, 500L, 1000L, () -> {
+        return distributeLock.tryLockThenCall(operationEventBetLockName,    500L, 1000L, () -> {
             try {
                 GameOperationEventDo eventBetResult = operationEventManager().getEventBetResult(betDo.getPayAmount());
                 if (eventBetResult.getEventResult()) {
