@@ -1,10 +1,7 @@
 package com.wegame.capi.biz.module.mariamakiling.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.BetRecordBuilder;
-import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -15,6 +12,8 @@ import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
+import com.wegame.capi.biz.module.mariamakiling.bet.function.MariaMakilingBetRecordFunction;
+import com.wegame.capi.biz.module.mariamakiling.bet.function.MariaMakilingBetResultHandleFunction;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -28,8 +27,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
@@ -45,7 +42,9 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     MariaMakilingBetRecordManager mariaMakilingBetRecordManager;
     @Autowired
-    MariaMakilingConfig mariaMakilingConfig;
+    MariaMakilingBetRecordFunction mariaMakilingBetRecordFunction;
+    @Autowired
+    MariaMakilingBetResultHandleFunction mariaMakilingBetResultHandleFunction;
 
     @Override
     public AbstractGameContext<MariaMakilingGameRecordDo> gameContext() {
@@ -117,42 +116,11 @@ public abstract class AbstractMariaMakilingBetStrategy
         List<MariaMakilingGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
-        //// 总中奖金额
-        long totalRewardAmount = list.stream()
-                .filter(item -> Objects.nonNull(item.getRewardResult()))
-                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                .sum();
-        BetRecordDo<MariaMakilingGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
-                betDo,
-                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
-                list);
+        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetRecordFunction.build(betRecordId, betDo, list);
         // 保存投注记录并派奖
         MariaMakilingGameRecordDo gameRecord = list.get(0);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeWheel());
-        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-        if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            return BetResultDo.<MariaMakilingGameRecordDo>builder()
-                    .betStatus(BetStatusEnum.SUCCESS)
-                    .betRecordId(betRecord.getId())
-                    .gameId(betDo.getGameId())
-                    .betType(betDo.getBetType())
-                    .betSubType(betDo.getBetSubType())
-                    .credit(resultDo.getCredit())
-                    .overallRewardAmount(gameRecord.getOverallRewardAmount())
-                    .totalPayoutAmount(betRecord.getPayOutAmount())
-                    .resultDetail(gameRecord)
-                    .build();
-        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
-            if (resultDo.getErrorCode() != null) {
-                throw new BusinessException(resultDo.getErrorCode());
-            }
-            throw new BusinessException(ErrorCode.ERR_INTER);
-        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
-            throw new BusinessException(ErrorCode.ERR_NET);
-        } else {
-            throw new BusinessException(ErrorCode.ERR_INTER);
-        }
+        return mariaMakilingBetResultHandleFunction.handle(betRecord, resultDo);
     }
 
     public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {

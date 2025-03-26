@@ -100,8 +100,8 @@ public class MariamakilingBetControllerTest extends BetControllerTest {
         betRequest.setBetType(BetTypeEnum.BUY_BET.getCode());
         betRequest.setBetSubType(BetSubTypeEnum.BUY_BET.getCode());
         BetDetail betDetail = new BetDetail();
-        betDetail.setBetAmount(100L);
-        betDetail.setPayAmount(10000L);
+        betDetail.setBetAmount(1000L);
+        betDetail.setPayAmount(35000L);
         betRequest.setBetDetail(betDetail);
         return betRequest;
     }
@@ -113,7 +113,7 @@ public class MariamakilingBetControllerTest extends BetControllerTest {
         betRequest.setBetSubType(BetSubTypeEnum.FREE_SPINS_BUY_BET.getCode());
 
         BetDetail betDetail = new BetDetail();
-        betDetail.setBetAmount(100L);
+        betDetail.setBetAmount(1000L);
         betDetail.setPayAmount(0L);
         betDetail.setBetRecordId(betRecordId);
         betDetail.setGameRecordId(gameRecordId);
