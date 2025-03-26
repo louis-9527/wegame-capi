@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.malakasTransactionManager;
 
 @Slf4j
-@Component("malakasRecordManager")
-public class MalakasRecordManager extends AbstractRecordManager<MalakasGameRecordDo> {
+@Component("malakasBetRecordManager")
+public class MalakasBetRecordManager extends AbstractBetRecordManager<MalakasGameRecordDo> {
 
     @Autowired
     GameRecordService<MalakasGameRecordDo> gameRecordService;

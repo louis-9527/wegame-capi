@@ -4,17 +4,15 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
-import com.wegame.capi.biz.builder.GamePlayBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
-import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.manager.MalakasRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.MalakasBetRecordManager;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
@@ -22,7 +20,6 @@ import com.wegame.capi.biz.module.malakas.game.MalakasGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +46,7 @@ public abstract class AbstractMalakasBetStrategy
     @Autowired
     MalakasGameContext malakasGameContext;
     @Autowired
-    MalakasRecordManager malakasRecordManager;
+    MalakasBetRecordManager malakasBetRecordManager;
     @Autowired
     MalakasConfig malakasConfig;
 
@@ -59,8 +56,8 @@ public abstract class AbstractMalakasBetStrategy
     }
 
     @Override
-    public AbstractRecordManager<MalakasGameRecordDo> getRecordManager() {
-        return malakasRecordManager;
+    public AbstractBetRecordManager<MalakasGameRecordDo> betRecordManager() {
+        return malakasBetRecordManager;
     }
 
     @Override
@@ -134,7 +131,7 @@ public abstract class AbstractMalakasBetStrategy
      */
     private BetResultDo<MalakasBetRecordDetailDo> betForFreeWheel(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        List<MalakasGameRecordDo> gameRecordList = getRecordManager().listGameRecord(
+        List<MalakasGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
                 GameRecordQuery.builder()
                         .betRecordId(betDo.getBetRecordId())
                         .playerId(userInfo.getPlayerId())
