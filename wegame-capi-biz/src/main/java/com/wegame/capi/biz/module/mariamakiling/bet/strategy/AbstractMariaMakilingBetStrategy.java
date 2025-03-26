@@ -113,11 +113,11 @@ public abstract class AbstractMariaMakilingBetStrategy
         List<MariaMakilingGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
-        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.build(betRecordId, betDo, list);
+        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.buildBetRecord(betRecordId, betDo, list);
         // 保存投注记录并派奖
         boolean syncOpt = mariaMakilingBetHelper.hasRewardFreeWheel(list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, syncOpt);
-        return mariaMakilingBetHelper.handle(betRecord, resultDo);
+        return mariaMakilingBetHelper.handleBetResult(betRecord, resultDo);
     }
 
     public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {

@@ -18,7 +18,7 @@ public interface BetHelper<RD extends ToVoConverter, R> {
      * @param gameRecordList 游戏记录列表
      * @return 投注记录
      */
-    BetRecordDo<R> build(long betRecordId, BetDo betDo, List<R> gameRecordList);
+    BetRecordDo<R> buildBetRecord(long betRecordId, BetDo betDo, List<R> gameRecordList);
 
     /**
      * 投注结果处理
@@ -27,7 +27,7 @@ public interface BetHelper<RD extends ToVoConverter, R> {
      * @param result    单钱包投注结果
      * @return 投注结果
      */
-    BetResultDo<RD> handle(BetRecordDo<R> betRecord, SingleWalletBetResultDo result);
+    BetResultDo<RD> handleBetResult(BetRecordDo<R> betRecord, SingleWalletBetResultDo result);
 
     /**
      * 判断是否中免费轮
