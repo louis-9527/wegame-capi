@@ -8,7 +8,7 @@ import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.listener.PulsarProducer;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
@@ -40,7 +40,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
 
     public abstract AbstractGameContext<R> gameContext();
 
-    public abstract AbstractRecordManager<R> betRecordManager();
+    public abstract AbstractBetRecordManager<R> betRecordManager();
 
     public long generateBetRecordId() {
         long betRecordId = snowflakeIdGenerator.nextId();

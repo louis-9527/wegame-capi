@@ -11,8 +11,8 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGameContext;
@@ -43,7 +43,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     @Autowired
     MariaMakilingGameContext mariaMakilingGameContext;
     @Autowired
-    MariaMakilingRecordManager mariaMakilingRecordManager;
+    MariaMakilingBetRecordManager mariaMakilingBetRecordManager;
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
 
@@ -53,8 +53,8 @@ public abstract class AbstractMariaMakilingBetStrategy
     }
 
     @Override
-    public AbstractRecordManager<MariaMakilingGameRecordDo> betRecordManager() {
-        return mariaMakilingRecordManager;
+    public AbstractBetRecordManager<MariaMakilingGameRecordDo> betRecordManager() {
+        return mariaMakilingBetRecordManager;
     }
 
     @Override
@@ -74,7 +74,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     private BetResultDo<MariaMakilingGameRecordDo> betForFreeWheel(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        List<MariaMakilingGameRecordDo> gameRecordList = mariaMakilingRecordManager.listGameRecordWithCache(GameRecordQuery.builder()
+        List<MariaMakilingGameRecordDo> gameRecordList = mariaMakilingBetRecordManager.listGameRecordWithCache(GameRecordQuery.builder()
                         .betRecordId(betDo.getBetRecordId())
                         .cacheKey(String.format("%s_%s", betDo.getBetRecordId(), userInfo.getPlayerId()))
                         .fromPrimary(true)
