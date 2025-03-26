@@ -115,8 +115,8 @@ public abstract class AbstractMariaMakilingBetStrategy
         // 构建投注记录
         BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.build(betRecordId, betDo, list);
         // 保存投注记录并派奖
-        MariaMakilingGameRecordDo gameRecord = list.get(0);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeWheel());
+        boolean syncOpt = mariaMakilingBetHelper.hasRewardFreeWheel(list);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, syncOpt);
         return mariaMakilingBetHelper.handle(betRecord, resultDo);
     }
 
