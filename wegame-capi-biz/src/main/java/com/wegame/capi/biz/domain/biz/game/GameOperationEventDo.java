@@ -1,19 +1,20 @@
 package com.wegame.capi.biz.domain.biz.game;
 
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
+import java.io.Serializable;
 
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameEventDo {
+public class GameOperationEventDo implements Serializable {
     /**
      * 是否命中干预事件
      */
@@ -21,16 +22,13 @@ public class GameEventDo {
     /**
      * 命中的干预事件
      */
-    private OperationEventDo dynamicOperationEvent;
-
+    private OperationEventDo operationEvent;
     /**
      * 命中那条倍数ID
      */
     private Long configId;
-
     /**
      * 干预事件记录ID
      */
     private Long operatorRecordId;
-
 }
