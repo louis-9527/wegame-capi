@@ -21,7 +21,7 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(description = "投注详情")
 public class BetDetail implements BetRequestValidate, Serializable {
-    private static final long MIN_BET_AMOUNT = 200L;
+    private static final long MIN_BET_AMOUNT = 300L;
     private static final long MAX_BET_AMOUNT = 10000000L;
     private static final long MULTIPLE = 35;
 
