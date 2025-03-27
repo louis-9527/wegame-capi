@@ -15,11 +15,18 @@ RUN wget -O /THIRD-PARTY-LICENSES-20200824.tar.gz https://corretto.aws/downloads
     apk add --no-cache amazon-corretto-8=$version-r0 && \
     rm -rf /usr/lib/jvm/java-8-amazon-corretto/lib/src.zip
 
+RUN apk add --no-cache tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime && \
+    echo "Asia/Kuala_Lumpur" > /etc/timezone
+
 ENV LANG C.UTF-8
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-amazon-corretto
 ENV PATH=$PATH:$JAVA_HOME/bin
 ENV CLASSPATH=.:$JAVA_HOME/lib/rt.jar
+
+#install nodejs npm
+RUN apk add --no-cache nodejs npm python3 make g++
 
 #install jmx exporter
 RUN mkdir -p /opt/jmx-prometheus-javaagent
@@ -29,3 +36,4 @@ RUN mkdir -p /log/wegame-capi
 WORKDIR /opt/wegame-capi
 RUN chmod 777 /opt/wegame-capi/target/wegame-capi-1.0.0.jar
 WORKDIR /opt/wegame-capi/target
+RUN npm install -g aws4

@@ -1,7 +1,8 @@
 
 
 
-
+游戏：模版方法设计模式
+游戏结果：工厂/建造者模式
 
 
 **包结构说明**：
@@ -47,3 +48,8 @@ http://localhost:9000/capi/doc.html
 
 测试环境接口文档地址：
 http://client.sportslive.com.ph:9000/capi/doc.html
+
+
+
+线上请求链路：
+压测机 -> cloudfront - > load balancer -> apisix (网关) -> 应用程序pods

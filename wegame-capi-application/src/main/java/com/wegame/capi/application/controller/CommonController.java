@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("common")
 @Api(value = "common模块", tags = {"common模块"})
 public class CommonController {
+
     @ApiOperation(value = "ping", httpMethod = "GET")
     @GetMapping("/ping")
     public CommonResponse<String> ping() {
+        log.info("CommonController#ping");
         return CommonResponse.build("pong");
     }
 }

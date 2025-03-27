@@ -1,6 +1,7 @@
 /target/
 /.idea/
 /log/
+wegame-capi-application/log/
 .DS_Store
 /wegame-capi-application/target/
 /wegame-capi-client/target/

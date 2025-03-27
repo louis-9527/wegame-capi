@@ -1,26 +1,27 @@
-spring:
-  application:
-    name: wegame-capi
-    env: prod
-  profiles:
-    active: prod
-  config:
-    import:
-      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
-  cloud:
-    nacos:
-      username: nacos
-      password: nacos
-#      discovery:
+#spring:
+#  application:
+#    name: wegame-capi
+#    env: prod
+#  profiles:
+#    active: prod
+##  config:
+##    import:
+##      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
+##      - "optional:nacos:${spring.application.name}-maria-makiling-config-${spring.profiles.active}.json"
+#  cloud:
+#    nacos:
+#      username: nacos
+#      password: nacos
+##      discovery:
+##        server-addr: nacos-cs.nacos.svc.cluster.local:8848
+##        group: ${spring.profiles.active}
+##        namespace: c364c8cf-3770-4b55-9304-2f05d6eba5c2
+##        metadata:
+##          application: ${spring.application.name}-${spring.profiles.active}
+#      config:
+#        import-check:
+#          enabled: true
 #        server-addr: nacos-cs.nacos.svc.cluster.local:8848
 #        group: ${spring.profiles.active}
 #        namespace: c364c8cf-3770-4b55-9304-2f05d6eba5c2
-#        metadata:
-#          application: ${spring.application.name}-${spring.profiles.active}
-      config:
-        import-check:
-          enabled: true
-        server-addr: nacos-cs.nacos.svc.cluster.local:8848
-        group: ${spring.profiles.active}
-        namespace: c364c8cf-3770-4b55-9304-2f05d6eba5c2
-        file-extension: yaml
+#        file-extension: yaml

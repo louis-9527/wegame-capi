@@ -24,7 +24,7 @@ public class FilterConfig {
     @Bean
     public FilterRegistrationBean mdcFilter() {
         MdcFilter mdcFilter = new MdcFilter();
-        log.info("build signatureFilterBean, mdcFilter: {}", mdcFilter);
+        log.info("build mdcFilter, mdcFilter: {}", mdcFilter);
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(mdcFilter);
         bean.setOrder(-2);
@@ -39,20 +39,15 @@ public class FilterConfig {
         signatureFilter.setAppId(Constants.APP_ID);
         signatureFilter.setAppSecret(Constants.APP_SECRET);
         signatureFilter.setRequestTimeOut(Constants.REQUEST_TIME_OUT);
-        log.info("build signatureFilterBean, signatureFilter: {}", signatureFilter);
+        log.info("build signatureFilter, signatureFilter: {}", signatureFilter);
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(signatureFilter);
         bean.setOrder(1);
-        // todo
-        bean.addUrlPatterns("/appVersionRule/*");
-        bean.addUrlPatterns("/common/*");
         bean.addUrlPatterns("/bet/*");
-        bean.addUrlPatterns("/event/*");
-        bean.addUrlPatterns("/report/*");
+        bean.addUrlPatterns("/betRecord/*");
+        bean.addUrlPatterns("/reward/*");
         bean.addUrlPatterns("/user/*");
-        bean.addUrlPatterns("/bannerConfig/*");
-        bean.addUrlPatterns("/commonConfig/*");
-
+        bean.addUrlPatterns("/user/*");
         bean.addUrlPatterns("/inner/*");
         return bean;
     }
@@ -61,11 +56,10 @@ public class FilterConfig {
     public FilterRegistrationBean contextFilter(@Autowired RedisTemplate<String, Object> redisTemplate) {
         ContextFilter contextFilter = new ContextFilter();
         contextFilter.setRedisTemplate(redisTemplate);
-        log.info("build contextFilterBean, contextFilter: {}", contextFilter);
+        log.info("build contextFilter, contextFilter: {}", contextFilter);
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(contextFilter);
         bean.setOrder(2);
-        // todo
         bean.addUrlPatterns("/*");
         return bean;
     }

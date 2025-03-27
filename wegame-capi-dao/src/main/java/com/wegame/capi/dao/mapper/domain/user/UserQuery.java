@@ -7,16 +7,17 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 玩家用户查询模型
+ * 用户查询模型
  * @author genereate
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UserQuery extends UserPo implements Serializable {
-    private static final long serialVersionUID = -5426702192748300288L;
+    private static final long serialVersionUID = -9102828208163068928L;
     /**
      * limit
      */

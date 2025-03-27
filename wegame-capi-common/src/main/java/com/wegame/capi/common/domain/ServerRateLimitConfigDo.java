@@ -22,6 +22,13 @@ import java.util.List;
 @ApiModel("服务限流配置")
 public class ServerRateLimitConfigDo implements Serializable {
     private static final long serialVersionUID = -891587652158464L;
+
+    private static final ServerRateLimitConfigCellDo DEFAULT_CELL_DO = ServerRateLimitConfigCellDo.builder()
+            .onOpen(false)
+            .permitsPerSecond(50D)
+            .type("global")
+            .build();
+
     /**
      * 全局
      */
@@ -56,16 +63,16 @@ public class ServerRateLimitConfigDo implements Serializable {
 
     }
 
-//    public List<ServerRateLimitConfigCellDo> allConfigDoList() {
-//        if (){
-//
-//
-//
-//        }
-//
-//
-//        return Lists.newArrayList();
-//    }
+    //    public List<ServerRateLimitConfigCellDo> allConfigDoList() {
+    //        if (){
+    //
+    //
+    //
+    //        }
+    //
+    //
+    //        return Lists.newArrayList();
+    //    }
 
 
 }

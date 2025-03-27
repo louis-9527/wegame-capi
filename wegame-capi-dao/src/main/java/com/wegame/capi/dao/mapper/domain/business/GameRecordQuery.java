@@ -2,21 +2,88 @@ package com.wegame.capi.dao.mapper.domain.business;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 游戏记录查询模型
+ *
  * @author genereate
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class GameRecordQuery extends GameRecordPo<Object> implements Serializable {
-    private static final long serialVersionUID = -3451558293028335616L;
+@EqualsAndHashCode(callSuper = false)
+public class GameRecordQuery implements Serializable {
+    private static final long serialVersionUID = -6976052604957607936L;
+    @Id
+    @Field("_id")
+    private Long id;
+    /**
+     * parentId
+     */
+    private Long parentId;
+    /**
+     * batchId
+     */
+    private Long batchId;
+    /**
+     * betRecordId
+     */
+    private Long betRecordId;
+    /**
+     * 玩家id
+     */
+    private String playerId;
+    /**
+     * 玩家名称
+     */
+    private String playerName;
+    /**
+     * 序号
+     */
+    private Integer index;
+    /**
+     * 免费轮标识 false否 true是
+     */
+    private Boolean freeWheelFlag;
+    /**
+     * 创建人
+     */
+    private String creator;
+    /**
+     * 创建时间
+     */
+    private Long createTime;
+    /**
+     * 更新人
+     */
+    private String updater;
+    /**
+     * 更新时间
+     */
+    private Long updateTime;
+    /**
+     * 开始创建时间
+     */
+    private Long startCreateTime;
+    /**
+     * 结束创建时间
+     */
+    private Long endCreateTime;
+    /**
+     * 开始更新时间
+     */
+    private Long startUpdateTime;
+    /**
+     * 结束更新时间
+     */
+    private Long endUpdateTime;
     /**
      * limit
      */
@@ -30,23 +97,18 @@ public class GameRecordQuery extends GameRecordPo<Object> implements Serializabl
      */
     private String orderByClause;
     /**
-     * 开始创建时间
+     * 排序语句
      */
-    private Date startCreateTime;
-    /**
-     * 结束创建时间
-     */
-    private Date endCreateTime;
-    /**
-     * 开始更新时间
-     */
-    private Date startUpdateTime;
-    /**
-     * 结束更新时间
-     */
-    private Date endUpdateTime;
+    private Sort.Direction direction;
 
     ///////////////  above auto generated ///////////////
-
+    /**
+     * 缓存key
+     */
+    private String cacheKey;
+    /**
+     * 查询是否强制走主分片. 默认false
+     */
+    private boolean fromPrimary = false;
 }
 

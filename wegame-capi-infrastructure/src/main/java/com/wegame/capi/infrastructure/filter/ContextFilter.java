@@ -5,8 +5,8 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.context.SystemInfo;
 import com.wegame.base.context.SystemInfoContext;
 import com.wegame.capi.common.Constants;
-import com.wegame.capi.common.context.UserInfo;
-import com.wegame.capi.common.context.UserInfoContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +42,9 @@ public class ContextFilter extends OncePerRequestFilter {
 
         // do filter
         filterChain.doFilter(request, response);
+
+        response.setHeader("Connection", "keep-alive");
+        response.setHeader("Keep-Alive", "timeout=180");
 
         // clean context
         SystemInfoContext.clear();

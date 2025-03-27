@@ -2,12 +2,12 @@ appid: com.wegame.capi
 ## log
 logging:
   level:
-    org.springframework.web: trace
-    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-    com.wegame: trace
-    org.apache.ibatis: trace
-    com.alibaba.nacos: info
-    com.alibaba.cloud.nacos: DEBUG
+    com.wegame: info
+    org.mongodb: error
+#    org.springframework.web: trace
+#    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+#    com.wegame: trace
+#    org.apache.ibatis: trace
 ## server
 server:
   port: 9500
@@ -15,11 +15,11 @@ server:
   tomcat:
     uri-encoding: UTF-8
     connection-timeout: 3000
-    max-connections: 100000
-    keep-alive-timeout: 3000
+    max-connections: 2000000
+    keep-alive-timeout: 180000
     accept-count: 100
     threads:
-      max: 20000
+      max: 300000
       min-spare: 20
   servlet:
     context-path: /capi/game
@@ -34,11 +34,16 @@ mybatis:
     cacheEnabled: true
 ## spring
 spring:
+  application:
+    name: wegame-capi
+    env: dev
+  profiles:
+    active: dev
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
   lifecycle:
-    timeout-per-shutdown-phase: 30
+    timeout-per-shutdown-phase: 90
   servlet:
     multipart:
       max-file-size: 10MB
@@ -53,7 +58,12 @@ spring:
     timeout: 500
     cluster:
       nodes:
-        - dev-nba-backend-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
+        - 172.31.27.141:7001
+        - 172.31.27.141:7002
+        - 172.31.27.141:7003
+        - 172.31.27.141:7004
+        - 172.31.27.141:7005
+        - 172.31.27.141:7006
       max-redirects: 5
     lettuce:
       pool:
@@ -65,57 +75,35 @@ spring:
         max-active: 8
         #连接池中的最小空闲连接
         min-idle: 0
-    password:
   datasource:
     dynamic:
       primary: wegame_user_db
       strict: true
       datasource:
         wegame_user_db:
-          url: jdbc:mysql://dev-nba-backend-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          url: jdbc:mysql://172.31.27.141:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: root
-          password: ENC(DHb76s+Gg5rikLGRiZVPz0E+iAwmb+SfJw0Vy2DJI5lMd9rLRK8GWiB/8z78PJ7HEaFZ5mF2LSlXR3gxerZskA==)
+          password: ENC(cLgvk81CoiK2/V32BRs7VzTYCyY2SNPTRNYhIBJOPF3YunMyzWpNFMnQ16/M96iq39MIyiBxQenzOLbOrAnblg==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
             initial-size: 10
             min-idle: 10
-            max-active: 2000
+            max-active: 5000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 3000
+            min-evictable-idle-time-millis: 30000
             validation-query: SELECT 1 FROM DUAL
             test-while-idle: true
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: false
-        wegame_backend_db:
-          url: jdbc:mysql://dev-nba-backend-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: root
-          password: ENC(DHb76s+Gg5rikLGRiZVPz0E+iAwmb+SfJw0Vy2DJI5lMd9rLRK8GWiB/8z78PJ7HEaFZ5mF2LSlXR3gxerZskA==)
-          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-          type: com.alibaba.druid.pool.DruidDataSource
-          druid:
-            initial-size: 10
-            min-idle: 10
-            max-active: 500
-            max-wait: 1000
-            time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 3000
-            validation-query: SELECT 1 FROM DUAL
-            test-while-idle: true
-            test-on-borrow: false
-            test-on-return: false
-            pool-prepared-statements: false
-        wegame_business_db:
-          url: jdbc:mysql://dev-nba-backend-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_business_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: root
-          password: ENC(DHb76s+Gg5rikLGRiZVPz0E+iAwmb+SfJw0Vy2DJI5lMd9rLRK8GWiB/8z78PJ7HEaFZ5mF2LSlXR3gxerZskA==)
-          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-          type: com.alibaba.druid.pool.DruidDataSource
   data:
     mongodb:
-      uri: mongodb+srv://DEVnbaBACKENDuser:5rs4P71xD2zHbjpx@nba-backend-dev.yuens.mongodb.net/nba-backend?retryWrites=true&w=majority&readPreference=secondaryPreferred
+      dynamic:
+        maria_makiling_mdb:
+          uri: mongodb://172.31.27.141:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
+          db: makiling
 ## fastjson
 fastjson:
   parser:
@@ -128,33 +116,34 @@ knife4j:
     title: 接口文档
     description: "接口文档"
     version: v1.0.0
-## aws s3
-amazon:
-  aws:
-    access-key-id: AKIAW3MEDX6WK5QMNG5N
-    access-key-secret: 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
-  s3:
-    endpoint: https://qatlivsports.s3.ap-east-1.amazonaws.com
-    region: ap-east-1
-    bucket: qatlivsports
-    upload-path: ChengDuDevImage/dev/
 ## api
 api:
-  sport:
-    platformDomain: https://test-restful.sportslive.com.ph
-    singleDomain: https://sw-http-main-apisix.igo8.me/
+  game:
+    singleDomain: http://sw-http-main-apisix.igo8.me
+    invokeSingle: false
     cp:
       platformId: 50
-      channelId: 1002
-      privateKey: fb2ec7910649acefa3da8b01872dc0bbe2d30ef767d9e4db4a3c206ea158e643
-      privateIv: c8cc3bac311ef9ca5a50e1054815fdf6
+      channelId: 1050
+      privateKey: 739cf125387017046c02d5610a122859844502203284d3509ff897dc54f7bc09
+      privateIv: 32f8e4c142810c8d9a75bce4666198ea
       agentKey: MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEFey5q0WeGxUSQ5M7K0D+6jZ5C+a4KcB5iA125+a8JFyeYYNPwXP7tPr6JwfodX0cgoK76Ecv54d5A/SOcBBuY5QIDAQABAkECfJ7Uq+lShhHTw1vnPJCNbU9Oh8VkyvWd9nUBubymXS7Po43R0F8epjAFut795e/JFZxlYUTPj7WbyKhKV0DxwQIhAxK8M6QE5EXHAuFTKYUW0k/nP2DV24dDPn7VbhfH3tDNAiEByJa3tGqOIrH/XXgooXhc/f/MdDcmj5zOUup1jihWiHkCIDU6SnwkYJVf+4/nIn4Ap0YErUMN9QZXxFisdABj421ZAiEBOgZ+3nUSwMYPTifgOf3gZ0lRQvTTbp54QQrEQzt3GHECIBZfUhEt2JB+sd7T/s43p5Z+eUk8KxAcw5L/HsrsqNjQ
     igo:
       platformId: 55
-      channelId: 1035
-      privateKey: 2ee2cd2db8c02bab79991dfa6ffacd57204ca98ffe0d588e284b45436bc03fe7
-      privateIv: 9ff843c66fa938b9d5b5bdb3d957db04
+      channelId: 1051
+      privateKey: 42a495b8c0e9416bd91ff6a7b65043c970acd88f3665e20cb6a12ddeb8e7e47d
+      privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
       agentKey: MIIBCgKCAQEAjpeqhcFzzqIkpOOSHpFkCXGVCdLau09V3opTAard1fbbRBodFRF8AFtEFsA4Uw590IC8Ey4n+uNR0SfevlmWyKvmC+5HVYoHEURRrENMleCFBfiMjYY5WTZoNeRl1LA2kZsFIzA6h5uY7oBKNDOkmVnlCKDCUJMj3h8cc3nPFOtPR6kJh60GSi6cRB4GHQZVixfvFqIuPWTO54RVjZm7U9D6G/BmRsbMMq2xD5kDaZYUOYjclOzY274bLaE8eUeY/nl5S26nZX++rVQ2a0IMu/hM94mCmCO7pPMllswuOdJX5XQCh3BNQzFd8sqC4tdc9OXKzzDDUzS5DiiSVSsauwIDAQAB
+  go:
+    wegameGoDomain: http://127.0.0.1:9800/go/game
+    secretString: cvFz78Gsxtwtpp2Wol6RcHBhRY5wdGEOcdUUhUzGzDDdzzWl94FDrFJKX3Z7nyBm
+pulsar:
+  dynamic:
+    maria_makiling:
+      url: pulsar://pulsar.makillingslot.net:6650
+      tenant: ${spring.application.name}_MariaMakiling
+      namespace: ${spring.application.env}
+      bet_topic: MariaMakiling_topic
+      bet_deadLetter_topic: MariaMakiling_deadLetter_topic
 #lark
 lark:
-  robot: 1abf2d83-03ca-4073-84a2-6d79d804ca3a
+  robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

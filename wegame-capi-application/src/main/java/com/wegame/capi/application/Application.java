@@ -8,16 +8,22 @@ import com.wegame.base.utils.LarkUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.annotation.PreDestroy;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 /**
  * 启动类
@@ -27,11 +33,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Slf4j
 @EnableScheduling
 @EnableAsync
+@EnableRetry
 @EnableCaching
 @EnableTransactionManagement
-@EnableDiscoveryClient
 @MapperScan(value = {"com.wegame.capi.dao.*"})
-@SpringBootApplication(scanBasePackages = {"com.wegame.*"}, exclude = {RedissonAutoConfiguration.class, SessionAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"com.wegame.*"}, exclude = {
+        RedissonAutoConfiguration.class,
+        SessionAutoConfiguration.class,
+        MongoAutoConfiguration.class})
 public class Application implements CommandLineRunner {
     @Value("${spring.application.name}")
     private String appName;
@@ -39,6 +48,9 @@ public class Application implements CommandLineRunner {
     private String env;
     @Value("${lark.robot}")
     private String robot;
+
+    @Autowired
+    List<ExecutorService> executorList;
 
     public static void main(String[] args) {
         log.info("Begin Start Application 😄😄😄😄😄😄");
@@ -50,6 +62,7 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) {
         try {
+            log.info("start Application after env: {}", env);
             if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
                 return;
             }
@@ -62,5 +75,34 @@ public class Application implements CommandLineRunner {
             log.warn("send publish message fail:{}", te.getMessage(), te);
         }
 
+    }
+
+    @PreDestroy
+    public void destroy() {
+        log.info("start destroy executor before destroy");
+        executorList.forEach(executor -> {
+            try {
+                executor.shutdown();
+                while (!executor.isTerminated()) {
+                    // 等待线程池中所有任务完成
+                }
+                log.info("executor {} graceful stop success", executor);
+            } catch (Exception e) {
+                log.error("executor {} graceful stop fail:{}", e.getMessage(), e);
+            }
+            //            try {
+            //                executor.shutdown();
+            //                boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
+            //                if (stopFlag) {
+            //                    log.info("executorService graceful stop success ,{},{}", executor, stopFlag);
+            //                } else {
+            //                    log.info("executorService graceful stop fail after 20 seconds,force stop it,{},{}", executor, stopFlag);
+            //                    executor.shutdownNow();
+            //                }
+            //            } catch (InterruptedException e) {
+            //                log.info("executorService graceful stop exception,force stop it,{}", executor);
+            //                executor.shutdownNow();
+            //            }
+        });
     }
 }

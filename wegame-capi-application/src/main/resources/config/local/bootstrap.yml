@@ -1,26 +1,27 @@
-spring:
-  application:
-    name: wegame-capi
-    env: local
-  profiles:
-    active: local
-  config:
-    import:
-      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
-  cloud:
-    nacos:
-      username: nacos
-      password: nacos
-      #      discovery:
-      #        server-addr: 43.198.184.127:8847,43.198.184.127:8849,43.198.184.127:8851
-      #        group: ${spring.profiles.active}
-      #        namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
-      #        metadata:
-      #          application: ${spring.application.name}-${spring.profiles.active}
-      config:
-        import-check:
-          enabled: true
-        server-addr: 43.198.184.127:8847,43.198.184.127:8849,43.198.184.127:8851
-        group: ${spring.profiles.active}
-        namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
-        file-extension: yaml
+#spring:
+#  application:
+#    name: wegame-capi
+#    env: local
+#  profiles:
+#    active: local
+##  config:
+##    import:
+##      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
+##      - "optional:nacos:${spring.application.name}-maria-makiling-config-${spring.profiles.active}.json"
+##  cloud:
+##    nacos:
+##      username: nacos
+##      password: nacos
+##      #      discovery:
+##      #        server-addr: 16.162.139.203:8847,16.162.139.203:8849,16.162.139.203:8851
+##      #        group: ${spring.profiles.active}
+##      #        namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
+##      #        metadata:
+##      #          application: ${spring.application.name}-${spring.profiles.active}
+##      config:
+##        import-check:
+##          enabled: true
+##        server-addr: 16.162.139.203:8847,16.162.139.203:8849,16.162.139.203:8851
+##        group: ${spring.profiles.active}
+##        namespace: ab26b1e9-a8c1-4d6b-b56c-4985e458083b
+##        file-extension: yaml

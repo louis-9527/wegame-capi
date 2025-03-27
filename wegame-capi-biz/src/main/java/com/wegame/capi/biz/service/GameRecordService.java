@@ -1,195 +1,75 @@
 package com.wegame.capi.biz.service;
 
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.api.SingleWalletApi;
-import com.wegame.capi.biz.converter.business.GameRecordConverter;
-import com.wegame.capi.biz.domain.business.GameRecordDo;
-import com.wegame.capi.client.domain.request.BetSummaryRequest;
-import com.wegame.capi.client.domain.request.BetSummaryVo;
-import com.wegame.capi.dao.mapper.business.GameRecordMapper;
-import com.wegame.capi.dao.mapper.domain.business.GameRecordPo;
+import com.wegame.capi.biz.builder.GameRecordQueryBuilder;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
-import org.apache.commons.collections4.CollectionUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.MONGOTEMPLATE;
+import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMARY_MONGOTEMPLATE;
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.gameRecordPutCacheThreadPoolExecutor;
 
 /**
- * po服务
+ * 游戏记录服务
+ *
  * @author genereate
  */
+@Slf4j
 @Service
-public class GameRecordService {
+public class GameRecordService<T> extends AbstractService {
 
-    @Autowired
-    GameRecordMapper gameRecordMapper;
-    @Autowired
-    SingleWalletApi singleWalletApi;
-
-    /**
-     * 新增
-     *
-     * @param gameRecordDo 游戏记录
-     * @return 主键id
-     */
-    public Long add(GameRecordDo gameRecordDo) {
-        AssertUtil.assertNotNull(gameRecordDo, ErrorCode.ERR_PARAM);
-        GameRecordPo po = GameRecordConverter.doToPo(gameRecordDo, OptEnum.ADD);
-        AssertUtil.assertNotNull(po, ErrorCode.ERR_PARAM);
-        gameRecordMapper.insert(po);
-        return po.getId();
-    }
-
-    /**
-     * 批量新增
-     *
-     * @param doList 游戏记录列表
-     * @return true/false
-     */
-    public boolean batchAdd(List<GameRecordDo> doList) {
-        AssertUtil.assertNotEmpty(doList, ErrorCode.ERR_PARAM);
-        gameRecordMapper.batchInsert(GameRecordConverter.doToPoList(doList, OptEnum.ADD));
+    public boolean batchAdd(List<T> gameRecordList, GameTypeEnum gameType, Class<T> tClass) {
+        AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(tClass, ErrorCode.ERR_INTER);
+        BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass);
+        bulkOps.insert(gameRecordList);
+        bulkOps.execute();
         return true;
     }
 
-    /**
-     * 删除：物理删除
-     *
-     * @param id 主键id
-     * @return true/false
-     */
-    public boolean delete(Long id) {
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        gameRecordMapper.deleteById(id);
-        return true;
-    }
-
-    /**
-     * 删除：批量物理删除
-     *
-     * @param ids 主键id列表
-     * @return true/false
-     */
-    public boolean batchDelete(List<Long> ids) {
-        AssertUtil.assertNotEmpty(ids, ErrorCode.ERR_PARAM);
-        gameRecordMapper.deleteByIds(ids);
-        return true;
-    }
-
-    /**
-     * 修改
-     *
-     * @param gameRecordDo 游戏记录
-     * @return true/false
-     */
-    public boolean update(GameRecordDo gameRecordDo) {
-        AssertUtil.assertNotNull(gameRecordDo, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(gameRecordDo.getId(), ErrorCode.ERR_PARAM);
-        gameRecordMapper.updateById(GameRecordConverter.doToPo(gameRecordDo, OptEnum.UPDATE));
-        return true;
-    }
-
-    /**
-     * 查询：根据主键id查询
-     *
-     * @param id 主键id
-     * @return GameRecordDo 游戏记录
-     */
-    public GameRecordDo get(Long id) {
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        return GameRecordConverter.poToDo(gameRecordMapper.selectById(id));
-    }
-
-    /**
-     * 查询：根据条件查询
-     *
-     * @param query 查询条件
-     * @return GameRecordDo 游戏记录
-     */
-    public GameRecordDo selectOne(GameRecordQuery query) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return GameRecordConverter.poToDo(gameRecordMapper.selectOne(query));
-    }
-
-    /**
-     * 查询Id：根据条件查询
-     *
-     * @param query 查询条件
-     * @return id
-     */
-     public Long selectId(GameRecordQuery query) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return gameRecordMapper.selectId(query);
-     }
-
-    /**
-     * 查询：根据id列表
-     *
-     * @param ids id列表
-     * @return List<GameRecordDo> 游戏记录列表
-     */
-    public List<GameRecordDo> listByIds(List<Long> ids) {
-        if (CollectionUtils.isEmpty(ids)) {
-            return Collections.emptyList();
-        }
-        return GameRecordConverter.poToDoList(gameRecordMapper.listByIds(ids));
-    }
-
-    /**
-     * 查询全部
-     *
-     * @return List<GameRecordDo> 游戏记录列表
-     */
-    public List<GameRecordDo> listAll() {
-        return GameRecordConverter.poToDoList(gameRecordMapper.listAll());
-    }
-
-    /**
-     * 查询id列表
-     *
-     * @param query 查询参数
-     * @return List<Long> id列表
-     */
-    public List<Long> listId(GameRecordQuery query) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return gameRecordMapper.listId(query);
+    @Async(gameRecordPutCacheThreadPoolExecutor)
+    @CachePut(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #cacheKey")
+    public List<T> asyncPutCache(List<T> gameRecordList, GameTypeEnum gameType, String cacheKey) {
+        return gameRecordList;
     }
 
     /**
      * 查询列表
      *
      * @param query 查询参数
-     * @return List<GameRecordDo> 游戏记录列表
+     * @return List<BetRecordDo> 游戏记录列表
      */
-    public List<GameRecordDo> list(GameRecordQuery query) {
+    public List<T> list(GameRecordQuery query, GameTypeEnum gameType, Class<T> clazz) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return GameRecordConverter.poToDoList(gameRecordMapper.list(query));
+        if (!query.isFromPrimary()) {
+            return getMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
+        } else {
+            return getPrimaryMongoTemplate(gameType).find(GameRecordQueryBuilder.buildMongodbQuery(query), clazz);
+        }
     }
 
-    /**
-     * 数量统计
-     *
-     * @param query 查询参数
-     * @return 数量
-     */
-    public long count(GameRecordQuery query) {
+    public Long count(GameRecordQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return gameRecordMapper.count(query);
+        if (!query.isFromPrimary()) {
+            return getMongoTemplate(gameType).count(GameRecordQueryBuilder.buildMongodbQuery(query), gameType.getGameRecordCollectionName());
+        } else {
+            return getPrimaryMongoTemplate(gameType).count(GameRecordQueryBuilder.buildMongodbQuery(query), gameType.getGameRecordCollectionName());
+        }
     }
-
-    ///////////////  above auto generated ///////////////
-
-    public BetSummaryVo betSummary(BetSummaryRequest request) {
-        String hash = singleWalletApi.hash(request.getChannelId(), request.getHash(), request.getRefId(), DateUtil.toUTC(request.getCreateTime()));
-        AssertUtil.assertTrue(StringUtils.equals(hash, request.getHash()), ErrorCode.ERR_PARAM);
-        // todo 麦冬 统计结果
-        return BetSummaryVo.builder().build();
-    }
-
 }

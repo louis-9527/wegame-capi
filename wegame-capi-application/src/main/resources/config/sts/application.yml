@@ -2,25 +2,21 @@ appid: com.wegame.capi
 ## log
 logging:
   level:
-    org.springframework.web: info
-    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: info
-    org.apache.ibatis: info
-    com.alibaba.nacos: info
-    com.alibaba.cloud.nacos: DEBUG
+    org.mongodb: error
 ## server
 server:
   port: 9500
   shutdown: graceful
   tomcat:
     uri-encoding: UTF-8
-    connection-timeout: 3000
-    max-connections: 10000
-    keep-alive-timeout: 3000
-    accept-count: 100
+    connection-timeout: 1000
+    max-connections: 30000
+    keep-alive-timeout: 120000
+    accept-count: 10000
     threads:
-      max: 20000
-      min-spare: 20
+      max: 40000
+      min-spare: 200
   servlet:
     context-path: /capi/game
     encoding:
@@ -34,11 +30,16 @@ mybatis:
     cacheEnabled: true
 ## spring
 spring:
+  application:
+    name: wegame-capi
+    env: sts
+  profiles:
+    active: sts
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
   lifecycle:
-    timeout-per-shutdown-phase: 30
+    timeout-per-shutdown-phase: 90
   servlet:
     multipart:
       max-file-size: 10MB
@@ -62,7 +63,7 @@ spring:
         #连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: 500
         #连接池最大连接数（使用负值表示没有限制）
-        max-active: 100
+        max-active: 1000
         #连接池中的最小空闲连接
         min-idle: 2
     password:
@@ -72,52 +73,30 @@ spring:
       strict: true
       datasource:
         wegame_user_db:
-          url: jdbc:mysql://qat-livsport-platform-mysql-hk.cluster-cadp1ktzmask.ap-east-1.rds.amazonaws.com:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: qatLivsportPLATFORMServiceUser
-          password: ENC(hiLRIBcWy4xPCHuIJGGW89wCAH3ADrjTjn/HvDtl+CtpCiZGdGdY/AMtW8tQugEYGwj3mekeIIy9UV/cZgcB+Q==)
+          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: QATmakilingService
+          password: ENC(Lm5nLGO2RTUPqHi/nkBU31uk6Zn/vV6GevM9jwwx4Bfck539re9GPagkh6bBi1t/lgexud3+wkye7Gz8qXTqhg==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-          type: com.alibaba.druid.pool.DruidDataSource
           driver-class-name: com.mysql.jdbc.Driver
+          type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 10
-            min-idle: 10
-            max-active: 2000
+            initial-size: 500
+            min-idle: 500
+            max-active: 1000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 3000
+            min-evictable-idle-time-millis: 30000
             validation-query: SELECT 1 FROM DUAL
             test-while-idle: true
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: false
-        wegame_backend_db:
-          url: jdbc:mysql://qat-livsport-platform-mysql-hk.cluster-cadp1ktzmask.ap-east-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: qatLivsportPLATFORMServiceUser
-          password: ENC(hiLRIBcWy4xPCHuIJGGW89wCAH3ADrjTjn/HvDtl+CtpCiZGdGdY/AMtW8tQugEYGwj3mekeIIy9UV/cZgcB+Q==)
-          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-          driver-class-name: com.mysql.jdbc.Driver
-          type: com.alibaba.druid.pool.DruidDataSource
-          druid:
-            initial-size: 10
-            min-idle: 10
-            max-active: 500
-            max-wait: 1000
-            time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 3000
-            validation-query: SELECT 1 FROM DUAL
-            test-while-idle: true
-            test-on-borrow: false
-            test-on-return: false
-            pool-prepared-statements: false
-        wegame_business_db:
-          url: jdbc:mysql://qat-livsport-platform-mysql-hk.cluster-cadp1ktzmask.ap-east-1.rds.amazonaws.com:3306/wegame_business_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: qatLivsportPLATFORMServiceUser
-          password: ENC(hiLRIBcWy4xPCHuIJGGW89wCAH3ADrjTjn/HvDtl+CtpCiZGdGdY/AMtW8tQugEYGwj3mekeIIy9UV/cZgcB+Q==)
-          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
-          type: com.alibaba.druid.pool.DruidDataSource
   data:
     mongodb:
-      uri: mongodb+srv://qatLivsportPLATFORMServiceUser:1rO6PSvbxb0wVUqlh9@livsport-platform-qat-pri.yuens.mongodb.net/livsport-platform?retryWrites=true&w=majority
+      dynamic:
+        maria_makiling_mdb:
+          uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=20&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
+          db: makiling
 ## fastjson
 fastjson:
   parser:
@@ -130,33 +109,32 @@ knife4j:
     title: 接口文档
     description: "接口文档"
     version: v1.0.0
-## aws s3
-amazon:
-  aws:
-    access-key-id: AKIAW3MEDX6WK5QMNG5N
-    access-key-secret: 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
-  s3:
-    endpoint: https://qatlivsports.s3.ap-east-1.amazonaws.com
-    region: ap-east-1
-    bucket: qatlivsports
-    upload-path: ChengDuQaImage/qa/
 ## api
 api:
-  sport:
-    platformDomain: http://qat-restful-private-service
-    singleDomain: https://sw-http-main-apisix.igo8.me/
+  game:
+    singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
+    invokeSingle: true
     cp:
       platformId: 50
-      channelId: 1002
-      privateKey: fb2ec7910649acefa3da8b01872dc0bbe2d30ef767d9e4db4a3c206ea158e643
-      privateIv: c8cc3bac311ef9ca5a50e1054815fdf6
-      agentKey: MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEFey5q0WeGxUSQ5M7K0D+6jZ5C+a4KcB5iA125+a8JFyeYYNPwXP7tPr6JwfodX0cgoK76Ecv54d5A/SOcBBuY5QIDAQABAkECfJ7Uq+lShhHTw1vnPJCNbU9Oh8VkyvWd9nUBubymXS7Po43R0F8epjAFut795e/JFZxlYUTPj7WbyKhKV0DxwQIhAxK8M6QE5EXHAuFTKYUW0k/nP2DV24dDPn7VbhfH3tDNAiEByJa3tGqOIrH/XXgooXhc/f/MdDcmj5zOUup1jihWiHkCIDU6SnwkYJVf+4/nIn4Ap0YErUMN9QZXxFisdABj421ZAiEBOgZ+3nUSwMYPTifgOf3gZ0lRQvTTbp54QQrEQzt3GHECIBZfUhEt2JB+sd7T/s43p5Z+eUk8KxAcw5L/HsrsqNjQ
+      channelId: 1050
+      privateKey: 739cf125387017046c02d5610a122859844502203284d3509ff897dc54f7bc09
+      privateIv: 32f8e4c142810c8d9a75bce4666198ea
     igo:
       platformId: 55
-      channelId: 1035
-      privateKey: 2ee2cd2db8c02bab79991dfa6ffacd57204ca98ffe0d588e284b45436bc03fe7
-      privateIv: 9ff843c66fa938b9d5b5bdb3d957db04
-      agentKey: MIIBCgKCAQEAjpeqhcFzzqIkpOOSHpFkCXGVCdLau09V3opTAard1fbbRBodFRF8AFtEFsA4Uw590IC8Ey4n+uNR0SfevlmWyKvmC+5HVYoHEURRrENMleCFBfiMjYY5WTZoNeRl1LA2kZsFIzA6h5uY7oBKNDOkmVnlCKDCUJMj3h8cc3nPFOtPR6kJh60GSi6cRB4GHQZVixfvFqIuPWTO54RVjZm7U9D6G/BmRsbMMq2xD5kDaZYUOYjclOzY274bLaE8eUeY/nl5S26nZX++rVQ2a0IMu/hM94mCmCO7pPMllswuOdJX5XQCh3BNQzFd8sqC4tdc9OXKzzDDUzS5DiiSVSsauwIDAQAB
+      channelId: 1051
+      privateKey: 42a495b8c0e9416bd91ff6a7b65043c970acd88f3665e20cb6a12ddeb8e7e47d
+      privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
+  go:
+    wegameGoDomain: http://wegame-go-svc.wegame-stress.svc.cluster.local:9800/go/game
+    secretString: NYjZX8sjmPKQq8N08DzqNQpQUJyxscdZ0AIafaIcZPVVayzPCHKEhdcfUOCEfdji
+pulsar:
+  dynamic:
+    maria_makiling:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_MariaMakiling
+      namespace: ${spring.application.env}
+      bet_topic: MariaMakiling_topic
+      bet_deadLetter_topic: MariaMakiling_deadLetter_topic
 #lark
 lark:
-  robot: 1abf2d83-03ca-4073-84a2-6d79d804ca3a
+  robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

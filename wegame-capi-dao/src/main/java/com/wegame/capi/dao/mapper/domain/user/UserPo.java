@@ -7,84 +7,49 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * user：玩家用户
+ * user：用户
  * @author genereate
  */
 @Data
+@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class UserPo implements Serializable {
-    private static final long serialVersionUID = -7895007337210506240L;
+    private static final long serialVersionUID = -1304646857779625984L;
     /**
      * 主键ID
      */
     private Long id;
     /**
-     * 玩家id
+     * 平台id
+     */
+    private String pId;
+    /**
+     * 用户姓名
      */
     private String playerId;
     /**
-     * 玩家姓名
+     * 用户姓名
      */
-    private String name;
+    private String playerName;
     /**
-     * 玩家昵称
+     * 用户昵称
      */
     private String nickName;
     /**
-     * 玩家真实姓名
+     * 用户级别
      */
-    private String realName;
+    private String userLevel;
     /**
-     * 电话号码
+     * 用户姓名
      */
-    private String phoneNumber;
+    private String userName;
     /**
-     * 性别: -1未知
+     * 赠送金额
      */
-    private Integer gender;
-    /**
-     * 玩家头像
-     */
-    private String playerAvatar;
-    /**
-     * 密码
-     */
-    private String password;
-    /**
-     * 邮箱
-     */
-    private String email;
-    /**
-     * 国家
-     */
-    private String nationality;
-    /**
-     * 省
-     */
-    private String province;
-    /**
-     * 市
-     */
-    private String city;
-    /**
-     * 地址
-     */
-    private String address;
-    /**
-     * 平台id
-     */
-    private String platformId;
-    /**
-     * 注册时间
-     */
-    private Date registrationTime;
-    /**
-     * 用户状态：1为正常，其他非正常
-     */
-    private Integer status;
+    private Long presentAmount;
     /**
      * 扩展信息
      */
