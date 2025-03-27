@@ -87,7 +87,7 @@ public class DailyMissionDo implements Serializable {
         /**
          * status
          */
-        private String status;
+        private Integer status;
         /**
          * starLevel
          */
