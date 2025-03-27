@@ -87,10 +87,24 @@ public abstract   class AbstractMalakasBetStrategy
     @Override
     public BetResultDo<MalakasBetRecordDetailDo> bet(BetDo betDo) {
         if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
-            // 非免费轮投注(正常投注、购买投注)
-            return betForNonFreeWheel(betDo);
+            // 非免费轮投注流程
+            //// 1、是否使用星卡
+            if (betDo.isUseStarCard()) {
+                // 1.1 是，则星卡投注流程
+                return betForStartCard(betDo);
+            } else {
+                // 1.2 否，则走其他投注流程
+                // 1.2.1、判断能否走干预事件投注
+                if (isCanOperationEventBet(betDo)) {
+                    // 1.2.11 命中干预事件：走干预事件投注
+                    return betForOperationEvent(betDo);
+                } else {
+                    // 1.2.12 未命中干预事件：走正常投注。
+                    return betForNonFreeWheel(betDo);
+                }
+            }
         } else {
-            // 免费轮投注
+            // 免费轮投注, 走查询
             return betForFreeWheel(betDo);
         }
     }
