@@ -61,23 +61,33 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     BagService bagService;
     @Value("${api.game.cp.channelId}")
     public String cpChannelId;
+    @Value("${dynamic.operation.switch}")
+    public boolean operationSwitch;
 
     public abstract AbstractOperationEventManager operationEventManager();
 
     public abstract BetHelper<RD, R> betHelper();
 
     public boolean isCanOperationEventBet(BetDo betDo) {
-        boolean canOperationEventBet = false;
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        if (Objects.equals(cpChannelId, userInfo.getChannelId()) && Objects.equals(betDo.getBetType(), NORMAL_BET)) {
-            GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount());
-            canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
-            if (canOperationEventBet) {
-                betDo.setGameOperationEvent(gameOperationEvent);
-            }
+        if (!operationSwitch) {
+            return false;
         }
-        return canOperationEventBet;
+        try {
+            boolean canOperationEventBet = false;
+            UserInfo userInfo = UserInfoContext.getUserInfo();
+            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+            if (Objects.equals(cpChannelId, userInfo.getChannelId()) && Objects.equals(betDo.getBetType(), NORMAL_BET)) {
+                GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount());
+                canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
+                if (canOperationEventBet) {
+                    betDo.setGameOperationEvent(gameOperationEvent);
+                }
+            }
+            return canOperationEventBet;
+        } catch (Exception e) {
+            log.error("isCanOperationEventBet error, errMsg: {}", e.getMessage(), e);
+            return false;
+        }
     }
 
     /**
