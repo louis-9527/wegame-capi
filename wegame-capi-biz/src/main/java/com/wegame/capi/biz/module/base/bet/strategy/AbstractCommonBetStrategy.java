@@ -136,6 +136,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
                 .id(super.generateId())
                 .gameId(this.gameContext().gameInfo().getGameType().getId())
+                .channelId(userInfo.getChannelId())
                 .betAmount(betDo.getBetAmount())
                 .playerId(userInfo.getPlayerId())
                 .rewardId(betDo.getRewardId())
@@ -146,6 +147,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         // 生成投注记录Id：唯一
         long betRecordId = generateBetRecordId();
         Pair<RedeemRewardResultDo, BetRecordDo<R>> redeemRewardResultDoBetRecord = this.rewardResult(betRecordId, betDo);
+
         RedeemRewardResultDo rewardResult = redeemRewardResultDoBetRecord.getKey();
         BetRecordDo<R> rBetRecordDo = redeemRewardResultDoBetRecord.getRight();
         if (!rewardResult.getSuccess()) {
