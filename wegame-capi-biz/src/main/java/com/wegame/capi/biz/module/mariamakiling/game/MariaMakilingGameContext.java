@@ -13,13 +13,14 @@ import java.util.Map;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 
 /**
- * MariaMakilingGameContext GamePlay上下文
+ * MariaMakilingGameContext Game上下文
  */
 @Component("mariaMakilingGameContext")
 public class MariaMakilingGameContext extends AbstractGameContext {
 
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "mariaMakilingGameNormalPlay")
+            .put(GamePlayTypeEnum.EVENT_PLAY,"mariaMakilingGameEventPlay")
             .build();
 
     @Autowired

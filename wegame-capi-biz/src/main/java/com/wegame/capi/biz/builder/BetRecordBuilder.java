@@ -19,7 +19,8 @@ public class BetRecordBuilder {
                                            BetDo betDo,
                                            Long payOutAmount,
                                            Boolean reachMaxMultiple,
-                                           List<T> gameRecordList) {
+                                           List<T> gameRecordList,
+                                           String ieId) {
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
@@ -45,6 +46,7 @@ public class BetRecordBuilder {
                 .updater(operator.getName())
                 .createTime(currentMilli)
                 .updateTime(currentMilli)
+                .ieId(ieId)
                 .gameRecordList(gameRecordList)
                 .build();
     }

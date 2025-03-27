@@ -6,13 +6,16 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.base.bet.strategy.BetStrategy;
-import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.utils.LockNameUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+
+import static com.wegame.capi.common.Constants.OPT_BUSY;
 
 /**
  * 抽象投注上下文
@@ -44,6 +47,8 @@ public abstract class AbstractBetContext {
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_PARAM, "Not Login");
-        return betStrategy.bet(betDo);
+        return distributeLock.lockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
+                () -> betStrategy.bet(betDo),
+                OPT_BUSY);
     }
 }

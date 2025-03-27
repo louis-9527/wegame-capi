@@ -49,6 +49,10 @@ public class FilterConfig {
         bean.addUrlPatterns("/user/*");
         bean.addUrlPatterns("/user/*");
         bean.addUrlPatterns("/inner/*");
+        bean.addUrlPatterns("/achievement/*");
+        bean.addUrlPatterns("/bag/*");
+        bean.addUrlPatterns("/mission/*");
+        bean.addUrlPatterns("/treasure/*");
         return bean;
     }
 

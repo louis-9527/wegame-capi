@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.converter.user.UserConverter;
 import com.wegame.capi.biz.domain.user.UserDo;
+import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.UserPo;
 import com.wegame.capi.dao.mapper.domain.user.UserQuery;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,6 +40,8 @@ public class UserService {
     UserManualMapper userManualMapper;
     @Autowired
     SingleWalletService singleWalletService;
+    @Autowired
+    UserLoginInfoService userLoginInfoService;
 
     /**
      * 新增
@@ -192,7 +196,7 @@ public class UserService {
 
     ///////////////  above auto generated ///////////////
 
-    public Long insert(UserDo userDo) {
+    public Long insert(UserDo userDo, String channelId, String gameId) {
         long startTime = DateUtil.getCurrentMilli();
         try {
             UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
@@ -202,8 +206,15 @@ public class UserService {
                 // 新增
                 userMapper.insert(userPo);
                 AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
-                return userPo.getId();
+                id = userPo.getId();
             }
+            UserLoginInfoDo userLoginInfoDo = UserLoginInfoDo.builder()
+                    .userId(id)
+                    .channelId(Long.parseLong(channelId))
+                    .gameId(gameId)
+                    .loginTime(new Date())
+                    .build();
+            userLoginInfoService.asyncAddOrUpdate(userLoginInfoDo);
             return id;
         } catch (Exception e) {
             log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);

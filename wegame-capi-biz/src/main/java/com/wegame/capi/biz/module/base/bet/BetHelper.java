@@ -18,7 +18,7 @@ public interface BetHelper<RD extends ToVoConverter, R> {
      * @param gameRecordList 游戏记录列表
      * @return 投注记录
      */
-    BetRecordDo<R> buildBetRecord(long betRecordId, BetDo betDo, List<R> gameRecordList);
+    BetRecordDo<R> buildBetRecord(long betRecordId, BetDo betDo, List<R> gameRecordList, String ieId);
 
     /**
      * 投注结果处理

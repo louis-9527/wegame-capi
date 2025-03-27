@@ -21,7 +21,7 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(description = "投注详情")
 public class BetDetail implements BetRequestValidate, Serializable {
-    private static final long MIN_BET_AMOUNT = 200L;
+    private static final long MIN_BET_AMOUNT = 300L;
     private static final long MAX_BET_AMOUNT = 10000000L;
     private static final long MULTIPLE = 35;
 
@@ -33,9 +33,17 @@ public class BetDetail implements BetRequestValidate, Serializable {
     private String betRecordId;
     @ApiModelProperty(value = "免费轮游戏记录ID, 非必填", required = false)
     private String gameRecordId;
+    // 星卡投注
+    @ApiModelProperty(value = "使用星卡, 非必填", required = false)
+    private boolean useStarCard;
+    @ApiModelProperty(value = "奖励配置id", required = true)
+    private String rewardConfigId;
+    @ApiModelProperty(value = "奖励id", required = true)
+    private String rewardId;
 
     @Override
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        validateStartCartBet(gameType, betType, betSubType);
         if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
             mariaMakilingValidateParam(gameType, betType, betSubType);
         } else if (Objects.equals(gameType, GameTypeEnum.MALAKAS)) {
@@ -49,8 +57,10 @@ public class BetDetail implements BetRequestValidate, Serializable {
 
     private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
+        if(!useStarCard) {
+            AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
+        }
         if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
@@ -68,7 +78,11 @@ public class BetDetail implements BetRequestValidate, Serializable {
         } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
+                if (useStarCard) {
+                    AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
+                } else {
+                    AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
+                }
             } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
@@ -130,6 +144,16 @@ public class BetDetail implements BetRequestValidate, Serializable {
         if (Objects.equals(BetSubTypeEnum.EX_BET, betSubType)) {
             double exceptPayAmount = betAmount * 1.5;
             AssertUtil.assertTrue((long)exceptPayAmount == payAmount, ErrorCode.ERR_PARAM, "ex bet payAmount must be 1.5 times of betAmount");
+        }
+    }
+
+    private void validateStartCartBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        // 判断是否使用星卡
+        if (useStarCard) {
+            AssertUtil.assertNotNull(rewardConfigId, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(rewardId, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType, ErrorCode.ERR_PARAM);
         }
     }
 }

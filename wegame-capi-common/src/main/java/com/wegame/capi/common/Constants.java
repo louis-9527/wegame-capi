@@ -44,4 +44,8 @@ public class Constants {
     public static final int CONST_10000 = 10000;
     public static final int CONST_1000000 = 1000000;
 
+    public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event:%s_%s";
+    public static final String OPERATION_EVENT_CONFIG_INCREMENT_CACHE_KEY = "wegame:cuser:operation_config_increment:%s_%s_%s";
+
+    public static final String OPT_BUSY = "Too many requests. Please try again later.";
 }
