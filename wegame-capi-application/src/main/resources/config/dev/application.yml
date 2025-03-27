@@ -166,6 +166,7 @@ pulsar:
 
 dynamic:
   operation:
+    switch: true
     pulsar_url: pulsar://pulsar-sw-main-external.client88.me:6650
     pulsar_topic: dos_game_slot_event
     pulsar_group:

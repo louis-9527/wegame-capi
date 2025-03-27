@@ -30,8 +30,4 @@ public class RedeemRewardResultDo implements Serializable {
      * 错误码
      */
     private ErrorCode errorCode;
-
-    public Boolean invalidPayOutAmount() {
-        return status == 5017;
-    }
 }

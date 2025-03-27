@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.bet;
 
+import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -49,11 +50,16 @@ public class BetDo implements Serializable {
      * 免费轮游戏记录id
      */
     private Long gameRecordId;
+    /////////////// 干预事件投注 /////////////
+    /**
+     * 干预事件投注
+     */
+    private GameOperationEventDo gameOperationEvent;
     /////////////// 星卡投注 ///////////////
     /**
      * 使用星卡
      */
-    private boolean useStarCart;
+    private boolean useStarCard;
     /**
      * 奖励配置id
      */
