@@ -1,12 +1,15 @@
 package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 
+import java.util.Objects;
+
 public class GamePlayBuilder {
 
-    public static GamePlayDo build(GamePlayTypeEnum gamePlayType, BetDo betDo, long betRecordId) {
+    public static GamePlayDo build(GamePlayTypeEnum gamePlayType, BetDo betDo, long betRecordId, GameOperationEventDo gameEventDo) {
         return GamePlayDo.builder()
                 .gamePlayType(gamePlayType)
                 .gameType(betDo.getGameType())
@@ -15,6 +18,8 @@ public class GamePlayBuilder {
                 .betAmount(betDo.getBetAmount())
                 .payAmount(betDo.getPayAmount())
                 .betRecordId(betRecordId)
+                .operationEventConfigBetRecordId(Objects.nonNull(gameEventDo) ? gameEventDo.getConfigId() : null)
+                .gameEventDo(gameEventDo)
                 .build();
     }
 }

@@ -83,6 +83,11 @@
                 <artifactId>pulsar-client</artifactId>
                 <version>${pulsar-client.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>1.70</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -147,6 +152,16 @@
         <!--            <version>1.11.490</version>-->
         <!--        </dependency>-->
         <!--aws s3-->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.70</version> <!-- 请根据需要更新版本 -->
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.70</version> <!-- 请根据需要更新版本 -->
+        </dependency>
     </dependencies>
 
     <build>

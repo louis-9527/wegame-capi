@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 
 @Slf4j
-public class MariaMakilingRewardHandlerTest extends BaseTest {
+public class MariaMakilingRewardHandlerTestVo extends BaseTest {
 
     @Resource()
     MariaMakilingRewardHandler mariaMakilingRewardHandler;

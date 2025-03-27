@@ -20,6 +20,8 @@ public class BetWithPayoutReq extends BaseReq {
 
     private BigDecimal payoutAmount;
 
+    private String ieId;
+
     private BetDetails betDetails;
 
     @Data
