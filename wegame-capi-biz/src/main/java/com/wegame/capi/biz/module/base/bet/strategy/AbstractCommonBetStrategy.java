@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
+import static com.wegame.capi.client.enums.BetTypeEnum.NORMAL_BET;
 
 /**
  * 抽象通用投注策略<br>
@@ -68,7 +69,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     public boolean isCanOperationEventBet(BetDo betDo) {
         boolean canOperationEventBet = false;
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        if (Objects.equals(cpChannelId, userInfo.getChannelId()) && Objects.equals(betDo.getBetType(), BetTypeEnum.NORMAL_BET)) {
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        if (Objects.equals(cpChannelId, userInfo.getChannelId()) && Objects.equals(betDo.getBetType(), NORMAL_BET)) {
             GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount());
             canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
             if (canOperationEventBet) {
@@ -82,7 +84,6 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
      * 干预事件投注-通用投注流程
      */
     public BetResultDo<RD> betForOperationEvent(BetDo betDo) {
-        // 前置处理 来自BetDo todo 前置枷锁 @bruce
         // 数据校验
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(betDo.getGameOperationEvent(), ErrorCode.ERR_INTER);
@@ -176,12 +177,11 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         return betHelper().handleBetResult(rBetRecordDo, resultDo);
     }
 
-    public BetRecordDo<R> generateBetRecord(long betRecordId,
-                                            BetDo betDo) {
+    public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {
         GamePlayTypeEnum playTypeEnum = GamePlayTypeEnum.NORMAL_PLAY;
         String ieId = null;
         GameOperationEventDo gameEventDo = betDo.getGameOperationEvent();
-        if (gameEventDo != null && gameEventDo.isEventResult()) {
+        if (Objects.nonNull(gameEventDo) && gameEventDo.isEventResult()) {
             playTypeEnum = GamePlayTypeEnum.EVENT_PLAY;
             ieId = gameEventDo.getOperationEvent().getEventId();
         }
