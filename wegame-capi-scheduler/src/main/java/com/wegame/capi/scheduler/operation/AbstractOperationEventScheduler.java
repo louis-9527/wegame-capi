@@ -102,41 +102,56 @@ public abstract class AbstractOperationEventScheduler
     private void eventDetailFailHandle(OperationEventDetailDo eventDetailDo) {
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
-            Long betRecordId = eventDetailDo.getBetRecordId();
             // 查询原始订单的状态
-            BetRecordDo recordDo = betRecordService.get(betRecordId, gameType);
-            if (Objects.equals(BetStatusEnum.ING.getCode(), recordDo.getStatus())) {
-                return;
-            }
-            BetStatusEnum eventDetailStatus = null;
-            OperationEventStatusEnum newEventStatus = OperationEventStatusEnum.NONE;
-            OperationEventSubStatusEnum eventSubStatus = null;
-            // 获取事件信息
-            OperationEventDo eventDo = operationEventService.getById(betRecordId, operationEventType());
-            long finishBonus = eventDo.getFinishBonus() == null ? 0L : eventDo.getFinishBonus();
-            if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
-                eventDetailStatus = BetStatusEnum.FAIL;
-            } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
-                eventDetailStatus = BetStatusEnum.SUCCESS;
-                if (eventDetailDo.getEventAmount() + finishBonus > eventDo.getMinBonus()) {
-                    eventSubStatus = OperationEventSubStatusEnum.FINISH_NORMAL;
-                    newEventStatus = OperationEventStatusEnum.FINISH;
+            OperationEventDetailDo eventDetailUpdate = null;
+            OperationEventDo eventDoUpdate = null;
+            BetRecordDo recordDo = betRecordService.get(eventDetailDo.getBetRecordId(), gameType);
+            if (recordDo == null) {
+                eventDetailUpdate = OperationEventDetailDo.builder()
+                        .id(eventDetailDo.getId())
+                        .betStatus(BetStatusEnum.FAIL)
+                        .build();
+                eventDoUpdate = OperationEventDo.builder()
+                        .id(eventDetailDo.getEventRecordId())
+                        .eventStatus(OperationEventStatusEnum.NONE).build();
+
+            } else {
+                if (Objects.equals(BetStatusEnum.ING.getCode(), recordDo.getStatus())) {
+                    return;
+                }
+                // 获取事件信息
+                if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
+                    eventDetailUpdate = OperationEventDetailDo.builder()
+                            .id(eventDetailDo.getId())
+                            .betStatus(BetStatusEnum.FAIL)
+                            .build();
+                    eventDoUpdate = OperationEventDo.builder()
+                            .id(eventDetailDo.getEventRecordId())
+                            .eventStatus(OperationEventStatusEnum.NONE).build();
+
+                } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
+                    eventDetailUpdate = OperationEventDetailDo.builder()
+                            .id(eventDetailDo.getId())
+                            .betId(recordDo.getBetId())
+                            .betStatus(BetStatusEnum.SUCCESS)
+                            .build();
+                    eventDoUpdate = OperationEventDo.builder()
+                            .id(eventDetailDo.getEventRecordId())
+                            .eventStatus(OperationEventStatusEnum.NONE).build();
+                    OperationEventDo eventDo = operationEventService.getById(eventDetailDo.getEventRecordId(), operationEventType());
+                    long finishBonus = eventDo.getFinishBonus() == null ? 0L : eventDo.getFinishBonus();
+                    if (eventDetailDo.getEventAmount() + finishBonus > eventDo.getMinBonus()) {
+                        eventDoUpdate.setFinishBonus(finishBonus + eventDetailDo.getEventAmount());
+                        eventDoUpdate.setEventStatus(OperationEventStatusEnum.FINISH);
+                        eventDoUpdate.setEventSubStatus(OperationEventSubStatusEnum.FINISH_NORMAL);
+                    }
                 }
             }
-            // 更新订单信息
-            OperationEventDetailDo eventDetailUpdate = OperationEventDetailDo.builder()
-                    .id(eventDetailDo.getId())
-                    .betStatus(eventDetailStatus)
-                    .betId(recordDo.getBetId())
-                    .build();
-            OperationEventDo eventDoUpdate = OperationEventDo.builder()
-                    .id(eventDo.getId())
-                    .eventSubStatus(eventSubStatus)
-                    .finishBonus(finishBonus + eventDetailDo.getEventAmount())
-                    .eventStatus(newEventStatus).build();
-            operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
-            if (OperationEventStatusEnum.FINISH == newEventStatus) {
-                operationEventManager().asyncReportEvent(eventDo.getId());
+            if (eventDetailUpdate != null && eventDoUpdate != null) {
+                operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
+                if (OperationEventStatusEnum.FINISH == eventDoUpdate.getEventStatus()) {
+                    operationEventManager().asyncReportEvent(eventDetailDo.getBetRecordId());
+                }
             }
         } catch (Exception e) {
             log.error("{}#eventDetailFailHandle exception:{}", getClass().getSimpleName(), e.getMessage(), e);

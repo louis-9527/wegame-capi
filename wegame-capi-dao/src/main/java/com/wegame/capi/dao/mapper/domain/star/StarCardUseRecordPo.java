@@ -38,6 +38,10 @@ public class StarCardUseRecordPo implements Serializable {
      * 游戏ID
      */
     private String gameId;
+    /**
+     * 渠道ID
+     */
+    private String channelId;
 
     /**
      * 投注记录ID

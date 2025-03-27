@@ -13,12 +13,18 @@ public class LockNameUtil {
     private static final String OPERATION_EVENT_SCHEDULER_LOCK = "lock:operation_event_scheduler_lock:%s";
 
     private static final String OPERATION_EVENT_BET_LOCK = "lock:operation_event_bet_lock:%s_%s";
+    private static final String STAR_CARD_REPORT_SCHEDULER_LOCK = "lock:star_card_report_scheduler_lock:%s";
+
 
 
     private LockNameUtil() {
     }
 
     /// ====== 分割线 定时任务锁 ====== ///
+    public static final String getBetLockName(String playerName) {
+        return String.format(BET_RECORD_STATUS_SCHEDULER_LOCK, playerName);
+    }
+
     public static String getBetRecordStatusSchedulerLockName(GameTypeEnum gameType) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         return String.format(BET_RECORD_STATUS_SCHEDULER_LOCK, gameType.getName());
@@ -37,5 +43,11 @@ public class LockNameUtil {
     public static String getOperationEventBetLockName(GameTypeEnum gameType,String playerId) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         return String.format(OPERATION_EVENT_BET_LOCK, gameType.getName(),playerId);
+    }
+
+
+    public static String getStarCardReportSchedulerLockName(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(STAR_CARD_REPORT_SCHEDULER_LOCK, gameType.getName());
     }
 }

@@ -9,7 +9,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
@@ -40,7 +40,7 @@ public class BetRecordController {
     @Autowired
     BetRecordService betRecordService;
     @Autowired
-    Map<String, AbstractRecordManager> recordManagerMap;
+    Map<String, AbstractBetRecordManager> betRecordManagerMap;
 
     @LoginRequired
     @ApiOperation(value = "分页查询", httpMethod = "POST")
@@ -71,12 +71,12 @@ public class BetRecordController {
         BetRecordDo betRecordDo = betRecordService.get(Long.valueOf(id), userInfo.getPlayerId(), gameType);
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
-        betRecordVo.setGameRecordList(getRecordManager(gameType).listGameRecordVo(Long.parseLong(id), gameType));
+        betRecordVo.setGameRecordList(betRecordManager(gameType).listGameRecordVo(Long.parseLong(id), gameType));
         return CommonResponse.build(betRecordVo);
     }
 
-    private AbstractRecordManager getRecordManager(GameTypeEnum gameType) {
-        AbstractRecordManager recordManager = recordManagerMap.get(RECORD_MANAGER_MAP.get(gameType));
+    private AbstractBetRecordManager betRecordManager(GameTypeEnum gameType) {
+        AbstractBetRecordManager recordManager = betRecordManagerMap.get(BET_RECORD_MANAGER_NAME_MAP.get(gameType));
         AssertUtil.assertNotNull(recordManager, ErrorCode.ERR_INTER);
         return recordManager;
     }

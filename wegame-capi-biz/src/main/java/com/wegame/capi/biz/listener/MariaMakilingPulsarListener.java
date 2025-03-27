@@ -4,8 +4,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.manager.MariaMakilingRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMak
     @Autowired
     BetRecordService betRecordService;
     @Autowired
-    MariaMakilingRecordManager mariaMakilingRecordManager;
+    MariaMakilingBetRecordManager mariaMakilingBetRecordManager;
     @Autowired
     Consumer<byte[]> mariamakilingConsumer;
 
@@ -39,8 +39,8 @@ public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMak
     }
 
     @Override
-    public AbstractRecordManager<MariaMakilingGameRecordDo> getRecordManager() {
-        return mariaMakilingRecordManager;
+    public AbstractBetRecordManager<MariaMakilingGameRecordDo> betRecordManager() {
+        return mariaMakilingBetRecordManager;
     }
 
     @Override
