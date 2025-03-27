@@ -16,7 +16,7 @@ import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_
  * MariaMakilingGameContext GamePlay上下文
  */
 @Component("malakasGameContext")
-public class MalakasGameContext extends AbstractGameContext {
+public class MalakasGameContext<R> extends AbstractGameContext<R> {
 
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "malakasGameNormalPlay")

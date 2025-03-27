@@ -13,9 +13,14 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MalakasBetRecordManager;
+import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
+import com.wegame.capi.biz.manager.operation.MalakasOperationEventManager;
 import com.wegame.capi.biz.module.base.RewardHelper;
+import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
+import com.wegame.capi.biz.module.base.bet.strategy.AbstractCommonBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
+import com.wegame.capi.biz.module.malakas.bet.MalakasBetHelper;
 import com.wegame.capi.biz.module.malakas.game.MalakasGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -26,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,25 +45,43 @@ import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
  * Malakas游戏投注抽象接口
  */
 @Slf4j
-public abstract class AbstractMalakasBetStrategy
-        extends AbstractBetStrategy<MalakasGameRecordDo, MalakasBetRecordDetailDo>
+public abstract   class AbstractMalakasBetStrategy
+        extends AbstractCommonBetStrategy<MalakasGameRecordDo, MalakasBetRecordDetailDo>
         implements MalakasBetStrategy<MalakasBetRecordDetailDo> {
 
     @Autowired
-    MalakasGameContext malakasGameContext;
+    MalakasGameContext<MalakasGameRecordDo> malakasGameContext;
     @Autowired
     MalakasBetRecordManager malakasBetRecordManager;
     @Autowired
     MalakasConfig malakasConfig;
+
+    @Autowired
+    @Qualifier("malakasOperationEventManager")
+    private MalakasOperationEventManager malakasOperationEventManager;
+    @Autowired
+    private MalakasBetHelper malakasBetHelper;
 
     @Override
     public AbstractGameContext<MalakasGameRecordDo> gameContext() {
         return malakasGameContext;
     }
 
+
     @Override
     public AbstractBetRecordManager<MalakasGameRecordDo> betRecordManager() {
         return malakasBetRecordManager;
+    }
+
+
+    @Override
+    public AbstractOperationEventManager operationEventManager() {
+        return malakasOperationEventManager;
+    }
+
+    @Override
+    public BetHelper<MalakasBetRecordDetailDo, MalakasGameRecordDo> betHelper() {
+        return malakasBetHelper;
     }
 
     @Override
@@ -94,37 +118,8 @@ public abstract class AbstractMalakasBetStrategy
                 "");
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        return malakasBetHelper.handleBetResult(betRecord, resultDo);
 
-        if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            // 4、组装返回结果
-            //// 合计中奖总金额
-            long overallRewardAmount = firstBatchList.stream()
-                    .filter(item -> Objects.nonNull(item.getRewardResult()))
-                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                    .sum();
-            return BetResultDo.<MalakasBetRecordDetailDo>builder()
-                    .betRecordId(betRecord.getId())
-                    .gameId(betDo.getGameId())
-                    .betType(betDo.getBetType())
-                    .betSubType(betDo.getBetSubType())
-                    .credit(resultDo.getCredit())
-                    .overallRewardAmount(maxAmountControl(overallRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()))
-                    .totalPayoutAmount(betRecord.getPayOutAmount())
-                    .resultDetail(MalakasBetRecordDetailDo.builder()
-                            .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetAmount(), overallRewardAmount))
-                            .gameRecordList(firstBatchList)
-                            .build())
-                    .build();
-        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
-            if (resultDo.getErrorCode() != null) {
-                throw new BusinessException(resultDo.getErrorCode());
-            }
-            throw new BusinessException(ErrorCode.ERR_INTER);
-        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
-            throw new BusinessException(ErrorCode.ERR_NET);
-        } else {
-            throw new BusinessException(ErrorCode.ERR_INTER);
-        }
     }
 
     /**
@@ -188,4 +183,5 @@ public abstract class AbstractMalakasBetStrategy
     public void freeWheelAfterHandle(Long betRecordId) {
         // do nothing
     }
+
 }

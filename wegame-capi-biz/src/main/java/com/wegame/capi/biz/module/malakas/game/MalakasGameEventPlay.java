@@ -4,37 +4,23 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
-import com.wegame.capi.biz.config.domain.MalakasConfig;
-import com.wegame.capi.biz.domain.biz.game.GameEventDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
-import com.wegame.capi.biz.module.malakas.MalakasProbabilisticUtil;
-import com.wegame.capi.biz.module.malakas.MalakasSymbolUtil;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
-import com.wegame.capi.common.enums.RewardTypeEnum;
-import com.wegame.capi.common.enums.SymbolEnum;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
-import com.wegame.capi.common.enums.SymbolTypeEnum;
-import lombok.Data;
-import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
-import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.*;
+import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolNullArr;
 
 @Slf4j
 @Component("malakasGameEventPlay")
@@ -53,11 +39,7 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
     private static final GameInfoDo gameInfo = MALAKAS_GAME_INFO;
 
     @Autowired
-    MalakasConfig malakasConfig;
-    @Autowired
     RewardHandler malakasRewardHandler;
-    @Autowired
-    SnowflakeIdGenerator snowflakeIdGenerator;
 
     @Autowired
     OperationEventConfigRecordService operationEventConfigRecordService;
@@ -203,14 +185,5 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
         });
     }
 
-    private boolean canContinuePlayOnPreWheel(RewardResultDo<MalakasSymbolDo> rewardResult) {
-        if (Objects.isNull(rewardResult)) {
-            return false;
-        }
-        if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
-            return false;
-        }
-        return CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
-    }
 
 }

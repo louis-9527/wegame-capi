@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.malakasTransactionManager;
 
-@Component("malakasDynamicOperationManager")
-public class MalakasDynamicOperationManager extends AbstractOperationEventManager<MalakasSymbolDo> {
+@Component("malakasOperationEventManager")
+public class MalakasOperationEventManager extends AbstractOperationEventManager {
 
     @Override
     public OperationEventTypeEnum operationEventType() {
