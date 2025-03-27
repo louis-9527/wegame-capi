@@ -28,9 +28,9 @@ public class BagOtherRewardDetailDo implements Serializable {
      */
     private String description;
     /**
-     * 跳转时游戏ID
+     * 游戏code
      */
-    private String skipGameId;
+    private String gameCode;
     /**
      * 系统游戏ID
      */
