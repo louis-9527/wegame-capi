@@ -59,7 +59,7 @@ public class BetDo implements Serializable {
     /**
      * 使用星卡
      */
-    private boolean useStarCart;
+    private boolean useStarCard;
     /**
      * 奖励配置id
      */

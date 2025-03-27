@@ -7,7 +7,6 @@ import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
-import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
@@ -21,7 +20,6 @@ import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +75,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
             // 非免费轮投注流程
             //// 1、是否使用星卡
-            if (betDo.isUseStarCart()) {
+            if (betDo.isUseStarCard()) {
                 // 1.1 是，则星卡投注流程
                 return betForStartCard(betDo);
             } else {

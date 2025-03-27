@@ -35,7 +35,7 @@ public class BetDetail implements BetRequestValidate, Serializable {
     private String gameRecordId;
     // 星卡投注
     @ApiModelProperty(value = "使用星卡, 非必填", required = false)
-    private boolean userStarCart;
+    private boolean useStarCard;
     @ApiModelProperty(value = "奖励配置id", required = true)
     private String rewardConfigId;
     @ApiModelProperty(value = "奖励id", required = true)
@@ -51,7 +51,7 @@ public class BetDetail implements BetRequestValidate, Serializable {
 
     private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-        if(!userStarCart) {
+        if(!useStarCard) {
             AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
         }
@@ -72,7 +72,7 @@ public class BetDetail implements BetRequestValidate, Serializable {
         } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                 AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-                if (userStarCart) {
+                if (useStarCard) {
                     AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
                 } else {
                     AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
@@ -92,7 +92,7 @@ public class BetDetail implements BetRequestValidate, Serializable {
 
     private void validateStartCartBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
         // 判断是否使用星卡
-        if (userStarCart) {
+        if (useStarCard) {
             AssertUtil.assertNotNull(rewardConfigId, ErrorCode.ERR_PARAM);
             AssertUtil.assertNotNull(rewardId, ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
