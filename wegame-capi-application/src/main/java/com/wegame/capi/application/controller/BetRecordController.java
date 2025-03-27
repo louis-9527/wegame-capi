@@ -31,10 +31,10 @@ import java.util.Map;
 @Api(value = "投注记录模块", tags = {"投注记录模块"})
 public class BetRecordController {
 
-    public static final Map<GameTypeEnum, String> RECORD_MANAGER_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
+    public static final Map<GameTypeEnum, String> BET_RECORD_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingRecordManager")
-            .put(GameTypeEnum.MALAKAS, "malakasRecordManager")
-            .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaRecordManager")
+            .put(GameTypeEnum.MALAKAS, "malakasBetRecordManager")
+            .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaBetRecordManager")
             .build();
 
     @Autowired

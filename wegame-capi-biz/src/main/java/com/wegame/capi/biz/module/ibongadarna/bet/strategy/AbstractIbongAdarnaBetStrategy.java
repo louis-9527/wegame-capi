@@ -4,20 +4,17 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
-import com.wegame.capi.biz.builder.GamePlayBuilder;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
-import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.manager.IbongAdarnaRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.IbongAdarnaBetRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGameContext;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +36,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
     @Autowired
     IbongAdarnaGameContext ibongAdarnaGameContext;
     @Autowired
-    IbongAdarnaRecordManager ibongAdarnaRecordManager;
+    IbongAdarnaBetRecordManager ibongAdarnaBetRecordManager;
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
 
@@ -49,14 +46,18 @@ public abstract class AbstractIbongAdarnaBetStrategy
     }
 
     @Override
-    public AbstractRecordManager<IbongAdarnaGameRecordDo> getRecordManager() {
-        return ibongAdarnaRecordManager;
+    public AbstractBetRecordManager<IbongAdarnaGameRecordDo> betRecordManager() {
+        return ibongAdarnaBetRecordManager;
     }
 
     @Override
     public BetResultDo<IbongAdarnaGameRecordDo> bet(BetDo betDo) {
+        return normalBet(betDo);
+    }
+
+    private BetResultDo<IbongAdarnaGameRecordDo> normalBet(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId));
+        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         IbongAdarnaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
@@ -64,7 +65,8 @@ public abstract class AbstractIbongAdarnaBetStrategy
                 betDo,
                 gameRecord.getRewardResult().getTotalRewardAmount(),
                 false,
-                list);
+                list,
+                "");
         // 保存投注记录并派奖
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);

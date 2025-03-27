@@ -4,8 +4,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
-import com.wegame.capi.biz.manager.AbstractRecordManager;
-import com.wegame.capi.biz.manager.IbongAdarnaRecordManager;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.IbongAdarnaBetRecordManager;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class IbongAdarnaPulsarListener extends AbstractPulsarListener<IbongAdarnaGameRecordDo> {
     @Autowired
-    IbongAdarnaRecordManager ibongAdarnaRecordManager;
+    IbongAdarnaBetRecordManager ibongAdarnaBetRecordManager;
     @Autowired
     Consumer<byte[]> ibongadarnaConsumer;
 
@@ -38,8 +38,8 @@ public class IbongAdarnaPulsarListener extends AbstractPulsarListener<IbongAdarn
     }
 
     @Override
-    public AbstractRecordManager<IbongAdarnaGameRecordDo> getRecordManager() {
-        return ibongAdarnaRecordManager;
+    public AbstractBetRecordManager<IbongAdarnaGameRecordDo> betRecordManager() {
+        return ibongAdarnaBetRecordManager;
     }
 
     @Override

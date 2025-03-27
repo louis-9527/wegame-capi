@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.ibongadarnaTransactionManager;
 
 @Slf4j
-@Component("ibongAdarnaRecordManager")
-public class IbongAdarnaRecordManager extends AbstractRecordManager<IbongAdarnaGameRecordDo> {
+@Component("ibongAdarnaBetRecordManager")
+public class IbongAdarnaBetRecordManager extends AbstractBetRecordManager<IbongAdarnaGameRecordDo> {
 
     @Autowired
     GameRecordService<IbongAdarnaGameRecordDo> gameRecordService;

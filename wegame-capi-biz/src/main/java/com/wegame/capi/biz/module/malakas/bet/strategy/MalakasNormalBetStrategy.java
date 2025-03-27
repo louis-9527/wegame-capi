@@ -41,10 +41,10 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
         log.info("freeWheelAfterHandle start... betRecordId: {}", betRecordId);
         defaultThreadPoolExecutor.execute(() -> {
             try {
-                BetRecordDo betRecord = malakasRecordManager.getBetRecord(betRecordId, GameTypeEnum.MALAKAS);
+                BetRecordDo betRecord = malakasBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.MALAKAS);
                 AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
                 GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
-                Long freeWheelCount = malakasRecordManager.countGameRecord(query, GameTypeEnum.MALAKAS);
+                Long freeWheelCount = malakasBetRecordManager.countGameRecord(query, GameTypeEnum.MALAKAS);
                 if (Objects.isNull(freeWheelCount)) {
                     log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
                     return;
