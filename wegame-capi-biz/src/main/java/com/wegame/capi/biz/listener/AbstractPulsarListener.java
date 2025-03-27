@@ -26,10 +26,7 @@ import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -57,7 +54,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 getMaximumPoolSize(),
                 0,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(1000),
+                new LinkedBlockingQueue<>(1000),
                 new CustomizableThreadFactory(getGameType().getName() + "-consumber-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         start = true;
