@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 public class MariaMakilingStarCardScheduler extends AbstractStarCardScheduler {
 
 
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void schedule() {
         long startTime = DateUtil.getCurrentMilli();
         log.info("{}#schedule start", getClass().getSimpleName());
