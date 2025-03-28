@@ -20,12 +20,8 @@ import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
-import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.RedeemRewardResStatusEnum;
-import com.wegame.capi.common.enums.StarCardReportStatusEnum;
-import com.wegame.capi.common.enums.StarCardUseStatusEnum;
+import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -40,6 +36,8 @@ import java.util.Objects;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
 import static com.wegame.capi.client.enums.BetTypeEnum.NORMAL_BET;
+import static com.wegame.capi.common.enums.BetPromotionTypeEnum.OPERATION_EVENT;
+import static com.wegame.capi.common.enums.BetPromotionTypeEnum.STAR_CARD;
 
 /**
  * 抽象通用投注策略<br>
@@ -80,7 +78,9 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount());
                 canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
                 if (canOperationEventBet) {
+                    // 设置betDo
                     betDo.setGameOperationEvent(gameOperationEvent);
+                    betDo.setBetPromotionType(BetPromotionTypeEnum.OPERATION_EVENT);
                 }
             }
             return canOperationEventBet;
@@ -98,6 +98,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(betDo.getGameOperationEvent(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(betDo.getGameOperationEvent().isEventResult(), ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), OPERATION_EVENT), ErrorCode.ERR_INTER);
         GameOperationEventDo gameOperationEvent = betDo.getGameOperationEvent();
         // 生产投注记录
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
@@ -120,22 +121,43 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         return betHelper().handleBetResult(betRecordDo, resultDo);
     }
 
+    public boolean isCanStarCardBet(BetDo betDo) {
+        try {
+            if (!betDo.isUseStarCard()) {
+                return false;
+            }
+            // 查询星卡详情
+            RewardDetailDo rewordDetail = bagService.getRewardDetail(betDo.getRewardConfigId());
+            AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(Objects.equals(rewordDetail.getDetails().getBetValue(), betDo.getBetAmount()), ErrorCode.ERR_PARAM);
+            // 设置betDo
+            betDo.setBetPromotionType(STAR_CARD);
+            betDo.setRewardDetail(rewordDetail);
+            return true;
+        } catch (Exception e) {
+            log.error("isCanOperationEventBet error, errMsg: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
     /**
      * 星卡投注流程-通用流程
      * <p>
      * todo 优化
      */
     public BetResultDo<RD> betForStartCard(BetDo betDo) {
+        AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(betDo.isUseStarCard(), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(betDo.getRewardDetail(), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(betDo.getRewardDetail().getDetails(), ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), STAR_CARD), ErrorCode.ERR_INTER);
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        // 查询星卡详情
-        RewardDetailDo rewordDetail = bagService.getRewardDetail(betDo.getRewardConfigId());
-        AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(Objects.equals(rewordDetail.getDetails().getBetValue(), betDo.getBetAmount()), ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // 准备核销星卡
         StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
-                .id(super.generateId())
-                .gameId(this.gameContext().gameInfo().getGameType().getId())
+                .id(generateId())
+                .gameId(gameContext().gameInfo().getGameType().getId())
                 .channelId(userInfo.getChannelId())
                 .betAmount(betDo.getBetAmount())
                 .playerId(userInfo.getPlayerId())
@@ -191,15 +213,15 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {
         GamePlayTypeEnum playTypeEnum = GamePlayTypeEnum.NORMAL_PLAY;
-        String ieId = null;
         GameOperationEventDo gameEventDo = betDo.getGameOperationEvent();
-        if (Objects.nonNull(gameEventDo) && gameEventDo.isEventResult()) {
-            playTypeEnum = GamePlayTypeEnum.EVENT_PLAY;
-            ieId = gameEventDo.getOperationEvent().getEventId();
+        if (Objects.equals(betDo.getBetPromotionType(), OPERATION_EVENT)) {
+            if (Objects.nonNull(gameEventDo) && gameEventDo.isEventResult()) {
+                playTypeEnum = GamePlayTypeEnum.EVENT_PLAY;
+            }
         }
         List<R> list = gameContext().play(build(playTypeEnum, betDo, betRecordId, gameEventDo));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-        return betHelper().buildBetRecord(betRecordId, betDo, list, ieId);
+        return betHelper().buildBetRecord(betRecordId, betDo, list);
     }
 
     /**

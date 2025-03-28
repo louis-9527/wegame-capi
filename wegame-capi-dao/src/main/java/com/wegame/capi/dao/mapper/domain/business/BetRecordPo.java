@@ -59,6 +59,10 @@ public class BetRecordPo implements Serializable {
      */
     private String betSubType;
     /**
+     * 投注营销类型
+     */
+    private Integer betPromotionType;
+    /**
      * 投注id（单钱包）
      */
     private String betId;
@@ -91,6 +95,10 @@ public class BetRecordPo implements Serializable {
      */
     private Integer status;
     /**
+     * 扩展信息
+     */
+    private ExtendInfo extendInfo;
+    /**
      * 创建人
      */
     private String creator;
@@ -108,5 +116,24 @@ public class BetRecordPo implements Serializable {
     private Long updateTime;
 
     ///////////////  above auto generated ///////////////
+
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class ExtendInfo implements Serializable {
+        private static final long serialVersionUID = 1L;
+        /**
+         * 干预事件Id(当这笔订单属于干预订单时生成,对于 EventId 需要传给单钱包)
+         */
+        private String ieId;
+        /**
+         * （星卡）奖励图片url
+         */
+        private String rewardUrl;
+    }
 }
 

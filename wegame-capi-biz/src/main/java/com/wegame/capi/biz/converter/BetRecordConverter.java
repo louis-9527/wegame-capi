@@ -4,17 +4,20 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
-import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
+import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
 import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
 import org.springframework.data.domain.Sort;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -44,8 +47,13 @@ public class BetRecordConverter {
         betRecordDo.setPayAmount(po.getPayAmount());
         betRecordDo.setPayOutAmount(po.getPayOutAmount());
         betRecordDo.setReachMaxMultiple(po.getReachMaxMultiple());
-        betRecordDo.setMarketFlag(po.getMarketFlag());
         betRecordDo.setStatus(po.getStatus());
+        if (Objects.nonNull(po.getExtendInfo())) {
+            betRecordDo.setExtendInfo(BetRecordDo.ExtendInfo.builder()
+                    .ieId(po.getExtendInfo().getIeId())
+                    .rewardUrl(po.getExtendInfo().getRewardUrl())
+                    .build());
+        }
         betRecordDo.setCreator(po.getCreator());
         betRecordDo.setCreateTime(po.getCreateTime());
         betRecordDo.setUpdater(po.getUpdater());
@@ -73,8 +81,13 @@ public class BetRecordConverter {
         po.setPayAmount(betRecordDo.getPayAmount());
         po.setPayOutAmount(betRecordDo.getPayOutAmount());
         po.setReachMaxMultiple(betRecordDo.getReachMaxMultiple());
-        po.setMarketFlag(betRecordDo.getMarketFlag());
         po.setStatus(betRecordDo.getStatus());
+        if (Objects.nonNull(betRecordDo.getExtendInfo())) {
+            po.setExtendInfo(BetRecordPo.ExtendInfo.builder()
+                    .ieId(betRecordDo.getExtendInfo().getIeId())
+                    .rewardUrl(betRecordDo.getExtendInfo().getRewardUrl())
+                    .build());
+        }
         if (OptEnum.ADD.equals(optEnum)) {
             po.setCreator(betRecordDo.getCreator());
             po.setCreateTime(betRecordDo.getCreateTime());
@@ -97,11 +110,18 @@ public class BetRecordConverter {
         vo.setUserId(Objects.nonNull(betRecordDo.getUserId()) ? String.valueOf(betRecordDo.getUserId()) : null);
         vo.setPlayerId(betRecordDo.getPlayerId());
         vo.setPlayerName(betRecordDo.getPlayerName());
+        vo.setBetPromotionType(betRecordDo.getBetPromotionType());
         vo.setBetAmount(betRecordDo.getBetAmount());
         vo.setPayAmount(betRecordDo.getPayAmount());
         vo.setPayOutAmount(betRecordDo.getPayOutAmount());
         vo.setReachMaxMultiple(betRecordDo.getReachMaxMultiple());
         vo.setStatus(betRecordDo.getStatus());
+        vo.setExtendInfo(Objects.nonNull(betRecordDo.getExtendInfo())
+                ? BetRecordVo.ExtendInfo
+                .builder()
+                .rewardUrl(betRecordDo.getExtendInfo().getRewardUrl())
+                .build()
+                : null);
         vo.setCreateTime(betRecordDo.getCreateTime());
         return vo;
     }
