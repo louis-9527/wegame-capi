@@ -57,7 +57,7 @@ public class BetDetail implements BetRequestValidate, Serializable {
 
     private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-        if(!useStarCard) {
+        if (!useStarCard) {
             AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
         }
@@ -143,7 +143,9 @@ public class BetDetail implements BetRequestValidate, Serializable {
         // ex类型，支付金额必须是投注金额的1.5倍
         if (Objects.equals(BetSubTypeEnum.EX_BET, betSubType)) {
             double exceptPayAmount = betAmount * 1.5;
-            AssertUtil.assertTrue((long)exceptPayAmount == payAmount, ErrorCode.ERR_PARAM, "ex bet payAmount must be 1.5 times of betAmount");
+            AssertUtil.assertTrue((long) exceptPayAmount == payAmount, ErrorCode.ERR_PARAM, "ex bet payAmount must be 1.5 times of betAmount");
+        } else {
+            AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM, "normal bet payAmount equal betAmount");
         }
     }
 
