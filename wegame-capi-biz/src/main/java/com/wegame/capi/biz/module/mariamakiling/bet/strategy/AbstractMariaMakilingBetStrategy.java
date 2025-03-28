@@ -77,7 +77,7 @@ public abstract class AbstractMariaMakilingBetStrategy
         if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
             // 非免费轮投注流程
             //// 1、是否使用星卡
-            if (betDo.isUseStarCard()) {
+            if (isCanStarCardBet(betDo)) {
                 // 1.1 是，则星卡投注流程
                 return betForStartCard(betDo);
             } else {

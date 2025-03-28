@@ -118,22 +118,41 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         return betHelper().handleBetResult(betRecordDo, resultDo);
     }
 
+    public boolean isCanStarCardBet(BetDo betDo) {
+        try {
+            if (!betDo.isUseStarCard()) {
+                return false;
+            }
+            // 查询星卡详情
+            RewardDetailDo rewordDetail = bagService.getRewardDetail(betDo.getRewardConfigId());
+            AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(Objects.equals(rewordDetail.getDetails().getBetValue(), betDo.getBetAmount()), ErrorCode.ERR_PARAM);
+            // 设置使用星卡的星卡详情
+            betDo.setRewardDetail(rewordDetail);
+            return true;
+        } catch (Exception e) {
+            log.error("isCanOperationEventBet error, errMsg: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
     /**
      * 星卡投注流程-通用流程
      * <p>
      * todo 优化
      */
     public BetResultDo<RD> betForStartCard(BetDo betDo) {
+        AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(betDo.isUseStarCard(), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(betDo.getRewardDetail(), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(betDo.getRewardDetail().getDetails(), ErrorCode.ERR_INTER);
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        // 查询星卡详情
-        RewardDetailDo rewordDetail = bagService.getRewardDetail(betDo.getRewardConfigId());
-        AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(Objects.equals(rewordDetail.getDetails().getBetValue(), betDo.getBetAmount()), ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // 准备核销星卡
         StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
-                .id(super.generateId())
-                .gameId(this.gameContext().gameInfo().getGameType().getId())
+                .id(generateId())
+                .gameId(gameContext().gameInfo().getGameType().getId())
                 .betAmount(betDo.getBetAmount())
                 .playerId(userInfo.getPlayerId())
                 .rewardId(betDo.getRewardId())
@@ -187,13 +206,19 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetPromotionTypeEnum betPromotionType, BetDo betDo) {
         GamePlayTypeEnum playTypeEnum = GamePlayTypeEnum.NORMAL_PLAY;
-        String ieId = null;
         BetRecordDo.ExtendInfo extendInfo = null;
         GameOperationEventDo gameEventDo = betDo.getGameOperationEvent();
-        if (Objects.nonNull(gameEventDo) && gameEventDo.isEventResult()) {
-            playTypeEnum = GamePlayTypeEnum.EVENT_PLAY;
-            ieId = gameEventDo.getOperationEvent().getEventId();
-            extendInfo = BetRecordDo.ExtendInfo.builder().ieId(ieId).build();
+        if (Objects.equals(betPromotionType, OPERATION_EVENT)) {
+            if (Objects.nonNull(gameEventDo) && gameEventDo.isEventResult()) {
+                playTypeEnum = GamePlayTypeEnum.EVENT_PLAY;
+                extendInfo = BetRecordDo.ExtendInfo.builder()
+                        .ieId(gameEventDo.getOperationEvent().getEventId())
+                        .build();
+            }
+        } else if (Objects.equals(betPromotionType, STAR_CARD)) {
+            extendInfo = BetRecordDo.ExtendInfo.builder()
+                    .rewardUrl(betDo.getRewardDetail().getDetails().getImgUrl())
+                    .build();
         }
         List<R> list = gameContext().play(build(playTypeEnum, betDo, betRecordId, gameEventDo));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
