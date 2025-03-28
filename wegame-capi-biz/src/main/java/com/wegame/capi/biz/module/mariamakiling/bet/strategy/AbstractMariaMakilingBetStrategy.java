@@ -20,6 +20,7 @@ import com.wegame.capi.biz.module.mariamakiling.game.MariaMakilingGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -145,7 +146,11 @@ public abstract class AbstractMariaMakilingBetStrategy
         List<MariaMakilingGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
-        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.buildBetRecord(betRecordId, betDo, list, null);
+        BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.buildBetRecord(betRecordId,
+                BetPromotionTypeEnum.NONE,
+                betDo,
+                null,
+                list);
         // 保存投注记录并派奖
         boolean syncOpt = mariaMakilingBetHelper.hasRewardFreeWheel(list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, syncOpt);
