@@ -123,8 +123,8 @@ public class BetStatusService {
                     .env(env)
                     .traceId(ThreadMdcUtil.getTraceId())
                     .body(String.format(MESSAGE_FORMAT,
-                            betRecordDo.getId(),
-                            gameType.getName()))
+                            gameType.getName(),
+                            betRecordDo.getId()))
                     .build().buildMessage());
         }
     }
