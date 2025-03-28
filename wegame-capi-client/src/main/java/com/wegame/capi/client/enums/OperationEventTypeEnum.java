@@ -22,6 +22,13 @@ public enum OperationEventTypeEnum {
             "mariamakiling_dynamicOperation_event_config",
             "mariamakiling_dynamicOperation_event_config_record"
     ),
+    IBONG_ADARNA(
+            GameTypeEnum.IBONG_ADARNA,
+            "ibongadarna_dynamicOperation_event",
+            "ibongadarna_dynamicOperation_event_detail",
+            "ibongadarna_dynamicOperation_event_config",
+            "ibongadarna_dynamicOperation_event_config_record"
+    ),
 
     ;
 
