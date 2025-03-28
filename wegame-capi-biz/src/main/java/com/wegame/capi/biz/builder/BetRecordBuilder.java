@@ -26,9 +26,11 @@ public class BetRecordBuilder {
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         long currentMilli = DateUtil.getCurrentMilli();
         BetRecordDo.ExtendInfo extendInfo = null;
         BetPromotionTypeEnum betPromotionType = betDo.getBetPromotionType();
+        AssertUtil.assertNotNull(betPromotionType, ErrorCode.ERR_INTER);
         if (Objects.equals(betPromotionType, BetPromotionTypeEnum.OPERATION_EVENT)) {
             extendInfo = BetRecordDo.ExtendInfo.builder()
                     .ieId(betDo.getGameOperationEvent().getOperationEvent().getEventId())
