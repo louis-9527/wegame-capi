@@ -29,7 +29,6 @@ public class SingleWalletServiceAspect {
     public Object authLoginTokenAround(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
-//            if (Objects.isNull(userInfo) || !StringUtils.equals(userInfo.getGameId(), GameTypeEnum.MARIA_MAKILING.getId())) {
             if (Objects.isNull(userInfo) || !mockGameList.contains(userInfo.getGameId())) {
                 return joinPoint.proceed();
             } else {
