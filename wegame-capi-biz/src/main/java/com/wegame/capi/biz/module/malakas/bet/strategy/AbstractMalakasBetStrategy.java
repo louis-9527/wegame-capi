@@ -88,11 +88,9 @@ public abstract class AbstractMalakasBetStrategy
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
         BetRecordDo<MalakasGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
-                BetPromotionTypeEnum.NONE,
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
-                null,
                 list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);

@@ -63,11 +63,9 @@ public abstract class AbstractIbongAdarnaBetStrategy
         IbongAdarnaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
         BetRecordDo<IbongAdarnaGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
-                BetPromotionTypeEnum.NONE,
                 betDo,
                 gameRecord.getRewardResult().getTotalRewardAmount(),
                 false,
-                null,
                 list);
         // 保存投注记录并派奖
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
