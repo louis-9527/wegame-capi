@@ -34,6 +34,8 @@ public class BetRecordVo implements Validate, Serializable {
     private String playerId;
     @ApiModelProperty("玩家名称")
     private String playerName;
+    @ApiModelProperty("0:无，2使用星卡")
+    private Integer betPromotionType;
     @ApiModelProperty("投注金额 单位：分")
     private Long betAmount;
     @ApiModelProperty("支付金额 单位：分")
@@ -44,9 +46,26 @@ public class BetRecordVo implements Validate, Serializable {
     private Boolean reachMaxMultiple;
     @ApiModelProperty("状态 0进行中 1已完结 2无效")
     private Integer status;
+    @ApiModelProperty("扩展信息")
+    private ExtendInfo extendInfo;
     @ApiModelProperty("创建时间")
     private Long createTime;
     @ApiModelProperty("游戏记录列表")
     private List<Object> gameRecordList;
+
+    /**
+     * 扩展信息
+     */
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class ExtendInfo implements Serializable {
+        private static final long serialVersionUID = 1L;
+        @ApiModelProperty("（星卡）奖励图片url")
+        private String rewardUrl;
+    }
 }
 

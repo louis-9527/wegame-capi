@@ -9,9 +9,11 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 
 import java.util.List;
+import java.util.Objects;
 
 public class BetRecordBuilder {
 
@@ -19,13 +21,23 @@ public class BetRecordBuilder {
                                            BetDo betDo,
                                            Long payOutAmount,
                                            Boolean reachMaxMultiple,
-                                           List<T> gameRecordList,
-                                           String ieId) {
+                                           List<T> gameRecordList) {
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         long currentMilli = DateUtil.getCurrentMilli();
+        BetRecordDo.ExtendInfo extendInfo = null;
+        BetPromotionTypeEnum betPromotionType = betDo.getBetPromotionType();
+        if (Objects.equals(betPromotionType, BetPromotionTypeEnum.OPERATION_EVENT)) {
+            extendInfo = BetRecordDo.ExtendInfo.builder()
+                    .ieId(betDo.getGameOperationEvent().getOperationEvent().getEventId())
+                    .build();
+        } else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.STAR_CARD)) {
+            extendInfo = BetRecordDo.ExtendInfo.builder()
+                    .rewardUrl(betDo.getRewardDetail().getDetails().getImgUrl())
+                    .build();
+        }
         return BetRecordDo.<T>builder()
                 .id(betRecordId)
                 .pId(userInfo.getPId())
@@ -37,16 +49,17 @@ public class BetRecordBuilder {
                 .betSerialNo(String.valueOf(betRecordId))
                 .betType(betDo.getBetType().getCode())
                 .betSubType(betDo.getBetSubType().getCode())
+                .betPromotionType(betPromotionType.getCode())
                 .betAmount(betDo.getBetAmount())
                 .payAmount(betDo.getPayAmount())
                 .payOutAmount(payOutAmount)
                 .reachMaxMultiple(reachMaxMultiple)
                 .status(BetStatusEnum.ING.getCode())
+                .extendInfo(extendInfo)
                 .creator(operator.getName())
                 .updater(operator.getName())
                 .createTime(currentMilli)
                 .updateTime(currentMilli)
-                .ieId(ieId)
                 .gameRecordList(gameRecordList)
                 .build();
     }
