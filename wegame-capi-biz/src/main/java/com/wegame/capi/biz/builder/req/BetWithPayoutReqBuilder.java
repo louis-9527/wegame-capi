@@ -7,6 +7,7 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class BetWithPayoutReqBuilder {
 
@@ -17,7 +18,7 @@ public class BetWithPayoutReqBuilder {
                 .channelId(betRecordDo.getChannelId())
                 .playerName(betRecordDo.getPlayerName())
                 .refId(betRecordDo.getBetSerialNo())
-                .ieId(betRecordDo.getIeId())
+                .ieId(Objects.nonNull(betRecordDo.getExtendInfo()) ? betRecordDo.getExtendInfo().getIeId() : null)
                 .createTime(DateUtil.toUTC(new Date(betRecordDo.getCreateTime())))
                 .betAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()))
                 .payoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()))

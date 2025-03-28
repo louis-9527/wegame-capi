@@ -13,6 +13,7 @@ import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,20 +33,22 @@ public class MariaMakilingBetHelper implements BetHelper<MariaMakilingGameRecord
 
     @Override
     public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(long betRecordId,
+                                                                 BetPromotionTypeEnum betPromotionType,
                                                                  BetDo betDo,
-                                                                 List<MariaMakilingGameRecordDo> gameRecordList,
-                                                                 String ieId) {
+                                                                 BetRecordDo.ExtendInfo extendInfo,
+                                                                 List<MariaMakilingGameRecordDo> gameRecordList) {
         // 构建投注记录
         long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
         return BetRecordBuilder.build(betRecordId,
+                betPromotionType,
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
-                gameRecordList,
-                ieId);
+                extendInfo,
+                gameRecordList);
     }
 
     @Override
