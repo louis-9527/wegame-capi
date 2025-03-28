@@ -15,6 +15,7 @@ import com.wegame.capi.biz.manager.IbongAdarnaBetRecordManager;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.module.ibongadarna.game.IbongAdarnaGameContext;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +66,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
                 betDo,
                 gameRecord.getRewardResult().getTotalRewardAmount(),
                 false,
-                list,
-                "");
+                list);
         // 保存投注记录并派奖
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
