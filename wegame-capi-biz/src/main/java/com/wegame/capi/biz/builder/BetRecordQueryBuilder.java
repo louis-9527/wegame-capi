@@ -108,9 +108,6 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordDo.getPayOutAmount())) {
             update.set("payOutAmount", recordDo.getPayOutAmount());
         }
-        if (Objects.nonNull(recordDo.getMarketFlag())) {
-            update.set("marketFlag", recordDo.getMarketFlag());
-        }
         if (Objects.nonNull(recordDo.getStatus())) {
             update.set("status", recordDo.getStatus());
         }

@@ -64,7 +64,7 @@ public class BetRecordDo<T> implements Serializable {
      *
      * @see com.wegame.capi.common.enums.BetPromotionTypeEnum
      */
-    private int betPromotionType;
+    private Integer betPromotionType;
     /**
      * 投注id（单钱包）
      */
@@ -89,10 +89,6 @@ public class BetRecordDo<T> implements Serializable {
      * 是否达到最大倍数
      */
     private Boolean reachMaxMultiple;
-    /**
-     * 营销标识 0否 1是
-     */
-    private Integer marketFlag;
     /**
      * 状态 0进行中 1已完结 2无效
      */
