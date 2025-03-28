@@ -32,7 +32,7 @@ import java.util.Map;
 public class BetRecordController {
 
     public static final Map<GameTypeEnum, String> BET_RECORD_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
-            .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingRecordManager")
+            .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingBetRecordManager")
             .put(GameTypeEnum.MALAKAS, "malakasBetRecordManager")
             .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaBetRecordManager")
             .build();
