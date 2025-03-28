@@ -36,7 +36,6 @@ public enum GameTypeEnum {
 
     ;
 
-
     /**
      * 枚举码.
      */
