@@ -6,6 +6,7 @@ import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -52,6 +53,10 @@ public class BetDo implements Serializable {
      * 免费轮游戏记录id
      */
     private Long gameRecordId;
+    /**
+     * 投注营销类型：默认无
+     */
+    BetPromotionTypeEnum betPromotionType = BetPromotionTypeEnum.NONE;
     /////////////// 干预事件投注 /////////////
     /**
      * 干预事件投注

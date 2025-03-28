@@ -13,21 +13,31 @@ import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 
 import java.util.List;
+import java.util.Objects;
 
 public class BetRecordBuilder {
 
     public static <T> BetRecordDo<T> build(Long betRecordId,
-                                           BetPromotionTypeEnum betPromotionType,
                                            BetDo betDo,
                                            Long payOutAmount,
                                            Boolean reachMaxMultiple,
-                                           BetRecordDo.ExtendInfo extendInfo,
                                            List<T> gameRecordList) {
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         long currentMilli = DateUtil.getCurrentMilli();
+        BetRecordDo.ExtendInfo extendInfo = null;
+        BetPromotionTypeEnum betPromotionType = betDo.getBetPromotionType();
+        if (Objects.equals(betPromotionType, BetPromotionTypeEnum.OPERATION_EVENT)) {
+            extendInfo = BetRecordDo.ExtendInfo.builder()
+                    .ieId(betDo.getGameOperationEvent().getOperationEvent().getEventId())
+                    .build();
+        } else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.STAR_CARD)) {
+            extendInfo = BetRecordDo.ExtendInfo.builder()
+                    .rewardUrl(betDo.getRewardDetail().getDetails().getImgUrl())
+                    .build();
+        }
         return BetRecordDo.<T>builder()
                 .id(betRecordId)
                 .pId(userInfo.getPId())
