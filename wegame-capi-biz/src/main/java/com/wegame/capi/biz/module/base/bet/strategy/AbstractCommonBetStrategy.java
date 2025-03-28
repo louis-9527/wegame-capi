@@ -78,7 +78,9 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount());
                 canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
                 if (canOperationEventBet) {
+                    // 设置betDo
                     betDo.setGameOperationEvent(gameOperationEvent);
+                    betDo.setBetPromotionType(BetPromotionTypeEnum.OPERATION_EVENT);
                 }
             }
             return canOperationEventBet;
@@ -96,9 +98,10 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(betDo.getGameOperationEvent(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(betDo.getGameOperationEvent().isEventResult(), ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), OPERATION_EVENT), ErrorCode.ERR_INTER);
         GameOperationEventDo gameOperationEvent = betDo.getGameOperationEvent();
         // 生产投注记录
-        BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), OPERATION_EVENT, betDo);
+        BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         // 保存干预事件详情并修改干预事件干预状态
         Long eventDetailId = operationEventManager().addEventDetail(OperationEventDetailBuilder.build(generateId(), betRecordDo, gameOperationEvent));
         AssertUtil.assertNotNull(eventDetailId, ErrorCode.ERR_INTER);
@@ -128,7 +131,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
             AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(Objects.equals(rewordDetail.getDetails().getBetValue(), betDo.getBetAmount()), ErrorCode.ERR_PARAM);
-            // 设置使用星卡的星卡详情
+            // 设置betDo
+            betDo.setBetPromotionType(STAR_CARD);
             betDo.setRewardDetail(rewordDetail);
             return true;
         } catch (Exception e) {
@@ -147,6 +151,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(betDo.isUseStarCard(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(betDo.getRewardDetail(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(betDo.getRewardDetail().getDetails(), ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), STAR_CARD), ErrorCode.ERR_INTER);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // 准备核销星卡
@@ -204,25 +209,17 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         return betHelper().handleBetResult(rBetRecordDo, resultDo);
     }
 
-    public BetRecordDo<R> generateBetRecord(long betRecordId, BetPromotionTypeEnum betPromotionType, BetDo betDo) {
+    public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {
         GamePlayTypeEnum playTypeEnum = GamePlayTypeEnum.NORMAL_PLAY;
-        BetRecordDo.ExtendInfo extendInfo = null;
         GameOperationEventDo gameEventDo = betDo.getGameOperationEvent();
-        if (Objects.equals(betPromotionType, OPERATION_EVENT)) {
+        if (Objects.equals(betDo.getBetPromotionType(), OPERATION_EVENT)) {
             if (Objects.nonNull(gameEventDo) && gameEventDo.isEventResult()) {
                 playTypeEnum = GamePlayTypeEnum.EVENT_PLAY;
-                extendInfo = BetRecordDo.ExtendInfo.builder()
-                        .ieId(gameEventDo.getOperationEvent().getEventId())
-                        .build();
             }
-        } else if (Objects.equals(betPromotionType, STAR_CARD)) {
-            extendInfo = BetRecordDo.ExtendInfo.builder()
-                    .rewardUrl(betDo.getRewardDetail().getDetails().getImgUrl())
-                    .build();
         }
         List<R> list = gameContext().play(build(playTypeEnum, betDo, betRecordId, gameEventDo));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-        return betHelper().buildBetRecord(betRecordId, betPromotionType, betDo, extendInfo, list);
+        return betHelper().buildBetRecord(betRecordId, betDo, list);
     }
 
     /**
@@ -230,7 +227,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
      * 如果第一次返回5017(超过最大限额度),需要重试
      */
     private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(long betRecordId, BetDo betDo) {
-        BetRecordDo<R> rBetRecordDo = generateBetRecord(betRecordId, STAR_CARD, betDo);
+        BetRecordDo<R> rBetRecordDo = generateBetRecord(betRecordId, betDo);
         RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), betDo.getPayAmount(), rBetRecordDo.getId());
         if (rewardResult.getSuccess()) {
             return Pair.of(rewardResult, rBetRecordDo);
@@ -242,7 +239,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             // 派奖金额超过限制
             long maxPay = AmountUtil.toLong(new BigDecimal(rewardResult.getMessage()));
             for (int i = 1; i <= 10; i++) {
-                rBetRecordDo = generateBetRecord(betRecordId, STAR_CARD, betDo);
+                rBetRecordDo = generateBetRecord(betRecordId, betDo);
                 if (rBetRecordDo.getPayAmount() < maxPay) {
                     break;
                 }
