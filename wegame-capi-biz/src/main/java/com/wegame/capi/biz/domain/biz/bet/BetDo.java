@@ -56,7 +56,7 @@ public class BetDo implements Serializable {
     /**
      * 投注营销类型：默认无
      */
-    BetPromotionTypeEnum betPromotionType = BetPromotionTypeEnum.NONE;
+    BetPromotionTypeEnum betPromotionType;
     /////////////// 干预事件投注 /////////////
     /**
      * 干预事件投注
