@@ -23,7 +23,7 @@ import java.util.Objects;
 @Component
 public class SingleWalletServiceAspect {
 
-    private final List<String> mockGameList = Lists.newArrayList("zhumeng001", "zhumeng002", "zhumeng003");
+    private final List<String> mockGameList = Lists.newArrayList( "zhumeng002");
 
     @Around("execution(* com.wegame.capi..service.SingleWalletService.authLoginToken(..))")
     public Object authLoginTokenAround(ProceedingJoinPoint joinPoint) throws Throwable {
