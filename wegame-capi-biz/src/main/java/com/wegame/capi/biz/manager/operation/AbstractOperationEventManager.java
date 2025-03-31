@@ -368,7 +368,7 @@ public abstract class AbstractOperationEventManager {
                     .eventId(eventDo.getEventId())
                     .requestTime(DateUtil.toUCTByMilli(new Date().getTime()))
                     .executeBouns(AmountUtil.toBigDecimal(totalAmount))
-                    .executeTime(startTime == null ? null : DateUtil.toUCTByMilli(startTime))
+                    .executeTime(startTime == null ? DateUtil.toUCTByMilli(DateUtil.getCurrentMilli()) : DateUtil.toUCTByMilli(startTime))
                     .betNos(betNos)
                     .betRecords(betRecords)
                     .eventStatus(eventDo.getEventSubStatus().getCode())

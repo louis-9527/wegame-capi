@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service.promotion;
 
+import com.wegame.base.domain.PageDo;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.*;
 import com.wegame.capi.api.promotion.BagApi;
@@ -43,9 +44,15 @@ public class BagService {
         return RewardDetailConverter.toDo(res);
     }
 
-    public List<HistoryMessageDo> getHistoryMessage(Integer pageNo, Integer pageSize) {
+    public PageDo<HistoryMessageDo> getHistoryMessage(Integer pageNo, Integer pageSize) {
         GetHistoryMessageRes res = bagApi.getHistoryMessage(GetHistoryMessageReqBuilder.buildReq(pageNo, pageSize));
-        return HistoryMessageConverter.resToDoList(res.getMessages());
+        return PageDo.<HistoryMessageDo>builder()
+                .pageNo(pageNo)
+                .pageSize(pageSize)
+                .total(res.getTotalCount())
+                .list(HistoryMessageConverter.resToDoList(res.getMessages()))
+                .build();
+
     }
 
     /**
