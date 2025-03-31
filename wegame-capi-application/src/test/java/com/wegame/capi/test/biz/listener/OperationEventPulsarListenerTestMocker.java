@@ -48,8 +48,8 @@ public class OperationEventPulsarListenerTestMocker {
                 .channelId("1050")
                 .strategyId("3")
                 .orderNo("Sss123")
-                .effectedTime("2025-04-05T07:31:13.357Z")
-                .settlementTime("2025-04-05T07:31:10.000Z")
+                .effectedTime("2025-03-01T07:31:13.357Z")
+//                .settlementTime("2025-04-05T07:31:10.000Z")
                 .timesOrSessionDuration(new BigDecimal(10))
                 .build();
     }

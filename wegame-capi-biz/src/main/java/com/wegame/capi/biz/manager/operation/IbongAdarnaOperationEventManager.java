@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.mariamakilingTransactionManager;
+import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.ibongadarnaTransactionManager;
 
 @Service
 @Component("ibongAdarnaOperationEventManager")
@@ -22,21 +22,21 @@ public class IbongAdarnaOperationEventManager extends AbstractOperationEventMana
     private static final Map<Double, List<List<Long>>> normalConfigDetailArray = new ConcurrentHashMap<>();
 
     @Override
-    @Transactional(transactionManager = mariamakilingTransactionManager)
+    @Transactional(transactionManager = ibongadarnaTransactionManager)
     public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
         return super.addEventDetail(eventDetailDo);
     }
 
 
     @Override
-    @Transactional(transactionManager = mariamakilingTransactionManager)
+    @Transactional(transactionManager = ibongadarnaTransactionManager)
     public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
         super.updateEventDetail(eventDetailDo, eventDo);
     }
 
     @Override
     public OperationEventTypeEnum operationEventType() {
-        return OperationEventTypeEnum.MARIA_MAKILING;
+        return OperationEventTypeEnum.IBONG_ADARNA;
     }
 
     @Override
