@@ -26,12 +26,12 @@ public abstract class AbstractScheduler {
     protected void scheduleWithLock(String lockName, Runnable runnable) {
         distributeLock.lockThenRun(lockName, () -> {
             try {
-                log.info("{} schedule task, get lock suc, taskName: {}, lockName: {}", taskName(), lockName);
+                log.info("schedule task, get lock suc, taskName: {}, lockName: {}", taskName(), lockName);
                 MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
                 OperatorContext.setOperator(Constants.SYSTEM_OPERATOR);
                 runnable.run();
             } catch (LockException e) {
-                log.info("{} schedule task warn, get lock fail, taskName: {}, lockName: {}", taskName(), lockName);
+                log.info("schedule task warn, get lock fail, taskName: {}, lockName: {}", taskName(), lockName);
             } catch (Exception e) {
                 log.error("{} schedule task error, errMsg: {}", taskName(), e.getMessage(), e);
             } finally {

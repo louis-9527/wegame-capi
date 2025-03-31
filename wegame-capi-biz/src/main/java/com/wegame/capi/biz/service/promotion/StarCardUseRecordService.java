@@ -4,19 +4,19 @@ import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.builder.StarCardUseRecordQueryBuilder;
+import com.wegame.capi.biz.converter.promotion.StartCardUseRecordConvert;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.StarCardUseTypeEnum;
 import com.wegame.capi.dao.mapper.domain.star.StarCardUseRecordPo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.wegame.capi.dao.mapper.domain.star.StarCardUseRecordQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.biz.converter.promotion.StartCardUseRecordConvert.doToPo;
+import java.util.List;
 
 /**
  * 星卡service
@@ -24,13 +24,10 @@ import static com.wegame.capi.biz.converter.promotion.StartCardUseRecordConvert.
 @Service
 public class StarCardUseRecordService extends AbstractService {
 
-    @Autowired
-    BagApi bagApi;
-
     public Long add(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
         StarCardUseTypeEnum starCardUseType = StarCardUseTypeEnum.valueOfGameType(gameType);
         AssertUtil.assertNotNull(starCardUseType, ErrorCode.ERR_INTER);
-        StarCardUseRecordPo poToInsert = doToPo(useRecordDo, OptEnum.ADD);
+        StarCardUseRecordPo poToInsert = StartCardUseRecordConvert.doToPo(useRecordDo, OptEnum.ADD);
         StarCardUseRecordPo po = getMongoTemplate(gameType).insert(poToInsert, starCardUseType.getCollectionName());
         return po.getId();
     }
@@ -48,5 +45,14 @@ public class StarCardUseRecordService extends AbstractService {
                 StarCardUseRecordPo.class,
                 starCardUseType.getCollectionName());
         return result.getModifiedCount() > 0;
+    }
+
+    public List<StarCardUseRecordDo> list(StarCardUseRecordQuery query, GameTypeEnum gameType) {
+        StarCardUseTypeEnum starCardUseType = StarCardUseTypeEnum.valueOfGameType(gameType);
+        AssertUtil.assertNotNull(starCardUseType, ErrorCode.ERR_INTER);
+        List<StarCardUseRecordPo> poList = getMongoTemplate(gameType).find(StarCardUseRecordQueryBuilder.buildQuery(query),
+                StarCardUseRecordPo.class,
+                starCardUseType.getCollectionName());
+        return StartCardUseRecordConvert.doTodoList(poList);
     }
 }

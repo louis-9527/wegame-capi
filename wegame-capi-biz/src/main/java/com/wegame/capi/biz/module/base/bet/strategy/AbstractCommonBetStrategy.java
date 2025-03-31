@@ -100,6 +100,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(betDo.getGameOperationEvent().isEventResult(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), OPERATION_EVENT), ErrorCode.ERR_INTER);
         GameOperationEventDo gameOperationEvent = betDo.getGameOperationEvent();
+        log.info("betForOperationEvent betDo:{}", betDo.getGameOperationEvent());
         // 生产投注记录
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         // 保存干预事件详情并修改干预事件干预状态
@@ -158,6 +159,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
                 .id(generateId())
                 .gameId(gameContext().gameInfo().getGameType().getId())
+                .channelId(userInfo.getChannelId())
                 .betAmount(betDo.getBetAmount())
                 .playerId(userInfo.getPlayerId())
                 .rewardId(betDo.getRewardId())
@@ -168,6 +170,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         // 生成投注记录Id：唯一
         long betRecordId = generateBetRecordId();
         Pair<RedeemRewardResultDo, BetRecordDo<R>> redeemRewardResultDoBetRecord = this.rewardResult(betRecordId, betDo);
+
         RedeemRewardResultDo rewardResult = redeemRewardResultDoBetRecord.getKey();
         BetRecordDo<R> rBetRecordDo = redeemRewardResultDoBetRecord.getRight();
         if (!rewardResult.getSuccess()) {
@@ -231,10 +234,6 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), betDo.getPayAmount(), rBetRecordDo.getId());
         if (rewardResult.getSuccess()) {
             return Pair.of(rewardResult, rBetRecordDo);
-        } else if (Objects.equals(RedeemRewardResStatusEnum.INSUFFICIENT_CREDIT.getCode(), rewardResult.getStatus())) {
-            // 余额-不足
-            rewardResult.setErrorCode(ErrorCode.INSUFFICIENT_CREDIT);
-            return Pair.of(rewardResult, rBetRecordDo);
         } else if (Objects.equals(RedeemRewardResStatusEnum.INVALID_REWARD_PAYOUT.getCode(), rewardResult.getStatus())) {
             // 派奖金额超过限制
             long maxPay = AmountUtil.toLong(new BigDecimal(rewardResult.getMessage()));
@@ -250,6 +249,11 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 }
             }
             rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
+            return Pair.of(rewardResult, rBetRecordDo);
+        } else if (Objects.equals(RedeemRewardResStatusEnum.INSUFFICIENT_CREDIT.getCode(), rewardResult.getStatus())) {
+            // 余额-不足
+            ErrorCode errorCode = RedeemRewardResStatusEnum.convetErrorCode(rewardResult.getStatus());
+            rewardResult.setErrorCode(errorCode == null ? ErrorCode.ERR_INTER : errorCode);
             return Pair.of(rewardResult, rBetRecordDo);
         }
         return Pair.of(rewardResult, rBetRecordDo);
