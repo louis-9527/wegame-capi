@@ -43,8 +43,7 @@ import static com.wegame.capi.biz.module.malakas.MalakasProbabilisticUtil.getWhe
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.*;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
-import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
-import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
+import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
 @Component("malakasGameNormalPlay")
@@ -270,7 +269,11 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
                     // 当前元素非空，则不生成
+                    randomNumberIndex = randomNumberIndex + 1;
                     continue;
+                }
+                if (Objects.equals(row, ONE_ROW_INDEX)) {
+                    columProbabilisticMap = buildColumProbabilisticMap(SEVEN_COLUM_INDEX, playProbabilisticConfig.getWheelProbabilisticConfig());
                 }
                 Integer randomNumber = randomNumberList.get(randomNumberIndex);
                 if (Objects.equals(row, ONE_ROW_INDEX) || scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL) {
