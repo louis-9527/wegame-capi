@@ -17,6 +17,7 @@ import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
@@ -90,7 +91,7 @@ public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongAdarnaS
         // 5.构建中奖结果
         return RewardResultDo.<IbongAdarnaSymbolDo>builder()
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
-                .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
+                .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
                 .hasRewardFreeWheel(false)
