@@ -3,6 +3,8 @@ package com.wegame.capi.common.utils;
 import cn.hutool.core.util.NumberUtil;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 /**
  * 金额工具
@@ -22,5 +24,29 @@ public class AmountUtil {
             return 0L;
         }
         return NumberUtil.mul(amount, 1000).longValue();
+    }
+
+    /**
+     * 根据patten将金额转换为decimal string
+     *
+     * @param patten       patten 参考 {@link DecimalFormat}
+     * @param amount       amount
+     * @param roundingMode 取模模式
+     * @return string decimal
+     */
+    public static String decimalFormat(String patten, Number amount, RoundingMode roundingMode) {
+        return NumberUtil.decimalFormat(patten, amount);
+    }
+
+    /**
+     * 根据patten将金额转换为decimal string
+     * 多余位数直接去除
+     *
+     * @param patten patten 参考 {@link DecimalFormat}
+     * @param amount amount
+     * @return string decimal
+     */
+    public static String decimalFormat(String patten, Number amount) {
+        return NumberUtil.decimalFormat(patten, amount, RoundingMode.FLOOR);
     }
 }
