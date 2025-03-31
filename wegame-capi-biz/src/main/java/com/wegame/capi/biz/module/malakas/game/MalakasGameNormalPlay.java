@@ -348,7 +348,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         List<BigDecimal> goldBoarderProbabilisticConfig = playProbabilisticConfig.getGoldBoarderProbabilisticConfig();
         BigDecimal goldBoarderProbabilistic = null;
         if (Objects.equals(row, ONE_ROW_INDEX)) {
-            goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(gameInfo.getColumn() - 1);
+            goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(SEVEN_COLUM_INDEX);
         } else {
             goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(column);
         }
