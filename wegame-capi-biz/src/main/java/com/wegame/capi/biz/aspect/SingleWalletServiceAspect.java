@@ -8,6 +8,7 @@ import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -18,14 +19,13 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Aspect
 @Component
 public class SingleWalletServiceAspect {
 
-    private final List<String> mockGameList = Lists.newArrayList( "zhumeng002");
+    private final List<String> mockGameList = Lists.newArrayList(GameTypeEnum.MALAKAS.getId());
 
     @Around("execution(* com.wegame.capi..service.SingleWalletService.authLoginToken(..))")
     public Object authLoginTokenAround(ProceedingJoinPoint joinPoint) throws Throwable {
