@@ -22,8 +22,8 @@ public class BagOtherRewardDetailVo implements Serializable {
     private String name;
     @ApiModelProperty(value = "奖励描述", required = true)
     private String description;
-    @ApiModelProperty(value = "跳转时游戏ID", required = true)
-    private String skipGameId;
+    @ApiModelProperty(value = "gameCode", required = true)
+    private String gameCode;
     @ApiModelProperty(value = "系统游戏ID", required = true)
     private String gameId;
     @ApiModelProperty(value = "游戏名称", required = true)

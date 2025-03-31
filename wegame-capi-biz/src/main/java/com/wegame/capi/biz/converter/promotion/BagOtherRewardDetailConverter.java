@@ -20,7 +20,7 @@ public class BagOtherRewardDetailConverter {
         detailVo.setRewardId(detailDo.getRewardId());
         detailVo.setName(detailDo.getName());
         detailVo.setDescription(detailDo.getDescription());
-        detailVo.setSkipGameId(detailDo.getSkipGameId());
+        detailVo.setGameCode(detailDo.getGameCode());
         detailVo.setGameId(detailDo.getGameId());
         detailVo.setGameName(detailDo.getGameName());
         detailVo.setImgUrl(detailDo.getImgUrl());
@@ -54,8 +54,8 @@ public class BagOtherRewardDetailConverter {
         rewordDetailDo.setRewardId(rewardBag.getRewardId());
         rewordDetailDo.setName(rewardBag.getName());
         rewordDetailDo.setDescription(rewardBag.getDescription());
-        rewordDetailDo.setSkipGameId(rewardBag.getGameId());
-        rewordDetailDo.setGameId(rewardBag.getGameCode());
+        rewordDetailDo.setGameCode(rewardBag.getGameCode());
+        rewordDetailDo.setGameId(rewardBag.getGameId());
         rewordDetailDo.setGameName(rewardBag.getGameName());
         rewordDetailDo.setImgUrl(rewardBag.getImgUrl());
         rewordDetailDo.setTotalCount(rewardBag.getTotalCount());

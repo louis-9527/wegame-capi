@@ -76,6 +76,14 @@ public class OperationEventQueryBuilder {
         return query;
     }
 
+    public static Query buildQueryOne(Long id) {
+        Criteria criteria = new Criteria();
+        criteria.and("_id").is(id);
+        Query query = new Query(criteria);
+        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus");
+        return query;
+    }
+
 
     public static Update buildUpdateById(OperationEventDo eventDo) {
         if (eventDo == null) {
