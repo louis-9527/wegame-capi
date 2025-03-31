@@ -1,6 +1,8 @@
 package com.wegame.capi.biz.aspect;
 
 import com.google.common.collect.Lists;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
@@ -29,7 +31,8 @@ public class SingleWalletServiceAspect {
     public Object authLoginTokenAround(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
-            if (Objects.isNull(userInfo) || !mockGameList.contains(userInfo.getGameId())) {
+            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+            if (!mockGameList.contains(userInfo.getGameId())) {
                 return joinPoint.proceed();
             } else {
                 return true;
@@ -47,7 +50,8 @@ public class SingleWalletServiceAspect {
     public Object getCreditAround(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
-            if (Objects.isNull(userInfo) || !mockGameList.contains(userInfo.getGameId())) {
+            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+            if (!mockGameList.contains(userInfo.getGameId())) {
                 return joinPoint.proceed();
             } else {
                 return BigDecimal.valueOf(10000000L);
@@ -65,7 +69,8 @@ public class SingleWalletServiceAspect {
     public Object betWithPayoutAround(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
-            if (Objects.isNull(userInfo) || !mockGameList.contains(userInfo.getGameId())) {
+            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+            if (!mockGameList.contains(userInfo.getGameId())) {
                 return joinPoint.proceed();
             } else {
                 return SingleWalletBetResultDo.builder()
@@ -87,7 +92,8 @@ public class SingleWalletServiceAspect {
     public Object getBetStatusAround(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
-            if (Objects.isNull(userInfo) || !mockGameList.contains(userInfo.getGameId())) {
+            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+            if (!mockGameList.contains(userInfo.getGameId())) {
                 return joinPoint.proceed();
             } else {
                 return BetStatusRes.builder()
@@ -107,7 +113,8 @@ public class SingleWalletServiceAspect {
     public Object verifyHashAround(ProceedingJoinPoint joinPoint) throws Throwable {
         try {
             UserInfo userInfo = UserInfoContext.getUserInfo();
-            if (Objects.isNull(userInfo) || !mockGameList.contains(userInfo.getGameId())) {
+            AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+            if (!mockGameList.contains(userInfo.getGameId())) {
                 return joinPoint.proceed();
             } else {
                 return true;
