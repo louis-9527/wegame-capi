@@ -269,6 +269,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
                     // 当前元素非空，则不生成
+                    randomNumberIndex = randomNumberIndex + 1;
                     continue;
                 }
                 if (Objects.equals(row, ONE_ROW_INDEX)) {
