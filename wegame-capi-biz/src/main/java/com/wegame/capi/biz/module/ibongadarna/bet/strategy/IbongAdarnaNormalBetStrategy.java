@@ -64,7 +64,7 @@ public class IbongAdarnaNormalBetStrategy extends AbstractIbongAdarnaBetStrategy
                     .rewardContent(String.format(Constants.IBONG_REWARD_NOTIFY_CONTENT_FORMAT,
                             userInfo.getUserName(),
                             multiple,
-                            NumberUtil.decimalFormat("#,##0.000", AmountUtil.toBigDecimal(totalRewardAmount))))
+                            AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(totalRewardAmount))))
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, IBONG_ADARNA.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);

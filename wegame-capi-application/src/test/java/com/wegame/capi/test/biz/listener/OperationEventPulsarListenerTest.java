@@ -1,5 +1,6 @@
 package com.wegame.capi.test.biz.listener;
 
+import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.biz.listener.OperationEventPulsarListener;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -15,8 +16,11 @@ public class OperationEventPulsarListenerTest extends BaseTest {
 
     @Autowired
     OperationEventPulsarListener operationEventPulsarListener;
+    @Autowired
+    SnowflakeIdGenerator snowflakeIdGenerator;
 
-    @Test
+    @Deprecated
+//    @Test
     public void test_handleMessage() {
         for (int i = 0; i < 2; i++) {
             boolean ret = operationEventPulsarListener.handleMessage(buildMessageDo());
@@ -24,6 +28,7 @@ public class OperationEventPulsarListenerTest extends BaseTest {
         }
     }
 
+    @Deprecated
     private OperationEventMessageDo buildMessageDo() {
         return OperationEventMessageDo.builder()
                 .playerName("slottest01")
@@ -40,4 +45,13 @@ public class OperationEventPulsarListenerTest extends BaseTest {
                 .timesOrSessionDuration(new BigDecimal(10))
                 .build();
     }
+
+    @Test
+    public void handleMessage_normal_test() {
+        boolean ret = operationEventPulsarListener.handleMessage(
+                OperationEventPulsarListenerTestMocker.mockOperationEventMessageDo(GameTypeEnum.IBONG_ADARNA, String.valueOf(snowflakeIdGenerator.nextId())));
+        Assert.assertTrue(ret);
+    }
+
+
 }
