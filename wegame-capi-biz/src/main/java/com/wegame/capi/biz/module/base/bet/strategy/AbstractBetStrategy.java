@@ -48,6 +48,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
 
     public long generateBetRecordId() {
         long betRecordId = snowflakeIdGenerator.nextId();
+        log.info("generateBetRecord id:{}", betRecordId);
         return betRecordId;
     }
 
