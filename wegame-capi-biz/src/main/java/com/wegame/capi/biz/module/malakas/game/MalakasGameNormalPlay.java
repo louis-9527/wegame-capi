@@ -265,7 +265,9 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             // 一列只能包含两个scatter
             int scatterNumberInColumn = countIndexSymbol(symbolArr, SymbolEnum.Scatter, column);
-            TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
+            TreeMap<String, Integer> columProbabilisticMap;
+            TreeMap<String, Integer> nonOneRowColumProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
+            TreeMap<String, Integer> oneRowColumProbabilisticMap = buildColumProbabilisticMap(SEVEN_COLUM_INDEX, playProbabilisticConfig.getWheelProbabilisticConfig());
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
                     // 当前元素非空，则不生成
@@ -273,8 +275,11 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
                     continue;
                 }
                 if (Objects.equals(row, ONE_ROW_INDEX)) {
-                    columProbabilisticMap = buildColumProbabilisticMap(SEVEN_COLUM_INDEX, playProbabilisticConfig.getWheelProbabilisticConfig());
+                    columProbabilisticMap = oneRowColumProbabilisticMap;
+                } else {
+                    columProbabilisticMap = nonOneRowColumProbabilisticMap;
                 }
+                AssertUtil.assertTrue(MapUtils.isNotEmpty(columProbabilisticMap), ErrorCode.ERR_INTER);
                 Integer randomNumber = randomNumberList.get(randomNumberIndex);
                 if (Objects.equals(row, ONE_ROW_INDEX) || scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL) {
                     // 第一行 || 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
