@@ -43,11 +43,12 @@ public class BetDetail implements BetRequestValidate, Serializable {
 
     @Override
     public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
-        validateStartCartBet(gameType, betType, betSubType);
         if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
             mariaMakilingValidateParam(gameType, betType, betSubType);
+            validateStartCartBet(gameType, betType, betSubType);
         } else if (Objects.equals(gameType, GameTypeEnum.MALAKAS)) {
             malakasValidateParam(gameType, betType, betSubType);
+            validateStartCartBet(gameType, betType, betSubType);
         } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
             ibongAdarnaValidateParam(gameType, betType, betSubType);
         } else {
