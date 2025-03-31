@@ -1,6 +1,7 @@
 package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wegame.base.enums.ErrorCode;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -41,6 +42,20 @@ public enum RedeemRewardResStatusEnum {
             if (item.getCode().equals(code)) {
                 return item;
             }
+        }
+        return null;
+    }
+
+
+    public static ErrorCode convetErrorCode(int code) {
+        if (INSUFFICIENT_CREDIT.code == code) {
+            return ErrorCode.STAR_CARD_INSUFFICIENT_CREDIT;
+        }
+        if (EXPERIENCE_NOT_MET.code == code) {
+            return ErrorCode.STAR_CARD_EXPIRED;
+        }
+        if (OPERATION_IN_PROGRESS.code == code) {
+            return ErrorCode.STAR_CARD_USE_ING;
         }
         return null;
     }

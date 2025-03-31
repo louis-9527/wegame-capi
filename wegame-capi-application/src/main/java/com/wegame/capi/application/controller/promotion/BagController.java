@@ -1,7 +1,9 @@
 package com.wegame.capi.application.controller.promotion;
 
+import cn.hutool.db.Page;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.base.domain.PageDo;
 import com.wegame.base.domain.PageInfoVo;
 import com.wegame.capi.biz.converter.promotion.BagOtherRewardDetailConverter;
 import com.wegame.capi.biz.converter.promotion.BagRewardConverter;
@@ -74,11 +76,11 @@ public class BagController {
     @PostMapping("/getHistoryMessage")
     public CommonResponse<PageInfoVo<HistoryMessageVo>> getHistoryMessage(@RequestBody QueryHistoryMessageRequest request) {
         request.validate();
-        List<HistoryMessageDo> messageDoList = bagService.getHistoryMessage(request.getPageNo(), request.getPageSize());
+        PageDo<HistoryMessageDo> messageDoPageDo = bagService.getHistoryMessage(request.getPageNo(), request.getPageSize());
         return build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                doToVoList(messageDoList),
-                0L));
+                doToVoList(messageDoPageDo.getList()),
+                messageDoPageDo.getTotal()));
     }
 
 }
