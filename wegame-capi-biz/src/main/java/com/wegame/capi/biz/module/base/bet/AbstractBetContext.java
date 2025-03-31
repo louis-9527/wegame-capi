@@ -47,8 +47,9 @@ public abstract class AbstractBetContext {
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_PARAM, "Not Login");
-        return distributeLock.lockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
-                () -> betStrategy.bet(betDo),
-                OPT_BUSY);
+//        return distributeLock.lockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
+//                () -> betStrategy.bet(betDo),
+//                OPT_BUSY);
+        return betStrategy.bet(betDo);
     }
 }
