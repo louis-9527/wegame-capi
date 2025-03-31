@@ -1,10 +1,7 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.wegame.capi.common.enums.SymbolSizeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -14,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
 @EqualsAndHashCode(of = {"id"}, callSuper = true)
 public class MalakasSymbolDo extends SymbolDo {
     private static final long serialVersionUID = -2266308987663710848L;
