@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -86,16 +87,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
      */
     private boolean lastGameFlag;
 
-    /**
-     * 是否中奖免费轮
-     *
-     * @return
-     */
-    @JsonIgnore
-    public boolean hasRewardFreeSpins() {
-        return Objects.nonNull(rewardResult) && CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList()) && rewardResult.isHasRewardFreeWheel();
-    }
-
+    @Transient
     @JsonIgnore
     @Override
     public MalakasBetResultVo toResultVo() {
@@ -128,6 +120,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
         }
     }
 
+    @Transient
     @JsonIgnore
     @Override
     public MalakasGameRecordVo toRecordVo() {
@@ -143,6 +136,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                 .build();
     }
 
+    @Transient
     @JsonIgnore
     private Set<IndexVo> buildRewardSymbolIndexSet() {
         return Optional.ofNullable(rewardResult.getRewardLineDetailList())
@@ -157,6 +151,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                 .collect(Collectors.toSet());
     }
 
+    @Transient
     @JsonIgnore
     private List<MalakasRewardLineVo> buildRewardLineList() {
         return Optional.ofNullable(rewardResult.getRewardLineDetailList())

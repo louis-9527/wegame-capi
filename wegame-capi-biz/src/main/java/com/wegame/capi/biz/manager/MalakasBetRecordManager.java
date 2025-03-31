@@ -39,6 +39,9 @@ public class MalakasBetRecordManager extends AbstractBetRecordManager<MalakasGam
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
+            gameRecordList.forEach(item -> {
+                log.info("add GameRecord id:{}", item.getId());
+            });
             boolean ret = gameRecordService.batchAdd(gameRecordList, gameType, MalakasGameRecordDo.class);
             AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         }
@@ -63,7 +66,7 @@ public class MalakasBetRecordManager extends AbstractBetRecordManager<MalakasGam
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
             // todo delete log
             gameRecordList.forEach(item -> {
-                log.info("addGameRecord id:{}", item.getId());
+                log.info("batchAdd GameRecord id:{}", item.getId());
             });
             boolean batchAddRet = gameRecordService.batchAdd(gameRecordList, gameType, MalakasGameRecordDo.class);
             AssertUtil.assertTrue(batchAddRet, ErrorCode.ERR_INTER);
