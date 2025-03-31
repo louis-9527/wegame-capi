@@ -136,10 +136,4 @@ public class SingleWalletService {
             return null;
         }
     }
-    //    public boolean verifyHash(String channelId, String playerName, Date createTime, String refId, String hash) {
-    //        Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(channelId);
-    //        String verifyHash = singleWalletApi.hash(channelId, playerName, DateUtil.toUTC(createTime), refId, privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
-    //        AssertUtil.assertTrue(StringUtils.equals(hash, verifyHash), ErrorCode.ERR_PARAM);
-    //        return true;
-    //    }
 }
