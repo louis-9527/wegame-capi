@@ -29,7 +29,7 @@ public class TreasureConverter {
                 .currentExperience(treasure.getExperience())
                 .targetExperience(treasure.getTarget())
                 .status(treasure.getStatus())
-                .vipLevel(treasure.getLevel())
+                .level(treasure.getLevel())
                 .rewards(rewardToDoList(treasure.getRewards()))
                 .build();
     }
@@ -74,7 +74,7 @@ public class TreasureConverter {
                 .currentExperience(treasure.getCurrentExperience())
                 .targetExperience(treasure.getTargetExperience())
                 .status(treasure.getStatus())
-                .vipLevel(treasure.getVipLevel())
+                .level(treasure.getLevel())
                 .rewards(rewardToVoList(treasure.getRewards()))
                 .build();
     }

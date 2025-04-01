@@ -110,13 +110,8 @@ public class OperationEventService extends AbstractService {
 
     public OperationEventDo getById(Long id, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        Criteria criteria = new Criteria();
-        criteria.and("_id").is(id);
-        Query query = new Query(criteria);
-        // todo fix @tutu
-        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus");
         OperationEventPo operationPo = getMongoTemplate(gameEnum.getGameType()).findOne(
-                query,
+                OperationEventQueryBuilder.buildQueryOne(id),
                 OperationEventPo.class,
                 gameEnum.getEventCollectionName());
         return OperationEventConvert.poToDo(operationPo);

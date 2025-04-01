@@ -44,7 +44,7 @@ public class DailyMissionVo implements  Serializable {
         @ApiModelProperty(value = "当前进度", required = true)
         private String experience;
         @ApiModelProperty(value = "状态 1锁定 2进行中 3完成", required = true)
-        private String status;
+        private Integer status;
         @ApiModelProperty(value = "星级", required = true)
         private Integer starLevel;
         @ApiModelProperty(value = "奖励id", required = true)

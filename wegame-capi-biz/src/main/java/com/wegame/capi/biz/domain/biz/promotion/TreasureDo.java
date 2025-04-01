@@ -38,7 +38,7 @@ public class TreasureDo implements  Serializable {
     /**
      * 宝箱等级
      */
-    private Integer vipLevel;
+    private Integer level;
     /**
      * 宝箱奖励列表
      */

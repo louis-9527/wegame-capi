@@ -48,6 +48,12 @@ public class BetRecordConverter {
         betRecordDo.setPayOutAmount(po.getPayOutAmount());
         betRecordDo.setReachMaxMultiple(po.getReachMaxMultiple());
         betRecordDo.setStatus(po.getStatus());
+        if (Objects.nonNull(po.getExtendInfo())) {
+            betRecordDo.setExtendInfo(BetRecordDo.ExtendInfo.builder()
+                    .ieId(po.getExtendInfo().getIeId())
+                    .rewardUrl(po.getExtendInfo().getRewardUrl())
+                    .build());
+        }
         betRecordDo.setCreator(po.getCreator());
         betRecordDo.setCreateTime(po.getCreateTime());
         betRecordDo.setUpdater(po.getUpdater());
