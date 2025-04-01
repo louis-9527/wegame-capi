@@ -8,10 +8,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @Slf4j
@@ -24,9 +21,9 @@ public class TestController {
     private OperationEventPulsarListener operationEventPulsarListener;
 
 
-    @ApiOperation(value = "eventMsg", httpMethod = "GET")
-    @GetMapping("/event/msg")
-    public CommonResponse<Boolean> handleEventMessage(@RequestParam(value = "event") String event) {
+    @ApiOperation(value = "eventMsg", httpMethod = "POST")
+    @PostMapping("/event/msg")
+    public CommonResponse<Boolean> handleEventMessage(@RequestBody String event) {
 
 //        String msgDoStr = "{\n" +
 //                "    \"playerName\": \"slottest01\",\n" +
