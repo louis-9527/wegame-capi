@@ -41,13 +41,12 @@ public class OperationEventConfigRecordDo implements Serializable {
      */
     private Object wheel;
     /**
-     * 滚轮总倍数
-     */
-    private BigDecimal totalMultiple;
-
-    /**
      * 免费轮
      */
     private List<Long> gameRecordIds;
+    /**
+     * 扩展属性，每个游戏根据实际需要定义值
+     */
+    private Object extInfo;
 
 }
