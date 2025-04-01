@@ -24,4 +24,9 @@ public class MalakasSymbolVo implements Serializable {
     private boolean symbolGoldBorder;
     @ApiModelProperty("元素清除次数，仅支持Wild元素")
     private Integer symbolClearTimes;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }
