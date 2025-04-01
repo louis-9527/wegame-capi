@@ -44,7 +44,8 @@ public class IbongAdarnaGameEventPlay extends AbstractGame<IbongAdarnaGameRecord
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), IBONG_ADARNA);
-        WheelDo<IbongAdarnaSymbolDo> wheel = convertWheel(configRecordList.get(0));
+        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER, "configRecordList is empty");
+        WheelDo<IbongAdarnaSymbolDo> wheel = convertWheel(configRecordList.get(0).getWheel());
         RewardResultDo<IbongAdarnaSymbolDo> firstWheelRewardResult = ibongAdarnaRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
         long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
         return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, firstWheelRewardResult, overallRewardAmount));
