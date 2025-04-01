@@ -211,12 +211,18 @@ public class MalakasSymbolUtil {
     }
 
     public static void postPlaceholderSymbol(List<MalakasGameRecordDo> ret) {
-        for (MalakasGameRecordDo record : CollectionUtils.emptyIfNull(ret)) {
+        if (CollectionUtils.isEmpty(ret)) {
+            return;
+        }
+        String id = MALAKAS_SYMBOL_PLACEHOLDER.getId();
+        for (MalakasGameRecordDo record : ret) {
             MalakasSymbolDo[][] symbolArr = record.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
                 for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
-                    if (Objects.nonNull(symbolArr[row][column]) && StringUtils.equals(symbolArr[row][column].getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId())) {
-                        symbolArr[row][column] = null;
+                    if (Objects.nonNull(symbolArr[row][column])) {
+                        if (StringUtils.equals(symbolArr[row][column].getId(), id)) {
+                            symbolArr[row][column] = null;
+                        }
                     }
                 }
             }
