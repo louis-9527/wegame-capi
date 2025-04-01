@@ -224,6 +224,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
             return wheel;
         }
         int tempCount = 0;
+        // todo @maidong 优化
         while (tempCount < needAddCount) {
             // 注意：第一行不能出现scatter
             int row = randomService.randomInt(1, gameInfo.getRow() - 1);
