@@ -103,40 +103,42 @@ public class MalakasSymbolUtil {
         List<RewardSymbolDo<MalakasSymbolDo>> rewardSymbolList = rewardResult.getRewardLineDetailList()
                 .stream()
                 .map(RewardLineDetailDo<MalakasSymbolDo>::getRewardSymbolList).flatMap(List::stream).collect(Collectors.toList());
-        for (RewardSymbolDo<MalakasSymbolDo> rewardSymbol : rewardSymbolList) {
-            if (rewardSymbol.getSymbol().isScatterSymbol()) {
-                // scatter 元素， 不做消除
-                // do nothing;
-            } else if (rewardSymbol.getSymbol().isWildSymbol()) {
-                // wild 元素
-                if (rewardSymbol.getSymbol().getSymbolClearTimes() > 1) {
-                    // 消除次数大于1，则不做消除, 消除次数-1
-                    IndexDo indexDo = rewardSymbol.getIndex();
-                    MalakasSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
-                    commonSymbol.setSymbolClearTimes(rewardSymbol.getSymbol().getSymbolClearTimes() - 1);
-                } else {
-                    // 消除次数小于1，则移除
-                    removeRewardSymbol(symbolArr, rewardSymbol);
-                }
-            } else {
-                // 普通元素消除
+        rewardSymbolList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
+    }
+
+    private static void clearIndexRewardSymbol(MalakasSymbolDo[][] symbolArr, RewardSymbolDo<MalakasSymbolDo> rewardSymbol) {
+        if (rewardSymbol.getSymbol().isScatterSymbol()) {
+            // scatter 元素， 不做消除
+            // do nothing;
+        } else if (rewardSymbol.getSymbol().isWildSymbol()) {
+            // wild 元素
+            if (rewardSymbol.getSymbol().getSymbolClearTimes() > 1) {
+                // 消除次数大于1，则不做消除, 消除次数-1
                 IndexDo indexDo = rewardSymbol.getIndex();
-                MalakasSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
-                if (commonSymbol.isSymbolGoldBorder()) {
-                    // 带金边普通元素，转换为Wild元素（元素大小转换为消除次数）
-                    MalakasSymbolDo wildSymbol = MalakasSymbolDo.builder()
-                            .id(SymbolEnum.Wild.getId())
-                            .name(SymbolEnum.Wild.getName())
-                            .symbolType(SymbolTypeEnum.WILD)
-                            .symbolSize(commonSymbol.getSymbolSize())
-                            .symbolGoldBorder(false)
-                            .symbolClearTimes(SymbolSizeEnum.getSymbolClearTimes(commonSymbol.getSymbolSize()))
-                            .build();
-                    symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = wildSymbol;
-                } else {
-                    // 不带金边普通元素，直接移除
-                    removeRewardSymbol(symbolArr, rewardSymbol);
-                }
+                MalakasSymbolDo wildSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
+                wildSymbol.setSymbolClearTimes(rewardSymbol.getSymbol().getSymbolClearTimes() - 1);
+            } else {
+                // 消除次数小于等于1，则移除
+                removeRewardSymbol(symbolArr, rewardSymbol);
+            }
+        } else {
+            // 普通元素消除
+            IndexDo indexDo = rewardSymbol.getIndex();
+            MalakasSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
+            if (commonSymbol.isSymbolGoldBorder()) {
+                // 带金边普通元素，转换为Wild元素（元素大小转换为消除次数）
+                MalakasSymbolDo wildSymbol = MalakasSymbolDo.builder()
+                        .id(SymbolEnum.Wild.getId())
+                        .name(SymbolEnum.Wild.getName())
+                        .symbolType(SymbolTypeEnum.WILD)
+                        .symbolSize(commonSymbol.getSymbolSize())
+                        .symbolGoldBorder(false)
+                        .symbolClearTimes(SymbolSizeEnum.getSymbolClearTimes(commonSymbol.getSymbolSize()))
+                        .build();
+                symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = wildSymbol;
+            } else {
+                // 不带金边普通元素，直接移除
+                removeRewardSymbol(symbolArr, rewardSymbol);
             }
         }
     }
