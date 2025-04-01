@@ -54,7 +54,7 @@ public class MalakasBetRecordManager extends AbstractBetRecordManager<MalakasGam
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
         // todo delete @maidong
         for (int i = 0; i < betRecordList.size(); i++) {
-            log.info("batchAdd index: {} betRecordId:{}", i, betRecordList.get(0).getId());
+            log.info("batchAdd index: {} betRecordId:{}", i, betRecordList.get(i).getId());
         }
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
         boolean ret = betRecordService.batchAdd(betRecordDos, gameType);
