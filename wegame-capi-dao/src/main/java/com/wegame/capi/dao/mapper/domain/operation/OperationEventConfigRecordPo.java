@@ -48,4 +48,9 @@ public class OperationEventConfigRecordPo implements Serializable {
      * 滚轮
      */
     private Object wheel;
+    /**
+     * 扩展属性，每个游戏根据实际需要定义值
+     */
+    private Object extInfo;
+
 }

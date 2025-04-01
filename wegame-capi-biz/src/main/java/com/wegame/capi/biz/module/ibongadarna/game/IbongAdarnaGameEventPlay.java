@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.ibongadarna.game;
 
+import cn.hutool.core.util.NumberUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
@@ -45,8 +46,11 @@ public class IbongAdarnaGameEventPlay extends AbstractGame<IbongAdarnaGameRecord
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), IBONG_ADARNA);
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER, "configRecordList is empty");
-        WheelDo<IbongAdarnaSymbolDo> wheel = convertWheel(configRecordList.get(0).getWheel());
-        RewardResultDo<IbongAdarnaSymbolDo> firstWheelRewardResult = ibongAdarnaRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
+        OperationEventConfigRecordDo configRecordDo = configRecordList.get(0);
+        AssertUtil.assertNotNull(configRecordDo.getExtInfo(), ErrorCode.ERR_INTER, "extInfo is null");
+        AssertUtil.assertTrue(NumberUtil.isNumber(configRecordDo.getExtInfo().toString()), ErrorCode.ERR_INTER, "extInfo is not number");
+        WheelDo<IbongAdarnaSymbolDo> wheel = convertWheel(configRecordDo.getWheel());
+        RewardResultDo<IbongAdarnaSymbolDo> firstWheelRewardResult = ibongAdarnaRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, new BigDecimal(configRecordDo.getExtInfo().toString())));
         long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
         return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, firstWheelRewardResult, overallRewardAmount));
     }
