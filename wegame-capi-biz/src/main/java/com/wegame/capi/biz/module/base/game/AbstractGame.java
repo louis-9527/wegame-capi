@@ -34,20 +34,8 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
 
     public long generateGameRecordId() {
         long gameRecordId = snowflakeIdGenerator.nextId();
-        // log.info("generateGameRecord id:{}", gameRecordId);
+         log.info("generateGameRecord id:{}", gameRecordId);
         return gameRecordId;
-    }
-
-    public List<Long> generateGameRecordIdList(int count) {
-        List gameRecordIdList = new ArrayList<>();
-        int temp = 0;
-        while (temp < count) {
-            long gameRecordId = snowflakeIdGenerator.nextId();
-            log.info("generateGameRecord id, free wheel:{}", gameRecordId);
-            gameRecordIdList.add(gameRecordId);
-            temp++;
-        }
-        return gameRecordIdList;
     }
 
     public TreeMap<String, Integer> buildColumProbabilisticMap(int cellNo, TreeMap<String, List<BigDecimal>> probabilisticConfigMap) {
