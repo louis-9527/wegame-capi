@@ -96,7 +96,6 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         }
         // 占位元素-将占位元素设置为空:
         postProcessPlaceholderSymbol(ret);
-        // 返回-游戏记录列表
         return ret;
     }
 
