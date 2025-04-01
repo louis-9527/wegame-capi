@@ -83,7 +83,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         long totalRewardAmount = 0L;
         // 中奖坐标列表
         List<RewardLineDetailDo<MalakasSymbolDo>> rewardLineDetailList = Lists.newArrayList();
-        for (RewardLineDo<MalakasSymbolDo> rewardLine : CollectionUtils.emptyIfNull(rewardLineList)) {
+        for (RewardLineDo<MalakasSymbolDo> rewardLine : rewardLineList) {
             // 计算赔率
             BigDecimal odds = malakasOddsCalculateStrategy.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
             // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率 * 倍率
@@ -152,16 +152,16 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     }
                     TreeMap<Integer, List<RewardSymbolDo<MalakasSymbolDo>>> treeMap = map.get(targetSymbol);
                     if (canPutIn(treeMap, currentColum)) {
-                        RewardSymbolDo<MalakasSymbolDo> symbolIndex = RewardSymbolDo.<MalakasSymbolDo>builder()
+                        RewardSymbolDo<MalakasSymbolDo> rewardSymbol = RewardSymbolDo.<MalakasSymbolDo>builder()
                                 .symbol(currentSymbol)
                                 .index(IndexFactory.buildDo(currentRow, currentColum))
                                 .build();
                         if (Objects.isNull(treeMap.get(currentColum))) {
                             List<RewardSymbolDo<MalakasSymbolDo>> list = new ArrayList<>();
-                            list.add(symbolIndex);
+                            list.add(rewardSymbol);
                             treeMap.put(currentColum, list);
                         } else {
-                            treeMap.get(currentColum).add(symbolIndex);
+                            treeMap.get(currentColum).add(rewardSymbol);
                         }
                     }
                 }
@@ -230,13 +230,13 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         // 校验：滚轮行数
         GameInfoDo gameInfo = rewardHandle.getGameInfo();
         AssertUtil.assertTrue(symbolArr.length == gameInfo.getRow(), ErrorCode.ERR_PARAM, "symbol arr err");
-        for (int row = 0; row < gameInfo.getRow(); row++) {
-            // 校验：滚轮列数
-            AssertUtil.assertTrue(symbolArr[row].length == gameInfo.getColumn(), ErrorCode.ERR_PARAM, "symbol arr err");
-            for (int column = 0; column < gameInfo.getColumn(); column++) {
-                // 校验：所有元素不能为空
-                AssertUtil.assertNotNull(symbolArr[row][column], ErrorCode.ERR_PARAM, "all symbol can not be null");
-            }
-        }
+        // for (int row = 0; row < gameInfo.getRow(); row++) {
+        //     // 校验：滚轮列数
+        //     AssertUtil.assertTrue(symbolArr[row].length == gameInfo.getColumn(), ErrorCode.ERR_PARAM, "symbol arr err");
+        //     for (int column = 0; column < gameInfo.getColumn(); column++) {
+        //         // 校验：所有元素不能为空
+        //         AssertUtil.assertNotNull(symbolArr[row][column], ErrorCode.ERR_PARAM, "all symbol can not be null");
+        //     }
+        // }
     }
 }
