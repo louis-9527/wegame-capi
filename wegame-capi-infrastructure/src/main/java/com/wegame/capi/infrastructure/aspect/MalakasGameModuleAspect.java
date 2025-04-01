@@ -1,6 +1,5 @@
 package com.wegame.capi.infrastructure.aspect;
 
-import com.wegame.base.utils.FastJsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MalakasGameModuleAspect {
 
-    @Around("execution(* com.wegame.capi..module.malakas.game.MalakasGame.play(..))")
+    @Around("execution(* com.wegame.capi..module.malakas.game.MalakasGameNormalPlay.play(..))")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Signature signature = joinPoint.getSignature();
@@ -21,7 +20,7 @@ public class MalakasGameModuleAspect {
             return joinPoint.proceed();
         } catch (Throwable throwable) {
             log.error("MalakasGame#play, param：{}, errMsg: {}",
-                    FastJsonUtils.toJSONString(joinPoint.getArgs()),
+                    joinPoint.getArgs(),
                     throwable.getMessage(),
                     throwable);
             throw throwable;

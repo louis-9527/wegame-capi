@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static com.wegame.capi.biz.converter.StatusOfEventsConverter.toVoList;
+import static com.wegame.capi.biz.converter.operation.StatusOfEventsConverter.doToVoList;
 import static com.wegame.capi.client.domain.response.PlatformResponse.build;
 
 @Slf4j
@@ -63,6 +63,6 @@ public class OperationEventCallbackController {
                 .effectedStartTime(eventRequest.getStartTime().toInstant().toEpochMilli())
                 .effectedEndTime(eventRequest.getEndTime().toInstant().toEpochMilli())
                 .build();
-        return build(toVoList(mariaMakilingOperationEventManager.getStatusOfEvents(operationEventQuery)));
+        return build(doToVoList(mariaMakilingOperationEventManager.getStatusOfEvents(operationEventQuery)));
     }
 }

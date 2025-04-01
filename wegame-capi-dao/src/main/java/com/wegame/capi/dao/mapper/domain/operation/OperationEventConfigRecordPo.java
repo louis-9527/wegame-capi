@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -41,10 +40,6 @@ public class OperationEventConfigRecordPo implements Serializable {
      */
     private List<Long> gameRecordIds;
     /**
-     * 滚轮总倍数
-     */
-    private BigDecimal totalMultiple;
-    /**
      * 滚轮
      */
     private Object wheel;
@@ -52,5 +47,4 @@ public class OperationEventConfigRecordPo implements Serializable {
      * 扩展属性，每个游戏根据实际需要定义值
      */
     private Object extInfo;
-
 }
