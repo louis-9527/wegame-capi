@@ -20,7 +20,6 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
-import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -48,8 +47,6 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
     OddsCalculateStrategy<MalakasSymbolDo> malakasOddsCalculateStrategy;
     @Autowired
     MultipleCalculateStrategy<MalakasSymbolDo> malakasMultipleCalculateStrategy;
-    @Autowired
-    BetRecordService betRecordService;
     @Autowired
     MalakasConfig malakasConfig;
 
