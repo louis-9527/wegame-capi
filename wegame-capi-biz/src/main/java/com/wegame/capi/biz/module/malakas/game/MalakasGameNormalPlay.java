@@ -94,10 +94,8 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
-        // todo 优化 占位元素-将占位元素设置为空:
-        long current = System.currentTimeMillis();
-        postPlaceholderSymbol(ret);
-        log.info("postPlaceholderSymbol cost time: {} ms", System.currentTimeMillis() - current);
+        // 占位元素-将占位元素设置为空:
+        postProcessPlaceholderSymbol(ret);
         return ret;
     }
 

@@ -12,6 +12,7 @@ import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,6 +24,7 @@ import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBO
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
+@Slf4j
 public class MalakasSymbolUtil {
 
     public static MalakasSymbolDo[][] copySymbolArr(MalakasSymbolDo[][] symbolArr) {
@@ -212,13 +214,14 @@ public class MalakasSymbolUtil {
         return count;
     }
 
-    public static void postPlaceholderSymbol(List<MalakasGameRecordDo> ret) {
-        if (CollectionUtils.isEmpty(ret)) {
+    public static void postProcessPlaceholderSymbol(List<MalakasGameRecordDo> gameRecordList) {
+        if (CollectionUtils.isEmpty(gameRecordList)) {
             return;
         }
+        long startTime = System.currentTimeMillis();
         String id = MALAKAS_SYMBOL_PLACEHOLDER.getId();
-        for (MalakasGameRecordDo record : ret) {
-            MalakasSymbolDo[][] symbolArr = record.getWheel().getSymbolArr();
+        gameRecordList.parallelStream().forEach(gameRecord -> {
+            MalakasSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
                 for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
                     if (Objects.nonNull(symbolArr[row][column])) {
@@ -228,7 +231,9 @@ public class MalakasSymbolUtil {
                     }
                 }
             }
-        }
+        });
+        long endTime = System.currentTimeMillis();
+        log.info("postPlaceholderSymbol cost time: {} ms", (endTime - startTime));
     }
 
     public static void print(MalakasSymbolDo[][] symbolArr, String scene) {
