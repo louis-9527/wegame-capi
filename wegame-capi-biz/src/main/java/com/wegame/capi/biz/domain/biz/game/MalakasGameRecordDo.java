@@ -13,10 +13,7 @@ import com.wegame.capi.client.domain.vo.malakas.MalakasBetResultVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasGameRecordVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasRewardLineVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.annotation.Id;
@@ -35,6 +32,7 @@ import java.util.stream.Collectors;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "malakas_game_record")
 public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasBetResultVo, MalakasGameRecordVo> {
