@@ -15,11 +15,11 @@ import java.util.Date;
 
 public class OperationEventApiTest extends BaseTest {
     @Autowired
-    OperationEventApi dynamicOperationApi;
+    OperationEventApi operationApi;
 
     @Test
     public void test_updateEventsStatus() {
-        UpdateEventsStatusRes updateEventsStatusRes = dynamicOperationApi.updateEventsStatus(buildUpdateEventsStatusReq());
+        UpdateEventsStatusRes updateEventsStatusRes = operationApi.updateEventsStatus(buildUpdateEventsStatusReq());
         // todo 断言
         System.out.println(JSON.toJSONString(updateEventsStatusRes));
     }
