@@ -2,13 +2,11 @@ package com.wegame.capi.biz.service.operation;
 
 import com.google.common.collect.Lists;
 import com.wegame.capi.biz.builder.operation.OperationEventConfigQueryBuilder;
-import com.wegame.capi.biz.converter.operation.OperationEventConfigConvert;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
-import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
-import com.wegame.capi.dao.mapper.domain.operation.OperationEventConfigPo;
-import com.wegame.capi.dao.mapper.domain.operation.OperationEventConfigQuery;
+import com.wegame.capi.dao.reposity.domain.operation.OperationEventConfigPo;
+import com.wegame.capi.dao.reposity.domain.operation.OperationEventConfigQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.Document;
