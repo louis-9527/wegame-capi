@@ -71,13 +71,17 @@ public class BetRequest implements Validate, Serializable {
         // 星卡投注
         @ApiModelProperty(value = "使用星卡, 非必填", required = false)
         private boolean useStarCard;
-        @ApiModelProperty(value = "奖励配置id", required = true)
+        @ApiModelProperty(value = "奖励配置id, 使用星卡时必填")
         private String rewardConfigId;
-        @ApiModelProperty(value = "奖励id", required = true)
+        @ApiModelProperty(value = "奖励id, 使用星卡时必填")
         private String rewardId;
 
         @Override
         public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+            AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(betAmount >= 0, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(payAmount >= 0, ErrorCode.ERR_PARAM);
             if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
                 mariaMakilingValidateParam(gameType, betType, betSubType);
                 validateStartCartBet(gameType, betType, betSubType);
