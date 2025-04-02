@@ -57,11 +57,7 @@ public abstract class AbstractOperationEventManager {
     @Autowired
     OperationEventConfigService operationEventConfigService;
     @Autowired
-    OperationEventConfigRecordService operationEventConfigRecordService;
-    @Autowired
     OperationEventApi operationEventApi;
-    @Autowired
-    DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
@@ -180,7 +176,7 @@ public abstract class AbstractOperationEventManager {
                     executeTime = eventDetail.getCreateTime();
                 }
                 betNos.add(String.valueOf(eventDetail.getBetRecordId()));
-                totalAmount += eventDetail.getPayOutAmount();
+                totalAmount += eventDetail.getEventAmount();
                 StatusOfEventsRecordDo eventsRecord = StatusOfEventsRecordDo.builder()
                         .betNo(eventDetail.getBetId())
                         .orderTime(eventDetail.getBetTime())
@@ -360,7 +356,7 @@ public abstract class AbstractOperationEventManager {
                         startTime = eventDetail.getCreateTime();
                     }
                     betNos.add(eventDetail.getBetId());
-                    totalAmount += eventDetail.getPayOutAmount();
+                    totalAmount += eventDetail.getEventAmount();
                     betRecords.add(UpdateEventsBetRecordReqBuilder.buildReq(eventDetail));
                 }
             }
