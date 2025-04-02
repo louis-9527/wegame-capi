@@ -33,8 +33,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SCATTER;
-import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
@@ -125,7 +123,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         // 1、处理第一列
         for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             MalakasSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
-            if (StringUtils.equals(targetSymbol.getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId()) || StringUtils.equals(targetSymbol.getId(), MALAKAS_SCATTER.getId())) {
+            if (targetSymbol.isPlaceholderSymbol() || targetSymbol.isScatterSymbol()) {
                 continue;
             }
 
@@ -140,7 +138,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 int currentRow = row;
                 MalakasSymbolDo currentSymbol = symbolArr[row][currentColum];
-                if (StringUtils.equals(currentSymbol.getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId())) {
+                if (currentSymbol.isPlaceholderSymbol()) {
                     continue;
                 }
                 for (MalakasSymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
