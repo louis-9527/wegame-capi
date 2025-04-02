@@ -2,7 +2,7 @@ package com.wegame.capi.biz.converter.operation;
 
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.dao.reposity.domain.operation.OperationEventConfigPo;
+import com.wegame.capi.dao.repository.domain.operation.OperationEventConfigPo;
 
 import java.util.Collections;
 import java.util.List;

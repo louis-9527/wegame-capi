@@ -3,7 +3,7 @@ package com.wegame.capi.biz.builder.operation;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
-import com.wegame.capi.dao.reposity.domain.operation.OperationEventDetailQuery;
+import com.wegame.capi.dao.repository.domain.operation.OperationEventDetailQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
