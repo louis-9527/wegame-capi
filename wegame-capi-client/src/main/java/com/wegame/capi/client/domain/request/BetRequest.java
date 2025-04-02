@@ -69,9 +69,9 @@ public class BetRequest implements Validate, Serializable {
         // 星卡投注
         @ApiModelProperty(value = "使用星卡, 非必填")
         private boolean useStarCard;
-        @ApiModelProperty(value = "奖励配置id")
+        @ApiModelProperty(value = "奖励配置id, 使用星卡时必填")
         private String rewardConfigId;
-        @ApiModelProperty(value = "奖励id")
+        @ApiModelProperty(value = "奖励id, 使用星卡时必填")
         private String rewardId;
 
         @Override
