@@ -5,7 +5,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.common.enums.StarCardReportStatusEnum;
 import com.wegame.capi.common.enums.StarCardUseStatusEnum;
-import com.wegame.capi.dao.reposity.domain.star.StarCardUseRecordPo;
+import com.wegame.capi.dao.repository.domain.star.StarCardUseRecordPo;
 
 import java.util.Collections;
 import java.util.List;

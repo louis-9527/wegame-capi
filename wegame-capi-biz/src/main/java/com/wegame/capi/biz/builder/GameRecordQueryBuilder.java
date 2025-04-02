@@ -1,8 +1,6 @@
 package com.wegame.capi.biz.builder;
 
-import com.wegame.capi.dao.reposity.domain.business.GameRecordQuery;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
+import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -10,7 +8,6 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.Objects;
 
-@Slf4j
 public class GameRecordQueryBuilder {
 
     public static Query buildMongodbQuery(GameRecordQuery recordQuery) {

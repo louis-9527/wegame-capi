@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.builder.operation;
 
-import com.wegame.capi.dao.reposity.domain.operation.OperationEventConfigQuery;
+import com.wegame.capi.dao.repository.domain.operation.OperationEventConfigQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
