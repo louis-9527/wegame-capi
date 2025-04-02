@@ -33,7 +33,7 @@ public class MalakasBetHelper implements BetHelper<MalakasBetRecordDetailDo, Mal
     MalakasConfig malakasConfig;
 
     @Override
-    public BetRecordDo<MalakasGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<MalakasGameRecordDo> gameRecordList, String ieId) {
+    public BetRecordDo<MalakasGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<MalakasGameRecordDo> gameRecordList) {
         //// 总中奖金额
         long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
@@ -43,8 +43,7 @@ public class MalakasBetHelper implements BetHelper<MalakasBetRecordDetailDo, Mal
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
-                gameRecordList,
-                ieId
+                gameRecordList
         );
     }
 
