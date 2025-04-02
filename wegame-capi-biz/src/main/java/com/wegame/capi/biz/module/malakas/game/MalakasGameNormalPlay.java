@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.malakas.game;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
@@ -59,9 +58,6 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
     MalakasConfig malakasConfig;
     @Autowired
     RewardHandler malakasRewardHandler;
-    @Autowired
-    SnowflakeIdGenerator snowflakeIdGenerator;
-
 
     @Override
     public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
@@ -99,8 +95,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
         // 占位元素-将占位元素设置为空:
-        postPlaceholderSymbol(ret);
-        // 返回-游戏记录列表
+        postProcessPlaceholderSymbol(ret);
         return ret;
     }
 
@@ -130,7 +125,6 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
             } else {
                 // help gc
                 freeWheelList.clear();
-                // preGameRecord.setGameRecordIds(null);
             }
         }
     }
@@ -229,6 +223,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
             return wheel;
         }
         int tempCount = 0;
+        // todo @maidong 优化
         while (tempCount < needAddCount) {
             // 注意：第一行不能出现scatter
             int row = randomService.randomInt(1, gameInfo.getRow() - 1);
@@ -262,12 +257,12 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
         int scatterNumberInWheel = totalScatterNumberInWheel;
         int randomNumberIndex = 0;
+        TreeMap<String, Integer> oneRowColumProbabilisticMap = buildColumProbabilisticMap(SEVEN_COLUM_INDEX, playProbabilisticConfig.getWheelProbabilisticConfig());
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             // 一列只能包含两个scatter
             int scatterNumberInColumn = countIndexSymbol(symbolArr, SymbolEnum.Scatter, column);
             TreeMap<String, Integer> columProbabilisticMap;
             TreeMap<String, Integer> nonOneRowColumProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
-            TreeMap<String, Integer> oneRowColumProbabilisticMap = buildColumProbabilisticMap(SEVEN_COLUM_INDEX, playProbabilisticConfig.getWheelProbabilisticConfig());
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
                     // 当前元素非空，则不生成
@@ -288,7 +283,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
                     SymbolSizeEnum symbolSize = generateSymbolSize(row, MalakasSymbolUtil.getMaxRow(symbolArr, row, column), column, gameInfo, playProbabilisticConfig);
                     MalakasSymbolUtil.handlePlaceholderSymbol(symbolArr, row, column, symbolSize);
                     // 构建元素金边
-                    boolean symbolGoldBorder = generateSymbolGoldBorder(gameInfo, playProbabilisticConfig, row, column);
+                    boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
                     MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
                     symbolArr[row][column] = malakasSymbolDo;
                 } else {
@@ -297,7 +292,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
                     SymbolSizeEnum symbolSize = generateSymbolSize(row, MalakasSymbolUtil.getMaxRow(symbolArr, row, column), column, gameInfo, playProbabilisticConfig);
                     MalakasSymbolUtil.handlePlaceholderSymbol(symbolArr, row, column, symbolSize);
                     // 构建元素金边
-                    boolean symbolGoldBorder = generateSymbolGoldBorder(gameInfo, playProbabilisticConfig, row, column);
+                    boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
                     MalakasSymbolDo malakasSymbolDo = MalakasSymbolDo.buildFromSymbol(symbolDo, symbolSize, symbolGoldBorder);
                     symbolArr[row][column] = malakasSymbolDo;
                     if (symbolDo.isScatterSymbol()) {
@@ -344,7 +339,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
                 .reduce(0, Integer::sum)));
     }
 
-    private boolean generateSymbolGoldBorder(GameInfoDo gameInfo, MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig, int row, int column) {
+    private boolean generateSymbolGoldBorder(MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig, int row, int column) {
         List<BigDecimal> goldBoarderProbabilisticConfig = playProbabilisticConfig.getGoldBoarderProbabilisticConfig();
         BigDecimal goldBoarderProbabilistic = null;
         if (Objects.equals(row, ONE_ROW_INDEX)) {

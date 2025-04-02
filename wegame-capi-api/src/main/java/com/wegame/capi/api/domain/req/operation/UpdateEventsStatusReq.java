@@ -52,7 +52,7 @@ public class UpdateEventsStatusReq implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
-    public static class DynamicOperationReq implements Serializable {
+    public static class OperationReq implements Serializable {
         private static final long serialVersionUID = -142579944391963747L;
         /**
          * 商户代码

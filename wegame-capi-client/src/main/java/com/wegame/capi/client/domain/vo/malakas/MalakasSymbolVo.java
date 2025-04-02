@@ -2,15 +2,13 @@ package com.wegame.capi.client.domain.vo.malakas;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,4 +24,9 @@ public class MalakasSymbolVo implements Serializable {
     private boolean symbolGoldBorder;
     @ApiModelProperty("元素清除次数，仅支持Wild元素")
     private Integer symbolClearTimes;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

@@ -12,6 +12,7 @@ import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,6 +24,7 @@ import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBO
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
+@Slf4j
 public class MalakasSymbolUtil {
 
     public static MalakasSymbolDo[][] copySymbolArr(MalakasSymbolDo[][] symbolArr) {
@@ -36,6 +38,23 @@ public class MalakasSymbolUtil {
                 } else if (StringUtils.equals(symbolArr[i][j].getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId())) {
                     newSymbolArr[i][j] = MALAKAS_SYMBOL_PLACEHOLDER;
                 } else {
+                    newSymbolArr[i][j] = symbolArr[i][j].copy();
+                }
+            }
+        }
+        return newSymbolArr;
+    }
+
+
+    public static MalakasSymbolDo[][] handleSymbolNullArr(MalakasSymbolDo[][] symbolArr) {
+        int row = symbolArr.length;
+        int col = symbolArr[0].length;
+        MalakasSymbolDo[][] newSymbolArr = new MalakasSymbolDo[row][col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (Objects.isNull(symbolArr[i][j])) {
+                    newSymbolArr[i][j] = MALAKAS_SYMBOL_PLACEHOLDER;
+                }else {
                     newSymbolArr[i][j] = symbolArr[i][j].copy();
                 }
             }
@@ -103,40 +122,42 @@ public class MalakasSymbolUtil {
         List<RewardSymbolDo<MalakasSymbolDo>> rewardSymbolList = rewardResult.getRewardLineDetailList()
                 .stream()
                 .map(RewardLineDetailDo<MalakasSymbolDo>::getRewardSymbolList).flatMap(List::stream).collect(Collectors.toList());
-        for (RewardSymbolDo<MalakasSymbolDo> rewardSymbol : rewardSymbolList) {
-            if (rewardSymbol.getSymbol().isScatterSymbol()) {
-                // scatter 元素， 不做消除
-                // do nothing;
-            } else if (rewardSymbol.getSymbol().isWildSymbol()) {
-                // wild 元素
-                if (rewardSymbol.getSymbol().getSymbolClearTimes() > 1) {
-                    // 消除次数大于1，则不做消除, 消除次数-1
-                    IndexDo indexDo = rewardSymbol.getIndex();
-                    MalakasSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
-                    commonSymbol.setSymbolClearTimes(rewardSymbol.getSymbol().getSymbolClearTimes() - 1);
-                } else {
-                    // 消除次数小于1，则移除
-                    removeRewardSymbol(symbolArr, rewardSymbol);
-                }
-            } else {
-                // 普通元素消除
+        rewardSymbolList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
+    }
+
+    private static void clearIndexRewardSymbol(MalakasSymbolDo[][] symbolArr, RewardSymbolDo<MalakasSymbolDo> rewardSymbol) {
+        if (rewardSymbol.getSymbol().isScatterSymbol()) {
+            // scatter 元素， 不做消除
+            // do nothing;
+        } else if (rewardSymbol.getSymbol().isWildSymbol()) {
+            // wild 元素
+            if (rewardSymbol.getSymbol().getSymbolClearTimes() > 1) {
+                // 消除次数大于1，则不做消除, 消除次数-1
                 IndexDo indexDo = rewardSymbol.getIndex();
-                MalakasSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
-                if (commonSymbol.isSymbolGoldBorder()) {
-                    // 带金边普通元素，转换为Wild元素（元素大小转换为消除次数）
-                    MalakasSymbolDo wildSymbol = MalakasSymbolDo.builder()
-                            .id(SymbolEnum.Wild.getId())
-                            .name(SymbolEnum.Wild.getName())
-                            .symbolType(SymbolTypeEnum.WILD)
-                            .symbolSize(commonSymbol.getSymbolSize())
-                            .symbolGoldBorder(false)
-                            .symbolClearTimes(SymbolSizeEnum.getSymbolClearTimes(commonSymbol.getSymbolSize()))
-                            .build();
-                    symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = wildSymbol;
-                } else {
-                    // 不带金边普通元素，直接移除
-                    removeRewardSymbol(symbolArr, rewardSymbol);
-                }
+                MalakasSymbolDo wildSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
+                wildSymbol.setSymbolClearTimes(rewardSymbol.getSymbol().getSymbolClearTimes() - 1);
+            } else {
+                // 消除次数小于等于1，则移除
+                removeRewardSymbol(symbolArr, rewardSymbol);
+            }
+        } else {
+            // 普通元素消除
+            IndexDo indexDo = rewardSymbol.getIndex();
+            MalakasSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
+            if (commonSymbol.isSymbolGoldBorder()) {
+                // 带金边普通元素，转换为Wild元素（元素大小转换为消除次数）
+                MalakasSymbolDo wildSymbol = MalakasSymbolDo.builder()
+                        .id(SymbolEnum.Wild.getId())
+                        .name(SymbolEnum.Wild.getName())
+                        .symbolType(SymbolTypeEnum.WILD)
+                        .symbolSize(commonSymbol.getSymbolSize())
+                        .symbolGoldBorder(false)
+                        .symbolClearTimes(SymbolSizeEnum.getSymbolClearTimes(commonSymbol.getSymbolSize()))
+                        .build();
+                symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = wildSymbol;
+            } else {
+                // 不带金边普通元素，直接移除
+                removeRewardSymbol(symbolArr, rewardSymbol);
             }
         }
     }
@@ -210,17 +231,26 @@ public class MalakasSymbolUtil {
         return count;
     }
 
-    public static void postPlaceholderSymbol(List<MalakasGameRecordDo> ret) {
-        for (MalakasGameRecordDo record : CollectionUtils.emptyIfNull(ret)) {
-            MalakasSymbolDo[][] symbolArr = record.getWheel().getSymbolArr();
+    public static void postProcessPlaceholderSymbol(List<MalakasGameRecordDo> gameRecordList) {
+        if (CollectionUtils.isEmpty(gameRecordList)) {
+            return;
+        }
+        long startTime = System.currentTimeMillis();
+        String id = MALAKAS_SYMBOL_PLACEHOLDER.getId();
+        gameRecordList.parallelStream().forEach(gameRecord -> {
+            MalakasSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
                 for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
-                    if (Objects.nonNull(symbolArr[row][column]) && StringUtils.equals(symbolArr[row][column].getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId())) {
-                        symbolArr[row][column] = null;
+                    if (Objects.nonNull(symbolArr[row][column])) {
+                        if (StringUtils.equals(symbolArr[row][column].getId(), id)) {
+                            symbolArr[row][column] = null;
+                        }
                     }
                 }
             }
-        }
+        });
+        long endTime = System.currentTimeMillis();
+        log.info("postPlaceholderSymbol cost time: {} ms", (endTime - startTime));
     }
 
     public static void print(MalakasSymbolDo[][] symbolArr, String scene) {

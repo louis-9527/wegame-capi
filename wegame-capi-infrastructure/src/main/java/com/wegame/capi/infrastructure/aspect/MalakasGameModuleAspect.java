@@ -31,6 +31,11 @@ public class MalakasGameModuleAspect {
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         (System.currentTimeMillis() - startTime));
+            } else {
+                log.info("MalakasGame#play，{}#{}，COST TIME：{} ms",
+                        signature.getDeclaringTypeName(),
+                        signature.getName(),
+                        (System.currentTimeMillis() - startTime));
             }
         }
     }

@@ -46,16 +46,17 @@ public class OperationEventApi extends SingleWalletBaseApi {
         try {
             // 参数加密
             String reqString = JSON.toJSONString(req);
+            log.info("com.wegame.capi.api.operation.OperationEventApi.updateEventsStatus:reqString={}", reqString);
             String sign = SecureUtil.md5(reqString);
             String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateKey);
             String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateIv);
             // 构建header
             MultiValueMap<String, String> headers = buildHeaders(sign, keyString, ivString);
-            UpdateEventsStatusReq.DynamicOperationReq operationReq = UpdateEventsStatusReq.DynamicOperationReq.builder()
+            UpdateEventsStatusReq.OperationReq operationReq = UpdateEventsStatusReq.OperationReq.builder()
                     .agentCode(cpChannelId)
                     .message(dynamicOperationEncryptionHelper.encryptWithAES256CBC(reqString))
                     .build();
-            RequestEntity<UpdateEventsStatusReq.DynamicOperationReq> requestEntity = new RequestEntity<>(operationReq,
+            RequestEntity<UpdateEventsStatusReq.OperationReq> requestEntity = new RequestEntity<>(operationReq,
                     headers,
                     HttpMethod.POST,
                     URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, dynamicOperationDomain)));

@@ -1,6 +1,5 @@
 package com.wegame.capi.client.domain.vo;
 
-import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaBetResultVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
