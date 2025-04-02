@@ -1,4 +1,4 @@
-package com.wegame.capi.test.application.controller.mariamakiling;
+package com.wegame.capi.test.application.controller.game.mariamakiling;
 
 import com.wegame.capi.test.application.controller.BetControllerTest;
 import lombok.extern.slf4j.Slf4j;
