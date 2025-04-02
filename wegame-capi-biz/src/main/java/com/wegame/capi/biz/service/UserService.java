@@ -194,7 +194,7 @@ public class UserService {
         return userMapper.count(query);
     }
 
-    ///////////////  above auto generated ///////////////
+    /// ////////////  above auto generated ///////////////
 
     public Long insert(UserDo userDo, String channelId, String gameId) {
         long startTime = DateUtil.getCurrentMilli();
@@ -208,13 +208,13 @@ public class UserService {
                 AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
                 id = userPo.getId();
             }
-            UserLoginInfoDo userLoginInfoDo = UserLoginInfoDo.builder()
+            userLoginInfoService.asyncAddOrUpdate(UserLoginInfoDo.builder()
                     .userId(id)
                     .channelId(Long.parseLong(channelId))
                     .gameId(gameId)
+                    .registerTime(Objects.isNull(id) ? new Date() : null)
                     .loginTime(new Date())
-                    .build();
-            userLoginInfoService.asyncAddOrUpdate(userLoginInfoDo);
+                    .build());
             return id;
         } catch (Exception e) {
             log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);

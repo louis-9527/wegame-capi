@@ -189,7 +189,6 @@ public class UserLoginInfoService {
                 .gameId(userLoginInfoDo.getGameId())
                 .build());
         if (Objects.isNull(userLoginInfoPo)) {
-            userLoginInfoDo.setRegisterTime(new Date());
             add(userLoginInfoDo);
         } else {
             UserLoginInfoDo updateDo = UserLoginInfoDo.builder()
