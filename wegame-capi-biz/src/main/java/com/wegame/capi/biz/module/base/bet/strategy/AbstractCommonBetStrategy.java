@@ -251,7 +251,6 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
             return Pair.of(rewardResult, rBetRecordDo);
         } else{
-            // 余额-不足
             ErrorCode errorCode = RedeemRewardResStatusEnum.convetErrorCode(rewardResult.getStatus());
             rewardResult.setErrorCode(errorCode == null ? ErrorCode.ERR_INTER : errorCode);
             return Pair.of(rewardResult, rBetRecordDo);
