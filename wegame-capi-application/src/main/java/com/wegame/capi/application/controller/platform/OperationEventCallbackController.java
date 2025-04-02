@@ -12,7 +12,7 @@ import com.wegame.capi.client.domain.response.PlatformResponse;
 import com.wegame.capi.client.domain.vo.StatusOfEventsResultVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
-import com.wegame.capi.dao.reposity.domain.operation.OperationEventQuery;
+import com.wegame.capi.dao.repository.domain.operation.OperationEventQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

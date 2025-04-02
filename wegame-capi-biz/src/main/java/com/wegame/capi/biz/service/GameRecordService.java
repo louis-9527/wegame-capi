@@ -5,7 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.GameRecordQueryBuilder;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.dao.reposity.domain.business.GameRecordQuery;
+import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.mongodb.core.BulkOperations;

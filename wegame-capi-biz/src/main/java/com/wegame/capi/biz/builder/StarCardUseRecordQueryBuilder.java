@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
-import com.wegame.capi.dao.reposity.domain.star.StarCardUseRecordQuery;
+import com.wegame.capi.dao.repository.domain.star.StarCardUseRecordQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;

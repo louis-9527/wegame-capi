@@ -1,4 +1,4 @@
-package com.wegame.capi.dao.reposity.domain.business;
+package com.wegame.capi.dao.repository.domain.business;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
