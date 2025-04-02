@@ -184,17 +184,15 @@ public class UserLoginInfoService {
 
     @Async(defaultThreadPoolExecutor)
     public void asyncAddOrUpdate(UserLoginInfoDo userLoginInfoDo) {
-        UserLoginInfoPo userLoginInfoPo = userLoginInfoMapper.selectOne(UserLoginInfoQuery.builder()
-                .userId(userLoginInfoDo.getUserId())
+        Long id = userLoginInfoMapper.selectId(UserLoginInfoQuery.builder()
+                .channelId(userLoginInfoDo.getChannelId())
                 .gameId(userLoginInfoDo.getGameId())
+                .userId(userLoginInfoDo.getUserId())
                 .build());
-        if (Objects.isNull(userLoginInfoPo)) {
+        if (Objects.isNull(id)) {
             add(userLoginInfoDo);
         } else {
-            UserLoginInfoDo updateDo = UserLoginInfoDo.builder()
-                    .id(userLoginInfoPo.getId())
-                    .loginTime(userLoginInfoDo.getLoginTime())
-                    .build();
+            UserLoginInfoDo updateDo = UserLoginInfoDo.builder().id(id).loginTime(userLoginInfoDo.getLoginTime()).build();
             update(updateDo);
         }
     }
