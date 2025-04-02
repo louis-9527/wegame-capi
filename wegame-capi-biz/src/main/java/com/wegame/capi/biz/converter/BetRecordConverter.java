@@ -10,8 +10,8 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.BetRecordPo;
-import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
+import com.wegame.capi.dao.reposity.domain.business.BetRecordPo;
+import com.wegame.capi.dao.reposity.domain.business.BetRecordQuery;
 import org.springframework.data.domain.Sort;
 
 import java.util.Collections;

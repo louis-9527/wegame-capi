@@ -1,4 +1,4 @@
-package com.wegame.capi.dao.mapper.domain.operation;
+package com.wegame.capi.dao.reposity.domain.operation;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
