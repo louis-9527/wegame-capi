@@ -57,11 +57,7 @@ public abstract class AbstractOperationEventManager {
     @Autowired
     OperationEventConfigService operationEventConfigService;
     @Autowired
-    OperationEventConfigRecordService operationEventConfigRecordService;
-    @Autowired
     OperationEventApi operationEventApi;
-    @Autowired
-    DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
