@@ -12,7 +12,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
+import com.wegame.capi.dao.reposity.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

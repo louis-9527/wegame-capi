@@ -8,7 +8,7 @@ import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
-import com.wegame.capi.dao.mapper.domain.star.StarCardUseRecordQuery;
+import com.wegame.capi.dao.reposity.domain.star.StarCardUseRecordQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

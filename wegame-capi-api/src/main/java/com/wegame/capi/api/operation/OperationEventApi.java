@@ -38,6 +38,7 @@ public class OperationEventApi extends SingleWalletBaseApi {
 
     /**
      * 更新事件状态
+     *
      * @param req 请求参数
      * @return 更新结果
      */
@@ -46,7 +47,7 @@ public class OperationEventApi extends SingleWalletBaseApi {
         try {
             // 参数加密
             String reqString = JSON.toJSONString(req);
-            log.info("com.wegame.capi.api.operation.OperationEventApi.updateEventsStatus:reqString={}", reqString);
+            log.info("updateEventsStatus req:{}", reqString);
             String sign = SecureUtil.md5(reqString);
             String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateKey);
             String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateIv);

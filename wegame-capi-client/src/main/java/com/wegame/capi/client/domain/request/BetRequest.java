@@ -193,10 +193,12 @@ public class BetRequest implements Validate, Serializable {
         private void validateStartCartBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用星卡
             if (useStarCard) {
-                AssertUtil.assertNotNull(rewardConfigId, ErrorCode.ERR_PARAM);
-                AssertUtil.assertNotNull(rewardId, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType || BetSubTypeEnum.FREE_SPINS_BUY_BET == betSubType, ErrorCode.ERR_PARAM);
+                if (BetSubTypeEnum.BUY_BET == betSubType) {
+                    AssertUtil.assertNotNull(rewardConfigId, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertNotNull(rewardId, ErrorCode.ERR_PARAM);
+                }
             }
         }
     }

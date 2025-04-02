@@ -4,10 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.BetStatusService;
-import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
+import com.wegame.capi.dao.reposity.domain.business.BetRecordQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
