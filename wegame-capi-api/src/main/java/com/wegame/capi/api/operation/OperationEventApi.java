@@ -51,11 +51,11 @@ public class OperationEventApi extends SingleWalletBaseApi {
             String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateIv);
             // 构建header
             MultiValueMap<String, String> headers = buildHeaders(sign, keyString, ivString);
-            UpdateEventsStatusReq.DynamicOperationReq operationReq = UpdateEventsStatusReq.DynamicOperationReq.builder()
+            UpdateEventsStatusReq.OperationReq operationReq = UpdateEventsStatusReq.OperationReq.builder()
                     .agentCode(cpChannelId)
                     .message(dynamicOperationEncryptionHelper.encryptWithAES256CBC(reqString))
                     .build();
-            RequestEntity<UpdateEventsStatusReq.DynamicOperationReq> requestEntity = new RequestEntity<>(operationReq,
+            RequestEntity<UpdateEventsStatusReq.OperationReq> requestEntity = new RequestEntity<>(operationReq,
                     headers,
                     HttpMethod.POST,
                     URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, dynamicOperationDomain)));

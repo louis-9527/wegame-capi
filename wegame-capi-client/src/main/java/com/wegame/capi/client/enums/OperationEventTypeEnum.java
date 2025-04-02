@@ -17,10 +17,10 @@ public enum OperationEventTypeEnum {
 
     MARIA_MAKILING(
             GameTypeEnum.MARIA_MAKILING,
-            "mariamakiling_dynamicOperation_event",
-            "mariamakiling_dynamicOperation_event_detail",
-            "mariamakiling_dynamicOperation_event_config",
-            "mariamakiling_dynamicOperation_event_config_record"
+            "mariamakiling_operation_event",
+            "mariamakiling_operation_event_detail",
+            "mariamakiling_operation_event_config",
+            "mariamakiling_operation_event_config_record"
     ),
 
     ;
