@@ -9,7 +9,6 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -60,14 +59,14 @@ public class IbongAdarnaNormalBetStrategy extends AbstractIbongAdarnaBetStrategy
                     .userName(userInfo.getUserName())
                     .notifyRewardType(NotifyRewardTypeEnum.MULTIPLE.name())
                     .rewardTime(DateUtil.getCurrentMilli())
-                    .rewardContent(String.format(Constants.IBONG_REWARD_NOTIFY_CONTENT_FORMAT,
+                    .rewardContent(String.format(Constants.IBONG_ADARNA_REWARD_NOTIFY_CONTENT_FORMAT,
                             userInfo.getUserName(),
                             multiple,
                             NumberUtil.decimalFormat("#,##0.00", NumberUtil.div(totalRewardAmount, 100))))
                     .build();
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, IBONG_ADARNA.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
-            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_IBONG_REWARD_NOTIFY_SIZE);
+            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.IBONG_ADARNA_REWARD_NOTIFY_SIZE);
         } catch (Exception e) {
             log.error("updateRewardNotifyInfo error", e);
         }
