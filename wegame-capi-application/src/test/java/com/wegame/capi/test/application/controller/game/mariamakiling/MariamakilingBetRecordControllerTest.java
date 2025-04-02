@@ -1,4 +1,4 @@
-package com.wegame.capi.test.application.controller.mariamakiling;
+package com.wegame.capi.test.application.controller.game.mariamakiling;
 
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;

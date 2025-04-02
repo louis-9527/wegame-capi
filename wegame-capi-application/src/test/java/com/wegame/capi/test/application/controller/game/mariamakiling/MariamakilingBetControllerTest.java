@@ -1,11 +1,10 @@
-package com.wegame.capi.test.application.controller.mariamakiling;
+package com.wegame.capi.test.application.controller.game.mariamakiling;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.client.domain.request.BetRequest;
-import com.wegame.capi.client.domain.request.BetDetail;
 import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingBetResultVo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -87,7 +86,7 @@ public class MariamakilingBetControllerTest extends BetControllerTest {
         betRequest.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
         betRequest.setBetType(BetTypeEnum.NORMAL_BET.getCode());
         betRequest.setBetSubType(BetSubTypeEnum.NORMAL_BET.getCode());
-        BetDetail betDetail = new BetDetail();
+        BetRequest.BetDetail betDetail = new BetRequest.BetDetail();
         betDetail.setBetAmount(500L);
         betDetail.setPayAmount(500L);
         betRequest.setBetDetail(betDetail);
@@ -99,7 +98,7 @@ public class MariamakilingBetControllerTest extends BetControllerTest {
         betRequest.setGameId(GameTypeEnum.MARIA_MAKILING.getId());
         betRequest.setBetType(BetTypeEnum.BUY_BET.getCode());
         betRequest.setBetSubType(BetSubTypeEnum.BUY_BET.getCode());
-        BetDetail betDetail = new BetDetail();
+        BetRequest.BetDetail betDetail = new BetRequest.BetDetail();
         betDetail.setBetAmount(1000L);
         betDetail.setPayAmount(35000L);
         betRequest.setBetDetail(betDetail);
@@ -112,7 +111,7 @@ public class MariamakilingBetControllerTest extends BetControllerTest {
         betRequest.setBetType(BetTypeEnum.BUY_BET.getCode());
         betRequest.setBetSubType(BetSubTypeEnum.FREE_SPINS_BUY_BET.getCode());
 
-        BetDetail betDetail = new BetDetail();
+        BetRequest.BetDetail betDetail = new BetRequest.BetDetail();
         betDetail.setBetAmount(1000L);
         betDetail.setPayAmount(0L);
         betDetail.setBetRecordId(betRecordId);
