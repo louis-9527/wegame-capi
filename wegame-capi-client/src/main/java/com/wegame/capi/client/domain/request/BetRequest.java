@@ -62,23 +62,27 @@ public class BetRequest implements Validate, Serializable {
         private Long betAmount;
         @ApiModelProperty(value = "支付金额/购买金额", required = true)
         private Long payAmount;
-        @ApiModelProperty(value = "投注记录ID, 获得免费轮的投注记录的投注id，非必填", required = false)
+        @ApiModelProperty(value = "投注记录ID, 获得免费轮的投注记录的投注id，非必填")
         private String betRecordId;
-        @ApiModelProperty(value = "免费轮游戏记录ID, 非必填", required = false)
+        @ApiModelProperty(value = "免费轮游戏记录ID, 非必填")
         private String gameRecordId;
         // 星卡投注
-        @ApiModelProperty(value = "使用星卡, 非必填", required = false)
+        @ApiModelProperty(value = "使用星卡, 非必填")
         private boolean useStarCard;
-        @ApiModelProperty(value = "奖励配置id", required = true)
+        @ApiModelProperty(value = "奖励配置id")
         private String rewardConfigId;
-        @ApiModelProperty(value = "奖励id", required = true)
+        @ApiModelProperty(value = "奖励id")
         private String rewardId;
 
         @Override
         public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
-            validateStartCartBet(gameType, betType, betSubType);
+            AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(betAmount >= 0, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(payAmount >= 0, ErrorCode.ERR_PARAM);
             if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
                 mariaMakilingValidateParam(gameType, betType, betSubType);
+                validateStartCartBet(gameType, betType, betSubType);
             }
         }
 
