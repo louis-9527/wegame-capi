@@ -67,7 +67,7 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                     .userName(userInfo.getUserName())
                     .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
                     .rewardTime(DateUtil.getCurrentMilli())
-                    .rewardContent(String.format(Constants.WEGAME_REWARD_NOTIFY_CONTENT_FORMAT,
+                    .rewardContent(String.format(Constants.MALAKAS_REWARD_NOTIFY_CONTENT_FORMAT,
                             DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
                             userInfo.getUserName(),
                             AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(totalRewardAmount)),
@@ -76,7 +76,7 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MALAKAS.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
-            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.WEGAME_REWARD_NOTIFY_SIZE);
+            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.MALAKAS_REWARD_NOTIFY_SIZE);
             rewardService.evict(GameTypeEnum.MALAKAS);
             Object o = redisTemplate.opsForValue().get(key);
             log.info("freeWheelAfterHandle updateRewardNotifyInfo redis value notifyInfo: {}, key: {}", o, key);
