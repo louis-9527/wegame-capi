@@ -27,7 +27,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.dao.reposity.domain.business.GameRecordQuery;
+import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
