@@ -1,6 +1,5 @@
 package com.wegame.capi.common.domain;
 
-import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
