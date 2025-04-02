@@ -193,7 +193,7 @@ public class BetRequest implements Validate, Serializable {
                 AssertUtil.assertNotNull(rewardConfigId, ErrorCode.ERR_PARAM);
                 AssertUtil.assertNotNull(rewardId, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType || BetSubTypeEnum.FREE_SPINS_BUY_BET == betSubType, ErrorCode.ERR_PARAM);
             }
         }
     }
