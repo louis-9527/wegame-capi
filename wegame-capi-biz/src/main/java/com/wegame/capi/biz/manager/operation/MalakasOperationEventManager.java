@@ -2,9 +2,8 @@ package com.wegame.capi.biz.manager.operation;
 
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
-import com.wegame.capi.dao.mapper.domain.operation.OperationEventConfigQuery;
+import com.wegame.capi.dao.reposity.domain.operation.OperationEventConfigQuery;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
