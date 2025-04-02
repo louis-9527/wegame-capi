@@ -35,7 +35,7 @@ public class MalakasSymbolUtil {
             for (int j = 0; j < col; j++) {
                 if (Objects.isNull(symbolArr[i][j])) {
                     newSymbolArr[i][j] = null;
-                } else if (StringUtils.equals(symbolArr[i][j].getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId())) {
+                } else if (symbolArr[i][j].isPlaceholderSymbol()) {
                     newSymbolArr[i][j] = MALAKAS_SYMBOL_PLACEHOLDER;
                 } else {
                     newSymbolArr[i][j] = symbolArr[i][j].copy();
@@ -236,13 +236,12 @@ public class MalakasSymbolUtil {
             return;
         }
         long startTime = System.currentTimeMillis();
-        String id = MALAKAS_SYMBOL_PLACEHOLDER.getId();
         gameRecordList.parallelStream().forEach(gameRecord -> {
             MalakasSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
                 for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
                     if (Objects.nonNull(symbolArr[row][column])) {
-                        if (StringUtils.equals(symbolArr[row][column].getId(), id)) {
+                        if (symbolArr[row][column].isPlaceholderSymbol()) {
                             symbolArr[row][column] = null;
                         }
                     }

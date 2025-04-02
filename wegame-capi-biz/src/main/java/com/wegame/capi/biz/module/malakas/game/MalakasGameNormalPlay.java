@@ -9,6 +9,8 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
+import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -222,15 +224,29 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         if (needAddCount <= 0) {
             return wheel;
         }
+
+        // 提取有效坐标集合
+        List<IndexDo> indexList = new ArrayList<>();
+        for (int row = 1; row < gameInfo.getRow(); row++) {
+            for (int column = 0; column < gameInfo.getColumn(); column++) {
+                MalakasSymbolDo symbol = wheel.getSymbolArr()[row][column];
+                if (Objects.nonNull(symbol)) {
+                    if (!symbol.isPlaceholderSymbol() && !symbol.isScatterSymbol()) {
+                        indexList.add(IndexFactory.buildDo(row, column));
+                    }
+                }
+            }
+        }
+
         int tempCount = 0;
-        // todo @maidong 优化
         while (tempCount < needAddCount) {
-            // 注意：第一行不能出现scatter
-            int row = randomService.randomInt(1, gameInfo.getRow() - 1);
-            int column = randomService.randomInt(0, gameInfo.getColumn() - 1);
+            int randomIndex = randomService.randomInt(0, indexList.size() - 1);
+            IndexDo indexDo = indexList.get(randomIndex);
+            int row = indexDo.getRowIndex();
+            int column = indexDo.getColumnIndex();
             AssertUtil.assertNotNull(wheel.getSymbolArr()[row][column], ErrorCode.ERR_INTER);
-            if (StringUtils.equals(wheel.getSymbolArr()[row][column].getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId())
-                    || StringUtils.equals(wheel.getSymbolArr()[row][column].getId(), SymbolEnum.Scatter.getId())) {
+            MalakasSymbolDo symbol = wheel.getSymbolArr()[row][column];
+            if (symbol.isPlaceholderSymbol() || symbol.isScatterSymbol()) {
                 // 为占位元素或者scatter元素，则继续
                 // do nothing;
             } else {
@@ -238,9 +254,9 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
                 if (columnScatterNum >= MAX_SCATTER_NUMBER_IN_REEL) {
                     continue;
                 }
-                wheel.getSymbolArr()[row][column].setId(SymbolEnum.Scatter.getId());
-                wheel.getSymbolArr()[row][column].setName(SymbolEnum.Scatter.getName());
-                wheel.getSymbolArr()[row][column].setSymbolType(SymbolTypeEnum.SCATTER);
+                symbol.setId(SymbolEnum.Scatter.getId());
+                symbol.setName(SymbolEnum.Scatter.getName());
+                symbol.setSymbolType(SymbolTypeEnum.SCATTER);
                 tempCount = tempCount + 1;
             }
         }
