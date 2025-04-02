@@ -23,10 +23,10 @@ public enum OperationEventTypeEnum {
             "mariamakiling_operation_event_config_record"
     ),
     MALAKAS_DYNAMIC(GameTypeEnum.MALAKAS,
-            "malakas_dynamicOperation_event",
-            "malakas_dynamicOperation_event_detail",
-            "malakas_dynamicOperation_event_config",
-            "malakas_dynamicOperation_event_config_record");
+            "malakas_operation_event",
+            "malakas_operation_event_detail",
+            "malakas_operation_event_config",
+            "malakas_operation_event_config_record");
 
 
     ;
