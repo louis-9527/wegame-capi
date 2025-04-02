@@ -1,4 +1,4 @@
-package com.wegame.capi.dao.reposity.domain.operation;
+package com.wegame.capi.dao.repository.domain.operation;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -10,8 +10,10 @@ import org.springframework.data.domain.Sort;
 @Data
 @ToString
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class OperationEventConfigQuery extends OperationEventConfigPo {
+public class OperationEventConfigRecordQuery extends OperationEventConfigRecordPo {
     /**
      * limit
      */
