@@ -1,8 +1,12 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
+
+import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 
 /**
  * Malakas游戏元素
@@ -29,6 +33,11 @@ public class MalakasSymbolDo extends SymbolDo {
      * 元素剩余消除次数（只有wild元素会有消除次数）
      */
     private Integer symbolClearTimes;
+
+    @JsonIgnore
+    public boolean isPlaceholderSymbol() {
+        return StringUtils.equals(getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId());
+    }
 
     public MalakasSymbolDo copy() {
         return MalakasSymbolDo.builder()

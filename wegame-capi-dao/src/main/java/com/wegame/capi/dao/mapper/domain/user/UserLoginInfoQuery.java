@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UserLoginInfoQuery extends UserLoginInfoPo implements Serializable {
-    private static final long serialVersionUID = -8013364772261423104L;
+    private static final long serialVersionUID = -4556517424942139392L;
     /**
      * limit
      */
