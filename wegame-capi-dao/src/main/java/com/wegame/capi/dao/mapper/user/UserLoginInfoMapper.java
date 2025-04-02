@@ -17,9 +17,10 @@ import java.util.List;
 public interface UserLoginInfoMapper {
     /** 增 */
     @Insert({"insert into `user_login_info`(" +
-            " `user_id`, " +
             " `channel_id`, " +
             " `game_id`, " +
+            " `user_id`, " +
+            " `player_id`, " +
             " `register_time`, " +
             " `login_time`, " +
             " `creator`, " +
@@ -27,9 +28,10 @@ public interface UserLoginInfoMapper {
             " `create_time`, " +
             " `update_time` " +
             ") values (" +
-            " #{userId}, " +
             " #{channelId}, " +
             " #{gameId}, " +
+            " #{userId}, " +
+            " #{playerId}, " +
             " #{registerTime}, " +
             " #{loginTime}, " +
             " #{creator}, " +
@@ -42,9 +44,10 @@ public interface UserLoginInfoMapper {
 
     @Insert({"<script>",
         " insert into `user_login_info` (",
-        "   `user_id`, ",
         "   `channel_id`, ",
         "   `game_id`, ",
+        "   `user_id`, ",
+        "   `player_id`, ",
         "   `register_time`, ",
         "   `login_time`, ",
         "   `creator`, ",
@@ -54,9 +57,10 @@ public interface UserLoginInfoMapper {
         ") values ",
         " <foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\" nullable=\"true\"> ",
         " (",
-        "   #{item.userId}, ",
         "   #{item.channelId}, ",
         "   #{item.gameId}, ",
+        "   #{item.userId}, ",
+        "   #{item.playerId}, ",
         "   #{item.registerTime}, ",
         "   #{item.loginTime}, ",
         "   #{item.creator}, ",
@@ -85,9 +89,10 @@ public interface UserLoginInfoMapper {
     @Update({"<script>",
         " update `user_login_info` ",
         " <trim prefix=\"set\" suffixOverrides=\",\"> ",
-        "     <if test=\"userId != null\">`user_id` = #{userId},</if> ",
         "     <if test=\"channelId != null\">`channel_id` = #{channelId},</if> ",
         "     <if test=\"gameId != null\">`game_id` = #{gameId},</if> ",
+        "     <if test=\"userId != null\">`user_id` = #{userId},</if> ",
+        "     <if test=\"playerId != null\">`player_id` = #{playerId},</if> ",
         "     <if test=\"registerTime != null\">`register_time` = #{registerTime},</if> ",
         "     <if test=\"loginTime != null\">`login_time` = #{loginTime},</if> ",
         "     <if test=\"creator != null\">`creator` = #{creator},</if> ",
@@ -106,9 +111,10 @@ public interface UserLoginInfoMapper {
             " select * from `user_login_info` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
-            "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
             "     <if test=\"query.channelId != null\">and `channel_id` = #{query.channelId}</if> ",
             "     <if test=\"query.gameId != null and query.gameId != ''\">and game_id like CONCAT('%', #{query.gameId}, '%')</if> ",
+            "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
+            "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.registerTime != null\">and `register_time` = #{query.registerTime}</if> ",
             "     <if test=\"query.loginTime != null\">and `login_time` = #{query.loginTime}</if> ",
             "     <if test=\"query.creator != null and query.creator != ''\">and creator like CONCAT('%', #{query.creator}, '%')</if> ",
@@ -127,9 +133,10 @@ public interface UserLoginInfoMapper {
             " select id from `user_login_info` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
-            "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
             "     <if test=\"query.channelId != null\">and `channel_id` = #{query.channelId}</if> ",
             "     <if test=\"query.gameId != null and query.gameId != ''\">and game_id like CONCAT('%', #{query.gameId}, '%')</if> ",
+            "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
+            "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.registerTime != null\">and `register_time` = #{query.registerTime}</if> ",
             "     <if test=\"query.loginTime != null\">and `login_time` = #{query.loginTime}</if> ",
             "     <if test=\"query.creator != null and query.creator != ''\">and creator like CONCAT('%', #{query.creator}, '%')</if> ",
@@ -159,9 +166,10 @@ public interface UserLoginInfoMapper {
             " select count(1) from `user_login_info` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
-            "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
             "     <if test=\"query.channelId != null\">and `channel_id` = #{query.channelId}</if> ",
             "     <if test=\"query.gameId != null and query.gameId != ''\">and game_id like CONCAT('%', #{query.gameId}, '%')</if> ",
+            "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
+            "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.registerTime != null\">and `register_time` = #{query.registerTime}</if> ",
             "     <if test=\"query.loginTime != null\">and `login_time` = #{query.loginTime}</if> ",
             "     <if test=\"query.creator != null and query.creator != ''\">and creator like CONCAT('%', #{query.creator}, '%')</if> ",
@@ -178,9 +186,10 @@ public interface UserLoginInfoMapper {
             " select * from `user_login_info` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
-            "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
             "     <if test=\"query.channelId != null\">and `channel_id` = #{query.channelId}</if> ",
             "     <if test=\"query.gameId != null and query.gameId != ''\">and game_id like CONCAT('%', #{query.gameId}, '%')</if> ",
+            "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
+            "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.registerTime != null\">and `register_time` = #{query.registerTime}</if> ",
             "     <if test=\"query.loginTime != null\">and `login_time` = #{query.loginTime}</if> ",
             "     <if test=\"query.creator != null and query.creator != ''\">and creator like CONCAT('%', #{query.creator}, '%')</if> ",
@@ -201,9 +210,10 @@ public interface UserLoginInfoMapper {
             " select id from `user_login_info` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
-            "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
             "     <if test=\"query.channelId != null\">and `channel_id` = #{query.channelId}</if> ",
             "     <if test=\"query.gameId != null and query.gameId != ''\">and game_id like CONCAT('%', #{query.gameId}, '%')</if> ",
+            "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
+            "     <if test=\"query.playerId != null and query.playerId != ''\">and player_id like CONCAT('%', #{query.playerId}, '%')</if> ",
             "     <if test=\"query.registerTime != null\">and `register_time` = #{query.registerTime}</if> ",
             "     <if test=\"query.loginTime != null\">and `login_time` = #{query.loginTime}</if> ",
             "     <if test=\"query.creator != null and query.creator != ''\">and creator like CONCAT('%', #{query.creator}, '%')</if> ",

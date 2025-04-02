@@ -16,15 +16,11 @@ import java.util.Date;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class UserLoginInfoPo implements Serializable {
-    private static final long serialVersionUID = -4681582752776584192L;
+    private static final long serialVersionUID = -125366309433197568L;
     /**
      * 主键ID
      */
     private Long id;
-    /**
-     * 用户id
-     */
-    private Long userId;
     /**
      * 渠道id
      */
@@ -33,6 +29,14 @@ public class UserLoginInfoPo implements Serializable {
      * 游戏id
      */
     private String gameId;
+    /**
+     * 用户id
+     */
+    private Long userId;
+    /**
+     * 玩家id
+     */
+    private String playerId;
     /**
      * 注册时间
      */

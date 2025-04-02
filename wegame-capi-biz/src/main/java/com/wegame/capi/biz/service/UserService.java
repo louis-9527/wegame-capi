@@ -209,9 +209,10 @@ public class UserService {
                 id = userPo.getId();
             }
             userLoginInfoService.asyncAddOrUpdate(UserLoginInfoDo.builder()
-                    .userId(id)
                     .channelId(Long.parseLong(channelId))
                     .gameId(gameId)
+                    .userId(id)
+                    .playerId(userPo.getPlayerId())
                     .registerTime(Objects.isNull(id) ? new Date() : null)
                     .loginTime(new Date())
                     .build());
