@@ -22,12 +22,18 @@ public enum OperationEventTypeEnum {
             "mariamakiling_operation_event_config",
             "mariamakiling_operation_event_config_record"
     ),
+    MALAKAS_DYNAMIC(GameTypeEnum.MALAKAS,
+            "malakas_operation_event",
+            "malakas_operation_event_detail",
+            "malakas_operation_event_config",
+            "malakas_operation_event_config_record"
+    ),
     IBONG_ADARNA(
             GameTypeEnum.IBONG_ADARNA,
-            "ibongadarna_dynamicOperation_event",
-            "ibongadarna_dynamicOperation_event_detail",
-            "ibongadarna_dynamicOperation_event_config",
-            "ibongadarna_dynamicOperation_event_config_record"
+            "ibongadarna_operation_event",
+            "ibongadarna_operation_event_detail",
+            "ibongadarna_operation_event_config",
+            "ibongadarna_operation_event_config_record"
     ),
 
     ;

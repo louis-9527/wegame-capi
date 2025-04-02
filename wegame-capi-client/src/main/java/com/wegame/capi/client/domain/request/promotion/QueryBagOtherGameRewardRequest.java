@@ -5,15 +5,22 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
 @Data
+@ToString
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @ApiModel(description = "获取背包列表请求(其他游戏)")
 public class QueryBagOtherGameRewardRequest implements Validate, Serializable {
     private static final long serialVersionUID = -4002950733224509502L;
-    @ApiModelProperty(value = "当前游戏Id", required = true)
+
+    @ApiModelProperty(value = "游戏Id", required = true)
     private String gameId;
 
     @Override

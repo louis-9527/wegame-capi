@@ -62,7 +62,6 @@ public abstract class AbstractIbongAdarnaBetStrategy
     }
 
     @Override
-
     public BetHelper<IbongAdarnaGameRecordDo, IbongAdarnaGameRecordDo> betHelper() {
         return ibongAdarnaBetHelper;
     }

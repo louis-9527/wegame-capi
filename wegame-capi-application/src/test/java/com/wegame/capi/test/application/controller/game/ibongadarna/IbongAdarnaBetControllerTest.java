@@ -1,4 +1,4 @@
-package com.wegame.capi.test.application.controller.ibongadarna;
+package com.wegame.capi.test.application.controller.game.ibongadarna;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.context.Operator;
@@ -6,7 +6,6 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.domain.request.BetDetail;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.domain.vo.BetResultVo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaBetResultVo;
@@ -69,7 +68,7 @@ public class IbongAdarnaBetControllerTest extends BetControllerTest {
         betRequest.setGameId(GameTypeEnum.IBONG_ADARNA.getId());
         betRequest.setBetType(BetTypeEnum.NORMAL_BET.getCode());
         betRequest.setBetSubType(BetSubTypeEnum.NORMAL_BET.getCode());
-        BetDetail betDetail = new BetDetail();
+        BetRequest.BetDetail betDetail = new BetRequest.BetDetail();
         betDetail.setBetAmount(600L);
         betDetail.setPayAmount(600L);
         betRequest.setBetDetail(betDetail);
@@ -81,7 +80,7 @@ public class IbongAdarnaBetControllerTest extends BetControllerTest {
         betRequest.setGameId(GameTypeEnum.IBONG_ADARNA.getId());
         betRequest.setBetType(BetTypeEnum.BUY_BET.getCode());
         betRequest.setBetSubType(BetSubTypeEnum.BUY_BET.getCode());
-        BetDetail betDetail = new BetDetail();
+        BetRequest.BetDetail betDetail = new BetRequest.BetDetail();
         betDetail.setBetAmount(500L);
         betDetail.setPayAmount(50000L);
         betRequest.setBetDetail(betDetail);

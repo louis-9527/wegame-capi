@@ -1,21 +1,29 @@
 //package com.wegame.capi.biz.module.base.bet.strategy;
 //
+//import cn.hutool.core.lang.UUID;
+//import com.wegame.base.Constants;
+//import com.wegame.base.context.OperatorContext;
 //import com.wegame.base.enums.ErrorCode;
 //import com.wegame.base.exception.BusinessException;
 //import com.wegame.base.exception.LockException;
 //import com.wegame.base.lock.DistributeLock;
 //import com.wegame.base.utils.AssertUtil;
+//import com.wegame.base.utils.DateUtil;
+//import com.wegame.base.utils.ThreadMdcUtil;
 //import com.wegame.capi.biz.builder.operation.OperationEventDetailBuilder;
 //import com.wegame.capi.biz.converter.ToVoConverter;
 //import com.wegame.capi.biz.domain.biz.BetRecordDo;
 //import com.wegame.capi.biz.domain.biz.bet.BetDo;
 //import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 //import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
-//import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
+//import com.wegame.capi.biz.domain.biz.game.GameEventDo;
+//import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
+//import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 //import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 //import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 //import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 //import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
+//import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 //import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 //import com.wegame.capi.biz.service.promotion.BagService;
 //import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
@@ -32,21 +40,22 @@
 //import com.wegame.capi.common.utils.LockNameUtil;
 //import lombok.extern.slf4j.Slf4j;
 //import org.apache.commons.lang3.tuple.Pair;
+//import org.slf4j.MDC;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.beans.factory.annotation.Value;
 //
 //import java.math.BigDecimal;
+//import java.net.BindException;
 //import java.util.List;
 //import java.util.Objects;
 //
-//import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-//
 //@Slf4j
-//public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR extends ToVoConverter>
+//public abstract class AbstractBetPromotionStrategy<R extends ToVoConverter, DR extends ToVoConverter, WD extends SymbolDo>
 //        extends AbstractBetStrategy<R, DR> {
 //
 //    @Autowired
 //    DistributeLock distributeLock;
+//
 //    @Autowired
 //    private StarCardUseRecordService startCardUseRecordService;
 //    @Autowired
@@ -54,7 +63,7 @@
 //    @Value("${api.game.cp.channelId}")
 //    private String cpChannelId;
 //
-//    public abstract AbstractOperationEventManager operationEventManager();
+//    public abstract AbstractOperationEventManager<WD> getDynamicOperationManager();
 //
 //    @Override
 //    public BetResultDo<DR> bet(BetDo betDo) {
@@ -97,7 +106,7 @@
 //        AssertUtil.assertTrue(Objects.equals(rewordDetail.getDetails().getBetValue(), betDo.getBetAmount()), ErrorCode.ERR_PARAM);
 //        // 准备核销星卡
 //        StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
-//                .id(super.generateId())
+//                .id(super.generateBetRecordId())
 //                .gameId(this.gameContext().gameInfo().getGameType().getId())
 //                .betAmount(betDo.getBetAmount())
 //                .playerId(userInfo.getPlayerId())
@@ -151,14 +160,14 @@
 //
 //    private BetResultDo<DR> betForDynamic(BetDo betDo) {
 //        // 判断是否命中干预
-//        Pair<GameOperationEventDo, BetRecordDo<R>> eventBetRecordPair = this.getEventBetRecordPair(betDo);
+//        Pair<GameEventDo, BetRecordDo<R>> eventBetRecordPair = this.getEventBetRecordPair(betDo);
 //        if (Objects.isNull(eventBetRecordPair)) {
 //            BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, null);
 //            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, this.hasRewardFreeWheel(betRecordDo.getGameRecordList()));
 //            return this.buildResult(betRecordDo, resultDo);
 //        }
 //        BetRecordDo<R> betRecordDo = eventBetRecordPair.getValue();
-//        GameOperationEventDo eventBetResult = eventBetRecordPair.getKey();
+//        GameEventDo eventBetResult = eventBetRecordPair.getKey();
 //        // 投注并派奖
 //        SingleWalletBetResultDo resultDo = super.saveBetRecordAndBetWithPayout(betRecordDo, this.hasRewardFreeWheel(betRecordDo.getGameRecordList()));
 //        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
@@ -168,23 +177,23 @@
 //            betStatusEnum = BetStatusEnum.SUCCESS;
 //        }
 //        // 命中的事件信息
-//        OperationEventDo eventDo = eventBetResult.getOperationEvent();
+//        OperationEventDo eventDo = eventBetResult.getDynamicOperationEvent();
 //        // 异步上报、更新状态
 //        long eventAmount = betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount();
-//        operationEventManager().asyncUpdateEventDetail(eventDo, betStatusEnum, eventBetResult.getOperatorRecordId(), resultDo.getBetId(), eventAmount);
+//        getDynamicOperationManager().asyncEventDetailUpdate(eventDo, betStatusEnum, eventBetResult.getOperatorRecordId(), resultDo.getBetId(), eventAmount);
 //        return this.buildResult(betRecordDo, resultDo);
 //    }
 //
 //
-//    private Pair<GameOperationEventDo, BetRecordDo<R>> getEventBetRecordPair(BetDo betDo) {
+//    private Pair<GameEventDo, BetRecordDo<R>> getEventBetRecordPair(BetDo betDo) {
 //        UserInfo userInfo = UserInfoContext.getUserInfo();
 //        String operationEventBetLockName = LockNameUtil.getOperationEventBetLockName(this.gameContext().gameInfo().getGameType(), userInfo.getPlayerId());
-//        return distributeLock.tryLockThenCall(operationEventBetLockName,    500L, 1000L, () -> {
+//        return distributeLock.tryLockThenCall(operationEventBetLockName, 500L, 1000L, () -> {
 //            try {
-//                GameOperationEventDo eventBetResult = operationEventManager().getEventBetResult(betDo.getPayAmount());
-//                if (eventBetResult.isEventResult()) {
+//                GameEventDo eventBetResult =  getDynamicOperationManager().getEventBetResult(betDo.getPayAmount());
+//                if (eventBetResult.getEventResult()) {
 //                    BetRecordDo<R> betRecordDo = this.loadBetRecordDo(betDo, eventBetResult);
-//                    betRecordDo.setIeId(eventBetResult.getOperationEvent().getEventId());
+//                    betRecordDo.setIeId(eventBetResult.getDynamicOperationEvent().getEventId());
 //                    // 构建并保存干预记录
 //                    Long detailId = this.saveEventDetail(generateBetRecordId(), betRecordDo, eventBetResult);
 //                    eventBetResult.setOperatorRecordId(detailId);
@@ -199,17 +208,30 @@
 //        });
 //    }
 //
-//    private BetRecordDo<R> loadBetRecordDo(BetDo betDo, GameOperationEventDo gameEventDo) {
+//    private BetRecordDo<R> loadBetRecordDo(BetDo betDo, GameEventDo gameEventDo) {
 //        //获取投注记录
 //        long betRecordId = generateBetRecordId();
 //        GamePlayTypeEnum playTypeEnum = GamePlayTypeEnum.NORMAL_PLAY;
-//        if (gameEventDo != null && gameEventDo.isEventResult()) {
+//        if (gameEventDo != null && gameEventDo.getEventResult()) {
 //            playTypeEnum = GamePlayTypeEnum.EVENT_PLAY;
 //        }
-//        List<R> list = gameContext().play(build(playTypeEnum, betDo, betRecordId, gameEventDo));
+//        List<R> list = gameContext().play(GamePlayDo.builder()
+//                .gameType(betDo.getGameType())
+//                .betType(betDo.getBetType())
+//                .betSubType(betDo.getBetSubType())
+//                .betAmount(betDo.getBetAmount())
+//                .payAmount(betDo.getPayAmount())
+//                .betRecordId(betRecordId)
+//                .gamePlayType(playTypeEnum)
+//                .gameEventDo(gameEventDo)
+//                .build());
 //        AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
 //        // 构建投注记录
 //        return this.buildBetRecord(betRecordId, betDo, list);
+//    }
+//
+//    private BetRecordDo<R> loadBetRecordDo(BetDo betDo) {
+//        return loadBetRecordDo(betDo, null);
 //    }
 //
 //    /**
@@ -218,7 +240,7 @@
 //     */
 //
 //    private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(BetDo betDo) {
-//        BetRecordDo<R> rBetRecordDo = loadBetRecordDo(betDo, null);
+//        BetRecordDo<R> rBetRecordDo = loadBetRecordDo(betDo);
 //        RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), betDo.getPayAmount(), rBetRecordDo.getId());
 //        if (rewardResult.getSuccess()) {
 //            return Pair.of(rewardResult, rBetRecordDo);
@@ -230,7 +252,7 @@
 //            // 派奖金额超过限制
 //            long maxPay = AmountUtil.toLong(new BigDecimal(rewardResult.getMessage()));
 //            for (int i = 1; i <= 10; i++) {
-//                rBetRecordDo = loadBetRecordDo(betDo, null);
+//                rBetRecordDo = loadBetRecordDo(betDo);
 //                if (rBetRecordDo.getPayAmount() < maxPay) {
 //                    break;
 //                }
@@ -247,8 +269,8 @@
 //    }
 //
 //
-//    private Long saveEventDetail(Long eventDetailId, BetRecordDo betRecordDo, GameOperationEventDo eventDo) {
-//        return operationEventManager().addEventDetail(OperationEventDetailBuilder.build(eventDetailId, betRecordDo, eventDo));
+//    private Long saveEventDetail(Long eventDetailId, BetRecordDo betRecordDo, GameEventDo eventDo) {
+//        return getDynamicOperationManager().addEventDetail(OperationEventDetailBuilder.build(eventDetailId, betRecordDo, eventDo));
 //    }
 //
 //    /**

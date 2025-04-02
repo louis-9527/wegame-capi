@@ -5,11 +5,9 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.OperatorUtil;
-import com.wegame.capi.client.domain.request.query.PageQueryUserLoginInfoRequest;
-import com.wegame.capi.client.domain.vo.UserLoginInfoVo;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
+import com.wegame.capi.client.domain.vo.UserLoginInfoVo;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoPo;
-import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoQuery;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -17,6 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * UserLoginInfoConverter
+ *
  * @author generate
  */
 public class UserLoginInfoConverter {
@@ -110,11 +109,11 @@ public class UserLoginInfoConverter {
 
     public static List<UserLoginInfoDo> poToDoList(List<UserLoginInfoPo> poList) {
         return Optional.ofNullable(poList)
-            .orElse(Collections.emptyList())
-            .stream()
-            .map(UserLoginInfoConverter::poToDo)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(UserLoginInfoConverter::poToDo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public static List<UserLoginInfoPo> doToPoList(List<UserLoginInfoDo> doList, OptEnum optEnum) {
@@ -133,28 +132,6 @@ public class UserLoginInfoConverter {
                 .map(UserLoginInfoConverter::doToVo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-    }
-
-    public static UserLoginInfoQuery requestToQuery(PageQueryUserLoginInfoRequest request, String orderClause) {
-        UserLoginInfoQuery query = new UserLoginInfoQuery();
-        query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
-        query.setUserId(StringUtils.isNotEmpty(request.getUserId()) ? Long.valueOf(request.getUserId()) : null);
-        query.setChannelId(StringUtils.isNotEmpty(request.getChannelId()) ? Long.valueOf(request.getChannelId()) : null);
-        query.setGameId(request.getGameId());
-        query.setRegisterTime(Objects.nonNull(request.getRegisterTime()) ? new Date(request.getRegisterTime()) : null);
-        query.setLoginTime(Objects.nonNull(request.getLoginTime()) ? new Date(request.getLoginTime()) : null);
-        query.setCreator(request.getCreator());
-        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? new Date(request.getCreateTime()) : null);
-        query.setUpdater(request.getUpdater());
-        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? new Date(request.getUpdateTime()) : null);
-        query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) ? new Date(request.getStartCreateTime()) : null);
-        query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);
-        query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? new Date(request.getStartUpdateTime()) : null);
-        query.setEndUpdateTime(Objects.nonNull(request.getEndUpdateTime()) ? new Date(request.getEndUpdateTime()) : null);
-        query.setLimit(request.getPageSize());
-        query.setOffset(request.getOffset());
-        query.setOrderByClause(orderClause);
-        return query;
     }
 
     ///////////////  above auto generated ///////////////
