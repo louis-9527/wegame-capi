@@ -14,7 +14,6 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Objects;
 
 @Data
@@ -177,25 +176,29 @@ public class BetRequest implements Validate, Serializable {
             AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
             // 投注类型只能正常投注
-            AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET.equals(betType), ErrorCode.ERR_PARAM, "not support betType");
+            AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET.equals(betType), ErrorCode.ERR_PARAM);
             // 投注子类型只能是正常投注/ex投注
-            AssertUtil.assertTrue(BetSubTypeEnum.NORMAL_BET.equals(betSubType) || BetSubTypeEnum.EX_BET.equals(betSubType), ErrorCode.ERR_PARAM, "not support betSubType");
-            // ex类型，支付金额必须是投注金额的1.5倍
-            if (Objects.equals(BetSubTypeEnum.EX_BET, betSubType)) {
-                double exceptPayAmount = betAmount * 1.5;
-                AssertUtil.assertTrue((long) exceptPayAmount == payAmount, ErrorCode.ERR_PARAM, "ex bet payAmount must be 1.5 times of betAmount");
+            AssertUtil.assertTrue(BetSubTypeEnum.NORMAL_BET.equals(betSubType) || BetSubTypeEnum.EX_BET.equals(betSubType), ErrorCode.ERR_PARAM);
+            if (Objects.equals(BetSubTypeEnum.NORMAL_BET, betSubType)) {
+                AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
+            } else if (Objects.equals(BetSubTypeEnum.EX_BET, betSubType)) {
+                // ex类型，支付金额必须是投注金额的1.5倍
+                long exceptPayAmount = new BigDecimal(String.valueOf(betAmount)).multiply(new BigDecimal("1.5")).longValue();
+                AssertUtil.assertTrue(exceptPayAmount == payAmount, ErrorCode.ERR_PARAM);
             } else {
-                AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM, "normal bet payAmount equal betAmount");
+                throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         }
 
         private void validateStartCartBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用星卡
             if (useStarCard) {
-                AssertUtil.assertNotNull(rewardConfigId, ErrorCode.ERR_PARAM);
-                AssertUtil.assertNotNull(rewardId, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType || BetSubTypeEnum.FREE_SPINS_BUY_BET == betSubType, ErrorCode.ERR_PARAM);
+                if (BetSubTypeEnum.BUY_BET == betSubType) {
+                    AssertUtil.assertNotNull(rewardConfigId, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertNotNull(rewardId, ErrorCode.ERR_PARAM);
+                }
             }
         }
     }

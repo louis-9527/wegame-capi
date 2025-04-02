@@ -10,7 +10,7 @@ import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
 import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import com.wegame.capi.dao.mapper.domain.operation.OperationEventPo;
+import com.wegame.capi.dao.reposity.domain.operation.OperationEventPo;
 
 import java.math.BigDecimal;
 import java.util.Collections;
