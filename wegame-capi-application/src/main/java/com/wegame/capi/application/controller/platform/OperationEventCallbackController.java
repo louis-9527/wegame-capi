@@ -1,14 +1,18 @@
 package com.wegame.capi.application.controller.platform;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.operation.MariaMakilingOperationEventManager;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventEncryptRequest;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventRequest;
 import com.wegame.capi.client.domain.response.PlatformResponse;
 import com.wegame.capi.client.domain.vo.StatusOfEventsResultVo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.dao.mapper.domain.operation.OperationEventQuery;
 import io.swagger.annotations.Api;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 import static com.wegame.capi.biz.converter.operation.StatusOfEventsConverter.doToVoList;
 import static com.wegame.capi.client.domain.response.PlatformResponse.build;
@@ -33,10 +38,15 @@ import static com.wegame.capi.client.domain.response.PlatformResponse.build;
 @Api(value = "干预事件回调模块", tags = {"干预事件回调模块"})
 public class OperationEventCallbackController {
 
-    // todo 支持多游戏
+
+
+    public static final Map<GameTypeEnum, String> OPERATION_EVENT_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
+            .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingOperationEventManager")
+            .build();
+
     @Autowired
-    @Qualifier("mariaMakilingOperationEventManager")
-    MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
+    Map<String, AbstractOperationEventManager> operationEventManagerMap;
+
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
 
@@ -56,13 +66,19 @@ public class OperationEventCallbackController {
         String messageBody = dynamicOperationEncryptionHelper.decryptWithAES256CBC(encryptRequest.getMessage(), keyString, ivString);
         GetStatusOfEventRequest eventRequest = JSON.parseObject(messageBody, GetStatusOfEventRequest.class);
         eventRequest.validate();
-        // todo 支持多种游戏 设置gameId参数
         OperationEventQuery operationEventQuery = OperationEventQuery.builder()
                 .eventIdList(eventRequest.getEventIds())
                 .eventStatus(OperationEventStatusEnum.FINISH.getCode())
                 .effectedStartTime(eventRequest.getStartTime().toInstant().toEpochMilli())
                 .effectedEndTime(eventRequest.getEndTime().toInstant().toEpochMilli())
                 .build();
-        return build(doToVoList(mariaMakilingOperationEventManager.getStatusOfEvents(operationEventQuery)));
+        return build(doToVoList(this.operationEventManager(GameTypeEnum.valueOfId(eventRequest.getGameId())).getStatusOfEvents(operationEventQuery)));
+    }
+
+
+    private AbstractOperationEventManager operationEventManager(GameTypeEnum gameType) {
+        AbstractOperationEventManager eventManager = operationEventManagerMap.get(OPERATION_EVENT_MANAGER_NAME_MAP.get(gameType));
+        AssertUtil.assertNotNull(eventManager, ErrorCode.ERR_INTER);
+        return eventManager;
     }
 }
