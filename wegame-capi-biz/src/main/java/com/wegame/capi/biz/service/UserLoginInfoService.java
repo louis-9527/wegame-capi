@@ -188,6 +188,7 @@ public class UserLoginInfoService {
                 .channelId(userLoginInfoDo.getChannelId())
                 .gameId(userLoginInfoDo.getGameId())
                 .userId(userLoginInfoDo.getUserId())
+                .playerId(userLoginInfoDo.getPlayerId())
                 .build());
         if (Objects.isNull(id)) {
             add(userLoginInfoDo);

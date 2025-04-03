@@ -25,7 +25,7 @@
 //@Component
 //public class SingleWalletServiceAspect {
 //
-//    private final List<String> mockGameList = Lists.newArrayList(GameTypeEnum.MALAKAS.getId());
+//    private final List<String> mockGameList = Lists.newArrayList(GameTypeEnum.MARIA_MAKILING.getId());
 //
 //    @Around("execution(* com.wegame.capi.biz.service.SingleWalletService.authLoginToken(..))")
 //    public Object authLoginTokenAround(ProceedingJoinPoint joinPoint) throws Throwable {
