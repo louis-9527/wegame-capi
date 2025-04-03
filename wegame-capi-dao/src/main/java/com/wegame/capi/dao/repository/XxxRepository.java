@@ -1,4 +1,6 @@
 package com.wegame.capi.dao.repository;
 
-public class XxxRepository {
+import org.springframework.data.mongodb.repository.MongoRepository;
+
+public interface XxxRepository extends MongoRepository<Object, Long> {
 }
