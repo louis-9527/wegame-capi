@@ -146,11 +146,13 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
         // 确定 `TotalMultiple` 参数
         WheelDo<MalakasSymbolDo> malakasSymbolWheel = this.convertWheel(recordDo.getWheel());
         MalakasSymbolDo[][] symbolArr = malakasSymbolWheel.getSymbolArr();
-
+        // 处理空值
         malakasSymbolWheel.setSymbolArr(handleSymbolNullArr(symbolArr));
         RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(
                 RewardHandlerBuilder.build(gameInfo, gamePlay, malakasSymbolWheel, totalMultiple)
         );
+        // 构建时还原
+        malakasSymbolWheel.setSymbolArr(symbolArr);
         return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, malakasSymbolWheel, rewardResult);
 
 
