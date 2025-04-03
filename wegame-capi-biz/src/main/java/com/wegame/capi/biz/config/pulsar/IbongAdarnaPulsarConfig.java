@@ -35,6 +35,7 @@ public class IbongAdarnaPulsarConfig {
     public PulsarClient ibongadarnaPulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(ibongAdarnaUrl)
+                .keepAliveInterval(30, TimeUnit.SECONDS)
                 .build();
     }
 
@@ -54,6 +55,7 @@ public class IbongAdarnaPulsarConfig {
                 .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
+                .autoUpdatePartitionsInterval(60, TimeUnit.SECONDS)
                 .create();
     }
 

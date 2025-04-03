@@ -35,6 +35,7 @@ public class MalakasPulsarConfig {
     public PulsarClient malakasPulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(url)
+                .keepAliveInterval(30, TimeUnit.SECONDS)
                 .build();
     }
 
@@ -54,6 +55,7 @@ public class MalakasPulsarConfig {
                 .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
+                .autoUpdatePartitionsInterval(60, TimeUnit.SECONDS)
                 .create();
     }
 
