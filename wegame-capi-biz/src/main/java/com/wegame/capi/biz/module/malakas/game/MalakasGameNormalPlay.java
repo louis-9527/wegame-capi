@@ -29,7 +29,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +53,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
     private static final int MAX_SCATTER_NUMBER_IN_WHEEL = 6;
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
-    private static final GameInfoDo gameInfo = MALAKAS_GAME_INFO;
+    private static final GameInfoDo GAME_INFO = MALAKAS_GAME_INFO;
 
     @Autowired
     MalakasConfig malakasConfig;
@@ -71,17 +70,17 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         switch (gamePlay.getBetType()) {
             // 正常投注
             case NORMAL_BET:
-                wheel = generateNormalWheel(gameInfo, getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false), false);
+                wheel = generateNormalWheel(getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false), false);
                 break;
             // 购买投注
             case BUY_BET:
-                wheel = generateRewardFreeWheel(gameInfo, getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false), false);
+                wheel = generateRewardFreeWheel(getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false), false);
                 break;
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
         // 判奖-根据游戏滚轮和中奖线算法判断
-        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, BigDecimal.ONE));
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, BigDecimal.ONE));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
         MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
@@ -108,10 +107,9 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
                                         LinkedList<FreeWheelHandleDo> freeWheelList) {
         if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
             WheelDo<MalakasSymbolDo> wheel = generateNormalWheelFromPreWheel(
-                    gameInfo,
                     getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false),
                     preGameRecord);
-            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
+            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
             long gameRecordId = generateGameRecordId();
             MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
             ret.add(gameRecord);
@@ -140,10 +138,10 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
             FreeWheelHandleDo freeWheel = freeWheelList.removeFirst();
             MalakasGameRecordDo parentGameRecord = ret.stream().filter(item -> Objects.equals(freeWheel.getParentGameRecordId(), item.getId())).findFirst().orElse(null);
             AssertUtil.assertNotNull(parentGameRecord, ErrorCode.ERR_INTER);
-            WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(gameInfo, getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), true), true);
+            WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), true), true);
             wheel.setFreeFlag(true);
             // 判奖-根据游戏滚轮和中奖线算法判断
-            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, totalMultipleAmount));
+            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, totalMultipleAmount));
             AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
             // 组装-游戏记录
             long gameRecordId = generateGameRecordId();
@@ -162,8 +160,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         }
     }
 
-    private WheelDo<MalakasSymbolDo> generateNormalWheelFromPreWheel(GameInfoDo gameInfo,
-                                                                     MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
+    private WheelDo<MalakasSymbolDo> generateNormalWheelFromPreWheel(MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
                                                                      MalakasGameRecordDo preGameRecord) {
         WheelDo<MalakasSymbolDo> preWheel = preGameRecord.getWheel();
         RewardResultDo<MalakasSymbolDo> preRewardResult = preGameRecord.getRewardResult();
@@ -172,10 +169,10 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         // 消除：中奖元素
         clearRewardSymbol(symbolArr, preRewardResult);
         // 重建：元素数组（非空元素按列下落处理：第1-6Reel非空元素向下移动，第7Reel非空元素向左移动）
-        rebuildSymbolArr(symbolArr, gameInfo);
+        rebuildSymbolArr(symbolArr, GAME_INFO);
         // 生产：缺失元素(填补剩余元素)
         int scatterNumberInWheel = countIndexSymbol(symbolArr, SymbolEnum.Scatter);
-        return generateCommonNormalWheel(gameInfo,
+        return generateCommonNormalWheel(GAME_INFO,
                 symbolArr,
                 scatterNumberInWheel,
                 playProbabilisticConfig,
@@ -186,17 +183,15 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
     /**
      * 生成正常滚轮：生成逻辑无任何限制
      *
-     * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<MalakasSymbolDo> generateNormalWheel(GameInfoDo gameInfo,
-                                                         MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
+    private WheelDo<MalakasSymbolDo> generateNormalWheel(MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
                                                          boolean freeWheelFlag) {
-        MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+        MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[GAME_INFO.getRow()][GAME_INFO.getColumn()];
         // 第一行（第一列 && 最后一列）： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
-        symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
-        return generateCommonNormalWheel(gameInfo,
+        symbolArr[ONE_ROW_INDEX][GAME_INFO.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
+        return generateCommonNormalWheel(GAME_INFO,
                 symbolArr,
                 0,
                 playProbabilisticConfig,
@@ -206,18 +201,15 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
 
     /**
      * 生成中奖免费轮滚轮: 需要满足4-6个Scatter
-     *
-     * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<MalakasSymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo,
-                                                             MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
+    private WheelDo<MalakasSymbolDo> generateRewardFreeWheel(MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig,
                                                              boolean freeWheelFlag) {
-        MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+        MalakasSymbolDo[][] symbolArr = new MalakasSymbolDo[GAME_INFO.getRow()][GAME_INFO.getColumn()];
         // 第一行（第一列 && 最后一列）： 不生成元素,使用占位元素
         symbolArr[ONE_ROW_INDEX][ONE_COLUM_INDEX] = MALAKAS_SYMBOL_PLACEHOLDER;
-        symbolArr[ONE_ROW_INDEX][gameInfo.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
-        WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(gameInfo, symbolArr, 0, playProbabilisticConfig, WHEEL_DEFAULT_INDEX, freeWheelFlag);
+        symbolArr[ONE_ROW_INDEX][GAME_INFO.getColumn() - 1] = MALAKAS_SYMBOL_PLACEHOLDER;
+        WheelDo<MalakasSymbolDo> wheel = generateCommonNormalWheel(GAME_INFO, symbolArr, 0, playProbabilisticConfig, WHEEL_DEFAULT_INDEX, freeWheelFlag);
         int scatterSymbolCount = countIndexSymbol(wheel.getSymbolArr(), SymbolEnum.Scatter);
         int randomScatterSymbolCount = randomService.randomInt(4, 6);
         int needAddCount = randomScatterSymbolCount - scatterSymbolCount;
@@ -227,8 +219,8 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
 
         // 提取有效坐标集合
         List<IndexDo> indexList = new ArrayList<>();
-        for (int row = 1; row < gameInfo.getRow(); row++) {
-            for (int column = 0; column < gameInfo.getColumn(); column++) {
+        for (int row = 1; row < GAME_INFO.getRow(); row++) {
+            for (int column = 0; column < GAME_INFO.getColumn(); column++) {
                 MalakasSymbolDo symbol = wheel.getSymbolArr()[row][column];
                 if (Objects.nonNull(symbol)) {
                     if (!symbol.isPlaceholderSymbol() && !symbol.isScatterSymbol()) {
