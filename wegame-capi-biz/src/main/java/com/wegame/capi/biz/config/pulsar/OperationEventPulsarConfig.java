@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * 干预事件Pulsar配置
  */
@@ -29,6 +31,7 @@ public class OperationEventPulsarConfig {
     public PulsarClient operationEventPulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(dynamicOperationTopicUrl)
+                .keepAliveInterval(30, TimeUnit.SECONDS)
                 .build();
     }
 
