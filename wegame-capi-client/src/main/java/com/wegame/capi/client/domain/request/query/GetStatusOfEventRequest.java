@@ -26,9 +26,9 @@ public class GetStatusOfEventRequest implements Validate,Serializable {
     @ApiModelProperty(value = "游戏ID", required = true)
     private String gameId;
     @ApiModelProperty(value = "开始时间", required = true)
-    private Date startTime;
+    private String startTime;
     @ApiModelProperty(value = "结束时间", required = true)
-    private Date endTime;
+    private String endTime;
 
     @Override
     public void validateParam() {

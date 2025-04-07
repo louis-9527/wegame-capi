@@ -29,7 +29,7 @@ public class StatusOfEventsConverter {
         StatusOfEventsResultVo vo = new StatusOfEventsResultVo();
         vo.setEventId(statusOfEventsDo.getEventId());
         vo.setExecuteBouns(Objects.isNull(statusOfEventsDo.getExecuteBouns()) ? null : AmountUtil.toBigDecimal(statusOfEventsDo.getExecuteBouns()));
-        vo.setExecuteTime(Objects.isNull(statusOfEventsDo.getExecuteTime()) ? null : DateUtil.toUCTByMilli(statusOfEventsDo.getExecuteTime()));
+        vo.setExecuteTime(Objects.isNull(statusOfEventsDo.getExecuteTime()) ? null : DateUtil.toUTC(statusOfEventsDo.getExecuteTime()));
         vo.setBetNos(statusOfEventsDo.getBetNos());
         vo.setBetRecords(StatusOfEventsBetRecordConverter.doToVoList(statusOfEventsDo.getBetRecords()));
         vo.setEventStatus(statusOfEventsDo.getEventStatus());

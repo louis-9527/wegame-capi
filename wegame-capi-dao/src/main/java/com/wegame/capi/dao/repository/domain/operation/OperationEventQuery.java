@@ -23,10 +23,6 @@ public class OperationEventQuery implements Serializable {
      */
     private Long id;
     /**
-     * 干预事件ID
-     */
-    private String eventId;
-    /**
      * 事件干预类型
      */
     private Integer eventKind;

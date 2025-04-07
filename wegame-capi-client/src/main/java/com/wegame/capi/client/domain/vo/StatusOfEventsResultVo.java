@@ -30,5 +30,5 @@ public class StatusOfEventsResultVo implements Serializable {
     @ApiModelProperty("干预事件订单信息")
     private List<StatusOfEventsBetRecordVo> betRecords;
     @ApiModelProperty("执行时间")
-    private Date executeTime;
+    private String executeTime;
 }
