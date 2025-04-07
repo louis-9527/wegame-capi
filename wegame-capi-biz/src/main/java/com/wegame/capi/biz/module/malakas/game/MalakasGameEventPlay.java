@@ -83,7 +83,7 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
                 continue;
             }
             // 处理免费轮
-            processFreeRounds(ret, gamePlay, recordDo, firstGameRecord, groupedByBatchId);
+            processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId);
         }
         return ret;
     }
