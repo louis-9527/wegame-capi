@@ -25,9 +25,10 @@ public class UserLoginInfoConverter {
             return null;
         }
         UserLoginInfoDo userLoginInfoDo = new UserLoginInfoDo();
-        userLoginInfoDo.setUserId(StringUtils.isNotEmpty(vo.getUserId()) ? Long.valueOf(vo.getUserId()) : null);
         userLoginInfoDo.setChannelId(StringUtils.isNotEmpty(vo.getChannelId()) ? Long.valueOf(vo.getChannelId()) : null);
         userLoginInfoDo.setGameId(vo.getGameId());
+        userLoginInfoDo.setUserId(StringUtils.isNotEmpty(vo.getUserId()) ? Long.valueOf(vo.getUserId()) : null);
+        userLoginInfoDo.setPlayerId(StringUtils.isNotEmpty(vo.getPlayerId()) ? vo.getPlayerId() : null);
         userLoginInfoDo.setRegisterTime(Objects.nonNull(vo.getRegisterTime()) ? new Date(vo.getRegisterTime()) : null);
         userLoginInfoDo.setLoginTime(Objects.nonNull(vo.getLoginTime()) ? new Date(vo.getLoginTime()) : null);
         userLoginInfoDo.setCreator(vo.getCreator());
@@ -43,9 +44,10 @@ public class UserLoginInfoConverter {
         }
         UserLoginInfoDo userLoginInfoDo = new UserLoginInfoDo();
         userLoginInfoDo.setId(po.getId());
-        userLoginInfoDo.setUserId(po.getUserId());
         userLoginInfoDo.setChannelId(po.getChannelId());
         userLoginInfoDo.setGameId(po.getGameId());
+        userLoginInfoDo.setUserId(po.getUserId());
+        userLoginInfoDo.setPlayerId(po.getPlayerId());
         userLoginInfoDo.setRegisterTime(po.getRegisterTime());
         userLoginInfoDo.setLoginTime(po.getLoginTime());
         userLoginInfoDo.setCreator(po.getCreator());
@@ -62,9 +64,10 @@ public class UserLoginInfoConverter {
         Operator operator = OperatorUtil.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserLoginInfoPo po = new UserLoginInfoPo();
-        po.setUserId(userLoginInfoDo.getUserId());
         po.setChannelId(userLoginInfoDo.getChannelId());
         po.setGameId(userLoginInfoDo.getGameId());
+        po.setUserId(userLoginInfoDo.getUserId());
+        po.setPlayerId(userLoginInfoDo.getPlayerId());
         po.setRegisterTime(userLoginInfoDo.getRegisterTime());
         po.setLoginTime(userLoginInfoDo.getLoginTime());
         if (OptEnum.ADD.equals(optEnum)) {
@@ -86,9 +89,10 @@ public class UserLoginInfoConverter {
         }
         UserLoginInfoVo vo = new UserLoginInfoVo();
         vo.setId(Objects.nonNull(userLoginInfoDo.getId()) ? String.valueOf(userLoginInfoDo.getId()) : null);
-        vo.setUserId(Objects.nonNull(userLoginInfoDo.getUserId()) ? String.valueOf(userLoginInfoDo.getUserId()) : null);
         vo.setChannelId(Objects.nonNull(userLoginInfoDo.getChannelId()) ? String.valueOf(userLoginInfoDo.getChannelId()) : null);
         vo.setGameId(userLoginInfoDo.getGameId());
+        vo.setUserId(Objects.nonNull(userLoginInfoDo.getUserId()) ? String.valueOf(userLoginInfoDo.getUserId()) : null);
+        vo.setPlayerId(Objects.nonNull(userLoginInfoDo.getPlayerId()) ? String.valueOf(userLoginInfoDo.getPlayerId()) : null);
         vo.setRegisterTime(Objects.nonNull(userLoginInfoDo.getRegisterTime()) ? userLoginInfoDo.getRegisterTime().getTime() : null);
         vo.setLoginTime(Objects.nonNull(userLoginInfoDo.getLoginTime()) ? userLoginInfoDo.getLoginTime().getTime() : null);
         vo.setCreator(userLoginInfoDo.getCreator());
