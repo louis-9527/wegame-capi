@@ -5,8 +5,8 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.OperatorUtil;
-import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
 import com.wegame.capi.client.domain.vo.UserLoginInfoVo;
+import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoPo;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 /**
  * UserLoginInfoConverter
- *
  * @author generate
  */
 public class UserLoginInfoConverter {
@@ -28,7 +27,7 @@ public class UserLoginInfoConverter {
         userLoginInfoDo.setChannelId(StringUtils.isNotEmpty(vo.getChannelId()) ? Long.valueOf(vo.getChannelId()) : null);
         userLoginInfoDo.setGameId(vo.getGameId());
         userLoginInfoDo.setUserId(StringUtils.isNotEmpty(vo.getUserId()) ? Long.valueOf(vo.getUserId()) : null);
-        userLoginInfoDo.setPlayerId(StringUtils.isNotEmpty(vo.getPlayerId()) ? vo.getPlayerId() : null);
+        userLoginInfoDo.setPlayerId(vo.getPlayerId());
         userLoginInfoDo.setRegisterTime(Objects.nonNull(vo.getRegisterTime()) ? new Date(vo.getRegisterTime()) : null);
         userLoginInfoDo.setLoginTime(Objects.nonNull(vo.getLoginTime()) ? new Date(vo.getLoginTime()) : null);
         userLoginInfoDo.setCreator(vo.getCreator());
@@ -92,7 +91,7 @@ public class UserLoginInfoConverter {
         vo.setChannelId(Objects.nonNull(userLoginInfoDo.getChannelId()) ? String.valueOf(userLoginInfoDo.getChannelId()) : null);
         vo.setGameId(userLoginInfoDo.getGameId());
         vo.setUserId(Objects.nonNull(userLoginInfoDo.getUserId()) ? String.valueOf(userLoginInfoDo.getUserId()) : null);
-        vo.setPlayerId(Objects.nonNull(userLoginInfoDo.getPlayerId()) ? String.valueOf(userLoginInfoDo.getPlayerId()) : null);
+        vo.setPlayerId(userLoginInfoDo.getPlayerId());
         vo.setRegisterTime(Objects.nonNull(userLoginInfoDo.getRegisterTime()) ? userLoginInfoDo.getRegisterTime().getTime() : null);
         vo.setLoginTime(Objects.nonNull(userLoginInfoDo.getLoginTime()) ? userLoginInfoDo.getLoginTime().getTime() : null);
         vo.setCreator(userLoginInfoDo.getCreator());
@@ -113,11 +112,11 @@ public class UserLoginInfoConverter {
 
     public static List<UserLoginInfoDo> poToDoList(List<UserLoginInfoPo> poList) {
         return Optional.ofNullable(poList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(UserLoginInfoConverter::poToDo)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            .orElse(Collections.emptyList())
+            .stream()
+            .map(UserLoginInfoConverter::poToDo)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 
     public static List<UserLoginInfoPo> doToPoList(List<UserLoginInfoDo> doList, OptEnum optEnum) {
