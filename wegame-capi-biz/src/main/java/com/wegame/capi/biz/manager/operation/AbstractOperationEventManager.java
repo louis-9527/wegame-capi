@@ -244,7 +244,7 @@ public abstract class AbstractOperationEventManager {
             // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
             if (eventAmount < 0.1 * betAmount) {
                 // 上报
-                asyncUpdateFinishEvent(eventDo.getId(), OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR);
+                asyncUpdateFinishEvent(eventDo.getId(), OperationEventSubStatusEnum.FINISH_NORMAL);
                 return null;
             }
         }
