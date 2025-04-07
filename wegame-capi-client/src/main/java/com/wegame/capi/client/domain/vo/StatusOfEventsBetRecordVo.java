@@ -21,9 +21,9 @@ public class StatusOfEventsBetRecordVo {
     @ApiModelProperty(value = "订单号", required = true)
     private String betNo;
     @ApiModelProperty(value = "下注时间", required = true)
-    private Date orderTime;
+    private String orderTime;
     @ApiModelProperty(value = "派奖时间", required = true)
-    private Date settlementTime;
+    private String settlementTime;
     @ApiModelProperty(value = "投注额度", required = true)
     private BigDecimal betAmount;
     @ApiModelProperty(value = "派彩额度", required = true)
