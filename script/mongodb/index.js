@@ -16,3 +16,6 @@ db.createCollection("mariamakiling_game_record");
 // 索引game_record-c端查询需要-新
 db.mariamakiling_game_record.createIndex({betRecordId: 1, batchId: 1})
 
+db.getCollection("mariamakiling_star_card_record").drop();
+db.createCollection("mariamakiling_star_card_record");
+db.mariamakiling_star_card_record.createIndex({ createTime: -1 });
