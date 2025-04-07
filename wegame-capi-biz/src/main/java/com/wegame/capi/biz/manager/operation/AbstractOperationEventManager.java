@@ -173,7 +173,7 @@ public abstract class AbstractOperationEventManager {
                 if (i == 0) {
                     executeTime = eventDetail.getCreateTime();
                 }
-                betNos.add(String.valueOf(eventDetail.getBetRecordId()));
+                betNos.add(eventDetail.getBetId());
                 totalAmount += eventDetail.getEventAmount();
                 StatusOfEventsRecordDo eventsRecord = StatusOfEventsRecordDo.builder()
                         .betNo(eventDetail.getBetId())

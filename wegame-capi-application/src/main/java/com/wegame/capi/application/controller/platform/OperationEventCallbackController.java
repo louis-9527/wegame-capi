@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.client.domain.request.query.GetStatusOfEventEncryptRequest;
@@ -36,7 +37,6 @@ import static com.wegame.capi.client.domain.response.PlatformResponse.build;
 public class OperationEventCallbackController {
 
 
-
     public static final Map<GameTypeEnum, String> OPERATION_EVENT_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingOperationEventManager")
             .put(GameTypeEnum.MALAKAS, "malakasOperationEventManager")
@@ -67,8 +67,8 @@ public class OperationEventCallbackController {
         OperationEventQuery operationEventQuery = OperationEventQuery.builder()
                 .eventIdList(eventRequest.getEventIds())
                 .eventStatus(OperationEventStatusEnum.FINISH.getCode())
-                .effectedStartTime(eventRequest.getStartTime().toInstant().toEpochMilli())
-                .effectedEndTime(eventRequest.getEndTime().toInstant().toEpochMilli())
+                .effectedStartTime(eventRequest.getStartTime() == null ? null : DateUtil.utcStringToEpochMilli(eventRequest.getStartTime()))
+                .effectedEndTime(eventRequest.getEndTime() == null ? null : DateUtil.utcStringToEpochMilli(eventRequest.getEndTime()))
                 .build();
         return build(doToVoList(this.operationEventManager(GameTypeEnum.valueOfId(eventRequest.getGameId())).getStatusOfEvents(operationEventQuery)));
     }
