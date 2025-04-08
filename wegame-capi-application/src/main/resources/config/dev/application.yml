@@ -167,10 +167,15 @@ pulsar:
 dynamic:
   operation:
     switch: true
-    pulsar_url: pulsar://pulsar-sw-main-external.client88.me:6650
+    pulsar_url: pulsar+ssl://pc-c2f76b54.aws-apse1-qat-snsoft-public.o-sn9dy.aws-apse1-qat-snsoft.aws.snio.cloud:6651
     pulsar_topic: dos_game_slot_event
     pulsar_group:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
+    pulsar:
+      auth:
+        issuer_url: https://auth.streamnative.cloud
+        credentials_file_path: /operation_pulsar_privateKey.json
+        audience: urn:sn:pulsar:o-sn9dy:qat
     domain: https://dos-egame.dos88.me
     rsa:
       public_key: |

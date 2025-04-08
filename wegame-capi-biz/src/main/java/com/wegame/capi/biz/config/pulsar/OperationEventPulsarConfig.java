@@ -3,11 +3,14 @@ package com.wegame.capi.biz.config.pulsar;
 import com.wegame.capi.biz.listener.OperationEventPulsarListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.impl.auth.oauth2.AuthenticationFactoryOAuth2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,13 +30,30 @@ public class OperationEventPulsarConfig {
     @Value("${dynamic.operation.pulsar_group.maria_makiling}")
     String dynamicOperationGroupMariaMakiling;
 
-    @Bean(name = operationEventPulsarClient, destroyMethod = "close")
+
+    @Value("${dynamic.operation.pulsar.auth.issuer_url}")
+    String dynamicOperationAuthIssuerUrl;
+
+    @Value("${dynamic.operation.pulsar.auth.credentials_file_path}")
+    String dynamicOperationAuthCredentialsFilePath;
+
+    @Value("${dynamic.operation.pulsar.auth.audience}")
+    String dynamicOperationAuthAudience;
+    @Bean(name =operationEventPulsarClient, destroyMethod = "close")
     public PulsarClient operationEventPulsarClient() throws Exception {
+        Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
+                new URL(dynamicOperationAuthIssuerUrl),
+                Objects.requireNonNull(getClass().getResource(dynamicOperationAuthCredentialsFilePath)),
+                dynamicOperationAuthAudience
+        );
         return PulsarClient.builder()
                 .serviceUrl(dynamicOperationTopicUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
+                .authentication(authentication)
                 .build();
     }
+
+
 
     @Bean(name = mariaMakilingOperationEventConsumer, destroyMethod = "close")
     public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
