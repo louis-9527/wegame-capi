@@ -143,6 +143,11 @@ dynamic:
     pulsar_topic: dos_game_slot_event
     pulsar_group:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
+    pulsar:
+      auth:
+        issuer_url: https://auth.streamnative.cloud
+        credentials_file_path: /operation_pulsar_privateKey.json
+        audience: urn:sn:pulsar:o-sn9dy:qat
     domain: https://dos-egame.dos88.me
     rsa:
       public_key: |
