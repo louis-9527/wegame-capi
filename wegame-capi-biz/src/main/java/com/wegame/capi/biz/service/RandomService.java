@@ -12,9 +12,6 @@ import java.util.List;
 @Component
 public class RandomService {
 
-    @Autowired
-    WeGameGoApi weGameGoApi;
-
     /**
      * 生成随机数据[min, max]
      *

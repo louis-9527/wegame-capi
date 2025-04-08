@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.base.bet.strategy.BetStrategy;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +48,13 @@ public abstract class AbstractBetContext {
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_PARAM, "Not Login");
-        return distributeLock.lockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
-                () -> betStrategy.bet(betDo),
-                OPT_BUSY);
+
+        if (BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+            return betStrategy.bet(betDo);
+        } else {
+            return distributeLock.lockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
+                    () -> betStrategy.bet(betDo),
+                    OPT_BUSY);
+        }
     }
 }
