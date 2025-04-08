@@ -213,7 +213,6 @@ public class UserService {
                     .gameId(gameId)
                     .userId(id)
                     .playerId(userPo.getPlayerId())
-                    .registerTime(Objects.isNull(id) ? new Date() : null)
                     .loginTime(new Date())
                     .build());
             return id;
