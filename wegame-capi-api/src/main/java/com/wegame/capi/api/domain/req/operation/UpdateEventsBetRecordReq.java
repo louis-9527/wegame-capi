@@ -22,11 +22,11 @@ public class UpdateEventsBetRecordReq implements Serializable {
     /**
      * 下注事件
      */
-    private Date orderTime;
+    private String orderTime;
     /**
      * 派奖时间
      */
-    private Date settlementTime;
+    private String settlementTime;
     /**
      * 投注额度
      */

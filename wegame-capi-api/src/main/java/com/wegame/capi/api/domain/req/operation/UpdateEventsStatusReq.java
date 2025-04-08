@@ -23,7 +23,7 @@ public class UpdateEventsStatusReq implements Serializable {
     /**
      * 响应消息
      */
-    private Date requestTime;
+    private String requestTime;
     /**
      * 总干预的游戏金额
      */
@@ -31,7 +31,7 @@ public class UpdateEventsStatusReq implements Serializable {
     /**
      * 开始执行时间
      */
-    private Date executeTime;
+    private String executeTime;
     /**
      * 干预事件订单号列表
      */
