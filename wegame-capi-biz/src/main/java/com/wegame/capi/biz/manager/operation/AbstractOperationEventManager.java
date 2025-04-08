@@ -360,9 +360,9 @@ public abstract class AbstractOperationEventManager {
             }
             UpdateEventsStatusReq updateEventsStatusReq = UpdateEventsStatusReq.builder()
                     .eventId(eventDo.getEventId())
-                    .requestTime(DateUtil.toUCTByMilli(new Date().getTime()))
+                    .requestTime(DateUtil.toUTC(new Date()))
                     .executeBouns(AmountUtil.toBigDecimal(totalAmount))
-                    .executeTime(startTime == null ? DateUtil.toUCTByMilli(DateUtil.getCurrentMilli()) : DateUtil.toUCTByMilli(startTime))
+                    .executeTime(startTime == null ? DateUtil.toUTC(DateUtil.getCurrentMilli()) : DateUtil.toUTC(startTime))
                     .betNos(betNos)
                     .betRecords(betRecords)
                     .eventStatus(eventDo.getEventSubStatus().getCode())
