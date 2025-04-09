@@ -42,6 +42,6 @@ public class Constants {
 
     // property
     public static final String TRUE_VAL = "true";
-    public static final String MARIA_MAKILING_PROP = "game.enable.maria_makiling";
+    public static final String MARIA_MAKILING_PROP = "game.enable.MariaMakiling";
 
 }

@@ -27,4 +27,4 @@
 #        file-extension: yaml
 game:
   enable:
-    maria_makiling: true
+    MariaMakiling: true

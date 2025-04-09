@@ -6,6 +6,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.MessageId;
@@ -29,11 +30,13 @@ public class PulsarProducer implements InitializingBean {
 
     private static final String PRODUCER = "Producer";
     @Autowired
+    GameProperty gameProperty;
+    @Autowired
     Map<String, Producer<byte[]>> producerCache;
 
     @Override
     public void afterPropertiesSet() {
-        Arrays.stream(GameTypeEnum.values()).forEach(gameType -> {
+        gameProperty.enabledGameTypes().forEach(gameType -> {
             Producer<byte[]> producer = producerCache.get(StringUtils.lowerCase(gameType.getName()) + PRODUCER);
             AssertUtil.assertNotNull(producer, ErrorCode.ERR_INTER);
         });
