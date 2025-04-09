@@ -3,7 +3,9 @@ package com.wegame.capi.application.controller;
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
+import com.wegame.capi.biz.listener.MalakasOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,8 @@ public class TestController {
 
     @Autowired
     MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
+    @Autowired
+    MalakasOperationEventPulsarListener malakasOperationEventPulsarListener;
 
 
     @ApiOperation(value = "eventMsg", httpMethod = "POST")
@@ -40,7 +44,12 @@ public class TestController {
 //                "    \"timesOrSessionDuration\": 10\n" +
 //                "}";
         OperationEventMessageDo msgDo = JSON.parseObject(event, OperationEventMessageDo.class);
-        mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
+        if(GameTypeEnum.MARIA_MAKILING == GameTypeEnum.valueOfId(msgDo.getGameId())) {
+            mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
+        }
+        if(GameTypeEnum.MALAKAS == GameTypeEnum.valueOfId(msgDo.getGameId())) {
+            malakasOperationEventPulsarListener.handleMessage(msgDo);
+        }
         return CommonResponse.build(true);
     }
 
