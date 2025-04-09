@@ -24,7 +24,7 @@ import static com.wegame.capi.biz.converter.operation.OperationEventConvert.mess
  */
 @Slf4j
 @Service
-public class OperationEventPulsarListener implements MessageListener {
+public abstract class AbsOperationEventPulsarListener implements MessageListener<byte[]> {
 
     @Value("${api.game.cp.channelId}")
     String cpChannelId;
@@ -34,7 +34,7 @@ public class OperationEventPulsarListener implements MessageListener {
     SnowflakeIdGenerator snowflakeIdGenerator;
 
     @Override
-    public void received(Consumer consumer, Message msg) {
+    public void received(Consumer<byte[]> consumer, Message<byte[]> msg) {
         String msgStr = new String(msg.getData());
         log.info("received operation event msg: {}", msgStr);
         OperationEventMessageDo messageDo = JSON.parseObject(msgStr, OperationEventMessageDo.class);
@@ -54,7 +54,7 @@ public class OperationEventPulsarListener implements MessageListener {
                 return true;
             }
             GameTypeEnum gameType = GameTypeEnum.valueOfId(messageDo.getGameId());
-            if (Objects.isNull(gameType)) {
+            if (Objects.isNull(gameType) || gameType != this.gameType()) {
                 log.warn("handleMessage error, un support gameType: {}", messageDo);
                 return true;
             }
@@ -75,4 +75,6 @@ public class OperationEventPulsarListener implements MessageListener {
             return false;
         }
     }
+
+    public abstract GameTypeEnum gameType();
 }
