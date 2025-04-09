@@ -28,3 +28,4 @@
 game:
   enable:
     maria_makiling: true
+    malakas: true
