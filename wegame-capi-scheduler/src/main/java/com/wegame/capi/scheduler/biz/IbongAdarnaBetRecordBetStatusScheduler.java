@@ -4,8 +4,12 @@ import com.wegame.base.exception.LockException;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import static com.wegame.capi.common.Constants.IBONG_ADARNA_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 
 /**
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
 public class IbongAdarnaBetRecordBetStatusScheduler
         extends AbstractBetRecordBetStatusScheduler {
 

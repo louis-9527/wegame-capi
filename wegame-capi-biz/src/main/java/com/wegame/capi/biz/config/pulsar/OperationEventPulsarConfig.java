@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.config.pulsar;
 
+import com.wegame.capi.biz.listener.IbongOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
@@ -25,6 +26,7 @@ public class OperationEventPulsarConfig {
     private static final String operationEventPulsarClient = "operationEventPulsarClient";
     private static final String mariaMakilingOperationEventConsumer = "mariaMakilingOperationEventConsumer";
     private static final String malakasOperationEventConsumer = "malakasOperationEventConsumer";
+    private static final String ibongOperationEventConsumer = "ibongOperationEventConsumer";
     // todo fix
     @Value("${dynamic.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
@@ -34,6 +36,8 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupMariaMakiling;
     @Value("${dynamic.operation.pulsar_group.malakas}")
     String dynamicOperationGroupMalakas;
+    @Value("${dynamic.operation.pulsar_group.ibong}")
+    String dynamicOperationGroupIbong;
     @Value("${dynamic.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.operation.pulsar.auth.credentials_file_path}")
@@ -79,6 +83,18 @@ public class OperationEventPulsarConfig {
                 .subscriptionName(dynamicOperationGroupMalakas)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(mariamakilingOperationEventPulsarListener)
+                .subscribe();
+    }
+    @Bean(name = ibongOperationEventConsumer, destroyMethod = "close")
+    @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
+    public Consumer<byte[]> IbongOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                          @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
+        String deadLetterTopic = dynamicOperationTopic;
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(deadLetterTopic)
+                .subscriptionName(dynamicOperationGroupIbong)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(ibongOperationEventPulsarListener)
                 .subscribe();
     }
 }

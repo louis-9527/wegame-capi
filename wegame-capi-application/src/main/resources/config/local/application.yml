@@ -180,6 +180,7 @@ dynamic:
     pulsar_group:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
       malakas: ${api.game.cp.channelId}_Malakas
+      ibong: ${api.game.cp.channelId}_Ibong
     pulsar:
      auth:
        issuer_url: https://auth.streamnative.cloud
