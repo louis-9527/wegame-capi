@@ -18,7 +18,7 @@ public class MongodbTemplateConfig {
     public static final String PRIMARY_MONGOTEMPLATE = "PrimaryMongoTemplate";
 
     private static final String mariamakilingMongoTemplate = "mariamakilingMongoTemplate";
-    private static final String mariamakilingPrimaryMongoTemplate= "mariamakilingPrimaryMongoTemplate";
+    private static final String mariamakilingPrimaryMongoTemplate = "mariamakilingPrimaryMongoTemplate";
 
     @Value("${spring.data.mongodb.dynamic.maria_makiling_mdb.uri}")
     String mariaMakilingMdbUri;
