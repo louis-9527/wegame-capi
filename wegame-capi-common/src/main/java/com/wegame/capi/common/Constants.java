@@ -50,7 +50,7 @@ public class Constants {
     // property
     public static final String TRUE_VAL = "true";
     public static final String MARIA_MAKILING_PROP = "game.enable.MariaMakiling";
-    public static final String MALAKAS_PROP = "game.enable.malakas";
-    public static final String IBONG_ADARNA_PROP = "game.enable.ibong_adarna";
+    public static final String MALAKAS_PROP = "game.enable.Malakas";
+    public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";
 
 }
