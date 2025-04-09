@@ -35,11 +35,12 @@ public enum SymbolSizeEnum {
      */
     private final String name;
     /**
-     * 元素跨行
+     * 跨行数量
      */
     private final int rowSpan;
-
-
+    /**
+     * 跨列数量
+     */
     private final int columnSpan;
 
     public static SymbolSizeEnum valueOfCode(String code) {
