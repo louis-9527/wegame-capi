@@ -10,10 +10,15 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+
+import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
 public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMakilingGameRecordDo> {
     @Autowired
     MariaMakilingBetRecordManager mariaMakilingBetRecordManager;

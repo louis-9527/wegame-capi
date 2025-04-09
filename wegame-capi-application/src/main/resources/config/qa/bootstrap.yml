@@ -25,3 +25,6 @@
 #        group: ${spring.profiles.active}
 #        namespace: e0ab850a-99b5-477b-af37-5c2a2aea72c9
 #        file-extension: yaml
+game:
+  enable:
+    maria_makiling: true
