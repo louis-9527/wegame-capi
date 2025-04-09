@@ -2,6 +2,8 @@ package com.wegame.capi.common.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
@@ -10,14 +12,16 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author apple
  */
+@Getter
 @ToString
+@AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum SymbolSizeEnum {
 
-    S("S", "小", 1),
-    M("M", "中", 2),
-    L("L", "大", 3),
-    XL("XL", "超大", 4),
+    S("S", "小", 1, 1),
+    M("M", "中", 2, 1),
+    L("L", "大", 3, 1),
+    XL("XL", "超大", 4, 1),
 
 
     ;
@@ -31,23 +35,13 @@ public enum SymbolSizeEnum {
      */
     private final String name;
     /**
-     * 元素跨行
+     * 跨行数量
      */
     private final int rowSpan;
-
-
     /**
-     * 私有构造方法.
-     *
-     * @param code      code
-     * @param name      名称
-     * @param rowSpan 跨行
+     * 跨列数量
      */
-    SymbolSizeEnum(String code, String name, int rowSpan) {
-        this.code = code;
-        this.name = name;
-        this.rowSpan = rowSpan;
-    }
+    private final int columnSpan;
 
     public static SymbolSizeEnum valueOfCode(String code) {
         for (SymbolSizeEnum item : SymbolSizeEnum.values()) {
@@ -56,18 +50,6 @@ public enum SymbolSizeEnum {
             }
         }
         return null;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getRowSpan() {
-        return rowSpan;
     }
 
     public static int getSymbolClearTimes(SymbolSizeEnum symbolSize) {

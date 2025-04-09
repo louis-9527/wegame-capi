@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,12 +13,15 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static com.wegame.base.PulsarConstants.PULSAR_TOPIC_FORMAT;
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * @author apple
  */
 @Slf4j
 @Configuration
+@ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
 public class MalakasPulsarConfig {
 
     @Value("${pulsar.dynamic.malakas.url}")

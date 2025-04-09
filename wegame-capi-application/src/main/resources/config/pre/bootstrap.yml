@@ -28,3 +28,5 @@
 game:
   enable:
     maria_makiling: true
+    malakas: true
+    ibong_adarna: true
