@@ -1,7 +1,8 @@
 package com.wegame.capi.test.biz.listener;
 
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
-import com.wegame.capi.biz.listener.OperationEventPulsarListener;
+import com.wegame.capi.biz.listener.AbsOperationEventPulsarListener;
+import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.OperationEventKindEnum;
 import com.wegame.capi.test.BaseTest;
@@ -14,12 +15,12 @@ import java.math.BigDecimal;
 public class OperationEventPulsarListenerTest extends BaseTest {
 
     @Autowired
-    OperationEventPulsarListener operationEventPulsarListener;
+    MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
 
     @Test
     public void test_handleMessage() {
         for (int i = 0; i < 2; i++) {
-            boolean ret = operationEventPulsarListener.handleMessage(buildMessageDo());
+            boolean ret = mariamakilingOperationEventPulsarListener.handleMessage(buildMessageDo());
             Assert.assertTrue(ret);
         }
     }

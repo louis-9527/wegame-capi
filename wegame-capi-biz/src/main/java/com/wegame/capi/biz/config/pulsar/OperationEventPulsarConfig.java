@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.config.pulsar;
 
-import com.wegame.capi.biz.listener.OperationEventPulsarListener;
+import com.wegame.capi.biz.listener.AbsOperationEventPulsarListener;
+import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
 import org.apache.pulsar.client.impl.auth.oauth2.AuthenticationFactoryOAuth2;
@@ -57,13 +58,13 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = mariaMakilingOperationEventConsumer, destroyMethod = "close")
     public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
-                                                                  @Autowired OperationEventPulsarListener operationEventPulsarListener) throws PulsarClientException {
+                                                                  @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
         String deadLetterTopic = dynamicOperationTopic;
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
                 .subscriptionName(dynamicOperationGroupMariaMakiling)
                 .subscriptionType(SubscriptionType.Shared)
-                .messageListener(operationEventPulsarListener)
+                .messageListener(mariamakilingOperationEventPulsarListener)
                 .subscribe();
     }
 }
