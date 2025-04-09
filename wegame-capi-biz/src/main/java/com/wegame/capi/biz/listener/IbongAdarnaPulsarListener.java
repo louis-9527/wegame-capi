@@ -10,10 +10,14 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+
+import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
 public class IbongAdarnaPulsarListener extends AbstractPulsarListener<IbongAdarnaGameRecordDo> {
     @Autowired
     IbongAdarnaBetRecordManager ibongAdarnaBetRecordManager;

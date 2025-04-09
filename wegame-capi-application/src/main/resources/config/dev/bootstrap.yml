@@ -25,3 +25,8 @@
 #        group: ${spring.profiles.active}
 #        namespace: cd274f91-247f-4b5d-8bd1-0a8c7fd386ec
 #        file-extension: yaml
+game:
+  enable:
+    maria_makiling: true
+    malakas: true
+    ibong_adarna: true

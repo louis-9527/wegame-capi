@@ -45,4 +45,11 @@ public class Constants {
     public static final String OPERATION_EVENT_CONFIG_INCREMENT_CACHE_KEY = "wegame:cuser:operation_config_increment:%s_%s_%s";
 
     public static final String OPT_BUSY = "Too many requests. Please try again later.";
+
+
+    // property
+    public static final String TRUE_VAL = "true";
+    public static final String MARIA_MAKILING_PROP = "game.enable.maria_makiling";
+    public static final String MALAKAS_PROP = "game.enable.malakas";
+    public static final String IBONG_ADARNA_PROP = "game.enable.ibong_adarna";
 }

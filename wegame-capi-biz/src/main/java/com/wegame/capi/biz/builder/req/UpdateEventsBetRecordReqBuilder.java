@@ -12,8 +12,8 @@ public class UpdateEventsBetRecordReqBuilder {
                 .betNo(eventDetailDo.getBetId())
                 .betAmount(AmountUtil.toBigDecimal(eventDetailDo.getBetAmount()))
                 .payoutAmount(AmountUtil.toBigDecimal(eventDetailDo.getPayOutAmount()))
-                .orderTime(DateUtil.toUCTByMilli(eventDetailDo.getBetTime()))
-                .settlementTime(DateUtil.toUCTByMilli(eventDetailDo.getPayOutTime()))
+                .orderTime(DateUtil.toUTC(eventDetailDo.getBetTime()))
+                .settlementTime(DateUtil.toUTC(eventDetailDo.getPayOutTime()))
                 .build();
     }
 }
