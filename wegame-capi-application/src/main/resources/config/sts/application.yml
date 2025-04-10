@@ -80,8 +80,8 @@ spring:
           driver-class-name: com.mysql.jdbc.Driver
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 500
-            min-idle: 500
+            initial-size: 200
+            min-idle: 50
             max-active: 1000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
