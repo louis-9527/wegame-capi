@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.api.base.PromotionBaseApi;
+import com.wegame.capi.api.base.SingleWalletBaseApi;
 import com.wegame.capi.api.domain.req.promotion.FreeSpinHistoryOfPlayerReq;
 import com.wegame.capi.api.domain.req.promotion.FreeSpinOfPlayerReq;
 import com.wegame.capi.api.domain.res.CommonRes;
@@ -28,7 +28,7 @@ import java.net.URI;
  */
 @Slf4j
 @Component
-public class FreeSpinApi extends PromotionBaseApi {
+public class FreeSpinApi extends SingleWalletBaseApi {
     private static final String FREE_SPIN_OF_PLAYER = "%s/freeSpinOfPlayer";
     private static final String FREE_SPIN_HISTORY_OF_PLAYER = "%s/freeSpinHistoryOfPlayer";
 
@@ -37,7 +37,7 @@ public class FreeSpinApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<FreeSpinOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_OF_PLAYER, promotionDomain)));
+            RequestEntity<FreeSpinOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_OF_PLAYER, singleDomain)));
             ResponseEntity<CommonRes<FreeSpinOfPlayerRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinOfPlayerRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -59,7 +59,7 @@ public class FreeSpinApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<FreeSpinHistoryOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_HISTORY_OF_PLAYER, promotionDomain)));
+            RequestEntity<FreeSpinHistoryOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_HISTORY_OF_PLAYER, singleDomain)));
             ResponseEntity<CommonRes<FreeSpinHistoryOfPlayerRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinHistoryOfPlayerRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
