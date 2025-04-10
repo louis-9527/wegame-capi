@@ -53,6 +53,7 @@ public class FilterConfig {
         bean.addUrlPatterns("/bag/*");
         bean.addUrlPatterns("/mission/*");
         bean.addUrlPatterns("/treasure/*");
+        bean.addUrlPatterns("/freeSpin/*");
         return bean;
     }
 
