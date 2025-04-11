@@ -33,14 +33,14 @@ public class MariaMakilingBetRecordManager extends AbstractBetRecordManager<Mari
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
     @Override
-    @Transactional(transactionManager = mariamakilingTransactionManager)
+    @Transactional(transactionManager = mariamakilingTransactionManager, rollbackFor = Exception.class)
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
         try {
             AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
             betRecordService.add(betRecord, gameType);
         } catch (DuplicateKeyException e) {
             log.warn("add Duplicate key, betRecordId: {}", betRecord.getId());
-            return betRecord.getId();
+            throw e;
         }
         boolean ret = gameRecordService.batchAdd(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
@@ -51,7 +51,7 @@ public class MariaMakilingBetRecordManager extends AbstractBetRecordManager<Mari
     }
 
     @Override
-    @Transactional(transactionManager = mariamakilingTransactionManager)
+    @Transactional(transactionManager = mariamakilingTransactionManager, rollbackFor = Exception.class)
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
