@@ -17,6 +17,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(description = "宝箱响应模型")
 public class TreasureVo implements  Serializable {
+    private static final long serialVersionUID = -635350446049642268L;
     @ApiModelProperty(value = "宝箱ID", required = true)
     private String treasureId;
     @ApiModelProperty(value = "宝箱名称", required = true)
