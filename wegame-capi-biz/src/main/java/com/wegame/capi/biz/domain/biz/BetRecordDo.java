@@ -138,6 +138,11 @@ public class BetRecordDo<T> implements Serializable {
          * （星卡）奖励图片url
          */
         private String rewardUrl;
+        // ------------------------------------------------------------------------------------------------------------
+        /**
+         * 预定投注Id
+         */
+        private String campaignId;
     }
 }
 

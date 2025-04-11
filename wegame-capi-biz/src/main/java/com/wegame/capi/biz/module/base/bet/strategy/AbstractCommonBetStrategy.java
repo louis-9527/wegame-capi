@@ -142,6 +142,26 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         }
     }
 
+    public boolean isCanFreeSpinBet(BetDo betDo) {
+        try {
+            if (!betDo.isUseFreeSpin()) {
+                return false;
+            }
+            // 查询星卡详情
+            RewardDetailDo rewordDetail = bagService.getRewardDetail(betDo.getRewardConfigId());
+            AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(Objects.equals(rewordDetail.getDetails().getBetValue(), betDo.getBetAmount()), ErrorCode.ERR_PARAM);
+            // 设置betDo
+            betDo.setBetPromotionType(STAR_CARD);
+            betDo.setRewardDetail(rewordDetail);
+            return true;
+        } catch (Exception e) {
+            log.error("isCanOperationEventBet error, errMsg: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
     /**
      * 星卡投注流程-通用流程
      * <p>
@@ -210,6 +230,11 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             // todo 调用单钱包失败需要上报,待成就系统开发完成接入
         }
         return betHelper().handleBetResult(rBetRecordDo, resultDo);
+    }
+
+    public BetResultDo<RD> betForFreeSpin(BetDo betDo) {
+        // todo maidong 完成流程
+        return null;
     }
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {

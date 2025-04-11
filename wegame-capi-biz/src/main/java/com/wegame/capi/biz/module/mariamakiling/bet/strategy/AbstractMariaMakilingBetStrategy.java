@@ -79,6 +79,9 @@ public abstract class AbstractMariaMakilingBetStrategy
             if (isCanStarCardBet(betDo)) {
                 // 1.1 是，则星卡投注流程
                 return betForStartCard(betDo);
+            } else if (isCanFreeSpinBet(betDo)) {
+                // 1.1 是，则预定投注流程
+                return betForFreeSpin(betDo);
             } else {
                 // 1.2 否，则走其他投注流程
                 // 1.2.1、判断能否走干预事件投注
