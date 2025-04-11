@@ -39,7 +39,7 @@ public class MariaMakilingBetRecordManager extends AbstractBetRecordManager<Mari
             AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
             betRecordService.add(betRecord, gameType);
         } catch (DuplicateKeyException e) {
-            log.warn("add Duplicate key, betRecordId: {}", betRecord.getId(), e);
+            log.warn("add Duplicate key, betRecordId: {}", betRecord.getId());
             return betRecord.getId();
         }
         boolean ret = gameRecordService.batchAdd(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);

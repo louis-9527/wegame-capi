@@ -98,7 +98,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                         }
                         onMessages(messages);
                     } catch (Exception e) {
-                        log.error("{} Error consuming messages, errMsg: {}", getClass().getSimpleName(), e.getMessage(), e);
+                        log.error("Error consuming messages", e);
                     } finally {
                         MDC.clear();
                     }
@@ -151,7 +151,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
             }
         } catch (Exception e) {
-            log.error("{} batchAdd error, errMsg: {}", getGameType().getName(), e.getMessage(), e);
+            log.error("{} batchAdd error", getGameType().getName(), e);
             add(recordList, messageIdMap);
         } finally {
             //            // help gc
@@ -204,7 +204,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 }
             }
         } catch (Exception e) {
-            log.error("{}, batchUpdate error, errMsg: {}", getGameType().getName(), e.getMessage(), e);
+            log.error("{}, batchUpdate error", getGameType().getName(), e);
             update(recordList, messageIdMap);
         } finally {
             //            // help gc
@@ -221,7 +221,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 betRecordManager().add(betRecordDo, getGameType());
                 getConsumer().acknowledge(messageIdMap.get(betRecordDo.getId()));
             } catch (Exception e) {
-                log.error("{} add error, betRecordId: {}, errMsg: {}", getGameType().getName(), betRecordDo.getId(), e.getMessage(), e);
+                log.error("{} add error, betRecordId: {}", getGameType().getName(), betRecordDo.getId(), e);
             }
         }
     }
@@ -236,7 +236,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                     log.error("{}, update fail, betRecordId: {}", getGameType().getName(), betRecordDo.getId());
                 }
             } catch (Exception e) {
-                log.error("{}, update error, betRecordId: {}, errMsg: {}", getGameType().getName(), betRecordDo.getId(), e.getMessage(), e);
+                log.error("{}, update error, betRecordId: {}", getGameType().getName(), betRecordDo.getId(), e);
             }
         }
     }
