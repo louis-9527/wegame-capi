@@ -21,12 +21,16 @@ import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -220,6 +224,13 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
             try {
                 betRecordManager().add(betRecordDo, getGameType());
                 getConsumer().acknowledge(messageIdMap.get(betRecordDo.getId()));
+            } catch (DuplicateKeyException e) {
+                log.error("{} add error DuplicateKey, betRecordId: {}", getGameType().getName(), betRecordDo.getId());
+                try {
+                    getConsumer().acknowledge(messageIdMap.get(betRecordDo.getId()));
+                } catch (Exception e1) {
+                    log.error("{} add error, ack fail. betRecordId: {}", getGameType().getName(), betRecordDo.getId(), e1);
+                }
             } catch (Exception e) {
                 log.error("{} add error, betRecordId: {}", getGameType().getName(), betRecordDo.getId(), e);
             }
