@@ -29,16 +29,16 @@ public class MariaMakilingStarCardScheduler extends AbstractStarCardScheduler {
 
     @Scheduled(cron = "0 0/10 * * * ?")
     public void schedule() {
-        long startTime = DateUtil.getCurrentMilli();
-        log.info("{}#schedule start", getClass().getSimpleName());
         try {
+            log.info("schedule start");
+            long startTime = DateUtil.getCurrentMilli();
             scheduleWithLock(LockNameUtil.getStarCardReportSchedulerLockName(gameTypeEnum()), this);
+            log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
-            log.info("{}, get lock fail", getClass().getSimpleName());
+            log.info("schedule get lock fail");
         } catch (Exception e) {
-            log.error("{}#schedule failed", getClass().getSimpleName(), e);
+            log.error("schedule failed", e);
         }
-        log.info("{}#schedule end, cost time:{}", getClass().getSimpleName(), DateUtil.getCurrentMilli() - startTime);
     }
 
     @Override
