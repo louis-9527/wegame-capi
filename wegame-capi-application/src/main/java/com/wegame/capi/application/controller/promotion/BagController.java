@@ -1,6 +1,5 @@
 package com.wegame.capi.application.controller.promotion;
 
-import cn.hutool.db.Page;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageDo;
