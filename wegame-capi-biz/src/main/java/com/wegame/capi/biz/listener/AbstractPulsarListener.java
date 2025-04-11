@@ -27,8 +27,10 @@ import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.locks.LockSupport;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -88,7 +90,6 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
     @Override
     public void run() {
         log.info("{} started...", getClass().getSimpleName());
-        LockSupport.parkNanos(this, TimeUnit.MINUTES.toNanos(1));
         for (int i = 0; i < getMaximumPoolSize(); i++) {
             executor.submit(() -> {
                 while (start) {
