@@ -33,14 +33,14 @@ public class IbongAdarnaBetRecordManager extends AbstractBetRecordManager<IbongA
     GameRecordService<IbongAdarnaGameRecordDo> gameRecordService;
 
     @Override
-    @Transactional(transactionManager = ibongadarnaTransactionManager)
+    @Transactional(transactionManager = ibongadarnaTransactionManager, rollbackFor = Exception.class)
     public Long add(BetRecordDo<IbongAdarnaGameRecordDo> betRecord, GameTypeEnum gameType) {
         try {
             AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
             betRecordService.add(betRecord, gameType);
         } catch (DuplicateKeyException e) {
             log.warn("add Duplicate key, betRecordId: {}", betRecord.getId(), e);
-            return betRecord.getId();
+            throw e;
         }
         boolean ret = gameRecordService.batchAdd(betRecord.getGameRecordList(), gameType, IbongAdarnaGameRecordDo.class);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
@@ -48,7 +48,7 @@ public class IbongAdarnaBetRecordManager extends AbstractBetRecordManager<IbongA
     }
 
     @Override
-    @Transactional(transactionManager = ibongadarnaTransactionManager)
+    @Transactional(transactionManager = ibongadarnaTransactionManager, rollbackFor = Exception.class)
     public boolean batchAdd(List<BetRecordDo<IbongAdarnaGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
