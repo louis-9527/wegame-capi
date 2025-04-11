@@ -112,7 +112,7 @@ knife4j:
 ## api
 api:
   game:
-    promotionDomain: https://reward-http-stress.igo8.me/
+    promotionDomain: https://reward-http-stress.igo8.me
     singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
     invokeSingle: true
     cp:
