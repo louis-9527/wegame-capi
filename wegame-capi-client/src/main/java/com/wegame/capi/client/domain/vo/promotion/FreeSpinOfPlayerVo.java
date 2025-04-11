@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.vo.promotion;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -13,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@ApiModel(description = "free spin 记录")
 public class FreeSpinOfPlayerVo implements Serializable {
     private static final long serialVersionUID = 889955515756526338L;
     @ApiModelProperty("playerName")
@@ -30,6 +32,7 @@ public class FreeSpinOfPlayerVo implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     @EqualsAndHashCode
+    @ApiModel(description = "free spin 记录")
     public static class FreeSpin implements Serializable {
         private static final long serialVersionUID = 85667361882570293L;
         @ApiModelProperty("channelId")
