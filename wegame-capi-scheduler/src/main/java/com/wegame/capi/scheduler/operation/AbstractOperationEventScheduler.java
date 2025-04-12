@@ -38,7 +38,7 @@ public abstract class AbstractOperationEventScheduler
         extends AbstractScheduler
         implements Runnable {
 
-    private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 10 * 60 * 1000;
+    private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 30 * 60 * 1000;
 
     @Autowired
     public OperationEventService operationEventService;
