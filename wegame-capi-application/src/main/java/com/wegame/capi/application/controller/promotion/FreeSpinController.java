@@ -39,7 +39,7 @@ public class FreeSpinController {
     @PostMapping("/freeSpinHistoryOfPlayer")
     public CommonResponse<FreeSpinHistoryOfPlayerVo> freeSpinHistoryOfPlayer(@RequestBody FreeSpinHistoryOfPlayerRequest request) {
         request.validate();
-        return build(toVo(freeSpinService.freeSpinHistoryOfPlayer(request.getPage(), request.getLimit(), request.getStartTime(), request.getEndTime())));
+        return build(toVo(freeSpinService.freeSpinHistoryOfPlayer(request.getPage(), request.getLimit())));
     }
 
 }

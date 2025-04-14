@@ -33,8 +33,8 @@ public class FreeSpinService {
         FreeSpinOfPlayerRes res = singleWalletApi.freeSpinOfPlayer(buildReq());
         return toDo(res);
     }
-    public FreeSpinHistoryOfPlayerDo freeSpinHistoryOfPlayer(Integer page, Integer limit, Integer startTime, Integer endTime) {
-        FreeSpinHistoryOfPlayerRes res = singleWalletApi.freeSpinHistoryOfPlayer(buildReq(page, limit, startTime, endTime));
+    public FreeSpinHistoryOfPlayerDo freeSpinHistoryOfPlayer(Integer page, Integer limit) {
+        FreeSpinHistoryOfPlayerRes res = singleWalletApi.freeSpinHistoryOfPlayer(buildReq(page, limit));
         return toDo(res);
     }
 }
