@@ -15,6 +15,6 @@ public class MariaMakilingDynamicOperationManagerTest extends BaseTest {
 
     @Test
     public void test_asyncReportEvent() {
-        mariaMakilingOperationEventManager.asyncReportEvent(1899046143636467712L);
+        mariaMakilingOperationEventManager.asyncReportEvent(1899046143636467712L,null);
     }
 }

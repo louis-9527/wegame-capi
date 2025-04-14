@@ -10,12 +10,17 @@ import com.wegame.capi.biz.converter.operation.OperationEventConvert;
 import com.wegame.capi.biz.domain.biz.operation.DynamicOperationEffectEventCatchDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.Constants;
+import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventPo;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -25,6 +30,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +49,12 @@ public class OperationEventService extends AbstractService {
             AssertUtil.assertNotNull(po, ErrorCode.ERR_INTER);
             OperationEventPo insertPo = getMongoTemplate(gameEnum.getGameType()).insert(po, gameEnum.getEventCollectionName());
             String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, eventDo.getGameId(), eventDo.getPlayerName());
-            redisTemplate.delete(catch_key);
+            Map<Object, Object> entries = redisTemplate.opsForHash().entries(catch_key);
+            if (!entries.isEmpty()) {
+                if (entries.containsKey("-1")) {
+                    redisTemplate.delete(catch_key);
+                }
+            }
             return insertPo.getId();
         } catch (DuplicateKeyException e) {
             return eventDo.getId();
@@ -53,7 +64,7 @@ public class OperationEventService extends AbstractService {
         }
     }
 
-    public Boolean update(OperationEventDo eventDo, OperationEventTypeEnum dynamicOperationGame) {
+    public Boolean update(OperationEventDo eventDo,String playName, OperationEventTypeEnum dynamicOperationGame) {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(eventDo.getId());
         Query query = new Query(criteria);
@@ -61,6 +72,9 @@ public class OperationEventService extends AbstractService {
                 OperationEventQueryBuilder.buildUpdateById(eventDo),
                 OperationEventPo.class,
                 dynamicOperationGame.getEventCollectionName());
+        if (StringUtils.isNotEmpty(playName) && eventDo.getEventStatus() != null && eventDo.getEventStatus().getCode().equals(OperationEventStatusEnum.FINISH.getCode())) {
+            this.cleanOperationByCatch(eventDo.getId(),playName, dynamicOperationGame);
+        }
         return result.getModifiedCount() > 0;
     }
 
@@ -116,6 +130,41 @@ public class OperationEventService extends AbstractService {
                 gameEnum.getEventCollectionName());
         return OperationEventConvert.poToDo(operationPo);
     }
+
+    /**
+     * 判断是否有使用中的干预事件
+     * true: 可干预
+     * false: 不可干预
+     *
+     * @param id
+     * @param gameEnum
+     * @return
+     */
+    public Boolean checkOperationUseStatus(Long id, OperationEventTypeEnum gameEnum) {
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        String catch_key = String.format(Constants.OPERATION_EVENT_ING_KEY, gameEnum.getGameType().getId(), id);
+        Object useStatus = redisTemplate.opsForValue().get(catch_key);
+        return Objects.isNull(useStatus);
+    }
+
+    public void updateOperationUseIng(Long id, OperationEventTypeEnum gameEnum) {
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        String catch_key = String.format(Constants.OPERATION_EVENT_ING_KEY, gameEnum.getGameType().getId(), id);
+        redisTemplate.opsForValue().set(catch_key, "1", Constants.OPERATION_EVENT_ING_EXPIRED, TimeUnit.SECONDS);
+    }
+
+    public void cleanOperationUseIng(Long id, OperationEventTypeEnum gameEnum) {
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        String catch_key = String.format(Constants.OPERATION_EVENT_ING_KEY, gameEnum.getGameType().getId(), id);
+        redisTemplate.delete(catch_key);
+    }
+
+    public void cleanOperationByCatch(Long id,String playerName, OperationEventTypeEnum gameEnum) {
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, gameEnum.getGameType().getId(), playerName);
+        redisTemplate.opsForHash().delete(catch_key, String.valueOf(id));
+    }
+
 
     private void saveCatch(String catch_key, Map<Long, String> catchMap) {
         // 构造 Lua 脚本
