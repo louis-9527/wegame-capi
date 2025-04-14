@@ -54,9 +54,6 @@ public enum RedeemRewardResStatusEnum {
         if (EXPERIENCE_NOT_MET.code == code) {
             return ErrorCode.STAR_CARD_EXPIRED;
         }
-        if (OPERATION_IN_PROGRESS.code == code) {
-            return ErrorCode.STAR_CARD_USE_ING;
-        }
         return null;
     }
 }

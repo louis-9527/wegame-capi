@@ -21,12 +21,14 @@ import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -50,9 +52,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         extends AbstractBetStrategy<R, RD> {
 
     private static final List<BetStatusEnum> FINAL_BET_STATUS = Arrays.asList(BetStatusEnum.SUCCESS, BetStatusEnum.FAIL);
-
     @Autowired
-    DistributeLock distributeLock;
+    RedisTemplate redisTemplate;
     @Autowired
     StarCardUseRecordService startCardUseRecordService;
     @Autowired
@@ -114,6 +115,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         long eventAmount = betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount();
         if (FINAL_BET_STATUS.contains(resultDo.getBetStatus())) {
             operationEventManager().asyncUpdateEventDetail(gameOperationEvent.getOperationEvent(),
+                    UserInfoContext.getUserInfo().getPlayerName(),
                     resultDo.getBetStatus(),
                     eventDetailId,
                     resultDo.getBetId(),

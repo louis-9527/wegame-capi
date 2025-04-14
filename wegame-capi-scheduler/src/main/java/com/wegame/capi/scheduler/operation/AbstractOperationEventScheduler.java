@@ -38,7 +38,7 @@ public abstract class AbstractOperationEventScheduler
         extends AbstractScheduler
         implements Runnable {
 
-    private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 10 * 60 * 1000;
+    private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 30 * 60 * 1000;
 
     @Autowired
     public OperationEventService operationEventService;
@@ -148,9 +148,9 @@ public abstract class AbstractOperationEventScheduler
                 }
             }
             if (eventDetailUpdate != null && eventDoUpdate != null) {
-                operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
+                operationEventManager().updateEventDetail(eventDetailDo.getPlayerName(),eventDetailUpdate, eventDoUpdate);
                 if (OperationEventStatusEnum.FINISH == eventDoUpdate.getEventStatus()) {
-                    operationEventManager().asyncReportEvent(eventDetailDo.getBetRecordId());
+                    operationEventManager().asyncReportEvent(eventDetailDo.getBetRecordId(),eventDetailDo.getPlayerName());
                 }
             }
         } catch (Exception e) {
@@ -196,7 +196,7 @@ public abstract class AbstractOperationEventScheduler
      * 事件处理成功,但未上报
      */
     private void eventReportFailHandle(OperationEventDo eventDo) {
-        operationEventManager().asyncReportEvent(eventDo.getId());
+        operationEventManager().asyncReportEvent(eventDo.getId(),eventDo.getPlayerName());
     }
 
     /**
@@ -236,7 +236,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventEventIngHandle(OperationEventDo eventDo) {
         if (eventDo.getExpiredTime() < DateUtil.getCurrentMilli()) {
             // 过期上报
-            operationEventManager().asyncUpdateFinishEvent(eventDo.getId(), OperationEventSubStatusEnum.FINISH_EXPIRED);
+            operationEventManager().asyncUpdateFinishEvent(eventDo.getId(),eventDo.getPlayerName(), OperationEventSubStatusEnum.FINISH_EXPIRED);
         }
     }
 }

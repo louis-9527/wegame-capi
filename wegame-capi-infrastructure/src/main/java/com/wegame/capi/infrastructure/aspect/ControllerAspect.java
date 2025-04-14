@@ -1,5 +1,7 @@
 package com.wegame.capi.infrastructure.aspect;
 
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -48,21 +50,25 @@ public class ControllerAspect {
                         .filter(arg -> (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)))
                         .collect(Collectors.toList());
             }
+            UserInfo userInfo =UserInfoContext.getUserInfo();
+
             long costTime = System.currentTimeMillis() - startTime;
             if (costTime > 150L) {
-                log.info("{}#{}, cost times more than 150: {} ms, req={}, res={}",
+                log.info("{}#{}, cost times more than 150: {} ms, req={}, res={},playerId={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
                         req,
-                        result);
+                        result,
+                        userInfo.getPlayerId());
             } else {
-                log.info("{}#{}, cost times: {} ms, req={}, res={}",
+                log.info("{}#{}, cost times: {} ms, req={}, res={},playerId={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
                         req,
-                        result);
+                        result,
+                        userInfo.getPlayerId());
             }
         } catch (Throwable e) {
             log.error("ControllerAspect.statistic error: {}", e.getMessage(), e);

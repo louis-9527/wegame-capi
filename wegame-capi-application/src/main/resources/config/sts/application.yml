@@ -50,22 +50,22 @@ spring:
   freemarker:
     checkTemplateLocation: false
   redis:
-    connectTimeout: 1000
-    timeout: 1000
+    connectTimeout: 200
+    timeout: 200
     cluster:
       nodes:
         - qat-makiling-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
-      max-redirects: 5
+      max-redirects: 3
     lettuce:
       pool:
         #连接池中的最大空闲连接
-        max-idle: 200
+        max-idle: 20
         #连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-wait: 500
+        max-wait: 100
         #连接池最大连接数（使用负值表示没有限制）
         max-active: 1000
         #连接池中的最小空闲连接
-        min-idle: 200
+        min-idle: 20
     password:
   datasource:
     dynamic:
@@ -139,16 +139,16 @@ pulsar:
 dynamic:
   operation:
     switch: true
-    pulsar_url: pulsar://pulsar-sw-main-external.client88.me:6650
+    pulsar_url: pulsar://pulsar-proxy-sw-main-stress.client88.me:6650
     pulsar_topic: dos_game_slot_event
     pulsar_group:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
     pulsar:
       auth:
-        issuer_url: https://auth.streamnative.cloud
+        issuer_url: null
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-sn9dy:qat
-    domain: https://dos-egame.dos88.me
+    domain: https://dos-egame-stresstest.dos88.me
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----

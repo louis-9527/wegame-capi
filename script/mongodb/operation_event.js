@@ -4,4 +4,6 @@
 db.getCollection("mariamakiling_operation_event").drop();
 db.createCollection("mariamakiling_operation_event");
 db.mariamakiling_operation_event.createIndex({ "eventId": 1 }, { unique: true });
+db.mariamakiling_operation_event.createIndex({"playerName": 1,"gameId": 1,"eventStatus": 1,"reportStatus":1,"expiredTime": 1,"createTime": 1})
+
 // db["mariamakiling_operation_event"].createIndex({ "eventId": 1 }, { unique: true });
