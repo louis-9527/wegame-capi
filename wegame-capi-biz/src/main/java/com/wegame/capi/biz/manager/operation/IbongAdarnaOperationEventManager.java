@@ -29,12 +29,6 @@ public class IbongAdarnaOperationEventManager extends AbstractOperationEventMana
 
 
     @Override
-    @Transactional(transactionManager = ibongadarnaTransactionManager)
-    public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
-        super.updateEventDetail(eventDetailDo, eventDo);
-    }
-
-    @Override
     public OperationEventTypeEnum operationEventType() {
         return OperationEventTypeEnum.IBONG_ADARNA;
     }

@@ -1,10 +1,7 @@
 package com.wegame.capi.biz.converter.promotion;
 
 import com.wegame.capi.api.domain.res.promotion.FreeSpinOfPlayerRes;
-import com.wegame.capi.api.domain.res.promotion.GetDailyMissionRes;
-import com.wegame.capi.biz.domain.biz.promotion.DailyMissionDo;
 import com.wegame.capi.biz.domain.biz.promotion.FreeSpinOfPlayerDo;
-import com.wegame.capi.client.domain.vo.promotion.DailyMissionVo;
 import com.wegame.capi.client.domain.vo.promotion.FreeSpinOfPlayerVo;
 
 import java.util.Collections;
