@@ -2,6 +2,7 @@ package com.wegame.capi.biz.config.pulsar;
 
 import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.*;
 import org.apache.pulsar.client.impl.auth.oauth2.AuthenticationFactoryOAuth2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,13 @@ public class OperationEventPulsarConfig {
 
     @Bean(name =operationEventPulsarClient, destroyMethod = "close")
     public PulsarClient operationEventPulsarClient() throws Exception {
+        if(StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)){
+            return PulsarClient.builder()
+                    .serviceUrl(dynamicOperationTopicUrl)
+                    .keepAliveInterval(30, TimeUnit.SECONDS)
+                    .build();
+        }
+
         Authentication authentication = AuthenticationFactoryOAuth2.clientCredentials(
                 new URL(dynamicOperationAuthIssuerUrl),
                 Objects.requireNonNull(getClass().getResource(dynamicOperationAuthCredentialsFilePath)),
