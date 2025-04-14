@@ -23,17 +23,17 @@ public class FreeSpinHistoryOfPlayerRequest implements Validate, Serializable {
     private Integer page;
     @ApiModelProperty(value = "Max limit of data return not more than 100", required = true)
     private Integer limit;
-    @ApiModelProperty(value = "Query start time based on player acquire free spin time [Unix timestamps in seconds]", required = true)
-    private Integer startTime;
-    @ApiModelProperty(value = "Query end time based on player acquire free spin time [Unix timestamps in seconds]", required = true)
-    private Integer endTime;
+//    @ApiModelProperty(value = "Query start time based on player acquire free spin time [Unix timestamps in seconds]", required = true)
+//    private Integer startTime;
+//    @ApiModelProperty(value = "Query end time based on player acquire free spin time [Unix timestamps in seconds]", required = true)
+//    private Integer endTime;
 
     @Override
     public void validateParam() {
         AssertUtil.assertNotNull(page, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(limit, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(startTime, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(endTime, ErrorCode.ERR_PARAM);
-        AssertUtil.assertTrue(startTime < endTime, ErrorCode.ERR_PARAM);
+//        AssertUtil.assertNotNull(startTime, ErrorCode.ERR_PARAM);
+//        AssertUtil.assertNotNull(endTime, ErrorCode.ERR_PARAM);
+//        AssertUtil.assertTrue(startTime < endTime, ErrorCode.ERR_PARAM);
     }
 }

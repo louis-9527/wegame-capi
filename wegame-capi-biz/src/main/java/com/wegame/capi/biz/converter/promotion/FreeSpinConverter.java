@@ -1,83 +1,33 @@
 package com.wegame.capi.biz.converter.promotion;
 
-import com.wegame.capi.api.domain.res.promotion.FreeSpinOfPlayerRes;
-import com.wegame.capi.api.domain.res.promotion.GetDailyMissionRes;
-import com.wegame.capi.biz.domain.biz.promotion.DailyMissionDo;
-import com.wegame.capi.biz.domain.biz.promotion.FreeSpinOfPlayerDo;
-import com.wegame.capi.client.domain.vo.promotion.DailyMissionVo;
-import com.wegame.capi.client.domain.vo.promotion.FreeSpinOfPlayerVo;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.wegame.capi.api.domain.res.promotion.FreeSpinRes;
+import com.wegame.capi.biz.domain.biz.promotion.FreeSpinDo;
+import com.wegame.capi.client.domain.vo.promotion.FreeSpinVo;
 
 public class FreeSpinConverter {
 
-    // FreeSpinOfPlayerRes to FreeSpinOfPlayerDo
-    public static FreeSpinOfPlayerDo toDo(FreeSpinOfPlayerRes freeSpinOfPlayerRes) {
-        return FreeSpinOfPlayerDo.builder()
-                .playerName(freeSpinOfPlayerRes.getPlayerName())
-                .refId(freeSpinOfPlayerRes.getRefId())
-                .current(toDoList(freeSpinOfPlayerRes.getCurrent()))
-                .others(toDoList(freeSpinOfPlayerRes.getOthers()))
-                .build();
-    }
-    private static List<FreeSpinOfPlayerDo.FreeSpin> toDoList(List<FreeSpinOfPlayerRes.FreeSpin> freeSpinList) {
-        return Optional.ofNullable(freeSpinList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(FreeSpinConverter::toDo)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-    private static FreeSpinOfPlayerDo.FreeSpin toDo(FreeSpinOfPlayerRes.FreeSpin freeSpin) {
-        if (Objects.isNull(freeSpin)) {
-            return null;
-        }
-        return FreeSpinOfPlayerDo.FreeSpin.builder()
-                .channelId(freeSpin.getChannelId())
-                .campaignId(freeSpin.getCampaignId())
-                .initCount(freeSpin.getInitCount())
-                .remainingCount(freeSpin.getRemainingCount())
-                .expireDate(freeSpin.getExpireDate())
-                .gameId(freeSpin.getGameId())
-                .gameIdRef(freeSpin.getGameIdRef())
-                .gameName(freeSpin.getGameName())
+    // FreeSpinRes to FreeSpinDo
+    public static FreeSpinDo toDo(FreeSpinRes freeSpinRes) {
+        return FreeSpinDo.builder()
+                .playerName(freeSpinRes.getPlayerName())
+                .betId(freeSpinRes.getBetId())
+                .credit(freeSpinRes.getCredit())
+                .refId(freeSpinRes.getRefId())
+                .remainingCount(freeSpinRes.getRemainingCount())
+                .campaignId(freeSpinRes.getCampaignId())
                 .build();
     }
 
-    // FreeSpinOfPlayerDo to FreeSpinOfPlayerVo
-    public static FreeSpinOfPlayerVo toVo(FreeSpinOfPlayerDo freeSpinOfPlayerDo) {
-        return FreeSpinOfPlayerVo.builder()
-                .playerName(freeSpinOfPlayerDo.getPlayerName())
-                .refId(freeSpinOfPlayerDo.getRefId())
-                .current(toVoList(freeSpinOfPlayerDo.getCurrent()))
-                .others(toVoList(freeSpinOfPlayerDo.getOthers()))
+    // FreeSpinDo to FreeSpinVo
+    public static FreeSpinVo toVo(FreeSpinDo freeSpinDo) {
+        return FreeSpinVo.builder()
+                .playerName(freeSpinDo.getPlayerName())
+                .betId(freeSpinDo.getBetId())
+                .credit(freeSpinDo.getCredit())
+                .refId(freeSpinDo.getRefId())
+                .remainingCount(freeSpinDo.getRemainingCount())
+                .campaignId(freeSpinDo.getCampaignId())
                 .build();
     }
-    private static List<FreeSpinOfPlayerVo.FreeSpin> toVoList(List<FreeSpinOfPlayerDo.FreeSpin> freeSpinList) {
-        return Optional.ofNullable(freeSpinList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(FreeSpinConverter::toVo)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-    private static FreeSpinOfPlayerVo.FreeSpin toVo(FreeSpinOfPlayerDo.FreeSpin freeSpin) {
-        if (Objects.isNull(freeSpin)) {
-            return null;
-        }
-        return FreeSpinOfPlayerVo.FreeSpin.builder()
-                .channelId(freeSpin.getChannelId())
-                .campaignId(freeSpin.getCampaignId())
-                .initCount(freeSpin.getInitCount())
-                .remainingCount(freeSpin.getRemainingCount())
-                .expireDate(freeSpin.getExpireDate())
-                .gameId(freeSpin.getGameId())
-                .gameIdRef(freeSpin.getGameIdRef())
-                .gameName(freeSpin.getGameName())
-                .build();
-    }
+
 }

@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.wegame.base.domain.CommonResponse.build;
-import static com.wegame.capi.biz.converter.promotion.FreeSpinConverter.toVo;
-import static com.wegame.capi.biz.converter.promotion.HistoryFreeSpinConverter.toVo;
+import static com.wegame.capi.biz.converter.promotion.FreeSpinPlayerConverter.toVo;
+import static com.wegame.capi.biz.converter.promotion.FreeSpinHistoryConverter.toVo;
 
 @Slf4j
 @RestController
@@ -39,7 +39,7 @@ public class FreeSpinController {
     @PostMapping("/freeSpinHistoryOfPlayer")
     public CommonResponse<FreeSpinHistoryOfPlayerVo> freeSpinHistoryOfPlayer(@RequestBody FreeSpinHistoryOfPlayerRequest request) {
         request.validate();
-        return build(toVo(freeSpinService.freeSpinHistoryOfPlayer(request.getPage(), request.getLimit(), request.getStartTime(), request.getEndTime())));
+        return build(toVo(freeSpinService.freeSpinHistoryOfPlayer(request.getPage(), request.getLimit())));
     }
 
 }

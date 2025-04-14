@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.domain.biz.bet;
 
-import com.sun.org.apache.xpath.internal.objects.XString;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -79,5 +78,14 @@ public class BetDo implements Serializable {
      * （星卡）奖励详情
      */
     private RewardDetailDo rewardDetail;
+    /////////////// 预定投注 ///////////////
+    /**
+     * 使用预定投注
+     */
+    private boolean useFreeSpin;
+    /**
+     * 预定投注Id
+     */
+    private String campaignId;
 }
 
