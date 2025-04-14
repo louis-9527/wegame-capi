@@ -31,12 +31,6 @@ public class MalakasOperationEventManager extends AbstractOperationEventManager 
         return super.addEventDetail(eventDetailDo);
     }
 
-    @Override
-    @Transactional(transactionManager = malakasTransactionManager)
-    public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
-        super.updateEventDetail(eventDetailDo, eventDo);
-    }
-
 
     @Override
     public List<List<Long>> getConfigIds(OperationEventConfigQuery configQuery) {
