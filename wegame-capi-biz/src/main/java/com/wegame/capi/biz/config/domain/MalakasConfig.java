@@ -65,10 +65,6 @@ public class MalakasConfig {
          * 免费轮概率
          */
         private PlayProbabilisticConfig freePlayProbabilisticConfig;
-        /**
-         * 免费轮获得Scatter个数概率配置
-         */
-        private TreeMap<Integer, Integer> freeWheelScatterProbabilisticConfig;
     }
 
     @Data
@@ -116,11 +112,9 @@ public class MalakasConfig {
         Assert.notNull(probabilisticConfig, "probabilisticConfig is null");
         Assert.notNull(probabilisticConfig.commonPlayProbabilisticConfig, "probabilisticConfig.commonPlayProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.freePlayProbabilisticConfig, "probabilisticConfig.freePlayPlayProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.freeWheelScatterProbabilisticConfig, "probabilisticConfig.freeWheelScatterProbabilisticConfig is null");
 
         playProbabilisticConfigValid(probabilisticConfig.commonPlayProbabilisticConfig);
         playProbabilisticConfigValid(probabilisticConfig.freePlayProbabilisticConfig);
-        freeWheelScatterProbabilisticConfigValid();
     }
     private void scatterFreeWheelTimesConfigValidate() {
         Assert.notNull(scatterFreeWheelTimesConfig, "scatterFreeWheelTimesConfig is null");
@@ -169,10 +163,5 @@ public class MalakasConfig {
     }
     private void goldBoarderProbabilisticConfigValid(List<BigDecimal> list) {
         AssertUtil.assertTrue(Objects.equals(list.size(), 7), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelGoldBoarderProbabilisticConfig size error");
-    }
-    private void freeWheelScatterProbabilisticConfigValid() {
-        // 校验-免费轮次数概率配置
-        int sum = probabilisticConfig.freeWheelScatterProbabilisticConfig.values().stream().reduce(0, Integer::sum);
-        AssertUtil.assertTrue(Objects.equals(sum, 100), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
     }
 }

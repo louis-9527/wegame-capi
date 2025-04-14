@@ -39,7 +39,7 @@ public class MariamakilingPulsarConfig {
     public PulsarClient mariaMakilingPulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(mariaMakilingUrl)
-                .keepAliveInterval(30, TimeUnit.SECONDS)
+                .keepAliveInterval(5, TimeUnit.SECONDS)
                 .build();
     }
 
