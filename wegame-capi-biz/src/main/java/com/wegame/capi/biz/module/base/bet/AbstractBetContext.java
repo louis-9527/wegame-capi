@@ -52,7 +52,9 @@ public abstract class AbstractBetContext {
         if (BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
             return betStrategy.bet(betDo);
         } else {
-            return distributeLock.lockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
+            return distributeLock.tryLockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
+                    1000,
+                    3000,
                     () -> betStrategy.bet(betDo),
                     OPT_BUSY);
         }
