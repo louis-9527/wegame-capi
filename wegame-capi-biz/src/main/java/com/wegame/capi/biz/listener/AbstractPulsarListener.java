@@ -92,7 +92,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
     @Override
     public void run() {
         log.info("{} started...", getClass().getSimpleName());
-       // for (int i = 0; i < getMaximumPoolSize(); i++) {
+        for (int i = 0; i < getMaximumPoolSize(); i++) {
             executor.submit(() -> {
                 while (start) {
                     try {
@@ -110,7 +110,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                     }
                 }
             });
-        // }
+         }
         log.info("{} stopped...", getClass().getSimpleName());
     }
 
