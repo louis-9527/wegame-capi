@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class HistoryFreeSpinConverter {
+public class FreeSpinHistoryConverter {
 
     // FreeSpinHistoryOfPlayerRes to FreeSpinHistoryOfPlayerDo
     public static FreeSpinHistoryOfPlayerDo toDo(FreeSpinHistoryOfPlayerRes freeSpinOfPlayerRes) {
@@ -26,7 +26,7 @@ public class HistoryFreeSpinConverter {
         return Optional.ofNullable(freeSpinList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(HistoryFreeSpinConverter::toDo)
+                .map(FreeSpinHistoryConverter::toDo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -59,7 +59,7 @@ public class HistoryFreeSpinConverter {
         return Optional.ofNullable(freeSpinList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(HistoryFreeSpinConverter::toVo)
+                .map(FreeSpinHistoryConverter::toVo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
