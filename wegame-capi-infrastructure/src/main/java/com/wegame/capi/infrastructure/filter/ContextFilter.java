@@ -82,8 +82,8 @@ public class ContextFilter extends OncePerRequestFilter {
     }
 
     private void buildUserInfoContextInfo(HttpServletRequest request) {
+        String _token_ = request.getHeader(Constants._TOKEN_);
         try {
-            String _token_ = request.getHeader(Constants._TOKEN_);
             if ("null".equals(_token_)) {
                 _token_ = null;
             }
@@ -93,7 +93,7 @@ public class ContextFilter extends OncePerRequestFilter {
             }
             UserInfoContext.setUserInfo(user);
         } catch (Exception e) {
-            log.error("buildUserInfoContextInfo error: {}", e.getMessage(), e);
+            log.error("buildUserInfoContextInfo error, token:{}", _token_, e);
         }
     }
 
