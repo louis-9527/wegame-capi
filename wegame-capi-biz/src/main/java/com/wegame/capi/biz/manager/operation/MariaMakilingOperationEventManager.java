@@ -23,15 +23,8 @@ public class MariaMakilingOperationEventManager extends AbstractOperationEventMa
 
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager)
-    public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
-        return super.addEventDetail(eventDetailDo);
-    }
-
-
-    @Override
-    @Transactional(transactionManager = mariamakilingTransactionManager)
-    public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
-        super.updateEventDetail(eventDetailDo, eventDo);
+    public void updateEventDetail(String playName,OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
+        super.updateEventDetail(playName,eventDetailDo, eventDo);
     }
 
     @Override
