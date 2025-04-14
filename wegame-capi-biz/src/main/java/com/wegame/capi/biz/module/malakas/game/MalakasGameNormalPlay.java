@@ -88,7 +88,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
         // loop play
         LinkedList<FreeWheelHandleDo> freeWheelList = new LinkedList<>();
-        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
+        loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList, false);
         if (CollectionUtils.isNotEmpty(freeWheelList)) {
             handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeWheelList);
         }
@@ -104,17 +104,18 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
                                         List<MalakasGameRecordDo> ret,
                                         AtomicLong totalRewardAmount,
                                         MalakasGameRecordDo preGameRecord,
-                                        LinkedList<FreeWheelHandleDo> freeWheelList) {
+                                        LinkedList<FreeWheelHandleDo> freeWheelList,
+                                        boolean freeWheelFlag) {
         if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
             WheelDo<MalakasSymbolDo> wheel = generateNormalWheelFromPreWheel(
-                    getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), false),
+                    getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), freeWheelFlag),
                     preGameRecord);
             RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
             long gameRecordId = generateGameRecordId();
             MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
+            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList, freeWheelFlag);
         } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
             if (!reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), malakasConfig.getRewardMaxMultiple())) {
                 for (int times = 1; times <= preGameRecord.getRewardResult().getRewardFreeWheelTimes(); times++) {
@@ -153,7 +154,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
             }
             parentGameRecord.getGameRecordIds().add(gameRecordId);
             // loop play
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
+            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList, true);
             if (CollectionUtils.isNotEmpty(ret)) {
                 totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
             }
