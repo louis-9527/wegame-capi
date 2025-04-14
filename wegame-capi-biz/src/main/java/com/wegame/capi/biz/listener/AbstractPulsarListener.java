@@ -54,12 +54,14 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
 
     @PostConstruct
     public void init() {
+        CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(getGameType().getName() + "-consumber-pool-");
+        threadFactory.setDaemon(true);
         executor = new WsThreadPoolExecutor(getCorePoolSize(),
                 getMaximumPoolSize(),
                 0,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(1000),
-                new CustomizableThreadFactory(getGameType().getName() + "-consumber-pool-"),
+                threadFactory,
                 new ThreadPoolExecutor.CallerRunsPolicy());
         start = true;
         run();
@@ -90,7 +92,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
     @Override
     public void run() {
         log.info("{} started...", getClass().getSimpleName());
-        for (int i = 0; i < getMaximumPoolSize(); i++) {
+       // for (int i = 0; i < getMaximumPoolSize(); i++) {
             executor.submit(() -> {
                 while (start) {
                     try {
@@ -101,14 +103,14 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                             continue;
                         }
                         onMessages(messages);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         log.error("Error consuming messages", e);
                     } finally {
                         MDC.clear();
                     }
                 }
             });
-        }
+        // }
         log.info("{} stopped...", getClass().getSimpleName());
     }
 
