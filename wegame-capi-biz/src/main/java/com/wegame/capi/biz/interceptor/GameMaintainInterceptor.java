@@ -63,14 +63,12 @@ public class GameMaintainInterceptor extends HandlerInterceptorAdapter {
         if (Objects.isNull(configDo.getEnableStatus())) {
             return false;
         }
-        if (configDo.getEnableStatus().equals(1)) {
+        if (configDo.getEnableStatus().equals(0)) {
             return false;
         }
-        if (configDo.getEnableStatus().equals(0)) {
+        if (configDo.getEnableStatus().equals(1)) {
             long now = DateUtil.getCurrentMilli();
-            if (now > configDo.getMaintainStartTime().getTime() && now < configDo.getMaintainEndTime().getTime() ) {
-                return true;
-            }
+            return now > configDo.getMaintainStartTime().getTime() && now < configDo.getMaintainEndTime().getTime();
         }
         return false;
     }
