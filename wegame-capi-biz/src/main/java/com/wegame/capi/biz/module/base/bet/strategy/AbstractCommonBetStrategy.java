@@ -229,11 +229,10 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(betDo.isUseFreeSpin(), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(betDo.getCampaignId(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), FREE_SPIN), ErrorCode.ERR_INTER);
-
-        // play
-
-        // betAndPayOut
-        return null;
+        BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
+        boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, true);
+        return betHelper().handleBetResult(betRecordDo, resultDo);
     }
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {
