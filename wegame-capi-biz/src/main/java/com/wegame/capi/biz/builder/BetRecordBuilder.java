@@ -35,6 +35,10 @@ public class BetRecordBuilder {
             extendInfo = BetRecordDo.ExtendInfo.builder()
                     .ieId(betDo.getGameOperationEvent().getOperationEvent().getEventId())
                     .build();
+        }else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.STAR_CARD)) {
+            extendInfo = BetRecordDo.ExtendInfo.builder()
+                    .rewardUrl(betDo.getRewardDetail().getDetails().getImgUrl())
+                    .build();
         } else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.FREE_SPIN)) {
             extendInfo = BetRecordDo.ExtendInfo.builder()
                     .campaignId(betDo.getCampaignId())
