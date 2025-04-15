@@ -7,10 +7,12 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.ThreadMdcUtil;
+import com.wegame.capi.biz.converter.backend.GameMaintainConfigConverter;
 import com.wegame.capi.biz.domain.backend.GameMaintainConfigDo;
 import com.wegame.capi.biz.service.backend.GameMaintainConfigService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.domain.vo.GameMaintainConfigVo;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -43,8 +45,8 @@ public class GameMaintainInterceptor extends HandlerInterceptorAdapter {
         GameMaintainConfigDo configDo = getMaintainConfig(request);
         if (isGameInMaintain(configDo)) {
             log.info("preHandle - game is under maintain");
-            CommonResponse<GameMaintainConfigDo> commonResponse = CommonResponse.build(ErrorCode.GAME_UNDER_MAINTAIN.getCode(), ErrorCode.GAME_UNDER_MAINTAIN.getMsg());
-            commonResponse.setData(configDo);
+            CommonResponse<GameMaintainConfigVo> commonResponse = CommonResponse.build(ErrorCode.GAME_UNDER_MAINTAIN.getCode(), ErrorCode.GAME_UNDER_MAINTAIN.getMsg());
+            commonResponse.setData(GameMaintainConfigConverter.doToVo(configDo));
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.setHeader(ThreadMdcUtil.TRACE_ID, MDC.get(ThreadMdcUtil.TRACE_ID));
