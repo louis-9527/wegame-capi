@@ -73,8 +73,6 @@ public class GameMaintainInterceptor extends HandlerInterceptorAdapter {
         return false;
     }
 
-
-
     private GameMaintainConfigDo getMaintainConfig(HttpServletRequest request) {
         String gameId = getGameId(request);
         if (Strings.isNullOrEmpty(gameId)) {

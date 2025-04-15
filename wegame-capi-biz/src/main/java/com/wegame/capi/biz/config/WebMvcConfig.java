@@ -53,19 +53,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/swagger-resources")
                 .addPathPatterns("/**");
 
-        registry.addInterceptor(gameMaintainInterceptor)
-                .order(2)
-                .addPathPatterns("/**")
-                .excludePathPatterns(
-                        "/META-INF/resources/",
-                        "/resources/",
-                        "/static/**",
-                        "/public/**",
-                        "/webjars/**",
-                        "/v2/**",
-                        "/doc.html",
-                        "/swagger-resources",
-                        "/operationEvent/getStatusOfEvents",
-                        "/common/ping");
+        //        registry.addInterceptor(gameMaintainInterceptor)
+        //                .order(2)
+        //                .addPathPatterns("/**")
+        //                .excludePathPatterns(
+        //                        "/META-INF/resources/",
+        //                        "/resources/",
+        //                        "/static/**",
+        //                        "/public/**",
+        //                        "/webjars/**",
+        //                        "/v2/**",
+        //                        "/doc.html",
+        //                        "/swagger-resources",
+        //                        "/operationEvent/getStatusOfEvents",
+        //                        "/common/ping");
     }
 }

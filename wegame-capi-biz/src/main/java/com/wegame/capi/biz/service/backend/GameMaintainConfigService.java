@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 
+import static com.wegame.capi.biz.converter.backend.GameMaintainConfigConverter.poToDo;
+
 /**
  * po服务
  * @author genereate
@@ -37,25 +39,16 @@ public class GameMaintainConfigService {
      */
     public GameMaintainConfigDo selectOne(GameMaintainConfigQuery query) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return GameMaintainConfigConverter.poToDo(gameMaintainConfigMapper.selectOne(query));
+        return poToDo(gameMaintainConfigMapper.selectOne(query));
     }
-
-
 
     ///////////////  above auto generated ///////////////
 
     @Cacheable(value = CacheConstants.GAME_MAINTAIN_CONFIG, key = "#gameId")
     public GameMaintainConfigDo selectByGameId(String gameId) {
         AssertUtil.assertNotNull(gameId, ErrorCode.ERR_PARAM);
-        return GameMaintainConfigConverter.poToDo(gameMaintainConfigMapper.selectOne(buildQuery(gameId)));
-    }
-
-    @CacheEvict(value = CacheConstants.GAME_MAINTAIN_CONFIG, key = "#gameId")
-    public void evict(String gameId) {
-        // do nothing
-    }
-
-    private GameMaintainConfigQuery buildQuery(String gameId) {
-        return GameMaintainConfigQuery.builder().gameId(gameId).build();
+        return poToDo(gameMaintainConfigMapper.selectOne(GameMaintainConfigQuery.builder()
+                .gameId(gameId)
+                .build()));
     }
 }
