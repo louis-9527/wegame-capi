@@ -165,24 +165,24 @@ public class OperationEventService extends AbstractService {
 
 
     private void saveCatch(String catch_key, Map<String, String> catchMap) {
-        redisTemplate.opsForHash().putAll(catch_key, catchMap);
-        redisTemplate.expire(catch_key, 24 * 60 * 60, TimeUnit.SECONDS);
-//
-//        String luaScript =
-//                "for i = 1, #ARGV - 1, 2 do " +
-//                        "redis.call('HSET', KEYS[1], tostring(ARGV[i]), tostring(ARGV[i+1])) " +
-//                        "end " +
-//                        "redis.call('EXPIRE', KEYS[1], tonumber(ARGV[#ARGV]))";
-//        List<Object> args = new ArrayList<>();
-//        for (Map.Entry<Long, String> entry : catchMap.entrySet()) {
-//            args.add(entry.getKey());
-//            args.add(entry.getValue());
-//        }
-//        args.add(24 * 60 * 60); // 24小时转换成秒
-//        redisTemplate.execute(
-//                new DefaultRedisScript<>(luaScript, Long.class),
-//                Collections.singletonList(catch_key),
-//                args.toArray() // 关键：转换为 String[]
-//        );
+//        redisTemplate.opsForHash().putAll(catch_key, catchMap);
+//        redisTemplate.expire(catch_key, 24 * 60 * 60, TimeUnit.SECONDS);
+
+        String luaScript =
+                "for i = 1, #ARGV - 1, 2 do " +
+                        "redis.call('HSET', KEYS[1], tostring(ARGV[i]), tostring(ARGV[i+1])) " +
+                        "end " +
+                        "redis.call('EXPIRE', KEYS[1], tonumber(ARGV[#ARGV]))";
+        List<Object> args = new ArrayList<>();
+        for (Map.Entry<String, String> entry : catchMap.entrySet()) {
+            args.add(Long.valueOf(entry.getKey()));
+            args.add(entry.getValue());
+        }
+        args.add(24 * 60 * 60); // 24小时转换成秒
+        redisTemplate.execute(
+                new DefaultRedisScript<>(luaScript, Long.class),
+                Collections.singletonList(catch_key),
+                args.toArray() // 关键：转换为 String[]
+        );
     }
 }
