@@ -34,7 +34,7 @@ public class Constants {
     public static final int CONST_10000 = 10000;
     public static final int CONST_1000000 = 1000000;
 
-    public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event_1:%s_%s";
+    public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event_2:%s_%s";
     public static final String OPERATION_EVENT_ING_KEY = "wegame:cuser:operation_event_ing:%s_%s";
     public static final Long OPERATION_EVENT_ING_EXPIRED = 5*60L;
 

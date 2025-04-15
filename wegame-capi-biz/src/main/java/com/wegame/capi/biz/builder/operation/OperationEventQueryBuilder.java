@@ -69,12 +69,14 @@ public class OperationEventQueryBuilder {
         criteria.and("playerName").is(playName);
         criteria.and("gameId").is(gameId);
         criteria.and("eventStatus").in(Lists.newArrayList(OperationEventStatusEnum.NONE.getCode(), OperationEventStatusEnum.ING.getCode()));
+        criteria.and("effectedTime").lte(currentMilli);
         criteria.and("expiredTime").gte(currentMilli);
         criteria.and("$expr").is(
                 new Document("lt", Arrays.asList("$finishBonus", "$minBonus"))
         );
         Query query = new Query(criteria);
-        query.with(Sort.by(Sort.Direction.ASC, "createTime"));
+        query.with(Sort.by(Sort.Direction.ASC, "effectedTime"));
+        query.limit(10);
         query.fields().include("_id", "gameId", "effectedTime", "expiredTime", "eventStatus");
         return query;
     }

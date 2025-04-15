@@ -8,10 +8,7 @@ import com.wegame.capi.api.base.SingleWalletBaseApi;
 import com.wegame.capi.api.domain.req.promotion.FreeSpinHistoryOfPlayerReq;
 import com.wegame.capi.api.domain.req.promotion.FreeSpinOfPlayerReq;
 import com.wegame.capi.api.domain.req.promotion.FreeSpinReq;
-import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
-import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
-import com.wegame.capi.api.domain.req.singlewallet.GetAuthLoginTokenReq;
-import com.wegame.capi.api.domain.req.singlewallet.GetCreditReq;
+import com.wegame.capi.api.domain.req.singlewallet.*;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinHistoryOfPlayerRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinOfPlayerRes;
@@ -64,6 +61,8 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     private static final String GET_CREDIT_URL_FORMAT = "%s/getCredit";
     private static final String BET_WITH_PAYOUT_URL_FORMAT = "%s/betWithPayout";
     private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
+    private static final String BET_STAR_SPIN_URL_FORMAT = "%s/starSpin";
+
 
     private static final String FREE_SPIN = "%s/freeSpin";
     private static final String FREE_SPIN_OF_PLAYER = "%s/freeSpinOfPlayer";
@@ -173,6 +172,68 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         throw new BusinessException(ErrorCode.ERR_NET);
     }
 
+    /**
+     * 星卡投注
+     * @param req
+     * @return
+     */
+
+    public CommonRes<SingleWalletBetWithPayoutRes> starSpin(BetStarSpinReq req) {
+        // 参数签名
+        assembleSingleSignature(req);
+        RequestEntity<BetStarSpinReq> requestEntity = new RequestEntity<>(req,
+                buildHeaders(),
+                HttpMethod.POST,
+                URI.create(String.format(BET_STAR_SPIN_URL_FORMAT, singleDomain)));
+        long requestStartTime = System.currentTimeMillis();
+        boolean canContinueExecute = true;
+        int duplicateIdCount = 0;
+        while (canContinueExecute) {
+            try {
+                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
+                        new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
+                        });
+                if (Objects.isNull(responseEntity) || Objects.isNull(responseEntity.getBody())) {
+                    canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                    continue;
+                }
+                CommonRes<SingleWalletBetWithPayoutRes> commonRes = responseEntity.getBody();
+                if (commonRes.isSuc()) {
+                    // 成功，则直接返回
+                    return commonRes;
+                } else if (Objects.equals(commonRes.getStatus(), DUPLICATE_REFERENCE_ID.getCode())) {
+                    duplicateIdCount = duplicateIdCount + 1;
+                    // 重复id，则判断能否继续重试(重试次数小于2 || 未达到重试时间上限)。
+                    // （单钱包认为3s后的重复id为成功）通过duplicateCount次数 + 每次重试sleep1.5s控制
+                    canContinueExecute = duplicateIdCount < MAX_DUPLICATE_COUNT;
+                    if (canContinueExecute) {
+                        // 能继续重试
+                        log.warn("betStarSpin continue retry when DUPLICATE_REFERENCE_ID, sleep 1.5 seconds");
+                        // 暂停1.5秒（1500000000纳秒）
+                        LockSupport.parkNanos(1500000000L);
+                    } else {
+                        // 不能继续重试，此时则认为成功
+                        log.warn("betStarSpin stop retry when DUPLICATE_REFERENCE_ID，reach max retry：{} count, See it as a success", duplicateIdCount);
+                        return commonRes;
+                    }
+                } else {
+                    // 其他状态码，则直接返回
+                    return commonRes;
+                }
+            } catch (Exception e) {
+                log.error("betStarSpin Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
+                // 发生异常，判断是否达到最大重试时限（重试的最大时限：请求时间 + 5s）
+                canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                if (!canContinueExecute) {
+                    log.error("betStarSpin BusinessException, reach max retry time limit");
+                    throw e;
+                } else {
+                    log.warn("betStarSpin immediately retry when error");
+                }
+            }
+        }
+        throw new BusinessException(ErrorCode.ERR_NET);
+    }
     /**
      * 单钱包状态查询
      *
