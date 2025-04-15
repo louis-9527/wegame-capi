@@ -80,7 +80,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
         // 判奖-根据游戏滚轮和中奖线算法判断
-        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, BigDecimal.ONE));
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
         MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
@@ -134,7 +134,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
                                          List<MalakasGameRecordDo> ret,
                                          AtomicLong totalRewardAmount,
                                          LinkedList<FreeWheelHandleDo> freeWheelList) {
-        BigDecimal totalMultipleAmount = new BigDecimal("1");
+        BigDecimal totalMultipleAmount = new BigDecimal("0");
         while (!freeWheelList.isEmpty()) {
             FreeWheelHandleDo freeWheel = freeWheelList.removeFirst();
             MalakasGameRecordDo parentGameRecord = ret.stream().filter(item -> Objects.equals(freeWheel.getParentGameRecordId(), item.getId())).findFirst().orElse(null);
