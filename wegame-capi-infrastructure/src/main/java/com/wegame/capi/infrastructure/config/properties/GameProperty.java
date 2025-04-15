@@ -12,7 +12,9 @@ public class GameProperty {
 
     @Value("${game.enable.MariaMakiling}")
     private boolean enableMariaMaking;
-    @Value("${game.enable.ibong_adarna}")
+    @Value("${game.enable.Malakas}")
+    private boolean enableMalakas;
+    @Value("${game.enable.IbongAdarna}")
     private boolean enableIbongAdarna;
 
     public List<GameTypeEnum> enabledGameTypes() {
@@ -20,10 +22,12 @@ public class GameProperty {
         if (enableMariaMaking) {
             gameTypeList.add(GameTypeEnum.MARIA_MAKILING);
         }
+        if (enableMalakas) {
+            gameTypeList.add(GameTypeEnum.MALAKAS);
+        }
         if (enableIbongAdarna) {
             gameTypeList.add(GameTypeEnum.IBONG_ADARNA);
         }
-
         return gameTypeList;
     }
 }

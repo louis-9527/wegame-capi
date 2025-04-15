@@ -57,6 +57,7 @@ spring:
   redis:
     connectTimeout: 500
     timeout: 500
+
     cluster:
       nodes:
         - localhost:7001
@@ -65,9 +66,10 @@ spring:
         - localhost:7004
         - localhost:7005
         - localhost:7006
-      max-redirects: 5
+      max-redirects: 3
     lettuce:
       pool:
+        enabled: true
         #连接池中的最大空闲连接
         max-idle: 10
         #连接池最大阻塞等待时间（使用负值表示没有限制）

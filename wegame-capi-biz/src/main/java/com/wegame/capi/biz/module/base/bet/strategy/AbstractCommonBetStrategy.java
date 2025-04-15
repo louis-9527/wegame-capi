@@ -28,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -38,8 +37,7 @@ import java.util.Objects;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
 import static com.wegame.capi.client.enums.BetTypeEnum.NORMAL_BET;
-import static com.wegame.capi.common.enums.BetPromotionTypeEnum.OPERATION_EVENT;
-import static com.wegame.capi.common.enums.BetPromotionTypeEnum.STAR_CARD;
+import static com.wegame.capi.common.enums.BetPromotionTypeEnum.*;
 
 /**
  * 抽象通用投注策略<br>
@@ -52,8 +50,6 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         extends AbstractBetStrategy<R, RD> {
 
     private static final List<BetStatusEnum> FINAL_BET_STATUS = Arrays.asList(BetStatusEnum.SUCCESS, BetStatusEnum.FAIL);
-    @Autowired
-    RedisTemplate redisTemplate;
     @Autowired
     StarCardUseRecordService startCardUseRecordService;
     @Autowired
@@ -144,6 +140,20 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         }
     }
 
+    public boolean isCanFreeSpinBet(BetDo betDo) {
+        try {
+            if (!betDo.isUseFreeSpin()) {
+                return false;
+            }
+            // 设置betDo
+            betDo.setBetPromotionType(FREE_SPIN);
+            return true;
+        } catch (Exception e) {
+            log.error("isCanFreeSpinBet error, errMsg: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
     /**
      * 星卡投注流程-通用流程
      * <p>
@@ -212,6 +222,18 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             // todo 调用单钱包失败需要上报,待成就系统开发完成接入
         }
         return betHelper().handleBetResult(rBetRecordDo, resultDo);
+    }
+
+    public BetResultDo<RD> betForFreeSpin(BetDo betDo) {
+        AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(betDo.isUseFreeSpin(), ErrorCode.ERR_INTER);
+        AssertUtil.assertStrNotEmpty(betDo.getCampaignId(), ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), FREE_SPIN), ErrorCode.ERR_INTER);
+
+        // play
+
+        // betAndPayOut
+        return null;
     }
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {

@@ -37,6 +37,8 @@ public class BetConverter {
                 .useStarCard(betRequest.getBetDetail().isUseStarCard())
                 .rewardConfigId(betRequest.getBetDetail().getRewardConfigId())
                 .rewardId(betRequest.getBetDetail().getRewardId())
+                .useFreeSpin(betRequest.getBetDetail().isUseFreeSpin())
+                .campaignId(betRequest.getBetDetail().getCampaignId())
                 .build();
     }
 }
