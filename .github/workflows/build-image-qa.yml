@@ -18,10 +18,10 @@ on: #workflow_dispatch, job will only execute while being triggered
       version:
         required: false
         default: 'lastest'
-      
+
 jobs:
   build:
-    runs-on: [sre-snsoft] #tag that match with your github-runner
+    runs-on: [InnovaTech-Game] #tag that match with your github-runner
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
@@ -32,7 +32,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           check-latest: true
-          
+
       - name: Install Maven
         run: |
           sudo apt-get update
@@ -78,7 +78,7 @@ jobs:
 
   build-docker:
     needs: build
-    runs-on: [sre-snsoft] #tag that match with your github-runner 
+    runs-on: [InnovaTech-Game] #tag that match with your github-runner
 
     steps:
       - name: Download artifact
