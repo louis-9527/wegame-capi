@@ -17,6 +17,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -50,17 +51,16 @@ public class ControllerAspect {
                         .filter(arg -> (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)))
                         .collect(Collectors.toList());
             }
-            UserInfo userInfo =UserInfoContext.getUserInfo();
-
+            UserInfo userInfo = UserInfoContext.getUserInfo();
             long costTime = System.currentTimeMillis() - startTime;
             if (costTime > 150L) {
-                log.info("{}#{}, cost times more than 150: {} ms, req={}, res={},playerId={}",
+                log.info("{}#{}, cost times more than 150: {} ms, req={}, res={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
                         req,
                         result,
-                        userInfo.getPlayerId());
+                        Objects.nonNull(userInfo) ? userInfo.getPlayerId() : "");
             } else {
                 log.info("{}#{}, cost times: {} ms, req={}, res={},playerId={}",
                         signature.getDeclaringTypeName(),
@@ -68,7 +68,7 @@ public class ControllerAspect {
                         costTime,
                         req,
                         result,
-                        userInfo.getPlayerId());
+                        Objects.nonNull(userInfo) ? userInfo.getPlayerId() : "");
             }
         } catch (Throwable e) {
             log.error("ControllerAspect.statistic error: {}", e.getMessage(), e);

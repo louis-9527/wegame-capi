@@ -75,6 +75,11 @@ public class BetRequest implements Validate, Serializable {
         private String rewardConfigId;
         @ApiModelProperty(value = "奖励id, 使用星卡时必填")
         private String rewardId;
+        // 预定投注
+        @ApiModelProperty(value = "使用预定投注, 非必填")
+        private boolean useFreeSpin;
+        @ApiModelProperty(value = "预定投注Id, 使用预定投注时必填")
+        private String campaignId;
 
         @Override
         public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
@@ -85,6 +90,7 @@ public class BetRequest implements Validate, Serializable {
             if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
                 mariaMakilingValidateParam(gameType, betType, betSubType);
                 validateStartCartBet(gameType, betType, betSubType);
+                validateFreeSpinBet(gameType, betType, betSubType);
             } else if (Objects.equals(gameType, GameTypeEnum.MALAKAS)) {
                 malakasValidateParam(gameType, betType, betSubType);
             } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
@@ -208,6 +214,18 @@ public class BetRequest implements Validate, Serializable {
                 if (BetSubTypeEnum.BUY_BET == betSubType) {
                     AssertUtil.assertNotNull(rewardConfigId, ErrorCode.ERR_PARAM);
                     AssertUtil.assertNotNull(rewardId, ErrorCode.ERR_PARAM);
+                }
+            }
+        }
+
+        private void validateFreeSpinBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+            // 判断是否使用预定投注
+            if (useFreeSpin) {
+                AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType || BetSubTypeEnum.FREE_SPINS_BUY_BET == betSubType, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
+                if (BetSubTypeEnum.BUY_BET == betSubType) {
+                    AssertUtil.assertStrNotEmpty(campaignId, ErrorCode.ERR_PARAM);
                 }
             }
         }

@@ -41,7 +41,7 @@ public class BaseReq implements Serializable {
      */
     private String refId;
     /**
-     *
+     * request createTime
      */
     private String createTime;
 }
