@@ -109,6 +109,10 @@ jobs:
           # 安装 Docker CLI + Buildx plugin
           sudo apt-get install -y docker-ce-cli docker-buildx-plugin awscli jq
 
+      - name: Check Docker status
+        run: |
+          docker version
+          docker info
 
       - name: Assume cross-account role to access ECR
         id: assume
