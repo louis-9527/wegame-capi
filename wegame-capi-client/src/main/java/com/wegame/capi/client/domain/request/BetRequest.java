@@ -154,7 +154,7 @@ public class BetRequest implements Validate, Serializable {
                 AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET == betType, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(BetSubTypeEnum.NORMAL_BET == betSubType || BetSubTypeEnum.FREE_SPINS_NORMAL_BET == betSubType, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET == betType, ErrorCode.ERR_PARAM);
-                if (BetSubTypeEnum.BUY_BET == betSubType) {
+                if (BetSubTypeEnum.NORMAL_BET == betSubType) {
                     AssertUtil.assertStrNotEmpty(campaignId, ErrorCode.ERR_PARAM);
                 }
             }
