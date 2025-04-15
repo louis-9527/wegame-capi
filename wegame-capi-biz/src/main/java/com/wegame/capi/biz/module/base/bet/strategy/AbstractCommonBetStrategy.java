@@ -262,7 +262,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             long maxPay = AmountUtil.toLong(new BigDecimal(rewardResult.getMessage()));
             for (int i = 1; i <= 10; i++) {
                 rBetRecordDo = generateBetRecord(betRecordId, betDo);
-                if (rBetRecordDo.getPayAmount() < maxPay) {
+                if (rBetRecordDo.getPayOutAmount() < maxPay) {
                     break;
                 }
                 // 如果重试10次都未获取到结果,返回异常
