@@ -141,6 +141,7 @@ jobs:
         run: |
           docker buildx build \
             --platform linux/arm64 \
+            --output type=image,push=true \
             --tag 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }} \
             --push \
             .
