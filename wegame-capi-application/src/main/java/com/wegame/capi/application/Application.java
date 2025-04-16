@@ -50,6 +50,8 @@ public class Application implements CommandLineRunner {
     private String robot;
 
     @Autowired
+    RedisWarmUp redisWarmUp;
+    @Autowired
     List<ExecutorService> executorList;
 
     public static void main(String[] args) {
@@ -63,6 +65,9 @@ public class Application implements CommandLineRunner {
     public void run(String... args) {
         try {
             log.info("start Application after env: {}", env);
+            // 预热
+            // 1、redis预热，2分钟内做redis预热
+            redisWarmUp.warmUp();
             if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
                 return;
             }
@@ -74,7 +79,6 @@ public class Application implements CommandLineRunner {
         } catch (Throwable te) {
             log.warn("send publish message fail:{}", te.getMessage(), te);
         }
-
     }
 
     @PreDestroy
