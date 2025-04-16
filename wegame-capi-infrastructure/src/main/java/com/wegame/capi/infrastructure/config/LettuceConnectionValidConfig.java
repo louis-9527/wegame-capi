@@ -21,7 +21,7 @@ public class LettuceConnectionValidConfig implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         if (redisConnectionFactory instanceof LettuceConnectionFactory) {
             ((LettuceConnectionFactory) redisConnectionFactory).setValidateConnection(true);
-            ((LettuceConnectionFactory) redisConnectionFactory).setShareNativeConnection(true);
+//            ((LettuceConnectionFactory) redisConnectionFactory).setShareNativeConnection(true);
             ((LettuceConnectionFactory) redisConnectionFactory).setEagerInitialization(true);
         }
     }

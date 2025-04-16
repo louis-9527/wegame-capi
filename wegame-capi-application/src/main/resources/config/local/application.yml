@@ -100,7 +100,7 @@ spring:
             max-active: 2000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 30000
+            min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL
             test-while-idle: true
             test-on-borrow: false
@@ -118,7 +118,7 @@ spring:
             max-active: 1000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 3000
+            min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL
             test-while-idle: true
             test-on-borrow: false

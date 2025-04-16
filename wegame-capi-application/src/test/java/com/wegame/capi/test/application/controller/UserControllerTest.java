@@ -80,9 +80,11 @@ public class UserControllerTest extends BaseTest {
         Assert.assertNotNull(loginResponse.getData());
         Assert.assertTrue(StringUtils.isNotEmpty(loginResponse.getData().getToken()));
         HttpServletResponse successMeHttpServletResponse = new MockHttpServletResponse();
-        CommonResponse<UserInfo> successMeResponse = userController.me(successMeHttpServletResponse);
-        Assert.assertNotNull(successMeResponse);
-        Assert.assertNull(successMeResponse.getData());
+        for(int i = 0; i < 5; i ++) {
+            CommonResponse<UserInfo> successMeResponse = userController.me(successMeHttpServletResponse);
+            Assert.assertNotNull(successMeResponse);
+            Assert.assertNull(successMeResponse.getData());
+        }
 
         // test me fail
         HttpServletRequest logoutHttpServletRequest = new MockHttpServletRequest();
