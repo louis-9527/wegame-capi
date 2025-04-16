@@ -46,8 +46,8 @@ public class Application implements CommandLineRunner {
     private String appName;
     @Value("${spring.application.env}")
     private String env;
-    @Value("${lark.robot}")
-    private String robot;
+    @Value("${lark.publishRobot}")
+    private String publishRobot;
 
     @Autowired
     RedisWarmUp redisWarmUp;
@@ -68,10 +68,10 @@ public class Application implements CommandLineRunner {
             // 预热
             // 1、redis预热，2分钟内做redis预热
             redisWarmUp.warmUp();
-            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
-                return;
-            }
-            LarkUtil.sendTextMsg(robot, ServicePublishMessage.builder()
+//            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
+//                return;
+//            }
+            LarkUtil.sendTextMsg(publishRobot, ServicePublishMessage.builder()
                     .applicationName(appName)
                     .env(env)
                     .ip(IpUtil.getLocalIp())

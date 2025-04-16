@@ -31,8 +31,8 @@ public abstract class AbstractAlertScheduler
     private String appName;
     @Value("${spring.application.env}")
     private String env;
-    @Value("${lark.robot}")
-    private String robot;
+    @Value("${lark.publishRobot}")
+    private String publishRobot;
     @Autowired
     BetRecordService betRecordService;
 
@@ -54,7 +54,7 @@ public abstract class AbstractAlertScheduler
                 .limit(1)
                 .build(), getGameType());
         if (CollectionUtils.isNotEmpty(idList)) {
-            LarkUtil.sendTextMsg(robot, BizAlertMessage.builder()
+            LarkUtil.sendTextMsg(publishRobot, BizAlertMessage.builder()
                     .applicationName(appName)
                     .env(env)
                     .traceId(ThreadMdcUtil.getTraceId())
