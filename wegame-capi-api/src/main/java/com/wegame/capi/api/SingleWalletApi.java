@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.api.base.SingleWalletBaseApi;
 import com.wegame.capi.api.domain.req.promotion.FreeSpinHistoryOfPlayerReq;
 import com.wegame.capi.api.domain.req.promotion.FreeSpinOfPlayerReq;
@@ -295,6 +296,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public FreeSpinOfPlayerRes freeSpinOfPlayer(FreeSpinOfPlayerReq req) {
         try {
+            log.info("freeSpinOfPlayer req: {}", FastJsonUtils.toJSONString(req));
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<FreeSpinOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_OF_PLAYER, singleDomain)));
