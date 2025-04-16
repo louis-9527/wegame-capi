@@ -1,6 +1,7 @@
-package com.wegame.capi.infrastructure.config;
+package com.wegame.capi.biz.config;
 
-import com.wegame.capi.infrastructure.filter.ContextFilter;
+import com.wegame.capi.biz.filter.ContextFilter;
+import com.wegame.capi.biz.service.UserService;
 import com.wegame.base.filter.MdcFilter;
 import com.wegame.base.filter.SignatureFilter;
 import com.wegame.capi.common.Constants;
@@ -58,9 +59,11 @@ public class FilterConfig {
     }
 
     @Bean
-    public FilterRegistrationBean contextFilter(@Autowired RedisTemplate<String, Object> redisTemplate) {
+    public FilterRegistrationBean contextFilter(@Autowired RedisTemplate<String, Object> redisTemplate,
+    @Autowired UserService userService) {
         ContextFilter contextFilter = new ContextFilter();
         contextFilter.setRedisTemplate(redisTemplate);
+        contextFilter.setUserService(userService);
         log.info("build contextFilter, contextFilter: {}", contextFilter);
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(contextFilter);

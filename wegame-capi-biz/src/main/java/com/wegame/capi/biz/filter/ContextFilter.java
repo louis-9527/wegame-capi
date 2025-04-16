@@ -1,9 +1,10 @@
-package com.wegame.capi.infrastructure.filter;
+package com.wegame.capi.biz.filter;
 
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.base.context.SystemInfo;
 import com.wegame.base.context.SystemInfoContext;
+import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -32,6 +33,8 @@ import java.util.Objects;
 public class ContextFilter extends OncePerRequestFilter {
 
     RedisTemplate<String, Object> redisTemplate;
+
+    UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -89,7 +92,8 @@ public class ContextFilter extends OncePerRequestFilter {
             }
             UserInfo user = null;
             if (StringUtils.isNotEmpty(_token_)) {
-                user = (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, _token_));
+                // user = (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, _token_));
+                user = userService.getUserInfoByToken(String.format(Constants.CUSER_LOGIN_TOKEN, _token_));
             }
             UserInfoContext.setUserInfo(user);
         } catch (Exception e) {
