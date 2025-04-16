@@ -26,8 +26,7 @@ public class FreeSpinService {
     SingleWalletApi singleWalletApi;
 
     public FreeSpinDo freeSpin() {
-        FreeSpinRes res = singleWalletApi.freeSpin(null);
-        return toDo(res);
+        return null;
     }
     public FreeSpinOfPlayerDo freeSpinOfPlayer() {
         FreeSpinOfPlayerRes res = singleWalletApi.freeSpinOfPlayer(buildReq());
