@@ -57,7 +57,6 @@ spring:
   redis:
     connectTimeout: 500
     timeout: 500
-
     cluster:
       nodes:
         - localhost:7001
@@ -68,6 +67,7 @@ spring:
         - localhost:7006
       max-redirects: 3
     lettuce:
+      read-from: REPLICA_PREFERRED  # 设置读取模式为优先从从节点读取
       pool:
         enabled: true
         #连接池中的最大空闲连接
@@ -78,7 +78,10 @@ spring:
         max-active: 8
         #连接池中的最小空闲连接
         min-idle: 0
+        #间隔1个小时，驱逐空闲线程
+        time-between-eviction-runs: 3600000
     password: qwe123!@#
+    client-type: lettuce
   datasource:
     dynamic:
       # 设置默认的数据源或者数据源组

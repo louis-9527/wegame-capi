@@ -71,6 +71,7 @@ spring:
         #连接池中的最小空闲连接
         min-idle: 2
     password:
+    client-type: lettuce
   datasource:
     dynamic:
       primary: wegame_user_db

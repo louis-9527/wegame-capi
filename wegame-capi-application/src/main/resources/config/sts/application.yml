@@ -50,8 +50,8 @@ spring:
   freemarker:
     checkTemplateLocation: false
   redis:
-    connectTimeout: 200
-    timeout: 200
+    connectTimeout: 500
+    timeout: 500
     cluster:
       nodes:
         - qat-makiling-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
@@ -67,7 +67,10 @@ spring:
         max-wait: 100
         #连接池最大连接数（使用负值表示没有限制）
         max-active: 1500
+        #间隔1个小时，驱逐空闲线程
+        time-between-eviction-runs: 3600000
     password:
+    client-type: lettuce
   datasource:
     dynamic:
       primary: wegame_user_db
@@ -81,7 +84,7 @@ spring:
           driver-class-name: com.mysql.jdbc.Driver
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 200
+            initial-size: 300
             min-idle: 50
             max-active: 1000
             max-wait: 1000
