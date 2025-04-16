@@ -50,6 +50,7 @@ public class UserController extends AbstractController {
     @GetMapping("/logout")
     public CommonResponse<Boolean> logout(HttpServletRequest request) {
         String token = request.getHeader(Constants._TOKEN_);
+        loginService.removeUserInfo(token);
         return build(loginService.logout(token));
     }
 

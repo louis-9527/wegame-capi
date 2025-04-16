@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.service;
 
-import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.exception.BusinessException;
@@ -9,8 +8,6 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.converter.user.UserConverter;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
-import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.mapper.domain.user.UserPo;
 import com.wegame.capi.dao.mapper.domain.user.UserQuery;
@@ -19,9 +16,6 @@ import com.wegame.capi.dao.mapper.user.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -47,8 +41,6 @@ public class UserService {
     SingleWalletService singleWalletService;
     @Autowired
     UserLoginInfoService userLoginInfoService;
-    @Autowired
-    RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 新增
@@ -229,15 +221,6 @@ public class UserService {
         } finally {
             log.info("insert cost:{}", DateUtil.getCurrentMilli() - startTime);
         }
-    }
-
-    @Cacheable(value = CacheConstants.USER_INFO, key = "#token")
-    public UserInfo getUserInfoByToken(String token) {
-        return  (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, token));
-    }
-
-    @CacheEvict(value = CacheConstants.USER_INFO, key = "#token")
-    public void removeUserInfo(String token) {
     }
 
     public Long getCredit() {

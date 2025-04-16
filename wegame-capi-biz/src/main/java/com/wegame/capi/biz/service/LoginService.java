@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.service;
 
 import cn.hutool.crypto.SecureUtil;
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
@@ -10,6 +11,8 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -46,5 +49,14 @@ public class LoginService {
             return false;
         }
         return true;
+    }
+
+    @Cacheable(value = CacheConstants.USER_INFO, key = "#token")
+    public UserInfo getUserInfoByToken(String token) {
+        return  (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, token));
+    }
+
+    @CacheEvict(value = CacheConstants.USER_INFO, key = "#token")
+    public void removeUserInfo(String token) {
     }
 }
