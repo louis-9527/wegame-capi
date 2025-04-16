@@ -229,11 +229,10 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(betDo.isUseFreeSpin(), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(betDo.getCampaignId(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), FREE_SPIN), ErrorCode.ERR_INTER);
-
-        // play
-
-        // betAndPayOut
-        return null;
+        BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
+        boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, true);
+        return betHelper().handleBetResult(betRecordDo, resultDo);
     }
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {
@@ -255,7 +254,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
      */
     private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(long betRecordId, BetDo betDo) {
         BetRecordDo<R> rBetRecordDo = generateBetRecord(betRecordId, betDo);
-        RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), betDo.getPayAmount(), rBetRecordDo.getId());
+        RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
         if (rewardResult.getSuccess()) {
             return Pair.of(rewardResult, rBetRecordDo);
         } else if (Objects.equals(RedeemRewardResStatusEnum.INVALID_REWARD_PAYOUT.getCode(), rewardResult.getStatus())) {
@@ -263,7 +262,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             long maxPay = AmountUtil.toLong(new BigDecimal(rewardResult.getMessage()));
             for (int i = 1; i <= 10; i++) {
                 rBetRecordDo = generateBetRecord(betRecordId, betDo);
-                if (rBetRecordDo.getPayAmount() < maxPay) {
+                if (rBetRecordDo.getPayOutAmount() < maxPay) {
                     break;
                 }
                 // 如果重试10次都未获取到结果,返回异常

@@ -29,20 +29,20 @@ public class TestController {
     @PostMapping("/event/msg")
     public CommonResponse<Boolean> handleEventMessage(@RequestBody String event) {
 
-//        String msgDoStr = "{\n" +
-//                "    \"playerName\": \"slottest01\",\n" +
-//                "    \"bonus\": 100,\n" +
-//                "    \"eventId\": \"2-0692-4dc5-9f08-4a383b5d311a\",\n" +
-//                "    \"eventKind\": 1,\n" +
-//                "    \"gameId\": \"zhumeng001\",\n" +
-//                "    \"operatorGameId\": \"d596da1e-81a7-4010-9d22-749b9c30c69c\",\n" +
-//                "    \"channelId\": \"1050\",\n" +
-//                "    \"strategyId\": 3,\n" +
-//                "    \"orderNo\": \"Sss123\",\n" +
-//                "    \"effectedTime\": \"2025-02-27T07:31:13.357Z\",\n" +
-//                "    \"settlementTime\": \"2025-02-27T07:31:10.000Z\",\n" +
-//                "    \"timesOrSessionDuration\": 10\n" +
-//                "}";
+        String msgDoStr = "{\n" +
+                "    \"playerName\": \"slottest01\",\n" +
+                "    \"bonus\": 100,\n" +
+                "    \"eventId\": \"2-0692-4dc5-9f08-4a383b5d311a\",\n" +
+                "    \"eventKind\": 1,\n" +
+                "    \"gameId\": \"zhumeng001\",\n" +
+                "    \"operatorGameId\": \"d596da1e-81a7-4010-9d22-749b9c30c69c\",\n" +
+                "    \"channelId\": \"1050\",\n" +
+                "    \"strategyId\": 3,\n" +
+                "    \"orderNo\": \"Sss123\",\n" +
+                "    \"effectedTime\": \"2025-02-27T07:31:13.357Z\",\n" +
+                "    \"settlementTime\": \"2025-02-27T07:31:10.000Z\",\n" +
+                "    \"timesOrSessionDuration\": 10\n" +
+                "}";
         OperationEventMessageDo msgDo = JSON.parseObject(event, OperationEventMessageDo.class);
         if(GameTypeEnum.MARIA_MAKILING == GameTypeEnum.valueOfId(msgDo.getGameId())) {
             mariamakilingOperationEventPulsarListener.handleMessage(msgDo);

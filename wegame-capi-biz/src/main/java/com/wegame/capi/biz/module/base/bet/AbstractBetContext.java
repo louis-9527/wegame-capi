@@ -49,13 +49,14 @@ public abstract class AbstractBetContext {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_PARAM, "Not Login");
 
-//        if (BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
-//            return betStrategy.bet(betDo);
-//        } else {
-//            return distributeLock.lockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
-//                    () -> betStrategy.bet(betDo),
-//                    OPT_BUSY);
-//        }
-        return betStrategy.bet(betDo);
+        if (BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+            return betStrategy.bet(betDo);
+        } else {
+            return distributeLock.tryLockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
+                    100,
+                    3000,
+                    () -> betStrategy.bet(betDo),
+                    OPT_BUSY);
+        }
     }
 }
