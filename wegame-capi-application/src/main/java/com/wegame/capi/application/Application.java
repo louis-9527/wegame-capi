@@ -68,9 +68,9 @@ public class Application implements CommandLineRunner {
             // 预热
             // 1、redis预热，2分钟内做redis预热
             redisWarmUp.warmUp();
-//            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
-//                return;
-//            }
+            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
+                return;
+            }
             LarkUtil.sendTextMsg(publishRobot, ServicePublishMessage.builder()
                     .applicationName(appName)
                     .env(env)
