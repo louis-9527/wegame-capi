@@ -30,8 +30,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import static com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder.buildFreeSpinReq;
 import static com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder.buildReq;
-import static com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder.buildStarSpinReq;
 import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode;
 
 
@@ -75,12 +75,17 @@ public class SingleWalletService {
         }
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = null;
         try {
+            if (betRecordDo.getBetPromotionType() != null && Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
+                commonRes = singleWalletApi.freeSpin(buildFreeSpinReq(betRecordDo));
+            } else {
+                commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
+            }
 //            if (betRecordDo.getBetPromotionType() != null && Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
 //                commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo));
 //            } else {
 //                commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
 //            }
-            commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
+//            commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
 
             AssertUtil.assertNotNull(commonRes, ErrorCode.ERR_NET);
             AssertUtil.assertNotNull(commonRes.getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
@@ -144,10 +149,4 @@ public class SingleWalletService {
             return null;
         }
     }
-    //    public boolean verifyHash(String channelId, String playerName, Date createTime, String refId, String hash) {
-    //        Pair<String, String> privateKeyAndIv = singleWalletApi.getPrivateKeyAndIvByChannelId(channelId);
-    //        String verifyHash = singleWalletApi.hash(channelId, playerName, DateUtil.toUTC(createTime), refId, privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
-    //        AssertUtil.assertTrue(StringUtils.equals(hash, verifyHash), ErrorCode.ERR_PARAM);
-    //        return true;
-    //    }
 }

@@ -37,19 +37,27 @@ import static com.wegame.capi.common.enums.SingleWalletResStatusEnum.DUPLICATE_R
 
 /**
  * Single Wallet Api
- * 文档导航：
+ * 文档导航：<a href="https://casinoplus.sg.larksuite.com/docx/IwUhdnb3aodz42xnUAWlLp12gpf"/>
  * 2.1      authLoginToken
  * 2.2      getCredit
  * 3.2.3    betWithPayout
+ * 5.6      starSpin
  * 8.1      betStatus
- * @see <a href="https://casinoplus.sg.larksuite.com/docx/IwUhdnb3aodz42xnUAWlLp12gpf"/>
  *
- * Free Spin api
- * 文档导航：8.Free Spin Api
+ * 成就系统 Api
+ * 文档导航：<a href="https://casinoplus.sg.larksuite.com/docx/XZzMdmW4aonhYfxtMEili1qGgkb"/>
+ * 2.2 getDailyMission
+ * 2.4 getAchievement
+ * 2.5 getRewardBag
+ * 2.9 redeemTreasure
+ * 2.10 redeemAchievement
+ *
+ * Free Spin Api
+ * 文档导航：<a href="https://casinoplus.sg.larksuite.com/docx/Mvlid9I9goOgUUx0hxjlPIiAg7g"/>
+ * 8.Free Spin Api
  * 8.1 freeSpin
  * 8.2 freeSpinOfPlayer
  * 8.3 freeSpinHistoryOfPlayer
- * @see <a href="https://casinoplus.sg.larksuite.com/docx/Mvlid9I9goOgUUx0hxjlPIiAg7g"/>
  */
 @Slf4j
 @Component
@@ -273,18 +281,18 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     }
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
-    public FreeSpinRes freeSpin(FreeSpinReq req) {
+    public CommonRes<SingleWalletBetWithPayoutRes> freeSpin(FreeSpinReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<FreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN, singleDomain)));
-            ResponseEntity<CommonRes<FreeSpinRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinRes>>() {
+            ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
+            return responseEntity.getBody();
         } catch (BusinessException e) {
             log.error("freeSpin BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw e;

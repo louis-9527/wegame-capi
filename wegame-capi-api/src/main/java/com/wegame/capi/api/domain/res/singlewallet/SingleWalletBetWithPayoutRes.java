@@ -14,8 +14,17 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 public class SingleWalletBetWithPayoutRes extends SingleWalletBaseRes implements Serializable {
     private static final long serialVersionUID = -1827164647777864099L;
+    // common field
+    /** Player name */
     private String playerName;
+    /** Unique id of the bet */
     private String betId;
+    /** Player balance */
     private BigDecimal credit;
-    private String refId;
+
+    // free spin field
+    /** The number of free spins remaining in the player's activity */
+    private Integer remainingCount;
+    /** Campaign id of the free spin */
+    private String campaignId;
 }
