@@ -13,10 +13,10 @@ on: #workflow_dispatch, job will only execute while being triggered
     inputs:
       env:
         description: 'Environment to deploy to'
-        required: true
+        required: false
         default: 'qa'
       version:
-        required: false
+        required: true
         default: 'lastest'
 
 jobs:
