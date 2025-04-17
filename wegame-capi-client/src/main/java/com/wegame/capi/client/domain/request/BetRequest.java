@@ -94,7 +94,7 @@ public class BetRequest implements Validate, Serializable {
 
         private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-            if (!useStarCard) {
+            if (!useStarCard || !useFreeSpin) {
                 AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
             } else {
