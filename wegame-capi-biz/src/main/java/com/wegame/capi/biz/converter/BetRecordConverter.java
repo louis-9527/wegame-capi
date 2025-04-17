@@ -77,6 +77,7 @@ public class BetRecordConverter {
         po.setPlayerName(betRecordDo.getPlayerName());
         po.setBetType(betRecordDo.getBetType());
         po.setBetSubType(betRecordDo.getBetSubType());
+        po.setBetPromotionType(betRecordDo.getBetPromotionType());
         po.setBetId(betRecordDo.getBetId());
         po.setBetSerialNo(betRecordDo.getBetSerialNo());
         po.setBetAmount(betRecordDo.getBetAmount());
