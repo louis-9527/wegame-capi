@@ -42,6 +42,8 @@ public class FreeSpinPlayerConverter {
                 .gameId(freeSpin.getGameId())
                 .gameIdRef(freeSpin.getGameIdRef())
                 .gameName(freeSpin.getGameName())
+                .totalWin(freeSpin.getTotalWin())
+                .freeBet(freeSpin.getFreeBet())
                 .build();
     }
 
@@ -75,6 +77,8 @@ public class FreeSpinPlayerConverter {
                 .gameId(freeSpin.getGameId())
                 .gameIdRef(freeSpin.getGameIdRef())
                 .gameName(freeSpin.getGameName())
+                .totalWin(freeSpin.getTotalWin())
+                .freeBet(freeSpin.getFreeBet())
                 .build();
     }
 }
