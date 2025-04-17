@@ -7,10 +7,12 @@ import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.promotion.FreeSpinHistoryOfPlayerReq;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
 import java.util.Date;
 
+@Slf4j
 public class FreeSpinHistoryOfPlayerReqBuilder {
 
     public static FreeSpinHistoryOfPlayerReq buildReq(Integer page, Integer limit) {
@@ -18,8 +20,9 @@ public class FreeSpinHistoryOfPlayerReqBuilder {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // startTime endTime 传最近30天
         Date now = new Date();
-        Integer startTime = now.getSeconds();
-        Integer endTime = DateUtil.addDays(now, -30).getSeconds();
+        Integer startTime =  (int) (now.getTime() / 1000);
+        Integer endTime = (int) DateUtil.addDays(now, -30).getTime() / 1000;
+        log.info("FreeSpinHistoryOfPlayerReqBuilder.buildReq，startTime：{}，endTime：{}", startTime, endTime);
         return FreeSpinHistoryOfPlayerReq.builder()
                 .pId(userInfo.getPId())
                 .channelId(userInfo.getChannelId())
