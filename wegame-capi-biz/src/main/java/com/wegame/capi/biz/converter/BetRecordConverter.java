@@ -120,6 +120,7 @@ public class BetRecordConverter {
                 ? BetRecordVo.ExtendInfo
                 .builder()
                 .rewardUrl(betRecordDo.getExtendInfo().getRewardUrl())
+                .campaignId(betRecordDo.getExtendInfo().getCampaignId())
                 .build()
                 : null);
         vo.setCreateTime(betRecordDo.getCreateTime());
