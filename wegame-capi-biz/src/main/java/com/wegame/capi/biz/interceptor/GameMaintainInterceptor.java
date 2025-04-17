@@ -78,7 +78,6 @@ public class GameMaintainInterceptor extends HandlerInterceptorAdapter {
         if (Strings.isNullOrEmpty(gameId)) {
             return null;
         }
-        log.info("GameMaintainInterceptor - gameid: {}", gameId);
         return gameMaintainConfigService.selectByGameId(gameId);
     }
 
