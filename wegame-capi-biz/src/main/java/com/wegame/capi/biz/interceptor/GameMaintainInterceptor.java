@@ -44,7 +44,7 @@ public class GameMaintainInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         GameMaintainConfigDo configDo = getMaintainConfig(request);
         if (isGameInMaintain(configDo)) {
-            log.info("preHandle - game is under maintain");
+            log.info("preHandle - game : {} is under maintain", configDo.getGameId());
             CommonResponse<GameMaintainConfigVo> commonResponse = CommonResponse.build(ErrorCode.GAME_UNDER_MAINTAIN.getCode(), ErrorCode.GAME_UNDER_MAINTAIN.getMsg());
             commonResponse.setData(GameMaintainConfigConverter.doToVo(configDo));
             response.setContentType("application/json");
