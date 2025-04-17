@@ -39,6 +39,7 @@ public class BetRecordConverter {
         betRecordDo.setUserId(po.getUserId());
         betRecordDo.setPlayerId(po.getPlayerId());
         betRecordDo.setPlayerName(po.getPlayerName());
+        betRecordDo.setBetPromotionType(po.getBetPromotionType());
         betRecordDo.setBetType(po.getBetType());
         betRecordDo.setBetSubType(po.getBetSubType());
         betRecordDo.setBetId(po.getBetId());
@@ -52,6 +53,7 @@ public class BetRecordConverter {
             betRecordDo.setExtendInfo(BetRecordDo.ExtendInfo.builder()
                     .ieId(po.getExtendInfo().getIeId())
                     .rewardUrl(po.getExtendInfo().getRewardUrl())
+                    .campaignId(po.getExtendInfo().getCampaignId())
                     .build());
         }
         betRecordDo.setCreator(po.getCreator());
@@ -75,6 +77,7 @@ public class BetRecordConverter {
         po.setPlayerName(betRecordDo.getPlayerName());
         po.setBetType(betRecordDo.getBetType());
         po.setBetSubType(betRecordDo.getBetSubType());
+        po.setBetPromotionType(betRecordDo.getBetPromotionType());
         po.setBetId(betRecordDo.getBetId());
         po.setBetSerialNo(betRecordDo.getBetSerialNo());
         po.setBetAmount(betRecordDo.getBetAmount());
@@ -86,6 +89,7 @@ public class BetRecordConverter {
             po.setExtendInfo(BetRecordPo.ExtendInfo.builder()
                     .ieId(betRecordDo.getExtendInfo().getIeId())
                     .rewardUrl(betRecordDo.getExtendInfo().getRewardUrl())
+                    .campaignId(betRecordDo.getExtendInfo().getCampaignId())
                     .build());
         }
         if (OptEnum.ADD.equals(optEnum)) {

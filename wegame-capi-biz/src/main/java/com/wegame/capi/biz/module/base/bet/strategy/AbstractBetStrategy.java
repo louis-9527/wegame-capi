@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.SnowflakeIdGenerator;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
