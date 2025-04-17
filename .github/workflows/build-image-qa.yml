@@ -44,13 +44,13 @@ jobs:
           sudo chown -R $(whoami):$(whoami) /opt/maven
           sudo chmod -R u+rwX /opt/maven
 
-      - name: Retrieve Maven dependency cache from S3
-        uses: leroy-merlin-br/action-s3-cache@v1
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
         with:
-          action: get
-          aws-region: ap-southeast-1
-          bucket: github-actions-test-cache
-          key: ${{ hashFiles('pom.xml') }}
+          path: /opt/maven/repo
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
 
       - name: Build with Maven
         run: |
@@ -58,16 +58,6 @@ jobs:
           mvn --version
           sudo cp ./settings.xml /usr/share/maven/conf/settings.xml
           mvn clean package -P${{ github.event.inputs.env }} -DskipTests
-
-      - name: Save Maven dependency cache to S3
-        uses: leroy-merlin-br/action-s3-cache@v1
-        with:
-          action: put
-          aws-region: ap-southeast-1
-          bucket: github-actions-test-cache
-          key: ${{ hashFiles('pom.xml') }}
-          artifacts: |
-            /opt/maven/repo
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
