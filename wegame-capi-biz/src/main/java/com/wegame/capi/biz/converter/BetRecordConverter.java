@@ -86,6 +86,7 @@ public class BetRecordConverter {
             po.setExtendInfo(BetRecordPo.ExtendInfo.builder()
                     .ieId(betRecordDo.getExtendInfo().getIeId())
                     .rewardUrl(betRecordDo.getExtendInfo().getRewardUrl())
+                    .campaignId(betRecordDo.getExtendInfo().getCampaignId())
                     .build());
         }
         if (OptEnum.ADD.equals(optEnum)) {
