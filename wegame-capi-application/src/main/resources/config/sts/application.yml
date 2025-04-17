@@ -96,7 +96,7 @@ spring:
             test-on-return: false
             pool-prepared-statements: false
         wegame_backend_db:
-          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: QATmakilingService
           password: ENC(Lm5nLGO2RTUPqHi/nkBU31uk6Zn/vV6GevM9jwwx4Bfck539re9GPagkh6bBi1t/lgexud3+wkye7Gz8qXTqhg==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
