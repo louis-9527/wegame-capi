@@ -370,7 +370,9 @@ public abstract class AbstractOperationEventManager {
             if (updateEventsStatusRes.isSuccess()) {
                 // 更新事件状态为已上报
                 OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
-                        .reportStatus(OperationEventReportStatusEnum.FINISH).build();
+                        .reportStatus(OperationEventReportStatusEnum.FINISH)
+                        .reportTime(DateUtil.getCurrentMilli())
+                        .build();
                 operationEventService.update(eventReportUpdate, playName,operationEventType());
                 return;
             }

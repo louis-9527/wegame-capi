@@ -94,6 +94,10 @@ public class OperationEventDo implements Serializable {
      */
     private Long updateTime;
     /**
+     * 上报时间
+     */
+    private Long reportTime;
+    /**
      * 上报失败原因
      */
     private String reportFailMsg;

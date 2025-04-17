@@ -2,6 +2,7 @@ package com.wegame.capi.biz.builder.operation;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventDetailQuery;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +60,8 @@ public class OperationEventDetailQueryBuilder {
         }
         if (Objects.nonNull(detailDo.getUpdateTime())) {
             update.set("updateTime", detailDo.getUpdateTime());
+        }else {
+            update.set("updateTime", DateUtil.getCurrentMilli());
         }
         return update;
     }
