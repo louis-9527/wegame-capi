@@ -77,15 +77,18 @@ public abstract class AbstractMariaMakilingBetStrategy
             // 非免费轮投注流程
             //// 1、是否使用星卡
             if (isCanStarCardBet(betDo)) {
+                log.info("-------canStarCardBet-------");
                 // 1.1 是，则星卡投注流程
                 return betForStartCard(betDo);
             } else if (isCanFreeSpinBet(betDo)) {
+                log.info("-------canFreeSpinBet-------");
                 // 1.1 是，则预定投注流程
                 return betForFreeSpin(betDo);
             } else {
                 // 1.2 否，则走其他投注流程
                 // 1.2.1、判断能否走干预事件投注
                 if (isCanOperationEventBet(betDo)) {
+                    log.info("-------canOperationEventBet-------");
                     // 1.2.11 命中干预事件：走干预事件投注
                     return betForOperationEvent(betDo);
                 } else {
