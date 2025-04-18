@@ -67,7 +67,6 @@ spring:
         - localhost:7006
       max-redirects: 3
     lettuce:
-      read-from: REPLICA_PREFERRED  # 设置读取模式为优先从从节点读取
       pool:
         enabled: true
         #连接池中的最大空闲连接
