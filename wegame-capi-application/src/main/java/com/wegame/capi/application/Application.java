@@ -48,9 +48,6 @@ public class Application implements CommandLineRunner {
     private String env;
     @Value("${lark.publishRobot}")
     private String publishRobot;
-
-    @Autowired
-    RedisWarmUp redisWarmUp;
     @Autowired
     List<ExecutorService> executorList;
 
@@ -65,9 +62,6 @@ public class Application implements CommandLineRunner {
     public void run(String... args) {
         try {
             log.info("start Application after env: {}", env);
-            // 预热
-            // 1、redis预热，2分钟内做redis预热
-            redisWarmUp.warmUp();
             if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
                 return;
             }

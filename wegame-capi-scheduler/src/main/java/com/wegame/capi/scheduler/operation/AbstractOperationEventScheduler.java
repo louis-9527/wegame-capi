@@ -38,7 +38,10 @@ public abstract class AbstractOperationEventScheduler
         extends AbstractScheduler
         implements Runnable {
 
-    private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 30 * 60 * 1000;
+    private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 5 * 60 * 1000;
+
+    private final long MONTH_DAY_AGO = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000);
+
 
     @Autowired
     public OperationEventService operationEventService;
@@ -54,7 +57,7 @@ public abstract class AbstractOperationEventScheduler
     @Override
     public void run() {
         // 事件明细中未处理成功
-        eventDetailIngExec();
+          eventDetailIngExec();
         // 事件状态已完成,但未上报
         eventReportFailExec();
         // 事件已过期,但未上报
@@ -67,12 +70,13 @@ public abstract class AbstractOperationEventScheduler
     private void eventDetailIngExec() {
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
-            log.info("{}#eventDetailFailExec run start. gameId: {}", getClass().getSimpleName(), gameType.getId());
+            log.info("{}#eventDetailIngExec. gameId: {}", getClass().getSimpleName(), gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDetailDo> detailList;
             OperationEventDetailQuery query = OperationEventDetailQuery.builder()
                     .betStatus(BetStatusEnum.ING.getCode())
+                    .gtCreateTime(MONTH_DAY_AGO)
                     .ltCreateTime(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
@@ -88,11 +92,11 @@ public abstract class AbstractOperationEventScheduler
                         .orElse(Collections.emptyList())
                         .forEach(this::eventDetailFailHandle);
             } while (CollectionUtils.isNotEmpty(detailList));
-            log.info("{}#eventDetailFailExec run end:{},time:{}", getClass().getSimpleName(),
+            log.info("{}#eventDetailIngExec run end:{},time:{}", getClass().getSimpleName(),
                     gameType.getId(),
                     DateUtil.getCurrentMilli() - startTime);
         } catch (Exception e) {
-            log.error("{}#eventDetailFailExec run exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+            log.error("{}#eventDetailIngExecrun exception:{}", getClass().getSimpleName(), e.getMessage(), e);
         }
     }
 
@@ -111,12 +115,9 @@ public abstract class AbstractOperationEventScheduler
                         .id(eventDetailDo.getId())
                         .betStatus(BetStatusEnum.FAIL)
                         .build();
-                eventDoUpdate = OperationEventDo.builder()
-                        .id(eventDetailDo.getEventRecordId())
-                        .eventStatus(OperationEventStatusEnum.NONE).build();
-
             } else {
                 if (Objects.equals(BetStatusEnum.ING.getCode(), recordDo.getStatus())) {
+                    // 原始订单处理中 则等待
                     return;
                 }
                 // 获取事件信息
@@ -125,9 +126,6 @@ public abstract class AbstractOperationEventScheduler
                             .id(eventDetailDo.getId())
                             .betStatus(BetStatusEnum.FAIL)
                             .build();
-                    eventDoUpdate = OperationEventDo.builder()
-                            .id(eventDetailDo.getEventRecordId())
-                            .eventStatus(OperationEventStatusEnum.NONE).build();
 
                 } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
                     eventDetailUpdate = OperationEventDetailDo.builder()
@@ -135,23 +133,22 @@ public abstract class AbstractOperationEventScheduler
                             .betId(recordDo.getBetId())
                             .betStatus(BetStatusEnum.SUCCESS)
                             .build();
-                    eventDoUpdate = OperationEventDo.builder()
-                            .id(eventDetailDo.getEventRecordId())
-                            .eventStatus(OperationEventStatusEnum.NONE).build();
+
                     OperationEventDo eventDo = operationEventService.getById(eventDetailDo.getEventRecordId(), operationEventType());
                     long finishBonus = eventDo.getFinishBonus() == null ? 0L : eventDo.getFinishBonus();
+                    long eventBonus = finishBonus + eventDetailDo.getEventAmount();
+                    eventDoUpdate = OperationEventDo.builder()
+                            .id(eventDetailDo.getEventRecordId())
+                            .finishBonus(eventBonus).build();
                     if (eventDetailDo.getEventAmount() + finishBonus > eventDo.getMinBonus()) {
-                        eventDoUpdate.setFinishBonus(finishBonus + eventDetailDo.getEventAmount());
                         eventDoUpdate.setEventStatus(OperationEventStatusEnum.FINISH);
                         eventDoUpdate.setEventSubStatus(OperationEventSubStatusEnum.FINISH_NORMAL);
                     }
                 }
             }
-            if (eventDetailUpdate != null && eventDoUpdate != null) {
-                operationEventManager().updateEventDetail(eventDetailDo.getPlayerName(),eventDetailUpdate, eventDoUpdate);
-                if (OperationEventStatusEnum.FINISH == eventDoUpdate.getEventStatus()) {
-                    operationEventManager().asyncReportEvent(eventDetailDo.getBetRecordId(),eventDetailDo.getPlayerName());
-                }
+            operationEventManager().updateEventDetail(eventDetailDo.getPlayerName(), eventDetailUpdate, eventDoUpdate);
+            if (eventDoUpdate != null && OperationEventStatusEnum.FINISH == eventDoUpdate.getEventStatus()) {
+                operationEventManager().asyncReportEvent(eventDetailDo.getBetRecordId());
             }
         } catch (Exception e) {
             log.error("{}#eventDetailFailHandle exception:{}", getClass().getSimpleName(), e.getMessage(), e);
@@ -171,12 +168,13 @@ public abstract class AbstractOperationEventScheduler
             OperationEventQuery query = OperationEventQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .eventStatus(OperationEventStatusEnum.FINISH.getCode())
-                    .createTimeLt(FIVE_MINUTES_AGO)
+                    .updateTimeGt(MONTH_DAY_AGO)
+                    .updateTimeLt(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE).build();
             do {
-                query.setLtLastId(lastId);
+                query.setGtLastId(lastId);
                 eventDetailDoList = operationEventService.queryList(query, operationEventType());
                 if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                     lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
@@ -196,7 +194,7 @@ public abstract class AbstractOperationEventScheduler
      * 事件处理成功,但未上报
      */
     private void eventReportFailHandle(OperationEventDo eventDo) {
-        operationEventManager().asyncReportEvent(eventDo.getId(),eventDo.getPlayerName());
+        operationEventManager().asyncReportEvent(eventDo);
     }
 
     /**
@@ -205,18 +203,20 @@ public abstract class AbstractOperationEventScheduler
     private void eventEventExpiredExec() {
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
-            log.info("{}#eventEventIngExec run start:{}", getClass().getSimpleName(), gameType.getId());
+            log.info("{}#eventEventExpiredExec run start:{}", getClass().getSimpleName(), gameType.getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDo> eventDetailDoList;
             OperationEventQuery query = OperationEventQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .expiredTimeLt(DateUtil.getCurrentMilli())
+                    .updateTimeGt(MONTH_DAY_AGO)
+                    .updateTimeLt(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE).build();
             do {
-                query.setLtLastId(lastId);
+                query.setGtLastId(lastId);
                 eventDetailDoList = operationEventService.queryList(query, operationEventType());
                 if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
                     lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
@@ -236,7 +236,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventEventIngHandle(OperationEventDo eventDo) {
         if (eventDo.getExpiredTime() < DateUtil.getCurrentMilli()) {
             // 过期上报
-            operationEventManager().asyncUpdateFinishEvent(eventDo.getId(),eventDo.getPlayerName(), OperationEventSubStatusEnum.FINISH_EXPIRED);
+            operationEventManager().asyncUpdateFinishEvent(eventDo.getId(), eventDo.getPlayerName(), OperationEventSubStatusEnum.FINISH_EXPIRED);
         }
     }
 }

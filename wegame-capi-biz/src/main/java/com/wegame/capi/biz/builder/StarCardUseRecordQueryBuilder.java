@@ -30,6 +30,9 @@ public class StarCardUseRecordQueryBuilder {
         if (Objects.nonNull(recordDo.getFailMsg())) {
             update.set("failMsg", recordDo.getFailMsg());
         }
+        if (Objects.nonNull(recordDo.getFailCode())) {
+            update.set("failCode", recordDo.getFailCode());
+        }
         if (Objects.nonNull(recordDo.getBetRecordId())) {
             update.set("betRecordId", recordDo.getBetRecordId());
         }

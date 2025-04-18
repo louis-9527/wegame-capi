@@ -59,6 +59,7 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.MARIA_MARKILING_REWARD_NOTIFY_SIZE);
             rewardService.evict(gameType);
+            rewardService.getWithCache(gameType);
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }

@@ -49,7 +49,7 @@ public class OperationEventDetailService extends AbstractService {
     }
 
     public List<OperationEventDetailDo> list(OperationEventDetailQuery query, OperationEventTypeEnum typeEnum) {
-        List<OperationEventDetailPo> poList = getMongoTemplate(typeEnum.getGameType()).find(buildQuery(query),
+        List<OperationEventDetailPo> poList = getPrimaryMongoTemplate(typeEnum.getGameType()).find(buildQuery(query),
                 OperationEventDetailPo.class,
                 typeEnum.getEventDetailCollectionName());
         return poToDoList(poList);
