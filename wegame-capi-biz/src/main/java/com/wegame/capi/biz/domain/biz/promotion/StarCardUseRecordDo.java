@@ -61,6 +61,10 @@ public class StarCardUseRecordDo implements Serializable {
      * 使用状态
      */
     private StarCardUseStatusEnum useStatus;
+    /**
+     * 核销失败原因
+     */
+    private Integer failCode;
 
     /**
      * 核销失败原因

@@ -39,8 +39,11 @@ public class TestController {
                 "    \"settlementTime\": \"2025-02-27T07:31:10.000Z\",\n" +
                 "    \"timesOrSessionDuration\": 10\n" +
                 "}";
-        OperationEventMessageDo msgDo = JSON.parseObject(event, OperationEventMessageDo.class);
-        mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
+        OperationEventMessageDo msgDo = JSON.parseObject(msgDoStr, OperationEventMessageDo.class);
+        for (int i=0;i<=210;i++) {
+            msgDo.setEventId(msgDo.getEventId()+"_"+i);
+            mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
+        }
         return CommonResponse.build(true);
     }
 
