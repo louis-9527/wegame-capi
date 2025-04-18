@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import static com.wegame.base.domain.CommonResponse.build;
 import static com.wegame.capi.biz.converter.promotion.CreateFreeSpinConverter.toVo;
 
 
@@ -56,7 +57,7 @@ public class TestController {
         if(GameTypeEnum.MALAKAS == GameTypeEnum.valueOfId(msgDo.getGameId())) {
             malakasOperationEventPulsarListener.handleMessage(msgDo);
         }
-        return CommonResponse.build(true);
+        return build(true);
     }
 
     @ApiOperation(value = "createFreeSpin", httpMethod = "POST")
