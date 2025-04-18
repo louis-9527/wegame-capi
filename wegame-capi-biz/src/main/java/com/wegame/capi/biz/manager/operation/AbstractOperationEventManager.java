@@ -65,6 +65,7 @@ public abstract class AbstractOperationEventManager {
 
     /**
      * 获取干预事件类型
+     *
      * @return 干预事件类型
      */
     public abstract OperationEventTypeEnum operationEventType();
@@ -88,7 +89,7 @@ public abstract class AbstractOperationEventManager {
             // 判断是否过期
             if (currentMilli > expiredTime) {
                 //过期 删除缓存并触发异步上报
-                asyncUpdateFinishEvent(recordId,playName, OperationEventSubStatusEnum.FINISH_EXPIRED);
+                asyncUpdateFinishEvent(recordId, playName, OperationEventSubStatusEnum.FINISH_EXPIRED);
                 continue;
             }
             //判断是否有未完成的干预事件
@@ -99,22 +100,21 @@ public abstract class AbstractOperationEventManager {
             OperationEventDo eventDo = operationEventService.getById(recordId, dynamicOperationGame);
             if (eventDo == null) {
                 log.warn("dynamicOperationEventService.getById is null:{}", recordId);
-                operationEventService.cleanOperationByCatch(recordId, playName,dynamicOperationGame);
+                operationEventService.cleanOperationByCatch(recordId, playName, dynamicOperationGame);
 
                 continue;
             }
             if (OperationEventStatusEnum.FINISH == eventDo.getEventStatus()) {
                 //已完成 删除缓存并触发异步上报
-                asyncReportEvent(recordId,playName);
+                asyncReportEvent(recordId);
                 continue;
             }
             // 判断金额
             if (eventDo.getFinishBonus() != null && (eventDo.getFinishBonus() >= eventDo.getMinBonus())) {
                 // 干预完成,删除缓存并触发异步上报
-                asyncUpdateFinishEvent(recordId,playName, OperationEventSubStatusEnum.FINISH_NORMAL);
+                asyncUpdateFinishEvent(recordId, playName, OperationEventSubStatusEnum.FINISH_NORMAL);
                 continue;
             }
-
 
             return eventDo;
         }
@@ -122,11 +122,15 @@ public abstract class AbstractOperationEventManager {
         return null;
     }
 
-    public void updateEventDetail(String playName,OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
-        operationEventDetailService.update(eventDetailDo, operationEventType());
-        operationEventService.update(eventDo, playName,operationEventType());
+    public void updateEventDetail(String playName, OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
+        if (eventDetailDo != null) {
+            operationEventDetailService.update(eventDetailDo, operationEventType());
+        }
+        if (eventDo != null) {
+            operationEventService.update(eventDo, playName, operationEventType());
+        }
     }
-    
+
     public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
         OperationEventTypeEnum typeEnum = operationEventType();
         Long id = operationEventDetailService.add(eventDetailDo, typeEnum);
@@ -210,7 +214,7 @@ public abstract class AbstractOperationEventManager {
             return GameOperationEventDo.builder().eventResult(false).build();
         }
         // 获取需要干预的金额
-        Long interventionAmount = getInterventionAmount(eventDo,userInfo.getPlayerName(), payOutAmount);
+        Long interventionAmount = getInterventionAmount(eventDo, userInfo.getPlayerName(), payOutAmount);
         if (interventionAmount == null) {
             return GameOperationEventDo.builder().eventResult(false).build();
         }
@@ -229,7 +233,7 @@ public abstract class AbstractOperationEventManager {
     /**
      * 获取需要干预的金额
      */
-    private Long getInterventionAmount(OperationEventDo eventDo,String playName, Long betAmount) {
+    private Long getInterventionAmount(OperationEventDo eventDo, String playName, Long betAmount) {
         // 判断需要干预金额
         long finishBonus = eventDo.getFinishBonus() == null ? 0L : eventDo.getFinishBonus();
         long eventAmount = eventDo.getBonus() - finishBonus;
@@ -244,7 +248,7 @@ public abstract class AbstractOperationEventManager {
             // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
             if (eventAmount < 0.1 * betAmount) {
                 // 上报
-                asyncUpdateFinishEvent(eventDo.getId(),playName, OperationEventSubStatusEnum.FINISH_NORMAL);
+                asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_NORMAL);
                 return null;
             }
         }
@@ -264,7 +268,7 @@ public abstract class AbstractOperationEventManager {
         return getPayMultipleConfigId(closestMultiple);
     }
 
-    public void asyncUpdateEventDetail(OperationEventDo eventDo,String playerName, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
+    public void asyncUpdateEventDetail(OperationEventDo eventDo, String playerName, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
         operationEventThreadPoolExecutor.execute(() -> {
             // 判断是否完成
             OperationEventSubStatusEnum eventSubStatusEnum = null;
@@ -293,27 +297,27 @@ public abstract class AbstractOperationEventManager {
                     .build();
 
 
-            updateEventDetail(playerName,eventDetailUpdate, eventDoUpdate);
+            updateEventDetail(playerName, eventDetailUpdate, eventDoUpdate);
             operationEventService.cleanOperationUseIng(eventDo.getId(), operationEventType());
             // 执行上报
             if (OperationEventSubStatusEnum.isFinish(eventSubStatusEnum)) {
                 // 如果完成执行上报
-                asyncReportEvent(eventDo.getId(),playerName);
+                asyncReportEvent(eventDo.getId());
             }
         });
     }
 
 
-    public void asyncUpdateFinishEvent(Long recordId,String playName, OperationEventSubStatusEnum eventSubStatusEnum) {
+    public void asyncUpdateFinishEvent(Long recordId, String playName, OperationEventSubStatusEnum eventSubStatusEnum) {
         operationEventThreadPoolExecutor.execute(() -> {
             OperationEventDo build = OperationEventDo.builder()
                     .id(recordId)
                     .eventStatus(OperationEventStatusEnum.FINISH)
                     .eventSubStatus(eventSubStatusEnum)
                     .build();
-            operationEventService.update(build,playName, operationEventType());
+            operationEventService.update(build, playName, operationEventType());
             // 异步上报
-            asyncReportEvent(recordId,playName);
+            asyncReportEvent(recordId);
         });
     }
 
@@ -323,72 +327,92 @@ public abstract class AbstractOperationEventManager {
      *
      * @param recordId 事件ID
      */
-    public void asyncReportEvent(Long recordId,String playName) {
+    public void asyncReportEvent(Long recordId) {
         operationEventReportThreadPoolExecutor.execute(() -> {
             OperationEventDo eventDo = operationEventService.getById(recordId, operationEventType());
-            AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
-            if (OperationEventStatusEnum.FINISH != eventDo.getEventStatus()) {
-                log.warn("event not finish,report fail:{}", recordId);
-                return;
-            }
-            operationEventService.cleanOperationByCatch(recordId,playName, operationEventType());
-            // 获取事件下所有已完成订单
-            OperationEventDetailQuery detailQuery = OperationEventDetailQuery.builder()
-                    .recordId(recordId)
-                    .betStatus(BetStatusEnum.SUCCESS.getCode())
-                    .orderByClause("createTime")
-                    .direction(Sort.Direction.ASC)
-                    .build();
+            this.reportEvent(eventDo);
+        });
 
-            List<OperationEventDetailDo> eventDetailDos = operationEventDetailService.list(detailQuery, operationEventType());
-            List<String> betNos = new ArrayList<>();
-            long totalAmount = 0L;
-            Long startTime = null;
-            List<UpdateEventsBetRecordReq> betRecords = new ArrayList<>();
-            if (CollectionUtils.isNotEmpty(eventDetailDos)) {
-                for (int i = 0; i < eventDetailDos.size(); i++) {
-                    OperationEventDetailDo eventDetail = eventDetailDos.get(i);
-                    if (i == 0) {
-                        startTime = eventDetail.getCreateTime();
-                    }
-                    betNos.add(eventDetail.getBetId());
-                    totalAmount += eventDetail.getEventAmount();
-                    betRecords.add(UpdateEventsBetRecordReqBuilder.buildReq(eventDetail));
-                }
-            }
-            UpdateEventsStatusReq updateEventsStatusReq = UpdateEventsStatusReq.builder()
-                    .eventId(eventDo.getEventId())
-                    .requestTime(DateUtil.toUTC(new Date()))
-                    .executeBouns(AmountUtil.toBigDecimal(totalAmount))
-                    .executeTime(startTime == null ? DateUtil.toUTC(DateUtil.getCurrentMilli()) : DateUtil.toUTC(startTime))
-                    .betNos(betNos)
-                    .betRecords(betRecords)
-                    .eventStatus(eventDo.getEventSubStatus().getCode())
-                    .build();
-            // 上报
-            UpdateEventsStatusRes updateEventsStatusRes = operationEventApi.updateEventsStatus(updateEventsStatusReq);
-            if (updateEventsStatusRes.isSuccess()) {
-                // 更新事件状态为已上报
-                OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
-                        .reportStatus(OperationEventReportStatusEnum.FINISH)
-                        .reportTime(DateUtil.getCurrentMilli())
-                        .build();
-                operationEventService.update(eventReportUpdate, playName,operationEventType());
-                return;
-            }
-            if (updateEventsStatusRes.isFail()) {
-                // 如果失败(特定情况)
-                OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
-                        .reportStatus(OperationEventReportStatusEnum.FAIL)
-                        .reportFailMsg(updateEventsStatusRes.getMessage())
-                        .build();
-                operationEventService.update(eventReportUpdate,playName, operationEventType());
-                return;
-            }
-            log.error("dynamicOperationEvent report error:{}", JSON.toJSONString(updateEventsStatusReq));
+    }
+
+
+
+    public void asyncReportEvent(OperationEventDo eventDo) {
+        AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
+        operationEventReportThreadPoolExecutor.execute(() -> {
+            this.reportEvent(eventDo);
         });
     }
 
+
+    private void reportEvent(OperationEventDo eventDo) {
+        Long recordId = eventDo.getId();
+        String playName = eventDo.getPlayerName();
+        AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
+        if (OperationEventStatusEnum.FINISH != eventDo.getEventStatus()) {
+            log.warn("event not finish,report fail:{}", recordId);
+            return;
+        }
+        operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
+        if (!(Objects.equals(OperationEventReportStatusEnum.NONE.getCode(), eventDo.getReportStatus().getCode()))) {
+            log.warn("event report is finish,report fail:{}", recordId);
+            return;
+        }
+        // 获取事件下所有已完成订单
+        OperationEventDetailQuery detailQuery = OperationEventDetailQuery.builder()
+                .recordId(recordId)
+                .betStatus(BetStatusEnum.SUCCESS.getCode())
+                .orderByClause("createTime")
+                .direction(Sort.Direction.ASC)
+                .build();
+
+        List<OperationEventDetailDo> eventDetailDos = operationEventDetailService.list(detailQuery, operationEventType());
+        List<String> betNos = new ArrayList<>();
+        long totalAmount = 0L;
+        Long startTime = null;
+        List<UpdateEventsBetRecordReq> betRecords = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(eventDetailDos)) {
+            for (int i = 0; i < eventDetailDos.size(); i++) {
+                OperationEventDetailDo eventDetail = eventDetailDos.get(i);
+                if (i == 0) {
+                    startTime = eventDetail.getCreateTime();
+                }
+                betNos.add(eventDetail.getBetId());
+                totalAmount += eventDetail.getEventAmount();
+                betRecords.add(UpdateEventsBetRecordReqBuilder.buildReq(eventDetail));
+            }
+        }
+        UpdateEventsStatusReq updateEventsStatusReq = UpdateEventsStatusReq.builder()
+                .eventId(eventDo.getEventId())
+                .requestTime(DateUtil.toUTC(new Date()))
+                .executeBouns(AmountUtil.toBigDecimal(totalAmount))
+                .executeTime(startTime == null ? DateUtil.toUTC(DateUtil.getCurrentMilli()) : DateUtil.toUTC(startTime))
+                .betNos(betNos)
+                .betRecords(betRecords)
+                .eventStatus(eventDo.getEventSubStatus().getCode())
+                .build();
+        // 上报
+        UpdateEventsStatusRes updateEventsStatusRes = operationEventApi.updateEventsStatus(updateEventsStatusReq);
+        if (updateEventsStatusRes.isSuccess()) {
+            // 更新事件状态为已上报
+            OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
+                    .reportStatus(OperationEventReportStatusEnum.FINISH)
+                    .reportTime(DateUtil.getCurrentMilli())
+                    .build();
+            operationEventService.update(eventReportUpdate, playName, operationEventType());
+            return;
+        }
+        if (updateEventsStatusRes.isFail()) {
+            // 如果失败(特定情况)
+            OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
+                    .reportStatus(OperationEventReportStatusEnum.FAIL)
+                    .reportFailMsg(updateEventsStatusRes.getMessage())
+                    .build();
+            operationEventService.update(eventReportUpdate, playName, operationEventType());
+            return;
+        }
+        log.error("dynamicOperationEvent report error:{}", JSON.toJSONString(updateEventsStatusReq));
+    }
 
 
 

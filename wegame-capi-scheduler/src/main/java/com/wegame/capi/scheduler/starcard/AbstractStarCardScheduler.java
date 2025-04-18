@@ -29,7 +29,7 @@ import java.util.Optional;
 public abstract class AbstractStarCardScheduler extends AbstractScheduler
         implements Runnable {
     private final long THREE_MINUTES_AGO = System.currentTimeMillis() - 3 * 60 * 1000;
-    private final long TEN_MINUTES_AGO = System.currentTimeMillis() - 10 * 60 * 1000;
+    private final long ONT_DAY_AGO = System.currentTimeMillis() - (24L * 60 * 60 * 1000);
 
 
     @Autowired
@@ -51,7 +51,7 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
             StarCardUseRecordQuery query = StarCardUseRecordQuery.builder()
                     .reportStatus(StarCardReportStatusEnum.ING.getCode())
                     .ltCreateTime(THREE_MINUTES_AGO)
-                    .gteCreateTime(TEN_MINUTES_AGO)
+                    .gteCreateTime(ONT_DAY_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE)
@@ -90,7 +90,7 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
                 // 未找到投注记录,
                 if (StarCardUseStatusEnum.ING == useRecordDo.getUseStatus()) {
                     // todo 使用状态为使用中,需要查询星卡真实使用状态
-                     //starCardUseStatus = StarCardUseStatusEnum.FAIL;
+                     starCardUseStatus = StarCardUseStatusEnum.FAIL;
                 } else if (StarCardUseStatusEnum.SUCCESS == useRecordDo.getUseStatus()) {
                     //todo 上报
                     starCardReportStatus = StarCardReportStatusEnum.ING;
@@ -117,7 +117,9 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
             StarCardUseRecordDo useUpdate = StarCardUseRecordDo.builder()
                     .id(useRecordDo.getId())
                     .reportStatus(starCardReportStatus)
-                    //         .useStatus(starCardUseStatus)
+                    .useStatus(starCardUseStatus)
+                    .failCode(-1)
+                    .failMsg("bet error")
                     .build();
             starCardUseRecordService.update(useUpdate,gameTypeEnum());
         } catch (Exception e) {
