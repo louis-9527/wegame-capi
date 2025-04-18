@@ -146,7 +146,7 @@ jobs:
           cd Mysterious-Slots-QAT
           sed -i "s|image: 438465153243.*|image: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}|g" deployment/templates/wegame-capi.yml
         env:
-          TOKEN: ${{ secrets.GITHUB_DEPLOYMENT_TOKEN }}
+          TOKEN: ${{ github.event.inputs.deployment }}
 
 
       - name: Deploy to QA
