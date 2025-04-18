@@ -56,8 +56,17 @@ public class OperationEventQueryBuilder {
         if (Objects.nonNull(recordQuery.getCreateTimeLt())) {
             criteria.and("createTime").lt(recordQuery.getCreateTimeLt());
         }
+        if (Objects.nonNull(recordQuery.getUpdateTimeGt()) && Objects.nonNull(recordQuery.getUpdateTimeLt())) {
+            criteria.andOperator(
+                    Criteria.where("updateTime").gt(recordQuery.getUpdateTimeGt()),
+                    Criteria.where("updateTime").lte(recordQuery.getUpdateTimeLt())
+            );
+        }
         if (Objects.nonNull(recordQuery.getLtLastId())) {
             criteria.and("_id").lt(recordQuery.getLtLastId());
+        }
+        if (Objects.nonNull(recordQuery.getGtLastId())) {
+            criteria.and("_id").gt(recordQuery.getGtLastId());
         }
         return criteria;
     }
@@ -115,7 +124,7 @@ public class OperationEventQueryBuilder {
         }
         if (Objects.nonNull(eventDo.getUpdateTime())) {
             update.set("updateTime", eventDo.getUpdateTime());
-        }else {
+        } else {
             update.set("updateTime", DateUtil.getCurrentMilli());
         }
 

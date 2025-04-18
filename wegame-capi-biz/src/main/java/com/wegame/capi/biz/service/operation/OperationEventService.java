@@ -122,7 +122,7 @@ public class OperationEventService extends AbstractService {
 
     public OperationEventDo getById(Long id, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        OperationEventPo operationPo = getMongoTemplate(gameEnum.getGameType()).findOne(
+        OperationEventPo operationPo = getPrimaryMongoTemplate(gameEnum.getGameType()).findOne(
                 OperationEventQueryBuilder.buildQueryOne(id),
                 OperationEventPo.class,
                 gameEnum.getEventCollectionName());
