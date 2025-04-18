@@ -58,6 +58,9 @@ spring:
       nodes:
         - prod-livsport-platform-redis-hk.jdc4k5.clustercfg.ape1.cache.amazonaws.com:6379
       max-redirects: 2
+    redisson:
+      minIdlePoolSize: 250
+      maxPoolSize: 1000
     lettuce:
       pool:
         enabled: true

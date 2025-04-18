@@ -65,6 +65,9 @@ spring:
         - 43.199.119.200:7005
         - 43.199.119.200:7006
       max-redirects: 5
+    redisson:
+      minIdlePoolSize: 250
+      maxPoolSize: 1000
     lettuce:
       pool:
         #连接池中的最大空闲连接
