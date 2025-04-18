@@ -6,13 +6,11 @@ import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.api.base.SingleWalletBaseApi;
-import com.wegame.capi.api.domain.req.promotion.CreateFreeSpinReq;
-import com.wegame.capi.api.domain.req.promotion.FreeSpinHistoryOfPlayerReq;
-import com.wegame.capi.api.domain.req.promotion.FreeSpinOfPlayerReq;
-import com.wegame.capi.api.domain.req.promotion.FreeSpinReq;
+import com.wegame.capi.api.domain.req.promotion.*;
 import com.wegame.capi.api.domain.req.singlewallet.*;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.CreateFreeSpinRes;
+import com.wegame.capi.api.domain.res.promotion.FreeSpinDetailRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinHistoryOfPlayerRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinOfPlayerRes;
 import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
@@ -78,6 +76,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     private static final String FREE_SPIN_OF_PLAYER = "%s/freeSpinOfPlayer";
     private static final String FREE_SPIN_HISTORY_OF_PLAYER = "%s/freeSpinHistoryOfPlayer";
     private static final String CREATE_FREE_SPIN = "%s/createFreeSpin";
+    private static final String FREE_SPIN_DETAIL = "%s/freeSpinDetail";
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
@@ -363,6 +362,26 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             throw e;
         } catch (Exception e) {
             log.error("createFreeSpin Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
+        }
+    }
+    public FreeSpinDetailRes freeSpinDetail(FreeSpinDetailReq req) {
+        try {
+            assembleSingleSignature(req);
+            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
+            RequestEntity<FreeSpinDetailReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_DETAIL, singleDomain)));
+            ResponseEntity<CommonRes<FreeSpinDetailRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinDetailRes>>() {
+            });
+            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
+            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            return responseEntity.getBody().getData();
+        } catch (BusinessException e) {
+            log.error("freeSpinDetail BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("freeSpinDetail Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }

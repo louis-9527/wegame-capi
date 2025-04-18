@@ -6,8 +6,6 @@ import com.wegame.capi.client.domain.request.promotion.CreateFreeSpinRequest;
 public class CreateFreeSpinReqBuilder {
 
     public static CreateFreeSpinReq buildReq(CreateFreeSpinRequest request) {
-//        UserInfo userInfo = UserInfoContext.getUserInfo();
-//        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         return CreateFreeSpinReq.builder()
                 .refId(request.getRefId())
                 .providerId(request.getProviderId())
