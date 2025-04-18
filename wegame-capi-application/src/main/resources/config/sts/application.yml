@@ -217,6 +217,10 @@ dynamic:
         2Xs3r+wtjZBpOrZxn5dMUhEHC7jm/0eLUcwOJ0lkoEnl
         -----END ENCRYPTED PRIVATE KEY-----
       password: egame-secure-passphrase
+httpclient-warm-up:
+  initHosts:
+    https://reward-http-stress.igo8.me: 300
+    http://sw-http-main-apisix-internal-stress.igo8.me: 300
 #lark
 lark:
   publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
