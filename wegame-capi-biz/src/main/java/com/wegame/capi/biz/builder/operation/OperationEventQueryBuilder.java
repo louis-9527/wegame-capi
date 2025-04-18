@@ -104,14 +104,19 @@ public class OperationEventQueryBuilder {
         if (Objects.nonNull(eventDo.getReportStatus())) {
             update.set("reportStatus", eventDo.getReportStatus().getCode());
         }
-        if (Objects.nonNull(eventDo.getUpdateTime())) {
-            update.set("updateTime", eventDo.getUpdateTime());
-        }
         if (Objects.nonNull(eventDo.getFinishBonus())) {
             update.set("finishBonus", eventDo.getFinishBonus());
         }
         if (Objects.nonNull(eventDo.getReportFailMsg())) {
             update.set("reportFailMsg", eventDo.getReportFailMsg());
+        }
+        if (Objects.nonNull(eventDo.getReportTime())) {
+            update.set("reportTime", eventDo.getReportTime());
+        }
+        if (Objects.nonNull(eventDo.getUpdateTime())) {
+            update.set("updateTime", eventDo.getUpdateTime());
+        }else {
+            update.set("updateTime", DateUtil.getCurrentMilli());
         }
 
         return update;

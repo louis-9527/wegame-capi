@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -54,6 +55,6 @@ public class FreeSpinOfPlayerVo implements Serializable {
         @ApiModelProperty("totalWin")
         private Integer totalWin;
         @ApiModelProperty("freeBet")
-        private Double freeBet;
+        private BigDecimal freeBet;
     }
 }
