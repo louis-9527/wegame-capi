@@ -5,12 +5,17 @@ import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.biz.listener.MalakasOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
+import com.wegame.capi.biz.service.promotion.FreeSpinService;
+import com.wegame.capi.client.domain.request.promotion.CreateFreeSpinRequest;
+import com.wegame.capi.client.domain.vo.promotion.CreateFreeSpinVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import static com.wegame.capi.biz.converter.promotion.CreateFreeSpinConverter.toVo;
 
 
 @Slf4j
@@ -23,7 +28,8 @@ public class TestController {
     MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
     @Autowired
     MalakasOperationEventPulsarListener malakasOperationEventPulsarListener;
-
+    @Autowired
+    FreeSpinService freeSpinService;
 
     @ApiOperation(value = "eventMsg", httpMethod = "POST")
     @PostMapping("/event/msg")
@@ -53,4 +59,10 @@ public class TestController {
         return CommonResponse.build(true);
     }
 
+    @ApiOperation(value = "createFreeSpin", httpMethod = "POST")
+    @PostMapping("/createFreeSpin")
+    public CommonResponse<CreateFreeSpinVo> createFreeSpin(@RequestBody CreateFreeSpinRequest request) {
+        request.validate();
+        return build(toVo(freeSpinService.createFreeSpin(request)));
+    }
 }

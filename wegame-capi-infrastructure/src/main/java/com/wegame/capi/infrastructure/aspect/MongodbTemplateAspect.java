@@ -26,10 +26,19 @@ public class MongodbTemplateAspect {
                     throwable);
             throw throwable;
         } finally {
-            log.info("调用mongodb接口耗时，{}#{}，耗时：{} ms",
-                    signature.getDeclaringTypeName(),
-                    signature.getName(),
-                    (System.currentTimeMillis() - startTime));
+            long endTime = System.currentTimeMillis();
+            long costTime = endTime - startTime;
+            if ( costTime > 20) {
+                log.info("{}#{}，mongodb call cost time more than 20：{} ms",
+                        signature.getDeclaringTypeName(),
+                        signature.getName(),
+                        costTime);
+            } else {
+                log.info("{}#{}，mongodb call cost time：{} ms",
+                        signature.getDeclaringTypeName(),
+                        signature.getName(),
+                        costTime);
+            }
         }
     }
 }
