@@ -134,18 +134,20 @@ jobs:
         run: |
           docker build -t 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }} .
           docker push 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}
-
+  
   deployment:
     needs: build-docker
     runs-on: [ARM] #tag that match with your github-runner
     steps:
+
       - name: Clone repo
-        env:
-        TOKEN: ${{ secrets.GITHUB_DEPLOYMENT_TOKEN }}
         run: |
           git clone https://git:${TOKEN}@github.com/sre-snsoft/Mysterious-Slots-QAT.git
           cd Mysterious-Slots-QAT
           sed -i "s|image: 438465153243.*|image: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}|g" deployment/templates/wegame-capi.yml
+        env:
+          TOKEN: ${{ secrets.GITHUB_DEPLOYMENT_TOKEN }}
+
 
       - name: Deploy to QA
         run: |
@@ -154,3 +156,4 @@ jobs:
           git config user.name "GitHub Actions"
           sh -x gitpush.sh "Deploy CAPI version ${{ github.event.inputs.version }} to QA"
 
+#The workflow is not valid. .github/workflows/build-image-capi-qa.yml (Line: 143, Col: 13): Unexpected value '' .github/workflows/build-image-capi-qa.yml (Line: 144, Col: 9): Unexpected value 'TOKEN'
