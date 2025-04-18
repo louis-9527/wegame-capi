@@ -56,6 +56,9 @@ spring:
       nodes:
         - uat-makiling-redis-sg.uj7p2w.clustercfg.apse1.cache.amazonaws.com:6379
       max-redirects: 5
+    redisson:
+      minIdlePoolSize: 250
+      maxPoolSize: 1000
     lettuce:
       pool:
         enabled: true
