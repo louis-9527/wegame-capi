@@ -84,9 +84,9 @@ spring:
           driver-class-name: com.mysql.jdbc.Driver
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 300
+            initial-size: 250
             min-idle: 50
-            max-active: 1000
+            max-active: 500
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30001
@@ -102,9 +102,9 @@ spring:
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           driver-class-name: com.mysql.jdbc.Driver
           druid:
-            initial-size: 10
-            min-idle: 10
-            max-active: 100
+            initial-size: 1
+            min-idle: 2
+            max-active: 10
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30001

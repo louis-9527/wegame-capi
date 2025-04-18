@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -17,12 +18,12 @@ import java.util.List;
 @ApiModel(description = "free spin 历史记录")
 public class FreeSpinHistoryOfPlayerVo implements Serializable {
     private static final long serialVersionUID = -8527322307778058829L;
-    @ApiModelProperty("playerName")
+    @ApiModelProperty("玩家姓名")
     private String playerName;
     @ApiModelProperty("refId")
     private String refId;
     @ApiModelProperty("history")
-    private List<FreeSpin> freeSpin;
+    private List<FreeSpin> history;
     @ApiModelProperty("totalPages")
     private Integer totalPages;
     @ApiModelProperty("page")
@@ -48,8 +49,10 @@ public class FreeSpinHistoryOfPlayerVo implements Serializable {
         @ApiModelProperty("gameName")
         private String gameName;
         @ApiModelProperty("totalWin")
-        private Integer totalWin;
+        private BigDecimal totalWin;
         @ApiModelProperty("firstUsedTime")
-        private Integer firstUsedTime;
+        private Long firstUsedTime;
+        @ApiModelProperty("freeBet")
+        private BigDecimal freeBet;
     }
 }
