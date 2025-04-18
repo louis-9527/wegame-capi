@@ -12,6 +12,7 @@ import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.SingleWalletService;
+import com.wegame.capi.biz.service.promotion.FreeSpinService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     public PulsarProducer pulsarProducer;
+    @Autowired
+    public FreeSpinService freeSpinService;
 
     public abstract AbstractGameContext<R> gameContext();
 

@@ -11,6 +11,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
+import com.wegame.capi.biz.domain.biz.promotion.FreeSpinDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
@@ -230,6 +231,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(betDo.isUseFreeSpin(), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(betDo.getCampaignId(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), FREE_SPIN), ErrorCode.ERR_INTER);
+        // todo 校验betValue是否和betAmount相同
+//        FreeSpinDetailDo freeSpinDetailDo = freeSpinService.freeSpinDetail(betDo.getCampaignId());
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
