@@ -6,9 +6,10 @@ logging:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: trace
     org.apache.ibatis: trace
-    org.mongodb: error
-#    com.alibaba.nacos: info
-#    com.alibaba.cloud.nacos: DEBUG
+    org.mongodb: DEBUG
+    org.springframework.data.redis: DEBUG
+    com.mongodb.internal.connection: DEBUG
+
 ## server
 server:
   port: 9500
@@ -70,13 +71,13 @@ spring:
       pool:
         enabled: true
         #连接池中的最大空闲连接
-        max-idle: 10
+        max-idle: 500
         #连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: 500
         #连接池最大连接数（使用负值表示没有限制）
         max-active: 8
         #连接池中的最小空闲连接
-        min-idle: 0
+        min-idle: 500
         #间隔1个小时，驱逐空闲线程
         time-between-eviction-runs: 3600000
     password: qwe123!@#
