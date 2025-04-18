@@ -83,8 +83,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
-        //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGameContext().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
-        //        AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
         CompletableFuture<MessageId> future = pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(), addMqMessage);
         SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
