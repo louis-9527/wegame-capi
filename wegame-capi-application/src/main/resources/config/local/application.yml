@@ -67,6 +67,9 @@ spring:
         - localhost:7005
         - localhost:7006
       max-redirects: 3
+    redisson:
+      minIdlePoolSize: 250
+      maxPoolSize: 1000
     lettuce:
       pool:
         enabled: true
