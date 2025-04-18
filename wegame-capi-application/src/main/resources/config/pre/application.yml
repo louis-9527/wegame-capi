@@ -117,6 +117,7 @@ spring:
     mongodb:
       dynamic:
         maria_makiling_mdb:
+          primary_uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/makiling?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=primary
           uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/makiling?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           db: makiling
 ## fastjson
