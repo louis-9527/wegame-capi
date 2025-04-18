@@ -94,12 +94,12 @@ public class BetRequest implements Validate, Serializable {
 
         private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-            if (!useStarCard || !useFreeSpin) {
-                AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
-            } else {
+            if (useStarCard || useFreeSpin) {
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(payAmount == 0L, ErrorCode.ERR_PARAM);
+            } else {
+                AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
             }
             if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
                 if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {

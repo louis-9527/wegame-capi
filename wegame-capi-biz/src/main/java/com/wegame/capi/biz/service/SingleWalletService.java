@@ -76,7 +76,7 @@ public class SingleWalletService {
         try {
             if (betRecordDo.getBetPromotionType() != null && Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
                 commonRes = singleWalletApi.freeSpin(buildFreeSpinReq(betRecordDo));
-            } if (betRecordDo.getBetPromotionType() != null && Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
+            } else if (betRecordDo.getBetPromotionType() != null && Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
                 commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo));
             } else {
                 commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));

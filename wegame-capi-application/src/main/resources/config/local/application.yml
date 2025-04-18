@@ -44,7 +44,7 @@ spring:
     allow-circular-references: true
     allow-bean-definition-overriding: true
   lifecycle:
-    timeout-per-shutdown-phase: 30
+    timeout-per-shutdown-phase: 90
   servlet:
     multipart:
       max-file-size: 10MB
@@ -126,13 +126,10 @@ spring:
             pool-prepared-statements: false
   data:
     mongodb:
-        dynamic:
-          maria_makiling_mdb:
-            uri: mongodb://localhost:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
-            db: makiling
-#          malakas_mdb:
-#            uri: mongodb://43.199.119.200:27017/malakas_mdb?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
-#        uri: mongodb://localhost:27017/wegame_mdb?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
+      dynamic:
+        maria_makiling_mdb:
+          uri: mongodb://43.199.119.200:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
+          db: makiling
 ## fastjson
 fastjson:
   parser:
@@ -150,7 +147,7 @@ api:
   game:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: http://sw-http-main-apisix.igo8.me
-    invokeSingle: false
+    invokeSingle: true
     cp:
       platformId: 50
       channelId: 1050
