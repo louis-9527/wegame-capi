@@ -1,0 +1,153 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.###
+
+name: Java CI with Maven # actions name will appear during triggered
+
+on: #workflow_dispatch, job will only execute while being triggered
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Environment to deploy to'
+        required: false
+        default: 'qa'
+      version:
+        required: true
+        default: 'latest'
+      deployment:
+        required: true
+
+jobs:
+  build:
+    runs-on: [ARM] #tag that match with your github-runner
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Set up JDK and Maven
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          check-latest: true
+
+      - name: Install Maven
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y maven
+
+      - name: Prepare Maven cache directory
+        run: |
+          sudo mkdir -p /opt/maven/repo
+          sudo chown -R $(whoami):$(whoami) /opt/maven
+          sudo chmod -R u+rwX /opt/maven
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: /opt/maven/repo
+          key: maven-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-${{ runner.arch }}-
+          retention-days: 365
+
+      - name: Build with Maven
+        run: |
+          rm -rf /opt/maven/repo/com/wegame
+          mvn --version
+          sudo cp ./settings.xml /usr/share/maven/conf/settings.xml
+          mvn clean package -P${{ github.event.inputs.env }} -DskipTests
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build ws jar
+          path: .
+
+  build-docker:
+    needs: build
+    runs-on: [ARM] #tag that match with your github-runner
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build ws jar
+          path: .
+
+      - name: Install Docker CLI & Buildx (official way)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ca-certificates curl gnupg lsb-release
+
+          # 添加 Docker GPG key
+          sudo install -m 0755 -d /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+            sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+          sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+          # 添加 Docker 官方 apt 仓库（注意 release 名称与你系统匹配）
+          echo \
+            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+            https://download.docker.com/linux/ubuntu \
+            $(lsb_release -cs) stable" | \
+            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+          sudo apt-get update
+
+          # 安装 Docker CLI + Buildx plugin
+          sudo apt-get install -y docker-ce-cli docker-buildx-plugin awscli jq
+
+      - name: Check Docker status
+        run: |
+          docker version
+          docker info
+
+      - name: Assume cross-account role to access ECR
+        id: assume
+        run: |
+          ROLE=$(aws sts assume-role \
+            --role-arn arn:aws:iam::438465153243:role/ecr_role_for_github-action \
+            --role-session-name github-ecr-session \
+            --output json)
+
+          echo "AWS_ACCESS_KEY_ID=$(echo $ROLE | jq -r '.Credentials.AccessKeyId')" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=$(echo $ROLE | jq -r '.Credentials.SecretAccessKey')" >> $GITHUB_ENV
+          echo "AWS_SESSION_TOKEN=$(echo $ROLE | jq -r '.Credentials.SessionToken')" >> $GITHUB_ENV
+          echo "ASSUMED_ROLE=true" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        run: |
+          docker buildx create --use --name multiarch-builder || docker buildx use multiarch-builder
+          docker buildx inspect --bootstrap
+
+      - name: Login to ECR (target account)
+        run: |
+          aws ecr get-login-password --region ap-southeast-1 | \
+          docker login --username AWS --password-stdin 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com
+
+      - name: Build & Push Docker Image (ARM)
+        run: |
+          docker build -t 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }} .
+          docker push 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}
+  
+  deployment:
+    runs-on: [ARM] #tag that match with your github-runner
+    steps:
+      - name: Clone repo
+        run: |
+          git clone https://git:${{ secrets.deployment }}@github.com/sre-snsoft/Mysterious-Slots-QAT.git
+          cd Mysterious-Slots-QAT
+          sed -i "s|image: 438465153243.*|image: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}|g" deployment/templates/wegame-capi.yml
+
+      - name: Deploy to QA
+        run: |
+          cd Mysterious-Slots-QAT
+          git config user.email "github-actions@github.com"
+          git config user.name "GitHub Actions"
+          sh -x gitpush.sh "Deploy CAPI version ${{ github.event.inputs.version }} to QA"
+
