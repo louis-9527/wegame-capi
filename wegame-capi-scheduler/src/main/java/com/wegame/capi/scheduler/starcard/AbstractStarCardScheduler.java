@@ -42,7 +42,7 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
 
     @Override
     public void run() {
-        // 查询前10分钟到前3分钟上报状态为待上报
+        // 查询前一天到前3分钟上报状态为待上报
         try {
             log.info("{}#AbstractStarCardScheduler run start. gameId: {}", getClass().getSimpleName(), gameTypeEnum().getId());
             long startTime = DateUtil.getCurrentMilli();
@@ -81,6 +81,9 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
     private void execUseStatusIngHandle(StarCardUseRecordDo useRecordDo) {
         try {
             Long betRecordId = useRecordDo.getBetRecordId();
+            if(Objects.isNull(betRecordId)){
+                return;
+            }
             // 查询原始订单的状态
             BetRecordDo recordDo = betRecordService.get(betRecordId, gameTypeEnum());
             StarCardReportStatusEnum starCardReportStatus = null;
