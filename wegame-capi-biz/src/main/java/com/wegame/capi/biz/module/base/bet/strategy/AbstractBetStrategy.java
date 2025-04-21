@@ -11,7 +11,7 @@ import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.SingleWalletService;
-import com.wegame.capi.biz.service.promotion.FreeSpinService;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +38,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     public PulsarProducer pulsarProducer;
-    @Autowired
-    public FreeSpinService freeSpinService;
 
     public abstract AbstractGameContext<R> gameContext();
 
@@ -58,12 +56,15 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      * 保存投注记录并投注派彩
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
-        //        if (syncOpt) {
-        //            return syncSaveBetRecordAndBetWithPayout(betRecordDo);
-        //        } else {
-        //            return asyncSaveBetRecordAndBetWithPayout(betRecordDo);
-        //        }
-        return asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
+            return asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+        } else {
+            if (syncOpt) {
+                return syncSaveBetRecordAndBetWithPayout(betRecordDo);
+            } else {
+                return asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+            }
+        }
     }
 
     private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
@@ -103,7 +104,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 // 新增消息发送失败，则转同步写db
                 betRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
             }
-            if (syncOpt) {
+            if (syncOpt && Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
                 // 同步设置游戏记录缓存
                 String cacheKey = String.format("%s_%s", betRecordDo.getId(), betRecordDo.getPlayerId());
                 betRecordManager().putGameRecordCache(betRecordDo.getGameRecordList(), gameContext().gameInfo().getGameType(), cacheKey);
