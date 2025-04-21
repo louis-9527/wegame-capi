@@ -75,7 +75,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     private static final String FREE_SPIN = "%s/freeSpin";
     private static final String FREE_SPIN_OF_PLAYER = "%s/freeSpinOfPlayer";
     private static final String FREE_SPIN_HISTORY_OF_PLAYER = "%s/freeSpinHistoryOfPlayer";
-    private static final String CREATE_FREE_SPIN = "%s/createFreeSpin";
+    private static final String CREATE_FREE_SPIN = "%s/callback/createFreeSpin";
     private static final String FREE_SPIN_DETAIL = "%s/freeSpinDetail";
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
@@ -349,7 +349,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         try {
 //            assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<CreateFreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.GET, URI.create(String.format(CREATE_FREE_SPIN, singleDomain)));
+            RequestEntity<CreateFreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(CREATE_FREE_SPIN, "http://igo-sw-callback-public.igo8.me")));
             ResponseEntity<CommonRes<CreateFreeSpinRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<CreateFreeSpinRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
