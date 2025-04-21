@@ -17,7 +17,7 @@ public class FreeSpinHistoryConverter {
         return FreeSpinHistoryOfPlayerDo.builder()
                 .playerName(freeSpinOfPlayerRes.getPlayerName())
                 .refId(freeSpinOfPlayerRes.getRefId())
-                .freeSpin(toDoList(freeSpinOfPlayerRes.getFreeSpin()))
+                .history(toDoList(freeSpinOfPlayerRes.getHistory()))
                 .totalPages(freeSpinOfPlayerRes.getTotalPages())
                 .page(freeSpinOfPlayerRes.getPage())
                 .build();
@@ -42,6 +42,7 @@ public class FreeSpinHistoryConverter {
                 .gameName(freeSpin.getGameName())
                 .totalWin(freeSpin.getTotalWin())
                 .firstUsedTime(freeSpin.getFirstUsedTime())
+                .freeBet(freeSpin.getFreeBet())
                 .build();
     }
 
@@ -50,7 +51,7 @@ public class FreeSpinHistoryConverter {
         return FreeSpinHistoryOfPlayerVo.builder()
                 .playerName(freeSpinHistoryOfPlayerDo.getPlayerName())
                 .refId(freeSpinHistoryOfPlayerDo.getRefId())
-                .freeSpin(toVoList(freeSpinHistoryOfPlayerDo.getFreeSpin()))
+                .history(toVoList(freeSpinHistoryOfPlayerDo.getHistory()))
                 .totalPages(freeSpinHistoryOfPlayerDo.getTotalPages())
                 .page(freeSpinHistoryOfPlayerDo.getPage())
                 .build();
@@ -75,6 +76,7 @@ public class FreeSpinHistoryConverter {
                 .gameName(freeSpin.getGameName())
                 .totalWin(freeSpin.getTotalWin())
                 .firstUsedTime(freeSpin.getFirstUsedTime())
+                .freeBet(freeSpin.getFreeBet())
                 .build();
     }
 }

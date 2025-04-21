@@ -12,7 +12,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class SingleWalletBaseRes implements Serializable {
-    static final long serialVersionUID = -851901361660936626L;
+    private static final long serialVersionUID = -851901361660936626L;
     /**
      * refId
      */

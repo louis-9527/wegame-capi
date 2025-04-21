@@ -11,6 +11,7 @@ import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.SingleWalletService;
+import com.wegame.capi.biz.service.promotion.FreeSpinService;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     public PulsarProducer pulsarProducer;
+    @Autowired
+    public FreeSpinService freeSpinService;
 
     public abstract AbstractGameContext<R> gameContext();
 
@@ -48,8 +51,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
 
     public long generateBetRecordId() {
         long betRecordId = snowflakeIdGenerator.nextId();
-        // todo delete @maidong
-        log.info("generateBetRecordId: {}", betRecordId);
         return betRecordId;
     }
 
@@ -57,11 +58,12 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      * 保存投注记录并投注派彩
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
-        if (syncOpt) {
-            return syncSaveBetRecordAndBetWithPayout(betRecordDo);
-        } else {
-            return asyncSaveBetRecordAndBetWithPayout(betRecordDo);
-        }
+        //        if (syncOpt) {
+        //            return syncSaveBetRecordAndBetWithPayout(betRecordDo);
+        //        } else {
+        //            return asyncSaveBetRecordAndBetWithPayout(betRecordDo);
+        //        }
+        return asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
     }
 
     private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
@@ -82,9 +84,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         return betSingleWalletResult;
     }
 
-    public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
-        // todo delete @maidong
-        log.info("asyncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordDo.getId());
+    public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, boolean syncOpt) {
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
         //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGameContext().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
@@ -103,6 +103,11 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 log.error("syncSendMessage send fail, sync add data, betRecordId: {}", betRecordDo.getId());
                 // 新增消息发送失败，则转同步写db
                 betRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
+            }
+            if (syncOpt) {
+                // 同步设置游戏记录缓存
+                String cacheKey = String.format("%s_%s", betRecordDo.getId(), betRecordDo.getPlayerId());
+                betRecordManager().putGameRecordCache(betRecordDo.getGameRecordList(), gameContext().gameInfo().getGameType(), cacheKey);
             }
             // 异步发送更新消息: 更新为投注成功
             pulsarProducer.asyncSendMessageThenRetry(gameContext().gameInfo().getGameType(),

@@ -71,6 +71,8 @@ public class StarCardUseRecordPo implements Serializable {
      * 核销失败原因
      */
     private String failMsg;
+
+    private Integer failCode;
     /**
      * 上报状态
      */

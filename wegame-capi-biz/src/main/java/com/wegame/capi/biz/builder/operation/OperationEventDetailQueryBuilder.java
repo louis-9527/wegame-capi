@@ -2,6 +2,7 @@ package com.wegame.capi.biz.builder.operation;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventDetailQuery;
 import org.apache.commons.lang3.StringUtils;
@@ -18,9 +19,6 @@ public class OperationEventDetailQueryBuilder {
         Query query = new Query(buildCriteria(detailQuery));
         if (Objects.nonNull(detailQuery.getLimit())) {
             query.limit(detailQuery.getLimit());
-        }
-        if (Objects.nonNull(detailQuery.getGtLastId())) {
-            query.addCriteria(Criteria.where("_id").gt(detailQuery.getGtLastId()));
         }
         if (StringUtils.isNotEmpty(detailQuery.getOrderByClause())) {
             if (Objects.isNull(detailQuery.getDirection())) {
@@ -40,7 +38,12 @@ public class OperationEventDetailQueryBuilder {
         if (Objects.nonNull(detailQuery.getBetStatus())) {
             criteria.and("betStatus").is(detailQuery.getBetStatus());
         }
-        if (Objects.nonNull(detailQuery.getLtCreateTime())) {
+        if (Objects.nonNull(detailQuery.getGtCreateTime()) && Objects.nonNull(detailQuery.getLtCreateTime())) {
+            criteria.andOperator(
+                    Criteria.where("createTime").gt(detailQuery.getGtCreateTime()),
+                    Criteria.where("createTime").lte(detailQuery.getLtCreateTime())
+            );
+        } else if (Objects.nonNull(detailQuery.getLtCreateTime())) {
             criteria.and("createTime").lt(detailQuery.getLtCreateTime());
         }
         return criteria;
@@ -59,6 +62,8 @@ public class OperationEventDetailQueryBuilder {
         }
         if (Objects.nonNull(detailDo.getUpdateTime())) {
             update.set("updateTime", detailDo.getUpdateTime());
+        } else {
+            update.set("updateTime", DateUtil.getCurrentMilli());
         }
         return update;
     }

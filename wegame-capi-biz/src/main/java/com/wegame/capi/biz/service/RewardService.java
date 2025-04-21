@@ -26,12 +26,16 @@ public class RewardService {
     @Cacheable(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id")
     public RewardInfoDo getWithCache(GameTypeEnum gameType) {
         RewardInfoDo rewardInfoDo = new RewardInfoDo();
-        String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
-        List<RewardNotifyInfoDo> messageList = (List<RewardNotifyInfoDo>) redisTemplate.opsForList().range(key, 0, -1);
-        if (CollectionUtils.isNotEmpty(messageList)) {
-            rewardInfoDo.setRewardMessageList(messageList.stream()
-                    .map(RewardNotifyInfoDo::getRewardContent)
-                    .collect(Collectors.toList()));
+        try {
+            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
+            List<RewardNotifyInfoDo> messageList = (List<RewardNotifyInfoDo>) redisTemplate.opsForList().range(key, 0, -1);
+            if (CollectionUtils.isNotEmpty(messageList)) {
+                rewardInfoDo.setRewardMessageList(messageList.stream()
+                        .map(RewardNotifyInfoDo::getRewardContent)
+                        .collect(Collectors.toList()));
+            }
+        } catch (Exception e) {
+            log.error("get rewardInfo error, gameType: {}", gameType, e);
         }
         return rewardInfoDo;
     }

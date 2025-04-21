@@ -56,8 +56,17 @@ public class OperationEventQueryBuilder {
         if (Objects.nonNull(recordQuery.getCreateTimeLt())) {
             criteria.and("createTime").lt(recordQuery.getCreateTimeLt());
         }
+        if (Objects.nonNull(recordQuery.getUpdateTimeGt()) && Objects.nonNull(recordQuery.getUpdateTimeLt())) {
+            criteria.andOperator(
+                    Criteria.where("updateTime").gt(recordQuery.getUpdateTimeGt()),
+                    Criteria.where("updateTime").lte(recordQuery.getUpdateTimeLt())
+            );
+        }
         if (Objects.nonNull(recordQuery.getLtLastId())) {
             criteria.and("_id").lt(recordQuery.getLtLastId());
+        }
+        if (Objects.nonNull(recordQuery.getGtLastId())) {
+            criteria.and("_id").gt(recordQuery.getGtLastId());
         }
         return criteria;
     }
@@ -69,12 +78,14 @@ public class OperationEventQueryBuilder {
         criteria.and("playerName").is(playName);
         criteria.and("gameId").is(gameId);
         criteria.and("eventStatus").in(Lists.newArrayList(OperationEventStatusEnum.NONE.getCode(), OperationEventStatusEnum.ING.getCode()));
+        criteria.and("effectedTime").lte(currentMilli);
         criteria.and("expiredTime").gte(currentMilli);
         criteria.and("$expr").is(
                 new Document("lt", Arrays.asList("$finishBonus", "$minBonus"))
         );
         Query query = new Query(criteria);
-        query.with(Sort.by(Sort.Direction.ASC, "createTime"));
+        query.with(Sort.by(Sort.Direction.ASC, "effectedTime"));
+        query.limit(10);
         query.fields().include("_id", "gameId", "effectedTime", "expiredTime", "eventStatus");
         return query;
     }
@@ -102,14 +113,19 @@ public class OperationEventQueryBuilder {
         if (Objects.nonNull(eventDo.getReportStatus())) {
             update.set("reportStatus", eventDo.getReportStatus().getCode());
         }
-        if (Objects.nonNull(eventDo.getUpdateTime())) {
-            update.set("updateTime", eventDo.getUpdateTime());
-        }
         if (Objects.nonNull(eventDo.getFinishBonus())) {
             update.set("finishBonus", eventDo.getFinishBonus());
         }
         if (Objects.nonNull(eventDo.getReportFailMsg())) {
             update.set("reportFailMsg", eventDo.getReportFailMsg());
+        }
+        if (Objects.nonNull(eventDo.getReportTime())) {
+            update.set("reportTime", eventDo.getReportTime());
+        }
+        if (Objects.nonNull(eventDo.getUpdateTime())) {
+            update.set("updateTime", eventDo.getUpdateTime());
+        } else {
+            update.set("updateTime", DateUtil.getCurrentMilli());
         }
 
         return update;

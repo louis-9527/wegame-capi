@@ -95,6 +95,10 @@ public class OperationEventPo implements Serializable {
      */
     private String reportFailMsg;
     /**
+     * 上报时间
+     */
+    private Long reportTime;
+    /**
      * 创建时间
      */
     private Long createTime;

@@ -102,17 +102,24 @@ public class BetRequest implements Validate, Serializable {
 
         private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-            if(!useStarCard) {
-                AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
-            } else {
+            if(useStarCard){
+                AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount), ErrorCode.ERR_PARAM);
+            }else if(useFreeSpin){
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(payAmount == 0L, ErrorCode.ERR_PARAM);
+            } else {
+                AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
             }
             if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
                 if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {
                     AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
-                    AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
+                    if (useFreeSpin) {
+                        AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
+                    } else {
+                        AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
+                    }
                 } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_NORMAL_BET)) {
                     AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                     AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
@@ -127,7 +134,7 @@ public class BetRequest implements Validate, Serializable {
                 if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                     AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                     if (useStarCard) {
-                        AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
+                        AssertUtil.assertTrue(Objects.equals(payAmount, betAmount), ErrorCode.ERR_PARAM);
                     } else {
                         AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
                     }
@@ -221,10 +228,10 @@ public class BetRequest implements Validate, Serializable {
         private void validateFreeSpinBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用预定投注
             if (useFreeSpin) {
-                AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType || BetSubTypeEnum.FREE_SPINS_BUY_BET == betSubType, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
-                if (BetSubTypeEnum.BUY_BET == betSubType) {
+                AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET == betType, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(BetSubTypeEnum.NORMAL_BET == betSubType || BetSubTypeEnum.FREE_SPINS_NORMAL_BET == betSubType, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET == betType, ErrorCode.ERR_PARAM);
+                if (BetSubTypeEnum.NORMAL_BET == betSubType) {
                     AssertUtil.assertStrNotEmpty(campaignId, ErrorCode.ERR_PARAM);
                 }
             }

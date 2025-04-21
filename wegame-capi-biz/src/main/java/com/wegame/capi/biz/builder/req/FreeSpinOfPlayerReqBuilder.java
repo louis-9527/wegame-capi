@@ -23,6 +23,7 @@ public class FreeSpinOfPlayerReqBuilder {
                 .playerName(userInfo.getPlayerName())
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .createTime(DateUtil.toUTC(new Date()))
+                .gameCode(userInfo.getGameId())
                 .build();
     }
 }

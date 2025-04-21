@@ -58,6 +58,16 @@ public class OperationEventQuery implements Serializable {
      * 小于创建时间
      */
     private Long createTimeLt;
+
+    /**
+     * 小于修改时间
+     */
+    private Long updateTimeLt;
+
+    /**
+     * 小于修改时间
+     */
+    private Long updateTimeGt;
     /**
      * 生效开始时间
      */
@@ -74,6 +84,10 @@ public class OperationEventQuery implements Serializable {
      * 小于最后一条的Id
      */
     private Long ltLastId;
+    /**
+     * 小于最后一条的Id
+     */
+    private Long gtLastId;
     /**
      * 排序语句
      */
