@@ -19,7 +19,7 @@ public class FreeSpinDetailDo implements Serializable {
     /** refId */
     private String refId;
     /** Details of the campaign  */
-    private List<Config> config;
+    private Config config;
 
     @Data
     @ToString
@@ -47,10 +47,10 @@ public class FreeSpinDetailDo implements Serializable {
         /** Total spin times */
         private Integer totalFreeSpin;
         /** Campaign start date [Unix timestamps in seconds]  */
-        private Date startDate;
+        private Integer startDate;
         /** Campaign end date [Unix timestamps in seconds]  */
-        private Date endDate;
+        private Integer endDate;
         /** Campaign create date [Unix timestamps in seconds]  */
-        private Date createTime;
+        private Integer createTime;
     }
 }
