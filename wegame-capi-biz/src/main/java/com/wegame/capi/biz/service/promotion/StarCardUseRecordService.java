@@ -12,6 +12,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.StarCardUseTypeEnum;
 import com.wegame.capi.dao.repository.domain.star.StarCardUseRecordPo;
 import com.wegame.capi.dao.repository.domain.star.StarCardUseRecordQuery;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
@@ -24,6 +25,7 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThre
 /**
  * 星卡service
  */
+@Slf4j
 @Service
 public class StarCardUseRecordService extends AbstractService {
 
@@ -36,11 +38,15 @@ public class StarCardUseRecordService extends AbstractService {
     }
 
     @Async(defaultThreadPoolExecutor)
-    public boolean asyncUpdate(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
-        return update(useRecordDo, gameType);
+    public void asyncUpdate(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
+        try {
+            update(useRecordDo, gameType);
+        } catch (Exception e) {
+            log.error("asyncUpdate error", e);
+        }
     }
 
-    public boolean update(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
+    public Boolean update(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(useRecordDo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(useRecordDo.getId(), ErrorCode.ERR_PARAM, "param \'id\' is null");
         StarCardUseTypeEnum starCardUseType = StarCardUseTypeEnum.valueOfGameType(gameType);
