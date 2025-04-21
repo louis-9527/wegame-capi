@@ -227,7 +227,6 @@ public class BetRequest implements Validate, Serializable {
                 }
             }
         }
-
         private void validateFreeSpinBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用预定投注
             if (useFreeSpin) {
