@@ -17,4 +17,6 @@ public class CreateFreeSpinRes implements Serializable {
     private Integer result;
     /** 活动编号 */
     private String eventId;
+    /** message */
+    private String message;
 }
