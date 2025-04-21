@@ -18,11 +18,11 @@ import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.service.promotion.BagService;
+import com.wegame.capi.biz.service.promotion.FreeSpinService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
-import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +55,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     StarCardUseRecordService startCardUseRecordService;
     @Autowired
     BagService bagService;
+    @Autowired
+    FreeSpinService freeSpinService;
     @Value("${api.game.cp.channelId}")
     public String cpChannelId;
     @Value("${dynamic.operation.switch}")
@@ -233,8 +235,11 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(betDo.isUseFreeSpin(), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(betDo.getCampaignId(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), FREE_SPIN), ErrorCode.ERR_INTER);
-        // todo 校验betValue是否和betAmount相同
-//        FreeSpinDetailDo freeSpinDetailDo = freeSpinService.freeSpinDetail(betDo.getCampaignId());
+        FreeSpinDetailDo freeSpinDetailDo = freeSpinService.freeSpinDetail(betDo.getCampaignId());
+        AssertUtil.assertNotNull(freeSpinDetailDo, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(freeSpinDetailDo.getConfig(), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(freeSpinDetailDo.getConfig().getBetValue(), ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(freeSpinDetailDo.getConfig().getBetValue() * 1000 == betDo.getBetAmount(), ErrorCode.ERR_INTER);
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
