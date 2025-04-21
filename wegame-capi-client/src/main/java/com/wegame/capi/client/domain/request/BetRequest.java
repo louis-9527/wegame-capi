@@ -94,7 +94,10 @@ public class BetRequest implements Validate, Serializable {
 
         private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-            if (useStarCard || useFreeSpin) {
+            if(useStarCard){
+                AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount), ErrorCode.ERR_PARAM);
+            }else if(useFreeSpin){
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(payAmount == 0L, ErrorCode.ERR_PARAM);
             } else {
@@ -123,7 +126,7 @@ public class BetRequest implements Validate, Serializable {
                 if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                     AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
                     if (useStarCard) {
-                        AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
+                        AssertUtil.assertTrue(Objects.equals(payAmount, betAmount), ErrorCode.ERR_PARAM);
                     } else {
                         AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
                     }
