@@ -102,4 +102,10 @@ public class MalakasBetRecordManager extends AbstractBetRecordManager<MalakasGam
     public Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
         return gameRecordService.count(query, gameType);
     }
+
+    @Override
+    public void putGameRecordCache(List<MalakasGameRecordDo> gameRecordList, GameTypeEnum gameType, String cacheKey) {
+        // 异步设置游戏记录缓存
+        gameRecordService.asyncPutCache(gameRecordList, gameType, cacheKey);
+    }
 }
