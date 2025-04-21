@@ -17,4 +17,6 @@ public class CreateFreeSpinDo implements Serializable {
     private Integer result;
     /** 活动编号 */
     private String eventId;
+    /** 提示信息 */
+    private String message;
 }
