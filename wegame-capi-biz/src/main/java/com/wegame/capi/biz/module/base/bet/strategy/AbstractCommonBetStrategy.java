@@ -199,7 +199,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                     .failCode(rewardResult.getStatus())
                     .failMsg(rewardResult.getMessage())
                     .playName(userInfo.getPlayerName()).build();
-            startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
+            startCardUseRecordService.asyncUpdate(updateRecord, this.gameContext().gameInfo().getGameType());
             if (rewardResult.getErrorCode() != null) {
                 throw new BusinessException(rewardResult.getErrorCode());
             }
@@ -212,7 +212,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 //.betRecordId(rBetRecordDo.getId())
                 .useStatus(StarCardUseStatusEnum.SUCCESS)
                 .playName(userInfo.getPlayerName()).build();
-        startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
+        startCardUseRecordService.asyncUpdate(updateRecord, this.gameContext().gameInfo().getGameType());
         // 调用投注
         boolean syncOpt = betHelper().hasRewardFreeWheel(rBetRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(rBetRecordDo, syncOpt);
@@ -223,7 +223,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                     .id(useRecordId)
                     .reportStatus(StarCardReportStatusEnum.NONE)
                     .playName(userInfo.getPlayerName()).build();
-            startCardUseRecordService.update(updateSuccessRecord, this.gameContext().gameInfo().getGameType());
+            startCardUseRecordService.asyncUpdate(updateSuccessRecord, this.gameContext().gameInfo().getGameType());
         } else {
             // todo 调用单钱包失败需要上报,待成就系统开发完成接入
         }
