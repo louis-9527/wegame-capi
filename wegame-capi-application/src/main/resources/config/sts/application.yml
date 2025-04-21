@@ -57,7 +57,7 @@ spring:
         - qat-makiling-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
       max-redirects: 3
     redisson:
-      minIdlePoolSize: 200
+      minIdlePoolSize: 0
       maxPoolSize: 500
     lettuce:
       pool:
