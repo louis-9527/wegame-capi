@@ -96,7 +96,6 @@ public class BetRequest implements Validate, Serializable {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
             if(useStarCard){
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount), ErrorCode.ERR_PARAM);
             }else if(useFreeSpin){
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(payAmount == 0L, ErrorCode.ERR_PARAM);
