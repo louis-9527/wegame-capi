@@ -6,6 +6,7 @@ import com.wegame.base.context.SystemInfo;
 import com.wegame.base.context.SystemInfoContext;
 import com.wegame.capi.biz.service.LoginService;
 import com.wegame.capi.biz.service.UserService;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;

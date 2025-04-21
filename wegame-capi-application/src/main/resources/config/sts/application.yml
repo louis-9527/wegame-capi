@@ -11,11 +11,11 @@ server:
   tomcat:
     uri-encoding: UTF-8
     connection-timeout: 1000
-    max-connections: 30000
+    max-connections: 20000
     keep-alive-timeout: 120000
-    accept-count: 10000
+    accept-count: 5000
     threads:
-      max: 40000
+      max: 2000
       min-spare: 500
   servlet:
     context-path: /capi/game
@@ -120,8 +120,8 @@ spring:
     mongodb:
       dynamic:
         maria_makiling_mdb:
-          primary_uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=400&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=primary
-          uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=400&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=2&journal=true&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=400&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=primary
+          uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=2&journal=true&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=400&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
           db: makiling
         malakas_mdb:
           uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/malakas?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=20&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
@@ -240,6 +240,11 @@ httpclient-warm-up:
   initHosts:
     https://reward-http-stress.igo8.me: 300
     http://sw-http-main-apisix-internal-stress.igo8.me: 300
+http:
+  connectTimeout: 1000
+  readTimeout: 500
+  connectionRequestTimeout: 1000
+
 #lark
 lark:
   publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

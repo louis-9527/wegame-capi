@@ -2,6 +2,7 @@ package com.wegame.capi.biz.manager.operation;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.api.domain.req.operation.UpdateEventsBetRecordReq;
@@ -23,6 +24,7 @@ import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.common.utils.MultipleUtil;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventConfigQuery;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventDetailQuery;
@@ -40,6 +42,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import static com.wegame.capi.common.Constants.OPT_BUSY;
 
 /**
  * 抽象干预事件Manager
@@ -62,6 +66,8 @@ public abstract class AbstractOperationEventManager {
     public ThreadPoolExecutor operationEventReportThreadPoolExecutor;
     @Autowired
     public ThreadPoolExecutor operationEventThreadPoolExecutor;
+    @Autowired
+    private DistributeLock distributeLock;
 
     /**
      * 获取干预事件类型
@@ -336,7 +342,6 @@ public abstract class AbstractOperationEventManager {
     }
 
 
-
     public void asyncReportEvent(OperationEventDo eventDo) {
         AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
         operationEventReportThreadPoolExecutor.execute(() -> {
@@ -346,6 +351,12 @@ public abstract class AbstractOperationEventManager {
 
 
     private void reportEvent(OperationEventDo eventDo) {
+        distributeLock.lockThenRun(LockNameUtil.getOperationEventReportLockName(this.operationEventType().getGameType(), eventDo.getId()),
+                () -> this.reportEventLock(eventDo),
+                "OperationEvent report distributeLock");
+    }
+
+    private void reportEventLock(OperationEventDo eventDo) {
         Long recordId = eventDo.getId();
         String playName = eventDo.getPlayerName();
         AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
@@ -413,7 +424,6 @@ public abstract class AbstractOperationEventManager {
         }
         log.error("dynamicOperationEvent report error:{}", JSON.toJSONString(updateEventsStatusReq));
     }
-
 
 
     private Long getPayMultipleConfigId(double multiple) {

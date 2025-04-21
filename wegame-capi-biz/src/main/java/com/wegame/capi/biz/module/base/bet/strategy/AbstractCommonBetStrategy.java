@@ -11,6 +11,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
+import com.wegame.capi.biz.domain.biz.promotion.FreeSpinDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
@@ -167,6 +168,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), STAR_CARD), ErrorCode.ERR_INTER);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        // 生成投注记录Id：唯一
+        long betRecordId = generateBetRecordId();
         // 准备核销星卡
         StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
                 .id(generateId())
@@ -175,12 +178,12 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 .betAmount(betDo.getBetAmount())
                 .playerId(userInfo.getPlayerId())
                 .rewardId(betDo.getRewardId())
+                .betRecordId(betRecordId)
                 .rewardConfigId(betDo.getRewardConfigId())
                 .playName(userInfo.getPlayerName()).build();
         Long useRecordId = startCardUseRecordService.add(recordDo, this.gameContext().gameInfo().getGameType());
         // 核销星卡
-        // 生成投注记录Id：唯一
-        long betRecordId = generateBetRecordId();
+
         Pair<RedeemRewardResultDo, BetRecordDo<R>> redeemRewardResultDoBetRecord = this.rewardResult(betRecordId, betDo);
 
         RedeemRewardResultDo rewardResult = redeemRewardResultDoBetRecord.getKey();
@@ -204,7 +207,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         StarCardUseRecordDo updateRecord = StarCardUseRecordDo.builder()
                 .id(useRecordId)
                 .payOutAmount(rBetRecordDo.getPayOutAmount())
-                .betRecordId(rBetRecordDo.getId())
+                //.betRecordId(rBetRecordDo.getId())
                 .useStatus(StarCardUseStatusEnum.SUCCESS)
                 .playName(userInfo.getPlayerName()).build();
         startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
@@ -230,6 +233,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(betDo.isUseFreeSpin(), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(betDo.getCampaignId(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), FREE_SPIN), ErrorCode.ERR_INTER);
+        // todo 校验betValue是否和betAmount相同
+//        FreeSpinDetailDo freeSpinDetailDo = freeSpinService.freeSpinDetail(betDo.getCampaignId());
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, syncOpt);

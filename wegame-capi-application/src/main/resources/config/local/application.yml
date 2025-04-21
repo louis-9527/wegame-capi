@@ -130,17 +130,21 @@ spring:
             pool-prepared-statements: false
   data:
     mongodb:
-      dynamic:
-        maria_makiling_mdb:
-          primary_uri: mongodb://43.199.119.200:27017/makiling?maxPoolSize=100&minPoolSize=10&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&readPreference=primary
-          uri: mongodb://43.199.119.200:27017/makiling?maxPoolSize=100&minPoolSize=10&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
-          db: makiling
-        malakas_mdb:
-          uri: mongodb://43.199.119.200:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
-          db: malakas
-        ibong_adarna_mdb:
-          uri: mongodb://43.199.119.200:27017/ibong?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
-          db: ibong
+        dynamic:
+          maria_makiling_mdb:
+            uri: mongodb://localhost:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
+            db: makiling
+          malakas_mdb:
+            uri: mongodb://localhost:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
+#            uri: mongodb://43.199.119.200:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
+            db: malakas
+            #        uri: mongodb://localhost:27017/wegame_mdb?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
+          ibong_adarna_mdb:
+            uri: mongodb://localhost:27017/ibong?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
+            db: ibong
+#          malakas_mdb:
+#            uri: mongodb://43.199.119.200:27017/malakas_mdb?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
+#        uri: mongodb://localhost:27017/wegame_mdb?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
 ## fastjson
 fastjson:
   parser:
@@ -254,6 +258,10 @@ httpclient-warm-up:
   initHosts:
     http://reward-http.igo8.me: 300
     http://sw-http-main-apisix.igo8.me: 300
+http:
+  connectTimeout: 1000
+  readTimeout: 500
+  connectionRequestTimeout: 1000
 #lark
 lark:
   publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
