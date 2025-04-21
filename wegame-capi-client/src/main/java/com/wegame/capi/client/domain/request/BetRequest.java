@@ -89,7 +89,7 @@ public class BetRequest implements Validate, Serializable {
             if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
                 mariaMakilingValidateParam(gameType, betType, betSubType);
                 validateStartCartBet(gameType, betType, betSubType);
-                validateFreeSpinBet(gameType, betType, betSubType);
+//                validateFreeSpinBet(gameType, betType, betSubType);
             } else if (Objects.equals(gameType, GameTypeEnum.MALAKAS)) {
                 malakasValidateParam(gameType, betType, betSubType);
                 validateStartCartBet(gameType, betType, betSubType);
@@ -227,16 +227,16 @@ public class BetRequest implements Validate, Serializable {
                 }
             }
         }
-        private void validateFreeSpinBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
-            // 判断是否使用预定投注
-            if (useFreeSpin) {
-                AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType || BetSubTypeEnum.FREE_SPINS_BUY_BET == betSubType, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
-                if (BetSubTypeEnum.BUY_BET == betSubType) {
-                    AssertUtil.assertStrNotEmpty(campaignId, ErrorCode.ERR_PARAM);
-                }
-            }
-        }
+//        private void validateFreeSpinBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+//            // 判断是否使用预定投注
+//            if (useFreeSpin) {
+//                AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET == betType, ErrorCode.ERR_PARAM);
+//                AssertUtil.assertTrue(BetSubTypeEnum.NORMAL_BET == betSubType || BetSubTypeEnum.FREE_SPINS_NORMAL_BET == betSubType, ErrorCode.ERR_PARAM);
+//                AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET == betType, ErrorCode.ERR_PARAM);
+//                if (BetSubTypeEnum.NORMAL_BET == betSubType) {
+//                    AssertUtil.assertStrNotEmpty(campaignId, ErrorCode.ERR_PARAM);
+//                }
+//            }
+//        }
     }
 }
