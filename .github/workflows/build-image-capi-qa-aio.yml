@@ -53,8 +53,7 @@ jobs:
           key: maven-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-${{ runner.os }}-${{ runner.arch }}-
-          retention-days: 365
-
+            
       - name: Build with Maven
         run: |
           rm -rf /opt/maven/repo/com/wegame
