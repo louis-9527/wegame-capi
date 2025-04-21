@@ -347,7 +347,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     }
     public CreateFreeSpinRes createFreeSpin(CreateFreeSpinReq req) {
         try {
-            assembleSingleSignature(req);
+//            assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<CreateFreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(CREATE_FREE_SPIN, singleDomain)));
             ResponseEntity<CommonRes<CreateFreeSpinRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<CreateFreeSpinRes>>() {
