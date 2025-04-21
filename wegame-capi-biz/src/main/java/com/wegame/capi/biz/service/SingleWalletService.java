@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.concurrent.locks.LockSupport;
 
 import static com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder.*;
 import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode;
@@ -74,16 +75,13 @@ public class SingleWalletService {
         }
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = null;
         try {
-            if (betRecordDo.getBetPromotionType() != null && Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
-                log.info("betWithPayout free spin");
+            if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
                 commonRes = singleWalletApi.freeSpin(buildFreeSpinReq(betRecordDo));
-            } else if (betRecordDo.getBetPromotionType() != null && Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
+            } else if (Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
                 commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo));
             } else {
-                log.info("betWithPayout normal");
                 commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
             }
-
             AssertUtil.assertNotNull(commonRes, ErrorCode.ERR_NET);
             AssertUtil.assertNotNull(commonRes.getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
         } catch (Exception e) {
@@ -109,6 +107,14 @@ public class SingleWalletService {
             BetStatusRes betStatusRes = getBetStatus(BetStatusReqBuilder.buildReq(betRecordDo));
             SingleWalletBetStatusEnum singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
             AssertUtil.assertNotNull(singleWalletBetStatus, ErrorCode.ERR_PARAM, "invalid bet status code");
+            // 查询投注状态结果为3， 则多一次重试-------start
+            if (Objects.equals(SingleWalletBetStatusEnum.RECEIVED_PAYOUT_REQUEST, singleWalletBetStatus)) {
+                LockSupport.parkNanos(2000000000L);
+                betStatusRes = getBetStatus(BetStatusReqBuilder.buildReq(betRecordDo));
+                singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
+                log.info("more one time getBetStatus, code: {}", betStatusRes.getCode());
+            }
+            // 查询投注状态结果为3， 则多一次重试-------end
             if (Objects.equals(SingleWalletBetStatusEnum.RECEIVED_PAYOUT_REQUEST, singleWalletBetStatus)) {
                 betStatusService.asyncConvertBetStatus(betRecordDo, GameTypeEnum.valueOfId(betRecordDo.getGameId()));
             }
