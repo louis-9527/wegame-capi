@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.module.malakas.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -81,7 +82,8 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         for (RewardLineDo<MalakasSymbolDo> rewardLine : rewardLineList) {
             // 计算赔率
             BigDecimal odds = malakasOddsCalculateStrategy.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
-            // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率 * 倍率
+            // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率 * 倍率, 特殊逻辑：如果倍率是0，则倍率+1
+            totalMultiple = NumberUtil.equals(totalMultiple, BigDecimal.ZERO) ? totalMultiple.add(BigDecimal.ONE) : totalMultiple;
             BigDecimal lineRewardAmount = calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, totalMultiple);
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();

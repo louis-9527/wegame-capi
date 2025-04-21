@@ -59,6 +59,9 @@ spring:
       nodes:
         - qat-makiling-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
       max-redirects: 5
+    redisson:
+      minIdlePoolSize: 250
+      maxPoolSize: 1000
     lettuce:
       pool:
         enabled: true
@@ -71,6 +74,7 @@ spring:
         #连接池中的最小空闲连接
         min-idle: 2
     password:
+    client-type: lettuce
   datasource:
     dynamic:
       primary: wegame_user_db
@@ -89,7 +93,25 @@ spring:
             max-active: 4000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 30000
+            min-evictable-idle-time-millis: 30001
+            validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            pool-prepared-statements: false
+        wegame_backend_db:
+          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: QATmakilingService
+          password: ENC(Lm5nLGO2RTUPqHi/nkBU31uk6Zn/vV6GevM9jwwx4Bfck539re9GPagkh6bBi1t/lgexud3+wkye7Gz8qXTqhg==)
+          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
+          driver-class-name: com.mysql.jdbc.Driver
+          druid:
+            initial-size: 10
+            min-idle: 10
+            max-active: 100
+            max-wait: 1000
+            time-between-eviction-runs-millis: 6000
+            min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL
             test-while-idle: true
             test-on-borrow: false
@@ -99,8 +121,9 @@ spring:
     mongodb:
       dynamic:
         maria_makiling_mdb:
-          uri: mongodb://43.199.119.200:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
-          #          uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
+          primary_uri: mongodb://43.199.119.200:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
+          uri: mongodb://43.199.119.200:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
+          #          uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&readPreference=secondaryPreferred
           db: makiling
         malakas_mdb:
           uri: mongodb://43.199.119.200:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
@@ -220,4 +243,5 @@ dynamic:
       password: egame-secure-passphrase
 #lark
 lark:
-  robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
+  publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
+  warningRobot: b2ff5555-4320-4c50-bfb5-5955cf1b6005

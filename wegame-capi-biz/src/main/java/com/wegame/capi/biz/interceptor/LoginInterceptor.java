@@ -1,7 +1,7 @@
-package com.wegame.capi.infrastructure.interceptor;
+package com.wegame.capi.biz.interceptor;
 
-import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.annotation.LoginRequired;
+import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.base.utils.ThreadMdcUtil;

@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -19,7 +20,7 @@ public class FreeSpinHistoryOfPlayerDo implements Serializable {
     /** refId */
     private String refId;
     /** history */
-    private List<FreeSpin> freeSpin;
+    private List<FreeSpin> history;
     /** totalPages */
     private Integer totalPages;
     /** page */
@@ -44,8 +45,10 @@ public class FreeSpinHistoryOfPlayerDo implements Serializable {
         /** gameName */
         private String gameName;
         /** totalWin */
-        private Integer totalWin;
+        private BigDecimal totalWin;
         /** firstUsedTime */
-        private Integer firstUsedTime;
+        private Long firstUsedTime;
+        /** freeBet */
+        private BigDecimal freeBet;
     }
 }

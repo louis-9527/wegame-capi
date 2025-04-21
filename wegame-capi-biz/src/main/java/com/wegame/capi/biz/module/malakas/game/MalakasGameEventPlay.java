@@ -56,7 +56,7 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
 
         // 处理首轮
         long firstGameRecordId = super.generateGameRecordId();
-        MalakasGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord,BigDecimal.ONE);
+        MalakasGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, BigDecimal.ZERO);
         ret.add(firstGameRecord);
         // 按 batchId 分组 & 记录 ID 映射
         Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId = gameMultipleRecordDos.stream()
@@ -74,7 +74,7 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
             if (recordDo.getParentId() != 0L) {
                 // 处理首轮普通轮
                 long gameRecordId = generateGameRecordId();
-                MalakasGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo,BigDecimal.ONE);
+                MalakasGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, BigDecimal.ZERO);
                 ret.add(gameRecord);
                 lastGameRecord = gameRecord;
             }
@@ -148,9 +148,7 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
         MalakasSymbolDo[][] symbolArr = malakasSymbolWheel.getSymbolArr();
         // 处理空值
         malakasSymbolWheel.setSymbolArr(handleSymbolNullArr(symbolArr));
-        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(
-                RewardHandlerBuilder.build(gameInfo, gamePlay, malakasSymbolWheel, totalMultiple)
-        );
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, malakasSymbolWheel, totalMultiple));
         // 构建时还原
         malakasSymbolWheel.setSymbolArr(symbolArr);
         return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, malakasSymbolWheel, rewardResult);
@@ -186,6 +184,4 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
         return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<MalakasSymbolDo>>() {
         });
     }
-
-
 }

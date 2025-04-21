@@ -14,4 +14,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class FreeSpinOfPlayerReq extends BaseReq {
     private static final long serialVersionUID = 6923927574495233856L;
+    /** gameCode */
+    private String gameCode;
 }

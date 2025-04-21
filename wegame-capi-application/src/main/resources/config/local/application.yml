@@ -2,13 +2,14 @@ appid: com.wegame.capi
 ## log
 logging:
   level:
-    org.springframework.web: trace
+#    org.springframework.web: trace
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-    com.wegame: trace
-    org.apache.ibatis: trace
-    org.mongodb: error
-#    com.alibaba.nacos: info
-#    com.alibaba.cloud.nacos: DEBUG
+#    com.wegame: trace
+#    org.apache.ibatis: trace
+    org.mongodb: DEBUG
+#    org.springframework.data.redis: DEBUG
+    com.mongodb.internal.connection: DEBUG
+#    org.apache.http: DEBUG
 ## server
 server:
   port: 9500
@@ -57,7 +58,6 @@ spring:
   redis:
     connectTimeout: 500
     timeout: 500
-
     cluster:
       nodes:
         - localhost:7001
@@ -67,18 +67,24 @@ spring:
         - localhost:7005
         - localhost:7006
       max-redirects: 3
+    redisson:
+      minIdlePoolSize: 250
+      maxPoolSize: 1000
     lettuce:
       pool:
         enabled: true
         #连接池中的最大空闲连接
-        max-idle: 10
+        max-idle: 500
         #连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: 500
         #连接池最大连接数（使用负值表示没有限制）
         max-active: 8
         #连接池中的最小空闲连接
-        min-idle: 0
+        min-idle: 500
+        #间隔1个小时，驱逐空闲线程
+        time-between-eviction-runs: 3600000
     password: qwe123!@#
+    client-type: lettuce
   datasource:
     dynamic:
       # 设置默认的数据源或者数据源组
@@ -97,7 +103,25 @@ spring:
             max-active: 2000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 30000
+            min-evictable-idle-time-millis: 30001
+            validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            pool-prepared-statements: false
+        wegame_backend_db:
+          url: jdbc:mysql://localhost:3306/wegame_backend_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: root
+          password: ENC(YNkAqtiSqYCkHLUlQcUkJwinsDrTnnxC/q5p2JRLGozqSGKFeap13wRM9BiqQYFXpRtIEWfKVZug+LSFFvd3JQ==)
+          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
+          type: com.alibaba.druid.pool.DruidDataSource
+          druid:
+            initial-size: 10
+            min-idle: 10
+            max-active: 1000
+            max-wait: 1000
+            time-between-eviction-runs-millis: 6000
+            min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL
             test-while-idle: true
             test-on-borrow: false
@@ -109,9 +133,6 @@ spring:
           maria_makiling_mdb:
             uri: mongodb://localhost:27017/makiling?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
             db: makiling
-#          malakas_mdb:
-#            uri: mongodb://43.199.119.200:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
-#            db: malakas
           malakas_mdb:
             uri: mongodb://localhost:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
 #            uri: mongodb://43.199.119.200:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
@@ -140,7 +161,7 @@ api:
   game:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: http://sw-http-main-apisix.igo8.me
-    invokeSingle: false
+    invokeSingle: true
     cp:
       platformId: 50
       channelId: 1050
@@ -232,6 +253,15 @@ dynamic:
         2Xs3r+wtjZBpOrZxn5dMUhEHC7jm/0eLUcwOJ0lkoEnl
         -----END ENCRYPTED PRIVATE KEY-----
       password: egame-secure-passphrase
+httpclient-warm-up:
+  initHosts:
+    http://reward-http.igo8.me: 300
+    http://sw-http-main-apisix.igo8.me: 300
+http:
+  connectTimeout: 1000
+  readTimeout: 500
+  connectionRequestTimeout: 1000
 #lark
 lark:
-  robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
+  publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
+  warningRobot: b2ff5555-4320-4c50-bfb5-5955cf1b6005

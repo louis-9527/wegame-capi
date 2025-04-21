@@ -58,6 +58,9 @@ spring:
       nodes:
         - prod-livsport-platform-redis-hk.jdc4k5.clustercfg.ape1.cache.amazonaws.com:6379
       max-redirects: 2
+    redisson:
+      minIdlePoolSize: 250
+      maxPoolSize: 1000
     lettuce:
       pool:
         enabled: true
@@ -87,7 +90,7 @@ spring:
             max-active: 2000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
-            min-evictable-idle-time-millis: 30000
+            min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL
             test-while-idle: true
             test-on-borrow: false
@@ -97,7 +100,7 @@ spring:
     mongodb:
       dynamic:
         maria_makiling_mdb:
-          uri: mongodb+srv://PRODlivsportService:XGN1EWlf18QTrstzi2@livsport-platform-prod-pri.g8mny.mongodb.net/livsport-platform?retryWrites=false&w=majority&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred&retryWrites=false
+          uri: mongodb+srv://PRODlivsportService:XGN1EWlf18QTrstzi2@livsport-platform-prod-pri.g8mny.mongodb.net/livsport-platform?retryWrites=false&w=majority&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&readPreference=secondaryPreferred&retryWrites=false
           db: makiling
         ibong_adarna_mdb:
           uri: mongodb+srv://PRODlivsportService:XGN1EWlf18QTrstzi2@livsport-platform-prod-pri.g8mny.mongodb.net/livsport-platform?retryWrites=false&w=majority&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred&retryWrites=false
@@ -149,4 +152,5 @@ pulsar:
       bet_deadLetter_topic: IbongAdarna_deadLetter_topic
 #lark
 lark:
-  robot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
+  publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
+  warningRobot: b2ff5555-4320-4c50-bfb5-5955cf1b6005

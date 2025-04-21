@@ -12,7 +12,7 @@ public class LockNameUtil {
     private static final String BET_LOCK = "lock:bet_lock_%s_%s";
     private static final String OPERATION_EVENT_SCHEDULER_LOCK = "lock:operation_event_scheduler_lock:%s";
 
-    private static final String OPERATION_EVENT_BET_LOCK = "lock:operation_event_bet_lock:%s_%s";
+    private static final String OPERATION_EVENT_REPORT_LOCK = "lock:operation_event_report_lock:%s_%s";
     private static final String STAR_CARD_REPORT_SCHEDULER_LOCK = "lock:star_card_report_scheduler_lock:%s";
 
 
@@ -40,9 +40,9 @@ public class LockNameUtil {
         return String.format(OPERATION_EVENT_SCHEDULER_LOCK, gameType.getName());
     }
 
-    public static String getOperationEventBetLockName(GameTypeEnum gameType,String playerId) {
+    public static String getOperationEventReportLockName(GameTypeEnum gameType,Long betRecordId) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
-        return String.format(OPERATION_EVENT_BET_LOCK, gameType.getName(),playerId);
+        return String.format(OPERATION_EVENT_REPORT_LOCK, gameType.getName(),betRecordId);
     }
 
 

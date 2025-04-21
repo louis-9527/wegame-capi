@@ -34,6 +34,10 @@ public class OperationEventDetailQuery implements Serializable {
      */
     private Long ltCreateTime;
     /**
+     * 大于createTime
+     */
+    private Long gtCreateTime;
+    /**
      * 大于最后一条的Id
      */
     private Long gtLastId;

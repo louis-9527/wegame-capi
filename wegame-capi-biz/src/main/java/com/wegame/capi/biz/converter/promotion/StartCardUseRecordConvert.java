@@ -28,6 +28,7 @@ public class StartCardUseRecordConvert {
         recordPo.setPlayerId(recordDo.getPlayerId());
         recordPo.setPlayName(recordDo.getPlayName());
         recordPo.setBetAmount(recordDo.getBetAmount());
+        recordPo.setBetRecordId(recordDo.getBetRecordId());
         recordPo.setPayOutAmount(recordDo.getPayOutAmount());
         if (OptEnum.ADD == optEnum) {
             recordPo.setUseStatus(StarCardUseStatusEnum.ING.getCode());

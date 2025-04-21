@@ -44,8 +44,10 @@ public class BetStatusService {
     private String appName;
     @Value("${spring.application.env}")
     private String env;
-    @Value("${lark.robot}")
-    private String robot;
+    @Value("${lark.publishRobot}")
+    private String publishRobot;
+    @Value("${lark.warningRobot}")
+    private String warningRobot;
     @Autowired
     SingleWalletApi singleWalletApi;
     @Autowired
@@ -118,7 +120,7 @@ public class BetStatusService {
             if (com.alibaba.druid.util.StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
                 return;
             }
-            LarkUtil.sendTextMsg(robot, BizAlertMessage.builder()
+            LarkUtil.sendTextMsg(warningRobot, BizAlertMessage.builder()
                     .applicationName(appName)
                     .env(env)
                     .traceId(ThreadMdcUtil.getTraceId())

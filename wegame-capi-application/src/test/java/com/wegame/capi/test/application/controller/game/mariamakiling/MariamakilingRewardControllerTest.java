@@ -40,6 +40,8 @@ public class MariamakilingRewardControllerTest extends RewardControllerTest {
 
     @Test
     public void test_get() {
-        commonGet();
+        for(int i = 0; i < 5; i++) {
+            commonGet();
+        }
     }
 }

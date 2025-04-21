@@ -17,6 +17,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import static com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder.buildReq;
+import static com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder.*;
 import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode;
 
 
@@ -73,11 +74,18 @@ public class SingleWalletService {
         }
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = null;
         try {
-            commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
+            if (betRecordDo.getBetPromotionType() != null && Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
+                commonRes = singleWalletApi.freeSpin(buildFreeSpinReq(betRecordDo));
+            } else if (betRecordDo.getBetPromotionType() != null && Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
+                commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo));
+            } else {
+                commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
+            }
+
             AssertUtil.assertNotNull(commonRes, ErrorCode.ERR_NET);
             AssertUtil.assertNotNull(commonRes.getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
         } catch (Exception e) {
-            log.error("betWithPayout error, betRecordId: {}, res: {}, errMsg: {}", betRecordDo.getId(), commonRes, e);
+            log.error("betWithPayout error, betRecordId: {}, res: {}", betRecordDo.getId(), commonRes, e);
             betStatusService.asyncConvertBetStatus(betRecordDo, GameTypeEnum.valueOfId(betRecordDo.getGameId()));
             return SingleWalletBetResultDo.builder()
                     .betStatus(BetStatusEnum.FAIL)

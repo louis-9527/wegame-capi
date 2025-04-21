@@ -46,9 +46,8 @@ public class Application implements CommandLineRunner {
     private String appName;
     @Value("${spring.application.env}")
     private String env;
-    @Value("${lark.robot}")
-    private String robot;
-
+    @Value("${lark.publishRobot}")
+    private String publishRobot;
     @Autowired
     List<ExecutorService> executorList;
 
@@ -66,7 +65,7 @@ public class Application implements CommandLineRunner {
             if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
                 return;
             }
-            LarkUtil.sendTextMsg(robot, ServicePublishMessage.builder()
+            LarkUtil.sendTextMsg(publishRobot, ServicePublishMessage.builder()
                     .applicationName(appName)
                     .env(env)
                     .ip(IpUtil.getLocalIp())
@@ -74,7 +73,6 @@ public class Application implements CommandLineRunner {
         } catch (Throwable te) {
             log.warn("send publish message fail:{}", te.getMessage(), te);
         }
-
     }
 
     @PreDestroy

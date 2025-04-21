@@ -11,6 +11,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
+import com.wegame.capi.biz.domain.biz.promotion.FreeSpinDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
@@ -167,6 +168,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), STAR_CARD), ErrorCode.ERR_INTER);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        // 生成投注记录Id：唯一
+        long betRecordId = generateBetRecordId();
         // 准备核销星卡
         StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
                 .id(generateId())
@@ -175,12 +178,12 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 .betAmount(betDo.getBetAmount())
                 .playerId(userInfo.getPlayerId())
                 .rewardId(betDo.getRewardId())
+                .betRecordId(betRecordId)
                 .rewardConfigId(betDo.getRewardConfigId())
                 .playName(userInfo.getPlayerName()).build();
         Long useRecordId = startCardUseRecordService.add(recordDo, this.gameContext().gameInfo().getGameType());
         // 核销星卡
-        // 生成投注记录Id：唯一
-        long betRecordId = generateBetRecordId();
+
         Pair<RedeemRewardResultDo, BetRecordDo<R>> redeemRewardResultDoBetRecord = this.rewardResult(betRecordId, betDo);
 
         RedeemRewardResultDo rewardResult = redeemRewardResultDoBetRecord.getKey();
@@ -191,6 +194,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                     .id(useRecordId)
                     .useStatus(StarCardUseStatusEnum.FAIL)
                     .reportStatus(StarCardReportStatusEnum.NONE)
+                    .failCode(rewardResult.getStatus())
                     .failMsg(rewardResult.getMessage())
                     .playName(userInfo.getPlayerName()).build();
             startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
@@ -203,7 +207,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         StarCardUseRecordDo updateRecord = StarCardUseRecordDo.builder()
                 .id(useRecordId)
                 .payOutAmount(rBetRecordDo.getPayOutAmount())
-                .betRecordId(rBetRecordDo.getId())
+                //.betRecordId(rBetRecordDo.getId())
                 .useStatus(StarCardUseStatusEnum.SUCCESS)
                 .playName(userInfo.getPlayerName()).build();
         startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
@@ -229,11 +233,12 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(betDo.isUseFreeSpin(), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(betDo.getCampaignId(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), FREE_SPIN), ErrorCode.ERR_INTER);
-
-        // play
-
-        // betAndPayOut
-        return null;
+        // todo 校验betValue是否和betAmount相同
+//        FreeSpinDetailDo freeSpinDetailDo = freeSpinService.freeSpinDetail(betDo.getCampaignId());
+        BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
+        boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+        return betHelper().handleBetResult(betRecordDo, resultDo);
     }
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {
@@ -255,26 +260,29 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
      */
     private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(long betRecordId, BetDo betDo) {
         BetRecordDo<R> rBetRecordDo = generateBetRecord(betRecordId, betDo);
-        RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), betDo.getPayAmount(), rBetRecordDo.getId());
+        RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
         if (rewardResult.getSuccess()) {
             return Pair.of(rewardResult, rBetRecordDo);
         } else if (Objects.equals(RedeemRewardResStatusEnum.INVALID_REWARD_PAYOUT.getCode(), rewardResult.getStatus())) {
             // 派奖金额超过限制
             long maxPay = AmountUtil.toLong(new BigDecimal(rewardResult.getMessage()));
+            log.warn("rewardResult info, status: {}, maxPay: {},PayOutAmount:{}", rewardResult.getStatus(), maxPay, rBetRecordDo.getPayOutAmount());
             for (int i = 1; i <= 10; i++) {
                 rBetRecordDo = generateBetRecord(betRecordId, betDo);
-                if (rBetRecordDo.getPayAmount() < maxPay) {
+                if (rBetRecordDo.getPayOutAmount() < maxPay) {
                     break;
                 }
+                log.warn(" try rewardResult info,  maxPay: {},PayOutAmount:{}", maxPay, rBetRecordDo.getPayOutAmount());
                 // 如果重试10次都未获取到结果,返回异常
                 if (i == 10) {
+                    log.error("try then 10 rewardResult info,RewardId:{}", betDo.getRewardId());
                     rewardResult.setErrorCode(ErrorCode.ERR_MIDDLE_PLATFORM);
                     return Pair.of(rewardResult, rBetRecordDo);
                 }
             }
             rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
             return Pair.of(rewardResult, rBetRecordDo);
-        } else{
+        } else {
             ErrorCode errorCode = RedeemRewardResStatusEnum.convetErrorCode(rewardResult.getStatus());
             rewardResult.setErrorCode(errorCode == null ? ErrorCode.ERR_INTER : errorCode);
             return Pair.of(rewardResult, rBetRecordDo);

@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -50,6 +51,6 @@ public class FreeSpinOfPlayerRes implements Serializable {
         /** totalWin */
         private Integer totalWin;
         /** freeBet */
-        private Double freeBet;
+        private BigDecimal freeBet;
     }
 }
