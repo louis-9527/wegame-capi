@@ -133,6 +133,7 @@ spring:
           maria_makiling_mdb:
            primary_uri: mongodb://43.199.119.200:27017/makiling?maxPoolSize=100&minPoolSize=10&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&readPreference=primary
            uri: mongodb://43.199.119.200:27017/makiling?maxPoolSize=100&minPoolSize=10&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
+           db: makiling
           malakas_mdb:
             uri: mongodb://localhost:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
 #            uri: mongodb://43.199.119.200:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib
