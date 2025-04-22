@@ -20,7 +20,7 @@ public class RedeemRewardResultDo implements Serializable {
     /**
      * sucess
      */
-    private Boolean success;
+    private boolean success;
     /**
      * message
      */
