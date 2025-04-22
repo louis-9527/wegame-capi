@@ -99,6 +99,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                         MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
                         Messages<byte[]> messages = getConsumer().batchReceive();
                         if (messages == null || messages.size() == 0) {
+                            log.warn("not received any messages, sleep one second");
                             Thread.currentThread().sleep(1000);
                             continue;
                         }
