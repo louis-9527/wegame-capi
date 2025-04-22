@@ -2,6 +2,7 @@ package com.wegame.capi.client.domain.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wegame.base.Validate;
+import com.wegame.base.domain.BaseRequest;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -16,12 +17,12 @@ import java.io.Serializable;
  * 用户登录请求参数
  */
 @Data
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "用户登录请求参数")
-public class UserLoginRequest implements Validate, Serializable {
+public class UserLoginRequest extends BaseRequest implements Validate, Serializable {
     @ApiModelProperty(value = "平台id", required = true)
     @JsonProperty("pId")
     private String pId;

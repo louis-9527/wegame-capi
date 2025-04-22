@@ -1,6 +1,7 @@
 package com.wegame.capi.client.domain.request.promotion;
 
 import com.wegame.base.Validate;
+import com.wegame.base.domain.BaseRequest;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import io.swagger.annotations.ApiModel;
@@ -11,13 +12,13 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 
 @Data
-@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "获取背包详情请求")
-public class QueryRewardDetailRequest implements Validate, Serializable {
+public class QueryRewardDetailRequest extends BaseRequest implements Validate, Serializable {
     private static final long serialVersionUID = -4002950733224509502L;
 
     @ApiModelProperty(value = "奖励配置id", required = true)
