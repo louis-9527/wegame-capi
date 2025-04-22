@@ -37,7 +37,7 @@ public class FreeSpinDetailRes implements Serializable {
         /** Request channel id */
         private String channelId;
         /** Status of campaign */
-        private String status;
+        private Integer status;
         /** Max player of campaign */
         private Integer maxPlayer;
         /** Bet value of campaign */
