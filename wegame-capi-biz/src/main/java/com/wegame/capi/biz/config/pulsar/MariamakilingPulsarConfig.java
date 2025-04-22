@@ -37,10 +37,19 @@ public class MariamakilingPulsarConfig {
 
     @Bean(name = "mariaMakilingPulsarClient", destroyMethod = "close")
     public PulsarClient mariaMakilingPulsarClient() throws Exception {
-        return PulsarClient.builder()
+        PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(mariaMakilingUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
+                .operationTimeout(200, TimeUnit.MILLISECONDS)
+                .connectionTimeout(500, TimeUnit.MILLISECONDS)
+                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
+                .listenerThreads(Runtime.getRuntime().availableProcessors() * 2)
+                .connectionsPerBroker(100)
+                .enableTcpNoDelay(true)
+                .connectionMaxIdleSeconds(300)
+                .statsInterval(60, TimeUnit.SECONDS)
                 .build();
+        return pulsarClient;
     }
 
     @Bean(name = "mariamakilingProducer", destroyMethod = "close")
