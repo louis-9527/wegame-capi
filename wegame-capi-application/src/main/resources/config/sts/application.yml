@@ -57,19 +57,19 @@ spring:
         - qat-makiling-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
       max-redirects: 3
     redisson:
-      minIdlePoolSize: 250
-      maxPoolSize: 1000
+      minIdlePoolSize: 50
+      maxPoolSize: 500
     lettuce:
       pool:
         enabled: true
         #连接池中的最小空闲连接
-        min-idle: 200
+        min-idle: 100
         #连接池中的最大空闲连接
-        max-idle: 200
+        max-idle: 100
         #连接池最大阻塞等待时间（使用负值表示没有限制）
         max-wait: 100
         #连接池最大连接数（使用负值表示没有限制）
-        max-active: 1500
+        max-active: 1000
         #间隔1个小时，驱逐空闲线程
         time-between-eviction-runs: 3600000
     password:
@@ -120,8 +120,8 @@ spring:
     mongodb:
       dynamic:
         maria_makiling_mdb:
-          primary_uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=2&journal=true&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=300&minPoolSize=150&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=primary
-          uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=2&journal=true&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=300&minPoolSize=150&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/makiling?retryWrites=true&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: makiling
         malakas_mdb:
           uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/malakas?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=20&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred

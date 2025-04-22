@@ -14,7 +14,7 @@ import static com.wegame.base.enums.CommonCacheEnvEnum.GAME_RECORD;
 public class GameRecordCache extends AbstractCache {
 
     public GameRecordCache() {
-        super(GAME_RECORD.cacheKeyPrefixName(), 300);
+        super(GAME_RECORD.cacheKeyPrefixName(), 60);
     }
 
     @Override

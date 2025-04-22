@@ -43,8 +43,6 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static com.wegame.capi.common.Constants.OPT_BUSY;
-
 /**
  * 抽象干预事件Manager
  */
@@ -82,7 +80,6 @@ public abstract class AbstractOperationEventManager {
     public OperationEventDo getEffectedEvent(String playName) {
         OperationEventTypeEnum dynamicOperationGame = operationEventType();
         List<DynamicOperationEffectEventCatchDo> entries = operationEventService.getEffectList(playName, operationEventType());
-
         for (DynamicOperationEffectEventCatchDo entry : entries) {
             long recordId = entry.getId();
             long effectedTime = entry.getEffectedTime();
@@ -95,29 +92,42 @@ public abstract class AbstractOperationEventManager {
             // 判断是否过期
             if (currentMilli > expiredTime) {
                 //过期 删除缓存并触发异步上报
+                operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
                 asyncUpdateFinishEvent(recordId, playName, OperationEventSubStatusEnum.FINISH_EXPIRED);
                 continue;
             }
             //判断是否有未完成的干预事件
-            if (!operationEventService.checkOperationUseStatus(recordId, dynamicOperationGame)) {
-                continue;
+            OperationEventStatusEnum operationEventStatusEnum = operationEventService.checkOperationUseStatus(recordId, dynamicOperationGame);
+            if (operationEventStatusEnum != null) {
+                if (OperationEventStatusEnum.ING == operationEventStatusEnum) {
+                    continue;
+                }
             }
             //查询事件详情
             OperationEventDo eventDo = operationEventService.getById(recordId, dynamicOperationGame);
             if (eventDo == null) {
                 log.warn("dynamicOperationEventService.getById is null:{}", recordId);
                 operationEventService.cleanOperationByCatch(recordId, playName, dynamicOperationGame);
-
+                continue;
+            }
+            if (OperationEventStatusEnum.ING == eventDo.getEventStatus()) {
                 continue;
             }
             if (OperationEventStatusEnum.FINISH == eventDo.getEventStatus()) {
                 //已完成 删除缓存并触发异步上报
+                operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
                 asyncReportEvent(recordId);
+                continue;
+            }
+            if (OperationEventReportStatusEnum.reportSuccess(eventDo.getReportStatus())) {
+                //已完成 删除缓存并触发异步上报
+                operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
                 continue;
             }
             // 判断金额
             if (eventDo.getFinishBonus() != null && (eventDo.getFinishBonus() >= eventDo.getMinBonus())) {
                 // 干预完成,删除缓存并触发异步上报
+                operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
                 asyncUpdateFinishEvent(recordId, playName, OperationEventSubStatusEnum.FINISH_NORMAL);
                 continue;
             }
@@ -128,20 +138,27 @@ public abstract class AbstractOperationEventManager {
         return null;
     }
 
-    public void updateEventDetail(String playName, OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
+    public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
         if (eventDetailDo != null) {
             operationEventDetailService.update(eventDetailDo, operationEventType());
         }
         if (eventDo != null) {
-            operationEventService.update(eventDo, playName, operationEventType());
+            operationEventService.update(eventDo, operationEventType());
         }
     }
 
     public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
         OperationEventTypeEnum typeEnum = operationEventType();
-        Long id = operationEventDetailService.add(eventDetailDo, typeEnum);
-        operationEventService.updateOperationUseIng(eventDetailDo.getEventRecordId(), typeEnum);
-        return id;
+        Long detailId = operationEventDetailService.add(eventDetailDo, typeEnum);
+        OperationEventDo eventDo = OperationEventDo.builder()
+                .id(eventDetailDo.getEventRecordId())
+                .eventStatus(OperationEventStatusEnum.ING).build();
+        operationEventService.update(eventDo, typeEnum);
+        return detailId;
+    }
+
+    public void updateOperationUseStatus(Long eventRecordId, OperationEventStatusEnum eventStatusEnum) {
+        operationEventService.updateOperationUseStatus(eventRecordId, eventStatusEnum, this.operationEventType());
     }
 
     public List<StatusOfEventsResultDo> getStatusOfEvents(OperationEventQuery operationEventQuery) {
@@ -276,20 +293,14 @@ public abstract class AbstractOperationEventManager {
 
     public void asyncUpdateEventDetail(OperationEventDo eventDo, String playerName, BetStatusEnum betStatus, Long detailId, String betId, Long eventAmount) {
         operationEventThreadPoolExecutor.execute(() -> {
-            // 判断是否完成
-            OperationEventSubStatusEnum eventSubStatusEnum = null;
+            OperationEventSubStatusEnum eventSubStatusEnum = OperationEventSubStatusEnum.NONE;
             OperationEventStatusEnum eventStatusEnum = OperationEventStatusEnum.NONE;
-            if (DateUtil.getCurrentMilli() > eventDo.getExpiredTime()) {
-                // 过期
-                eventSubStatusEnum = OperationEventSubStatusEnum.FINISH_EXPIRED;
-                eventStatusEnum = OperationEventStatusEnum.FINISH;
-            }
+
             Long finishBonus = eventDo.getFinishBonus() == null ? 0 : eventDo.getFinishBonus() + eventAmount;
             if (eventDo.getMinBonus() <= finishBonus) {
                 eventSubStatusEnum = OperationEventSubStatusEnum.FINISH_NORMAL;
                 eventStatusEnum = OperationEventStatusEnum.FINISH;
             }
-
             OperationEventDetailDo eventDetailUpdate = OperationEventDetailDo.builder()
                     .id(detailId)
                     .betStatus(betStatus)
@@ -303,8 +314,8 @@ public abstract class AbstractOperationEventManager {
                     .build();
 
 
-            updateEventDetail(playerName, eventDetailUpdate, eventDoUpdate);
-            operationEventService.cleanOperationUseIng(eventDo.getId(), operationEventType());
+            updateEventDetail(eventDetailUpdate, eventDoUpdate);
+            operationEventService.updateOperationUseStatus(eventDo.getId(),OperationEventStatusEnum.NONE, operationEventType());
             // 执行上报
             if (OperationEventSubStatusEnum.isFinish(eventSubStatusEnum)) {
                 // 如果完成执行上报
@@ -321,7 +332,7 @@ public abstract class AbstractOperationEventManager {
                     .eventStatus(OperationEventStatusEnum.FINISH)
                     .eventSubStatus(eventSubStatusEnum)
                     .build();
-            operationEventService.update(build, playName, operationEventType());
+            operationEventService.update(build, operationEventType());
             // 异步上报
             asyncReportEvent(recordId);
         });
@@ -358,13 +369,11 @@ public abstract class AbstractOperationEventManager {
 
     private void reportEventLock(OperationEventDo eventDo) {
         Long recordId = eventDo.getId();
-        String playName = eventDo.getPlayerName();
         AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
         if (OperationEventStatusEnum.FINISH != eventDo.getEventStatus()) {
             log.warn("event not finish,report fail:{}", recordId);
             return;
         }
-        operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
         if (!(Objects.equals(OperationEventReportStatusEnum.NONE.getCode(), eventDo.getReportStatus().getCode()))) {
             log.warn("event report is finish,report fail:{}", recordId);
             return;
@@ -410,7 +419,7 @@ public abstract class AbstractOperationEventManager {
                     .reportStatus(OperationEventReportStatusEnum.FINISH)
                     .reportTime(DateUtil.getCurrentMilli())
                     .build();
-            operationEventService.update(eventReportUpdate, playName, operationEventType());
+            operationEventService.update(eventReportUpdate, operationEventType());
             return;
         }
         if (updateEventsStatusRes.isFail()) {
@@ -419,7 +428,7 @@ public abstract class AbstractOperationEventManager {
                     .reportStatus(OperationEventReportStatusEnum.FAIL)
                     .reportFailMsg(updateEventsStatusRes.getMessage())
                     .build();
-            operationEventService.update(eventReportUpdate, playName, operationEventType());
+            operationEventService.update(eventReportUpdate, operationEventType());
             return;
         }
         log.error("dynamicOperationEvent report error:{}", JSON.toJSONString(updateEventsStatusReq));

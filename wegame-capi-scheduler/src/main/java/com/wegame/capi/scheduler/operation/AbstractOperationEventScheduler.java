@@ -146,7 +146,8 @@ public abstract class AbstractOperationEventScheduler
                     }
                 }
             }
-            operationEventManager().updateEventDetail(eventDetailDo.getPlayerName(), eventDetailUpdate, eventDoUpdate);
+            operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
+            operationEventService.updateOperationUseStatus(eventDetailDo.getEventRecordId(),OperationEventStatusEnum.NONE, operationEventType());
             if (eventDoUpdate != null && OperationEventStatusEnum.FINISH == eventDoUpdate.getEventStatus()) {
                 operationEventManager().asyncReportEvent(eventDetailDo.getBetRecordId());
             }

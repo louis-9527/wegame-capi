@@ -62,7 +62,7 @@ public class OperationEventService extends AbstractService {
         }
     }
 
-    public Boolean update(OperationEventDo eventDo, String playName, OperationEventTypeEnum dynamicOperationGame) {
+    public Boolean update(OperationEventDo eventDo, OperationEventTypeEnum dynamicOperationGame) {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(eventDo.getId());
         Query query = new Query(criteria);
@@ -70,9 +70,6 @@ public class OperationEventService extends AbstractService {
                 OperationEventQueryBuilder.buildUpdateById(eventDo),
                 OperationEventPo.class,
                 dynamicOperationGame.getEventCollectionName());
-        if (StringUtils.isNotEmpty(playName) && eventDo.getEventStatus() != null && eventDo.getEventStatus().getCode().equals(OperationEventStatusEnum.FINISH.getCode())) {
-            this.cleanOperationByCatch(eventDo.getId(), playName, dynamicOperationGame);
-        }
         return result.getModifiedCount() > 0;
     }
 
@@ -138,20 +135,23 @@ public class OperationEventService extends AbstractService {
      * @param gameEnum
      * @return
      */
-    public Boolean checkOperationUseStatus(Long id, OperationEventTypeEnum gameEnum) {
+    public OperationEventStatusEnum checkOperationUseStatus(Long id, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         String catch_key = String.format(Constants.OPERATION_EVENT_ING_KEY, gameEnum.getGameType().getId(), id);
         Object useStatus = redisTemplate.opsForValue().get(catch_key);
-        return Objects.isNull(useStatus);
+        if (Objects.nonNull(useStatus)) {
+            return OperationEventStatusEnum.valueOfCode(Integer.parseInt(String.valueOf(useStatus)));
+        }
+        return null;
     }
 
-    public void updateOperationUseIng(Long id, OperationEventTypeEnum gameEnum) {
+    public void updateOperationUseStatus(Long id,OperationEventStatusEnum eventStatusEnum, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         String catch_key = String.format(Constants.OPERATION_EVENT_ING_KEY, gameEnum.getGameType().getId(), id);
-        redisTemplate.opsForValue().set(catch_key, "1", Constants.OPERATION_EVENT_ING_EXPIRED, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(catch_key, String.valueOf(eventStatusEnum.getCode()), Constants.OPERATION_EVENT_ING_EXPIRED, TimeUnit.SECONDS);
     }
 
-    public void cleanOperationUseIng(Long id, OperationEventTypeEnum gameEnum) {
+    public void cleanOperationUseStatus(Long id, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         String catch_key = String.format(Constants.OPERATION_EVENT_ING_KEY, gameEnum.getGameType().getId(), id);
         redisTemplate.delete(catch_key);

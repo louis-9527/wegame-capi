@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.operation.OperationEventDetailBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
@@ -17,6 +16,7 @@ import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
+import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.biz.service.promotion.FreeSpinService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
@@ -53,6 +53,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     private static final List<BetStatusEnum> FINAL_BET_STATUS = Arrays.asList(BetStatusEnum.SUCCESS, BetStatusEnum.FAIL);
     @Autowired
     StarCardUseRecordService startCardUseRecordService;
+    @Autowired
+    OperationEventService operationEventService;
     @Autowired
     BagService bagService;
     @Autowired
@@ -104,6 +106,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         // 生产投注记录
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         // 保存干预事件详情并修改干预事件干预状态
+        operationEventManager().updateOperationUseStatus(gameOperationEvent.getOperationEvent().getId(),OperationEventStatusEnum.ING);
         Long eventDetailId = operationEventManager().addEventDetail(OperationEventDetailBuilder.build(generateId(), betRecordDo, gameOperationEvent));
         AssertUtil.assertNotNull(eventDetailId, ErrorCode.ERR_INTER);
         // 投注并派奖
@@ -199,7 +202,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                     .failCode(rewardResult.getStatus())
                     .failMsg(rewardResult.getMessage())
                     .playName(userInfo.getPlayerName()).build();
-            startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
+            startCardUseRecordService.asyncUpdate(updateRecord, this.gameContext().gameInfo().getGameType());
             if (rewardResult.getErrorCode() != null) {
                 throw new BusinessException(rewardResult.getErrorCode());
             }
@@ -212,7 +215,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 //.betRecordId(rBetRecordDo.getId())
                 .useStatus(StarCardUseStatusEnum.SUCCESS)
                 .playName(userInfo.getPlayerName()).build();
-        startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
+        startCardUseRecordService.asyncUpdate(updateRecord, this.gameContext().gameInfo().getGameType());
         // 调用投注
         boolean syncOpt = betHelper().hasRewardFreeWheel(rBetRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(rBetRecordDo, syncOpt);
@@ -223,7 +226,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                     .id(useRecordId)
                     .reportStatus(StarCardReportStatusEnum.NONE)
                     .playName(userInfo.getPlayerName()).build();
-            startCardUseRecordService.update(updateSuccessRecord, this.gameContext().gameInfo().getGameType());
+            startCardUseRecordService.asyncUpdate(updateSuccessRecord, this.gameContext().gameInfo().getGameType());
         } else {
             // todo 调用单钱包失败需要上报,待成就系统开发完成接入
         }
