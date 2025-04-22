@@ -5,7 +5,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.promotion.FreeSpinOfPlayerReq;
-import com.wegame.capi.api.domain.req.promotion.GetDailyMissionReq;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import org.slf4j.MDC;
@@ -23,7 +22,7 @@ public class FreeSpinOfPlayerReqBuilder {
                 .playerName(userInfo.getPlayerName())
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .createTime(DateUtil.toUTC(new Date()))
-                .gameCode(userInfo.getGameId())
+                .gameId(userInfo.getGameId())
                 .build();
     }
 }
