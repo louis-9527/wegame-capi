@@ -2,6 +2,7 @@ package com.wegame.capi.application;
 
 import com.alibaba.druid.util.StringUtils;
 import com.wegame.base.domain.ServicePublishMessage;
+import com.wegame.base.domain.ServiceShutdownMessage;
 import com.wegame.base.enums.EnvEnum;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.base.utils.LarkUtil;
@@ -60,19 +61,8 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        try {
-            log.info("start Application after env: {}", env);
-            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
-                return;
-            }
-            LarkUtil.sendTextMsg(publishRobot, ServicePublishMessage.builder()
-                    .applicationName(appName)
-                    .env(env)
-                    .ip(IpUtil.getLocalIp())
-                    .build().buildMessage());
-        } catch (Throwable te) {
-            log.warn("send publish message fail:{}", te.getMessage(), te);
-        }
+        log.info("start Application after env: {}", env);
+        sendPublishMessage();
     }
 
     @PreDestroy
@@ -102,5 +92,36 @@ public class Application implements CommandLineRunner {
             //                executor.shutdownNow();
             //            }
         });
+        sendShutdownMessage();
+    }
+
+    private void sendPublishMessage() {
+        try {
+            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
+                return;
+            }
+            LarkUtil.sendTextMsg(publishRobot, ServicePublishMessage.builder()
+                    .applicationName(appName)
+                    .env(env)
+                    .ip(IpUtil.getLocalIp())
+                    .build().buildMessage());
+        } catch (Exception e) {
+            log.warn("send publish message fail:{}", e.getMessage(), e);
+        }
+    }
+
+    private void sendShutdownMessage() {
+        try {
+            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
+                return;
+            }
+            LarkUtil.sendTextMsg(publishRobot, ServiceShutdownMessage.builder()
+                    .applicationName(appName)
+                    .env(env)
+                    .ip(IpUtil.getLocalIp())
+                    .build().buildMessage());
+        } catch (Throwable te) {
+            log.warn("send shutdown message fail:{}", te.getMessage(), te);
+        }
     }
 }
