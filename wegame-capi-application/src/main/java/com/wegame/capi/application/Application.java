@@ -100,7 +100,6 @@ public class Application implements CommandLineRunner {
     private void gracefulShutdown(ThreadPoolTaskScheduler taskScheduler) {
         try {
             log.info("before executor gracefulShutdown: {}", taskScheduler.getScheduledExecutor());
-            // gracefulShutdown(taskScheduler.getScheduledExecutor());
             taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
             taskScheduler.shutdown();
             gracefulShutdown(taskScheduler.getScheduledExecutor());
