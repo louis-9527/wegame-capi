@@ -64,8 +64,7 @@ public class BetRecordBuilder {
                 .extendInfo(extendInfo)
                 .creator(operator.getName())
                 .updater(operator.getName())
-                .createTime(currentMilli)
-                .updateTime(currentMilli)
+                .betTime(currentMilli)
                 .gameRecordList(gameRecordList)
                 .build();
     }

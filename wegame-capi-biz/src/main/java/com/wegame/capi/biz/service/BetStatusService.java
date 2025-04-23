@@ -44,8 +44,6 @@ public class BetStatusService {
     private String appName;
     @Value("${spring.application.env}")
     private String env;
-    @Value("${lark.publishRobot}")
-    private String publishRobot;
     @Value("${lark.warningRobot}")
     private String warningRobot;
     @Autowired
@@ -61,12 +59,15 @@ public class BetStatusService {
     public void convertBetStatus(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
+        log.info("convertBetStatus betRecordDo: {}", betRecordDo);
         if (!Objects.equals(BetStatusEnum.ING.getCode(), betRecordDo.getStatus())) {
             // 只处理投注中的投注记录
+            log.error("betRecordDo status is int, betRecordId: {}", betRecordDo.getId());
             return;
         }
-        if (System.currentTimeMillis() - betRecordDo.getCreateTime() > THREE_MINUTES) {
+        if (System.currentTimeMillis() - betRecordDo.getCreateTime() >= THREE_MINUTES - 800) {
             // 只处理3分钟以内的投注记录
+            log.error("betRecordDo createTime is expired, betRecordId: {}", betRecordDo.getId());
             return;
         }
         // 控制20s不超过1个请求

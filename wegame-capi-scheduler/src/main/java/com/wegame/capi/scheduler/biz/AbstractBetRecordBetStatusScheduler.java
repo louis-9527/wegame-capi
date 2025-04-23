@@ -27,7 +27,7 @@ public abstract class AbstractBetRecordBetStatusScheduler
         implements Runnable {
 
     private static final long THREE_MINUTES = 3 * 60 * 1000;
-    private static final long TWO_MINUTES = 2 * 60 * 1000;
+    private static final long ONE_MINUTES = 1 * 60 * 1000;
 
     @Autowired
     BetRecordService betRecordService;
@@ -48,7 +48,7 @@ public abstract class AbstractBetRecordBetStatusScheduler
             recordIdList = betRecordService.listId(BetRecordQuery.builder()
                     .status(BetStatusEnum.ING.getCode())
                     .startCreateTime(System.currentTimeMillis() - THREE_MINUTES)
-                    .endCreateTime(System.currentTimeMillis() - TWO_MINUTES)
+                    .endCreateTime(System.currentTimeMillis() - ONE_MINUTES)
                     .gtLastId(gtLastId)
                     .limit(DEFAULT_PAGE_SIZE)
                     .orderByClause("_id")
@@ -60,8 +60,7 @@ public abstract class AbstractBetRecordBetStatusScheduler
             for (Long betRecordId : CollectionUtils.emptyIfNull(recordIdList)) {
                 BetRecordDo betRecordDo = betRecordService.get(betRecordId, getGameType());
                 if (Objects.isNull(betRecordDo)) {
-                    // do nothing
-                    log.warn("betRecordDo is null: {}", betRecordId);
+                    log.error("betRecordDo is null, betRecordId: {}", betRecordId);
                 } else {
                     betStatusService.asyncConvertBetStatus(betRecordDo, getGameType());
                 }

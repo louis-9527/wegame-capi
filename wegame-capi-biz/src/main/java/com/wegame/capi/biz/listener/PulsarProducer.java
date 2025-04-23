@@ -48,12 +48,15 @@ public class PulsarProducer implements InitializingBean {
         int times = 0;
         do {
             messageId = syncSendMessage(gameTypeEnum, mqMessage);
+            if (times > 0) {
+                log.warn("syncSendMessage retry times:{}, messageId: {}", times, mqMessage.getMsgId());
+            }
             times++;
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
         if (duration > 20L) {
-            log.warn("sendMessage cost time more than 20, {} ms", endTime - startTime);
+            log.warn("sendMessage cost time more than 20, {} ms, messageId: {}", endTime - startTime, mqMessage.getMsgId());
         }
         return messageId;
     }

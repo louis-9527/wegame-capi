@@ -40,14 +40,14 @@ public class MariamakilingPulsarConfig {
         PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(mariaMakilingUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
-                .operationTimeout(500, TimeUnit.MILLISECONDS)
-                .connectionTimeout(1000, TimeUnit.MILLISECONDS)
-                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
-                .listenerThreads(Runtime.getRuntime().availableProcessors())
-                .connectionsPerBroker(100)
-                .enableTcpNoDelay(true)
-                .connectionMaxIdleSeconds(300)
-                .statsInterval(60, TimeUnit.SECONDS)
+                //                .operationTimeout(500, TimeUnit.MILLISECONDS)
+                //                .connectionTimeout(1000, TimeUnit.MILLISECONDS)
+                //                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
+                //                .listenerThreads(Runtime.getRuntime().availableProcessors())
+                //                .connectionsPerBroker(100)
+                //                .enableTcpNoDelay(true)
+                //                .connectionMaxIdleSeconds(300)
+                //                .statsInterval(60, TimeUnit.SECONDS)
                 .build();
         return pulsarClient;
     }
