@@ -138,7 +138,7 @@ knife4j:
 ## api
 api:
   game:
-    promotionDomain: https://reward-http-stress.igo8.me
+    promotionDomain: http://reward-http-internal-stress.igo8.me
     singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
     invokeSingle: true
     cp:
@@ -220,7 +220,7 @@ dynamic:
       password: egame-secure-passphrase
 httpclient-warm-up:
   initHosts:
-    https://reward-http-stress.igo8.me: 300
+    http://reward-http-internal-stress.igo8.me: 300
     http://sw-http-main-apisix-internal-stress.igo8.me: 300
 http:
   connectTimeout: 1000
