@@ -139,6 +139,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                     }
                 } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
                     AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
                     AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
                     AssertUtil.assertTrue(NumberUtil.isLong(betRecordId), ErrorCode.ERR_PARAM);
                     AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
@@ -153,7 +154,6 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
             if(useStarCard){
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
-                AssertUtil.assertTrue(Objects.equals(payAmount, betAmount), ErrorCode.ERR_PARAM);
             }else if(useFreeSpin){
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(payAmount == 0L, ErrorCode.ERR_PARAM);
