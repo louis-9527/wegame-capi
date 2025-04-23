@@ -20,10 +20,10 @@ public class MongodbTemplateAspect {
         try {
             return joinPoint.proceed();
         } catch (Throwable throwable) {
-            log.error("调用mongodb接口异常, 入参：{}, errMsg: {}",
-                    FastJsonUtils.toJSONString(joinPoint.getArgs()),
-                    throwable.getMessage(),
-                    throwable);
+//            log.error("调用mongodb接口异常, 入参：{}, errMsg: {}",
+//                    FastJsonUtils.toJSONString(joinPoint.getArgs()),
+//                    throwable.getMessage(),
+//                    throwable);
             throw throwable;
         } finally {
             long endTime = System.currentTimeMillis();
