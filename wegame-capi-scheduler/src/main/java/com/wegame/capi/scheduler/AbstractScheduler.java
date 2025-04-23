@@ -32,7 +32,8 @@ public abstract class AbstractScheduler {
                 OperatorContext.setOperator(Constants.SYSTEM_OPERATOR);
                 runnable.run();
             } catch (LockException e) {
-                log.info("schedule task warn, get lock fail, taskName: {}, lockName: {}", taskName(), lockName);
+                // do nothing
+                // log.info("schedule task warn, get lock fail, taskName: {}, lockName: {}", taskName(), lockName);
             } catch (Exception e) {
                 log.error("{} schedule task error, errMsg: {}", taskName(), e.getMessage(), e);
             } finally {

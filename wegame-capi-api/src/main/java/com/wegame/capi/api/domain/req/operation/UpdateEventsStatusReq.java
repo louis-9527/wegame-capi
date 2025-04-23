@@ -27,7 +27,7 @@ public class UpdateEventsStatusReq implements Serializable {
     /**
      * 总干预的游戏金额
      */
-    private BigDecimal executeBouns;
+    private BigDecimal executeBonus;
     /**
      * 开始执行时间
      */

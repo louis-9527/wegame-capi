@@ -43,7 +43,7 @@ public class Constants {
 
     public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event_2:%s_%s";
     public static final String OPERATION_EVENT_ING_KEY = "wegame:cuser:operation_event_ing:%s_%s";
-    public static final Long OPERATION_EVENT_ING_EXPIRED = 5*60L;
+    public static final Long OPERATION_EVENT_ING_EXPIRED = 20 * 60L;
 
 
     public static final String OPERATION_EVENT_CONFIG_INCREMENT_CACHE_KEY = "wegame:cuser:operation_config_increment:%s_%s_%s";

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +25,7 @@ public class ThreadPoolConfig {
     public static final String gameRecordPutCacheThreadPoolExecutor = "gameRecordPutCacheThreadPoolExecutor";
     public static final String operationEventThreadPoolExecutor = "operationEventThreadPoolExecutor";
     public static final String operationEventReportThreadPoolExecutor = "operationEventReportThreadPoolExecutor";
+    public static final String starCardUseRecordThreadPoolExecutor = "starCardUseRecordThreadPoolExecutor";
 
     /**
      * 默认模块-线程池
@@ -36,7 +38,7 @@ public class ThreadPoolConfig {
                 100,
                 30L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(1000),
+                new LinkedBlockingDeque(1000),
                 new CustomizableThreadFactory("default-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
@@ -54,7 +56,7 @@ public class ThreadPoolConfig {
                 5000,
                 60L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(10000),
+                new LinkedBlockingDeque(10000),
                 new CustomizableThreadFactory("bet-record-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
@@ -72,7 +74,7 @@ public class ThreadPoolConfig {
                 1000,
                 60L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(100000),
+                new LinkedBlockingDeque(100000),
                 new CustomizableThreadFactory("bet-record-status-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
@@ -85,7 +87,7 @@ public class ThreadPoolConfig {
                 50,
                 60L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(10000),
+                new LinkedBlockingDeque(10000),
                 new CustomizableThreadFactory("send-message-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
@@ -98,7 +100,7 @@ public class ThreadPoolConfig {
                 50,
                 60L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(100000),
+                new LinkedBlockingDeque(100000),
                 new CustomizableThreadFactory("game-record-cache-put-thread-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
@@ -116,7 +118,7 @@ public class ThreadPoolConfig {
                 100,
                 60L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(10000),
+                new LinkedBlockingDeque(10000),
                 new CustomizableThreadFactory("dynamic-event-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
@@ -129,8 +131,26 @@ public class ThreadPoolConfig {
                 100,
                 60L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(10000),
+                new LinkedBlockingDeque(10000),
                 new CustomizableThreadFactory("dynamic-event-report-pool-"),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        return executor;
+    }
+
+    /**
+     * 默认模块-线程池
+     *
+     * @return
+     */
+    @Bean(starCardUseRecordThreadPoolExecutor)
+    public ThreadPoolExecutor starCardUseRecordThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(30,
+                100,
+                60L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingDeque<>(10000),
+                new CustomizableThreadFactory("star-card-use-record-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
         return executor;
