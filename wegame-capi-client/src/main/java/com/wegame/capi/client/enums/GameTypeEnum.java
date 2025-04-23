@@ -20,18 +20,15 @@ public enum GameTypeEnum {
     MARIA_MAKILING("zhumeng001",
             "MariaMakiling",
             "mariamakiling_bet_record",
-            "mariamakiling_game_record",
-            500L),
+            "mariamakiling_game_record", 300L),
     MALAKAS("zhumeng002",
             "Malakas",
             "malakas_bet_record",
-            "malakas_game_record",
-            500L),
+            "malakas_game_record", 300L),
     IBONG_ADARNA("zhumeng003",
             "IbongAdarna",
             "ibongadarna_bet_record",
-            "ibongadarna_game_record",
-            500L),
+            "ibongadarna_game_record", 300L),
 
 
     ;

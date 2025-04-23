@@ -85,6 +85,7 @@ public class BetRecordConverter {
         po.setPayOutAmount(betRecordDo.getPayOutAmount());
         po.setReachMaxMultiple(betRecordDo.getReachMaxMultiple());
         po.setStatus(betRecordDo.getStatus());
+        po.setBetTime(betRecordDo.getBetTime());
         if (Objects.nonNull(betRecordDo.getExtendInfo())) {
             po.setExtendInfo(BetRecordPo.ExtendInfo.builder()
                     .ieId(betRecordDo.getExtendInfo().getIeId())

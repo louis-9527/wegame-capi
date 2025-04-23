@@ -405,7 +405,7 @@ public abstract class AbstractOperationEventManager {
         UpdateEventsStatusReq updateEventsStatusReq = UpdateEventsStatusReq.builder()
                 .eventId(eventDo.getEventId())
                 .requestTime(DateUtil.toUTC(new Date()))
-                .executeBouns(AmountUtil.toBigDecimal(totalAmount))
+                .executeBonus(AmountUtil.toBigDecimal(totalAmount))
                 .executeTime(startTime == null ? DateUtil.toUTC(DateUtil.getCurrentMilli()) : DateUtil.toUTC(startTime))
                 .betNos(betNos)
                 .betRecords(betRecords)

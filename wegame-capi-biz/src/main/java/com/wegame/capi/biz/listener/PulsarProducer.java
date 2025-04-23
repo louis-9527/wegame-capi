@@ -49,26 +49,30 @@ public class PulsarProducer implements InitializingBean {
         int times = 0;
         do {
             messageId = syncSendMessage(gameTypeEnum, mqMessage);
+            if (times > 0) {
+                log.warn("syncSendMessage retry times:{}, messageId: {}", times, mqMessage.getMsgId());
+            }
             times++;
         } while (Objects.isNull(messageId) && times < tryTimes);
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
         if (duration > 20L) {
-            log.warn("sendMessage cost time more than 20, {} ms", endTime - startTime);
+            log.warn("sendMessage cost time more than 20, {} ms, messageId: {}", endTime - startTime, mqMessage.getMsgId());
         }
         return messageId;
     }
 
     public <T> MessageId syncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
-            // log.info("{}Producer syncSendMessage type:{},msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
+            // todo 去掉日志
+            log.info("syncSendMessage messageId: {}", mqMessage.getMsgId());
             return getProducer(gameType)
                     .newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage, SerializerFeature.DisableCircularReferenceDetect))
                     .send();
-        } catch (PulsarClientException e) {
-            log.error("{}Producer send fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
+        } catch (Exception e) {
+            log.error("{}Producer syncSendMessage fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
             throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
         }
     }

@@ -90,9 +90,13 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Boolean reachMaxMultiple;
     /**
-     * 状态 0进行中 1已完结 2无效
+     * 投注状态 0进行中 1已完结 2无效
      */
     private Integer status;
+    /**
+     * 投注时间
+     */
+    private Long betTime;
     /**
      * 扩展信息
      */

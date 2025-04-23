@@ -3,10 +3,12 @@ package com.wegame.capi.application.controller;
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
+import com.wegame.capi.biz.listener.IbongOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
 import com.wegame.capi.biz.service.promotion.FreeSpinService;
 import com.wegame.capi.client.domain.request.promotion.CreateFreeSpinRequest;
 import com.wegame.capi.client.domain.vo.promotion.CreateFreeSpinVo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,8 @@ public class TestController {
     @Autowired
     MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
     @Autowired
+    IbongOperationEventPulsarListener ibongOperationEventPulsarListener;
+    @Autowired
     FreeSpinService freeSpinService;
 
     @ApiOperation(value = "eventMsg", httpMethod = "POST")
@@ -50,7 +54,11 @@ public class TestController {
                 "    \"timesOrSessionDuration\": 10\n" +
                 "}";
         OperationEventMessageDo msgDo = JSON.parseObject(event, OperationEventMessageDo.class);
-        mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
+        if (msgDo.getGameId().equals(GameTypeEnum.MARIA_MAKILING.getId())) {
+            mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
+        } else if (msgDo.getGameId().equals(GameTypeEnum.IBONG_ADARNA.getId())) {
+            ibongOperationEventPulsarListener.handleMessage(msgDo);
+        }
 
 //        for (int i = 0; i <= 210; i++) {
 //            msgDo.setEventId(msgDo.getEventId() + "_" + i);

@@ -120,8 +120,8 @@ spring:
     mongodb:
       dynamic:
         maria_makiling_mdb:
-          primary_uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/makiling?compressors=snappy&retryWrites=false&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
-          uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/makiling?compressors=snappy&retryWrites=false&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/makiling?compressors=zlib&retryWrites=false&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/makiling?compressors=zlib&retryWrites=false&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: makiling
         malakas_mdb:
           uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/malakas?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=20&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
@@ -144,7 +144,7 @@ knife4j:
 ## api
 api:
   game:
-    promotionDomain: https://reward-http-stress.igo8.me
+    promotionDomain: http://reward-http-internal-stress.igo8.me
     singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
     invokeSingle: true
     cp:
@@ -192,7 +192,7 @@ dynamic:
         issuer_url: null
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-sn9dy:qat
-    domain: https://dos-egame-stresstest.dos88.me
+    domain: https://dos-egame-stresstest-internal.dos88.me
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
@@ -238,8 +238,9 @@ dynamic:
       password: egame-secure-passphrase
 httpclient-warm-up:
   initHosts:
-    https://reward-http-stress.igo8.me: 300
+    http://reward-http-internal-stress.igo8.me: 300
     http://sw-http-main-apisix-internal-stress.igo8.me: 300
+    https://dos-egame-stresstest-internal.dos88.me: 300
 http:
   connectTimeout: 1000
   readTimeout: 500
