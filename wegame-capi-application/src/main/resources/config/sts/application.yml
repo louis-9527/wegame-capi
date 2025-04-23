@@ -174,7 +174,7 @@ dynamic:
         issuer_url: null
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-sn9dy:qat
-    domain: https://dos-egame-stresstest.dos88.me
+    domain: https://dos-egame-stresstest-internal.dos88.me
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
@@ -222,6 +222,7 @@ httpclient-warm-up:
   initHosts:
     http://reward-http-internal-stress.igo8.me: 300
     http://sw-http-main-apisix-internal-stress.igo8.me: 300
+    https://dos-egame-stresstest-internal.dos88.me: 300
 http:
   connectTimeout: 1000
   readTimeout: 500
