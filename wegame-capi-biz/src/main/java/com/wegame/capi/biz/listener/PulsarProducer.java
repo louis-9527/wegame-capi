@@ -66,7 +66,7 @@ public class PulsarProducer implements InitializingBean {
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
                     .send();
-        } catch (PulsarClientException e) {
+        } catch (Exception e) {
             log.error("{}Producer send fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
             throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
         }

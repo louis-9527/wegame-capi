@@ -22,7 +22,7 @@ public class LockNameUtil {
 
     /// ====== 分割线 定时任务锁 ====== ///
     public static final String getBetLockName(String playerName) {
-        return String.format(BET_RECORD_STATUS_SCHEDULER_LOCK, playerName);
+        return String.format(BET_LOCK, playerName);
     }
 
     public static String getBetRecordStatusSchedulerLockName(GameTypeEnum gameType) {

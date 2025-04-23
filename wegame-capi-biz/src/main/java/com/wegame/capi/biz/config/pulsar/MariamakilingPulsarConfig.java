@@ -60,7 +60,7 @@ public class MariamakilingPulsarConfig {
                 // 开启批量发送
                 .enableBatching(true)
                 .batcherBuilder(BatcherBuilder.KEY_BASED)
-                .batchingMaxMessages(200) // 每批最大 200 条消息
+                .batchingMaxMessages(100) // 每批最大 200 条消息
                 // .batchingMaxBytes(4 * 1024) // 每个批次最大 4 KB
                 // 10ms 内合并批量消息
                 // 最大延迟 10 毫秒
