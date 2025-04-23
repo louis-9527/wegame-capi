@@ -63,14 +63,15 @@ public class PulsarProducer implements InitializingBean {
 
     public <T> MessageId syncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
-            // log.info("{}Producer syncSendMessage type:{},msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
+            // todo 去掉日志
+            log.info("syncSendMessage messageId: {}", mqMessage.getMsgId());
             return getProducer(gameType)
                     .newMessage()
                     .key(mqMessage.getMsgId())
                     .value(JSON.toJSONBytes(mqMessage))
                     .send();
         } catch (Exception e) {
-            log.error("{}Producer send fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
+            log.error("{}Producer syncSendMessage fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
             throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
         }
     }
