@@ -67,7 +67,6 @@ public class BetRecordConverter {
         if (Objects.isNull(betRecordDo)) {
             return null;
         }
-        long currentMilli = DateUtil.getCurrentMilli();
         BetRecordPo po = new BetRecordPo();
         po.setId(betRecordDo.getId());
         po.setPId(betRecordDo.getPId());
@@ -96,12 +95,12 @@ public class BetRecordConverter {
         }
         if (OptEnum.ADD.equals(optEnum)) {
             po.setCreator(betRecordDo.getCreator());
-            po.setCreateTime(currentMilli);
+            po.setCreateTime(betRecordDo.getCreateTime());
             po.setUpdater(betRecordDo.getUpdater());
-            po.setUpdateTime(currentMilli);
+            po.setUpdateTime(betRecordDo.getUpdateTime());
         } else {
             po.setUpdater(betRecordDo.getUpdater());
-            po.setUpdateTime(currentMilli);
+            po.setUpdateTime(DateUtil.getCurrentMilli());
             po.setId(betRecordDo.getId());
         }
         return po;
