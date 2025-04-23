@@ -16,8 +16,9 @@ public enum OperationEventSubStatusEnum {
 
     NONE(0, "处理中"),
     FINISH_NORMAL(1, "干预完成(正常)"),
-    FINISH_EXPIRED(2, "干预完成(事件超时)");
-    //FINISH_AMOUNT_ERROR(3, "干预完成(投注金额不符)");
+    FINISH_EXPIRED(2, "干预完成(事件超时)"),
+    FINISH_AMOUNT_ERROR_FIND_DETAIL(3, "干预完成(投注金额不符,有干预明细)"),
+    FINISH_AMOUNT_ERROR_NOT_DETAIL(4, "干预完成(投注金额不符,有干预明细)");
 
     /**
      * 枚举码.
@@ -27,6 +28,7 @@ public enum OperationEventSubStatusEnum {
      * 描述信息.
      */
     private final String desc;
+
     /**
      * 私有构造方法.
      *
@@ -48,13 +50,12 @@ public enum OperationEventSubStatusEnum {
     }
 
     public static boolean isFinish(OperationEventSubStatusEnum subStatus) {
-        if(Objects.isNull(subStatus)){
+        if (Objects.isNull(subStatus)) {
             return false;
         }
-        if (OperationEventSubStatusEnum.FINISH_NORMAL == subStatus
-                || OperationEventSubStatusEnum.FINISH_EXPIRED == subStatus) {
-            return true;
-        }
-        return false;
+        return OperationEventSubStatusEnum.FINISH_NORMAL == subStatus
+                || OperationEventSubStatusEnum.FINISH_EXPIRED == subStatus
+                || OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_FIND_DETAIL == subStatus
+                || OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_NOT_DETAIL == subStatus;
     }
 }
