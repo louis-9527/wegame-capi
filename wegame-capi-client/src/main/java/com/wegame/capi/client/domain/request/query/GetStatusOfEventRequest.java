@@ -1,6 +1,7 @@
 package com.wegame.capi.client.domain.request.query;
 
 import com.wegame.base.Validate;
+import com.wegame.base.domain.BaseRequest;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import io.swagger.annotations.ApiModel;
@@ -13,13 +14,13 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "获取干预事件结果")
-public class GetStatusOfEventRequest implements Validate,Serializable {
+public class GetStatusOfEventRequest extends BaseRequest implements Validate,Serializable {
     private static final long serialVersionUID = 4774663284527334032L;
     @ApiModelProperty(value = "干预事件IDs (最多为10)", required = true)
     private List<String> eventIds;

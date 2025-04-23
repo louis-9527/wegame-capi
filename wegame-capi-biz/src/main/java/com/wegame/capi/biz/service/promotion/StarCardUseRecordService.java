@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.starCardUseRecordThreadPoolExecutor;
 
 /**
  * 星卡service
@@ -37,12 +38,12 @@ public class StarCardUseRecordService extends AbstractService {
         return po.getId();
     }
 
-    @Async(defaultThreadPoolExecutor)
+    @Async(starCardUseRecordThreadPoolExecutor)
     public void asyncUpdate(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
         try {
             update(useRecordDo, gameType);
         } catch (Exception e) {
-            log.error("asyncUpdate error", e);
+            log.error("asyncUpdate starCardUseRecord error", e);
         }
     }
 
