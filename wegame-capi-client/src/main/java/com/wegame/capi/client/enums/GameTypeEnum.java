@@ -20,7 +20,7 @@ public enum GameTypeEnum {
     MARIA_MAKILING("zhumeng001",
             "MariaMakiling",
             "mariamakiling_bet_record",
-            "mariamakiling_game_record", 500L)
+            "mariamakiling_game_record", 300L)
 
     ;
 
