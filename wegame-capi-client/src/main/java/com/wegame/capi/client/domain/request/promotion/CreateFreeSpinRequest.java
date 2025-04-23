@@ -1,6 +1,7 @@
 package com.wegame.capi.client.domain.request.promotion;
 
 import com.wegame.base.Validate;
+import com.wegame.base.domain.BaseRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -11,13 +12,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-@ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "历史FreeSpin请求模型")
-public class CreateFreeSpinRequest implements Validate, Serializable {
+public class CreateFreeSpinRequest extends BaseRequest implements Validate, Serializable {
     private static final long serialVersionUID = 6074772096926787533L;
     @ApiModelProperty(value = "此交易的唯一参考ID", required = true)
     private String refId;

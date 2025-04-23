@@ -11,6 +11,7 @@ public class CreateFreeSpinConverter {
         return CreateFreeSpinDo.builder()
                 .result(createFreeSpinRes.getResult())
                 .eventId(createFreeSpinRes.getEventId())
+                .message(createFreeSpinRes.getMessage())
                 .build();
     }
 
@@ -19,6 +20,7 @@ public class CreateFreeSpinConverter {
         return CreateFreeSpinVo.builder()
                 .result(createFreeSpinDo.getResult())
                 .eventId(createFreeSpinDo.getEventId())
+                .message(createFreeSpinDo.getMessage())
                 .build();
     }
 }

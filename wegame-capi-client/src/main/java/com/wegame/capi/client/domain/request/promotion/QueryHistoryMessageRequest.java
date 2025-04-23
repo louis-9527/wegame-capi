@@ -12,9 +12,9 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 
 @Data
-@ToString
 @SuperBuilder
 @NoArgsConstructor
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "分页查询历史消息请求参数", parent = PageQueryRequest.class)
 public class QueryHistoryMessageRequest extends PageQueryRequest implements Validate, Serializable {

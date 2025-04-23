@@ -45,4 +45,9 @@ public enum OperationEventReportStatusEnum {
         }
         return null;
     }
+    public static Boolean reportSuccess(OperationEventReportStatusEnum reportStatus){
+            return Objects.equals(OperationEventReportStatusEnum.FINISH.getCode(), reportStatus.getCode())
+                    || Objects.equals(OperationEventReportStatusEnum.FAIL.getCode(), reportStatus.getCode());
+    }
+
 }

@@ -9,7 +9,7 @@ public class LockNameUtil {
     // 定时任务锁
     private static final String BET_RECORD_STATUS_SCHEDULER_LOCK = "lock:bet_record_status_scheduler_lock:%s";
     private static final String BET_RECORD_STATUS_ALERT_SCHEDULER_LOCK = "lock:bet_record_status_alert_scheduler_lock:%s";
-    private static final String BET_LOCK = "lock:bet_lock_%s_%s";
+    private static final String BET_LOCK = "lock:bet_lock:%s";
     private static final String OPERATION_EVENT_SCHEDULER_LOCK = "lock:operation_event_scheduler_lock:%s";
 
     private static final String OPERATION_EVENT_REPORT_LOCK = "lock:operation_event_report_lock:%s_%s";
@@ -22,7 +22,7 @@ public class LockNameUtil {
 
     /// ====== 分割线 定时任务锁 ====== ///
     public static final String getBetLockName(String playerName) {
-        return String.format(BET_RECORD_STATUS_SCHEDULER_LOCK, playerName);
+        return String.format(BET_LOCK, playerName);
     }
 
     public static String getBetRecordStatusSchedulerLockName(GameTypeEnum gameType) {

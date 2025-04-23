@@ -44,7 +44,7 @@ public class MariaMakilingBetRecordManager extends AbstractBetRecordManager<Mari
         }
         boolean ret = gameRecordService.batchAdd(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
-                // 异步设置游戏记录缓存
+        // 异步设置游戏记录缓存
         //        String cacheKey = String.format("%s_%s", betRecord.getId(), betRecord.getPlayerId());
         //        gameRecordService.asyncPutCache(betRecord.getGameRecordList(), gameType, cacheKey);
         return betRecord.getId();

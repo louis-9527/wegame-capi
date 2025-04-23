@@ -95,6 +95,10 @@ public class BetRecordPo implements Serializable {
      */
     private Integer status;
     /**
+     * 投注时间
+     */
+    private Long betTime;
+    /**
      * 扩展信息
      */
     private ExtendInfo extendInfo;

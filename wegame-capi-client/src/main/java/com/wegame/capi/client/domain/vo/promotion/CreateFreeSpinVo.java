@@ -20,4 +20,6 @@ public class CreateFreeSpinVo implements Serializable {
     private Integer result;
     @ApiModelProperty(value = "活动编号", required = true)
     private String eventId;
+    @ApiModelProperty(value = "提示信息", required = true)
+    private String message;
 }

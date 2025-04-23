@@ -12,15 +12,21 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.StarCardUseTypeEnum;
 import com.wegame.capi.dao.repository.domain.star.StarCardUseRecordPo;
 import com.wegame.capi.dao.repository.domain.star.StarCardUseRecordQuery;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.starCardUseRecordThreadPoolExecutor;
+
 /**
  * 星卡service
  */
+@Slf4j
 @Service
 public class StarCardUseRecordService extends AbstractService {
 
@@ -30,6 +36,15 @@ public class StarCardUseRecordService extends AbstractService {
         StarCardUseRecordPo poToInsert = StartCardUseRecordConvert.doToPo(useRecordDo, OptEnum.ADD);
         StarCardUseRecordPo po = getMongoTemplate(gameType).insert(poToInsert, starCardUseType.getCollectionName());
         return po.getId();
+    }
+
+    @Async(starCardUseRecordThreadPoolExecutor)
+    public void asyncUpdate(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {
+        try {
+            update(useRecordDo, gameType);
+        } catch (Exception e) {
+            log.error("asyncUpdate starCardUseRecord error", e);
+        }
     }
 
     public Boolean update(StarCardUseRecordDo useRecordDo, GameTypeEnum gameType) {

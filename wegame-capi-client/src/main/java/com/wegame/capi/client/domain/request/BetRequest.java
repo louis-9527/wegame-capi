@@ -2,6 +2,7 @@ package com.wegame.capi.client.domain.request;
 
 import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.Validate;
+import com.wegame.base.domain.BaseRequest;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
@@ -18,12 +19,12 @@ import java.math.RoundingMode;
 import java.util.Objects;
 
 @Data
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "投注请求参数")
-public class BetRequest implements Validate, Serializable {
+public class BetRequest extends BaseRequest implements Validate, Serializable {
     private static final long serialVersionUID = 1L;
     @ApiModelProperty(value = "游戏Id", required = true)
     private String gameId;
@@ -224,7 +225,6 @@ public class BetRequest implements Validate, Serializable {
                 }
             }
         }
-
         private void validateFreeSpinBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用预定投注
             if (useFreeSpin) {

@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.base.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.operation.OperationEventDetailBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
@@ -17,12 +16,13 @@ import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
+import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.biz.service.promotion.BagService;
+import com.wegame.capi.biz.service.promotion.FreeSpinService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
-import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +54,11 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     @Autowired
     StarCardUseRecordService startCardUseRecordService;
     @Autowired
+    OperationEventService operationEventService;
+    @Autowired
     BagService bagService;
+    @Autowired
+    FreeSpinService freeSpinService;
     @Value("${api.game.cp.channelId}")
     public String cpChannelId;
     @Value("${dynamic.operation.switch}")
@@ -102,6 +106,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         // 生产投注记录
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         // 保存干预事件详情并修改干预事件干预状态
+        operationEventManager().updateOperationUseStatus(gameOperationEvent.getOperationEvent().getId(), OperationEventStatusEnum.ING);
         Long eventDetailId = operationEventManager().addEventDetail(OperationEventDetailBuilder.build(generateId(), betRecordDo, gameOperationEvent));
         AssertUtil.assertNotNull(eventDetailId, ErrorCode.ERR_INTER);
         // 投注并派奖
@@ -170,8 +175,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // 生成投注记录Id：唯一
         long betRecordId = generateBetRecordId();
-        // 准备核销星卡
-        StarCardUseRecordDo recordDo = StarCardUseRecordDo.builder()
+        Long startCardUseRecordId = startCardUseRecordService.add(StarCardUseRecordDo.builder()
                 .id(generateId())
                 .gameId(gameContext().gameInfo().getGameType().getId())
                 .channelId(userInfo.getChannelId())
@@ -180,48 +184,46 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 .rewardId(betDo.getRewardId())
                 .betRecordId(betRecordId)
                 .rewardConfigId(betDo.getRewardConfigId())
-                .playName(userInfo.getPlayerName()).build();
-        Long useRecordId = startCardUseRecordService.add(recordDo, this.gameContext().gameInfo().getGameType());
+                .playName(userInfo.getPlayerName())
+                .useStatus(StarCardUseStatusEnum.ING)
+                .reportStatus(StarCardReportStatusEnum.ING)
+                .build(), this.gameContext().gameInfo().getGameType());
         // 核销星卡
-
+        long startTime = System.currentTimeMillis();
         Pair<RedeemRewardResultDo, BetRecordDo<R>> redeemRewardResultDoBetRecord = this.rewardResult(betRecordId, betDo);
-
+        log.info("rewardResult cost time: {} ms", System.currentTimeMillis() - startTime);
         RedeemRewardResultDo rewardResult = redeemRewardResultDoBetRecord.getKey();
         BetRecordDo<R> rBetRecordDo = redeemRewardResultDoBetRecord.getRight();
-        if (!rewardResult.getSuccess()) {
+        if (!rewardResult.isSuccess()) {
             // 更新星卡使用状态-失败
-            StarCardUseRecordDo updateRecord = StarCardUseRecordDo.builder()
-                    .id(useRecordId)
+            startCardUseRecordService.asyncUpdate(StarCardUseRecordDo.builder()
+                    .id(startCardUseRecordId)
                     .useStatus(StarCardUseStatusEnum.FAIL)
                     .reportStatus(StarCardReportStatusEnum.NONE)
                     .failCode(rewardResult.getStatus())
                     .failMsg(rewardResult.getMessage())
-                    .playName(userInfo.getPlayerName()).build();
-            startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
+                    .build(), this.gameContext().gameInfo().getGameType());
             if (rewardResult.getErrorCode() != null) {
                 throw new BusinessException(rewardResult.getErrorCode());
             }
             throw new BusinessException(ErrorCode.ERR_INTER);
         }
         // 更新星卡使用状态-成功
-        StarCardUseRecordDo updateRecord = StarCardUseRecordDo.builder()
-                .id(useRecordId)
+        startCardUseRecordService.asyncUpdate(StarCardUseRecordDo.builder()
+                .id(startCardUseRecordId)
                 .payOutAmount(rBetRecordDo.getPayOutAmount())
-                //.betRecordId(rBetRecordDo.getId())
                 .useStatus(StarCardUseStatusEnum.SUCCESS)
-                .playName(userInfo.getPlayerName()).build();
-        startCardUseRecordService.update(updateRecord, this.gameContext().gameInfo().getGameType());
+                .build(), this.gameContext().gameInfo().getGameType());
         // 调用投注
         boolean syncOpt = betHelper().hasRewardFreeWheel(rBetRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(rBetRecordDo, syncOpt);
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             // 更新星卡上报状态->无需上报
-            StarCardUseRecordDo updateSuccessRecord = StarCardUseRecordDo.builder()
-                    .id(useRecordId)
+            startCardUseRecordService.asyncUpdate(StarCardUseRecordDo.builder()
+                    .id(startCardUseRecordId)
                     .reportStatus(StarCardReportStatusEnum.NONE)
-                    .playName(userInfo.getPlayerName()).build();
-            startCardUseRecordService.update(updateSuccessRecord, this.gameContext().gameInfo().getGameType());
+                    .build(), this.gameContext().gameInfo().getGameType());
         } else {
             // todo 调用单钱包失败需要上报,待成就系统开发完成接入
         }
@@ -233,8 +235,11 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(betDo.isUseFreeSpin(), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(betDo.getCampaignId(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), FREE_SPIN), ErrorCode.ERR_INTER);
-        // todo 校验betValue是否和betAmount相同
-//        FreeSpinDetailDo freeSpinDetailDo = freeSpinService.freeSpinDetail(betDo.getCampaignId());
+        FreeSpinDetailDo freeSpinDetailDo = freeSpinService.freeSpinDetail(betDo.getCampaignId());
+        AssertUtil.assertNotNull(freeSpinDetailDo, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(freeSpinDetailDo.getConfig(), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(freeSpinDetailDo.getConfig().getBetValue(), ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(freeSpinDetailDo.getConfig().getBetValue() * 1000 == betDo.getBetAmount(), ErrorCode.ERR_INTER);
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
@@ -261,7 +266,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     private Pair<RedeemRewardResultDo, BetRecordDo<R>> rewardResult(long betRecordId, BetDo betDo) {
         BetRecordDo<R> rBetRecordDo = generateBetRecord(betRecordId, betDo);
         RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
-        if (rewardResult.getSuccess()) {
+        if (rewardResult.isSuccess()) {
             return Pair.of(rewardResult, rBetRecordDo);
         } else if (Objects.equals(RedeemRewardResStatusEnum.INVALID_REWARD_PAYOUT.getCode(), rewardResult.getStatus())) {
             // 派奖金额超过限制

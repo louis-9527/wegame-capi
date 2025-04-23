@@ -44,8 +44,6 @@ public class BetStatusService {
     private String appName;
     @Value("${spring.application.env}")
     private String env;
-    @Value("${lark.publishRobot}")
-    private String publishRobot;
     @Value("${lark.warningRobot}")
     private String warningRobot;
     @Autowired
@@ -61,17 +59,20 @@ public class BetStatusService {
     public void convertBetStatus(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
+        log.info("convertBetStatus betRecordDo: {}", betRecordDo);
         if (!Objects.equals(BetStatusEnum.ING.getCode(), betRecordDo.getStatus())) {
             // 只处理投注中的投注记录
+            log.error("betRecordDo status is int, betRecordId: {}", betRecordDo.getId());
             return;
         }
-        if (System.currentTimeMillis() - betRecordDo.getCreateTime() > THREE_MINUTES) {
+        if (System.currentTimeMillis() - betRecordDo.getCreateTime() >= THREE_MINUTES) {
             // 只处理3分钟以内的投注记录
+            log.error("betRecordDo createTime is expired, betRecordId: {}", betRecordDo.getId());
             return;
         }
         // 控制20s不超过1个请求
         RateLimiter rateLimiter = RateLimiter.create(1.0 / 20.0);
-        while (System.currentTimeMillis() - betRecordDo.getCreateTime() <= THREE_MINUTES - 800) {
+        do  {
             try {
                 rateLimiter.acquire();
                 log.info("convertBetStatus info, betRecordId: {}", betRecordDo.getId());
@@ -95,7 +96,7 @@ public class BetStatusService {
             } catch (Exception e) {
                 log.error("convertBetStatus error, betRecordId: {}, errMsg: {}", betRecordDo.getId(), e.getMessage(), e);
             }
-        }
+        } while (System.currentTimeMillis() - betRecordDo.getCreateTime() <= THREE_MINUTES - 800);
     }
 
     @Async(betRecordStatusThreadPoolExecutor)
@@ -104,6 +105,7 @@ public class BetStatusService {
     }
 
     private void handle(BetRecordDo betRecordDo, GameTypeEnum gameType, BetStatusEnum betStatus, BetStatusRes betStatusRes) {
+        log.info("handle betStatus betRecordId: {}, betStatus: {}, betStatusRes: {}", betRecordDo.getId(), betStatus, betStatusRes);
         // 状态更新
         boolean ret = betRecordService.update(BetRecordDo.builder()
                 .id(betRecordDo.getId())
@@ -117,7 +119,7 @@ public class BetStatusService {
         }
         // 业务告警
         if (Objects.equals(BetStatusEnum.FAIL, betStatus)) {
-            if (com.alibaba.druid.util.StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
+            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
                 return;
             }
             LarkUtil.sendTextMsg(warningRobot, BizAlertMessage.builder()
