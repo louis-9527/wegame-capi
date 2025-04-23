@@ -96,27 +96,29 @@ public class IbongAdarnaGameNormalPlay extends AbstractGame<IbongAdarnaGameRecor
     private void generateColumSymbol(IbongAdarnaSymbolDo[][] symbolArr, int colum, GameInfoDo gameInfo, List<SymbolDo> preSymbolGenList) {
         TreeMap<String, TreeMap<String, Integer>> symbolBreakUpProbabilisticMap = buildSymbolBreakUpProbabilisticMap();
         int preSymbolGenCount = preSymbolGenList.size();
+        AssertUtil.assertTrue(preSymbolGenCount > 0 && preSymbolGenCount <= 2, ErrorCode.ERR_INTER, "invalid preSymbolGenCount");
         int[] rowIndex = new int[gameInfo.getRow()];
         for (int row = 0; row < gameInfo.getRow(); row++) {
             SymbolDo symbolDo;
-            if (preSymbolGenCount <= 1) {
+            if (preSymbolGenCount == 1) {
                 // 一列只有一个元素
                 symbolDo = preSymbolGenList.get(0);
             } else {
-                // 第一行
-                if (row == 0) {
-                    symbolDo = preSymbolGenList.get(0);
-                    rowIndex[row] = 0;
-                } else if (row == 1) {
-                    // 第二行随机取
+                if (row == 2) {
+                    // 第三行：如果第一行和第二行一样，则取不一样的元素
+                    if (rowIndex[row - 1] == rowIndex[row - 2]) {
+                        int preSymbolIndex = rowIndex[row - 1] == 0 ? 1 : 0;
+                        symbolDo = preSymbolGenList.get(preSymbolIndex);
+                    } else {
+                        // 否则：取第二行的元素
+                        symbolDo = preSymbolGenList.get(rowIndex[row - 1]);
+                    }
+                } else {
+                    // 第一行随机
+                    // 第二行随机
                     int preSymbolIndex = randomService.randomInt(0, preSymbolGenCount - 1);
                     symbolDo = preSymbolGenList.get(preSymbolIndex);
                     rowIndex[row] = preSymbolIndex;
-                } else if (rowIndex[row - 1] == rowIndex[row - 2]) {
-                    // 最后一行，第一行第二行个元素如果是一样的，则取不一样的元素，如果不一样，则取上一个一样的元素
-                    symbolDo = preSymbolGenList.get(1);
-                } else {
-                    symbolDo = preSymbolGenList.get(rowIndex[row - 1]);
                 }
             }
             // 分裂
