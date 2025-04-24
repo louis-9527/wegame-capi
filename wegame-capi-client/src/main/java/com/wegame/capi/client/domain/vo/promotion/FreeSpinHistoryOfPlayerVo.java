@@ -54,5 +54,7 @@ public class FreeSpinHistoryOfPlayerVo implements Serializable {
         private Long firstUsedTime;
         @ApiModelProperty("freeBet")
         private BigDecimal freeBet;
+        @ApiModelProperty("usedCount")
+        private Integer usedCount;
     }
 }
