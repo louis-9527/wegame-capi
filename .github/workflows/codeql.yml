@@ -3,11 +3,12 @@ name: "CodeQL Scan"
 on: #workflow_dispatch, job will only execute while being triggered
   workflow_dispatch:
 
-
 jobs:
   analyze:
     name: Analyze
     runs-on: [AMD]
+    env:
+      GITHUB_TOKEN: ${{ secrets.CODESCAN_SECRET }}
     strategy:
       fail-fast: false
       matrix:
