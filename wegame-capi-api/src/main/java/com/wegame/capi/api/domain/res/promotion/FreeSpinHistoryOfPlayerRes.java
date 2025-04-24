@@ -50,5 +50,7 @@ public class FreeSpinHistoryOfPlayerRes implements Serializable {
         private Long firstUsedTime;
         /** freeBet */
         private BigDecimal freeBet;
+        /** usedCount */
+        private Integer usedCount;
     }
 }
