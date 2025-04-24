@@ -38,9 +38,9 @@ RUN wget "http://arms-apm-ap-southeast-1.oss-ap-southeast-1.aliyuncs.com/AliyunJ
     unzip AliyunJavaAgent.zip -d /root/
 
 # Set ARMS environment variables
-ENV arms_licenseKey=1hlahoc4rpc@830177c1a0e9f6f
-ENV arms_appName=MariaMakilling-qat-wegame-capi
-ENV JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -javaagent:/root/AliyunJavaAgent/aliyun-java-agent.jar -Darms.licenseKey=${arms_licenseKey} -Darms.appName=${arms_appName}"
+ENV arms_licenseKey="1hlahoc4rpc@830177c1a0e9f6f"
+ENV arms_appName="MariaMakilling-qat-wegame-capi"
+ENV JAVA_TOOL_OPTIONS="-javaagent:/root/AliyunJavaAgent/aliyun-java-agent.jar -Darms.licenseKey=${arms_licenseKey} -Darms.appName=${arms_appName}"
 
 # Logging directory and application setup
 RUN mkdir -p /log/wegame-capi && \
