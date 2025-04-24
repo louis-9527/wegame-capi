@@ -20,10 +20,10 @@ RUN apk add --no-cache tzdata && \
     ln -sf /usr/share/zoneinfo/Asia/Kuala_Lumpur /etc/localtime && \
     echo "Asia/Kuala_Lumpur" > /etc/timezone
 
-ENV LANG C.UTF-8
-ENV JAVA_HOME=/usr/lib/jvm/java-8-amazon-corretto
-ENV PATH=$PATH:$JAVA_HOME/bin
-ENV CLASSPATH=.:$JAVA_HOME/lib/rt.jar
+ENV LANG="C.UTF-8"
+ENV JAVA_HOME="/usr/lib/jvm/java-8-amazon-corretto"
+ENV PATH="$PATH:$JAVA_HOME/bin"
+ENV CLASSPATH=".:$JAVA_HOME/lib/rt.jar"
 
 # Install Node.js, npm, python3, make, g++
 RUN apk add --no-cache nodejs npm python3 make g++
