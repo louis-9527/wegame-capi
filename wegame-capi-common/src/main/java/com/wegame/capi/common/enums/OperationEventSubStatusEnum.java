@@ -18,7 +18,7 @@ public enum OperationEventSubStatusEnum {
     FINISH_NORMAL(1, "干预完成(正常)"),
     FINISH_EXPIRED(2, "干预完成(事件超时)"),
     FINISH_AMOUNT_ERROR_FIND_DETAIL(3, "干预完成(投注金额不符,有干预明细)"),
-    FINISH_AMOUNT_ERROR_NOT_DETAIL(4, "干预完成(投注金额不符,有干预明细)");
+    FINISH_AMOUNT_ERROR_NOT_DETAIL(4, "干预完成(投注金额不符,无干预明细)");
 
     /**
      * 枚举码.

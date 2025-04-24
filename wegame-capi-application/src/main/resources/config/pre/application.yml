@@ -96,7 +96,7 @@ spring:
             test-on-return: false
             pool-prepared-statements: false
         wegame_backend_db:
-          url: jdbc:mysql://uat-makiling-mysql-sg.cluster-cfyzf55cbcc5.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          url: jdbc:mysql://uat-makiling-mysql-sg.cluster-cfyzf55cbcc5.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: uatMakilingSERvice
           password: ENC(in249zpTqyECI+UDsxVp14KxYKHbiKh0JCMgG4Ekpx+vIeHfwMmplUU2GUDP7vLSPAxVnJuKwM/yUfxIfvHzHw==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
@@ -143,6 +143,7 @@ api:
   game:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: https://sw-http-main-apisix.igo9.me
+    freeSpinDomain: https://sw-http-freespin.igo8.me
     invokeSingle: true
     cp:
       platformId: 50
@@ -239,3 +240,4 @@ dynamic:
 lark:
   publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
   warningRobot: b2ff5555-4320-4c50-bfb5-5955cf1b6005
+  shutDownRobot: b9807c8f-9abf-449b-852a-0b180f6e288d

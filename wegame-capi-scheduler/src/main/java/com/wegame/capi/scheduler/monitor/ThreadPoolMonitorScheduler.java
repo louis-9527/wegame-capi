@@ -1,4 +1,4 @@
-//package com.wegame.capi.scheduler;
+//package com.wegame.capi.scheduler.monitor;
 //
 //import cn.hutool.core.util.NumberUtil;
 //import com.wegame.base.utils.FastJsonUtils;
@@ -38,13 +38,13 @@
 //    /**
 //     * 定时任务
 //     */
-//    @Scheduled(cron = "0 0/5 * * * ?")
+//    @Scheduled(cron = "0 * * * * ?")
 //    public void schedule() {
 //        log.info("Scheduled execute start");
 //        statisticTomcatThreadPool();
 //        statisticTomcatConnectPool();
-//        statisticBusinessThreadPool();
-//        statisticsRunningTimeInfo();
+////        statisticBusinessThreadPool();
+////        statisticsRunningTimeInfo();
 //    }
 //
 //    public void statisticsRunningTimeInfo() {
@@ -82,12 +82,7 @@
 //                .getConnector()
 //                .getProtocolHandler()
 //                .getExecutor();
-//
-//        ((TomcatWebServer) webServerApplicationContext.getWebServer())
-//                .getTomcat()
-//                .getConnector()
-//                .getProtocolHandler();
-//        Map<String, String> map = new LinkedHashMap<String, String>();
+//        Map<String, String> map = new LinkedHashMap<>();
 //        map.put("核心线程数", String.valueOf(executor.getCorePoolSize()));
 //        map.put("最大线程数", String.valueOf(executor.getMaximumPoolSize()));
 //        map.put("活跃线程数", String.valueOf(executor.getActiveCount()));

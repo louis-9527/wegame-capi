@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.starCardUseRecordThreadPoolExecutor;
 
 /**
