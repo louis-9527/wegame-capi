@@ -140,6 +140,7 @@ api:
   game:
     promotionDomain: https://reward-http-stress.igo8.me
     singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
+    freeSpinDomain: https://sw-http-freespin.igo8.me
     invokeSingle: true
     cp:
       platformId: 50

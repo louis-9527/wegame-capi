@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
-import com.wegame.capi.biz.service.promotion.FreeSpinService;
+import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.client.domain.request.promotion.CreateFreeSpinRequest;
 import com.wegame.capi.client.domain.vo.promotion.CreateFreeSpinVo;
 import io.swagger.annotations.Api;
