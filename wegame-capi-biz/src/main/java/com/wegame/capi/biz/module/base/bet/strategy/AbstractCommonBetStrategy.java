@@ -18,7 +18,7 @@ import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.biz.service.promotion.BagService;
-import com.wegame.capi.biz.service.promotion.FreeSpinService;
+import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;

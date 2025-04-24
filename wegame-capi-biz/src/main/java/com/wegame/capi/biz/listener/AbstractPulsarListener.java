@@ -69,25 +69,22 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
 
     @PreDestroy
     public void destroy() throws Exception {
+        log.info("start destroy pulsar listener");
         start = false;
-        if (getConsumer() != null) {
-            getConsumer().close();
-        }
         if (executor != null) {
+            log.info("start closing executor: {}", executor);
             executor.shutdown();
             while (!executor.isTerminated()) {
                 // 等待线程池中所有任务完成
+                Thread.currentThread().sleep(1000);
             }
-            //                boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
-            //                if (stopFlag) {
-            //                    log.info("{} executor graceful stop success ,{},{}", getClass().getSimpleName(), executor, stopFlag);
-            //                } else {
-            //                    log.info("{} executor graceful stop fail after 20 seconds,force stop it,{},{}", getClass().getSimpleName(), executor, stopFlag);
-            //                    executor.shutdownNow();
-            //                }
+            log.info("after closing executor: {}", executor);
         }
+        if (getConsumer() != null) {
+            getConsumer().close();
+        }
+        log.info("finish destroy pulsar listener");
     }
-
 
     @Override
     public void run() {
@@ -99,8 +96,8 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                         MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
                         Messages<byte[]> messages = getConsumer().batchReceive();
                         if (messages == null || messages.size() == 0) {
-                            log.warn("not received any messages, sleep one second");
-                            Thread.currentThread().sleep(1000);
+                            // log.warn("not received any messages, sleep one second");
+                            Thread.currentThread().sleep(2000);
                             continue;
                         }
                         onMessages(messages);
@@ -112,9 +109,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 }
             });
          }
-        log.info("{} stopped...", getClass().getSimpleName());
     }
-
 
     public void onMessages(Messages<byte[]> messages) {
         if (Objects.isNull(messages) || messages.size() == 0) {
@@ -146,7 +141,6 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
         batchUpdate(updateRecordList, updateMessageIdMap);
     }
 
-
     public void batchAdd(List<BetRecordDo<T>> recordList, Map<Long, MessageId> messageIdMap) {
         long startTime = System.currentTimeMillis();
         if (CollectionUtils.isEmpty(recordList)) {
@@ -168,7 +162,6 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
         long endTime = System.currentTimeMillis();
         log.info("{} batchAdd, size:{}, cost: {} ms", getGameType().getName(), recordList.size(), endTime - startTime);
     }
-
 
     /**
      * 批量更新：

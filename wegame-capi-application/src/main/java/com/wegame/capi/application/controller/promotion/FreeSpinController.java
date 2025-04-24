@@ -2,7 +2,7 @@ package com.wegame.capi.application.controller.promotion;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.biz.service.promotion.FreeSpinService;
+import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.client.domain.request.promotion.FreeSpinHistoryOfPlayerRequest;
 import com.wegame.capi.client.domain.vo.promotion.FreeSpinHistoryOfPlayerVo;
 import com.wegame.capi.client.domain.vo.promotion.FreeSpinOfPlayerVo;

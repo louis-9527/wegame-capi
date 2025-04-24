@@ -34,14 +34,15 @@ public class ThreadPoolConfig {
      */
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(100,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(1,
                 100,
-                30L,
+                100L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingDeque(1000),
                 new CustomizableThreadFactory("default-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
@@ -52,14 +53,15 @@ public class ThreadPoolConfig {
      */
     @Bean(betRecordThreadPoolExecutor)
     public ThreadPoolExecutor betRecordThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
-                5000,
-                60L,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                1000,
+                100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque(10000),
+                new LinkedBlockingDeque(100000),
                 new CustomizableThreadFactory("bet-record-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
@@ -70,40 +72,43 @@ public class ThreadPoolConfig {
      */
     @Bean(betRecordStatusThreadPoolExecutor)
     public ThreadPoolExecutor betRecordStatusThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
-                1000,
-                60L,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(5,
+                100,
+                100L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingDeque(100000),
                 new CustomizableThreadFactory("bet-record-status-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
     @Bean(sendMessageThreadPoolExecutor)
     public ThreadPoolExecutor sendMessageThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
                 50,
-                60L,
+                100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque(10000),
+                new LinkedBlockingDeque(100000),
                 new CustomizableThreadFactory("send-message-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
     @Bean(gameRecordPutCacheThreadPoolExecutor)
     public ThreadPoolExecutor gameRecordPutCacheThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
-                50,
-                60L,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
+                100,
+                100L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingDeque(100000),
                 new CustomizableThreadFactory("game-record-cache-put-thread-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
@@ -116,12 +121,13 @@ public class ThreadPoolConfig {
     public ThreadPoolExecutor operationEventThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
                 100,
-                60L,
+                100L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingDeque(10000),
                 new CustomizableThreadFactory("dynamic-event-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
@@ -129,30 +135,32 @@ public class ThreadPoolConfig {
     public ThreadPoolExecutor operationEventReportThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
                 100,
-                60L,
+                100L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingDeque(10000),
                 new CustomizableThreadFactory("dynamic-event-report-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
     /**
-     * 默认模块-线程池
+     * 星卡使用记录模块-线程池
      *
      * @return
      */
     @Bean(starCardUseRecordThreadPoolExecutor)
     public ThreadPoolExecutor starCardUseRecordThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(30,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(2,
                 100,
-                60L,
+                100L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingDeque<>(10000),
                 new CustomizableThreadFactory("star-card-use-record-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 }
