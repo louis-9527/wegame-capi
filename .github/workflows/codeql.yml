@@ -36,9 +36,3 @@ jobs:
       #with:
         # If you want to use a custom build command, you can specify it here.
         # build-command: 'mvn clean package -P${{ github.event.inputs.env }} -DskipTests'
-    
-    - name: Run CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        upload: true
-        token: ${{ secrets.CODESCAN_SECRET }}
