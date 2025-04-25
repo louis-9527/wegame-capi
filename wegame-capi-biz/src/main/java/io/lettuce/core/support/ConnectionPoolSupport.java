@@ -135,17 +135,11 @@ public abstract class ConnectionPoolSupport {
 
         };
 
-
-        if (config.getMinIdle() > 0) {
-            for (int i = 0; i < config.getMinIdle(); i++) {
-                try {
-                    pool.addObject();
-                } catch (Exception e) {
-                    log.info("Failed to add object", e);
-                }
-            }
-        }
-
+       try {
+           pool.preparePool();
+       } catch (Exception e) {
+           log.error("Failed to prepare pool", e);
+       }
 
         poolRef.set(new ObjectPoolWrapper<>(pool));
 

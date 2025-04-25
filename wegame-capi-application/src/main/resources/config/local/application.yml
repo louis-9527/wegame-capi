@@ -71,6 +71,11 @@ spring:
       minIdlePoolSize: 0
       maxPoolSize: 1000
     lettuce:
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30m
+          dynamicRefreshSources: true
       pool:
         enabled: true
         #连接池中的最大空闲连接
