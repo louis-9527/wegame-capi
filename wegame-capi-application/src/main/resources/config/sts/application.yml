@@ -235,7 +235,6 @@ http:
   connectTimeout: 1000
   readTimeout: 500
   connectionRequestTimeout: 1000
-
 #lark
 lark:
   publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
