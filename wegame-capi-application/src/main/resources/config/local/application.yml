@@ -71,6 +71,11 @@ spring:
       minIdlePoolSize: 0
       maxPoolSize: 1000
     lettuce:
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30m
+          dynamicRefreshSources: true
       pool:
         enabled: true
         #连接池中的最大空闲连接
@@ -258,6 +263,7 @@ httpclient-warm-up:
   initHosts:
     http://reward-http.igo8.me: 300
     http://sw-http-main-apisix.igo8.me: 300
+    https://sw-http-freespin.igo8.me: 50
 http:
   connectTimeout: 1000
   readTimeout: 500
