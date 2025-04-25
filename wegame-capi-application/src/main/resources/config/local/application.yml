@@ -245,6 +245,7 @@ httpclient-warm-up:
   initHosts:
     http://reward-http.igo8.me: 300
     http://sw-http-main-apisix.igo8.me: 300
+    https://sw-http-freespin.igo8.me: 50
 http:
   connectTimeout: 1000
   readTimeout: 500
