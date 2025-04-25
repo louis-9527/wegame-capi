@@ -50,17 +50,17 @@ public class FreeSpinApi extends FreeSpinBaseApi {
             RequestEntity<FreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN, freeSpinDomain)));
             ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
             });
-            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            AssertUtil.assertNotNull(responseEntity, ErrorCode.FREE_SPIN_BET_USE_FAILED);
+            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.FREE_SPIN_BET_USE_FAILED);
+            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.FREE_SPIN_BET_USE_FAILED, responseEntity.getBody().getMessage());
+            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.FREE_SPIN_BET_USE_FAILED, responseEntity.getBody().getMessage());
             return responseEntity.getBody();
         } catch (BusinessException e) {
             log.error("freeSpin BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             log.error("freeSpin Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
+            throw new RetryException(ErrorCode.FREE_SPIN_BET_USE_FAILED, e);
         }
     }
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
