@@ -40,7 +40,7 @@ public abstract class AbstractOperationEventScheduler
 
     private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 5 * 60 * 1000;
 
-    private final long MONTH_DAY_AGO = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000);
+    private final long MONTH_DAY_AGO = System.currentTimeMillis() - (3L * 24 * 60 * 60 * 1000);
 
 
     @Autowired
