@@ -76,10 +76,9 @@ public class OperationEventQueryBuilder {
         Criteria criteria = new Criteria();
         long currentMilli = DateUtil.getCurrentMilli();
         criteria.and("playerName").is(playName);
-        criteria.and("gameId").is(gameId);
-        criteria.and("eventStatus").in(Lists.newArrayList(OperationEventStatusEnum.NONE.getCode(), OperationEventStatusEnum.ING.getCode()));
         criteria.and("effectedTime").lte(currentMilli);
         criteria.and("expiredTime").gte(currentMilli);
+        criteria.and("eventStatus").in(Lists.newArrayList(OperationEventStatusEnum.NONE.getCode(), OperationEventStatusEnum.ING.getCode()));
         criteria.and("$expr").is(
                 new Document("lt", Arrays.asList("$finishBonus", "$minBonus"))
         );
