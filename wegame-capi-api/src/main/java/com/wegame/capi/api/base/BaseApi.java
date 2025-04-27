@@ -17,6 +17,8 @@ public class BaseApi {
     @Autowired
     public RestTemplate restTemplate;
 
+    @Autowired
+    public RestTemplate promotionRestTemplate;
 }
 
 

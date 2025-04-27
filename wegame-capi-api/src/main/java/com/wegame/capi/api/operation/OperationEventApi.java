@@ -42,7 +42,7 @@ public class OperationEventApi extends SingleWalletBaseApi {
      * @param req 请求参数
      * @return 更新结果
      */
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public UpdateEventsStatusRes updateEventsStatus(UpdateEventsStatusReq req) {
         try {
             // 参数加密
@@ -61,7 +61,7 @@ public class OperationEventApi extends SingleWalletBaseApi {
                     headers,
                     HttpMethod.POST,
                     URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, dynamicOperationDomain)));
-            ResponseEntity<UpdateEventsStatusRes> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
+            ResponseEntity<UpdateEventsStatusRes> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
