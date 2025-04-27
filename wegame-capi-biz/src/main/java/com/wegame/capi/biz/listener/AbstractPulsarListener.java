@@ -134,7 +134,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 }
             } else if (mqMessage.getType().equals(MessageTypeEnum.UPDATE.getCode())) {
                 // 避免一批次消息里面有重复消息
-                if (!addMessageIdMap.containsKey(betRecord.getId())) {
+                if (!updateMessageIdMap.containsKey(betRecord.getId())) {
                     updateMessageIdMap.put(betRecord.getId(), message.getMessageId());
                     updateRecordList.add(betRecord);
                 }
@@ -248,7 +248,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                     if (Objects.nonNull(messageId)) {
                         getConsumer().acknowledge(messageId);
                     } else {
-                        log.error("{} update error, betRecordId: {}, messageId is null", getGameType().getName(), betRecordDo.getId());
+                        log.error("{} update success but acknowledge fail, messageId is null, betRecordId: {}, ", getGameType().getName(), betRecordDo.getId());
                     }
                 } else {
                     log.error("{}, update fail, betRecordId: {}", getGameType().getName(), betRecordDo.getId());
