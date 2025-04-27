@@ -58,7 +58,7 @@ public class PulsarProducer implements InitializingBean {
         return messageId;
     }
 
-    public <T> MessageId syncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
+    private <T> MessageId syncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
             // todo 去掉日志
             log.info("syncSendMessage messageId: {}", mqMessage.getMsgId());
