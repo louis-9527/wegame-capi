@@ -29,6 +29,8 @@ public class BaseApi {
     @Qualifier(PROMOTION_REST_TEMPLATE_BEAN)
     RestTemplate promotionRestTemplate;
 
+    @Autowired
+    public RestTemplate promotionRestTemplate;
 }
 
 

@@ -33,13 +33,13 @@ public class BagApi extends PromotionBaseApi {
     private static final String REDEEM_REWARD_URL_FORMAT = "%s/redeemReward";
     private static final String GET_HISTORY_MESSAGE_URL_FORMAT = "%s/getHistoryMessage";
 
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public GetBagCurrentRewardRes getBagCurrentReward(GetBagCurrentRewardReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetBagCurrentRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REWARD_BAG_URL_FORMAT, promotionDomain)));
-            ResponseEntity<CommonRes<GetBagCurrentRewardRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetBagCurrentRewardRes>>() {
+            ResponseEntity<CommonRes<GetBagCurrentRewardRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetBagCurrentRewardRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -55,13 +55,13 @@ public class BagApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public GetBagOtherRewardRes getBagOtherReward(GetBagOtherRewardReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetBagOtherRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_OTHER_GAME_URL_FORMAT, promotionDomain)));
-            ResponseEntity<CommonRes<GetBagOtherRewardRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetBagOtherRewardRes>>() {
+            ResponseEntity<CommonRes<GetBagOtherRewardRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetBagOtherRewardRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -98,13 +98,13 @@ public class BagApi extends PromotionBaseApi {
      * @param req 请求参数
      * @return
      */
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public CommonRes<RedeemRewardRes> redeemReward(RedeemRewardReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<RedeemRewardReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_REWARD_URL_FORMAT, promotionDomain)));
-            ResponseEntity<CommonRes<RedeemRewardRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemRewardRes>>() {
+            ResponseEntity<CommonRes<RedeemRewardRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemRewardRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -118,13 +118,13 @@ public class BagApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public GetRewardDetailRes getRewardDetail(GetRewardDetailReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetRewardDetailReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REWARD_DETAIL_URL_FORMAT, promotionDomain)));
-            ResponseEntity<CommonRes<GetRewardDetailRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetRewardDetailRes>>() {
+            ResponseEntity<CommonRes<GetRewardDetailRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetRewardDetailRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -139,13 +139,13 @@ public class BagApi extends PromotionBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public GetHistoryMessageRes getHistoryMessage(GetHistoryMessageReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetHistoryMessageReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_HISTORY_MESSAGE_URL_FORMAT, promotionDomain)));
-            ResponseEntity<CommonRes<GetHistoryMessageRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetHistoryMessageRes>>() {
+            ResponseEntity<CommonRes<GetHistoryMessageRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetHistoryMessageRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);

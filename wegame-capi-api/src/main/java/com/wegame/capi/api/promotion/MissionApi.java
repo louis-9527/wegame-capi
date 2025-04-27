@@ -28,13 +28,13 @@ import java.net.URI;
 public class MissionApi extends PromotionBaseApi {
     private static final String GET_DAILY_MISSION = "%s/getDailyMission";
 
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public GetDailyMissionRes getDailyMission(GetDailyMissionReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetDailyMissionReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_DAILY_MISSION, promotionDomain)));
-            ResponseEntity<CommonRes<GetDailyMissionRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetDailyMissionRes>>() {
+            ResponseEntity<CommonRes<GetDailyMissionRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetDailyMissionRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
