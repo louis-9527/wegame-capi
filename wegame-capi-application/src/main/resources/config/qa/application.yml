@@ -57,7 +57,12 @@ spring:
     timeout: 1500
     cluster:
       nodes:
-        - qat-makiling-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
+        - 43.199.119.200:7001
+        - 43.199.119.200:7002
+        - 43.199.119.200:7003
+        - 43.199.119.200:7004
+        - 43.199.119.200:7005
+        - 43.199.119.200:7006
       max-redirects: 5
     redisson:
       minIdlePoolSize: 250
@@ -73,7 +78,7 @@ spring:
         max-active: 1000
         #连接池中的最小空闲连接
         min-idle: 2
-    password:
+    password: qwe123!@#
     client-type: lettuce
   datasource:
     dynamic:
