@@ -15,7 +15,6 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
@@ -128,11 +127,17 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 log.info("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}, messageId: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount(), message.getMessageId());
             }
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
-                addMessageIdMap.put(betRecord.getId(), message.getMessageId());
-                addRecordList.add(betRecord);
+                // 避免一批次消息里面有重复消息
+                if (!addMessageIdMap.containsKey(betRecord.getId())) {
+                    addMessageIdMap.put(betRecord.getId(), message.getMessageId());
+                    addRecordList.add(betRecord);
+                }
             } else if (mqMessage.getType().equals(MessageTypeEnum.UPDATE.getCode())) {
-                updateMessageIdMap.put(betRecord.getId(), message.getMessageId());
-                updateRecordList.add(betRecord);
+                // 避免一批次消息里面有重复消息
+                if (!addMessageIdMap.containsKey(betRecord.getId())) {
+                    updateMessageIdMap.put(betRecord.getId(), message.getMessageId());
+                    updateRecordList.add(betRecord);
+                }
             }
         });
         // 批量新增
