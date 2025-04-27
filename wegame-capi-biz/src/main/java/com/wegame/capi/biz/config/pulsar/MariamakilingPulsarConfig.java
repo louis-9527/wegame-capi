@@ -93,7 +93,7 @@ public class MariamakilingPulsarConfig {
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**
-                        .maxRedeliverCount(8)
+                        .maxRedeliverCount(15)
                         // **死信队列**
                         .deadLetterTopic(deadLetterTopic)
                         .build())
