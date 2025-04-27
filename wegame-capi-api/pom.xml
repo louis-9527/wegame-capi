@@ -21,6 +21,10 @@
             <groupId>com.wegame</groupId>
             <artifactId>wegame-capi-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.wegame</groupId>
+            <artifactId>wegame-capi-infrastructure</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
