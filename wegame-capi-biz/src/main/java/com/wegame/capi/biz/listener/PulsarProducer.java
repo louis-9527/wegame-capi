@@ -69,7 +69,7 @@ public class PulsarProducer implements InitializingBean {
                     .send();
         } catch (Exception e) {
             log.error("{}Producer syncSendMessage fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
-            throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_PLATFORM, e);
+            return null;
         }
     }
 
