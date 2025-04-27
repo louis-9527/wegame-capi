@@ -125,7 +125,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                     this.getTypeReference());
             BetRecordDo<T> betRecord = mqMessage.getBody();
             if (message.getRedeliveryCount() > 0) {
-                log.info("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount());
+                log.info("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}, messageId: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount(), message.getMessageId());
             }
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 addMessageIdMap.put(betRecord.getId(), message.getMessageId());
@@ -181,27 +181,28 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
             } else {
                 log.warn("{}, batchUpdate not all success", getGameType().getName());
-                Map<Long, MessageId> failMessageIdMap = new HashMap<>();
-                List<Long> nonExistIdList = betRecordService.listNotExistIdList(recordList.stream().map(BetRecordDo::getId).collect(Collectors.toList()), getGameType());
-                if (CollectionUtils.isNotEmpty(nonExistIdList)) {
-                    log.warn("{}, batchUpdate nonExistIdList: {}", getGameType().getName(), nonExistIdList);
-                }
-                Optional.ofNullable(nonExistIdList)
-                        .orElse(Collections.emptyList())
-                        .forEach(nonExistBetRecordId -> {
-                            failMessageIdMap.put(nonExistBetRecordId, messageIdMap.get(nonExistBetRecordId));
-                            messageIdMap.remove(nonExistBetRecordId);
-                        });
-                List<BetRecordDo> failRecordList = recordList.stream()
-                        .filter(item -> nonExistIdList.contains(item.getId()))
-                        .collect(Collectors.toList());
-                if (MapUtils.isNotEmpty(messageIdMap)) {
-                    getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
-                }
-                if (CollectionUtils.isNotEmpty(failRecordList) && MapUtils.isNotEmpty(failMessageIdMap)) {
-                    Thread.currentThread().sleep(1000);
-                    update(failRecordList, failMessageIdMap);
-                }
+                update(recordList, messageIdMap);
+                //                Map<Long, MessageId> failMessageIdMap = new HashMap<>();
+                //                List<Long> nonExistIdList = betRecordService.listNotExistIdList(recordList.stream().map(BetRecordDo::getId).collect(Collectors.toList()), getGameType());
+                //                if (CollectionUtils.isNotEmpty(nonExistIdList)) {
+                //                    log.warn("{}, batchUpdate nonExistIdList: {}", getGameType().getName(), nonExistIdList);
+                //                }
+                //                Optional.ofNullable(nonExistIdList)
+                //                        .orElse(Collections.emptyList())
+                //                        .forEach(nonExistBetRecordId -> {
+                //                            failMessageIdMap.put(nonExistBetRecordId, messageIdMap.get(nonExistBetRecordId));
+                //                            messageIdMap.remove(nonExistBetRecordId);
+                //                        });
+                //                List<BetRecordDo> failRecordList = recordList.stream()
+                //                        .filter(item -> nonExistIdList.contains(item.getId()))
+                //                        .collect(Collectors.toList());
+                //                if (MapUtils.isNotEmpty(messageIdMap)) {
+                //                    getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
+                //                }
+                //                if (CollectionUtils.isNotEmpty(failRecordList) && MapUtils.isNotEmpty(failMessageIdMap)) {
+                //                    Thread.currentThread().sleep(1000);
+                //                    update(failRecordList, failMessageIdMap);
+                //                }
             }
         } catch (Exception e) {
             log.error("{}, batchUpdate error", getGameType().getName(), e);
@@ -238,7 +239,12 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
             try {
                 boolean ret = betRecordService.update(betRecordDo, getGameType());
                 if (ret) {
-                    getConsumer().acknowledge(messageIdMap.get(betRecordDo.getId()));
+                    MessageId messageId = messageIdMap.get(betRecordDo.getId());
+                    if (Objects.nonNull(messageId)) {
+                        getConsumer().acknowledge(messageId);
+                    } else {
+                        log.error("{} update error, betRecordId: {}, messageId is null", getGameType().getName(), betRecordDo.getId());
+                    }
                 } else {
                     log.error("{}, update fail, betRecordId: {}", getGameType().getName(), betRecordDo.getId());
                 }
