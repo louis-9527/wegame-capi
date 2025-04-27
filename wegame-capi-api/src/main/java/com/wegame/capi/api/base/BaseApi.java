@@ -27,9 +27,6 @@ public class BaseApi {
     public RestTemplate walletRestTemplate;
     @Autowired
     @Qualifier(PROMOTION_REST_TEMPLATE_BEAN)
-    RestTemplate promotionRestTemplate;
-
-    @Autowired
     public RestTemplate promotionRestTemplate;
 }
 
