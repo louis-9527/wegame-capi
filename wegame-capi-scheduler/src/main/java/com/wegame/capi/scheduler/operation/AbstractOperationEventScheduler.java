@@ -40,7 +40,7 @@ public abstract class AbstractOperationEventScheduler
 
     private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 5 * 60 * 1000;
 
-    private final long MONTH_DAY_AGO = System.currentTimeMillis() - (3L * 24 * 60 * 60 * 1000);
+    private final long TWO_HOURS_AGO = System.currentTimeMillis() - (2 * 60 * 60 * 1000);
 
 
     @Autowired
@@ -57,7 +57,7 @@ public abstract class AbstractOperationEventScheduler
     @Override
     public void run() {
         // 事件明细中未处理成功
-          eventDetailIngExec();
+        eventDetailIngExec();
         // 事件状态已完成,但未上报
         eventReportFailExec();
         // 事件已过期,但未上报
@@ -76,7 +76,7 @@ public abstract class AbstractOperationEventScheduler
             List<OperationEventDetailDo> detailList;
             OperationEventDetailQuery query = OperationEventDetailQuery.builder()
                     .betStatus(BetStatusEnum.ING.getCode())
-                    .gtCreateTime(MONTH_DAY_AGO)
+                    .gtCreateTime(TWO_HOURS_AGO)
                     .ltCreateTime(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
@@ -116,18 +116,8 @@ public abstract class AbstractOperationEventScheduler
                         .betStatus(BetStatusEnum.FAIL)
                         .build();
             } else {
-                if (Objects.equals(BetStatusEnum.ING.getCode(), recordDo.getStatus())) {
-                    // 原始订单处理中 则等待
-                    return;
-                }
-                // 获取事件信息
-                if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
-                    eventDetailUpdate = OperationEventDetailDo.builder()
-                            .id(eventDetailDo.getId())
-                            .betStatus(BetStatusEnum.FAIL)
-                            .build();
-
-                } else if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
+                if (Objects.equals(BetStatusEnum.ING.getCode(), recordDo.getStatus()) || Objects.equals(BetStatusEnum.SUCCESS.getCode(), recordDo.getStatus())) {
+                    // 进行中或者成功 都按照成功计算
                     eventDetailUpdate = OperationEventDetailDo.builder()
                             .id(eventDetailDo.getId())
                             .betId(recordDo.getBetId())
@@ -144,10 +134,16 @@ public abstract class AbstractOperationEventScheduler
                         eventDoUpdate.setEventStatus(OperationEventStatusEnum.FINISH);
                         eventDoUpdate.setEventSubStatus(OperationEventSubStatusEnum.FINISH_NORMAL);
                     }
+                } else if (Objects.equals(BetStatusEnum.FAIL.getCode(), recordDo.getStatus())) {
+                    eventDetailUpdate = OperationEventDetailDo.builder()
+                            .id(eventDetailDo.getId())
+                            .betStatus(BetStatusEnum.FAIL)
+                            .build();
+
                 }
             }
             operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
-            operationEventService.updateOperationUseStatus(eventDetailDo.getEventRecordId(),OperationEventStatusEnum.NONE, operationEventType());
+            operationEventService.updateOperationUseStatus(eventDetailDo.getEventRecordId(), OperationEventStatusEnum.NONE, operationEventType());
             if (eventDoUpdate != null && OperationEventStatusEnum.FINISH == eventDoUpdate.getEventStatus()) {
                 operationEventManager().asyncReportEvent(eventDetailDo.getBetRecordId());
             }
@@ -169,7 +165,7 @@ public abstract class AbstractOperationEventScheduler
             OperationEventQuery query = OperationEventQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .eventStatus(OperationEventStatusEnum.FINISH.getCode())
-                    .updateTimeGt(MONTH_DAY_AGO)
+                    .updateTimeGt(TWO_HOURS_AGO)
                     .updateTimeLt(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
@@ -211,7 +207,7 @@ public abstract class AbstractOperationEventScheduler
             OperationEventQuery query = OperationEventQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .expiredTimeLt(DateUtil.getCurrentMilli())
-                    .updateTimeGt(MONTH_DAY_AGO)
+                    .updateTimeGt(TWO_HOURS_AGO)
                     .updateTimeLt(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
