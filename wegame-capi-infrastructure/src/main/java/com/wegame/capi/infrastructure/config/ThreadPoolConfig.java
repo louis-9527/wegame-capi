@@ -33,7 +33,7 @@ public class ThreadPoolConfig {
                 new LinkedBlockingQueue(100000),
                 new CustomizableThreadFactory("default-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
     }
@@ -47,7 +47,7 @@ public class ThreadPoolConfig {
                 new LinkedBlockingQueue(100000),
                 new CustomizableThreadFactory("bet-record-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
     }
@@ -61,7 +61,7 @@ public class ThreadPoolConfig {
                 new LinkedBlockingQueue<>(100000),
                 new CustomizableThreadFactory("bet-record-status-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
     }
@@ -75,7 +75,7 @@ public class ThreadPoolConfig {
                 new LinkedBlockingQueue(1000000),
                 new CustomizableThreadFactory("send-message-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
     }
