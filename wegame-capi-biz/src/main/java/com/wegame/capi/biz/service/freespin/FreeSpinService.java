@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.service.freespin;
 
-import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.promotion.FreeSpinReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.CreateFreeSpinRes;
@@ -8,7 +7,7 @@ import com.wegame.capi.api.domain.res.promotion.FreeSpinDetailRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinHistoryOfPlayerRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinOfPlayerRes;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
-import com.wegame.capi.api.freespin.FreeSpinApi;
+import com.wegame.capi.api.SingleWalletFreeSpinApi;
 import com.wegame.capi.biz.domain.biz.promotion.*;
 import com.wegame.capi.client.domain.request.promotion.CreateFreeSpinRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,7 @@ import static com.wegame.capi.biz.builder.req.FreeSpinOfPlayerReqBuilder.buildRe
 import static com.wegame.capi.biz.builder.req.FreeSpinDetailReqBuilder.buildReq;
 import static com.wegame.capi.biz.converter.promotion.CreateFreeSpinConverter.toDo;
 import static com.wegame.capi.biz.converter.promotion.FreeSpinHistoryConverter.toDo;
-import static com.wegame.capi.biz.converter.promotion.FreeSpinPlayerConverter.toDo;
+import static com.wegame.capi.biz.converter.promotion.FreeSpinPlayerConverter.resToDo;
 import static com.wegame.capi.biz.converter.promotion.FreeSpinDetailConverter.toDo;
 
 /**
@@ -30,25 +29,25 @@ import static com.wegame.capi.biz.converter.promotion.FreeSpinDetailConverter.to
 public class FreeSpinService {
 
     @Autowired
-    FreeSpinApi freeSpinApi;
+    SingleWalletFreeSpinApi singleWalletFreeSpinApi;
 
     public CommonRes<SingleWalletBetWithPayoutRes> freeSpin(FreeSpinReq req) {
-        return freeSpinApi.freeSpin(req);
+        return singleWalletFreeSpinApi.freeSpin(req);
     }
     public FreeSpinOfPlayerDo freeSpinOfPlayer() {
-        FreeSpinOfPlayerRes res = freeSpinApi.freeSpinOfPlayer(buildReq());
-        return toDo(res);
+        FreeSpinOfPlayerRes res = singleWalletFreeSpinApi.freeSpinOfPlayer(buildReq());
+        return resToDo(res);
     }
     public FreeSpinHistoryOfPlayerDo freeSpinHistoryOfPlayer(Integer page, Integer limit) {
-        FreeSpinHistoryOfPlayerRes res = freeSpinApi.freeSpinHistoryOfPlayer(buildReq(page, limit));
+        FreeSpinHistoryOfPlayerRes res = singleWalletFreeSpinApi.freeSpinHistoryOfPlayer(buildReq(page, limit));
         return toDo(res);
     }
     public CreateFreeSpinDo createFreeSpin(CreateFreeSpinRequest request) {
-        CreateFreeSpinRes res = freeSpinApi.createFreeSpin(buildReq(request));
+        CreateFreeSpinRes res = singleWalletFreeSpinApi.createFreeSpin(buildReq(request));
         return toDo(res);
     }
     public FreeSpinDetailDo freeSpinDetail(String campaignId) {
-        FreeSpinDetailRes res = freeSpinApi.freeSpinDetail(buildReq(campaignId));
+        FreeSpinDetailRes res = singleWalletFreeSpinApi.freeSpinDetail(buildReq(campaignId));
         return toDo(res);
     }
 }

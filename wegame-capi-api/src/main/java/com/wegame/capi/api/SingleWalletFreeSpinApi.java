@@ -1,4 +1,4 @@
-package com.wegame.capi.api.freespin;
+package com.wegame.capi.api;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
@@ -34,7 +34,7 @@ import java.net.URI;
  */
 @Slf4j
 @Component
-public class FreeSpinApi extends FreeSpinBaseApi {
+public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
 
     private static final String FREE_SPIN = "%s/freeSpin";
     private static final String FREE_SPIN_OF_PLAYER = "%s/freeSpinOfPlayer";
@@ -48,7 +48,7 @@ public class FreeSpinApi extends FreeSpinBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<FreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN, freeSpinDomain)));
-            ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
+            ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.FREE_SPIN_BET_USE_FAILED);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.FREE_SPIN_BET_USE_FAILED);

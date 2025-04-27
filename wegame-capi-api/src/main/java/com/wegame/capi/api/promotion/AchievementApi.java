@@ -56,7 +56,6 @@ public class AchievementApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public RedeemAchievementRes redeemAchievement(RedeemAchievementReq req) {
         try {
             assembleSingleSignature(req);

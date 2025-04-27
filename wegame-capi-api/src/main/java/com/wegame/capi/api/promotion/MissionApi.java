@@ -26,6 +26,7 @@ import java.net.URI;
 @Slf4j
 @Component
 public class MissionApi extends PromotionBaseApi {
+
     private static final String GET_DAILY_MISSION = "%s/getDailyMission";
 
     @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)

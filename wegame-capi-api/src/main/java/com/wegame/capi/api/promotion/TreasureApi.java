@@ -56,7 +56,6 @@ public class TreasureApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public RedeemTreasureRes redeemTreasure(RedeemTreasureReq req) {
         try {
             assembleSingleSignature(req);
