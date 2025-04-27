@@ -78,6 +78,7 @@ spring:
         max-active: 8
         #连接池中的最小空闲连接
         min-idle: 0
+    password: qwe123!@#
   datasource:
     dynamic:
       primary: wegame_user_db
