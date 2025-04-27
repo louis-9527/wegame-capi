@@ -69,6 +69,7 @@ public class MariamakilingPulsarConfig {
                 .sendTimeout(100, TimeUnit.MILLISECONDS)
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
+                .autoUpdatePartitions(true)
                 .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
                 .create();
     }
@@ -97,6 +98,7 @@ public class MariamakilingPulsarConfig {
                         .deadLetterTopic(deadLetterTopic)
                         .build())
                 // .keySharedPolicy(KeySharedPolicy.stickyHashRange())
+                .autoUpdatePartitions(true)
                 .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
                 .subscribe();
     }
@@ -116,6 +118,9 @@ public class MariamakilingPulsarConfig {
                     } catch (Exception e) {
                         log.error("Message moved acknowledge error:", e);
                     }
-                }).subscribe();
+                })
+                .autoUpdatePartitions(true)
+                .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
+                .subscribe();
     }
 }
