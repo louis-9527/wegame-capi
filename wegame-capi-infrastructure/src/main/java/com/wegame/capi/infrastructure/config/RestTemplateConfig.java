@@ -26,19 +26,19 @@ public class RestTemplateConfig {
     // wallet resTemplate
     @Value("${httpclient.common.connectMaxTotal:5000}")
     int walletConnectMaxTotal;
-    @Value("${httpclient.common.connectDefaultMaxPerRoute:5000}")
+    @Value("${httpclient.common.connectDefaultMaxPerRoute:1000}")
     int walletConnectDefaultMaxPerRoute;
     @Value("${httpclient.wallet.connectTimeout:1000}")
     int walletConnectTimeout;
-    @Value("${httpclient.wallet.readTimeout:200}")
+    @Value("${httpclient.wallet.readTimeout:800}")
     int walletReadTimeout;
-    @Value("${httpclient.wallet.connectionRequestTimeout:200}")
+    @Value("${httpclient.wallet.connectionRequestTimeout:800}")
     int walletConnectionRequestTimeout;
 
     // promotion resTemplate
     @Value("${httpclient.common.connectMaxTotal:5000}")
     int promotionConnectMaxTotal;
-    @Value("${httpclient.common.connectDefaultMaxPerRoute:5000}")
+    @Value("${httpclient.common.connectDefaultMaxPerRoute:500}")
     int promotionConnectDefaultMaxPerRoute;
     @Value("${httpclient.promotion.connectTimeout:1000}")
     int promotionConnectTimeout;
