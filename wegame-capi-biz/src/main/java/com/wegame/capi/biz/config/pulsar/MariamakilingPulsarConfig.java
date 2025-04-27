@@ -66,7 +66,7 @@ public class MariamakilingPulsarConfig {
                 // 10ms 内合并批量消息
                 // 最大延迟 10 毫秒
                 .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)
-                .sendTimeout(100, TimeUnit.MILLISECONDS)
+                .sendTimeout(200, TimeUnit.MILLISECONDS)
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
                 .autoUpdatePartitions(true)
