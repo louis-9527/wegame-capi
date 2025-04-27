@@ -138,6 +138,7 @@ api:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: https://sw-http-main-apisix.igo9.me
     freeSpinDomain: https://sw-http-freespin.igo8.me
+    operationDomain: https://dos-egame.dos99.me
     invokeSingle: true
     cp:
       platformId: 50
@@ -173,7 +174,6 @@ dynamic:
         issuer_url: https://auth.streamnative.cloud
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-382ss:uat
-    domain: https://dos-egame.dos99.me
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----

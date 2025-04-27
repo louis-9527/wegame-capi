@@ -146,7 +146,10 @@ api:
     promotionDomain: https://reward-http-stress.igo8.me
     # promotionDomain: http://reward-http-internal-stress.igo8.me
     singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
-    freeSpinDomain: https://sw-http-freespin.igo8.me
+    #    freeSpinDomain: https://sw-http-freespin.igo8.me
+    freeSpinDomain: https://sw-http-freespin-stress.igo8.me
+    #operationDomain: https://dos-egame-stresstest.dos88.me
+    operationDomain: http://dos-egame-stresstest-internal.dos88.me
     invokeSingle: true
     cp:
       platformId: 50
@@ -181,8 +184,6 @@ dynamic:
         issuer_url: null
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-sn9dy:qat
-    # domain: https://dos-egame-stresstest.dos88.me
-    domain: http://dos-egame-stresstest-internal.dos88.me
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
