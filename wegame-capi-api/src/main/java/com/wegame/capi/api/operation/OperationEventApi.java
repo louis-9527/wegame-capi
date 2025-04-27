@@ -33,8 +33,8 @@ public class OperationEventApi extends SingleWalletBaseApi {
     private static final String UPDATE_EVENTS_STATUS_URL_FORMAT = "%s/updateEventsStatus";
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
-    @Value("${dynamic.operation.domain}")
-    String dynamicOperationDomain;
+    @Value("${api.game.operationDomain}")
+    String operationDomain;
 
     /**
      * 更新事件状态
@@ -60,7 +60,7 @@ public class OperationEventApi extends SingleWalletBaseApi {
             RequestEntity<UpdateEventsStatusReq.OperationReq> requestEntity = new RequestEntity<>(operationReq,
                     headers,
                     HttpMethod.POST,
-                    URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, dynamicOperationDomain)));
+                    URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, operationDomain)));
             ResponseEntity<UpdateEventsStatusRes> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
