@@ -55,7 +55,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders();
             RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
-            ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {
+            ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -79,7 +79,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             MultiValueMap<String, String> headers = buildHeaders();
             RequestEntity<GetCreditReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(GET_CREDIT_URL_FORMAT, singleDomain)));
-            ResponseEntity<CommonRes<GetCreditRes>> responseEntity = restTemplate.exchange(requestEntity,
+            ResponseEntity<CommonRes<GetCreditRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<GetCreditRes>>() {
                     });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
@@ -108,7 +108,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         int duplicateIdCount = 0;
         while (canContinueExecute) {
             try {
-                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
+                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                         new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
                         });
                 if (Objects.isNull(responseEntity) || Objects.isNull(responseEntity.getBody())) {
@@ -170,7 +170,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         int duplicateIdCount = 0;
         while (canContinueExecute) {
             try {
-                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
+                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                         new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
                         });
                 if (Objects.isNull(responseEntity) || Objects.isNull(responseEntity.getBody())) {
@@ -214,6 +214,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         }
         throw new BusinessException(ErrorCode.ERR_NET);
     }
+
     /**
      * 单钱包状态查询
      *
@@ -227,7 +228,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             MultiValueMap<String, String> headers = buildHeaders();
             RequestEntity<BetStatusReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(BET_STATUS_URL_FORMAT, singleDomain)));
-            ResponseEntity<CommonRes<BetStatusRes>> responseEntity = restTemplate.exchange(requestEntity,
+            ResponseEntity<CommonRes<BetStatusRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<BetStatusRes>>() {
                     });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);

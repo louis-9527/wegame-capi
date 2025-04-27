@@ -34,7 +34,7 @@ public class WeGameGoApi extends BaseApi {
     public Integer minMaxRandom(MinMaxRandomReq req) {
         try {
             RequestEntity<MinMaxRandomReq> requestEntity = new RequestEntity<>(req, buildWeGameGoHeaders(), HttpMethod.POST, URI.create(String.format(MIN_MAX_RANDOM_URL, wegameGoDomain)));
-            ResponseEntity<GoCommonRes<Integer>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<GoCommonRes<Integer>>() {
+            ResponseEntity<GoCommonRes<Integer>> responseEntity = commonRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<GoCommonRes<Integer>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -49,7 +49,7 @@ public class WeGameGoApi extends BaseApi {
     public List<Integer> multiMinMaxRandom(MultiMinMaxRandomReq req) {
         try {
             RequestEntity<MultiMinMaxRandomReq> requestEntity = new RequestEntity<>(req, buildWeGameGoHeaders(), HttpMethod.POST, URI.create(String.format(MULTI_MIN_MAX_RANDOM_URL, wegameGoDomain)));
-            ResponseEntity<GoCommonRes<List<Integer>>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<GoCommonRes<List<Integer>>>() {
+            ResponseEntity<GoCommonRes<List<Integer>>> responseEntity = commonRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<GoCommonRes<List<Integer>>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);

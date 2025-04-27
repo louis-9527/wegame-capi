@@ -78,6 +78,7 @@ spring:
         max-active: 8
         #连接池中的最小空闲连接
         min-idle: 0
+    password: qwe123!@#
   datasource:
     dynamic:
       primary: wegame_user_db
@@ -150,6 +151,7 @@ api:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: http://sw-http-main-apisix.igo8.me
     freeSpinDomain: https://sw-http-freespin.igo8.me
+    operationDomain: https://dos-egame.dos88.me
     invokeSingle: true
     cp:
       platformId: 50

@@ -57,7 +57,12 @@ spring:
     timeout: 1500
     cluster:
       nodes:
-        - qat-makiling-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
+        - 43.199.119.200:7001
+        - 43.199.119.200:7002
+        - 43.199.119.200:7003
+        - 43.199.119.200:7004
+        - 43.199.119.200:7005
+        - 43.199.119.200:7006
       max-redirects: 5
     redisson:
       minIdlePoolSize: 250
@@ -73,7 +78,7 @@ spring:
         max-active: 1000
         #连接池中的最小空闲连接
         min-idle: 2
-    password:
+    password: qwe123!@#
     client-type: lettuce
   datasource:
     dynamic:
@@ -150,6 +155,7 @@ api:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: http://sw-http-main-apisix.igo8.me
     freeSpinDomain: https://sw-http-freespin.igo8.me
+    operationDomain: https://dos-egame.dos88.me
     invokeSingle: true
     cp:
       platformId: 50
@@ -198,7 +204,6 @@ dynamic:
         issuer_url: https://auth.streamnative.cloud
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-sn9dy:qat
-    domain: https://dos-egame.dos88.me
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
@@ -242,15 +247,6 @@ dynamic:
         2Xs3r+wtjZBpOrZxn5dMUhEHC7jm/0eLUcwOJ0lkoEnl
         -----END ENCRYPTED PRIVATE KEY-----
       password: egame-secure-passphrase
-httpclient-warm-up:
-  initHosts:
-    http://reward-http.igo8.me: 300
-    http://sw-http-main-apisix.igo8.me: 300
-    https://sw-http-freespin.igo8.me: 50
-http:
-  connectTimeout: 1000
-  readTimeout: 500
-  connectionRequestTimeout: 1000
 #lark
 lark:
   publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

@@ -144,6 +144,7 @@ api:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: https://sw-http-main-apisix.igo9.me
     freeSpinDomain: https://sw-http-freespin.igo8.me
+    operationDomain: https://dos-egame.dos99.me
     invokeSingle: true
     cp:
       platformId: 50
@@ -193,7 +194,6 @@ dynamic:
         issuer_url: https://auth.streamnative.cloud
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-382ss:uat
-    domain: https://dos-egame.dos99.me
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
@@ -237,15 +237,6 @@ dynamic:
         2Xs3r+wtjZBpOrZxn5dMUhEHC7jm/0eLUcwOJ0lkoEnl
         -----END ENCRYPTED PRIVATE KEY-----
       password: egame-secure-passphrase
-httpclient-warm-up:
-  initHosts:
-    http://reward-http.igo8.me: 300
-    http://sw-http-main-apisix.igo8.me: 300
-    https://sw-http-freespin.igo8.me: 50
-http:
-  connectTimeout: 1000
-  readTimeout: 500
-  connectionRequestTimeout: 1000
 #lark
 lark:
   publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31

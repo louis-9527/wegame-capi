@@ -122,6 +122,7 @@ api:
   game:
     singleDomain: https://sw-http-main-apisix.igo10.me
     freeSpinDomain: https://sw-http-freespin.igo8.me
+    operationDomain:
     # 是否调用
     invokeSingle: true
     cp:

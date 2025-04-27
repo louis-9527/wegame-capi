@@ -10,7 +10,6 @@ import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
 import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
 import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
-import com.wegame.capi.api.freespin.FreeSpinApi;
 import com.wegame.capi.biz.builder.req.BetStatusReqBuilder;
 import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
 import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;

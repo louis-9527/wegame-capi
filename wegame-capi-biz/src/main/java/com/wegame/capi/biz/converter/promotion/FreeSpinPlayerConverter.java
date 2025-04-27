@@ -12,24 +12,25 @@ import java.util.stream.Collectors;
 
 public class FreeSpinPlayerConverter {
 
-    // FreeSpinOfPlayerRes to FreeSpinOfPlayerDo
-    public static FreeSpinOfPlayerDo toDo(FreeSpinOfPlayerRes freeSpinOfPlayerRes) {
+    public static FreeSpinOfPlayerDo resToDo(FreeSpinOfPlayerRes freeSpinOfPlayerRes) {
         return FreeSpinOfPlayerDo.builder()
                 .playerName(freeSpinOfPlayerRes.getPlayerName())
                 .refId(freeSpinOfPlayerRes.getRefId())
-                .current(toDoList(freeSpinOfPlayerRes.getCurrent()))
-                .others(toDoList(freeSpinOfPlayerRes.getOthers()))
+                .current(retToDoList(freeSpinOfPlayerRes.getCurrent()))
+                .others(retToDoList(freeSpinOfPlayerRes.getOthers()))
                 .build();
     }
-    private static List<FreeSpinOfPlayerDo.FreeSpin> toDoList(List<FreeSpinOfPlayerRes.FreeSpin> freeSpinList) {
+
+    private static List<FreeSpinOfPlayerDo.FreeSpin> retToDoList(List<FreeSpinOfPlayerRes.FreeSpin> freeSpinList) {
         return Optional.ofNullable(freeSpinList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(FreeSpinPlayerConverter::toDo)
+                .map(FreeSpinPlayerConverter::resToDo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-    private static FreeSpinOfPlayerDo.FreeSpin toDo(FreeSpinOfPlayerRes.FreeSpin freeSpin) {
+
+    private static FreeSpinOfPlayerDo.FreeSpin resToDo(FreeSpinOfPlayerRes.FreeSpin freeSpin) {
         if (Objects.isNull(freeSpin)) {
             return null;
         }
@@ -47,8 +48,7 @@ public class FreeSpinPlayerConverter {
                 .build();
     }
 
-    // FreeSpinOfPlayerDo to FreeSpinOfPlayerVo
-    public static FreeSpinOfPlayerVo toVo(FreeSpinOfPlayerDo freeSpinOfPlayerDo) {
+    public static FreeSpinOfPlayerVo doToVo(FreeSpinOfPlayerDo freeSpinOfPlayerDo) {
         return FreeSpinOfPlayerVo.builder()
                 .playerName(freeSpinOfPlayerDo.getPlayerName())
                 .refId(freeSpinOfPlayerDo.getRefId())
@@ -56,15 +56,17 @@ public class FreeSpinPlayerConverter {
                 .others(toVoList(freeSpinOfPlayerDo.getOthers()))
                 .build();
     }
+
     private static List<FreeSpinOfPlayerVo.FreeSpin> toVoList(List<FreeSpinOfPlayerDo.FreeSpin> freeSpinList) {
         return Optional.ofNullable(freeSpinList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(FreeSpinPlayerConverter::toVo)
+                .map(FreeSpinPlayerConverter::doToVo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
-    private static FreeSpinOfPlayerVo.FreeSpin toVo(FreeSpinOfPlayerDo.FreeSpin freeSpin) {
+
+    private static FreeSpinOfPlayerVo.FreeSpin doToVo(FreeSpinOfPlayerDo.FreeSpin freeSpin) {
         if (Objects.isNull(freeSpin)) {
             return null;
         }
