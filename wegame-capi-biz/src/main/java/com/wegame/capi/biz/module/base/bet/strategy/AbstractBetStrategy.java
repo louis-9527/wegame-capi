@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 抽象投注策略<br>
@@ -97,13 +96,13 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 betRecordManager().putGameRecordCache(betRecordDo.getGameRecordList(), gameContext().gameInfo().getGameType(), cacheKey);
             }
             // 异步发送更新消息: 更新为投注成功
-            pulsarProducer.asyncSendMessageThenRetry(gameContext().gameInfo().getGameType(),
+            pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
             return betSingleWalletResult;
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("asyncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
             // 异步发送更新消息: 更新为投注失败
-            pulsarProducer.asyncSendMessageThenRetry(gameContext().gameInfo().getGameType(),
+            pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult));
         }
         return betSingleWalletResult;
