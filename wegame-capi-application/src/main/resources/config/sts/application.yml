@@ -143,8 +143,8 @@ knife4j:
 ## api
 api:
   game:
-    # promotionDomain: https://reward-http-stress.igo8.me
-    promotionDomain: http://reward-http-internal-stress.igo8.me
+    promotionDomain: https://reward-http-stress.igo8.me
+    # promotionDomain: http://reward-http-internal-stress.igo8.me
     singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
     freeSpinDomain: https://sw-http-freespin.igo8.me
     invokeSingle: true
@@ -230,7 +230,8 @@ httpclient-warm-up:
   initHosts:
     http://reward-http-internal-stress.igo8.me: 300
     http://sw-http-main-apisix-internal-stress.igo8.me: 300
-    http://dos-egame-stresstest-internal.dos88.me: 100
+    # http://dos-egame-stresstest-internal.dos88.me: 100
+    https://reward-http-stress.igo8.me: 100
 http:
   connectTimeout: 1000
   readTimeout: 500
