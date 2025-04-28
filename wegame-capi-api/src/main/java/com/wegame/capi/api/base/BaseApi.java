@@ -18,7 +18,6 @@ import static com.wegame.capi.infrastructure.config.RestTemplateConfig.WALLET_RE
 @Client
 @Component
 public class BaseApi {
-
     @Autowired
     @Qualifier(COMMON_REST_TEMPLATE_BEAN)
     public RestTemplate commonRestTemplate;

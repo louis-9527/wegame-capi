@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.service.freespin;
 
-import com.wegame.capi.api.domain.req.promotion.FreeSpinReq;
+import com.wegame.capi.api.domain.req.freespin.FreeSpinReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.CreateFreeSpinRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinDetailRes;
