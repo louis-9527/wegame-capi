@@ -32,7 +32,7 @@ public class OperationEventQueryBuilder {
                 query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
             }
         }
-        query.fields().include("_id", "eventId", "playerName", "minBonus", "maxBonus", "finishBonus", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus");
+        query.fields().include("_id", "eventId", "playerName", "minBonus", "maxBonus", "finishBonus", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus","updateTime");
         return query;
     }
 
@@ -95,7 +95,7 @@ public class OperationEventQueryBuilder {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
-        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus");
+        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus","updateTime");
         return query;
     }
 
