@@ -41,6 +41,8 @@ public abstract class AbstractOperationEventScheduler
     private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 5 * 60 * 1000;
 
     private final long TWO_HOURS_AGO = System.currentTimeMillis() - (2 * 60 * 60 * 1000);
+    private final long ONE_HOURS_AGO = System.currentTimeMillis() - (60 * 60 * 1000);
+
 
 
     @Autowired
@@ -207,8 +209,6 @@ public abstract class AbstractOperationEventScheduler
             OperationEventQuery query = OperationEventQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .expiredTimeLt(DateUtil.getCurrentMilli())
-                    .updateTimeGt(TWO_HOURS_AGO)
-                    .updateTimeLt(FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE).build();
