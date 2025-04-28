@@ -194,10 +194,10 @@ dynamic:
     pulsar_group:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
     pulsar:
-     auth:
-       issuer_url: https://auth.streamnative.cloud
-       credentials_file_path: /operation_pulsar_privateKey.json
-       audience:  urn:sn:pulsar:o-sn9dy:qat
+      auth:
+        issuer_url: https://auth.streamnative.cloud
+        credentials_file_path: /operation_pulsar_privateKey.json
+        audience:  urn:sn:pulsar:o-sn9dy:qat
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
