@@ -6,10 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author apple
@@ -27,59 +24,44 @@ public class ThreadPoolConfig {
     public static final String operationEventReportThreadPoolExecutor = "operationEventReportThreadPoolExecutor";
     public static final String starCardUseRecordThreadPoolExecutor = "starCardUseRecordThreadPoolExecutor";
 
-    /**
-     * 默认模块-线程池
-     *
-     * @return
-     */
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(1,
                 100,
                 100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque(1000),
+                new LinkedBlockingQueue(100000),
                 new CustomizableThreadFactory("default-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
     }
 
-    /**
-     * 投注模块-线程池
-     *
-     * @return
-     */
     @Bean(betRecordThreadPoolExecutor)
     public ThreadPoolExecutor betRecordThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
                 1000,
                 100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque(100000),
+                new LinkedBlockingQueue(100000),
                 new CustomizableThreadFactory("bet-record-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
     }
 
-    /**
-     * 投注模块-线程池
-     *
-     * @return
-     */
     @Bean(betRecordStatusThreadPoolExecutor)
     public ThreadPoolExecutor betRecordStatusThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(5,
                 100,
                 100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque(100000),
+                new LinkedBlockingQueue<>(100000),
                 new CustomizableThreadFactory("bet-record-status-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
     }
@@ -90,10 +72,10 @@ public class ThreadPoolConfig {
                 50,
                 100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque(100000),
+                new LinkedBlockingQueue(1000000),
                 new CustomizableThreadFactory("send-message-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
     }
@@ -104,7 +86,7 @@ public class ThreadPoolConfig {
                 100,
                 100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque(100000),
+                new LinkedBlockingQueue(100000),
                 new CustomizableThreadFactory("game-record-cache-put-thread-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
@@ -112,19 +94,14 @@ public class ThreadPoolConfig {
         return executor;
     }
 
-    /**
-     * 动态运营-线程池
-     *
-     * @return
-     */
     @Bean(operationEventThreadPoolExecutor)
     public ThreadPoolExecutor operationEventThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
                 100,
                 100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque(10000),
-                new CustomizableThreadFactory("dynamic-event-pool-"),
+                new LinkedBlockingQueue(10000),
+                new CustomizableThreadFactory("operation-event-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
@@ -137,26 +114,21 @@ public class ThreadPoolConfig {
                 100,
                 100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque(10000),
-                new CustomizableThreadFactory("dynamic-event-report-pool-"),
+                new LinkedBlockingQueue(10000),
+                new CustomizableThreadFactory("operation-event-report-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
     }
 
-    /**
-     * 星卡使用记录模块-线程池
-     *
-     * @return
-     */
     @Bean(starCardUseRecordThreadPoolExecutor)
     public ThreadPoolExecutor starCardUseRecordThreadPoolExecutor() {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(2,
                 100,
                 100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque<>(10000),
+                new LinkedBlockingQueue<>(10000),
                 new CustomizableThreadFactory("star-card-use-record-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
