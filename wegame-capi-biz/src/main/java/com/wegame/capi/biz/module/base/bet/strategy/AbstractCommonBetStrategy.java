@@ -134,8 +134,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             }
             // 查询星卡详情
             RewardDetailDo rewordDetail = bagService.getRewardDetail(betDo.getRewardConfigId());
-            AssertUtil.assertNotNull(rewordDetail, ErrorCode.ERR_PARAM);
-            AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.ERR_PARAM);
+            AssertUtil.assertNotNull(rewordDetail, ErrorCode.STAR_CARD_USE_ERROR);
+            AssertUtil.assertNotNull(rewordDetail.getDetails(), ErrorCode.STAR_CARD_USE_ERROR);
             AssertUtil.assertTrue(Objects.equals(rewordDetail.getDetails().getBetValue(), betDo.getBetAmount()), ErrorCode.ERR_PARAM);
             // 设置betDo
             betDo.setBetPromotionType(STAR_CARD);
@@ -207,7 +207,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             if (rewardResult.getErrorCode() != null) {
                 throw new BusinessException(rewardResult.getErrorCode());
             }
-            throw new BusinessException(ErrorCode.ERR_INTER);
+            throw new BusinessException(ErrorCode.STAR_CARD_USE_ERROR);
         }
         // 更新星卡使用状态-成功
         startCardUseRecordService.asyncUpdate(StarCardUseRecordDo.builder()

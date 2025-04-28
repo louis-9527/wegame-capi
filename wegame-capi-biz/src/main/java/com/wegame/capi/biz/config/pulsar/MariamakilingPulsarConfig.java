@@ -44,7 +44,7 @@ public class MariamakilingPulsarConfig {
                 .connectionTimeout(2000, TimeUnit.MILLISECONDS)
                 .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
                 .listenerThreads(Runtime.getRuntime().availableProcessors())
-                .connectionsPerBroker(50)
+                .connectionsPerBroker(60)
                 .connectionMaxIdleSeconds(3000)
                 .enableTcpNoDelay(true)
                 // 10分钟打印一次统计信息
@@ -66,7 +66,7 @@ public class MariamakilingPulsarConfig {
                 // 10ms 内合并批量消息
                 // 最大延迟 10 毫秒
                 .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)
-                .sendTimeout(100, TimeUnit.MILLISECONDS)
+                .sendTimeout(150, TimeUnit.MILLISECONDS)
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
                 .autoUpdatePartitions(true)
@@ -88,12 +88,13 @@ public class MariamakilingPulsarConfig {
                 .receiverQueueSize(2000)
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(500)  // 批量最多100条
+                        // 批量最多100条
+                        .maxNumMessages(500)
                         .timeout(100, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**
-                        .maxRedeliverCount(8)
+                        .maxRedeliverCount(10)
                         // **死信队列**
                         .deadLetterTopic(deadLetterTopic)
                         .build())
@@ -112,7 +113,7 @@ public class MariamakilingPulsarConfig {
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener((consumer, msg) -> {
                     String message = new String(msg.getData());
-                    log.warn("Message moved to DLQ, consumerName: {},msgCount:{}", consumer.getConsumerName(), message);
+                    log.error("Message moved to DLQ, consumerName: {}, msgContent:{}", consumer.getConsumerName(), message);
                     try {
                         consumer.acknowledge(msg);
                     } catch (Exception e) {
