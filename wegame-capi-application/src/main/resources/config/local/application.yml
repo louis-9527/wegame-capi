@@ -2,13 +2,14 @@ appid: com.wegame.capi
 ## log
 logging:
   level:
+    org.apache.pulsar: DEBUG
 #    org.springframework.web: trace
-    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+#    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 #    com.wegame: trace
 #    org.apache.ibatis: trace
-    org.mongodb: DEBUG
+#    org.mongodb: DEBUG
 #    org.springframework.data.redis: DEBUG
-    com.mongodb.internal.connection: DEBUG
+#    com.mongodb.internal.connection: DEBUG
 #    org.apache.http: DEBUG
 ## server
 server:
@@ -194,10 +195,10 @@ dynamic:
     pulsar_group:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
     pulsar:
-     auth:
-       issuer_url: https://auth.streamnative.cloud
-       credentials_file_path: /operation_pulsar_privateKey.json
-       audience:  urn:sn:pulsar:o-sn9dy:qat
+      auth:
+        issuer_url: https://auth.streamnative.cloud
+        credentials_file_path: /operation_pulsar_privateKey.json
+        audience:  urn:sn:pulsar:o-sn9dy:qat
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
