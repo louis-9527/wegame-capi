@@ -44,7 +44,7 @@ public class MariamakilingPulsarConfig {
                 .connectionTimeout(2000, TimeUnit.MILLISECONDS)
                 .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
                 .listenerThreads(Runtime.getRuntime().availableProcessors())
-                .connectionsPerBroker(50)
+                .connectionsPerBroker(60)
                 .connectionMaxIdleSeconds(3000)
                 .enableTcpNoDelay(true)
                 // 10分钟打印一次统计信息
