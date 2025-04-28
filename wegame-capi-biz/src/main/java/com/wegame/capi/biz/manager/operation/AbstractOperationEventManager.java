@@ -377,7 +377,17 @@ public abstract class AbstractOperationEventManager {
      */
     public void reportEventById(Long recordId) {
         OperationEventDo eventDo = operationEventService.getById(recordId, operationEventType());
-        this.reportEvent(eventDo);
+        this.reportEvent(eventDo, false);
+    }
+
+    /**
+     * 同步上报,
+     *
+     * @param recordId 事件ID
+     */
+    public void reportEventById(Long recordId, boolean scheduler) {
+        OperationEventDo eventDo = operationEventService.getById(recordId, operationEventType());
+        this.reportEvent(eventDo, scheduler);
     }
 
     public void reportEvent(OperationEventDo eventDo) {
