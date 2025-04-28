@@ -43,6 +43,7 @@ public class FreeSpinHistoryConverter {
                 .totalWin(freeSpin.getTotalWin())
                 .firstUsedTime(freeSpin.getFirstUsedTime())
                 .freeBet(freeSpin.getFreeBet())
+                .usedCount(freeSpin.getUsedCount())
                 .build();
     }
 
@@ -77,6 +78,7 @@ public class FreeSpinHistoryConverter {
                 .totalWin(freeSpin.getTotalWin())
                 .firstUsedTime(freeSpin.getFirstUsedTime())
                 .freeBet(freeSpin.getFreeBet())
+                .usedCount(freeSpin.getUsedCount())
                 .build();
     }
 }
