@@ -2,7 +2,6 @@ package com.wegame.capi.biz.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -58,6 +57,16 @@ public class PulsarProducer implements InitializingBean {
         return messageId;
     }
 
+    @Async(sendMessageThreadPoolExecutor)
+    public <T> void asyncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
+        // todo 去掉日志
+        log.info("{}Producer asyncSendMessageThenRetry msgType:{}, msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
+        MessageId id = syncSendMessage(gameType, mqMessage, 100);
+        if (Objects.isNull(id)) {
+            log.error("asyncSendMessage send fail, mqMessage: {}", mqMessage);
+        }
+    }
+
     private <T> MessageId syncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
             // todo 去掉日志
@@ -70,16 +79,6 @@ public class PulsarProducer implements InitializingBean {
         } catch (Exception e) {
             log.error("{}Producer syncSendMessage fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);
             return null;
-        }
-    }
-
-    @Async(sendMessageThreadPoolExecutor)
-    public <T> void asyncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
-        // todo 去掉日志
-        log.info("{}Producer asyncSendMessageThenRetry msgType:{}, msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
-        MessageId id = syncSendMessage(gameType, mqMessage, 100);
-        if (Objects.isNull(id)) {
-            log.error("asyncSendMessage send fail, mqMessage: {}", mqMessage);
         }
     }
 
