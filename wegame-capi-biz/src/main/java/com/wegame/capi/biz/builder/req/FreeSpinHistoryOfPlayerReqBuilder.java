@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
-import com.wegame.capi.api.domain.req.promotion.FreeSpinHistoryOfPlayerReq;
+import com.wegame.capi.api.domain.req.freespin.FreeSpinHistoryOfPlayerReq;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import lombok.extern.slf4j.Slf4j;
