@@ -82,6 +82,7 @@ jobs:
           context: .
           push: true
           tags: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}
+          latforms: linux/arm64
 
       - name: Clone repo
         run: |
