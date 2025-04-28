@@ -337,8 +337,8 @@ public abstract class AbstractOperationEventManager {
                     .eventSubStatus(eventSubStatusEnum)
                     .build();
             operationEventService.update(build, operationEventType());
-            // 异步上报
-            asyncReportEventById(recordId);
+            // 上报
+            reportEventById(recordId);
         });
     }
 
