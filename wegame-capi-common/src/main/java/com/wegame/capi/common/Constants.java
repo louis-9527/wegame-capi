@@ -48,4 +48,10 @@ public class Constants {
     public static final String TRUE_VAL = "true";
     public static final String MARIA_MAKILING_PROP = "game.enable.MariaMakiling";
 
+
+    public static final long FIVE_MINUTES_AGO = 5 * 60 * 1000;
+
+    public static final long TWO_HOURS_AGO = 2 * 60 * 60 * 1000;
+
+
 }

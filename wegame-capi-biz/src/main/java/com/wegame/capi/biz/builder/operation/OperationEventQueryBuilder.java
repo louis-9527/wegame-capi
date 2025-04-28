@@ -89,6 +89,8 @@ public class OperationEventQueryBuilder {
         return query;
     }
 
+
+
     public static Query buildQueryOne(Long id) {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);

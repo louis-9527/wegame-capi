@@ -85,13 +85,14 @@ public abstract class AbstractOperationEventManager {
             long effectedTime = entry.getEffectedTime();
             long expiredTime = entry.getExpiredTime();
             long currentMilli = DateUtil.getCurrentMilli();
-            if (currentMilli < effectedTime) {
+            // 为啥加1000?是为了防止时间误差,dos系统干预事件立即上报会触发event not find
+            if (currentMilli < effectedTime + 1000) {
                 // 未到执行时间
                 continue;
             }
             // 判断是否过期
             if (currentMilli > expiredTime) {
-                //过期 删除缓存并触发异步上报
+                // 过期 删除缓存并触发异步上报
                 operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
                 asyncUpdateFinishEvent(recordId, playName, OperationEventSubStatusEnum.FINISH_EXPIRED);
                 continue;
@@ -271,9 +272,10 @@ public abstract class AbstractOperationEventManager {
             // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
             if (eventAmount < 0.1 * betAmount) {
                 // 上报
-                if (finishBonus>0L) {
+                log.info("event getInterventionAmount finish amount error eventId:{}", eventDo.getEventId());
+                if (finishBonus > 0L) {
                     asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_FIND_DETAIL);
-                }else {
+                } else {
                     asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_NOT_DETAIL);
                 }
                 return null;
@@ -319,7 +321,7 @@ public abstract class AbstractOperationEventManager {
 
 
             updateEventDetail(eventDetailUpdate, eventDoUpdate);
-            operationEventService.updateOperationUseStatus(eventDo.getId(),OperationEventStatusEnum.NONE, operationEventType());
+            operationEventService.updateOperationUseStatus(eventDo.getId(), OperationEventStatusEnum.NONE, operationEventType());
             // 执行上报
             if (OperationEventSubStatusEnum.isFinish(eventSubStatusEnum)) {
                 // 如果完成执行上报
@@ -342,7 +344,8 @@ public abstract class AbstractOperationEventManager {
         });
     }
 
-    public void updateFinishEvent(Long recordId,  OperationEventSubStatusEnum eventSubStatusEnum) {
+
+    public void updateFinishEvent(Long recordId, Boolean scheduler, OperationEventSubStatusEnum eventSubStatusEnum) {
         OperationEventDo build = OperationEventDo.builder()
                 .id(recordId)
                 .eventStatus(OperationEventStatusEnum.FINISH)
@@ -366,33 +369,31 @@ public abstract class AbstractOperationEventManager {
         });
 
     }
+
     /**
      * 同步上报,
      *
      * @param recordId 事件ID
      */
     public void reportEventById(Long recordId) {
-            OperationEventDo eventDo = operationEventService.getById(recordId, operationEventType());
-            this.reportEvent(eventDo);
+        OperationEventDo eventDo = operationEventService.getById(recordId, operationEventType());
+        this.reportEvent(eventDo);
     }
-
-
-    public void asyncReportEventById(OperationEventDo eventDo) {
-        AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
-        operationEventReportThreadPoolExecutor.execute(() -> {
-            this.reportEvent(eventDo);
-        });
-    }
-
-
 
     public void reportEvent(OperationEventDo eventDo) {
         distributeLock.lockThenRun(LockNameUtil.getOperationEventReportLockName(this.operationEventType().getGameType(), eventDo.getId()),
-                () -> this.reportEventLock(eventDo),
+                () -> this.reportEventLock(eventDo, false),
                 "OperationEvent report distributeLock");
     }
 
-    private void reportEventLock(OperationEventDo eventDo) {
+    public void reportEvent(OperationEventDo eventDo, boolean scheduler) {
+        distributeLock.lockThenRun(LockNameUtil.getOperationEventReportLockName(this.operationEventType().getGameType(), eventDo.getId()),
+                () -> this.reportEventLock(eventDo, scheduler),
+                "OperationEvent report distributeLock");
+    }
+
+
+    private void reportEventLock(OperationEventDo eventDo, boolean scheduler) {
         log.info("report start eventId:{}", eventDo.getId());
         Long recordId = eventDo.getId();
         AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
@@ -449,13 +450,21 @@ public abstract class AbstractOperationEventManager {
             return;
         }
         if (updateEventsStatusRes.isFail()) {
-            // 如果失败(特定情况)
-            OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
-                    .reportStatus(OperationEventReportStatusEnum.FAIL)
-                    .reportFailMsg(updateEventsStatusRes.getMessage())
-                    .build();
-            operationEventService.update(eventReportUpdate, operationEventType());
-            return;
+            log.warn("dynamicOperationEvent report error,eventId:{}", eventDo.getEventId());
+            if (!scheduler) {
+                log.warn("dynamicOperationEvent report error,no scheduler return,,eventId:{}", eventDo.getEventId());
+                return;
+            }
+            if ((DateUtil.getCurrentMilli() - eventDo.getUpdateTime()) >= Constants.TWO_HOURS_AGO) {
+                log.error("dynamicOperationEvent report error,scheduler eventId:{}", eventDo.getEventId());
+                // 如果失败(特定情况)
+                OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
+                        .reportStatus(OperationEventReportStatusEnum.FAIL)
+                        .reportFailMsg(updateEventsStatusRes.getMessage())
+                        .build();
+                operationEventService.update(eventReportUpdate, operationEventType());
+                return;
+            }
         }
         log.error("dynamicOperationEvent report error:{}", JSON.toJSONString(updateEventsStatusReq));
     }

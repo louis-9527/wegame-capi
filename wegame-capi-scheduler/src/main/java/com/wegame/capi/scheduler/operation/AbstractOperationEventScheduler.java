@@ -11,6 +11,7 @@ import com.wegame.capi.biz.service.operation.OperationEventDetailService;
 import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
@@ -37,12 +38,6 @@ import java.util.Optional;
 public abstract class AbstractOperationEventScheduler
         extends AbstractScheduler
         implements Runnable {
-
-    private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 5 * 60 * 1000;
-
-    private final long TWO_HOURS_AGO = System.currentTimeMillis() - (3 * 60 * 60 * 1000);
-    private final long ONE_HOURS_AGO = System.currentTimeMillis() - (60 * 60 * 1000);
-
 
 
     @Autowired
@@ -73,13 +68,13 @@ public abstract class AbstractOperationEventScheduler
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
             log.info("{}#eventDetailIngExec. gameId: {}", getClass().getSimpleName(), gameType.getId());
-            long startTime = DateUtil.getCurrentMilli();
+            long currentTimeMillis = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDetailDo> detailList;
             OperationEventDetailQuery query = OperationEventDetailQuery.builder()
                     .betStatus(BetStatusEnum.ING.getCode())
-                    .gtCreateTime(TWO_HOURS_AGO)
-                    .ltCreateTime(FIVE_MINUTES_AGO)
+                    .gtCreateTime(currentTimeMillis - Constants.TWO_HOURS_AGO)
+                    .ltCreateTime(currentTimeMillis - Constants.FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE)
@@ -96,7 +91,7 @@ public abstract class AbstractOperationEventScheduler
             } while (CollectionUtils.isNotEmpty(detailList));
             log.info("{}#eventDetailIngExec run end:{},time:{}", getClass().getSimpleName(),
                     gameType.getId(),
-                    DateUtil.getCurrentMilli() - startTime);
+                    DateUtil.getCurrentMilli() - currentTimeMillis);
         } catch (Exception e) {
             log.error("{}#eventDetailIngExecrun exception:{}", getClass().getSimpleName(), e.getMessage(), e);
         }
@@ -154,6 +149,8 @@ public abstract class AbstractOperationEventScheduler
         }
     }
 
+
+
     /**
      * 事件已经完成,但未上报
      */
@@ -161,14 +158,14 @@ public abstract class AbstractOperationEventScheduler
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
             log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run start:{}", gameType.getId());
-            long startTime = DateUtil.getCurrentMilli();
+            long currentTimeMillis = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDo> eventDetailDoList;
             OperationEventQuery query = OperationEventQuery.builder()
                     .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
                     .eventStatus(OperationEventStatusEnum.FINISH.getCode())
-                    .updateTimeGt(TWO_HOURS_AGO)
-                    .updateTimeLt(FIVE_MINUTES_AGO)
+                    .updateTimeGt(currentTimeMillis - Constants.TWO_HOURS_AGO)
+                    .updateTimeLt(currentTimeMillis - Constants.FIVE_MINUTES_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE).build();
@@ -182,7 +179,7 @@ public abstract class AbstractOperationEventScheduler
                         .orElse(Collections.emptyList())
                         .forEach(this::eventReportFailHandle);
             } while (CollectionUtils.isNotEmpty(eventDetailDoList));
-            log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run end:{},time:{}", gameType.getId(), DateUtil.getCurrentMilli() - startTime);
+            log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run end:{},time:{}", gameType.getId(), DateUtil.getCurrentMilli() - currentTimeMillis);
         } catch (Throwable e) {
             log.error("{}#eventReportFailExec exception:{}", getClass().getSimpleName(), e.getMessage(), e);
 
@@ -193,7 +190,7 @@ public abstract class AbstractOperationEventScheduler
      * 事件处理成功,但未上报
      */
     private void eventReportFailHandle(OperationEventDo eventDo) {
-        operationEventManager().reportEvent(eventDo);
+        operationEventManager().reportEvent(eventDo,true);
     }
 
     /**
@@ -203,7 +200,7 @@ public abstract class AbstractOperationEventScheduler
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
             log.info("{}#eventEventExpiredExec run start:{}", getClass().getSimpleName(), gameType.getId());
-            long startTime = DateUtil.getCurrentMilli();
+            long currentTimeMillis = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDo> eventDetailDoList;
             OperationEventQuery query = OperationEventQuery.builder()
@@ -222,7 +219,7 @@ public abstract class AbstractOperationEventScheduler
                         .orElse(Collections.emptyList())
                         .forEach(this::eventEventIngHandle);
             } while (CollectionUtils.isNotEmpty(eventDetailDoList));
-            log.info("{}#eventEventExpiredExec run end:{}, cost time:{}", getClass().getSimpleName(), gameType.getId(), DateUtil.getCurrentMilli() - startTime);
+            log.info("{}#eventEventExpiredExec run end:{}, cost time:{}", getClass().getSimpleName(), gameType.getId(), DateUtil.getCurrentMilli() - currentTimeMillis);
         } catch (Throwable e) {
             log.error("{}#eventEventExpiredExec exception:{}", getClass().getSimpleName(), e.getMessage(), e);
 
@@ -233,7 +230,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventEventIngHandle(OperationEventDo eventDo) {
         if (eventDo.getExpiredTime() < DateUtil.getCurrentMilli()) {
             // 过期上报
-            operationEventManager().updateFinishEvent(eventDo.getId(), OperationEventSubStatusEnum.FINISH_EXPIRED);
+            operationEventManager().updateFinishEvent(eventDo.getId(), Boolean.TRUE, OperationEventSubStatusEnum.FINISH_EXPIRED);
         }
     }
 }
