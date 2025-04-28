@@ -29,7 +29,7 @@ import java.util.Optional;
 public abstract class AbstractStarCardScheduler extends AbstractScheduler
         implements Runnable {
     private final long THREE_MINUTES_AGO = System.currentTimeMillis() - 3 * 60 * 1000;
-    private final long ONT_DAY_AGO = System.currentTimeMillis() - (24L * 60 * 60 * 1000);
+    private final long MONTH_DAY_AGO = System.currentTimeMillis() - (3L * 24 * 60 * 60 * 1000);
 
 
     @Autowired
@@ -51,7 +51,7 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
             StarCardUseRecordQuery query = StarCardUseRecordQuery.builder()
                     .reportStatus(StarCardReportStatusEnum.ING.getCode())
                     .ltCreateTime(THREE_MINUTES_AGO)
-                    .gteCreateTime(ONT_DAY_AGO)
+                    .gteCreateTime(MONTH_DAY_AGO)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE)
