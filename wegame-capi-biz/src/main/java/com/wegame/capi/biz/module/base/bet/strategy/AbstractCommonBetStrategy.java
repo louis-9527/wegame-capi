@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.base.bet.strategy;
 
+import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
@@ -240,7 +241,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertNotNull(freeSpinDetailDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(freeSpinDetailDo.getConfig(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(freeSpinDetailDo.getConfig().getBetValue(), ErrorCode.ERR_INTER);
-        AssertUtil.assertTrue(freeSpinDetailDo.getConfig().getBetValue() * 1000 == betDo.getBetAmount(), ErrorCode.ERR_INTER);
+        BigDecimal betValue = freeSpinDetailDo.getConfig().getBetValue();
+        AssertUtil.assertTrue(NumberUtil.mul(betValue, 1000).longValue() == betDo.getBetAmount(), ErrorCode.ERR_INTER);
         Integer startDateSecond = freeSpinDetailDo.getConfig().getStartDate();
         AssertUtil.assertNotNull(startDateSecond, ErrorCode.ERR_INTER);
         Integer endDateSecond = freeSpinDetailDo.getConfig().getEndDate();

@@ -5,8 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
 
 @Data
 @ToString
@@ -43,7 +42,7 @@ public class FreeSpinDetailDo implements Serializable {
         /** Max player of campaign */
         private Integer maxPlayer;
         /** Bet value of campaign */
-        private Integer betValue;
+        private BigDecimal betValue;
         /** Total spin times */
         private Integer totalFreeSpin;
         /** Campaign start date [Unix timestamps in seconds]  */

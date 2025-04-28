@@ -40,7 +40,7 @@ public abstract class AbstractOperationEventScheduler
 
     private final long FIVE_MINUTES_AGO = System.currentTimeMillis() - 5 * 60 * 1000;
 
-    private final long TWO_HOURS_AGO = System.currentTimeMillis() - (2 * 60 * 60 * 1000);
+    private final long TWO_HOURS_AGO = System.currentTimeMillis() - (3 * 60 * 60 * 1000);
     private final long ONE_HOURS_AGO = System.currentTimeMillis() - (60 * 60 * 1000);
 
 
@@ -147,7 +147,7 @@ public abstract class AbstractOperationEventScheduler
             operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
             operationEventService.updateOperationUseStatus(eventDetailDo.getEventRecordId(), OperationEventStatusEnum.NONE, operationEventType());
             if (eventDoUpdate != null && OperationEventStatusEnum.FINISH == eventDoUpdate.getEventStatus()) {
-                operationEventManager().asyncReportEvent(eventDetailDo.getBetRecordId());
+                operationEventManager().reportEventById(eventDetailDo.getBetRecordId());
             }
         } catch (Exception e) {
             log.error("{}#eventDetailFailHandle exception:{}", getClass().getSimpleName(), e.getMessage(), e);
@@ -193,7 +193,7 @@ public abstract class AbstractOperationEventScheduler
      * 事件处理成功,但未上报
      */
     private void eventReportFailHandle(OperationEventDo eventDo) {
-        operationEventManager().asyncReportEvent(eventDo);
+        operationEventManager().reportEvent(eventDo);
     }
 
     /**
@@ -233,7 +233,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventEventIngHandle(OperationEventDo eventDo) {
         if (eventDo.getExpiredTime() < DateUtil.getCurrentMilli()) {
             // 过期上报
-            operationEventManager().asyncUpdateFinishEvent(eventDo.getId(), eventDo.getPlayerName(), OperationEventSubStatusEnum.FINISH_EXPIRED);
+            operationEventManager().updateFinishEvent(eventDo.getId(), OperationEventSubStatusEnum.FINISH_EXPIRED);
         }
     }
 }

@@ -116,7 +116,7 @@ public abstract class AbstractOperationEventManager {
             if (OperationEventStatusEnum.FINISH == eventDo.getEventStatus()) {
                 //已完成 删除缓存并触发异步上报
                 operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
-                asyncReportEvent(recordId);
+                asyncReportEventById(recordId);
                 continue;
             }
             if (OperationEventReportStatusEnum.reportSuccess(eventDo.getReportStatus())) {
@@ -323,7 +323,7 @@ public abstract class AbstractOperationEventManager {
             // 执行上报
             if (OperationEventSubStatusEnum.isFinish(eventSubStatusEnum)) {
                 // 如果完成执行上报
-                asyncReportEvent(eventDo.getId());
+                asyncReportEventById(eventDo.getId());
             }
         });
     }
@@ -337,9 +337,20 @@ public abstract class AbstractOperationEventManager {
                     .eventSubStatus(eventSubStatusEnum)
                     .build();
             operationEventService.update(build, operationEventType());
-            // 异步上报
-            asyncReportEvent(recordId);
+            // 上报
+            reportEventById(recordId);
         });
+    }
+
+    public void updateFinishEvent(Long recordId,  OperationEventSubStatusEnum eventSubStatusEnum) {
+        OperationEventDo build = OperationEventDo.builder()
+                .id(recordId)
+                .eventStatus(OperationEventStatusEnum.FINISH)
+                .eventSubStatus(eventSubStatusEnum)
+                .build();
+        operationEventService.update(build, operationEventType());
+        // 上报
+        reportEventById(recordId);
     }
 
 
@@ -348,16 +359,25 @@ public abstract class AbstractOperationEventManager {
      *
      * @param recordId 事件ID
      */
-    public void asyncReportEvent(Long recordId) {
+    public void asyncReportEventById(Long recordId) {
         operationEventReportThreadPoolExecutor.execute(() -> {
             OperationEventDo eventDo = operationEventService.getById(recordId, operationEventType());
             this.reportEvent(eventDo);
         });
 
     }
+    /**
+     * 同步上报,
+     *
+     * @param recordId 事件ID
+     */
+    public void reportEventById(Long recordId) {
+            OperationEventDo eventDo = operationEventService.getById(recordId, operationEventType());
+            this.reportEvent(eventDo);
+    }
 
 
-    public void asyncReportEvent(OperationEventDo eventDo) {
+    public void asyncReportEventById(OperationEventDo eventDo) {
         AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
         operationEventReportThreadPoolExecutor.execute(() -> {
             this.reportEvent(eventDo);
@@ -365,13 +385,15 @@ public abstract class AbstractOperationEventManager {
     }
 
 
-    private void reportEvent(OperationEventDo eventDo) {
+
+    public void reportEvent(OperationEventDo eventDo) {
         distributeLock.lockThenRun(LockNameUtil.getOperationEventReportLockName(this.operationEventType().getGameType(), eventDo.getId()),
                 () -> this.reportEventLock(eventDo),
                 "OperationEvent report distributeLock");
     }
 
     private void reportEventLock(OperationEventDo eventDo) {
+        log.info("report start eventId:{}", eventDo.getId());
         Long recordId = eventDo.getId();
         AssertUtil.assertNotNull(eventDo, ErrorCode.ERR_INTER);
         if (OperationEventStatusEnum.FINISH != eventDo.getEventStatus()) {
