@@ -36,6 +36,8 @@ public class FreeSpinOfPlayerDo implements Serializable {
         private String channelId;
         /** campaignId */
         private String campaignId;
+        /** campaignName */
+        private String campaignName;
         /** initCount */
         private Integer initCount;
         /** remainingCount */
@@ -49,7 +51,7 @@ public class FreeSpinOfPlayerDo implements Serializable {
         /** gameName */
         private String gameName;
         /** totalWin */
-        private Integer totalWin;
+        private BigDecimal totalWin;
         /** freeBet */
         private BigDecimal freeBet;
     }

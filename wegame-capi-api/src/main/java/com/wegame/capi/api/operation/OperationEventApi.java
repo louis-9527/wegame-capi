@@ -61,7 +61,7 @@ public class OperationEventApi extends SingleWalletBaseApi {
                     headers,
                     HttpMethod.POST,
                     URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, operationDomain)));
-            ResponseEntity<UpdateEventsStatusRes> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
+            ResponseEntity<UpdateEventsStatusRes> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);

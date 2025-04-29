@@ -1,11 +1,13 @@
 package com.wegame.capi.common.utils;
 
+import com.wegame.capi.common.Constants;
+
 import java.util.List;
 
 public class MultipleUtil {
 
     public static Double findClosestMultiple(double input, List<Double> multipleList) {
-        if (input < 1.1) {
+        if (input < Constants.MIN_BET_AMOUNT_M) {
             return null;
         }
         int left = 0;
