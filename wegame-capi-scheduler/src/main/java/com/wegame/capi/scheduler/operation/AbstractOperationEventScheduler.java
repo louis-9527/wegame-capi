@@ -59,6 +59,8 @@ public abstract class AbstractOperationEventScheduler
         eventReportFailExec();
         // 事件已过期,但未上报
         eventEventExpiredExec();
+        // 处理已完成的事件
+        eventFinishFailExec();
     }
 
     /**
@@ -142,13 +144,12 @@ public abstract class AbstractOperationEventScheduler
             operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
             operationEventService.updateOperationUseStatus(eventDetailDo.getEventRecordId(), OperationEventStatusEnum.NONE, operationEventType());
             if (eventDoUpdate != null && OperationEventStatusEnum.FINISH == eventDoUpdate.getEventStatus()) {
-                operationEventManager().reportEventById(eventDetailDo.getBetRecordId(),true);
+                operationEventManager().reportEventById(eventDetailDo.getBetRecordId(), true);
             }
         } catch (Exception e) {
             log.error("{}#eventDetailFailHandle exception:{}", getClass().getSimpleName(), e.getMessage(), e);
         }
     }
-
 
 
     /**
@@ -190,7 +191,7 @@ public abstract class AbstractOperationEventScheduler
      * 事件处理成功,但未上报
      */
     private void eventReportFailHandle(OperationEventDo eventDo) {
-        operationEventManager().reportEvent(eventDo,true);
+        operationEventManager().reportEvent(eventDo, true);
     }
 
     /**
@@ -231,6 +232,55 @@ public abstract class AbstractOperationEventScheduler
         if (eventDo.getExpiredTime() < DateUtil.getCurrentMilli()) {
             // 过期上报
             operationEventManager().updateFinishEvent(eventDo.getId(), Boolean.TRUE, OperationEventSubStatusEnum.FINISH_EXPIRED);
+        }
+    }
+
+
+    /**
+     * 事件已经完成,但未处理
+     */
+    private void eventFinishFailExec() {
+        try {
+            GameTypeEnum gameType = operationEventType().getGameType();
+            log.info("AbstractDynamicOperationEventScheduler#eventFinishFailExec run start:{}", gameType.getId());
+            long currentTimeMillis = DateUtil.getCurrentMilli();
+            Long lastId = null;
+            List<OperationEventDo> eventDetailDoList;
+            OperationEventQuery query = OperationEventQuery.builder()
+                    .reportStatus(OperationEventReportStatusEnum.NONE.getCode())
+                    .eventStatus(OperationEventStatusEnum.NONE.getCode())
+                    .updateTimeGt(currentTimeMillis - Constants.TWO_HOURS_AGO)
+                    .updateTimeLt(currentTimeMillis - Constants.FIVE_MINUTES_AGO)
+                    .finishMinAmount(gameType.getMinBetAmount() * Constants.MIN_BET_AMOUNT_M)
+                    .direction(Sort.Direction.ASC)
+                    .orderByClause("_id")
+                    .limit(DEFAULT_PAGE_SIZE).build();
+            do {
+                query.setGtLastId(lastId);
+                eventDetailDoList = operationEventService.queryList(query, operationEventType());
+                if (CollectionUtil.isNotEmpty(eventDetailDoList)) {
+                    lastId = eventDetailDoList.get(eventDetailDoList.size() - 1).getId();
+                }
+                Optional.ofNullable(eventDetailDoList)
+                        .orElse(Collections.emptyList())
+                        .forEach(this::eventFinishFailExecHandle);
+            } while (CollectionUtils.isNotEmpty(eventDetailDoList));
+            log.info("AbstractDynamicOperationEventScheduler#eventFinishFailExec run end:{},time:{}", gameType.getId(), DateUtil.getCurrentMilli() - currentTimeMillis);
+        } catch (Throwable e) {
+            log.error("{}#eventFinishFailExec exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+
+        }
+    }
+
+    private void eventFinishFailExecHandle(OperationEventDo eventDo) {
+        if (eventDo.getFinishBonus() >= eventDo.getMinBonus()) {
+            operationEventManager().updateFinishEvent(eventDo.getId(), Boolean.TRUE, OperationEventSubStatusEnum.FINISH_NORMAL);
+            return;
+        }
+        if (Objects.equals(eventDo.getFinishBonus(), 0L)) {
+            operationEventManager().updateFinishEvent(eventDo.getId(), Boolean.TRUE, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_NOT_DETAIL);
+        } else {
+            operationEventManager().updateFinishEvent(eventDo.getId(), Boolean.TRUE, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_FIND_DETAIL);
         }
     }
 }

@@ -270,7 +270,7 @@ public abstract class AbstractOperationEventManager {
         // 如果投注金额小于系统最小的投注金额,需要判断是否可以赠送出去
         if (betAmount <= operationEventType().getGameType().getMinBetAmount()) {
             // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
-            if (eventAmount < 0.1 * betAmount) {
+            if (eventAmount < Constants.MIN_BET_AMOUNT_M * betAmount) {
                 // 上报
                 log.info("event getInterventionAmount finish amount error eventId:{}", eventDo.getEventId());
                 if (finishBonus > 0L) {
@@ -470,6 +470,7 @@ public abstract class AbstractOperationEventManager {
                 // 如果失败(特定情况)
                 OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
                         .reportStatus(OperationEventReportStatusEnum.FAIL)
+                        .reportTime(DateUtil.getCurrentMilli())
                         .reportFailMsg(updateEventsStatusRes.getMessage())
                         .build();
                 operationEventService.update(eventReportUpdate, operationEventType());

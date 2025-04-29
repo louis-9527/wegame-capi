@@ -96,4 +96,10 @@ public class OperationEventQuery implements Serializable {
      * 排序方向
      */
     private Sort.Direction direction;
+
+    /**
+     * 最小完成金额
+     */
+    private Double finishMinAmount;
+
 }
