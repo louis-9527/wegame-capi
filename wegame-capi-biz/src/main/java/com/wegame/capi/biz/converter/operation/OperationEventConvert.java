@@ -78,6 +78,7 @@ public class OperationEventConvert {
         eventDo.setEventStatus(OperationEventStatusEnum.valueOfCode(po.getEventStatus()));
         eventDo.setEventSubStatus(OperationEventSubStatusEnum.valueOfCode(po.getEventSubStatus()));
         eventDo.setReportStatus(OperationEventReportStatusEnum.valueOfCode(po.getReportStatus()));
+        eventDo.setUpdateTime(po.getUpdateTime());
         return eventDo;
     }
 
