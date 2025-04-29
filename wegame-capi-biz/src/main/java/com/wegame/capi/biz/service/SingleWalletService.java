@@ -16,6 +16,7 @@ import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
+import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
@@ -50,6 +51,8 @@ public class SingleWalletService {
     SingleWalletApi singleWalletApi;
     @Autowired
     BetStatusService betStatusService;
+    @Autowired
+    FreeSpinService freeSpinService;
 
     public boolean authLoginToken(UserLoginDo userLoginDo) {
         AuthLoginTokenRes res = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.buildReq(userLoginDo));
@@ -76,7 +79,7 @@ public class SingleWalletService {
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = null;
         try {
             if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
-                commonRes = singleWalletApi.freeSpin(buildFreeSpinReq(betRecordDo));
+                commonRes = freeSpinService.freeSpin(buildFreeSpinReq(betRecordDo));
             } else if (Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
                 commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo));
             } else {

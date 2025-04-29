@@ -4,15 +4,9 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.api.base.SingleWalletBaseApi;
-import com.wegame.capi.api.domain.req.promotion.*;
 import com.wegame.capi.api.domain.req.singlewallet.*;
 import com.wegame.capi.api.domain.res.CommonRes;
-import com.wegame.capi.api.domain.res.promotion.CreateFreeSpinRes;
-import com.wegame.capi.api.domain.res.promotion.FreeSpinDetailRes;
-import com.wegame.capi.api.domain.res.promotion.FreeSpinHistoryOfPlayerRes;
-import com.wegame.capi.api.domain.res.promotion.FreeSpinOfPlayerRes;
 import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
 import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
 import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
@@ -29,10 +23,10 @@ import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 import static com.wegame.capi.common.enums.SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID;
-
 
 /**
  * Single Wallet Api
@@ -42,27 +36,12 @@ import static com.wegame.capi.common.enums.SingleWalletResStatusEnum.DUPLICATE_R
  * 3.2.3    betWithPayout
  * 5.6      starSpin
  * 8.1      betStatus
- *
- * 成就系统 Api
- * 文档导航：<a href="https://casinoplus.sg.larksuite.com/docx/XZzMdmW4aonhYfxtMEili1qGgkb"/>
- * 2.2 getDailyMission
- * 2.4 getAchievement
- * 2.5 getRewardBag
- * 2.9 redeemTreasure
- * 2.10 redeemAchievement
- *
- * Free Spin Api
- * 文档导航：<a href="https://casinoplus.sg.larksuite.com/docx/Mvlid9I9goOgUUx0hxjlPIiAg7g"/>
- * 8.Free Spin Api
- * 8.1 freeSpin
- * 8.2 freeSpinOfPlayer
- * 8.3 freeSpinHistoryOfPlayer
  */
 @Slf4j
 @Component
 public class SingleWalletApi extends SingleWalletBaseApi {
 
-    private static final long FIVE_SECONDS = 5000L;
+    private static final long TWENTY_SECONDS = 20000L;
     private static final int MAX_DUPLICATE_COUNT = 2;
 
     private static final String AUTH_LOGIN_TOKEN_URL_FORMAT = "%s/authLoginToken";
@@ -71,20 +50,13 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
     private static final String BET_STAR_SPIN_URL_FORMAT = "%s/starSpin";
 
-
-    private static final String FREE_SPIN = "%s/freeSpin";
-    private static final String FREE_SPIN_OF_PLAYER = "%s/freeSpinOfPlayer";
-    private static final String FREE_SPIN_HISTORY_OF_PLAYER = "%s/freeSpinHistoryOfPlayer";
-    private static final String CREATE_FREE_SPIN = "%s/callback/createFreeSpin";
-    private static final String FREE_SPIN_DETAIL = "%s/freeSpinDetail";
-
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders();
             RequestEntity<GetAuthLoginTokenReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(AUTH_LOGIN_TOKEN_URL_FORMAT, singleDomain)));
-            ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {
+            ResponseEntity<CommonRes<AuthLoginTokenRes>> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<AuthLoginTokenRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -108,7 +80,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             MultiValueMap<String, String> headers = buildHeaders();
             RequestEntity<GetCreditReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(GET_CREDIT_URL_FORMAT, singleDomain)));
-            ResponseEntity<CommonRes<GetCreditRes>> responseEntity = restTemplate.exchange(requestEntity,
+            ResponseEntity<CommonRes<GetCreditRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<GetCreditRes>>() {
                     });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
@@ -137,11 +109,11 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         int duplicateIdCount = 0;
         while (canContinueExecute) {
             try {
-                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
+                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                         new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
                         });
                 if (Objects.isNull(responseEntity) || Objects.isNull(responseEntity.getBody())) {
-                    canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                    canContinueExecute = System.currentTimeMillis() < requestStartTime + TWENTY_SECONDS;
                     continue;
                 }
                 CommonRes<SingleWalletBetWithPayoutRes> commonRes = responseEntity.getBody();
@@ -170,11 +142,12 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             } catch (Exception e) {
                 log.error("betWithPayout Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
                 // 发生异常，判断是否达到最大重试时限（重试的最大时限：请求时间 + 5s）
-                canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                canContinueExecute = System.currentTimeMillis() < requestStartTime + TWENTY_SECONDS;
                 if (!canContinueExecute) {
                     log.error("betWithPayout BusinessException, reach max retry time limit");
                     throw e;
                 } else {
+                    LockSupport.parkNanos(this, TimeUnit.MILLISECONDS.toNanos(1500));
                     log.warn("betWithPayout immediately retry when error");
                 }
             }
@@ -184,10 +157,10 @@ public class SingleWalletApi extends SingleWalletBaseApi {
 
     /**
      * 星卡投注
+     *
      * @param req
      * @return
      */
-
     public CommonRes<SingleWalletBetWithPayoutRes> starSpin(BetStarSpinReq req) {
         // 参数签名
         assembleSingleSignature(req);
@@ -200,11 +173,11 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         int duplicateIdCount = 0;
         while (canContinueExecute) {
             try {
-                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity,
+                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                         new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
                         });
                 if (Objects.isNull(responseEntity) || Objects.isNull(responseEntity.getBody())) {
-                    canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                    canContinueExecute = System.currentTimeMillis() < requestStartTime + TWENTY_SECONDS;
                     continue;
                 }
                 CommonRes<SingleWalletBetWithPayoutRes> commonRes = responseEntity.getBody();
@@ -233,7 +206,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             } catch (Exception e) {
                 log.error("betStarSpin Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
                 // 发生异常，判断是否达到最大重试时限（重试的最大时限：请求时间 + 5s）
-                canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                canContinueExecute = System.currentTimeMillis() < requestStartTime + TWENTY_SECONDS;
                 if (!canContinueExecute) {
                     log.error("betStarSpin BusinessException, reach max retry time limit");
                     throw e;
@@ -244,6 +217,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         }
         throw new BusinessException(ErrorCode.ERR_NET);
     }
+
     /**
      * 单钱包状态查询
      *
@@ -257,7 +231,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             MultiValueMap<String, String> headers = buildHeaders();
             RequestEntity<BetStatusReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
                     URI.create(String.format(BET_STATUS_URL_FORMAT, singleDomain)));
-            ResponseEntity<CommonRes<BetStatusRes>> responseEntity = restTemplate.exchange(requestEntity,
+            ResponseEntity<CommonRes<BetStatusRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<BetStatusRes>>() {
                     });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
@@ -279,108 +253,5 @@ public class SingleWalletApi extends SingleWalletBaseApi {
         headers.add("Connection", "Keep-Alive");
         headers.add("Keep-Alive", "timeout=180");
         return headers;
-    }
-
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
-    public CommonRes<SingleWalletBetWithPayoutRes> freeSpin(FreeSpinReq req) {
-        try {
-            assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<FreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN, singleDomain)));
-            ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
-            });
-            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody();
-        } catch (BusinessException e) {
-            log.error("freeSpin BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            log.error("freeSpin Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
-        }
-    }
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
-    public FreeSpinOfPlayerRes freeSpinOfPlayer(FreeSpinOfPlayerReq req) {
-        try {
-            log.info("freeSpinOfPlayer req: {}", FastJsonUtils.toJSONString(req));
-            assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<FreeSpinOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_OF_PLAYER, singleDomain)));
-            ResponseEntity<CommonRes<FreeSpinOfPlayerRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinOfPlayerRes>>() {
-            });
-            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
-        } catch (BusinessException e) {
-            log.error("freeSpinOfPlayer BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            log.error("freeSpinOfPlayer Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
-        }
-    }
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
-    public FreeSpinHistoryOfPlayerRes freeSpinHistoryOfPlayer(FreeSpinHistoryOfPlayerReq req) {
-        try {
-            assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<FreeSpinHistoryOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_HISTORY_OF_PLAYER, singleDomain)));
-            ResponseEntity<CommonRes<FreeSpinHistoryOfPlayerRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinHistoryOfPlayerRes>>() {
-            });
-            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
-        } catch (BusinessException e) {
-            log.error("freeSpinHistoryOfPlayer BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            log.error("freeSpinHistoryOfPlayer Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
-        }
-    }
-    public CreateFreeSpinRes createFreeSpin(CreateFreeSpinReq req) {
-        try {
-            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<CreateFreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(CREATE_FREE_SPIN, "http://igo-sw-callback-public.igo8.me")));
-            ResponseEntity<CommonRes<CreateFreeSpinRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<CreateFreeSpinRes>>() {
-            });
-            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
-        } catch (BusinessException e) {
-            log.error("createFreeSpin BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            log.error("createFreeSpin Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
-        }
-    }
-    public FreeSpinDetailRes freeSpinDetail(FreeSpinDetailReq req) {
-        try {
-            assembleSingleSignature(req);
-            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<FreeSpinDetailReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_DETAIL, singleDomain)));
-            ResponseEntity<CommonRes<FreeSpinDetailRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinDetailRes>>() {
-            });
-            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
-        } catch (BusinessException e) {
-            log.error("freeSpinDetail BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            log.error("freeSpinDetail Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
-        }
     }
 }

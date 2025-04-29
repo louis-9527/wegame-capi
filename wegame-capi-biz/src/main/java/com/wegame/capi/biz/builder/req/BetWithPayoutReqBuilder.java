@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
-import com.wegame.capi.api.domain.req.promotion.FreeSpinReq;
+import com.wegame.capi.api.domain.req.freespin.FreeSpinReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetStarSpinReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;

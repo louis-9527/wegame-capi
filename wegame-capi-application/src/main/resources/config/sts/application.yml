@@ -11,12 +11,12 @@ server:
   tomcat:
     uri-encoding: UTF-8
     connection-timeout: 1000
-    max-connections: 20000
+    max-connections: 15000
     keep-alive-timeout: 120000
     accept-count: 5000
     threads:
       max: 2000
-      min-spare: 500
+      min-spare: 1000
   servlet:
     context-path: /capi/game
     encoding:
@@ -60,6 +60,11 @@ spring:
       minIdlePoolSize: 50
       maxPoolSize: 500
     lettuce:
+      cluster:
+        refresh:
+          adaptive: true
+          period: 30m
+          dynamicRefreshSources: true
       pool:
         enabled: true
         #连接池中的最小空闲连接
@@ -67,7 +72,7 @@ spring:
         #连接池中的最大空闲连接
         max-idle: 100
         #连接池最大阻塞等待时间（使用负值表示没有限制）
-        max-wait: 100
+        max-wait: 10
         #连接池最大连接数（使用负值表示没有限制）
         max-active: 1000
         #间隔1个小时，驱逐空闲线程
@@ -99,7 +104,7 @@ spring:
             test-on-return: false
             pool-prepared-statements: false
         wegame_backend_db:
-          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: QATmakilingService
           password: ENC(Lm5nLGO2RTUPqHi/nkBU31uk6Zn/vV6GevM9jwwx4Bfck539re9GPagkh6bBi1t/lgexud3+wkye7Gz8qXTqhg==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
@@ -144,8 +149,13 @@ knife4j:
 ## api
 api:
   game:
+#    promotionDomain: https://reward-http-stress.igo8.me
     promotionDomain: http://reward-http-internal-stress.igo8.me
     singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
+    #    freeSpinDomain: https://sw-http-freespin.igo8.me
+    freeSpinDomain: https://sw-http-freespin-stress.igo8.me
+    #operationDomain: https://dos-egame-stresstest.dos88.me
+    operationDomain: http://dos-egame-stresstest-internal.dos88.me
     invokeSingle: true
     cp:
       platformId: 50
@@ -192,7 +202,6 @@ dynamic:
         issuer_url: null
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-sn9dy:qat
-    domain: https://dos-egame-stresstest-internal.dos88.me
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
@@ -236,17 +245,8 @@ dynamic:
         2Xs3r+wtjZBpOrZxn5dMUhEHC7jm/0eLUcwOJ0lkoEnl
         -----END ENCRYPTED PRIVATE KEY-----
       password: egame-secure-passphrase
-httpclient-warm-up:
-  initHosts:
-    http://reward-http-internal-stress.igo8.me: 300
-    http://sw-http-main-apisix-internal-stress.igo8.me: 300
-    https://dos-egame-stresstest-internal.dos88.me: 300
-http:
-  connectTimeout: 1000
-  readTimeout: 500
-  connectionRequestTimeout: 1000
-
 #lark
 lark:
   publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
   warningRobot: b2ff5555-4320-4c50-bfb5-5955cf1b6005
+  shutDownRobot: b9807c8f-9abf-449b-852a-0b180f6e288d

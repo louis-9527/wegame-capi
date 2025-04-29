@@ -34,13 +34,13 @@ public class AchievementApi extends PromotionBaseApi {
     private static final String REDEEM_ACHIEVEMENT_URL_FORMAT = "%s/redeemAchievement";
     private static final String GET_ACHIEVEMENT_URL_FORMAT = "%s/getAchievement";
 
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public GetAchievementRes getAchievement(GetAchievementReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetAchievementReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_ACHIEVEMENT_URL_FORMAT, promotionDomain)));
-            ResponseEntity<CommonRes<GetAchievementRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetAchievementRes>>() {
+            ResponseEntity<CommonRes<GetAchievementRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetAchievementRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -56,13 +56,12 @@ public class AchievementApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public RedeemAchievementRes redeemAchievement(RedeemAchievementReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<RedeemAchievementReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_ACHIEVEMENT_URL_FORMAT, promotionDomain)));
-            ResponseEntity<CommonRes<RedeemAchievementRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemAchievementRes>>() {
+            ResponseEntity<CommonRes<RedeemAchievementRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemAchievementRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);

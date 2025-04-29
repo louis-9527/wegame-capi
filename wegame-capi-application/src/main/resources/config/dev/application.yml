@@ -2,8 +2,9 @@ appid: com.wegame.capi
 ## log
 logging:
   level:
-    com.wegame: info
-    org.mongodb: error
+    org.apache.pulsar: DEBUG
+#    com.wegame: info
+#    org.mongodb: error
 #    org.springframework.web: trace
 #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 #    com.wegame: trace
@@ -78,6 +79,7 @@ spring:
         max-active: 8
         #连接池中的最小空闲连接
         min-idle: 0
+    password: qwe123!@#
   datasource:
     dynamic:
       primary: wegame_user_db
@@ -102,7 +104,7 @@ spring:
             test-on-return: false
             pool-prepared-statements: false
         wegame_backend_db:
-          url: jdbc:mysql://172.31.27.141:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          url: jdbc:mysql://43.199.119.200:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: root
           password: ENC(cLgvk81CoiK2/V32BRs7VzTYCyY2SNPTRNYhIBJOPF3YunMyzWpNFMnQ16/M96iq39MIyiBxQenzOLbOrAnblg==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
@@ -129,9 +131,6 @@ spring:
         malakas_mdb:
           uri: mongodb://43.199.119.200:27017/malakas?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=primary
           db: malakas
-        ibong_adarna_mdb:
-          uri: mongodb://43.199.119.200:27017/ibong?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false&readPreference=primary
-          db: ibong
 ## fastjson
 fastjson:
   parser:
@@ -149,7 +148,9 @@ api:
   game:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: http://sw-http-main-apisix.igo8.me
-    invokeSingle: true
+    freeSpinDomain: https://sw-http-freespin.igo8.me
+    operationDomain: https://dos-egame.dos88.me
+    invokeSingle: false
     cp:
       platformId: 50
       channelId: 1050
@@ -179,12 +180,6 @@ pulsar:
       namespace: ${spring.application.env}
       bet_topic: Malakas_topic
       bet_deadLetter_topic: Malakas_deadLetter_topic
-    ibong_adarna:
-      url: pulsar://pulsar.makillingslot.net:6650
-      tenant: ${spring.application.name}_IbongAdarna
-      namespace: ${spring.application.env}
-      bet_topic: IbongAdarna_topic
-      bet_deadLetter_topic: IbongAdarna_deadLetter_topic
 
 dynamic:
   operation:
@@ -200,7 +195,6 @@ dynamic:
         issuer_url: https://auth.streamnative.cloud
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-sn9dy:qat
-    domain: https://dos-egame.dos88.me
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
@@ -248,3 +242,4 @@ dynamic:
 lark:
   publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
   warningRobot: b2ff5555-4320-4c50-bfb5-5955cf1b6005
+  shutDownRobot: b9807c8f-9abf-449b-852a-0b180f6e288d

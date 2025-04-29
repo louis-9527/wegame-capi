@@ -33,8 +33,8 @@ public class OperationEventApi extends SingleWalletBaseApi {
     private static final String UPDATE_EVENTS_STATUS_URL_FORMAT = "%s/updateEventsStatus";
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
-    @Value("${dynamic.operation.domain}")
-    String dynamicOperationDomain;
+    @Value("${api.game.operationDomain}")
+    String operationDomain;
 
     /**
      * 更新事件状态
@@ -42,7 +42,7 @@ public class OperationEventApi extends SingleWalletBaseApi {
      * @param req 请求参数
      * @return 更新结果
      */
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public UpdateEventsStatusRes updateEventsStatus(UpdateEventsStatusReq req) {
         try {
             // 参数加密
@@ -60,8 +60,8 @@ public class OperationEventApi extends SingleWalletBaseApi {
             RequestEntity<UpdateEventsStatusReq.OperationReq> requestEntity = new RequestEntity<>(operationReq,
                     headers,
                     HttpMethod.POST,
-                    URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, dynamicOperationDomain)));
-            ResponseEntity<UpdateEventsStatusRes> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
+                    URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, operationDomain)));
+            ResponseEntity<UpdateEventsStatusRes> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);

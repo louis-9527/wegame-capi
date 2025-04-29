@@ -18,7 +18,6 @@ public class FreeSpinConverter {
                 .build();
     }
 
-    // FreeSpinDo to FreeSpinVo
     public static FreeSpinVo toVo(FreeSpinDo freeSpinDo) {
         return FreeSpinVo.builder()
                 .playerName(freeSpinDo.getPlayerName())

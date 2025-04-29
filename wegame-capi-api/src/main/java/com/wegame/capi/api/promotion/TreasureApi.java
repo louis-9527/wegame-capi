@@ -34,13 +34,13 @@ public class TreasureApi extends PromotionBaseApi {
     private static final String GET_TREASURE = "%s/getTreasure";
     private static final String REDEEM_TREASURE = "%s/redeemTreasure";
 
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
     public GetTreasureRes getTreasure(GetTreasureReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<GetTreasureReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_TREASURE, promotionDomain)));
-            ResponseEntity<CommonRes<GetTreasureRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetTreasureRes>>() {
+            ResponseEntity<CommonRes<GetTreasureRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetTreasureRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -56,13 +56,12 @@ public class TreasureApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public RedeemTreasureRes redeemTreasure(RedeemTreasureReq req) {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<RedeemTreasureReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(REDEEM_TREASURE, promotionDomain)));
-            ResponseEntity<CommonRes<RedeemTreasureRes>> responseEntity = restTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemTreasureRes>>() {
+            ResponseEntity<CommonRes<RedeemTreasureRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<RedeemTreasureRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);

@@ -1,4 +1,4 @@
-package com.wegame.capi.api.domain.req.promotion;
+package com.wegame.capi.api.domain.req.freespin;
 
 import com.wegame.capi.api.domain.req.BaseReq;
 import lombok.Data;

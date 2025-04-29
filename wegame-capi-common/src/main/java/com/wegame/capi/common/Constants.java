@@ -57,4 +57,12 @@ public class Constants {
     public static final String MALAKAS_PROP = "game.enable.Malakas";
     public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";
 
+
+    public static final long FIVE_MINUTES_AGO = 5 * 60 * 1000;
+
+    public static final long TWO_HOURS_AGO = 2 * 60 * 60 * 1000;
+
+    public static final Double MIN_BET_AMOUNT_M = 1.1;
+
+
 }

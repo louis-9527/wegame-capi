@@ -2,11 +2,12 @@ appid: com.wegame.capi
 ## log
 logging:
   level:
+    org.apache.pulsar: DEBUG
     #    org.springframework.web: info
     #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-    com.wegame: info
-    org.mongodb: error
-#    org.apache.ibatis: info
+    #    com.wegame: info
+    #    org.mongodb: error
+    #    org.apache.ibatis: info
 ## server
 server:
   port: 9500
@@ -57,7 +58,12 @@ spring:
     timeout: 1500
     cluster:
       nodes:
-        - qat-makiling-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
+        - 43.199.119.200:7001
+        - 43.199.119.200:7002
+        - 43.199.119.200:7003
+        - 43.199.119.200:7004
+        - 43.199.119.200:7005
+        - 43.199.119.200:7006
       max-redirects: 5
     redisson:
       minIdlePoolSize: 250
@@ -73,7 +79,7 @@ spring:
         max-active: 1000
         #连接池中的最小空闲连接
         min-idle: 2
-    password:
+    password: qwe123!@#
     client-type: lettuce
   datasource:
     dynamic:
@@ -100,7 +106,7 @@ spring:
             test-on-return: false
             pool-prepared-statements: false
         wegame_backend_db:
-          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: QATmakilingService
           password: ENC(Lm5nLGO2RTUPqHi/nkBU31uk6Zn/vV6GevM9jwwx4Bfck539re9GPagkh6bBi1t/lgexud3+wkye7Gz8qXTqhg==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
@@ -149,6 +155,8 @@ api:
   game:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: http://sw-http-main-apisix.igo8.me
+    freeSpinDomain: https://sw-http-freespin.igo8.me
+    operationDomain: https://dos-egame.dos88.me
     invokeSingle: true
     cp:
       platformId: 50
@@ -197,7 +205,6 @@ dynamic:
         issuer_url: https://auth.streamnative.cloud
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-sn9dy:qat
-    domain: https://dos-egame.dos88.me
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
@@ -245,3 +252,4 @@ dynamic:
 lark:
   publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
   warningRobot: b2ff5555-4320-4c50-bfb5-5955cf1b6005
+  shutDownRobot: b9807c8f-9abf-449b-852a-0b180f6e288d

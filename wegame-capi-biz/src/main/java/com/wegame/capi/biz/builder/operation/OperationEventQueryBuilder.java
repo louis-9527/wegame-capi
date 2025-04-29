@@ -32,15 +32,13 @@ public class OperationEventQueryBuilder {
                 query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
             }
         }
-        query.fields().include("_id", "eventId", "playerName", "minBonus", "maxBonus", "finishBonus", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus");
+        query.fields().include("_id", "eventId", "playerName", "minBonus", "maxBonus", "finishBonus", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus", "updateTime");
         return query;
     }
 
     public static Criteria buildCriteria(OperationEventQuery recordQuery) {
         Criteria criteria = new Criteria();
-        if (Objects.nonNull(recordQuery.getGameId())) {
-            criteria.and("gameId").is(recordQuery.getGameId());
-        }
+
         if (Objects.nonNull(recordQuery.getEventIdList())) {
             criteria.and("eventId").in(recordQuery.getEventIdList());
         }
@@ -68,6 +66,14 @@ public class OperationEventQueryBuilder {
         if (Objects.nonNull(recordQuery.getGtLastId())) {
             criteria.and("_id").gt(recordQuery.getGtLastId());
         }
+        if (Objects.nonNull(recordQuery.getFinishMinAmount())) {
+            criteria.and("$expr").is(
+                    new Document("$gt", Arrays.asList(
+                            "$finishBonus",
+                            new Document("$subtract", Arrays.asList("$maxBonus", recordQuery.getFinishMinAmount()))
+                    ))
+            );
+        }
         return criteria;
     }
 
@@ -76,10 +82,9 @@ public class OperationEventQueryBuilder {
         Criteria criteria = new Criteria();
         long currentMilli = DateUtil.getCurrentMilli();
         criteria.and("playerName").is(playName);
-        criteria.and("gameId").is(gameId);
-        criteria.and("eventStatus").in(Lists.newArrayList(OperationEventStatusEnum.NONE.getCode(), OperationEventStatusEnum.ING.getCode()));
         criteria.and("effectedTime").lte(currentMilli);
         criteria.and("expiredTime").gte(currentMilli);
+        criteria.and("eventStatus").in(Lists.newArrayList(OperationEventStatusEnum.NONE.getCode(), OperationEventStatusEnum.ING.getCode()));
         criteria.and("$expr").is(
                 new Document("lt", Arrays.asList("$finishBonus", "$minBonus"))
         );
@@ -90,11 +95,12 @@ public class OperationEventQueryBuilder {
         return query;
     }
 
+
     public static Query buildQueryOne(Long id) {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
-        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus");
+        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus", "updateTime");
         return query;
     }
 

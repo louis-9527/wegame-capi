@@ -20,7 +20,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -28,7 +27,6 @@ import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 启动类
@@ -53,6 +51,8 @@ public class Application implements CommandLineRunner {
     private String env;
     @Value("${lark.publishRobot}")
     private String publishRobot;
+    @Value("${lark.shutDownRobot}")
+    private String shutDownRobot;
     @Autowired
     List<Executor> executorList;
 
@@ -130,7 +130,7 @@ public class Application implements CommandLineRunner {
             if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
                 return;
             }
-            LarkUtil.sendTextMsg(publishRobot, ServiceShutdownMessage.builder()
+            LarkUtil.sendTextMsg(shutDownRobot, ServiceShutdownMessage.builder()
                     .applicationName(appName)
                     .env(env)
                     .ip(IpUtil.getLocalIp())
