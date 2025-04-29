@@ -23,6 +23,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 import static com.wegame.capi.common.enums.SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID;
@@ -141,11 +142,12 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             } catch (Exception e) {
                 log.error("betWithPayout Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
                 // 发生异常，判断是否达到最大重试时限（重试的最大时限：请求时间 + 5s）
-                canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                canContinueExecute = System.currentTimeMillis() < requestStartTime + 20000L;
                 if (!canContinueExecute) {
                     log.error("betWithPayout BusinessException, reach max retry time limit");
                     throw e;
                 } else {
+                    LockSupport.parkNanos(this, TimeUnit.MILLISECONDS.toNanos(1500));
                     log.warn("betWithPayout immediately retry when error");
                 }
             }
@@ -155,6 +157,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
 
     /**
      * 星卡投注
+     *
      * @param req
      * @return
      */
