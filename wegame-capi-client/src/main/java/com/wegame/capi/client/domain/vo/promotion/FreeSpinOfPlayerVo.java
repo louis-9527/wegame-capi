@@ -40,6 +40,8 @@ public class FreeSpinOfPlayerVo implements Serializable {
         private String channelId;
         @ApiModelProperty("campaignId")
         private String campaignId;
+        @ApiModelProperty("campaignName")
+        private String campaignName;
         @ApiModelProperty("initCount")
         private Integer initCount;
         @ApiModelProperty("remainingCount")

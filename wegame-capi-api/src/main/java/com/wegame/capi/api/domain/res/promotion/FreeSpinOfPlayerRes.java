@@ -36,6 +36,8 @@ public class FreeSpinOfPlayerRes implements Serializable {
         private String channelId;
         /** campaignId */
         private String campaignId;
+        /** campaignName */
+        private String campaignName;
         /** initCount */
         private Integer initCount;
         /** remainingCount */
