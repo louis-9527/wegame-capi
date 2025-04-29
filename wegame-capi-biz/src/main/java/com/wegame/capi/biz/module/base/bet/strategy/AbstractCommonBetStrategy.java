@@ -298,7 +298,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             return Pair.of(rewardResult, rBetRecordDo);
         } else {
             ErrorCode errorCode = RedeemRewardResStatusEnum.convetErrorCode(rewardResult.getStatus());
-            rewardResult.setErrorCode(errorCode == null ? ErrorCode.ERR_INTER : errorCode);
+            rewardResult.setErrorCode(errorCode == null ? ErrorCode.STAR_CARD_USE_ERROR : errorCode);
             return Pair.of(rewardResult, rBetRecordDo);
         }
     }
