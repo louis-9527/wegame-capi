@@ -49,7 +49,7 @@ public class FreeSpinOfPlayerDo implements Serializable {
         /** gameName */
         private String gameName;
         /** totalWin */
-        private Integer totalWin;
+        private BigDecimal totalWin;
         /** freeBet */
         private BigDecimal freeBet;
     }
