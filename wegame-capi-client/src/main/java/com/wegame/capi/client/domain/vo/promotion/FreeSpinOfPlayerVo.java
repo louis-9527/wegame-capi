@@ -53,7 +53,7 @@ public class FreeSpinOfPlayerVo implements Serializable {
         @ApiModelProperty("gameName")
         private String gameName;
         @ApiModelProperty("totalWin")
-        private Integer totalWin;
+        private BigDecimal totalWin;
         @ApiModelProperty("freeBet")
         private BigDecimal freeBet;
     }
