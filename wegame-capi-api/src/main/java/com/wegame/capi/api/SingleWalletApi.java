@@ -41,7 +41,7 @@ import static com.wegame.capi.common.enums.SingleWalletResStatusEnum.DUPLICATE_R
 @Component
 public class SingleWalletApi extends SingleWalletBaseApi {
 
-    private static final long FIVE_SECONDS = 5000L;
+    private static final long TWENTY_SECONDS = 20000L;
     private static final int MAX_DUPLICATE_COUNT = 2;
 
     private static final String AUTH_LOGIN_TOKEN_URL_FORMAT = "%s/authLoginToken";
@@ -113,7 +113,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
                         new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
                         });
                 if (Objects.isNull(responseEntity) || Objects.isNull(responseEntity.getBody())) {
-                    canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                    canContinueExecute = System.currentTimeMillis() < requestStartTime + TWENTY_SECONDS;
                     continue;
                 }
                 CommonRes<SingleWalletBetWithPayoutRes> commonRes = responseEntity.getBody();
@@ -142,7 +142,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             } catch (Exception e) {
                 log.error("betWithPayout Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
                 // 发生异常，判断是否达到最大重试时限（重试的最大时限：请求时间 + 5s）
-                canContinueExecute = System.currentTimeMillis() < requestStartTime + 20000L;
+                canContinueExecute = System.currentTimeMillis() < requestStartTime + TWENTY_SECONDS;
                 if (!canContinueExecute) {
                     log.error("betWithPayout BusinessException, reach max retry time limit");
                     throw e;
@@ -177,7 +177,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
                         new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>() {
                         });
                 if (Objects.isNull(responseEntity) || Objects.isNull(responseEntity.getBody())) {
-                    canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                    canContinueExecute = System.currentTimeMillis() < requestStartTime + TWENTY_SECONDS;
                     continue;
                 }
                 CommonRes<SingleWalletBetWithPayoutRes> commonRes = responseEntity.getBody();
@@ -206,7 +206,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             } catch (Exception e) {
                 log.error("betStarSpin Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
                 // 发生异常，判断是否达到最大重试时限（重试的最大时限：请求时间 + 5s）
-                canContinueExecute = System.currentTimeMillis() < requestStartTime + FIVE_SECONDS;
+                canContinueExecute = System.currentTimeMillis() < requestStartTime + TWENTY_SECONDS;
                 if (!canContinueExecute) {
                     log.error("betStarSpin BusinessException, reach max retry time limit");
                     throw e;
