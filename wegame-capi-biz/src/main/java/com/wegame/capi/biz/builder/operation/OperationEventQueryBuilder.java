@@ -32,15 +32,13 @@ public class OperationEventQueryBuilder {
                 query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
             }
         }
-        query.fields().include("_id", "eventId", "playerName", "minBonus", "maxBonus", "finishBonus", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus","updateTime");
+        query.fields().include("_id", "eventId", "playerName", "minBonus", "maxBonus", "finishBonus", "bonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus", "updateTime");
         return query;
     }
 
     public static Criteria buildCriteria(OperationEventQuery recordQuery) {
         Criteria criteria = new Criteria();
-        if (Objects.nonNull(recordQuery.getGameId())) {
-            criteria.and("gameId").is(recordQuery.getGameId());
-        }
+
         if (Objects.nonNull(recordQuery.getEventIdList())) {
             criteria.and("eventId").in(recordQuery.getEventIdList());
         }
@@ -68,6 +66,14 @@ public class OperationEventQueryBuilder {
         if (Objects.nonNull(recordQuery.getGtLastId())) {
             criteria.and("_id").gt(recordQuery.getGtLastId());
         }
+        if (Objects.nonNull(recordQuery.getFinishMinAmount())) {
+            criteria.and("$expr").is(
+                    new Document("$gt", Arrays.asList(
+                            "$finishBonus",
+                            new Document("$subtract", Arrays.asList("$maxBonus", recordQuery.getFinishMinAmount()))
+                    ))
+            );
+        }
         return criteria;
     }
 
@@ -90,12 +96,11 @@ public class OperationEventQueryBuilder {
     }
 
 
-
     public static Query buildQueryOne(Long id) {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
-        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus","updateTime");
+        query.fields().include("_id", "eventId", "playerName", "bonus", "minBonus", "finishBonus", "betType", "maxBonus", "eventKind", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus", "eventSubStatus", "reportStatus", "updateTime");
         return query;
     }
 
