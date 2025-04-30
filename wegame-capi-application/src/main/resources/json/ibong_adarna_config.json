@@ -30,9 +30,9 @@
     "probabilisticConfig": {
         "commonPlayWheelProbabilisticConfig": {
             "1001": [
-                "18.00",
-                "18.00",
-                "18.00"
+                "18.0000",
+                "18.0000",
+                "18.0000"
             ],
             "1002": [
                 "17.00",
@@ -72,43 +72,43 @@
         },
         "symbolBreakUpProbabilisticConfig": {
             "1001": {
-                "NO_BREAK_UP": "88.4560",
-                "TWO_BREAK_UP": "8.00",
+                "NO_BREAK_UP": "83.7310",
+                "TWO_BREAK_UP": "12.7250",
                 "THREE_BREAK_UP": "3.54400"
             },
             "1002": {
-                "NO_BREAK_UP": "88.4560",
-                "TWO_BREAK_UP": "8.00",
+                "NO_BREAK_UP": "83.7310",
+                "TWO_BREAK_UP": "12.7250",
                 "THREE_BREAK_UP": "3.54400"
             },
             "1003": {
-                "NO_BREAK_UP": "88.4560",
-                "TWO_BREAK_UP": "8.00",
+                "NO_BREAK_UP": "83.7310",
+                "TWO_BREAK_UP": "12.7250",
                 "THREE_BREAK_UP": "3.54400"
             },
             "1004": {
-                "NO_BREAK_UP": "88.4560",
-                "TWO_BREAK_UP": "8.00",
+                "NO_BREAK_UP": "83.7310",
+                "TWO_BREAK_UP": "12.7250",
                 "THREE_BREAK_UP": "3.54400"
             },
             "1005": {
-                "NO_BREAK_UP": "88.4560",
-                "TWO_BREAK_UP": "8.00",
+                "NO_BREAK_UP": "83.7310",
+                "TWO_BREAK_UP": "12.7250",
                 "THREE_BREAK_UP": "3.54400"
             },
             "1006": {
-                "NO_BREAK_UP": "88.4560",
-                "TWO_BREAK_UP": "8.00",
+                "NO_BREAK_UP": "83.7310",
+                "TWO_BREAK_UP": "12.7250",
                 "THREE_BREAK_UP": "3.54400"
             },
             "1007": {
-                "NO_BREAK_UP": "88.4560",
-                "TWO_BREAK_UP": "8.00",
+                "NO_BREAK_UP": "83.7310",
+                "TWO_BREAK_UP": "12.7250",
                 "THREE_BREAK_UP": "3.54400"
             },
             "4001": {
-                "NO_BREAK_UP": "88.4560",
-                "TWO_BREAK_UP": "8.00",
+                "NO_BREAK_UP": "83.7310",
+                "TWO_BREAK_UP": "12.7250",
                 "THREE_BREAK_UP": "3.54400"
             }
         },
@@ -119,7 +119,7 @@
             },
             "2.0": {
                 "NORMAL": "23.00",
-                "EX": "48.600"
+                "EX": "48.6660"
             },
             "3.0": {
                 "NORMAL": "17.00",
@@ -127,7 +127,7 @@
             },
             "5.0": {
                 "NORMAL": "10.0",
-                "EX": "14.400"
+                "EX": "14.3340"
             },
             "10.0": {
                 "NORMAL": "5.00",
