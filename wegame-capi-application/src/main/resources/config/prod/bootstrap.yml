@@ -1,9 +1,9 @@
 #spring:
 #  application:
 #    name: wegame-capi
-#    env: sts
+#    env: prod
 #  profiles:
-#    active: sts
+#    active: prod
 ##  config:
 ##    import:
 ##      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
