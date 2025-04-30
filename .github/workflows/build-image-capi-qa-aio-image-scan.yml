@@ -85,7 +85,7 @@ jobs:
           provenance: false
       
       - name: Time Wait
-        run: sleep 10 && aws sts get-caller-identity
+        run: sleep 10 && apt-get update && apt-get install -y awscli && aws sts get-caller-identity
 
       - name: Scan built image with Inspector
         uses: aws-actions/vulnerability-scan-github-action-for-amazon-inspector@v1
