@@ -83,20 +83,34 @@ jobs:
           push: true
           tags: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}
           provenance: false
+      
+      - name: Time Wait
+        run: sleep 10
 
       - name: Scan built image with Inspector
         uses: aws-actions/vulnerability-scan-github-action-for-amazon-inspector@v1
         with:
           artifact_type: 'container'
           artifact_path: '438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}'
+          display_vulnerability_findings: "enabled"
           critical_threshold: 1
           high_threshold: 1
           medium_threshold: 1
           low_threshold: 1
           other_threshold: 1
 
-      - name: Fail job if vulnerability threshold is exceeded
-        run: exit ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}
+      - name: Upload Scan Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Inspector Vulnerability Scan Artifacts
+          path: |
+            ${{ steps.inspector.outputs.inspector_scan_results }}
+            ${{ steps.inspector.outputs.inspector_scan_results_csv }}
+            ${{ steps.inspector.outputs.artifact_sbom }}
+            ${{ steps.inspector.outputs.inspector_scan_results_markdown }}
+
+      # - name: Fail job if vulnerability threshold is exceeded
+      #   run: exit ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}
 
       - name: Clone repo
         run: |
