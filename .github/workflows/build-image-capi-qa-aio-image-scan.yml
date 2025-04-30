@@ -84,8 +84,13 @@ jobs:
           tags: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}
           provenance: false
       
-      - name: Time Wait
-        run: sleep 10 && apt-get update && apt-get install -y awscli && aws sts get-caller-identity
+      - name: Install AWS CLI and test identity
+        run: |
+          sleep 10
+          sudo apt-get update
+          sudo apt-get install -y awscli
+          aws sts get-caller-identity
+
 
       - name: Scan built image with Inspector
         uses: aws-actions/vulnerability-scan-github-action-for-amazon-inspector@v1
