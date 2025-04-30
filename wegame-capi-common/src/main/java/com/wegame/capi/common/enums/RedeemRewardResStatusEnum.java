@@ -51,7 +51,7 @@ public enum RedeemRewardResStatusEnum {
         if (INSUFFICIENT_CREDIT.code == code) {
             return ErrorCode.STAR_CARD_INSUFFICIENT_CREDIT;
         }
-        if (EXPERIENCE_NOT_MET.code == code) {
+        if (REWARD_EXPIRED.code == code) {
             return ErrorCode.STAR_CARD_EXPIRED;
         }
         return null;
