@@ -121,9 +121,11 @@ spring:
           uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/makiling?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           db: makiling
         malakas_mdb:
+          primary_uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/malakas?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=primary
           uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/malakas?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           db: malakas
         ibong_adarna_mdb:
+          primary_uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/ibong?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/ibong?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           db: ibong
 ## fastjson
@@ -162,13 +164,13 @@ api:
 pulsar:
   dynamic:
     maria_makiling:
-      url: pulsar://pulsar.makillingslot.net:6650
+      url: pulsar://pulsar.makillingslot.org:6650
       tenant: ${spring.application.name}_MariaMakiling
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
     malakas:
-      url: pulsar://pulsar.makillingslot.net:6650
+      url: pulsar://pulsar.makillingslot.org:6650
       tenant: ${spring.application.name}_Malakas
       namespace: ${spring.application.env}
       bet_topic: Malakas_topic
