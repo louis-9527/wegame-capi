@@ -162,7 +162,7 @@ api:
 pulsar:
   dynamic:
     maria_makiling:
-      url: pulsar://pulsar.makillingslot.net:6650
+      url: pulsar://pulsar.makillingslot.org:6650
       tenant: ${spring.application.name}_MariaMakiling
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
