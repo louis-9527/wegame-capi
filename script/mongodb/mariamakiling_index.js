@@ -32,8 +32,8 @@ db.getCollection("mariamakiling_operation_event").drop();
 db.createCollection("mariamakiling_operation_event");
 db.mariamakiling_operation_event.createIndex({createTime: -1, channelId: 1});
 db.mariamakiling_operation_event.createIndex({updateTime: 1, reportStatus: 1});
-db.mariamakiling_operation_event.createIndex({updateTime: 1,eventStatus: 1});
-db.mariamakiling_operation_event.createIndex({playerName: 1, effectedTime: 1, expiredTime: 1,eventStatus: 1});
+db.mariamakiling_operation_event.createIndex({updateTime: 1, eventStatus: 1});
+db.mariamakiling_operation_event.createIndex({playerName: 1, effectedTime: 1, expiredTime: 1, eventStatus: 1});
 db.mariamakiling_operation_event.createIndex({eventId: 1}, {unique: true});
 db.mariamakiling_operation_event.createIndex({expiredTime: 1, reportStatus: 1});
 
