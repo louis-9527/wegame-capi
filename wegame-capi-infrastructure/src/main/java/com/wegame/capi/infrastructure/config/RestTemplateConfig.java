@@ -53,12 +53,12 @@ public class RestTemplateConfig {
         manager.setMaxTotal(walletConnectMaxTotal);
         manager.setDefaultMaxPerRoute(walletConnectDefaultMaxPerRoute);
         HttpClient httpClient = HttpClientBuilder.create().setConnectionManager(manager).build();
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-        clientHttpRequestFactory.setConnectTimeout(walletConnectTimeout);
-        clientHttpRequestFactory.setReadTimeout(walletReadTimeout);
-        clientHttpRequestFactory.setConnectionRequestTimeout(walletConnectionRequestTimeout);
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        factory.setConnectTimeout(walletConnectTimeout);
+        factory.setReadTimeout(walletReadTimeout);
+        factory.setConnectionRequestTimeout(walletConnectionRequestTimeout);
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setRequestFactory(clientHttpRequestFactory);
+        restTemplate.setRequestFactory(factory);
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setSupportedMediaTypes(Arrays.asList(
                 MediaType.TEXT_HTML,
@@ -76,12 +76,12 @@ public class RestTemplateConfig {
         manager.setMaxTotal(promotionConnectMaxTotal);
         manager.setDefaultMaxPerRoute(promotionConnectDefaultMaxPerRoute);
         HttpClient httpClient = HttpClientBuilder.create().setConnectionManager(manager).build();
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
-        clientHttpRequestFactory.setConnectTimeout(promotionConnectTimeout);
-        clientHttpRequestFactory.setReadTimeout(promotionReadTimeout);
-        clientHttpRequestFactory.setConnectionRequestTimeout(promotionConnectionRequestTimeout);
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        factory.setConnectTimeout(promotionConnectTimeout);
+        factory.setReadTimeout(promotionReadTimeout);
+        factory.setConnectionRequestTimeout(promotionConnectionRequestTimeout);
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setRequestFactory(clientHttpRequestFactory);
+        restTemplate.setRequestFactory(factory);
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setSupportedMediaTypes(Arrays.asList(
                 MediaType.TEXT_HTML,
