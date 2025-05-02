@@ -10,7 +10,7 @@ import com.wegame.capi.api.domain.req.promotion.RedeemAchievementReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.GetAchievementRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemAchievementRes;
-import com.wegame.capi.common.enums.SingleWalletPromotionResStatusEnum;
+import com.wegame.capi.common.constants.AchievementErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
-import java.util.Objects;
 
 /**
  * 成就api
@@ -65,15 +64,16 @@ public class AchievementApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            // todo 麦冬：特殊处理，后续单钱包接口支持幂等后移除
-            if (Objects.equals(responseEntity.getBody().getStatus(), SingleWalletPromotionResStatusEnum.TREASURE_ALREADY_REDEEMED.getCode())) {
-                throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_ACHIEVEMENT_REDEEMED, responseEntity.getBody().getMessage());
+            if (!responseEntity.getBody().isSuc()) {
+                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
             }
             AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
-            log.error("redeemAchievement BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
+            log.error("redeemAchievement BusinessException, req: {}, errorCode: {}, errMsg: {}", req, e.getErrorCode().getCode(), e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             log.error("redeemAchievement Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
