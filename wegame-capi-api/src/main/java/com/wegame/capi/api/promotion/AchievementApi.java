@@ -73,7 +73,7 @@ public class AchievementApi extends PromotionBaseApi {
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
-            log.error("redeemAchievement BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
+            log.error("redeemAchievement BusinessException, req: {}, errorCode: {}, errMsg: {}", req, e.getErrorCode().getCode(), e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             log.error("redeemAchievement Exception, req: {}, errMsg: {}", req, e.getMessage(), e);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wegame.base.enums.ErrorCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @ToString
@@ -36,9 +37,9 @@ public enum AchievementErrorCode {
     }
 
     public static AchievementErrorCode valueOfThirdCode(Integer thirdCode) {
-        for (AchievementErrorCode errorCode : values()) {
-            if (errorCode.getErrorCode().equals(thirdCode)) {
-                return errorCode;
+        for (AchievementErrorCode item : values()) {
+            if (StringUtils.equals(item.getThirdCode(), String.valueOf(thirdCode))) {
+                return item;
             }
         }
         return null;
