@@ -8,6 +8,7 @@ import com.wegame.capi.api.base.PromotionBaseApi;
 import com.wegame.capi.api.domain.req.promotion.*;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.*;
+import com.wegame.capi.common.constants.AchievementErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -43,7 +44,11 @@ public class BagApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            if (!responseEntity.getBody().isSuc()) {
+                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+            }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException be) {
@@ -65,7 +70,11 @@ public class BagApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            if (!responseEntity.getBody().isSuc()) {
+                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+            }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException be) {
@@ -128,7 +137,11 @@ public class BagApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            if (!responseEntity.getBody().isSuc()) {
+                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+            }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException be) {
@@ -149,7 +162,11 @@ public class BagApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            if (!responseEntity.getBody().isSuc()) {
+                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+            }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException be) {
