@@ -291,7 +291,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 // 如果重试10次都未获取到结果,返回异常
                 if (i == 10) {
                     log.error("try then 10 rewardResult info,RewardId:{}", betDo.getRewardId());
-                    rewardResult.setErrorCode(ErrorCode.ACHIEVEMENT_INVALID_REWARD_PAYOUT);
+                    rewardResult.setErrorCode(ErrorCode.ERR_INTER);
                     return Pair.of(rewardResult, rBetRecordDo);
                 }
             }
