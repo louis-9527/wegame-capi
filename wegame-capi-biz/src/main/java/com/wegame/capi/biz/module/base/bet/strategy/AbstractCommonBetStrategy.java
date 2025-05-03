@@ -278,7 +278,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
         if (rewardResult.isSuccess()) {
             return Pair.of(rewardResult, rBetRecordDo);
-        } else if (Objects.equals(Integer.valueOf(ErrorCode.ACHIEVEMENT_INVALID_REWARD_PAYOUT.getCode()), rewardResult.getStatus())) {
+        } else if (Objects.equals(Integer.valueOf(AchievementErrorCode.INVALID_REWARD_PAYOUT.getThirdCode()), rewardResult.getStatus())) {
             // 派奖金额超过限制
             long maxPay = AmountUtil.toLong(new BigDecimal(rewardResult.getMessage()));
             log.warn("rewardResult info, status: {}, maxPay: {},PayOutAmount:{}", rewardResult.getStatus(), maxPay, rBetRecordDo.getPayOutAmount());
