@@ -2,12 +2,14 @@ package com.wegame.capi.common.constants;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wegame.base.enums.ErrorCode;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
 @Getter
 @ToString
+@AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AchievementErrorCode {
     INVALID_REWARD("5001", "invalid reward", ErrorCode.ACHIEVEMENT_INVALID_REWARD),
@@ -26,15 +28,12 @@ public enum AchievementErrorCode {
     NO_CONFIG_MATCH_WITH_CHANNEL_ID("5014", "no config match with channelId", ErrorCode.ACHIEVEMENT_NO_CONFIG_MATCH_WITH_CHANNEL_ID),
     INVALID_REWARD_PAYOUT("5015", "invalid reward payout", ErrorCode.ACHIEVEMENT_INVALID_REWARD_PAYOUT);
 
+    /** 三方错误码 */
     private final String thirdCode;
+    /** 三方错误提示信息 */
     private final String msg;
+    /** 关联的业务方错误码 */
     private final ErrorCode errorCode;
-
-    AchievementErrorCode(String thirdCode, String msg, ErrorCode errorCode) {
-        this.thirdCode = thirdCode;
-        this.msg = msg;
-        this.errorCode = errorCode;
-    }
 
     public static AchievementErrorCode valueOfThirdCode(Integer thirdCode) {
         for (AchievementErrorCode item : values()) {
