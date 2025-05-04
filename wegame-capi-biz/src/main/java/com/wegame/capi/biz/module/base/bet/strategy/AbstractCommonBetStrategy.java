@@ -278,7 +278,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         RedeemRewardResultDo rewardResult = bagService.use(betDo.getRewardId(), rBetRecordDo.getPayOutAmount(), rBetRecordDo.getId());
         if (rewardResult.isSuccess()) {
             return Pair.of(rewardResult, rBetRecordDo);
-        } else if (Objects.equals(Integer.valueOf(ErrorCode.ACHIEVEMENT_INVALID_REWARD_PAYOUT.getCode()), rewardResult.getStatus())) {
+        } else if (Objects.equals(Integer.valueOf(AchievementErrorCode.INVALID_REWARD_PAYOUT.getThirdCode()), rewardResult.getStatus())) {
             // 派奖金额超过限制
             long maxPay = AmountUtil.toLong(new BigDecimal(rewardResult.getMessage()));
             log.warn("rewardResult info, status: {}, maxPay: {},PayOutAmount:{}", rewardResult.getStatus(), maxPay, rBetRecordDo.getPayOutAmount());
@@ -291,7 +291,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 // 如果重试10次都未获取到结果,返回异常
                 if (i == 10) {
                     log.error("try then 10 rewardResult info,RewardId:{}", betDo.getRewardId());
-                    rewardResult.setErrorCode(ErrorCode.ACHIEVEMENT_INVALID_REWARD_PAYOUT);
+                    rewardResult.setErrorCode(ErrorCode.ERR_INTER);
                     return Pair.of(rewardResult, rBetRecordDo);
                 }
             }
