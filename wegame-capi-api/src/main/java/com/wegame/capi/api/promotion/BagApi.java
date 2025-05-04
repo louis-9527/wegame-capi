@@ -107,7 +107,7 @@ public class BagApi extends PromotionBaseApi {
      * @param req 请求参数
      * @return
      */
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public CommonRes<RedeemRewardRes> redeemReward(RedeemRewardReq req) {
         try {
             assembleSingleSignature(req);
