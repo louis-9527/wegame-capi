@@ -107,6 +107,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
         }
         throw new BusinessException(ErrorCode.FREE_SPIN_BET_USE_FAILED);
     }
+
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public FreeSpinOfPlayerRes freeSpinOfPlayer(FreeSpinOfPlayerReq req) {
         try {
@@ -133,6 +134,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
+
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public FreeSpinHistoryOfPlayerRes freeSpinHistoryOfPlayer(FreeSpinHistoryOfPlayerReq req) {
         try {
@@ -158,6 +160,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
+
     public CreateFreeSpinRes createFreeSpin(CreateFreeSpinReq req) {
         try {
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
@@ -181,6 +184,8 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
+
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public FreeSpinDetailRes freeSpinDetail(FreeSpinDetailReq req) {
         try {
             assembleSingleSignature(req);
