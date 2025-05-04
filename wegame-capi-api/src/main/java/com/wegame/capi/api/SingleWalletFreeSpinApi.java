@@ -17,6 +17,7 @@ import com.wegame.capi.api.domain.res.promotion.FreeSpinDetailRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinHistoryOfPlayerRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinOfPlayerRes;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
+import com.wegame.capi.common.constants.FreeSpinErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -118,7 +119,11 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            if (!responseEntity.getBody().isSuc()) {
+                FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(freeSpinErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(freeSpinErrorCode.getErrorCode(), freeSpinErrorCode.getMsg());
+            }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
@@ -139,7 +144,11 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            if (!responseEntity.getBody().isSuc()) {
+                FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(freeSpinErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(freeSpinErrorCode.getErrorCode(), freeSpinErrorCode.getMsg());
+            }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
@@ -158,6 +167,11 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            if (!responseEntity.getBody().isSuc()) {
+                FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(freeSpinErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(freeSpinErrorCode.getErrorCode(), freeSpinErrorCode.getMsg());
+            }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
@@ -177,7 +191,11 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            if (!responseEntity.getBody().isSuc()) {
+                FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(freeSpinErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(freeSpinErrorCode.getErrorCode(), freeSpinErrorCode.getMsg());
+            }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
