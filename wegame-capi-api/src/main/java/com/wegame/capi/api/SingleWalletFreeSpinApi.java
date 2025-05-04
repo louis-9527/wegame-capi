@@ -53,7 +53,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
     private static final String CREATE_FREE_SPIN = "%s/callback/createFreeSpin";
     private static final String FREE_SPIN_DETAIL = "%s/freeSpinDetail";
 
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public CommonRes<SingleWalletBetWithPayoutRes> freeSpin(FreeSpinReq req) {
         // 参数签名
         assembleSingleSignature(req);
@@ -108,7 +108,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
         }
         throw new BusinessException(ErrorCode.FREE_SPIN_BET_USE_FAILED);
     }
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public FreeSpinOfPlayerRes freeSpinOfPlayer(FreeSpinOfPlayerReq req) {
         try {
             log.info("freeSpinOfPlayer req: {}", FastJsonUtils.toJSONString(req));
@@ -134,7 +134,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public FreeSpinHistoryOfPlayerRes freeSpinHistoryOfPlayer(FreeSpinHistoryOfPlayerReq req) {
         try {
             assembleSingleSignature(req);
