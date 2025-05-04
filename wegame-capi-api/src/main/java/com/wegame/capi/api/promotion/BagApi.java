@@ -34,7 +34,7 @@ public class BagApi extends PromotionBaseApi {
     private static final String REDEEM_REWARD_URL_FORMAT = "%s/redeemReward";
     private static final String GET_HISTORY_MESSAGE_URL_FORMAT = "%s/getHistoryMessage";
 
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetBagCurrentRewardRes getBagCurrentReward(GetBagCurrentRewardReq req) {
         try {
             assembleSingleSignature(req);
@@ -60,7 +60,7 @@ public class BagApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetBagOtherRewardRes getBagOtherReward(GetBagOtherRewardReq req) {
         try {
             assembleSingleSignature(req);
@@ -127,7 +127,7 @@ public class BagApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetRewardDetailRes getRewardDetail(GetRewardDetailReq req) {
         try {
             assembleSingleSignature(req);
@@ -152,7 +152,7 @@ public class BagApi extends PromotionBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetHistoryMessageRes getHistoryMessage(GetHistoryMessageReq req) {
         try {
             assembleSingleSignature(req);

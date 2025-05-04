@@ -33,7 +33,7 @@ public class AchievementApi extends PromotionBaseApi {
     private static final String REDEEM_ACHIEVEMENT_URL_FORMAT = "%s/redeemAchievement";
     private static final String GET_ACHIEVEMENT_URL_FORMAT = "%s/getAchievement";
 
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetAchievementRes getAchievement(GetAchievementReq req) {
         try {
             assembleSingleSignature(req);

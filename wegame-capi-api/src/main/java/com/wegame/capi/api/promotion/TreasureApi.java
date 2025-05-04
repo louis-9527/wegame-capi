@@ -35,7 +35,7 @@ public class TreasureApi extends PromotionBaseApi {
     private static final String GET_TREASURE = "%s/getTreasure";
     private static final String REDEEM_TREASURE = "%s/redeemTreasure";
 
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetTreasureRes getTreasure(GetTreasureReq req) {
         try {
             assembleSingleSignature(req);
