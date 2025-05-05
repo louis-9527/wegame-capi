@@ -54,7 +54,7 @@ spring:
     timeout: 500
     cluster:
       nodes:
-        - qat-makiling-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379
+        - prod-makiling-redis-sg.7odqjm.clustercfg.apse1.cache.amazonaws.com:6379
       max-redirects: 3
     redisson:
       minIdlePoolSize: 50
@@ -85,9 +85,9 @@ spring:
       strict: true
       datasource:
         wegame_user_db:
-          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: QATmakilingService
-          password: ENC(Lm5nLGO2RTUPqHi/nkBU31uk6Zn/vV6GevM9jwwx4Bfck539re9GPagkh6bBi1t/lgexud3+wkye7Gz8qXTqhg==)
+          url: jdbc:mysql://prod-makiling-mysql-sg.cluster-cnidxkef2jeq.ap-southeast-1.rds.amazonaws.com:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: PROD_Makiling_Service_User
+          password: ENC(QdOoUQKWq8Sg7gyhwSLhK1Gf2UH3ZoNIMKyBqMSlYLv4FOrByxPHoT1xoLnyOH9Ts1vrzTbAnhDlm33b4/3vxA==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           driver-class-name: com.mysql.jdbc.Driver
           type: com.alibaba.druid.pool.DruidDataSource
@@ -104,9 +104,9 @@ spring:
             test-on-return: false
             pool-prepared-statements: false
         wegame_backend_db:
-          url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
-          username: QATmakilingService
-          password: ENC(Lm5nLGO2RTUPqHi/nkBU31uk6Zn/vV6GevM9jwwx4Bfck539re9GPagkh6bBi1t/lgexud3+wkye7Gz8qXTqhg==)
+          url: jdbc:mysql://prod-makiling-mysql-sg.cluster-cnidxkef2jeq.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: PROD_Makiling_Service_User
+          password: ENC(QdOoUQKWq8Sg7gyhwSLhK1Gf2UH3ZoNIMKyBqMSlYLv4FOrByxPHoT1xoLnyOH9Ts1vrzTbAnhDlm33b4/3vxA==)
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           driver-class-name: com.mysql.jdbc.Driver
           druid:
@@ -125,8 +125,8 @@ spring:
     mongodb:
       dynamic:
         maria_makiling_mdb:
-          primary_uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/makiling?compressors=zlib&retryWrites=false&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
-          uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/makiling?compressors=zlib&retryWrites=false&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@makiling-prod-pri.hgmd9m.mongodb.net/makiling?compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@makiling-prod-pri.hgmd9m.mongodb.net/makiling?compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: makiling
 ## fastjson
 fastjson:
@@ -143,27 +143,21 @@ knife4j:
 ## api
 api:
   game:
-    #    promotionDomain: https://reward-http-stress.igo8.me
-    promotionDomain: http://reward-http-internal-stress.igo8.me
-    singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
-    #    freeSpinDomain: https://sw-http-freespin.igo8.me
-    freeSpinDomain: https://sw-http-freespin-stress.igo8.me
-    #operationDomain: https://dos-egame-stresstest.dos88.me
-    operationDomain: http://dos-egame-stresstest-internal.dos88.me
+    promotionDomain: https://reward-http.igo10.me
+    singleDomain: https://sw-inhouse-http-main-v2.igo10.me
+    freeSpinDomain: https://sw-inhouse-http-freespin.igo10.me
+    operationDomain: http://dos-egame.dos10.me
     invokeSingle: true
     cp:
       platformId: 50
-      channelId: 1050
-      privateKey: 739cf125387017046c02d5610a122859844502203284d3509ff897dc54f7bc09
-      privateIv: 32f8e4c142810c8d9a75bce4666198ea
+      channelId: 3050
+      privateKey: 83b3c7bfe1c1419d383b9ca24fcde99b3ba98546324a00318915a8680ffef78b
+      privateIv: 32f6f527671d53424647ae30c014ac9e
     igo:
       platformId: 55
-      channelId: 1051
-      privateKey: 42a495b8c0e9416bd91ff6a7b65043c970acd88f3665e20cb6a12ddeb8e7e47d
-      privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
-  go:
-    wegameGoDomain: http://wegame-go-svc.wegame-stress.svc.cluster.local:9800/go/game
-    secretString: NYjZX8sjmPKQq8N08DzqNQpQUJyxscdZ0AIafaIcZPVVayzPCHKEhdcfUOCEfdji
+      channelId: 3051
+      privateKey: fd86c6c8040ab02e6303f9c632543d27579c2b21009a6a58535db6157d39978d
+      privateIv: d3cb0efe3c18b10db7a2723dec401cc8
 pulsar:
   dynamic:
     maria_makiling:
@@ -175,13 +169,13 @@ pulsar:
 dynamic:
   operation:
     switch: true
-    pulsar_url: pulsar://pulsar-proxy-sw-main-stress.client88.me:6650
+    pulsar_url: pulsar+ssl://pc-39401331.aws-apse1-production-ypeqz.aws.snio.cloud:6651
     pulsar_topic: dos_game_slot_event
     pulsar_group:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
     pulsar:
       auth:
-        issuer_url: null
+        issuer_url: https://auth.streamnative.cloud
         credentials_file_path: /operation_pulsar_privateKey.json
         audience: urn:sn:pulsar:o-sn9dy:qat
     rsa:
@@ -229,6 +223,6 @@ dynamic:
       password: egame-secure-passphrase
 #lark
 lark:
-  publishRobot: 7614441b-3ea3-4b6e-9e53-6aa1feff2b31
+  publishRobot: 5581bc5f-baa8-40b5-859b-0e1becbedf6b
   warningRobot: b2ff5555-4320-4c50-bfb5-5955cf1b6005
-  shutDownRobot: b9807c8f-9abf-449b-852a-0b180f6e288d
+  shutDownRobot: b7a6477c-b829-41d4-acac-599c15aee2dc
