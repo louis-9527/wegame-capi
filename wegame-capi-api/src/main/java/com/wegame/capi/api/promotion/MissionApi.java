@@ -30,7 +30,7 @@ public class MissionApi extends PromotionBaseApi {
 
     private static final String GET_DAILY_MISSION = "%s/getDailyMission";
 
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetDailyMissionRes getDailyMission(GetDailyMissionReq req) {
         try {
             assembleSingleSignature(req);
