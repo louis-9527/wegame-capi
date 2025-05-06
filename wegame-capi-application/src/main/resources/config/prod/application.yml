@@ -177,7 +177,7 @@ dynamic:
       auth:
         issuer_url: https://auth.streamnative.cloud
         credentials_file_path: /operation_pulsar_privateKey.json
-        audience: urn:sn:pulsar:o-sn9dy:qat
+        audience: urn:sn:pulsar:o-sqeqe:egame-prod
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
