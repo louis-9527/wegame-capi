@@ -74,18 +74,23 @@ public class GameMaintainInterceptor extends HandlerInterceptorAdapter {
     }
 
     private GameMaintainConfigDo getMaintainConfig(HttpServletRequest request) {
-        String gameId = getGameId(request);
-        if (Strings.isNullOrEmpty(gameId)) {
+        try {
+            String gameId = getGameId(request);
+            if (Strings.isNullOrEmpty(gameId)) {
+                return null;
+            }
+            return gameMaintainConfigService.selectByGameId(gameId);
+        } catch (Exception e) {
+            log.warn("getMaintainConfig error", e);
             return null;
         }
-        return gameMaintainConfigService.selectByGameId(gameId);
     }
 
     private String getGameId(HttpServletRequest request) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         if (Objects.nonNull(userInfo)) {
             return userInfo.getGameId();
-        }else {
+        } else {
             return request.getHeader(DEFAULT_HEADER_GAME_ID);
         }
     }
