@@ -92,7 +92,7 @@ spring:
           driver-class-name: com.mysql.jdbc.Driver
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 250
+            initial-size: 200
             min-idle: 50
             max-active: 500
             max-wait: 1000
@@ -149,7 +149,7 @@ knife4j:
 ## api
 api:
   game:
-#    promotionDomain: https://reward-http-stress.igo8.me
+    #    promotionDomain: https://reward-http-stress.igo8.me
     promotionDomain: http://reward-http-internal-stress.igo8.me
     singleDomain: http://sw-http-main-apisix-internal-stress.igo8.me
     #    freeSpinDomain: https://sw-http-freespin.igo8.me
