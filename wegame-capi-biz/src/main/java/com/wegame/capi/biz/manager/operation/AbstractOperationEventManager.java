@@ -268,8 +268,8 @@ public abstract class AbstractOperationEventManager {
         }
 
         // 如果投注金额小于系统最小的投注金额,需要判断是否可以赠送出去
-        if (betAmount <= operationEventType().getGameType().getMinBetAmount()) {
-            // 如果投注金额等于最小的投注金额,就需要判断是否能送出去
+      //  if (betAmount <= operationEventType().getGameType().getMinBetAmount()) {
+
             if (eventAmount < Constants.MIN_BET_AMOUNT_M * betAmount) {
                 // 上报
                 log.info("event getInterventionAmount finish amount error eventId:{}", eventDo.getEventId());
@@ -280,7 +280,7 @@ public abstract class AbstractOperationEventManager {
                 }
                 return null;
             }
-        }
+      //  }
         return eventAmount;
     }
 
