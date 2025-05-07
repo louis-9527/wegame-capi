@@ -9,7 +9,7 @@ import static com.wegame.base.CacheConstants.GAME_MAINTAIN_CONFIG;
 @Component(GAME_MAINTAIN_CONFIG)
 public class GameMaintainConfigCache extends AbstractMultiCache {
     public GameMaintainConfigCache() {
-        super(CommonCacheEnvEnum.GAME_MAINTAIN_CONFIG.cacheKeyPrefixName(), 60 * 60, 300, 20);
+        super(CommonCacheEnvEnum.GAME_MAINTAIN_CONFIG.cacheKeyPrefixName(), 10 * 60, 300, 20);
     }
 
     @Override
