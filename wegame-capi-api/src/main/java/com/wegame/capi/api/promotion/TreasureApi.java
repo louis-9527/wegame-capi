@@ -10,6 +10,7 @@ import com.wegame.capi.api.domain.req.promotion.RedeemTreasureReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.GetTreasureRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemTreasureRes;
+import com.wegame.capi.common.constants.AchievementErrorCode;
 import com.wegame.capi.common.enums.SingleWalletPromotionResStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -34,7 +35,7 @@ public class TreasureApi extends PromotionBaseApi {
     private static final String GET_TREASURE = "%s/getTreasure";
     private static final String REDEEM_TREASURE = "%s/redeemTreasure";
 
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetTreasureRes getTreasure(GetTreasureReq req) {
         try {
             assembleSingleSignature(req);
@@ -44,7 +45,11 @@ public class TreasureApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            if (!responseEntity.getBody().isSuc()) {
+                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+            }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
@@ -65,11 +70,11 @@ public class TreasureApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            // todo 麦冬：特殊处理，后续单钱包接口支持幂等后移除
-            if (Objects.equals(responseEntity.getBody().getStatus(), SingleWalletPromotionResStatusEnum.TREASURE_ALREADY_REDEEMED.getCode())) {
-                throw new BusinessException(ErrorCode.ERR_SINGLE_WALLET_TREASURE_REDEEMED, responseEntity.getBody().getMessage());
+            if (!responseEntity.getBody().isSuc()) {
+                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
             }
-            AssertUtil.assertTrue(responseEntity.getBody().isSuc(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {

@@ -141,8 +141,8 @@ api:
   game:
     promotionDomain: http://reward-http.igo8.me
     singleDomain: https://sw-http-main-apisix.igo9.me
-    freeSpinDomain: https://sw-http-freespin.igo8.me
-    operationDomain: https://dos-egame.dos99.me
+    freeSpinDomain: https://sw-http-freespin.igo9.me
+    operationDomain: http://dos-egame.dos99.me
     invokeSingle: true
     cp:
       platformId: 50
