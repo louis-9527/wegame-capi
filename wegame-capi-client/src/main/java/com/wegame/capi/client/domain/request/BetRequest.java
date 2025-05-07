@@ -56,6 +56,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
     @EqualsAndHashCode(callSuper = false)
     @ApiModel(description = "投注详情")
     public static class BetDetail implements BetRequestValidate, Serializable {
+        private static final long serialVersionUID = 7551644737494774350L;
         private static final long MIN_BET_AMOUNT = 300L;
         private static final long MAX_BET_AMOUNT = 10000000L;
         private static final long MULTIPLE = 35;
@@ -97,6 +98,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                 validateFreeSpinBet(gameType, betType, betSubType);
             } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
                 ibongAdarnaValidateParam(gameType, betType, betSubType);
+                validateFreeSpinBet(gameType, betType, betSubType);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORT");
             }
@@ -212,7 +214,11 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             // 投注子类型只能是正常投注/ex投注
             AssertUtil.assertTrue(BetSubTypeEnum.NORMAL_BET.equals(betSubType) || BetSubTypeEnum.EX_BET.equals(betSubType), ErrorCode.ERR_PARAM);
             if (Objects.equals(BetSubTypeEnum.NORMAL_BET, betSubType)) {
-                AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
+                if (useFreeSpin) {
+                    AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
+                } else {
+                    AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
+                }
             } else if (Objects.equals(BetSubTypeEnum.EX_BET, betSubType)) {
                 // ex类型，支付金额必须是投注金额的1.5倍
                 long exceptPayAmount = new BigDecimal(String.valueOf(betAmount)).multiply(new BigDecimal("1.5")).longValue();
