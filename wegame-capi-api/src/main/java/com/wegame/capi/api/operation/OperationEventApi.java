@@ -42,7 +42,7 @@ public class OperationEventApi extends SingleWalletBaseApi {
      * @param req 请求参数
      * @return 更新结果
      */
-    @Retryable(value = RetryException.class, maxAttempts = 1, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public UpdateEventsStatusRes updateEventsStatus(UpdateEventsStatusReq req) {
         try {
             // 参数加密

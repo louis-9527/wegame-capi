@@ -165,6 +165,7 @@ public class BetRecordConverter {
         BetRecordQuery query = new BetRecordQuery();
         query.setId(Optional.ofNullable(request.getId()).map(Long::valueOf).orElse(null));
         query.setPlayerId(userInfo.getPlayerId());
+        query.setChannelId(userInfo.getChannelId());
         query.setStatus(BetStatusEnum.SUCCESS.getCode());
         query.setStartCreateTime(request.getStartCreateTime());
         query.setEndCreateTime(request.getEndCreateTime());

@@ -106,28 +106,39 @@ public class SingleWalletService {
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID.getCode())) {
             // 重复的refId当作成功处理(返回用户成功)
             log.warn("betWithPayout result unknown, duplicate reference id. betRecordId：{} commonRes: {}", betRecordDo.getId(), commonRes);
-            // 查询投注状态
-            BetStatusRes betStatusRes = getBetStatus(BetStatusReqBuilder.buildReq(betRecordDo));
-            SingleWalletBetStatusEnum singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
-            AssertUtil.assertNotNull(singleWalletBetStatus, ErrorCode.ERR_PARAM, "invalid bet status code");
-            // 查询投注状态结果为3， 则多一次重试-------start
-            if (Objects.equals(SingleWalletBetStatusEnum.RECEIVED_PAYOUT_REQUEST, singleWalletBetStatus)) {
-                LockSupport.parkNanos(2000000000L);
-                betStatusRes = getBetStatus(BetStatusReqBuilder.buildReq(betRecordDo));
-                singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
-                log.info("more one time getBetStatus, code: {}", betStatusRes.getCode());
+            if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
+                log.warn("betWithPayout result unknown, duplicate reference id in free spin scene. betRecordId：{} commonRes: {}", betRecordDo.getId(), commonRes);
+                // 获取余额
+                BigDecimal userCredit = getUserCredit();
+                return SingleWalletBetResultDo.builder()
+                        .betId("")
+                        .betStatus(BetStatusEnum.SUCCESS)
+                        .credit(Objects.nonNull(userCredit) ? AmountUtil.toLong(userCredit) : null)
+                        .build();
+            } else {
+                // 查询投注状态
+                BetStatusRes betStatusRes = getBetStatus(BetStatusReqBuilder.buildReq(betRecordDo));
+                SingleWalletBetStatusEnum singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
+                AssertUtil.assertNotNull(singleWalletBetStatus, ErrorCode.ERR_PARAM, "invalid bet status code");
+                // 查询投注状态结果为3， 则多一次重试-------start
+                if (Objects.equals(SingleWalletBetStatusEnum.RECEIVED_PAYOUT_REQUEST, singleWalletBetStatus)) {
+                    LockSupport.parkNanos(2000000000L);
+                    betStatusRes = getBetStatus(BetStatusReqBuilder.buildReq(betRecordDo));
+                    singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
+                    log.info("more one time getBetStatus, code: {}", betStatusRes.getCode());
+                }
+                // 查询投注状态结果为3， 则多一次重试-------end
+                if (Objects.equals(SingleWalletBetStatusEnum.RECEIVED_PAYOUT_REQUEST, singleWalletBetStatus)) {
+                    betStatusService.asyncConvertBetStatus(betRecordDo, GameTypeEnum.valueOfId(betRecordDo.getGameId()));
+                }
+                // 获取余额
+                BigDecimal userCredit = getUserCredit();
+                return SingleWalletBetResultDo.builder()
+                        .betId(betStatusRes.getBetId())
+                        .betStatus(BetStatusEnum.valueOfSingleWalletBetStatus(singleWalletBetStatus))
+                        .credit(Objects.nonNull(userCredit) ? AmountUtil.toLong(userCredit) : null)
+                        .build();
             }
-            // 查询投注状态结果为3， 则多一次重试-------end
-            if (Objects.equals(SingleWalletBetStatusEnum.RECEIVED_PAYOUT_REQUEST, singleWalletBetStatus)) {
-                betStatusService.asyncConvertBetStatus(betRecordDo, GameTypeEnum.valueOfId(betRecordDo.getGameId()));
-            }
-            // 获取余额
-            BigDecimal userCredit = getUserCredit();
-            return SingleWalletBetResultDo.builder()
-                    .betId(betStatusRes.getBetId())
-                    .betStatus(BetStatusEnum.valueOfSingleWalletBetStatus(singleWalletBetStatus))
-                    .credit(Objects.nonNull(userCredit) ? AmountUtil.toLong(userCredit) : null)
-                    .build();
         } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INSUFFICIENT_CREDIT.getCode())) {
             return SingleWalletBetResultDo.builder()
                     .betStatus(BetStatusEnum.FAIL)

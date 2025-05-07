@@ -34,18 +34,22 @@ public class FreeSpinService {
     public CommonRes<SingleWalletBetWithPayoutRes> freeSpin(FreeSpinReq req) {
         return singleWalletFreeSpinApi.freeSpin(req);
     }
+
     public FreeSpinOfPlayerDo freeSpinOfPlayer() {
         FreeSpinOfPlayerRes res = singleWalletFreeSpinApi.freeSpinOfPlayer(buildReq());
         return resToDo(res);
     }
+
     public FreeSpinHistoryOfPlayerDo freeSpinHistoryOfPlayer(Integer page, Integer limit) {
         FreeSpinHistoryOfPlayerRes res = singleWalletFreeSpinApi.freeSpinHistoryOfPlayer(buildReq(page, limit));
         return toDo(res);
     }
+
     public CreateFreeSpinDo createFreeSpin(CreateFreeSpinRequest request) {
         CreateFreeSpinRes res = singleWalletFreeSpinApi.createFreeSpin(buildReq(request));
         return toDo(res);
     }
+
     public FreeSpinDetailDo freeSpinDetail(String campaignId) {
         FreeSpinDetailRes res = singleWalletFreeSpinApi.freeSpinDetail(buildReq(campaignId));
         return toDo(res);
