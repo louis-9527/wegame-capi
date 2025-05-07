@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.listener;
 
 import com.wegame.capi.biz.service.RewardService;
+import com.wegame.capi.biz.service.backend.GameMaintainConfigService;
 import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     GameProperty gameProperty;
     @Autowired
     RewardService rewardService;
+    @Autowired
+    GameMaintainConfigService gameMaintainConfigService;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -29,6 +32,9 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
         try {
             gameProperty.enabledGameTypes().forEach(gameType -> {
                 rewardService.getWithCache(gameType);
+            });
+            gameProperty.enabledGameTypes().forEach(gameType -> {
+                gameMaintainConfigService.selectByGameId(gameType.getId());
             });
         } catch (Exception e) {
             log.error("businessWarmUp error", e);
