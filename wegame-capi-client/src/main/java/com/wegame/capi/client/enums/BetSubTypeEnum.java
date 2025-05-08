@@ -1,18 +1,18 @@
 package com.wegame.capi.client.enums;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 投注子类型
  *
  * @author apple
  */
+@Getter
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum BetSubTypeEnum {
@@ -57,16 +57,6 @@ public enum BetSubTypeEnum {
         this.betType = betType;
     }
 
-    //    public static BetSubTypeEnum valueOfFreeSpinsBetSubType(BetTypeEnum betType) {
-    //        if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
-    //            return FREE_SPINS_BUY_BET;
-    //        } else if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
-    //            return FREE_SPINS_NORMAL_BET;
-    //        } else {
-    //            return null;
-    //        }
-    //    }
-
     public static BetSubTypeEnum valueOfCode(String code) {
         for (BetSubTypeEnum item : BetSubTypeEnum.values()) {
             if (item.getCode().equals(code)) {
@@ -74,18 +64,6 @@ public enum BetSubTypeEnum {
             }
         }
         return null;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public BetTypeEnum getBetType() {
-        return betType;
     }
 
     public static Boolean isFreeWheel(String betSubType) {

@@ -2,18 +2,13 @@ package com.wegame.capi.biz.service;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.api.WeGameGoApi;
 import com.wegame.capi.common.utils.SecureRandomUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 public class RandomService {
-
-    @Autowired
-    WeGameGoApi weGameGoApi;
 
     /**
      * 生成随机数据[min, max]

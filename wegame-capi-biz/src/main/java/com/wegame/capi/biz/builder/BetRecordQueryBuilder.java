@@ -3,7 +3,7 @@ package com.wegame.capi.biz.builder;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
+import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -107,9 +107,6 @@ public class BetRecordQueryBuilder {
         }
         if (Objects.nonNull(recordDo.getPayOutAmount())) {
             update.set("payOutAmount", recordDo.getPayOutAmount());
-        }
-        if (Objects.nonNull(recordDo.getMarketFlag())) {
-            update.set("marketFlag", recordDo.getMarketFlag());
         }
         if (Objects.nonNull(recordDo.getStatus())) {
             update.set("status", recordDo.getStatus());

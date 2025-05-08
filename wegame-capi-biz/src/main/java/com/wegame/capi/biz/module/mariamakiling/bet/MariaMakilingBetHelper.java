@@ -31,7 +31,9 @@ public class MariaMakilingBetHelper implements BetHelper<MariaMakilingGameRecord
     MariaMakilingConfig mariaMakilingConfig;
 
     @Override
-    public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<MariaMakilingGameRecordDo> gameRecordList) {
+    public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(long betRecordId,
+                                                                 BetDo betDo,
+                                                                 List<MariaMakilingGameRecordDo> gameRecordList) {
         // 构建投注记录
         long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))

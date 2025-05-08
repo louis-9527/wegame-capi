@@ -6,9 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author apple
@@ -22,84 +20,119 @@ public class ThreadPoolConfig {
     public static final String betRecordStatusThreadPoolExecutor = "betRecordStatusThreadPoolExecutor";
     public static final String sendMessageThreadPoolExecutor = "sendMessageThreadPoolExecutor";
     public static final String gameRecordPutCacheThreadPoolExecutor = "gameRecordPutCacheThreadPoolExecutor";
+    public static final String operationEventThreadPoolExecutor = "operationEventThreadPoolExecutor";
+    public static final String operationEventReportThreadPoolExecutor = "operationEventReportThreadPoolExecutor";
+    public static final String starCardUseRecordThreadPoolExecutor = "starCardUseRecordThreadPoolExecutor";
 
-    /**
-     * 默认模块-线程池
-     *
-     * @return
-     */
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(100,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(1,
                 100,
-                30L,
+                100L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(1000),
+                new LinkedBlockingQueue(100000),
                 new CustomizableThreadFactory("default-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
-    /**
-     * 投注模块-线程池
-     *
-     * @return
-     */
     @Bean(betRecordThreadPoolExecutor)
     public ThreadPoolExecutor betRecordThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
-                5000,
-                60L,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                1000,
+                100L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(10000),
+                new LinkedBlockingQueue(100000),
                 new CustomizableThreadFactory("bet-record-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
-    /**
-     * 投注模块-线程池
-     *
-     * @return
-     */
     @Bean(betRecordStatusThreadPoolExecutor)
     public ThreadPoolExecutor betRecordStatusThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
-                1000,
-                60L,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(5,
+                100,
+                100L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(100000),
+                new LinkedBlockingQueue<>(100000),
                 new CustomizableThreadFactory("bet-record-status-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
     @Bean(sendMessageThreadPoolExecutor)
     public ThreadPoolExecutor sendMessageThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
                 50,
-                60L,
+                100L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(10000),
+                new LinkedBlockingQueue(1000000),
                 new CustomizableThreadFactory("send-message-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
-        executor.allowCoreThreadTimeOut(true);
+        // executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 
     @Bean(gameRecordPutCacheThreadPoolExecutor)
     public ThreadPoolExecutor gameRecordPutCacheThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
-                50,
-                60L,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
+                100,
+                100L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue(100000),
+                new LinkedBlockingQueue(100000),
                 new CustomizableThreadFactory("game-record-cache-put-thread-pool-"),
                 new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
+    @Bean(operationEventThreadPoolExecutor)
+    public ThreadPoolExecutor operationEventThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                100,
+                100L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue(10000),
+                new CustomizableThreadFactory("operation-event-pool-"),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
+    @Bean(operationEventReportThreadPoolExecutor)
+    public ThreadPoolExecutor operationEventReportThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                100,
+                100L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue(10000),
+                new CustomizableThreadFactory("operation-event-report-pool-"),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
+    @Bean(starCardUseRecordThreadPoolExecutor)
+    public ThreadPoolExecutor starCardUseRecordThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(2,
+                100,
+                100L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(10000),
+                new CustomizableThreadFactory("star-card-use-record-pool-"),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
         return executor;
     }
 }

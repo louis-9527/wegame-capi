@@ -5,11 +5,9 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.OperatorUtil;
-import com.wegame.capi.client.domain.request.query.PageQueryUserRequest;
-import com.wegame.capi.client.domain.vo.UserVo;
 import com.wegame.capi.biz.domain.user.UserDo;
+import com.wegame.capi.client.domain.vo.UserVo;
 import com.wegame.capi.dao.mapper.domain.user.UserPo;
-import com.wegame.capi.dao.mapper.domain.user.UserQuery;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -17,6 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * UserConverter
+ *
  * @author generate
  */
 public class UserConverter {
@@ -122,11 +121,11 @@ public class UserConverter {
 
     public static List<UserDo> poToDoList(List<UserPo> poList) {
         return Optional.ofNullable(poList)
-            .orElse(Collections.emptyList())
-            .stream()
-            .map(UserConverter::poToDo)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(UserConverter::poToDo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public static List<UserPo> doToPoList(List<UserDo> doList, OptEnum optEnum) {
@@ -145,30 +144,6 @@ public class UserConverter {
                 .map(UserConverter::doToVo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-    }
-
-    public static UserQuery requestToQuery(PageQueryUserRequest request, String orderClause) {
-        UserQuery query = new UserQuery();
-        query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
-        query.setPlayerId(request.getPlayerId());
-        query.setPlayerName(request.getPlayerName());
-        query.setNickName(request.getNickName());
-        query.setUserLevel(request.getUserLevel());
-        query.setUserName(request.getUserName());
-        query.setPresentAmount(StringUtils.isNotEmpty(request.getPresentAmount()) ? Long.valueOf(request.getPresentAmount()) : null);
-        query.setExtend(request.getExtend());
-        query.setCreator(request.getCreator());
-        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? new Date(request.getCreateTime()) : null);
-        query.setUpdater(request.getUpdater());
-        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? new Date(request.getUpdateTime()) : null);
-        query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) ? new Date(request.getStartCreateTime()) : null);
-        query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);
-        query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? new Date(request.getStartUpdateTime()) : null);
-        query.setEndUpdateTime(Objects.nonNull(request.getEndUpdateTime()) ? new Date(request.getEndUpdateTime()) : null);
-        query.setLimit(request.getPageSize());
-        query.setOffset(request.getOffset());
-        query.setOrderByClause(orderClause);
-        return query;
     }
 
     ///////////////  above auto generated ///////////////

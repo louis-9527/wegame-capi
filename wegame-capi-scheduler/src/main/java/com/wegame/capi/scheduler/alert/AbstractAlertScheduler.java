@@ -9,7 +9,7 @@ import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.dao.mapper.domain.business.BetRecordQuery;
+import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,8 +31,8 @@ public abstract class AbstractAlertScheduler
     private String appName;
     @Value("${spring.application.env}")
     private String env;
-    @Value("${lark.robot}")
-    private String robot;
+    @Value("${lark.warningRobot}")
+    private String warningRobot;
     @Autowired
     BetRecordService betRecordService;
 
@@ -54,7 +54,7 @@ public abstract class AbstractAlertScheduler
                 .limit(1)
                 .build(), getGameType());
         if (CollectionUtils.isNotEmpty(idList)) {
-            LarkUtil.sendTextMsg(robot, BizAlertMessage.builder()
+            LarkUtil.sendTextMsg(warningRobot, BizAlertMessage.builder()
                     .applicationName(appName)
                     .env(env)
                     .traceId(ThreadMdcUtil.getTraceId())

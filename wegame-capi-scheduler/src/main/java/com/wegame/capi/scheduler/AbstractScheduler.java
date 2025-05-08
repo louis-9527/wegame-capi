@@ -9,7 +9,8 @@ import com.wegame.base.utils.ThreadMdcUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public abstract class AbstractScheduler {
@@ -24,14 +25,15 @@ public abstract class AbstractScheduler {
     }
 
     protected void scheduleWithLock(String lockName, Runnable runnable) {
-        distributeLock.lockThenRun(lockName, () -> {
+        distributeLock.lockThenRun(lockName, 100, TimeUnit.MILLISECONDS, () -> {
             try {
-                log.info("{} schedule task, get lock suc, taskName: {}, lockName: {}", taskName(), lockName);
+                log.info("schedule task, get lock suc, taskName: {}, lockName: {}", taskName(), lockName);
                 MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
                 OperatorContext.setOperator(Constants.SYSTEM_OPERATOR);
                 runnable.run();
             } catch (LockException e) {
-                log.info("{} schedule task warn, get lock fail, taskName: {}, lockName: {}", taskName(), lockName);
+                // do nothing
+                // log.info("schedule task warn, get lock fail, taskName: {}, lockName: {}", taskName(), lockName);
             } catch (Exception e) {
                 log.error("{} schedule task error, errMsg: {}", taskName(), e.getMessage(), e);
             } finally {

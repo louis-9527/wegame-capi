@@ -1,0 +1,116 @@
+package com.wegame.capi.api.domain.req.singlewallet;
+
+import com.wegame.capi.api.domain.req.BaseReq;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.math.BigDecimal;
+
+@Data
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class BetStarSpinReq extends BaseReq {
+    private static final long serialVersionUID = 2474046915423606033L;
+    private static final BigDecimal zero = BigDecimal.ZERO;
+
+    private BigDecimal betAmount;
+
+    private BigDecimal payoutAmount;
+
+    private BetDetails betDetails;
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BetDetails {
+        private String gameId;
+        private String roundNo;
+        private Long wagersDate;
+        private Long settlementDate;
+        private Boolean isFreeRound;
+        private JackpotDetails jackpotDetails;
+
+        @Data
+        @SuperBuilder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class JackpotDetails {
+            private JackpotPool jackpotPool = new JackpotPool();
+            private JackpotContributionDetails jackpotContributionDetails = new JackpotContributionDetails();
+        }
+
+        @Data
+        @SuperBuilder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class JackpotPool {
+            private BigDecimal totalJackpotAmount = zero;
+            private GrandPool grandPool = new GrandPool();
+            private MajorPool majorPool = new MajorPool();
+            private MinorPool minorPool = new MinorPool();
+            private MiniPool miniPool = new MiniPool();
+            private BetBonusPool betBonusPool = new BetBonusPool();
+        }
+
+        @Data
+        @SuperBuilder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class JackpotContributionDetails {
+            private BigDecimal grandContributionAmount = zero;
+            private BigDecimal majorContributionAmount = zero;
+            private BigDecimal minorContributionAmount = zero;
+            private BigDecimal miniContributionAmount = zero;
+            private BigDecimal betBonusContributionAmount = zero;
+        }
+
+        @Data
+        @SuperBuilder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class GrandPool {
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
+        }
+
+        @Data
+        @SuperBuilder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class MajorPool {
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
+        }
+
+        @Data
+        @SuperBuilder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class MinorPool {
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
+        }
+
+        @Data
+        @SuperBuilder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class MiniPool {
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
+        }
+
+        @Data
+        @SuperBuilder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class BetBonusPool {
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
+        }
+    }
+}

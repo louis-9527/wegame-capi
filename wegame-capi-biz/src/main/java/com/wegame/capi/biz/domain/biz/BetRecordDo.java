@@ -4,11 +4,11 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
  * bet_record：投注记录
+ *
  * @author generate
  */
 @Data
@@ -49,12 +49,22 @@ public class BetRecordDo<T> implements Serializable {
     private String playerName;
     /**
      * 投注类型
+     *
+     * @see com.wegame.capi.client.enums.BetTypeEnum
      */
     private String betType;
     /**
      * 投注子类型
+     *
+     * @see com.wegame.capi.client.enums.BetSubTypeEnum
      */
     private String betSubType;
+    /**
+     * 投注营销类型
+     *
+     * @see com.wegame.capi.common.enums.BetPromotionTypeEnum
+     */
+    private Integer betPromotionType;
     /**
      * 投注id（单钱包）
      */
@@ -80,13 +90,17 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Boolean reachMaxMultiple;
     /**
-     * 营销标识 0否 1是
-     */
-    private Integer marketFlag;
-    /**
-     * 状态 0进行中 1已完结 2无效
+     * 投注状态 0进行中 1已完结 2无效
      */
     private Integer status;
+    /**
+     * 投注时间
+     */
+    private Long betTime;
+    /**
+     * 扩展信息
+     */
+    private ExtendInfo extendInfo;
     /**
      * 创建人
      */
@@ -103,8 +117,36 @@ public class BetRecordDo<T> implements Serializable {
      * 更新时间
      */
     private Long updateTime;
-
     ///////////////  above auto generated ///////////////
+    /**
+     * 游戏记录列表
+     */
     private List<T> gameRecordList;
+
+    /**
+     * 扩展信息
+     */
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class ExtendInfo implements Serializable {
+        private static final long serialVersionUID = 1L;
+        /**
+         * 干预事件Id(当这笔订单属于干预订单时生成,对于 EventId 需要传给单钱包)
+         */
+        private String ieId;
+        /**
+         * （星卡）奖励图片url
+         */
+        private String rewardUrl;
+        // ------------------------------------------------------------------------------------------------------------
+        /**
+         * 预定投注Id
+         */
+        private String campaignId;
+    }
 }
 

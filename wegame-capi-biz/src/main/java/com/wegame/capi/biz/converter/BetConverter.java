@@ -7,6 +7,7 @@ import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -24,6 +25,7 @@ public class BetConverter {
                 .gameType(gameType)
                 .betType(BetTypeEnum.valueOfCode(betRequest.getBetType()))
                 .betSubType(BetSubTypeEnum.valueOfCode(betRequest.getBetSubType()))
+                .betPromotionType(BetPromotionTypeEnum.NONE)
                 .betAmount(Long.valueOf(betRequest.getBetDetail().getBetAmount()))
                 .payAmount(Long.valueOf(betRequest.getBetDetail().getPayAmount()))
                 .betRecordId(StringUtils.isNotEmpty(betRequest.getBetDetail().getBetRecordId())
@@ -32,8 +34,11 @@ public class BetConverter {
                 .gameRecordId(StringUtils.isNotEmpty(betRequest.getBetDetail().getGameRecordId())
                         ? Long.valueOf(betRequest.getBetDetail().getGameRecordId())
                         : null)
+                .useStarCard(betRequest.getBetDetail().isUseStarCard())
+                .rewardConfigId(betRequest.getBetDetail().getRewardConfigId())
+                .rewardId(betRequest.getBetDetail().getRewardId())
+                .useFreeSpin(betRequest.getBetDetail().isUseFreeSpin())
+                .campaignId(betRequest.getBetDetail().getCampaignId())
                 .build();
     }
-
-
 }

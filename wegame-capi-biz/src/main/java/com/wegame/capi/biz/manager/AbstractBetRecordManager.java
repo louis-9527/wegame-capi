@@ -4,7 +4,7 @@ import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
+import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -39,5 +39,7 @@ public abstract class AbstractBetRecordManager<T extends ToVoConverter> {
     public abstract List<?> listGameRecordVo(Long betRecordId, GameTypeEnum gameType);
 
     public abstract Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType);
+
+    public abstract void putGameRecordCache(List<T> gameRecordList, GameTypeEnum gameType, String cacheKey);
 
 }

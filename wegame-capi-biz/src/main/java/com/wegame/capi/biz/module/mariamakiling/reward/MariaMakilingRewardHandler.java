@@ -11,16 +11,16 @@ import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
-import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
-import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
@@ -58,8 +58,6 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
     OddsCalculateStrategy mariaMakilingOddsCalculateStrategy;
     @Autowired
     MultipleCalculateStrategy mariaMakilingMultipleCalculateStrategy;
-    @Autowired
-    BetRecordService betRecordService;
     @Autowired
     RandomService randomService;
     @Autowired
@@ -114,7 +112,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
         // 5.构建中奖结果
         RewardResultDo<SymbolDo> rewardResult = RewardResultDo.<SymbolDo>builder()
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
-                .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
+                .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
                 .hasRewardFreeWheel(hasRewardScatter(rewardLineList))
@@ -254,10 +252,10 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
         // 校验：滚轮行数
         GameInfoDo gameInfo = rewardHandle.getGameInfo();
         AssertUtil.assertTrue(symbolArr.length == gameInfo.getRow(), ErrorCode.ERR_PARAM, "symbol arr err");
-        for (int row = 0; row < gameInfo.getRow(); row++) {
+        for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             // 校验：滚轮列数
             AssertUtil.assertTrue(symbolArr[row].length == gameInfo.getColumn(), ErrorCode.ERR_PARAM, "symbol arr err");
-            for (int column = 0; column < gameInfo.getColumn(); column++) {
+            for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
                 // 校验：所有元素不能为空
                 AssertUtil.assertNotNull(symbolArr[row][column], ErrorCode.ERR_PARAM, "all symbol can not be null");
                 // 校验：第一列不能包含wild

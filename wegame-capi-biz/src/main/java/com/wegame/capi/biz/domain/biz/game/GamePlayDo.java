@@ -48,5 +48,11 @@ public class GamePlayDo implements Serializable {
      * 投注记录id
      */
     private Long betRecordId;
+    ///////////////
+    /**
+     * 干预事件配置-投注记录ID
+     */
+    private Long operationEventConfigBetRecordId;
+    private GameOperationEventDo gameEventDo;
 }
 

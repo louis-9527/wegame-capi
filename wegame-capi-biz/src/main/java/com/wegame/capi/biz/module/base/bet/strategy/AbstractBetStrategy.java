@@ -11,6 +11,7 @@ import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.SingleWalletService;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 抽象投注策略<br>
@@ -31,6 +31,7 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends ToVoConverter>
         implements BetStrategy<RD> {
+    private static final int RETRY_TIMES = 3;
     @Autowired
     public SingleWalletService singleWalletService;
     @Autowired
@@ -42,19 +43,26 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
 
     public abstract AbstractBetRecordManager<R> betRecordManager();
 
+    public long generateId() {
+        return snowflakeIdGenerator.nextId();
+    }
+
     public long generateBetRecordId() {
-        long betRecordId = snowflakeIdGenerator.nextId();
-        return betRecordId;
+        return snowflakeIdGenerator.nextId();
     }
 
     /**
      * 保存投注记录并投注派彩
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
-        if (syncOpt) {
-            return syncSaveBetRecordAndBetWithPayout(betRecordDo);
+        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
+            return asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
         } else {
-            return asyncSaveBetRecordAndBetWithPayout(betRecordDo);
+            if (syncOpt) {
+                return syncSaveBetRecordAndBetWithPayout(betRecordDo);
+            } else {
+                return asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+            }
         }
     }
 
@@ -75,34 +83,26 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         return betSingleWalletResult;
     }
 
-    public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+    public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, boolean syncOpt) {
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
-        //        MessageId addMessageId = pulsarProducer.syncSendMessage(getGameContext().getGameInfo().getGameType(),addMqMessage, RETRY_TIMES);
-        //        AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
-        CompletableFuture<MessageId> future = pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(), addMqMessage);
+        MessageId addMessageId = pulsarProducer.syncSendMessage(gameContext().gameInfo().getGameType(), addMqMessage, RETRY_TIMES);
+        AssertUtil.assertNotNull(addMessageId, ErrorCode.ERR_INTER);
         SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            MessageId messageId;
-            try {
-                messageId = future.get();
-            } catch (Exception e) {
-                log.error("asyncSendMessage send fail, to syncSendMessage, betRecordId: {}", betRecordDo.getId());
-                messageId = pulsarProducer.syncSendMessage(gameContext().gameInfo().getGameType(), addMqMessage);
-            }
-            if (Objects.isNull(messageId)) {
-                log.error("syncSendMessage send fail, sync add data, betRecordId: {}", betRecordDo.getId());
-                // 新增消息发送失败，则转同步写db
-                betRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
+            if (syncOpt && Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
+                // 同步设置游戏记录缓存
+                String cacheKey = String.format("%s_%s", betRecordDo.getId(), betRecordDo.getPlayerId());
+                betRecordManager().putGameRecordCache(betRecordDo.getGameRecordList(), gameContext().gameInfo().getGameType(), cacheKey);
             }
             // 异步发送更新消息: 更新为投注成功
-            pulsarProducer.asyncSendMessageThenRetry(gameContext().gameInfo().getGameType(),
+            pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
             return betSingleWalletResult;
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("asyncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
-            // 异步发送更新消息: 更新为投注成功
-            pulsarProducer.asyncSendMessageThenRetry(gameContext().gameInfo().getGameType(),
+            // 异步发送更新消息: 更新为投注失败
+            pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(),
                     buildUpdateMessage(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult));
         }
         return betSingleWalletResult;

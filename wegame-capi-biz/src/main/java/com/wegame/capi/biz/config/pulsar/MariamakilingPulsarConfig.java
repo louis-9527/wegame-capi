@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,12 +13,15 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static com.wegame.base.PulsarConstants.PULSAR_TOPIC_FORMAT;
+import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * @author apple
  */
 @Slf4j
 @Configuration
+@ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
 public class MariamakilingPulsarConfig {
 
     @Value("${pulsar.dynamic.maria_makiling.url}")
@@ -33,9 +37,20 @@ public class MariamakilingPulsarConfig {
 
     @Bean(name = "mariaMakilingPulsarClient", destroyMethod = "close")
     public PulsarClient mariaMakilingPulsarClient() throws Exception {
-        return PulsarClient.builder()
+        PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(mariaMakilingUrl)
+                .keepAliveInterval(30, TimeUnit.SECONDS)
+                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
+                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
+                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
+                .listenerThreads(Runtime.getRuntime().availableProcessors())
+                .connectionsPerBroker(60)
+                .connectionMaxIdleSeconds(3000)
+                .enableTcpNoDelay(true)
+                // 10分钟打印一次统计信息
+                .statsInterval(600, TimeUnit.SECONDS)
                 .build();
+        return pulsarClient;
     }
 
     @Bean(name = "mariamakilingProducer", destroyMethod = "close")
@@ -46,14 +61,16 @@ public class MariamakilingPulsarConfig {
                 // 开启批量发送
                 .enableBatching(true)
                 .batcherBuilder(BatcherBuilder.KEY_BASED)
-                .batchingMaxMessages(200) // 每批最大 200 条消息
+                .batchingMaxMessages(100) // 每批最大 200 条消息
                 // .batchingMaxBytes(4 * 1024) // 每个批次最大 4 KB
                 // 10ms 内合并批量消息
                 // 最大延迟 10 毫秒
                 .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)
-                .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
+                .sendTimeout(150, TimeUnit.MILLISECONDS)
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
+                .autoUpdatePartitions(true)
+                .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
                 .create();
     }
 
@@ -71,16 +88,19 @@ public class MariamakilingPulsarConfig {
                 .receiverQueueSize(2000)
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(500)  // 批量最多100条
+                        // 批量最多100条
+                        .maxNumMessages(500)
                         .timeout(100, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**
-                        .maxRedeliverCount(15)
+                        .maxRedeliverCount(10)
                         // **死信队列**
                         .deadLetterTopic(deadLetterTopic)
                         .build())
                 // .keySharedPolicy(KeySharedPolicy.stickyHashRange())
+                .autoUpdatePartitions(true)
+                .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
                 .subscribe();
     }
 
@@ -93,12 +113,15 @@ public class MariamakilingPulsarConfig {
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener((consumer, msg) -> {
                     String message = new String(msg.getData());
-                    log.warn("Message moved to DLQ, consumerName: {},msgCount:{}", consumer.getConsumerName(), message);
+                    log.error("Message moved to DLQ, consumerName: {}, msgContent:{}", consumer.getConsumerName(), message);
                     try {
                         consumer.acknowledge(msg);
                     } catch (Exception e) {
                         log.error("Message moved acknowledge error:", e);
                     }
-                }).subscribe();
+                })
+                .autoUpdatePartitions(true)
+                .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
+                .subscribe();
     }
 }

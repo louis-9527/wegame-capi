@@ -2,6 +2,7 @@ package com.wegame.capi.application;
 
 import com.alibaba.druid.util.StringUtils;
 import com.wegame.base.domain.ServicePublishMessage;
+import com.wegame.base.domain.ServiceShutdownMessage;
 import com.wegame.base.enums.EnvEnum;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.base.utils.LarkUtil;
@@ -19,10 +20,12 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -46,11 +49,12 @@ public class Application implements CommandLineRunner {
     private String appName;
     @Value("${spring.application.env}")
     private String env;
-    @Value("${lark.robot}")
-    private String robot;
-
+    @Value("${lark.publishRobot}")
+    private String publishRobot;
+    @Value("${lark.shutDownRobot}")
+    private String shutDownRobot;
     @Autowired
-    List<ExecutorService> executorList;
+    List<Executor> executorList;
 
     public static void main(String[] args) {
         log.info("Begin Start Application 😄😄😄😄😄😄");
@@ -61,48 +65,78 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        try {
-            log.info("start Application after env: {}", env);
-            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
-                return;
-            }
-            LarkUtil.sendTextMsg(robot, ServicePublishMessage.builder()
-                    .applicationName(appName)
-                    .env(env)
-                    .ip(IpUtil.getLocalIp())
-                    .build().buildMessage());
-        } catch (Throwable te) {
-            log.warn("send publish message fail:{}", te.getMessage(), te);
-        }
-
+        log.info("start Application after env: {}", env);
+        sendPublishMessage();
     }
 
     @PreDestroy
     public void destroy() {
         log.info("start destroy executor before destroy");
-        executorList.forEach(executor -> {
-            try {
-                executor.shutdown();
-                while (!executor.isTerminated()) {
-                    // 等待线程池中所有任务完成
-                }
-                log.info("executor {} graceful stop success", executor);
-            } catch (Exception e) {
-                log.error("executor {} graceful stop fail:{}", e.getMessage(), e);
+        executorList.forEach(item -> {
+            if (item instanceof ExecutorService) {
+                gracefulShutdown((ExecutorService) item);
+            } else if (item instanceof ThreadPoolTaskScheduler){
+                gracefulShutdown((ThreadPoolTaskScheduler) item);
+            } else {
+                log.error("unknown executor: {}", item);
             }
-            //            try {
-            //                executor.shutdown();
-            //                boolean stopFlag = executor.awaitTermination(20, TimeUnit.SECONDS);
-            //                if (stopFlag) {
-            //                    log.info("executorService graceful stop success ,{},{}", executor, stopFlag);
-            //                } else {
-            //                    log.info("executorService graceful stop fail after 20 seconds,force stop it,{},{}", executor, stopFlag);
-            //                    executor.shutdownNow();
-            //                }
-            //            } catch (InterruptedException e) {
-            //                log.info("executorService graceful stop exception,force stop it,{}", executor);
-            //                executor.shutdownNow();
-            //            }
         });
+        sendShutdownMessage();
+    }
+
+    private void gracefulShutdown(ExecutorService executorService) {
+        try {
+            log.info("before executor gracefulShutdown: {}", executorService);
+            executorService.shutdown();
+            while (!executorService.isTerminated()) {
+                // 等待线程池中所有任务完成
+            }
+            log.info("after executor graceful: {}", executorService);
+        } catch (Exception e) {
+            log.error("executor gracefulShutdown error:{}", executorService, e);
+        }
+    }
+
+    private void gracefulShutdown(ThreadPoolTaskScheduler taskScheduler) {
+        try {
+            log.info("before executor gracefulShutdown: {}", taskScheduler.getScheduledExecutor());
+            taskScheduler.setWaitForTasksToCompleteOnShutdown(true);
+            taskScheduler.shutdown();
+            gracefulShutdown(taskScheduler.getScheduledExecutor());
+            gracefulShutdown(taskScheduler.getScheduledThreadPoolExecutor());
+            log.info("after executor graceful: {}", taskScheduler);
+        } catch (Exception e) {
+            log.error("executor gracefulShutdown error:{}", taskScheduler, e);
+        }
+    }
+
+    private void sendPublishMessage() {
+        try {
+            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
+                return;
+            }
+            LarkUtil.sendTextMsg(publishRobot, ServicePublishMessage.builder()
+                    .applicationName(appName)
+                    .env(env)
+                    .ip(IpUtil.getLocalIp())
+                    .build().buildMessage());
+        } catch (Exception e) {
+            log.warn("send publish message fail:{}", e.getMessage(), e);
+        }
+    }
+
+    private void sendShutdownMessage() {
+        try {
+            if (StringUtils.equals(env, EnvEnum.LOCAL.getValue())) {
+                return;
+            }
+            LarkUtil.sendTextMsg(shutDownRobot, ServiceShutdownMessage.builder()
+                    .applicationName(appName)
+                    .env(env)
+                    .ip(IpUtil.getLocalIp())
+                    .build().buildMessage());
+        } catch (Throwable te) {
+            log.warn("send shutdown message fail:{}", te.getMessage(), te);
+        }
     }
 }

@@ -8,7 +8,7 @@ import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.vo.mariamaking.MariaMakilingGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.dao.mapper.domain.business.GameRecordQuery;
+import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,25 +33,25 @@ public class MariaMakilingBetRecordManager extends AbstractBetRecordManager<Mari
     GameRecordService<MariaMakilingGameRecordDo> gameRecordService;
 
     @Override
-    @Transactional(transactionManager = mariamakilingTransactionManager)
+    @Transactional(transactionManager = mariamakilingTransactionManager, rollbackFor = Exception.class)
     public Long add(BetRecordDo<MariaMakilingGameRecordDo> betRecord, GameTypeEnum gameType) {
         try {
             AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
             betRecordService.add(betRecord, gameType);
         } catch (DuplicateKeyException e) {
-            log.warn("add Duplicate key, betRecordId: {}", betRecord.getId(), e);
-            return betRecord.getId();
+            log.warn("add Duplicate key, betRecordId: {}", betRecord.getId());
+            throw e;
         }
         boolean ret = gameRecordService.batchAdd(betRecord.getGameRecordList(), gameType, MariaMakilingGameRecordDo.class);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         // 异步设置游戏记录缓存
-        String cacheKey = String.format("%s_%s", betRecord.getId(), betRecord.getPlayerId());
-        gameRecordService.asyncPutCache(betRecord.getGameRecordList(), gameType, cacheKey);
+        //        String cacheKey = String.format("%s_%s", betRecord.getId(), betRecord.getPlayerId());
+        //        gameRecordService.asyncPutCache(betRecord.getGameRecordList(), gameType, cacheKey);
         return betRecord.getId();
     }
 
     @Override
-    @Transactional(transactionManager = mariamakilingTransactionManager)
+    @Transactional(transactionManager = mariamakilingTransactionManager, rollbackFor = Exception.class)
     public boolean batchAdd(List<BetRecordDo<MariaMakilingGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
@@ -84,6 +84,7 @@ public class MariaMakilingBetRecordManager extends AbstractBetRecordManager<Mari
         //            query.setFromPrimary(true);
         //            recordDos = gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
         //        }
+        log.info("list game record from db");
         return gameRecordService.list(query, gameType, MariaMakilingGameRecordDo.class);
     }
 
@@ -106,5 +107,11 @@ public class MariaMakilingBetRecordManager extends AbstractBetRecordManager<Mari
     @Override
     public Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
         return gameRecordService.count(query, gameType);
+    }
+
+    @Override
+    public void putGameRecordCache(List<MariaMakilingGameRecordDo> gameRecordList, GameTypeEnum gameType, String cacheKey) {
+        // 异步设置游戏记录缓存
+        gameRecordService.asyncPutCache(gameRecordList, gameType, cacheKey);
     }
 }

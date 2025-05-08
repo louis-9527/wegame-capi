@@ -23,9 +23,9 @@ public class Constants {
             "if redis.call('LLEN', key) > maxSize then\n" +
             "    redis.call('LTRIM', key, -maxSize, -1)\n" +
             "end";
-    public static final Integer WEGAME_REWARD_NOTIFY_SIZE = 10;
+    public static final Integer MARIA_MARKILING_REWARD_NOTIFY_SIZE = 10;
     // 推送大奖tips内容
-    public static final String WEGAME_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+    public static final String MARIA_MARKILING_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
 
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
@@ -33,5 +33,27 @@ public class Constants {
 
     public static final int CONST_10000 = 10000;
     public static final int CONST_1000000 = 1000000;
+
+    public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event_2:%s_%s";
+    public static final String OPERATION_EVENT_ING_KEY = "wegame:cuser:operation_event_ing:%s_%s";
+    public static final Long OPERATION_EVENT_ING_EXPIRED = 20 * 60L;
+
+
+    public static final String OPERATION_EVENT_CONFIG_INCREMENT_CACHE_KEY = "wegame:cuser:operation_config_increment:%s_%s_%s";
+
+    public static final String OPT_BUSY = "Too many requests. Please try again later.";
+
+
+    // property
+    public static final String TRUE_VAL = "true";
+    public static final String MARIA_MAKILING_PROP = "game.enable.MariaMakiling";
+
+
+    public static final long FIVE_MINUTES_AGO = 5 * 60 * 1000;
+
+    public static final long TWO_HOURS_AGO = 2 * 60 * 60 * 1000;
+
+    public static final Double MIN_BET_AMOUNT_M = 1.1;
+
 
 }

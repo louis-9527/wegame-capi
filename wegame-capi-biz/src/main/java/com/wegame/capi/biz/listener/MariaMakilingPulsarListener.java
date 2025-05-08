@@ -6,18 +6,20 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
-import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+
+import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 @Slf4j
 @Component
-public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMakilingGameRecordDo>{
-    @Autowired
-    BetRecordService betRecordService;
+@ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
+public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMakilingGameRecordDo> {
     @Autowired
     MariaMakilingBetRecordManager mariaMakilingBetRecordManager;
     @Autowired
@@ -35,7 +37,8 @@ public class MariaMakilingPulsarListener extends AbstractPulsarListener<MariaMak
 
     @Override
     public TypeReference<MQMessage<BetRecordDo<MariaMakilingGameRecordDo>>> getTypeReference() {
-        return new TypeReference<MQMessage<BetRecordDo<MariaMakilingGameRecordDo>>>() {};
+        return new TypeReference<MQMessage<BetRecordDo<MariaMakilingGameRecordDo>>>() {
+        };
     }
 
     @Override
