@@ -13,6 +13,9 @@ import com.wegame.capi.biz.service.BetService;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 public class CommonControllerTest extends BaseTest {
@@ -21,7 +24,8 @@ public class CommonControllerTest extends BaseTest {
     CommonController commonController;
     @Test
     public void test_ping() {
-        CommonResponse<String> commonResponse = commonController.ping();
+        HttpServletResponse response = new MockHttpServletResponse();
+        CommonResponse<String> commonResponse = commonController.ping(response);
         Assert.assertNotNull(commonResponse);
         Assert.assertNotNull(commonResponse.getData());
         Assert.assertTrue(StringUtils.equals(commonResponse.getData(), "pong"));
