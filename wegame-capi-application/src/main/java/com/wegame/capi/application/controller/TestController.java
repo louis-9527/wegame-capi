@@ -1,35 +1,35 @@
-//package com.wegame.capi.application.controller;
-//
-//import com.alibaba.fastjson.JSON;
-//import com.wegame.base.domain.CommonResponse;
-//import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
-//import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
-//import com.wegame.capi.biz.service.freespin.FreeSpinService;
-//import com.wegame.capi.client.domain.request.promotion.CreateFreeSpinRequest;
-//import com.wegame.capi.client.domain.vo.promotion.CreateFreeSpinVo;
-//import io.swagger.annotations.Api;
-//import io.swagger.annotations.ApiOperation;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//import static com.wegame.base.domain.CommonResponse.build;
-//import static com.wegame.capi.biz.converter.promotion.CreateFreeSpinConverter.toVo;
-//
-//
-//@Slf4j
-//@RestController
-//@RequestMapping("test")
-//@Api(value = "测试模块", tags = {"测试模块"})
-//public class TestController {
-//
-//    @Autowired
-//    MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
-//    @Autowired
-//    FreeSpinService freeSpinService;
+package com.wegame.capi.application.controller;
+
+import com.alibaba.fastjson.JSON;
+import com.wegame.base.domain.CommonResponse;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
+import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
+import com.wegame.capi.biz.service.freespin.FreeSpinService;
+import com.wegame.capi.client.domain.request.promotion.CreateFreeSpinRequest;
+import com.wegame.capi.client.domain.vo.promotion.CreateFreeSpinVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static com.wegame.base.domain.CommonResponse.build;
+import static com.wegame.capi.biz.converter.promotion.CreateFreeSpinConverter.toVo;
+
+
+@Slf4j
+@RestController
+@RequestMapping("test")
+@Api(value = "测试模块", tags = {"测试模块"})
+public class TestController {
+
+    @Autowired
+    MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
+    @Autowired
+    FreeSpinService freeSpinService;
 //
 //    @ApiOperation(value = "eventMsg", httpMethod = "POST")
 //    @PostMapping("/event/msg")
@@ -58,11 +58,11 @@
 ////        }
 //        return CommonResponse.build(true);
 //    }
-//
-//    @ApiOperation(value = "createFreeSpin", httpMethod = "POST")
-//    @PostMapping("/createFreeSpin")
-//    public CommonResponse<CreateFreeSpinVo> createFreeSpin(@RequestBody CreateFreeSpinRequest request) {
-//        request.validate();
-//        return build(toVo(freeSpinService.createFreeSpin(request)));
-//    }
-//}
+
+    @ApiOperation(value = "createFreeSpin", httpMethod = "POST")
+    @PostMapping("/createFreeSpin")
+    public CommonResponse<CreateFreeSpinVo> createFreeSpin(@RequestBody CreateFreeSpinRequest request) {
+        request.validate();
+        return build(toVo(freeSpinService.createFreeSpin(request)));
+    }
+}
