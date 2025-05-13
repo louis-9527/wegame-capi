@@ -15,7 +15,7 @@ public class LockNameUtil {
     private static final String OPERATION_EVENT_REPORT_LOCK = "lock:operation_event_report_lock:%s_%s";
     private static final String STAR_CARD_REPORT_SCHEDULER_LOCK = "lock:star_card_report_scheduler_lock:%s";
 
-    private static final String MAINTAIN_CONFIG_UPDATE_LOCK = "lock:maintain_config_update_scheduler_lock";
+    private static final String MAINTAIN_CONFIG_UPDATE_LOCK = "lock:maintain_config_update_scheduler_lock:%s";
 
 
 
@@ -53,7 +53,8 @@ public class LockNameUtil {
         return String.format(STAR_CARD_REPORT_SCHEDULER_LOCK, gameType.getName());
     }
 
-    public static String getMaintainConfigUpdateLock() {
-        return MAINTAIN_CONFIG_UPDATE_LOCK;
+    public static String getMaintainConfigUpdateLock(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(MAINTAIN_CONFIG_UPDATE_LOCK, gameType.getName());
     }
 }
