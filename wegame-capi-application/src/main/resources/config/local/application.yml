@@ -75,7 +75,7 @@ spring:
       cluster:
         refresh:
           adaptive: true
-          period: 30m
+          period: 3m
           dynamicRefreshSources: true
       pool:
         enabled: true
