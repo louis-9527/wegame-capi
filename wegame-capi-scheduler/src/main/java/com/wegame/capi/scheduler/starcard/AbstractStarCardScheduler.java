@@ -7,7 +7,9 @@ import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.*;
+import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.StarCardReportStatusEnum;
+import com.wegame.capi.common.enums.StarCardUseStatusEnum;
 import com.wegame.capi.dao.repository.domain.star.StarCardUseRecordQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +30,12 @@ import java.util.Optional;
 @Component
 public abstract class AbstractStarCardScheduler extends AbstractScheduler
         implements Runnable {
+
     private final long THREE_MINUTES_AGO = System.currentTimeMillis() - 3 * 60 * 1000;
     private final long MONTH_DAY_AGO = System.currentTimeMillis() - (3L * 24 * 60 * 60 * 1000);
 
     @Autowired
     private StarCardUseRecordService starCardUseRecordService;
-
     @Autowired
     public BetRecordService betRecordService;
 
@@ -43,7 +45,7 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
     public void run() {
         // 查询前一天到前3分钟上报状态为待上报
         try {
-            log.info("{}#AbstractStarCardScheduler run start. gameId: {}", getClass().getSimpleName(), gameTypeEnum().getId());
+            log.info("AbstractStarCardScheduler run start. gameId: {}", gameTypeEnum().getId());
             long startTime = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<StarCardUseRecordDo> detailList;
@@ -65,11 +67,11 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
                         .orElse(Collections.emptyList())
                         .forEach(this::execUseStatusIngHandle);
             } while (CollectionUtils.isNotEmpty(detailList));
-            log.info("{}#AbstractStarCardScheduler run end:{},time:{}", getClass().getSimpleName(),
+            log.info("AbstractStarCardScheduler run end:{},time:{}",
                     gameTypeEnum().getId(),
                     DateUtil.getCurrentMilli() - startTime);
         } catch (Exception e) {
-            log.error("{}#AbstractStarCardScheduler run exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+            log.error("AbstractStarCardScheduler run exception", e);
         }
     }
 
@@ -80,7 +82,7 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
     private void execUseStatusIngHandle(StarCardUseRecordDo useRecordDo) {
         try {
             Long betRecordId = useRecordDo.getBetRecordId();
-            if(Objects.isNull(betRecordId)){
+            if (Objects.isNull(betRecordId)) {
                 return;
             }
             // 查询原始订单的状态
@@ -92,7 +94,7 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
                 // 未找到投注记录,
                 if (StarCardUseStatusEnum.ING == useRecordDo.getUseStatus()) {
                     // todo 使用状态为使用中,需要查询星卡真实使用状态
-                     starCardUseStatus = StarCardUseStatusEnum.FAIL;
+                    starCardUseStatus = StarCardUseStatusEnum.FAIL;
                 } else if (StarCardUseStatusEnum.SUCCESS == useRecordDo.getUseStatus()) {
                     //todo 上报
                     starCardReportStatus = StarCardReportStatusEnum.ING;
@@ -123,9 +125,9 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
                     .failCode(-1)
                     .failMsg("bet error")
                     .build();
-            starCardUseRecordService.update(useUpdate,gameTypeEnum());
+            starCardUseRecordService.update(useUpdate, gameTypeEnum());
         } catch (Exception e) {
-            log.error("{}#eventDetailFailHandle exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+            log.error("eventDetailFailHandle exception", e);
         }
     }
 }

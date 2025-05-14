@@ -9,10 +9,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
- * MariaMakiling干预事件定时任务
+ * Malakas星卡定时任务
  */
 @Slf4j
 @Service
@@ -21,16 +22,16 @@ public class MalakasStarCardScheduler extends AbstractStarCardScheduler {
 
     @Scheduled(cron = "0 0/9 * * * ?")
     public void schedule() {
-        long startTime = DateUtil.getCurrentMilli();
-        log.info("{}#schedule start", getClass().getSimpleName());
         try {
+            log.info("schedule start");
+            long startTime = DateUtil.getCurrentMilli();
             scheduleWithLock(LockNameUtil.getStarCardReportSchedulerLockName(gameTypeEnum()), this);
+            log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
-            log.info("{}, get lock fail", getClass().getSimpleName());
+            log.info("schedule get lock fail");
         } catch (Exception e) {
-            log.error("{}#schedule failed", getClass().getSimpleName(), e);
+            log.error("schedule failed", e);
         }
-        log.info("{}#schedule end, cost time:{}", getClass().getSimpleName(), DateUtil.getCurrentMilli() - startTime);
     }
 
     @Override
