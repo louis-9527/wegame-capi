@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.config.pulsar;
 
-import com.wegame.capi.biz.listener.AbsOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +26,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 public class OperationEventPulsarConfig {
     private static final String operationEventPulsarClient = "operationEventPulsarClient";
     private static final String mariaMakilingOperationEventConsumer = "mariaMakilingOperationEventConsumer";
-    // todo fix
+
     @Value("${dynamic.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
     @Value("${dynamic.operation.pulsar_topic}")
@@ -41,9 +40,9 @@ public class OperationEventPulsarConfig {
     @Value("${dynamic.operation.pulsar.auth.audience}")
     String dynamicOperationAuthAudience;
 
-    @Bean(name =operationEventPulsarClient, destroyMethod = "close")
+    @Bean(name = operationEventPulsarClient, destroyMethod = "close")
     public PulsarClient operationEventPulsarClient() throws Exception {
-        if(StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)){
+        if (StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)) {
             return PulsarClient.builder()
                     .serviceUrl(dynamicOperationTopicUrl)
                     .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -63,11 +62,10 @@ public class OperationEventPulsarConfig {
     }
 
 
-
     @Bean(name = mariaMakilingOperationEventConsumer, destroyMethod = "close")
     @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
     public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
-                                                                  @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
+                                                                @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
         String deadLetterTopic = dynamicOperationTopic;
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

@@ -44,17 +44,18 @@ public class FilterConfig {
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(signatureFilter);
         bean.setOrder(1);
-        bean.addUrlPatterns("/bet/*");
-        bean.addUrlPatterns("/betRecord/*");
-        bean.addUrlPatterns("/reward/*");
-        bean.addUrlPatterns("/user/*");
-        bean.addUrlPatterns("/user/*");
-        bean.addUrlPatterns("/inner/*");
-        bean.addUrlPatterns("/achievement/*");
-        bean.addUrlPatterns("/bag/*");
-        bean.addUrlPatterns("/mission/*");
-        bean.addUrlPatterns("/treasure/*");
-        bean.addUrlPatterns("/freeSpin/*");
+        bean.addUrlPatterns(
+                "/bet/*",
+                "/betRecord/*",
+                "/reward/*",
+                "/user/*",
+                "/inner/*",
+                "/achievement/*",
+                "/bag/*",
+                "/mission/*",
+                "/treasure/*",
+                "/freeSpin/*"
+        );
         return bean;
     }
 
@@ -68,7 +69,18 @@ public class FilterConfig {
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(contextFilter);
         bean.setOrder(2);
-        bean.addUrlPatterns("/*");
+        bean.addUrlPatterns(
+                "/bet/*",
+                "/betRecord/*",
+                "/reward/*",
+                "/user/*",
+                "/inner/*",
+                "/achievement/*",
+                "/bag/*",
+                "/mission/*",
+                "/treasure/*",
+                "/freeSpin/*"
+        );
         return bean;
     }
 }

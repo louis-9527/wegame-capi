@@ -56,10 +56,10 @@ public class OperationEventCallbackController {
         String encryptedIv = request.getHeader("iv");
         AssertUtil.assertStrNotEmpty(encryptedKey, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(encryptedIv, ErrorCode.ERR_PARAM);
-        //使用私钥解密encryptedKey 和 encryptedIv
+        // 使用私钥解密encryptedKey 和 encryptedIv
         String keyString = dynamicOperationEncryptionHelper.decrypt(encryptedKey);
         String ivString = dynamicOperationEncryptionHelper.decrypt(encryptedIv);
-        //String key 和iv 解密message
+        // String key 和iv 解密message
         String messageBody = dynamicOperationEncryptionHelper.decryptWithAES256CBC(encryptRequest.getMessage(), keyString, ivString);
         GetStatusOfEventRequest eventRequest = JSON.parseObject(messageBody, GetStatusOfEventRequest.class);
         eventRequest.validate();
@@ -71,7 +71,6 @@ public class OperationEventCallbackController {
                 .build();
         return build(doToVoList(this.operationEventManager(GameTypeEnum.valueOfId(eventRequest.getGameId())).getStatusOfEvents(operationEventQuery)));
     }
-
 
     private AbstractOperationEventManager operationEventManager(GameTypeEnum gameType) {
         AbstractOperationEventManager eventManager = operationEventManagerMap.get(OPERATION_EVENT_MANAGER_NAME_MAP.get(gameType));

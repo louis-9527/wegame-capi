@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * WebMvcConfig
+ *
  * @author apple
  */
 @Configuration
@@ -37,35 +38,37 @@ public class WebMvcConfig implements WebMvcConfigurer {
         converters.add(converter);
     }
 
-
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor())
                 .order(1)
-                .excludePathPatterns("/META-INF/resources/",
+                .excludePathPatterns(
+                        "/META-INF/resources/",
                         "/resources/",
                         "/static/**",
                         "/public/**",
                         "/webjars/**",
                         "/v2/**",
                         "/doc.html",
-                        "/swagger-resources")
-                .addPathPatterns("/**");
+                        "/swagger-resources",
+                        "/operationEvent/getStatusOfEvents",
+                        "/common/ping"
+                ).addPathPatterns("/**");
 
-                registry.addInterceptor(gameMaintainInterceptor)
-                        .order(2)
-                        .addPathPatterns("/**")
-                        .excludePathPatterns(
-                                "/META-INF/resources/",
-                                "/resources/",
-                                "/static/**",
-                                "/public/**",
-                                "/webjars/**",
-                                "/v2/**",
-                                "/doc.html",
-                                "/swagger-resources",
-                                "/operationEvent/getStatusOfEvents",
-                                "/common/ping");
+        registry.addInterceptor(gameMaintainInterceptor)
+                .order(2)
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/META-INF/resources/",
+                        "/resources/",
+                        "/static/**",
+                        "/public/**",
+                        "/webjars/**",
+                        "/v2/**",
+                        "/doc.html",
+                        "/swagger-resources",
+                        "/operationEvent/getStatusOfEvents",
+                        "/common/ping"
+                );
     }
 }
