@@ -65,4 +65,9 @@ public class Constants {
     public static final Double MIN_BET_AMOUNT_M = 1.1;
 
 
+
+    public static final String MONGOTEMPLATE = "MongoTemplate";
+    public static final String PRIMARY_MONGOTEMPLATE = "PrimaryMongoTemplate";
+
+
 }

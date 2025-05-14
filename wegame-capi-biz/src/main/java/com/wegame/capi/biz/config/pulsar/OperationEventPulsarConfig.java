@@ -42,9 +42,9 @@ public class OperationEventPulsarConfig {
     @Value("${dynamic.operation.pulsar.auth.audience}")
     String dynamicOperationAuthAudience;
 
-    @Bean(name =operationEventPulsarClient, destroyMethod = "close")
+    @Bean(name = operationEventPulsarClient, destroyMethod = "close")
     public PulsarClient operationEventPulsarClient() throws Exception {
-        if(StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)){
+        if (StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)) {
             return PulsarClient.builder()
                     .serviceUrl(dynamicOperationTopicUrl)
                     .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -64,11 +64,10 @@ public class OperationEventPulsarConfig {
     }
 
 
-
     @Bean(name = mariaMakilingOperationEventConsumer, destroyMethod = "close")
     @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
     public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
-                                                                  @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
+                                                                @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
         String deadLetterTopic = dynamicOperationTopic;
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
