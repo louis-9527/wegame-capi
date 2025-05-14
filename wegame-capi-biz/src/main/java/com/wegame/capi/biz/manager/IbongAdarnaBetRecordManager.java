@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.ibongadarnaTransactionManager;
+import static com.wegame.capi.infrastructure.config.mongo.IbongadarnaMongoConfig.ibongadarnaTransactionManager;
 
 @Slf4j
 @Component("ibongAdarnaBetRecordManager")
