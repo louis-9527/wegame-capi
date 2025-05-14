@@ -4,7 +4,6 @@ import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.operation.MalakasOperationEventManager;
-import com.wegame.capi.biz.manager.operation.MariaMakilingOperationEventManager;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
@@ -22,7 +21,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
 public class MalakasOperationEventScheduler extends AbstractOperationEventScheduler {
 
     @Autowired

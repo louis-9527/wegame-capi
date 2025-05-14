@@ -39,7 +39,6 @@ public abstract class AbstractOperationEventScheduler
         extends AbstractScheduler
         implements Runnable {
 
-
     @Autowired
     public OperationEventService operationEventService;
     @Autowired
