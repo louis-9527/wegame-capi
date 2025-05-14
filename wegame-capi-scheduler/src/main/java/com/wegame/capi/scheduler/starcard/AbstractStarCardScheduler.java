@@ -31,7 +31,6 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
     private final long THREE_MINUTES_AGO = System.currentTimeMillis() - 3 * 60 * 1000;
     private final long MONTH_DAY_AGO = System.currentTimeMillis() - (3L * 24 * 60 * 60 * 1000);
 
-
     @Autowired
     private StarCardUseRecordService starCardUseRecordService;
 

@@ -20,14 +20,14 @@ public class MariaMakilingMaintainCacheUpdateScheduler extends AbstractMaintainC
     @Scheduled(cron = "0 0/5 * * * ?")
     public void schedule() {
         try {
-            log.info("MaintainCacheUpdateScheduler: update start");
+            log.info("schedule start");
             long startTime = DateUtil.getCurrentMilli();
             scheduleWithLock(LockNameUtil.getMaintainConfigUpdateLock(gameType()), this);
-            log.info("MaintainCacheUpdateScheduler: schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
+            log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
-            log.info("MaintainCacheUpdateScheduler: get lock fail");
+            log.info("get lock fail");
         } catch (Exception e) {
-            log.error("MaintainCacheUpdateScheduler : schedule failed", e);
+            log.error("schedule failed", e);
         }
     }
 

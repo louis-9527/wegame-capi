@@ -31,14 +31,14 @@ public class MariaMakilingOperationEventScheduler extends AbstractOperationEvent
     @Scheduled(cron = "0 0/10 * * * ?")
     public void schedule() {
         try {
-            log.info("MariaMakilingOperationEventScheduler schedule start");
+            log.info("schedule start");
             long startTime = DateUtil.getCurrentMilli();
             scheduleWithLock(LockNameUtil.getOperationEventSchedulerLockName(operationEventType().getGameType()), this);
-            log.info(" MariaMakilingOperationEventScheduler schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
+            log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
-            log.info("MariaMakilingOperationEventScheduler schedule get lock fail");
+            log.info("schedule get lock fail");
         } catch (Exception e) {
-            log.error("MariaMakilingOperationEventScheduler schedule failed", e);
+            log.error("schedule failed", e);
         }
     }
 

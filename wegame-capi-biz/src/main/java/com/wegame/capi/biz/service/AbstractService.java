@@ -12,8 +12,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import javax.annotation.Resource;
 import java.util.Map;
 
-import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.MONGOTEMPLATE;
-import static com.wegame.capi.infrastructure.config.MongodbTemplateConfig.PRIMARY_MONGOTEMPLATE;
+import static com.wegame.capi.common.Constants.MONGOTEMPLATE;
+import static com.wegame.capi.common.Constants.PRIMARY_MONGOTEMPLATE;
+
 
 public abstract class AbstractService implements InitializingBean {
 
