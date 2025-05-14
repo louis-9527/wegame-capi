@@ -19,7 +19,11 @@ schema {
         marketFlag = INT
         status = INT
         betTime = LONG
-        extendInfo = ROW<ieId STRING, rewardUrl STRING, campaignId STRING>
+        extendInfo = {
+            ieId STRING,
+            rewardUrl STRING,
+            campaignId STRING
+        }
         creator = STRING
         createTime = LONG
         updater = STRING
