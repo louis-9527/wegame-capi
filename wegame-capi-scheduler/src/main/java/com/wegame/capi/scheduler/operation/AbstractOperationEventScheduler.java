@@ -9,13 +9,13 @@ import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.operation.OperationEventDetailService;
 import com.wegame.capi.biz.service.operation.OperationEventService;
-import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.common.enums.OperationEventStatusEnum;
 import com.wegame.capi.common.enums.OperationEventSubStatusEnum;
-import com.wegame.capi.common.enums.OperationEventReportStatusEnum;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventDetailQuery;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
@@ -68,7 +68,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventDetailIngExec() {
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
-            log.info("{}#eventDetailIngExec. gameId: {}", getClass().getSimpleName(), gameType.getId());
+            log.info("eventDetailIngExec. gameId: {}", gameType.getId());
             long currentTimeMillis = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDetailDo> detailList;
@@ -90,11 +90,11 @@ public abstract class AbstractOperationEventScheduler
                         .orElse(Collections.emptyList())
                         .forEach(this::eventDetailFailHandle);
             } while (CollectionUtils.isNotEmpty(detailList));
-            log.info("{}#eventDetailIngExec run end:{},time:{}", getClass().getSimpleName(),
+            log.info("eventDetailIngExec run end. gameId: {}, cost time:{}",
                     gameType.getId(),
                     DateUtil.getCurrentMilli() - currentTimeMillis);
         } catch (Exception e) {
-            log.error("{}#eventDetailIngExecrun exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+            log.error("eventDetailIngExec run exception", e);
         }
     }
 
@@ -146,7 +146,7 @@ public abstract class AbstractOperationEventScheduler
                 operationEventManager().reportEventById(eventDetailDo.getBetRecordId(), true);
             }
         } catch (Exception e) {
-            log.error("{}#eventDetailFailHandle exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+            log.error("eventDetailFailHandle exception", e);
         }
     }
 
@@ -157,7 +157,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventReportFailExec() {
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
-            log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run start:{}", gameType.getId());
+            log.info("eventReportFailExec run start:{}", gameType.getId());
             long currentTimeMillis = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDo> eventDetailDoList;
@@ -179,9 +179,11 @@ public abstract class AbstractOperationEventScheduler
                         .orElse(Collections.emptyList())
                         .forEach(this::eventReportFailHandle);
             } while (CollectionUtils.isNotEmpty(eventDetailDoList));
-            log.info("AbstractDynamicOperationEventScheduler#eventReportFailExec run end:{},time:{}", gameType.getId(), DateUtil.getCurrentMilli() - currentTimeMillis);
+            log.info("eventReportFailExec run end. gameId: {}, cost time: {}",
+                    gameType.getId(),
+                    DateUtil.getCurrentMilli() - currentTimeMillis);
         } catch (Throwable e) {
-            log.error("{}#eventReportFailExec exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+            log.error("eventReportFailExec exception", e);
 
         }
     }
@@ -199,7 +201,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventEventExpiredExec() {
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
-            log.info("{}#eventEventExpiredExec run start:{}", getClass().getSimpleName(), gameType.getId());
+            log.info("eventEventExpiredExec run start. gameId: {}", gameType.getId());
             long currentTimeMillis = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDo> eventDetailDoList;
@@ -219,9 +221,11 @@ public abstract class AbstractOperationEventScheduler
                         .orElse(Collections.emptyList())
                         .forEach(this::eventEventIngHandle);
             } while (CollectionUtils.isNotEmpty(eventDetailDoList));
-            log.info("{}#eventEventExpiredExec run end:{}, cost time:{}", getClass().getSimpleName(), gameType.getId(), DateUtil.getCurrentMilli() - currentTimeMillis);
+            log.info("eventEventExpiredExec run end. gameId: {}, cost time: {}",
+                    gameType.getId(),
+                    DateUtil.getCurrentMilli() - currentTimeMillis);
         } catch (Throwable e) {
-            log.error("{}#eventEventExpiredExec exception:{}", getClass().getSimpleName(), e.getMessage(), e);
+            log.error("eventEventExpiredExec exception", e);
 
         }
 
@@ -241,7 +245,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventFinishFailExec() {
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
-            log.info("AbstractDynamicOperationEventScheduler#eventFinishFailExec run start:{}", gameType.getId());
+            log.info("eventFinishFailExec run start. gameId: {}", gameType.getId());
             long currentTimeMillis = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDo> eventDetailDoList;
@@ -264,10 +268,11 @@ public abstract class AbstractOperationEventScheduler
                         .orElse(Collections.emptyList())
                         .forEach(this::eventFinishFailExecHandle);
             } while (CollectionUtils.isNotEmpty(eventDetailDoList));
-            log.info("AbstractDynamicOperationEventScheduler#eventFinishFailExec run end:{},time:{}", gameType.getId(), DateUtil.getCurrentMilli() - currentTimeMillis);
+            log.info("eventFinishFailExec run end. gameId: {}, cost time: {}",
+                    gameType.getId(),
+                    DateUtil.getCurrentMilli() - currentTimeMillis);
         } catch (Throwable e) {
-            log.error("{}#eventFinishFailExec exception:{}", getClass().getSimpleName(), e.getMessage(), e);
-
+            log.error("eventFinishFailExec exception", e);
         }
     }
 
