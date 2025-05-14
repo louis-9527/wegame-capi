@@ -32,14 +32,20 @@ public class MongodbTemplateConfig {
     String mariaMakilingMdbPrimaryUri;
     @Value("${spring.data.mongodb.dynamic.maria_makiling_mdb.db}")
     String mariaMakilingMdb;
+
+
     @Value("${spring.data.mongodb.dynamic.malakas_mdb.uri}")
     String malakasMdbUri;
     @Value("${spring.data.mongodb.dynamic.malakas_mdb.db}")
     String malakasMdb;
+
+
     @Value("${spring.data.mongodb.dynamic.ibong_adarna_mdb.uri}")
     String ibongAdarnaMdbUri;
+    @Value("${spring.data.mongodb.dynamic.ibong_adarna_mdb.primary_uri}")
+    String ibongAdarnaMdbPrimaryUri;
     @Value("${spring.data.mongodb.dynamic.ibong_adarna_mdb.db}")
-    String ibongAdarnaMdbDb;
+    String ibongAdarnaMdb;
 
     /**
      * bean格式，游戏名称小写 + MongoTemplate
@@ -80,7 +86,7 @@ public class MongodbTemplateConfig {
      */
     @Bean(ibongadarnaMongoTemplate)
     public MongoTemplate ibongadarnaMongoTemplate() {
-        return new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdbDb);
+        return new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdb);
     }
 
     /**
@@ -88,7 +94,7 @@ public class MongodbTemplateConfig {
      */
     @Bean(ibongadarnaPrimaryMongoTemplate)
     public MongoTemplate ibongadarnaPrimaryMongoTemplate() {
-        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdbDb);
+        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(ibongAdarnaMdbPrimaryUri), ibongAdarnaMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
     }
