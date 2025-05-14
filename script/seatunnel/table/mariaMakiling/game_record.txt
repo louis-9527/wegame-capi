@@ -1,0 +1,30 @@
+schema {
+    fields {
+        _id = LONG
+        parentId = LONG
+        batchId = LONG
+        betRecordId = LONG
+        playerId = STRING
+        playerName = STRING
+        index = INT
+        freeWheelFlag = BOOLEAN
+        wheel = {
+            index = INT
+            freeFlag = BOOLEAN
+            symbolArr = ARRAY<STRING>
+        }
+        rewardResult = {
+            betAmount = LONG
+            rewardType = STRING
+            rewardSubType = STRING
+            totalRewardAmount = LONG
+            totalMultiple = STRING
+            hasRewardFreeWheel = BOOLEAN
+            rewardFreeWheelTimes = INT
+        }
+        gameRecordIds = ARRAY<LONG>
+        accumulateReachMaxMultiple = BOOLEAN
+        lastGameFlag = BOOLEAN
+        overallRewardAmount = LONG
+    }
+}
