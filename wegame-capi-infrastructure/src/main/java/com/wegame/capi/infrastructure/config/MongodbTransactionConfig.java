@@ -39,7 +39,7 @@ public class MongodbTransactionConfig {
 
     @Bean(name = malakasTransactionManager)
     public MongoTransactionManager malakasTransactionManager() {
-        MongoTransactionManager manager = new MongoTransactionManager(mariamakilingMongoTemplate.getMongoDbFactory());
+        MongoTransactionManager manager = new MongoTransactionManager(malakasMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)
                 .build();
