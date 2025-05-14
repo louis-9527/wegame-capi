@@ -1,0 +1,20 @@
+schema {
+    fields {
+        _id = LONG
+        rewardId = STRING
+        rewardConfigId = STRING
+        gameId = STRING
+        channelId = STRING
+        betRecordId = LONG
+        playerId = STRING
+        playName = STRING
+        betAmount = LONG
+        payOutAmount = LONG
+        useStatus = INT
+        failMsg = STRING
+        failCode = INT
+        reportStatus = INT
+        createTime = LONG
+        updateTime = LONG
+    }
+}

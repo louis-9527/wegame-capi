@@ -1,0 +1,24 @@
+schema {
+    fields {
+        _id = LONG
+        eventId = STRING
+        playerName = STRING
+        bonus = LONG
+        minBonus = LONG
+        maxBonus = LONG
+        finishBonus = LONG
+        eventKind = INT
+        gameId = STRING
+        channelId = STRING
+        effectedTime = LONG
+        expiredTime = LONG
+        eventStatus = INT
+        eventSubStatus = INT
+        reportStatus = INT
+        eventMsgDetail = STRING
+        reportFailMsg = STRING
+        reportTime = LONG
+        createTime = LONG
+        updateTime = LONG
+    }
+}
