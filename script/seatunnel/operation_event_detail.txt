@@ -1,0 +1,24 @@
+schema {
+    fields {
+        _id = LONG
+        operatorRecordId = LONG
+        eventId = STRING
+        operatorGameId = STRING
+        configId = LONG
+        playerId = STRING
+        playerName = STRING
+        userId = STRING
+        betAmount = LONG
+        payOutAmount = LONG
+        eventAmount = LONG
+        payOutTime = LONG
+        betTime = LONG
+        betId = STRING
+        betRecordId = LONG
+        betStatus = INT
+        channelId = STRING
+        gameId = STRING
+        createTime = LONG
+        updateTime = LONG
+    }
+}
