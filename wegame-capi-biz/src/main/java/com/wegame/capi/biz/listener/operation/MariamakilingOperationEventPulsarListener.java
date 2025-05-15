@@ -1,11 +1,10 @@
-package com.wegame.capi.biz.listener;
+package com.wegame.capi.biz.listener.operation;
 
 import com.wegame.capi.client.enums.GameTypeEnum;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
-public class MariamakilingOperationEventPulsarListener extends AbsOperationEventPulsarListener{
+public class MariamakilingOperationEventPulsarListener extends AbstractOperationEventPulsarListener {
 
     @Override
     public GameTypeEnum gameType() {
