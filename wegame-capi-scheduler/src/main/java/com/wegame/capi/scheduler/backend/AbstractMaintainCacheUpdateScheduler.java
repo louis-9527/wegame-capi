@@ -12,20 +12,25 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-public abstract class AbstractMaintainCacheUpdateScheduler extends AbstractScheduler implements Runnable {
+public abstract class AbstractMaintainCacheUpdateScheduler
+        extends AbstractScheduler
+        implements Runnable {
 
     abstract GameTypeEnum gameType();
 
     @Autowired
     GameMaintainConfigService gameMaintainConfigService;
 
-
     @Override
     public void run() {
         GameTypeEnum gameType = gameType();
-        if (Objects.nonNull(gameType)) {
-            GameMaintainConfigDo config = gameMaintainConfigService.selectByGameIdWithNoCache(gameType.getId());
-            gameMaintainConfigService.putCache(gameType.getId(), config);
+        if (Objects.isNull(gameType)) {
+            return;
         }
+        GameMaintainConfigDo config = gameMaintainConfigService.selectByGameIdWithNoCache(gameType.getId());
+        if (Objects.isNull(config)) {
+            return;
+        }
+        gameMaintainConfigService.putCache(gameType.getId(), config);
     }
 }
