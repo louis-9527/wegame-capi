@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.listener;
+package com.wegame.capi.biz.listener.betRecord;
 
 import cn.hutool.core.lang.UUID;
 import com.alibaba.fastjson.JSON;

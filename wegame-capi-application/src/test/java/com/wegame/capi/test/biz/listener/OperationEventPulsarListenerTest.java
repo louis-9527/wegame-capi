@@ -1,8 +1,7 @@
 package com.wegame.capi.test.biz.listener;
 
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
-import com.wegame.capi.biz.listener.AbsOperationEventPulsarListener;
-import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
+import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.OperationEventKindEnum;
 import com.wegame.capi.test.BaseTest;
