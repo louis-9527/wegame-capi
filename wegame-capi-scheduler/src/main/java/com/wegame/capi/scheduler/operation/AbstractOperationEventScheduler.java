@@ -157,7 +157,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventReportFailExec() {
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
-            log.info("eventReportFailExec run start:{}", gameType.getId());
+            log.info("eventReportFailExec run start. gameId: {}", gameType.getId());
             long currentTimeMillis = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDo> eventDetailDoList;
@@ -201,7 +201,7 @@ public abstract class AbstractOperationEventScheduler
     private void eventEventExpiredExec() {
         try {
             GameTypeEnum gameType = operationEventType().getGameType();
-            log.info("eventEventExpiredExec run start. gameId: {}", gameType.getId());
+            log.info("eventEventExpiredExec run start. gameId:{}", gameType.getId());
             long currentTimeMillis = DateUtil.getCurrentMilli();
             Long lastId = null;
             List<OperationEventDo> eventDetailDoList;
@@ -226,9 +226,7 @@ public abstract class AbstractOperationEventScheduler
                     DateUtil.getCurrentMilli() - currentTimeMillis);
         } catch (Throwable e) {
             log.error("eventEventExpiredExec exception", e);
-
         }
-
     }
 
     private void eventEventIngHandle(OperationEventDo eventDo) {

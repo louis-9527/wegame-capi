@@ -16,7 +16,6 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.Objects;
 
-
 /**
  * 投注记录兜底定时任务<br/>
  * 扭转投注中 -> 投注成功/投注失败
@@ -60,7 +59,7 @@ public abstract class AbstractBetRecordBetStatusScheduler
             for (Long betRecordId : CollectionUtils.emptyIfNull(recordIdList)) {
                 BetRecordDo betRecordDo = betRecordService.get(betRecordId, getGameType());
                 if (Objects.isNull(betRecordDo)) {
-                    log.error("betRecordDo is null, betRecordId: {}", betRecordId);
+                    log.warn("betRecordDo is null, betRecordId: {}", betRecordId);
                 } else {
                     betStatusService.asyncConvertBetStatus(betRecordDo, getGameType());
                 }
@@ -68,43 +67,4 @@ public abstract class AbstractBetRecordBetStatusScheduler
         } while (CollectionUtils.isNotEmpty(recordIdList));
         log.info("{} schedule run end...", taskName());
     }
-
-    //    public void handle(BetRecordDo betRecordDo) {
-    //        try {
-    //            if (!BetStatusEnum.ING.getCode().equals(betRecordDo.getStatus())) {
-    //                return;
-    //            }
-    //            log.info("{}, handle in betting BetRecordDo, betRecordId: {}", taskName(), betRecordDo.getId());
-    //            // 获取当前订单状态
-    //            BetStatusRes betStatusRes = singleWalletService.getBetStatus(buildStatusReq(betRecordDo));
-    //            AssertUtil.assertNotNull(betStatusRes, ErrorCode.ERR_INTER);
-    //            SingleWalletBetStatusEnum singleWalletBetStatus = valueOfCode(betStatusRes.getCode());
-    //            AssertUtil.assertNotNull(singleWalletBetStatus, ErrorCode.ERR_PARAM, "invalid single wallet bet status code");
-    //            BetStatusEnum betStatus = BetStatusEnum.valueOfSingleWalletBetStatus(singleWalletBetStatus);
-    //            if (Objects.equals(BetStatusEnum.SUCCESS, betStatus)) {
-    //                // 更新记录: 状态更新为成功
-    //                betRecordService.update(BetRecordDo.builder()
-    //                        .id(betRecordDo.getId())
-    //                        .betId(betStatusRes.getBetId())
-    //                        .status(BetStatusEnum.SUCCESS.getCode())
-    //                        .build(), getGameType());
-    //            } else if (Objects.equals(BetStatusEnum.FAIL, betStatus)) {
-    //                // 更新记录: 状态更新为失败
-    //                betRecordService.update(BetRecordDo.builder()
-    //                                .id(betRecordDo.getId())
-    //                                .betId(betStatusRes.getBetId())
-    //                                .status(BetStatusEnum.FAIL.getCode())
-    //                                .build(),
-    //                        getGameType());
-    //            } else {
-    //                log.error("{}, handle invalid betStatus: {}, betRecordId: {}, betStatusRes: {}",
-    //                        taskName(),
-    //                        betStatus,
-    //                        betRecordDo.getId(),
-    //                        betStatusRes);
-    //            }
-    //        } catch (Exception e) {
-    //            log.error("{}, handle in betting BetRecordDo error, betRecordId: {}, errMsg: {}", taskName(), betRecordDo.getId(), e.getMessage(), e);
-    //        }
-    //    }
 }
