@@ -18,6 +18,7 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.constants.FreeSpinErrorCode;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
@@ -146,11 +147,20 @@ public class SingleWalletService {
                     .errorMsg(commonRes.getErrorMessage())
                     .build();
         } else {
-            return SingleWalletBetResultDo.builder()
-                    .betStatus(BetStatusEnum.FAIL)
-                    .errorCode(ErrorCode.ERR_NET)
-                    .errorMsg(commonRes.getErrorMessage())
-                    .build();
+            if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
+                FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(commonRes.getStatus());
+                return SingleWalletBetResultDo.builder()
+                        .betStatus(BetStatusEnum.FAIL)
+                        .errorCode(Objects.isNull(freeSpinErrorCode) ? ErrorCode.ERR_NET : freeSpinErrorCode.getErrorCode())
+                        .errorMsg(commonRes.getErrorMessage())
+                        .build();
+            } else {
+                return SingleWalletBetResultDo.builder()
+                        .betStatus(BetStatusEnum.FAIL)
+                        .errorCode(ErrorCode.ERR_NET)
+                        .errorMsg(commonRes.getErrorMessage())
+                        .build();
+            }
         }
     }
 

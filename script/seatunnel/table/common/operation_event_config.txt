@@ -1,0 +1,8 @@
+schema {
+    fields {
+        _id = LONG
+        gameId = STRING
+        betType = STRING
+        multiple = DOUBLE
+    }
+}
