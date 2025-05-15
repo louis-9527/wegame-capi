@@ -30,8 +30,6 @@ public abstract class AbstractStarCardScheduler
         extends AbstractScheduler
         implements Runnable {
 
-    private final long THREE_MINUTES_AGO = System.currentTimeMillis() - 3 * 60 * 1000;
-    private final long MONTH_DAY_AGO = System.currentTimeMillis() - (3L * 24 * 60 * 60 * 1000);
 
     @Autowired
     private StarCardUseRecordService starCardUseRecordService;
@@ -46,6 +44,8 @@ public abstract class AbstractStarCardScheduler
         try {
             log.info("AbstractStarCardScheduler run start. gameId: {}", gameTypeEnum().getId());
             long startTime = DateUtil.getCurrentMilli();
+            long THREE_MINUTES_AGO = System.currentTimeMillis() - 3 * 60 * 1000;
+            long MONTH_DAY_AGO = System.currentTimeMillis() - (3L * 24 * 60 * 60 * 1000);
             Long lastId = null;
             List<StarCardUseRecordDo> detailList;
             StarCardUseRecordQuery query = StarCardUseRecordQuery.builder()
