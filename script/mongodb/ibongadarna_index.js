@@ -1,6 +1,7 @@
 // ----------------------------
 //  Collection structure for mariamakiling_bet_record
 // ----------------------------
+use ibong;
 db.getCollection("ibongadarna_bet_record").drop();
 db.createCollection("ibongadarna_bet_record");
 // 索引ibongadarna_bet_record-c端查询需要
