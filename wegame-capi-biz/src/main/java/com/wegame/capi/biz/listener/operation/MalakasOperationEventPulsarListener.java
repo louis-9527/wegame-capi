@@ -4,7 +4,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MalakasOperationEventPulsarListener extends AbsOperationEventPulsarListener{
+public class MalakasOperationEventPulsarListener extends AbstractOperationEventPulsarListener {
     @Override
     public GameTypeEnum gameType() {
         return GameTypeEnum.MALAKAS;
