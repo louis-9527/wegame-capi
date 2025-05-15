@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.manager.operation;
 
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
-import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventConfigQuery;
 import org.springframework.stereotype.Component;
@@ -12,7 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.wegame.capi.infrastructure.config.MongodbTransactionConfig.ibongadarnaTransactionManager;
+import static com.wegame.capi.infrastructure.config.mongo.IbongadarnaMongoConfig.ibongadarnaTransactionManager;
+
 
 @Service
 @Component("ibongAdarnaOperationEventManager")
