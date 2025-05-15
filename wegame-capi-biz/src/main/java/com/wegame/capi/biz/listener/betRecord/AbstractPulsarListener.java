@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.listener;
+package com.wegame.capi.biz.listener.betRecord;
 
 import cn.hutool.core.lang.UUID;
 import com.alibaba.fastjson.JSON;
@@ -157,7 +157,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 getConsumer().acknowledge(messageIdMap.values().stream().collect(Collectors.toList()));
             }
         } catch (Exception e) {
-            log.error("{} batchAdd error", getGameType().getName(), e);
+            log.warn("{} batchAdd error", getGameType().getName(), e);
             add(recordList, messageIdMap);
         } finally {
             //            // help gc
@@ -227,7 +227,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter> implements
                 betRecordManager().add(betRecordDo, getGameType());
                 getConsumer().acknowledge(messageIdMap.get(betRecordDo.getId()));
             } catch (DuplicateKeyException e) {
-                log.error("{} add error DuplicateKey, betRecordId: {}", getGameType().getName(), betRecordDo.getId());
+                log.warn("{} add record, DuplicateKey, betRecordId: {}", getGameType().getName(), betRecordDo.getId());
                 try {
                     getConsumer().acknowledge(messageIdMap.get(betRecordDo.getId()));
                 } catch (Exception e1) {

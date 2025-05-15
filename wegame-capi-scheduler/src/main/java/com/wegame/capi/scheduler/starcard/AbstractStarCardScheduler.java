@@ -24,15 +24,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * 抽象星卡使用定时任务
+ * 星卡定时任务
  */
 @Slf4j
 @Component
-public abstract class AbstractStarCardScheduler extends AbstractScheduler
+public abstract class AbstractStarCardScheduler
+        extends AbstractScheduler
         implements Runnable {
 
-    private final long THREE_MINUTES_AGO = System.currentTimeMillis() - 3 * 60 * 1000;
-    private final long MONTH_DAY_AGO = System.currentTimeMillis() - (3L * 24 * 60 * 60 * 1000);
 
     @Autowired
     private StarCardUseRecordService starCardUseRecordService;
@@ -47,6 +46,8 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
         try {
             log.info("AbstractStarCardScheduler run start. gameId: {}", gameTypeEnum().getId());
             long startTime = DateUtil.getCurrentMilli();
+            long THREE_MINUTES_AGO = System.currentTimeMillis() - 3 * 60 * 1000;
+            long MONTH_DAY_AGO = System.currentTimeMillis() - (3L * 24 * 60 * 60 * 1000);
             Long lastId = null;
             List<StarCardUseRecordDo> detailList;
             StarCardUseRecordQuery query = StarCardUseRecordQuery.builder()
@@ -67,9 +68,7 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
                         .orElse(Collections.emptyList())
                         .forEach(this::execUseStatusIngHandle);
             } while (CollectionUtils.isNotEmpty(detailList));
-            log.info("AbstractStarCardScheduler run end:{},time:{}",
-                    gameTypeEnum().getId(),
-                    DateUtil.getCurrentMilli() - startTime);
+            log.info("AbstractStarCardScheduler run end. cost time: {}", DateUtil.getCurrentMilli() - startTime);
         } catch (Exception e) {
             log.error("AbstractStarCardScheduler run exception", e);
         }
@@ -89,7 +88,6 @@ public abstract class AbstractStarCardScheduler extends AbstractScheduler
             BetRecordDo recordDo = betRecordService.get(betRecordId, gameTypeEnum());
             StarCardReportStatusEnum starCardReportStatus = null;
             StarCardUseStatusEnum starCardUseStatus = null;
-
             if (recordDo == null) {
                 // 未找到投注记录,
                 if (StarCardUseStatusEnum.ING == useRecordDo.getUseStatus()) {

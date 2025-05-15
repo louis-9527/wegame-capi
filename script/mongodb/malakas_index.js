@@ -1,3 +1,4 @@
+use malakas;
 db.getCollection("malakas_bet_record").drop();
 db.createCollection("malakas_bet_record");
 // malakas_bet_record-c端查询需要
