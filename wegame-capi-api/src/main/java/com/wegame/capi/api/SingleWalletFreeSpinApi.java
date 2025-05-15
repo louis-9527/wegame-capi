@@ -10,9 +10,7 @@ import com.wegame.capi.api.domain.req.freespin.FreeSpinDetailReq;
 import com.wegame.capi.api.domain.req.freespin.FreeSpinHistoryOfPlayerReq;
 import com.wegame.capi.api.domain.req.freespin.FreeSpinOfPlayerReq;
 import com.wegame.capi.api.domain.req.freespin.FreeSpinReq;
-import com.wegame.capi.api.domain.req.promotion.*;
 import com.wegame.capi.api.domain.res.CommonRes;
-import com.wegame.capi.api.domain.res.promotion.CreateFreeSpinRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinDetailRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinHistoryOfPlayerRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinOfPlayerRes;
@@ -157,30 +155,6 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             throw e;
         } catch (Exception e) {
             log.error("freeSpinHistoryOfPlayer Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
-        }
-    }
-
-    public CreateFreeSpinRes createFreeSpin(CreateFreeSpinReq req) {
-        try {
-            MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<CreateFreeSpinReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(CREATE_FREE_SPIN, "http://igo-sw-callback-public.igo8.me")));
-            ResponseEntity<CommonRes<CreateFreeSpinRes>> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<CreateFreeSpinRes>>() {
-            });
-            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
-            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
-            if (!responseEntity.getBody().isSuc()) {
-                FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
-                AssertUtil.assertNotNull(freeSpinErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-                throw new BusinessException(freeSpinErrorCode.getErrorCode(), freeSpinErrorCode.getMsg());
-            }
-            AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-            return responseEntity.getBody().getData();
-        } catch (BusinessException e) {
-            log.error("createFreeSpin BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            log.error("createFreeSpin Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
