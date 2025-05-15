@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.listener;
+package com.wegame.capi.biz.listener.operation;
 
 import com.wegame.capi.client.enums.GameTypeEnum;
 import org.springframework.stereotype.Service;

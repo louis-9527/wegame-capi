@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.listener;
+package com.wegame.capi.biz.listener.betRecord;
 
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.mq.MQMessage;
