@@ -1,7 +1,8 @@
 package com.wegame.capi.biz.config.pulsar;
 
-import com.wegame.capi.biz.listener.IbongOperationEventPulsarListener;
-import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
+import com.wegame.capi.biz.listener.operation.MalakasOperationEventPulsarListener;
+import com.wegame.capi.biz.listener.operation.IbongOperationEventPulsarListener;
+import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.*;
@@ -72,30 +73,30 @@ public class OperationEventPulsarConfig {
     @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
     public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                 @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
-        String deadLetterTopic = dynamicOperationTopic;
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
-                .topic(deadLetterTopic)
+                .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMariaMakiling)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(mariamakilingOperationEventPulsarListener)
                 .subscribe();
     }
+
     @Bean(name = malakasOperationEventConsumer, destroyMethod = "close")
     @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
     public Consumer<byte[]> malakasOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
-                                                                @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
-        String deadLetterTopic = dynamicOperationTopic;
+                                                          @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
-                .topic(deadLetterTopic)
+                .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMalakas)
                 .subscriptionType(SubscriptionType.Shared)
-                .messageListener(mariamakilingOperationEventPulsarListener)
+                .messageListener(malakasOperationEventPulsarListener)
                 .subscribe();
     }
+
     @Bean(name = ibongOperationEventConsumer, destroyMethod = "close")
     @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
     public Consumer<byte[]> IbongOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
-                                                          @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
+                                                        @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
         String deadLetterTopic = dynamicOperationTopic;
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
