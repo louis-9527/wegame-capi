@@ -45,13 +45,14 @@ jobs:
           sudo mkdir -p /opt/maven/repo
           sudo chown -R $(whoami):$(whoami) /opt/maven
           sudo chmod -R u+rwX /opt/maven
+
       - name: Cache Maven dependencies
         uses: actions/cache@v3
         with:
           path: /opt/maven/repo
-          key: maven-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/pom.xml') }}
+          key: maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            maven-${{ runner.os }}-${{ runner.arch }}-
+            maven-
             
       - name: Build with Maven
         run: |
