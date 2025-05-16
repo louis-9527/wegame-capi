@@ -20,15 +20,15 @@ public enum GameTypeEnum {
     MARIA_MAKILING("zhumeng001",
             "MariaMakiling",
             "mariamakiling_bet_record",
-            "mariamakiling_game_record", 300L),
+            "mariamakiling_game_record", 300L,1.1),
     MALAKAS("zhumeng002",
             "Malakas",
             "malakas_bet_record",
-            "malakas_game_record", 300L),
+            "malakas_game_record", 300L,1.1),
     IBONG_ADARNA("zhumeng003",
             "IbongAdarna",
             "ibongadarna_bet_record",
-            "ibongadarna_game_record", 300L),
+            "ibongadarna_game_record", 300L,1.2),
 
 
     ;
@@ -58,6 +58,11 @@ public enum GameTypeEnum {
      * 最小投注金额
      */
     private final Long minBetAmount;
+
+    /**
+     * 最小投注倍数
+     */
+    private final double minBetMultiple;
 
     public static GameTypeEnum valueOfId(String id) {
         for (GameTypeEnum item : GameTypeEnum.values()) {
