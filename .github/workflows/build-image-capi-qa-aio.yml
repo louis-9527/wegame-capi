@@ -83,7 +83,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}
+          tags: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/${{ github.event.inputs.game }}:${{ github.event.inputs.version }}
           provenance: false
       
       - name: Install AWS CLI and test identity
@@ -117,13 +117,13 @@ jobs:
       # - name: Fail job if vulnerability threshold is exceeded
       #   run: exit ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}
 
-      - name: Clone repo
-        run: |
-          git clone https://git:${{ secrets.DEPLOYMENT_TOKEN }}@github.com/sre-snsoft/Mysterious-Slots-QAT.git
-          cd Mysterious-Slots-QAT
-          sed -i "s|image: 438465153243.*|image: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}|g" deployment/templates/wegame-capi.yml
-        env:
-          TOKEN: ${{ github.event.inputs.deployment }}
+      # - name: Clone repo
+      #   run: |
+      #     git clone https://git:${{ secrets.DEPLOYMENT_TOKEN }}@github.com/sre-snsoft/Mysterious-Slots-QAT.git
+      #     cd Mysterious-Slots-QAT
+      #     sed -i "s|image: 438465153243.*|image: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}|g" deployment/templates/wegame-capi.yml
+      #   env:
+      #     TOKEN: ${{ github.event.inputs.deployment }}
 
       - name: Deploy to QA
         run: |
