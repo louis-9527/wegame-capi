@@ -114,6 +114,7 @@ jobs:
             ${{ steps.inspector.outputs.inspector_scan_results_csv }}
             ${{ steps.inspector.outputs.artifact_sbom }}
             ${{ steps.inspector.outputs.inspector_scan_results_markdown }}
+
       # - name: Fail job if vulnerability threshold is exceeded
       #   run: exit ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}
 
@@ -125,9 +126,9 @@ jobs:
       #   env:
       #     TOKEN: ${{ github.event.inputs.deployment }}
 
-      - name: Deploy to QA
-        run: |
-          cd Mysterious-Slots-QAT
-          git config user.email "github-actions@github.com"
-          git config user.name "GitHub Actions"
-          sh -x gitpush.sh "Deploy CAPI version ${{ github.event.inputs.version }} to QA"
+      # - name: Deploy to QA
+      #   run: |
+      #     cd Mysterious-Slots-QAT
+      #     git config user.email "github-actions@github.com"
+      #     git config user.name "GitHub Actions"
+      #     sh -x gitpush.sh "Deploy CAPI version ${{ github.event.inputs.version }} to QA"
