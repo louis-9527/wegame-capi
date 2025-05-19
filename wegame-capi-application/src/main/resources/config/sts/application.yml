@@ -195,7 +195,7 @@ pulsar:
 dynamic:
   operation:
     switch: true
-    pulsar_url: pulsar://pulsar-proxy-sw-main-stress.client88.me:6650
+    pulsar_url: pulsar+ssl://pc-2ac35ef3.aws-apse5-test-j8swe.aws.snio.cloud:6651
     pulsar_topic: dos_game_slot_event
     pulsar_group:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
@@ -203,9 +203,9 @@ dynamic:
       ibong: ${api.game.cp.channelId}_Ibong
     pulsar:
       auth:
-        issuer_url: null
+        issuer_url: https://auth.streamnative.cloud/
         credentials_file_path: /operation_pulsar_privateKey.json
-        audience: urn:sn:pulsar:o-sn9dy:qat
+        audience: urn:sn:pulsar:o-sn9dy:stress-test-kl
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
