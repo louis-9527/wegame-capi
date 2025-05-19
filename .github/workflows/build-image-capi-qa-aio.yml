@@ -18,8 +18,9 @@ on: #workflow_dispatch, job will only execute while being triggered
       version:
         required: true
         default: 'latest'
-      deployment:
+      game:
         required: true
+
 
 jobs:
   build-push-deploy-All-in-One:
@@ -40,6 +41,8 @@ jobs:
           ls -la
           sudo apt-get update
           sudo apt-get install -y maven
+          echo "${{ github.event.inputs.game }}"
+
       - name: Prepare Maven cache directory
         run: |
           sudo mkdir -p /opt/maven/repo
@@ -60,6 +63,7 @@ jobs:
           mvn --version
           sudo cp ./settings.xml /usr/share/maven/conf/settings.xml
           mvn clean package -P${{ github.event.inputs.env }} -DskipTests
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
         with:
@@ -88,6 +92,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y awscli
           aws sts get-caller-identity
+
       - name: Scan built image with Inspector
         uses: aws-actions/vulnerability-scan-github-action-for-amazon-inspector@v1
         with:
@@ -114,7 +119,7 @@ jobs:
 
       - name: Clone repo
         run: |
-          git clone https://git:${TOKEN}@github.com/sre-snsoft/Mysterious-Slots-QAT.git
+          git clone https://git:${{ secrets.DEPLOYMENT_TOKEN }}@github.com/sre-snsoft/Mysterious-Slots-QAT.git
           cd Mysterious-Slots-QAT
           sed -i "s|image: 438465153243.*|image: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}|g" deployment/templates/wegame-capi.yml
         env:
