@@ -118,17 +118,15 @@ jobs:
       # - name: Fail job if vulnerability threshold is exceeded
       #   run: exit ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}
 
-      # - name: Clone repo
-      #   run: |
-      #     git clone https://git:${{ secrets.DEPLOYMENT_TOKEN }}@github.com/sre-snsoft/Mysterious-Slots-QAT.git
-      #     cd Mysterious-Slots-QAT
-      #     sed -i "s|image: 438465153243.*|image: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:${{ github.event.inputs.version }}|g" deployment/templates/wegame-capi.yml
-      #   env:
-      #     TOKEN: ${{ github.event.inputs.deployment }}
+      - name: Clone repo
+        run: |
+          git clone https://git:${{ secrets.DEPLOYMENT_TOKEN }}@github.com/sre-snsoft/Mysterious-Slots-QAT.git
+          cd Mysterious-Slots-QAT
+          sed -i "s|image: 438465153243.*|image: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/${{ github.event.inputs.game }}:${{ github.event.inputs.version }}|g" deployment/templates/${{ github.event.inputs.game }}.yml
 
-      # - name: Deploy to QA
-      #   run: |
-      #     cd Mysterious-Slots-QAT
-      #     git config user.email "github-actions@github.com"
-      #     git config user.name "GitHub Actions"
-      #     sh -x gitpush.sh "Deploy CAPI version ${{ github.event.inputs.version }} to QA"
+      - name: Deploy to QA
+        run: |
+          cd Mysterious-Slots-QAT
+          git config user.email "github-actions@github.com"
+          git config user.name "GitHub Actions"
+          sh -x gitpush.sh "Deploy CAPI version ${{ github.event.inputs.version }} to QA"
