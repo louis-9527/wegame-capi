@@ -33,7 +33,6 @@ jobs:
 
     env: 
       AWS_REGION: ap-southeast-1
-      IMAGE_URI: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:4.1.19
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
