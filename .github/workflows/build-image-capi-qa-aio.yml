@@ -73,7 +73,7 @@ jobs:
       - name: Login to ECR
         uses: docker/login-action@v3
         with:
-          registry: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com
+          registry: ${{ secrets.QAT_ACC }
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -83,7 +83,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/${{ github.event.inputs.game }}:${{ github.event.inputs.version }}
+          tags: ${{ secrets.QAT_ACC }/${{ github.event.inputs.game }}:${{ github.event.inputs.version }}
           provenance: false
 
       - name: Scan built image with Inspector
@@ -115,7 +115,7 @@ jobs:
         run: |
           git clone https://git:${{ secrets.DEPLOYMENT_TOKEN }}@github.com/sre-snsoft/Mysterious-Slots-QAT.git
           cd Mysterious-Slots-QAT
-          sed -i "s|image: 438465153243.*|image: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/${{ github.event.inputs.game }}:${{ github.event.inputs.version }}|g" deployment/templates/${{ github.event.inputs.game }}.yml
+          sed -i "s|image: 438465153243.*|image: ${{ secrets.QAT_ACC }/${{ github.event.inputs.game }}:${{ github.event.inputs.version }}|g" deployment/templates/${{ github.event.inputs.game }}.yml
 
       - name: Deploy to QA
         run: |
