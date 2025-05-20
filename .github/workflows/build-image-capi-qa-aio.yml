@@ -62,7 +62,7 @@ jobs:
           rm -rf /opt/maven/repo/com/wegame
           mvn --version
           sudo cp ./settings.xml /usr/share/maven/conf/settings.xml
-          mvn clean package -P${{ github.event.inputs.env }} -DskipTests
+          mvn clean package -Pqa -DskipTests
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
@@ -85,13 +85,6 @@ jobs:
           push: true
           tags: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/${{ github.event.inputs.game }}:${{ github.event.inputs.version }}
           provenance: false
-      
-      - name: Install AWS CLI and test identity
-        run: |
-          sleep 10
-          sudo apt-get update
-          sudo apt-get install -y awscli
-          aws sts get-caller-identity
 
       - name: Scan built image with Inspector
         uses: aws-actions/vulnerability-scan-github-action-for-amazon-inspector@v1
@@ -129,4 +122,6 @@ jobs:
           cd Mysterious-Slots-QAT
           git config user.email "github-actions@github.com"
           git config user.name "GitHub Actions"
+          git config pull.rebase false
+          git pull origin main
           sh -x gitpush.sh "Deploy CAPI version ${{ github.event.inputs.version }} to QA"
