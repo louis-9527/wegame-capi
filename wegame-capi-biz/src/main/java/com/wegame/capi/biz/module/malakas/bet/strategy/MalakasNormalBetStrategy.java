@@ -78,8 +78,6 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
             log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.MALAKAS_REWARD_NOTIFY_SIZE);
             rewardService.evict(GameTypeEnum.MALAKAS);
-            Object o = redisTemplate.opsForValue().get(key);
-            log.info("freeWheelAfterHandle updateRewardNotifyInfo redis value notifyInfo: {}, key: {}", o, key);
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }
