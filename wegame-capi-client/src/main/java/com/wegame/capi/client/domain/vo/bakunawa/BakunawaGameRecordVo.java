@@ -30,7 +30,7 @@ public class BakunawaGameRecordVo implements Validate, Serializable {
     @ApiModelProperty("中奖金额")
     private Long rewardAmount;
     @ApiModelProperty("滚轮结果")
-    private BakunawaSymbolVo[][] wheel;
+    private String[][] wheel;
     @ApiModelProperty("倍率")
     private BigDecimal multiple;
     @ApiModelProperty("累计中奖总金额")

@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaBetResultVo;
-import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaGameRecordVo;
-import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaRewardLineVo;
+import com.wegame.capi.client.domain.vo.bakunawa.BakunawaBetResultVo;
+import com.wegame.capi.client.domain.vo.bakunawa.BakunawaGameRecordVo;
+import com.wegame.capi.client.domain.vo.bakunawa.BakunawaRewardLineVo;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * IbongAdarna游戏记录
+ * Bakunawa游戏记录
  */
 @Data
 @SuperBuilder
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "bakunawa_game_record")
-public class BakunawaGameRecordDo implements Serializable, ToVoConverter<IbongAdarnaBetResultVo, IbongAdarnaGameRecordVo> {
+public class BakunawaGameRecordDo implements Serializable, ToVoConverter<BakunawaBetResultVo, BakunawaGameRecordVo> {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * id
@@ -61,17 +61,18 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<IbongAd
     /**
      * 滚轮
      */
-    private WheelDo<IbongAdarnaSymbolDo> wheel;
+    private WheelDo<SymbolDo> wheel;
     /**
      * 中奖结果
      */
-    private RewardResultDo<IbongAdarnaSymbolDo> rewardResult;
+    private RewardResultDo<SymbolDo> rewardResult;
     /**
      * 累计中奖总金额
      */
     private Long overallRewardAmount;
 
     // todo
+
     /**
      * 是否中奖免费轮
      *
@@ -85,13 +86,13 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<IbongAd
 
     @Transient
     @Override
-    public IbongAdarnaBetResultVo toResultVo() {
+    public BakunawaBetResultVo toResultVo() {
         if (Objects.isNull(rewardResult)) {
-            return IbongAdarnaBetResultVo.builder()
+            return BakunawaBetResultVo.builder()
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
-            return IbongAdarnaBetResultVo.builder()
+            return BakunawaBetResultVo.builder()
                     .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
@@ -100,7 +101,7 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<IbongAd
                     .freeWheelFlag(0)
                     .build();
         } else {
-            return IbongAdarnaBetResultVo.builder()
+            return BakunawaBetResultVo.builder()
                     .rewardType(Objects.isNull(rewardResult.getRewardType()) ? null : rewardResult.getRewardType().getCode())
                     .rewardSubType(Objects.isNull(rewardResult.getRewardSubType()) ? null : rewardResult.getRewardSubType().getCode())
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
@@ -124,8 +125,8 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<IbongAd
 
     @Transient
     @Override
-    public IbongAdarnaGameRecordVo toRecordVo() {
-        return IbongAdarnaGameRecordVo.builder()
+    public BakunawaGameRecordVo toRecordVo() {
+        return BakunawaGameRecordVo.builder()
                 .id(String.valueOf(id))
                 .betAmount(Objects.nonNull(rewardResult) ? rewardResult.getBetAmount() : null)
                 .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
@@ -136,11 +137,11 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<IbongAd
                 .build();
     }
 
-    private List<IbongAdarnaRewardLineVo> buildRewardLineList() {
+    private List<BakunawaRewardLineVo> buildRewardLineList() {
         return Optional.ofNullable(rewardResult.getRewardLineDetailList())
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(subItem -> IbongAdarnaRewardLineVo.builder()
+                .map(subItem -> BakunawaRewardLineVo.builder()
                         .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
                         .multiple(subItem.getMultiple())
                         .odds(subItem.getOdds())

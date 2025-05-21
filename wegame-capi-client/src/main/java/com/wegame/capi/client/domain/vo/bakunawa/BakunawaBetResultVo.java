@@ -31,7 +31,7 @@ public class BakunawaBetResultVo implements Serializable {
     @ApiModelProperty("倍率盘倍率")
     private BigDecimal totalRewardMultiple;
     @ApiModelProperty("滚轮")
-    private BakunawaSymbolVo[][] wheel;
+    private String[][] wheel;
     @ApiModelProperty("中奖元素坐标集合")
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
