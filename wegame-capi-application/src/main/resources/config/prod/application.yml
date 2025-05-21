@@ -128,6 +128,10 @@ spring:
           primary_uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@makiling-prod-pri.hgmd9m.mongodb.net/makiling?compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
           uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@makiling-prod-pri.hgmd9m.mongodb.net/makiling?compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: makiling
+        bakunawa_mdb:
+          primary_uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@makiling-prod-pri.hgmd9m.mongodb.net/bakunawa?compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@makiling-prod-pri.hgmd9m.mongodb.net/bakunawa?compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          db: bakunawa
 ## fastjson
 fastjson:
   parser:
@@ -166,6 +170,12 @@ pulsar:
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
+    bakunawa:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_Bakunawa
+      namespace: ${spring.application.env}
+      bet_topic: Bakunawa_topic
+      bet_deadLetter_topic: Bakunawa_deadLetter_topic
 dynamic:
   operation:
     switch: true
