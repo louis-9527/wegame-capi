@@ -70,7 +70,7 @@ public abstract class AbstractBakunawaBetStrategy
 
     @Override
     public BetResultDo<BakunawaGameRecordDo> bet(BetDo betDo) {
-        //// 1、是否使用星卡
+        //// 1、是否使用free spin
         if (isCanFreeSpinBet(betDo)) {
             // 1.1 是，则预定投注流程
             return betForFreeSpin(betDo);
