@@ -4,7 +4,6 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
-import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
@@ -14,7 +13,6 @@ import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,9 +20,6 @@ import java.util.Objects;
 
 @Component
 public class BakunawaBetHelper implements BetHelper<BakunawaGameRecordDo, BakunawaGameRecordDo> {
-
-    @Autowired
-    IbongAdarnaConfig ibongAdarnaConfig;
 
     @Override
     public BetRecordDo<BakunawaGameRecordDo> buildBetRecord(long betRecordId,

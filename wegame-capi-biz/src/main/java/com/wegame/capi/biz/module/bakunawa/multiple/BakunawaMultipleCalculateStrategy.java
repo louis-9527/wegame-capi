@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.bakunawa.multiple;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.BakunawaConfig;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
@@ -26,7 +27,7 @@ import java.util.TreeMap;
 public class BakunawaMultipleCalculateStrategy
         extends AbstractMultipleCalculateStrategy<IbongAdarnaSymbolDo> {
     @Autowired // todo @maidong
-    IbongAdarnaConfig ibongAdarnaConfig;
+    BakunawaConfig bakunawaConfig;
     @Autowired
     RandomService randomService;
 
@@ -43,7 +44,8 @@ public class BakunawaMultipleCalculateStrategy
 
     private BigDecimal randomMultiple(BetSubTypeEnum betSubType) {
         // 取出对应投注类型的倍率出现概率配置
-        TreeMap<BigDecimal, TreeMap<String, BigDecimal>> multiPleProbabilisticConfig = ibongAdarnaConfig.getProbabilisticConfig().getMultiPleProbabilisticConfig();
+        TreeMap<BigDecimal, TreeMap<String, BigDecimal>> multiPleProbabilisticConfig = null; // todo @maidong
+        // bakunawaConfig.getProbabilisticConfig().getMultiplierWheelProbabilisticConfig();
         TreeMap<BigDecimal, Integer> betTypeMultiPleProbabilisticMap = new TreeMap<>();
         MultipleTypeEnum multipleType = MultipleTypeEnum.fromBetSubTypeEnum(betSubType);
         multiPleProbabilisticConfig.forEach((key, value) -> {
