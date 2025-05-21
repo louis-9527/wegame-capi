@@ -1,4 +1,4 @@
-package com.wegame.capi.client.domain.vo;
+package com.wegame.capi.client.domain.vo.jackpot;
 
 import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
@@ -28,24 +28,24 @@ public class JackpotRewardPoolVo implements Validate, Serializable {
     private Integer type;
     @ApiModelProperty("奖池金额.单位：厘， 可以为负")
     private String amount;
-    @ApiModelProperty("创建人")
-    private String creator;
-    @ApiModelProperty("创建时间")
-    private Long createTime;
-    @ApiModelProperty("更新人")
-    private String updater;
-    @ApiModelProperty("更新时间")
-    private Long updateTime;
+    //    @ApiModelProperty("创建人")
+    //    private String creator;
+    //    @ApiModelProperty("创建时间")
+    //    private Long createTime;
+    //    @ApiModelProperty("更新人")
+    //    private String updater;
+    //    @ApiModelProperty("更新时间")
+    //    private Long updateTime;
 
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(type, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(amount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(creator, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(createTime, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(updater, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(updateTime, ErrorCode.ERR_PARAM);
+        //        AssertUtil.assertStrNotEmpty(creator, ErrorCode.ERR_PARAM);
+        //        AssertUtil.assertNotNull(createTime, ErrorCode.ERR_PARAM);
+        //        AssertUtil.assertStrNotEmpty(updater, ErrorCode.ERR_PARAM);
+        //        AssertUtil.assertNotNull(updateTime, ErrorCode.ERR_PARAM);
     }
 
     @Override

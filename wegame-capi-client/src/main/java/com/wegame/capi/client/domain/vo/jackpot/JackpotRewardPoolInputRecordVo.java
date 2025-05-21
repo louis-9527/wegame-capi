@@ -1,4 +1,4 @@
-package com.wegame.capi.client.domain.vo;
+package com.wegame.capi.client.domain.vo.jackpot;
 
 import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
