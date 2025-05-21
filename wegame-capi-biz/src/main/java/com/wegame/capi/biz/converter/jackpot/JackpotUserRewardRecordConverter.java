@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.converter.business;
+package com.wegame.capi.biz.converter.jackpot;
 
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
@@ -7,9 +7,9 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRecordRequest;
 import com.wegame.capi.client.domain.vo.JackpotUserRewardRecordVo;
-import com.wegame.capi.biz.domain.business.JackpotUserRewardRecordDo;
-import com.wegame.capi.dao.mapper.domain.business.JackpotUserRewardRecordPo;
-import com.wegame.capi.dao.mapper.domain.business.JackpotUserRewardRecordQuery;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;

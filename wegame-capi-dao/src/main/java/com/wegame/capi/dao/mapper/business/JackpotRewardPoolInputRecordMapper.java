@@ -1,7 +1,7 @@
 package com.wegame.capi.dao.mapper.business;
 
-import com.wegame.capi.dao.mapper.domain.business.JackpotRewardPoolInputRecordPo;
-import com.wegame.capi.dao.mapper.domain.business.JackpotRewardPoolInputRecordQuery;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordPo;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordQuery;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import org.apache.ibatis.annotations.*;
 
