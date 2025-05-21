@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.domain.business;
+package com.wegame.capi.biz.domain.biz.jackpot;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;

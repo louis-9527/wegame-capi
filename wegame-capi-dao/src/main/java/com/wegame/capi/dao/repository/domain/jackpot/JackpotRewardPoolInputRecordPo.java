@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.domain.business;
+package com.wegame.capi.dao.repository.domain.jackpot;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -8,15 +8,15 @@ import java.util.Date;
 
 /**
  * jackpot_reward_pool_input_record：jackpot奖池流入记录
- * @author generate
+ * @author genereate
  */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class JackpotRewardPoolInputRecordDo implements Serializable {
-    private static final long serialVersionUID = -2289705874960169984L;
+public class JackpotRewardPoolInputRecordPo implements Serializable {
+    private static final long serialVersionUID = -7285481505430335488L;
     /**
      * 主键ID/投注记录ID
      */
@@ -58,6 +58,6 @@ public class JackpotRewardPoolInputRecordDo implements Serializable {
      */
     private Date updateTime;
 
-    ///////////////  above auto generated ///////////////
+   ///////////////  above auto generated ///////////////
 }
 
