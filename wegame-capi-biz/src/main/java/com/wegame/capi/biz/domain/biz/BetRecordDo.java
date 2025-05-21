@@ -147,6 +147,29 @@ public class BetRecordDo<T> implements Serializable {
          * 预定投注Id
          */
         private String campaignId;
+
+        /**
+         * grand奖池贡献金额
+         */
+        private Long grandContributionAmount;
+
+        /**
+         * major奖池贡献金额
+         */
+        private Long majorContributionAmount;
+
+        /**
+         * minor奖池贡献金额
+         */
+        private Long minorContributionAmount;
+
+
+        /**
+         * mini奖池贡献金额
+         */
+        private Long miniContributionAmount;
+
+
     }
 }
 
