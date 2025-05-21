@@ -56,6 +56,7 @@ public class Constants {
     public static final String MARIA_MAKILING_PROP = "game.enable.MariaMakiling";
     public static final String MALAKAS_PROP = "game.enable.Malakas";
     public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";
+    public static final String BAKUNAWA_ADARNA_PROP = "game.enable.Bakunawa";
 
 
     public static final long FIVE_MINUTES_AGO = 5 * 60 * 1000;
