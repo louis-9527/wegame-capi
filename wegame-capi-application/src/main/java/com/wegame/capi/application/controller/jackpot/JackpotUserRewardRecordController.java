@@ -4,7 +4,7 @@ import com.wegame.base.Validate;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
 
-import com.wegame.capi.biz.service.JackpotUserRewardRecordService;
+import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRecordRequest;
