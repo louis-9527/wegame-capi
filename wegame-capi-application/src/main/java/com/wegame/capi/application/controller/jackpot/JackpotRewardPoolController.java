@@ -26,6 +26,7 @@ import java.util.List;
 @Api(value = "jackpot奖池模块", tags = {"jackpot奖池模块"})
 public class JackpotRewardPoolController {
 
+    // todo 走 manager @lyric 参考 BetRecordController
     @Autowired
     JackpotRewardPoolService jackpotRewardPoolService;
 

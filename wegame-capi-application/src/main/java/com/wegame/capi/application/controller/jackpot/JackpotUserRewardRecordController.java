@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 @Api(value = "用户jackpot中奖记录模块", tags = {"用户jackpot中奖记录模块"})
 public class JackpotUserRewardRecordController {
 
+    // todo 走 manager @lyric 参考 BetRecordController
     @Autowired
     JackpotUserRewardRecordService jackpotUserRewardRecordService;
 
