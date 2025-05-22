@@ -22,6 +22,7 @@ import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +48,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         validate(rewardHandle);
         // 2、计算中奖线
         RewardLineDo<SymbolDo> rewardLine = calcRewardLine(rewardHandle.getGameInfo(), rewardHandle.getWheel());
-        if (Objects.isNull(rewardLine)) {
+        if (Objects.isNull(rewardLine) || CollectionUtils.isEmpty(rewardLine.getRewardSymbolList())) {
             // 未中奖
             return RewardResultDo.<SymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
@@ -67,7 +68,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         List<RewardLineDetailDo<SymbolDo>> rewardLineDetailList = Lists.newArrayList();
         // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 基础倍率 * 倍率盘倍率
         BigDecimal lineRewardAmount = this.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), basicMultiple, pieMultiple.getValue());
-        // 中奖总金额
+        // 中奖总金额x
         long totalRewardAmount = lineRewardAmount.longValue();
         // 中奖线明细列表
         rewardLineDetailList.add(RewardLineDetailDo.<SymbolDo>builder()
