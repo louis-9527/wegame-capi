@@ -2,6 +2,8 @@ package com.wegame.capi.dao.repository.domain.jackpot;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -20,6 +22,8 @@ public class JackpotUserRewardRecordPo implements Serializable {
     /**
      * 主键ID
      */
+    @Id
+    @Field("_id")
     private Long id;
     /**
      * 用户id

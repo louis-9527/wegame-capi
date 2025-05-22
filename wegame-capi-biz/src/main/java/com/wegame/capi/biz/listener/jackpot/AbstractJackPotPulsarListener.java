@@ -38,12 +38,14 @@ import java.util.stream.Collectors;
 
 /**
  * jackpot pulsar listener
+ *
  * @param <T>
  */
 @Slf4j
-public abstract class AbstractJackPotPulsarListener <T extends ToVoConverter> implements Runnable {
+public abstract class AbstractJackPotPulsarListener<T extends ToVoConverter> implements Runnable {
     private volatile boolean start = false;
     ExecutorService executor;
+
     public abstract Consumer<byte[]> getConsumer();
 
     public abstract GameTypeEnum getGameType();
@@ -55,6 +57,7 @@ public abstract class AbstractJackPotPulsarListener <T extends ToVoConverter> im
     public abstract int getCorePoolSize();
 
     public abstract int getMaximumPoolSize();
+
     @PostConstruct
     public void init() {
         CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(getGameType().getName() + "-jackPot-consumber-pool-");
@@ -134,7 +137,7 @@ public abstract class AbstractJackPotPulsarListener <T extends ToVoConverter> im
                 if (!updateMessageIdMap.containsKey(betRecord.getId())) {
                     updateMessageIdMap.put(betRecord.getId(), message.getMessageId());
                     updateRecordList.add(betRecord);
-                }else {
+                } else {
                     try {
                         this.getConsumer().acknowledge(message.getMessageId());
                     } catch (PulsarClientException e) {
@@ -156,7 +159,7 @@ public abstract class AbstractJackPotPulsarListener <T extends ToVoConverter> im
             List<JackpotRewardPoolInputRecordDo> recordList = new ArrayList<>();
             updateRecordList.forEach(record -> {
                 BetRecordDo.ExtendInfo extendInfo = record.getExtendInfo();
-                if(extendInfo != null && extendInfo.getJackPotPoolAmount() != null){
+                if (extendInfo != null && extendInfo.getJackPotPoolAmount() != null) {
                     BetRecordDo.JackPotPoolAmount jackPotPoolAmount = extendInfo.getJackPotPoolAmount();
                     recordList.add(JackpotRewardPoolInputRecordDo.builder()
                             .type(JackpotRewardPoolInputTypeEnum.PAYOUT_IN)
@@ -165,7 +168,7 @@ public abstract class AbstractJackPotPulsarListener <T extends ToVoConverter> im
                             .minorAmount(jackPotPoolAmount.getMinorContributionAmount())
                             .miniAmount(jackPotPoolAmount.getMiniContributionAmount())
                             .build());
-                }else {
+                } else {
                     try {
                         this.getConsumer().acknowledge(updateMessageIdMap.get(record.getId()));
                     } catch (PulsarClientException e) {
@@ -173,13 +176,8 @@ public abstract class AbstractJackPotPulsarListener <T extends ToVoConverter> im
                     }
                 }
             });
-
             // 批量处理
-            List<Long> failIds = jackpotManager().batchAddJackpotRewardRecord(recordList);
-            if (!failIds.isEmpty()) {
-                // 保留未失败的记录，即从updateMessageIdMap中移除failIds中存在的id
-                updateMessageIdMap.entrySet().removeIf(entry -> failIds.contains(entry.getKey()));
-            }
+            this.jackpotManager().batchAddJackpotRewardRecord(recordList);
             if (!updateMessageIdMap.isEmpty()) {
                 // 批量ack
                 try {
@@ -189,7 +187,6 @@ public abstract class AbstractJackPotPulsarListener <T extends ToVoConverter> im
                 }
             }
         }
-
 
 
     }

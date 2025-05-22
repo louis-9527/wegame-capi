@@ -43,17 +43,16 @@ public class JackpotRewardPoolService extends AbstractService {
         List<JackpotRewardPoolPo> jackpotRewardPoolPos = JackpotRewardPoolConverter.doToPoList(jackpotRewardPoolDos,OptEnum.UPDATE);
         AssertUtil.assertNotNull(jackpotRewardPoolPos, ErrorCode.ERR_PARAM, "jackpotRewardPoolPo is null");
 
-        BulkOperations bulkOps = getMongoTemplate(jackpotTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED,
-                BetRecordPo.class,
+        BulkOperations bulkOps = getMongoTemplate(jackpotTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.ORDERED,
+                JackpotRewardPoolPo.class,
                 jackpotTypeEnum.getJackpotRewardPoolCollectionName());
-        jackpotRewardPoolDos.forEach(poolDo -> {
+        jackpotRewardPoolPos.forEach(poolPo -> {
             Criteria criteria = new Criteria();
-            criteria.and("type").is(poolDo.getType());
+            criteria.and("type").is(poolPo.getType());
             Query query = new Query(criteria);
-            bulkOps.updateOne(query, JackpotQueryBuilder.buildUpdate(poolDo));
+            bulkOps.updateOne(query, JackpotQueryBuilder.buildUpdate(poolPo));
         });
-        BulkWriteResult bulkWriteResult = bulkOps.execute();
-        bulkWriteResult.getModifiedCount();
+        bulkOps.execute();
     }
 
     /**

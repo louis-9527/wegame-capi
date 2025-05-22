@@ -64,6 +64,7 @@ public class JackpotRewardPoolInputRecordConverter {
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         JackpotRewardPoolInputRecordPo po = new JackpotRewardPoolInputRecordPo();
+        po.setId(jackpotRewardPoolInputRecordDo.getId());
         po.setType(jackpotRewardPoolInputRecordDo.getType().getCode());
         po.setGrandAmount(jackpotRewardPoolInputRecordDo.getGrandAmount());
         po.setMajorAmount(jackpotRewardPoolInputRecordDo.getMajorAmount());

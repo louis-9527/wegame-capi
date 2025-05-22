@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager.jackpot;
 
+import com.mongodb.DuplicateKeyException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
@@ -52,11 +53,16 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         return null;
     }
 
-    @Transactional(transactionManager = lamangTransactionManager)
+    /**
+     * 返回失败的ID列表
+     *
+     * @param rewardPoolInputRecordDos
+     * @return
+     */
     @Override
-    public List<Long> batchAddJackpotRewardRecord(List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos) {
+    public void batchAddJackpotRewardRecord(List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos) {
         if (CollectionUtils.isEmpty(rewardPoolInputRecordDos)) {
-            return Collections.emptyList();
+            return;
         }
         List<Long> failIds = jackpotRewardPoolInputRecordService.batchAdd(rewardPoolInputRecordDos, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
         if (!failIds.isEmpty()) {
@@ -74,7 +80,6 @@ public class LamangJackpotManager extends AbstractJackpotManager {
             minorAmount += record.getMinorAmount() == null ? 0 : record.getMinorAmount();
             miniAmount += record.getMiniAmount() == null ? 0 : record.getMiniAmount();
         }
-
         // 组装奖池对象
         long currentMilli = DateUtil.getCurrentMilli();
         JackpotRewardPoolDo grandDo = JackpotRewardPoolDo.builder()
@@ -102,8 +107,6 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         rewardPoolDos.add(majorDo);
         rewardPoolDos.add(minorDo);
         rewardPoolDos.add(miniDo);
-
         jackpotRewardPoolService.batchUpdate(rewardPoolDos, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
-        return new ArrayList<>();
     }
 }

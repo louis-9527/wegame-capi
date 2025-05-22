@@ -6,11 +6,11 @@ logging:
 #    org.springframework.web: trace
 #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: trace
-#    org.apache.ibatis: trace
-#    org.mongodb: DEBUG
-#    org.springframework.data.redis: DEBUG
-#    com.mongodb.internal.connection: DEBUG
-#    org.apache.http: DEBUG
+    org.apache.ibatis: trace
+    org.mongodb: DEBUG
+    org.springframework.data.redis: DEBUG
+    com.mongodb.internal.connection: DEBUG
+    org.apache.http: DEBUG
 ## server
 server:
   port: 9500
