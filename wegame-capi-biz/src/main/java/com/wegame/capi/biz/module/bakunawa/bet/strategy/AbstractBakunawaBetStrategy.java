@@ -12,7 +12,6 @@ import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.BakunawaBetRecordManager;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.operation.BakunawaOperationEventManager;
-import com.wegame.capi.biz.manager.operation.IbongAdarnaOperationEventManager;
 import com.wegame.capi.biz.module.bakunawa.bet.BakunawaBetHelper;
 import com.wegame.capi.biz.module.bakunawa.game.BakunawaGameContext;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
