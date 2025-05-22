@@ -28,10 +28,6 @@ public class JackpotRewardPoolConverter {
         JackpotRewardPoolDo jackpotRewardPoolDo = new JackpotRewardPoolDo();
         jackpotRewardPoolDo.setType(vo.getType());
         jackpotRewardPoolDo.setAmount(StringUtils.isNotEmpty(vo.getAmount()) ? Long.valueOf(vo.getAmount()) : null);
-        jackpotRewardPoolDo.setCreator(vo.getCreator());
-        jackpotRewardPoolDo.setCreateTime(Objects.nonNull(vo.getCreateTime()) ? new Date(vo.getCreateTime()) : null);
-        jackpotRewardPoolDo.setUpdater(vo.getUpdater());
-        jackpotRewardPoolDo.setUpdateTime(Objects.nonNull(vo.getUpdateTime()) ? new Date(vo.getUpdateTime()) : null);
         return jackpotRewardPoolDo;
     }
 
@@ -80,10 +76,6 @@ public class JackpotRewardPoolConverter {
         vo.setId(Objects.nonNull(jackpotRewardPoolDo.getId()) ? String.valueOf(jackpotRewardPoolDo.getId()) : null);
         vo.setType(jackpotRewardPoolDo.getType());
         vo.setAmount(Objects.nonNull(jackpotRewardPoolDo.getAmount()) ? String.valueOf(jackpotRewardPoolDo.getAmount()) : null);
-        vo.setCreator(jackpotRewardPoolDo.getCreator());
-        vo.setCreateTime(Objects.nonNull(jackpotRewardPoolDo.getCreateTime()) ? jackpotRewardPoolDo.getCreateTime().getTime() : null);
-        vo.setUpdater(jackpotRewardPoolDo.getUpdater());
-        vo.setUpdateTime(Objects.nonNull(jackpotRewardPoolDo.getUpdateTime()) ? jackpotRewardPoolDo.getUpdateTime().getTime() : null);
         return vo;
     }
 
