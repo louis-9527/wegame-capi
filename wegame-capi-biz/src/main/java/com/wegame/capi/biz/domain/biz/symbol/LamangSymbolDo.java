@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
+import com.wegame.capi.common.enums.lamang.LamangSymbolSizeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -20,10 +20,21 @@ import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_SYMBOL_P
 public class LamangSymbolDo extends SymbolDo {
     private static final long serialVersionUID = -2266308987663710848L;
 
+    
     /**
      * 元素金边
      */
     private boolean symbolGoldBorder;
+
+    /**
+     * 适用于scatter 和 scatter +1 ,是否已经被用于添加jackpot抽奖次数
+     */
+    private boolean addJackpotTime;
+
+    /**
+     * 适用于scatter 和 scatter +1 ,是否已经被用于添加免费轮
+     */
+    private boolean addFreeWheel;
 
     @JsonIgnore
     public boolean isPlaceholderSymbol() {

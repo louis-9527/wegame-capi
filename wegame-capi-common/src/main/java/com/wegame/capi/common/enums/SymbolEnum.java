@@ -37,6 +37,7 @@ public enum SymbolEnum {
     Symbol2005("2005", "Symbol2005"),
 
     Scatter("3001", "Scatter"),
+    Scatter1("3002", "Scatter+1"),
 
     Wild("4001", "Wild"),
     WildX2("4002", "WildX2"),
@@ -44,6 +45,8 @@ public enum SymbolEnum {
     WildX5("4004", "WildX5"),
     WildX10("4005", "WildX10"),
 
+    BigWild("4006", "BigWild"),
+    SuperWild("4007", "SuperWild"),
     ;
 
     /**
