@@ -25,6 +25,11 @@ public abstract class AbstractJackpotManager {
 
     public abstract JackpotUserRewardRecordDo getByGameRecordId(Long gameRecordId, GameTypeEnum gameType);
 
-    public abstract void batchAddJackpotRewardRecord (List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos);
+    /**
+     * 批量新增,返回失败的ID列表
+     * @param rewardPoolInputRecordDos
+     * @return
+     */
+    public abstract List<Long> batchAddJackpotRewardRecord (List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos);
 
 }

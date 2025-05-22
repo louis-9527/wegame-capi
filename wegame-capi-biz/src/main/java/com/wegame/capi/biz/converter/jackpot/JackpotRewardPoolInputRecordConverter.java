@@ -8,6 +8,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolInputRecordRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolInputRecordVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
+import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordQuery;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +27,7 @@ public class JackpotRewardPoolInputRecordConverter {
             return null;
         }
         JackpotRewardPoolInputRecordDo jackpotRewardPoolInputRecordDo = new JackpotRewardPoolInputRecordDo();
-        jackpotRewardPoolInputRecordDo.setType(vo.getType());
+        jackpotRewardPoolInputRecordDo.setType(JackpotRewardPoolInputTypeEnum.valueOfCode(vo.getType()));
         jackpotRewardPoolInputRecordDo.setGrandAmount(StringUtils.isNotEmpty(vo.getGrandAmount()) ? Long.valueOf(vo.getGrandAmount()) : null);
         jackpotRewardPoolInputRecordDo.setMajorAmount(StringUtils.isNotEmpty(vo.getMajorAmount()) ? Long.valueOf(vo.getMajorAmount()) : null);
         jackpotRewardPoolInputRecordDo.setMinorAmount(StringUtils.isNotEmpty(vo.getMinorAmount()) ? Long.valueOf(vo.getMinorAmount()) : null);
@@ -44,7 +45,7 @@ public class JackpotRewardPoolInputRecordConverter {
         }
         JackpotRewardPoolInputRecordDo jackpotRewardPoolInputRecordDo = new JackpotRewardPoolInputRecordDo();
         jackpotRewardPoolInputRecordDo.setId(po.getId());
-        jackpotRewardPoolInputRecordDo.setType(po.getType());
+        jackpotRewardPoolInputRecordDo.setType(JackpotRewardPoolInputTypeEnum.valueOfCode(po.getType()));
         jackpotRewardPoolInputRecordDo.setGrandAmount(po.getGrandAmount());
         jackpotRewardPoolInputRecordDo.setMajorAmount(po.getMajorAmount());
         jackpotRewardPoolInputRecordDo.setMinorAmount(po.getMinorAmount());
@@ -63,7 +64,7 @@ public class JackpotRewardPoolInputRecordConverter {
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         JackpotRewardPoolInputRecordPo po = new JackpotRewardPoolInputRecordPo();
-        po.setType(jackpotRewardPoolInputRecordDo.getType());
+        po.setType(jackpotRewardPoolInputRecordDo.getType().getCode());
         po.setGrandAmount(jackpotRewardPoolInputRecordDo.getGrandAmount());
         po.setMajorAmount(jackpotRewardPoolInputRecordDo.getMajorAmount());
         po.setMinorAmount(jackpotRewardPoolInputRecordDo.getMinorAmount());
@@ -87,7 +88,7 @@ public class JackpotRewardPoolInputRecordConverter {
         }
         JackpotRewardPoolInputRecordVo vo = new JackpotRewardPoolInputRecordVo();
         vo.setId(Objects.nonNull(jackpotRewardPoolInputRecordDo.getId()) ? String.valueOf(jackpotRewardPoolInputRecordDo.getId()) : null);
-        vo.setType(jackpotRewardPoolInputRecordDo.getType());
+        vo.setType(jackpotRewardPoolInputRecordDo.getType().getCode());
         vo.setGrandAmount(Objects.nonNull(jackpotRewardPoolInputRecordDo.getGrandAmount()) ? String.valueOf(jackpotRewardPoolInputRecordDo.getGrandAmount()) : null);
         vo.setMajorAmount(Objects.nonNull(jackpotRewardPoolInputRecordDo.getMajorAmount()) ? String.valueOf(jackpotRewardPoolInputRecordDo.getMajorAmount()) : null);
         vo.setMinorAmount(Objects.nonNull(jackpotRewardPoolInputRecordDo.getMinorAmount()) ? String.valueOf(jackpotRewardPoolInputRecordDo.getMinorAmount()) : null);

@@ -8,10 +8,13 @@ import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
+import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.MessageId;
@@ -44,6 +47,8 @@ public abstract class AbstractJackPotPulsarListener <T extends ToVoConverter> im
     public abstract Consumer<byte[]> getConsumer();
 
     public abstract GameTypeEnum getGameType();
+
+    public abstract AbstractJackpotManager jackpotManager();
 
     public abstract TypeReference<MQMessage<BetRecordDo<T>>> getTypeReference();
 
@@ -147,6 +152,45 @@ public abstract class AbstractJackPotPulsarListener <T extends ToVoConverter> im
             }
         }
         // 批量处理落库
+        if (!updateRecordList.isEmpty()) {
+            List<JackpotRewardPoolInputRecordDo> recordList = new ArrayList<>();
+            updateRecordList.forEach(record -> {
+                BetRecordDo.ExtendInfo extendInfo = record.getExtendInfo();
+                if(extendInfo != null && extendInfo.getJackPotPoolAmount() != null){
+                    BetRecordDo.JackPotPoolAmount jackPotPoolAmount = extendInfo.getJackPotPoolAmount();
+                    recordList.add(JackpotRewardPoolInputRecordDo.builder()
+                            .type(JackpotRewardPoolInputTypeEnum.PAYOUT_IN)
+                            .grandAmount(jackPotPoolAmount.getGrandContributionAmount())
+                            .majorAmount(jackPotPoolAmount.getMajorContributionAmount())
+                            .minorAmount(jackPotPoolAmount.getMinorContributionAmount())
+                            .miniAmount(jackPotPoolAmount.getMiniContributionAmount())
+                            .build());
+                }else {
+                    try {
+                        this.getConsumer().acknowledge(updateMessageIdMap.get(record.getId()));
+                    } catch (PulsarClientException e) {
+                        log.error("Error ack message", e);
+                    }
+                }
+            });
+
+            // 批量处理
+            List<Long> failIds = jackpotManager().batchAddJackpotRewardRecord(recordList);
+            if (!failIds.isEmpty()) {
+                // 保留未失败的记录，即从updateMessageIdMap中移除failIds中存在的id
+                updateMessageIdMap.entrySet().removeIf(entry -> failIds.contains(entry.getKey()));
+            }
+            if (!updateMessageIdMap.isEmpty()) {
+                // 批量ack
+                try {
+                    this.getConsumer().acknowledge(new ArrayList<>(updateMessageIdMap.values()));
+                } catch (PulsarClientException e) {
+                    log.error("Error batch ack message", e);
+                }
+            }
+        }
+
+
 
     }
 }
