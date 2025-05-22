@@ -46,8 +46,9 @@ public enum SymbolEnum {
 
     Symbol0("0", "Symbol0"),
     Symbol1("1", "Symbol1"),
-    Symbol5("0", "Symbol5"),
-    Symbol10("0", "Symbol10"),
+    Symbol5("5", "Symbol5"),
+    Symbol10("10", "Symbol10"),
+    SymbolNull("null", "SymbolNull"),
 
     ;
 
