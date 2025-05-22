@@ -13,9 +13,10 @@ import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.MultiplePieTypeEnum;
 import com.wegame.capi.common.utils.GameUtil;
-import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,7 +64,7 @@ public class BakunawaMultipleCalculateStrategy extends AbstractMultipleCalculate
         // 随机取出一个倍率
         String multiple = GameUtil.randomKey(multipleProbabilisticMap, randomService.randomInt(1, Constants.CONST_1000000));
         if (!MultiplePieTypeEnum.BAKUNAWA.getCode().equals(multiple)) {
-            return new Pair<>(MultiplePieTypeEnum.NORMAL, new BigDecimal(multiple));
+            return ImmutablePair.of(MultiplePieTypeEnum.NORMAL, new BigDecimal(multiple));
         } else {
             // 计算吞月倍率盘倍率
             TreeMap<String, BigDecimal> originalSuperMultiplePieProbabilisticConfig = bakunawaConfig.getProbabilisticConfig().getMultiplePieProbabilisticConfig();
@@ -73,7 +74,7 @@ public class BakunawaMultipleCalculateStrategy extends AbstractMultipleCalculate
             });
             // 随机取出一个倍率
             String finalMultiple = GameUtil.randomKey(superMultiPleProbabilisticMap, randomService.randomInt(1, Constants.CONST_1000000));
-            return new Pair<>(MultiplePieTypeEnum.BAKUNAWA, new BigDecimal(finalMultiple));
+            return ImmutablePair.of(MultiplePieTypeEnum.BAKUNAWA, new BigDecimal(finalMultiple));
         }
     }
 }
