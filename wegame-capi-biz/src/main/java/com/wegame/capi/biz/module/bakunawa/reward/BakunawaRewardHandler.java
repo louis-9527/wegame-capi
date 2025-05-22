@@ -125,7 +125,6 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         return RewardLineDo.<SymbolDo>builder()
                 .rewardLineType(null)
                 .rewardLineSubType(RewardLineSubTypeEnum.COMMON)
-                .rewardLineNo(null)
                 .rewardLineCount(1)
                 .rewardSymbol(null)
                 .rewardSymbolList(rewardSymbolDoList)
