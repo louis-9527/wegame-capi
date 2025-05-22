@@ -128,33 +128,5 @@ public class LamangGameHelper {
             .build();
 
 
-    public static final List<List<SymbolSizeEnum>> LAMANG_REEL_TEMPLATE = Arrays.asList(
-            // S
-            Arrays.asList(S, S, S, S, S),
-            // M，S
-            //// 1M，3S，
-            Arrays.asList(M, S, S, S),
-            Arrays.asList(S, M, S, S),
-            Arrays.asList(S, S, M, S),
-            Arrays.asList(S, S, S, M),
-            //// 2M，1S
-            Arrays.asList(M, M, S),
-            Arrays.asList(M, S, M),
-            Arrays.asList(S, M, M),
-            // L，S
-            //// 1L，2S
-            Arrays.asList(L, S, S),
-            Arrays.asList(S, L, S),
-            Arrays.asList(S, S, L),
-            // L，M
-            //// 1L，1M
-            Arrays.asList(L, M),
-            Arrays.asList(M, L),
-            // XL、S
-            //// 1XL，1S
-            Arrays.asList(XL, S),
-            Arrays.asList(S, XL)
-    );
-
 
 }
