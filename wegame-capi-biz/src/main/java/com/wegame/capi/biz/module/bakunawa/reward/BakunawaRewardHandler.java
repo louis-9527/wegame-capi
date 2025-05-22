@@ -17,10 +17,9 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
+import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
-import com.wegame.capi.common.enums.RewardSubTypeEnum;
-import com.wegame.capi.common.enums.RewardTypeEnum;
+import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,9 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.wegame.capi.biz.module.bakunawa.BakunawaGameHelper.*;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
@@ -43,6 +44,8 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
     MultipleCalculateStrategy bakunawaMultipleCalculateStrategy;
     @Autowired
     BakunawaConfig bakunawaConfig;
+    @Autowired
+    RandomService randomService;
 
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
         // 1、业务校验
@@ -51,6 +54,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         List<RewardLineDo<SymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算滚盘倍率
         BigDecimal totalMultiple = bakunawaMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
+        // 4、 计算倍率盘倍率
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
             return RewardResultDo.<SymbolDo>builder()
