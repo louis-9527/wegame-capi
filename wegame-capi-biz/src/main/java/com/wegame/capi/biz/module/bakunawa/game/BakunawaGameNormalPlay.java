@@ -8,7 +8,6 @@ import com.wegame.capi.biz.domain.biz.game.BakunawaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
@@ -25,6 +24,9 @@ import java.util.List;
 import java.util.TreeMap;
 
 import static com.wegame.capi.biz.module.bakunawa.BakunawaGameHelper.BAKUNAWA_GAME_INFO;
+import static com.wegame.capi.common.Constants.CONST_1000000;
+import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
+import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
 @Component("bakunawaGameNormalPlay")
@@ -56,8 +58,7 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
     }
 
     /**
-     * 正常滚轮生成：生成逻辑无任何限制
-     *
+     * 滚轮生成
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
@@ -65,31 +66,21 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         // 元素出现概率配置
         TreeMap<String, List<BigDecimal>> wheelProbabilisticConfigMap = bakunawaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
-        // 逐个生成滚轮
-        for (int colum = 0; colum < gameInfo.getColumn(); colum++) {
-            // 列概率配置
-            TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(colum, wheelProbabilisticConfigMap);
-            generateColumSymbol(symbolArr, colum, gameInfo, columProbabilisticMap);
+        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
+        int randomNumberIndex = 0;
+        for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
+            // 列概率
+            TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, wheelProbabilisticConfigMap);
+            for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
+                Integer randomNumber = randomNumberList.get(randomNumberIndex);
+                SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
+                symbolArr[row][column] = symbolDo;
+            }
         }
         return WheelDo.<SymbolDo>builder()
                 .index(DEFAULT_WHEEL_INDEX)
                 .symbolArr(symbolArr)
                 .build();
-    }
-
-    /**
-     * 每一列只有两个不同的元素
-     *
-     * @param symbolArr        元素数组
-     * @param colum            当前列
-     * @param gameInfo         游戏信息
-     */
-    private void generateColumSymbol(IbongAdarnaSymbolDo[][] symbolArr, int colum, GameInfoDo gameInfo, TreeMap<String, Integer> columProbabilisticMap) {
-        TreeMap<String, TreeMap<String, Integer>> symbolBreakUpProbabilisticMap = buildSymbolBreakUpProbabilisticMap();
-        int preSymbolGenCount = preSymbolGenList.size();
-        AssertUtil.assertTrue(preSymbolGenCount > 0 && preSymbolGenCount <= 2, ErrorCode.ERR_INTER, "invalid preSymbolGenCount");
-        int[] rowIndex = new int[gameInfo.getRow()];
-
     }
 
 

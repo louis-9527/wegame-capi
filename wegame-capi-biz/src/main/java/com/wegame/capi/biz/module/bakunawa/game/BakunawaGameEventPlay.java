@@ -30,11 +30,10 @@ import static com.wegame.capi.biz.module.bakunawa.BakunawaGameHelper.BAKUNAWA_GA
 import static com.wegame.capi.client.enums.OperationEventTypeEnum.IBONG_ADARNA;
 
 @Slf4j
-@Component("ibongAdarnaGameEventPlay")
+@Component("bakunawaGameEventPlay")
 public class BakunawaGameEventPlay extends AbstractGame<BakunawaGameRecordDo> {
 
     private static final GameInfoDo GAME_INFO = BAKUNAWA_GAME_INFO;
-    // todo @maidong
     @Autowired
     RewardHandler<SymbolDo> bakunawaRewardHandler;
     @Autowired

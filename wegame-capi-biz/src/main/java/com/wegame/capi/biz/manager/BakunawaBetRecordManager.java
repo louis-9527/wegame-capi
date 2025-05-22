@@ -6,6 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.BakunawaGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
+import com.wegame.capi.client.domain.vo.bakunawa.BakunawaGameRecordVo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
@@ -79,7 +80,7 @@ public class BakunawaBetRecordManager extends AbstractBetRecordManager<BakunawaG
     }
 
     @Override
-    public List<IbongAdarnaGameRecordVo> listGameRecordVo(Long betRecordId, GameTypeEnum gameType) {
+    public List<BakunawaGameRecordVo> listGameRecordVo(Long betRecordId, GameTypeEnum gameType) {
         List<BakunawaGameRecordDo> list = gameRecordService.list(GameRecordQuery.builder()
                 .betRecordId(betRecordId)
                 .orderByClause("_id")
