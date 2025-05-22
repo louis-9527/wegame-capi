@@ -120,29 +120,30 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
     }
 
     private List<RewardLineDo<SymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<SymbolDo> wheel) {
-        SymbolDo[][] symbolArr = wheel.getSymbolArr();
-        List<RewardLineDo<SymbolDo>> rewardLineDoList = Lists.newArrayList();
-        // 获取固定线路
-        Map<Integer, List<List<Integer>>> rewardFixedLinesConfigMap = ibongAdarnaConfig.getRewardFixedLinesConfig();
-        rewardFixedLinesConfigMap.forEach((lineNo, lineIndexList) -> {
-            Set<String> rewardSymbolDoSet = Sets.newHashSet();
-            List<RewardSymbolDo<SymbolDo>> rewardSymbolDoList = Lists.newArrayList();
-            for (List<Integer> lineIndex : lineIndexList) {
-                SymbolDo symbolDo = symbolArr[lineIndex.get(0)][lineIndex.get(1)];
-                rewardSymbolDoSet.add(symbolDo.getId());
-                rewardSymbolDoList.add(RewardSymbolDo.<SymbolDo>builder()
-                        .symbol(symbolDo)
-                        .index(IndexFactory.buildDo(lineIndex.get(0), lineIndex.get(1)))
-                        .build());
-            }
-            // 当前线是否中奖
-            if (hasReward(rewardSymbolDoSet, gameInfo)) {
-                // 构建中奖线
-                rewardLineDoList.add(buildRewardLineDo(rewardSymbolDoList, lineNo));
-            }
-        });
-        // 返回中奖线列表
-        return rewardLineDoList;
+            //        SymbolDo[][] symbolArr = wheel.getSymbolArr();
+            //        List<RewardLineDo<SymbolDo>> rewardLineDoList = Lists.newArrayList();
+            //        // 获取固定线路
+            //        Map<Integer, List<List<Integer>>> rewardFixedLinesConfigMap = ibongAdarnaConfig.getRewardFixedLinesConfig();
+            //        rewardFixedLinesConfigMap.forEach((lineNo, lineIndexList) -> {
+            //            Set<String> rewardSymbolDoSet = Sets.newHashSet();
+            //            List<RewardSymbolDo<SymbolDo>> rewardSymbolDoList = Lists.newArrayList();
+            //            for (List<Integer> lineIndex : lineIndexList) {
+            //                SymbolDo symbolDo = symbolArr[lineIndex.get(0)][lineIndex.get(1)];
+            //                rewardSymbolDoSet.add(symbolDo.getId());
+            //                rewardSymbolDoList.add(RewardSymbolDo.<SymbolDo>builder()
+            //                        .symbol(symbolDo)
+            //                        .index(IndexFactory.buildDo(lineIndex.get(0), lineIndex.get(1)))
+            //                        .build());
+            //            }
+            //            // 当前线是否中奖
+            //            if (hasReward(rewardSymbolDoSet, gameInfo)) {
+            //                // 构建中奖线
+            //                rewardLineDoList.add(buildRewardLineDo(rewardSymbolDoList, lineNo));
+            //            }
+            //        });
+            //        // 返回中奖线列表
+            //        return rewardLineDoList;
+        return null;
     }
 
     /**

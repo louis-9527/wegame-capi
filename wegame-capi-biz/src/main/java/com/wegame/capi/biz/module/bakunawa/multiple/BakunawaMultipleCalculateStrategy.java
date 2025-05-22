@@ -26,6 +26,7 @@ public class BakunawaMultipleCalculateStrategy
     @Autowired
     RandomService randomService;
 
+    // 计算基础倍率： todo @maidong 根据一位数组中 【】 【】 【】
     @Override
     public BigDecimal calculateMultiple(RewardHandleDo<SymbolDo> rewardHandle, List<RewardLineDo<SymbolDo>> rewardLineList) {
         // 传入当前倍率盘数据，则直接返回倍率盘数据，应用场景：dos

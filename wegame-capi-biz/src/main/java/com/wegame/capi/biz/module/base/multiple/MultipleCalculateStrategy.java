@@ -13,9 +13,9 @@ import java.util.List;
 public interface MultipleCalculateStrategy<T extends SymbolDo> {
 
     /**
-     * 计算赔率
+     * 计算倍率
      * @param rewardHandle
-     * @return 赔率
+     * @return 倍率
      */
     BigDecimal calculateMultiple(RewardHandleDo<T> rewardHandle, List<RewardLineDo<T>> rewardLineList);
 }
