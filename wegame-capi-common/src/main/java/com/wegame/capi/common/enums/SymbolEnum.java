@@ -37,6 +37,7 @@ public enum SymbolEnum {
     Symbol2005("2005", "Symbol2005"),
 
     Scatter("3001", "Scatter"),
+    Scatter1("3002", "Scatter+1"),
 
     Wild("4001", "Wild"),
     WildX2("4002", "WildX2"),
