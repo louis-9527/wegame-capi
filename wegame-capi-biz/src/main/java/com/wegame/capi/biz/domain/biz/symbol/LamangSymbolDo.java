@@ -26,6 +26,16 @@ public class LamangSymbolDo extends SymbolDo {
      */
     private boolean symbolGoldBorder;
 
+    /**
+     * 适用于scatter 和 scatter +1 ,是否已经被用于添加jackpot抽奖次数
+     */
+    private boolean addJackpotTime;
+
+    /**
+     * 适用于scatter 和 scatter +1 ,是否已经被用于添加免费轮
+     */
+    private boolean addFreeWheel;
+
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
         return StringUtils.equals(getId(), LAMANG_SYMBOL_PLACEHOLDER.getId());

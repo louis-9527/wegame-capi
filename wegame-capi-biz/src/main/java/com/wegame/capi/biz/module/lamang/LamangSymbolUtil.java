@@ -36,13 +36,8 @@ public class LamangSymbolUtil {
         return false;
     }
 
-    public static boolean hasBigWildInRow(LamangSymbolDo[][] symbolArr, int row) {
-        for (int col = 0; col < symbolArr[row].length; col++) {
-            if (Objects.nonNull(symbolArr[row][col]) && StringUtils.equals(symbolArr[row][col].getId(), LAMANG_BIG_WILD.getId())) {
-                return true;
-            }
-        }
-        return false;
+    public static void holdBigWild(LamangSymbolDo[][] symbolArr) {
+        //todo 用占位符覆盖bigWild所在1-3列
     }
 
     public static int countIndexSymbol(LamangSymbolDo[][] symbolArr, SymbolEnum symbol) {

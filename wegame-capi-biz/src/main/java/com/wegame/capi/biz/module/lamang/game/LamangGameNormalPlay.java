@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
-import com.wegame.capi.biz.config.domain.MalakasConfig;
+import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
@@ -13,7 +13,6 @@ import com.wegame.capi.biz.domain.biz.symbol.*;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
-import com.wegame.capi.biz.module.lamang.LamangSymbolUtil;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.RewardTypeEnum;
@@ -54,32 +53,32 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     private static final int SUPER_WILD_END_COLUMN_INDEX = 3;
 
     @Autowired
-    MalakasConfig lamangConfig;
+    LamangConfig lamangConfig;
 
     @Autowired
     RewardHandler malakasRewardHandler;
 
     @Override
     public List<LamangGameRecordDo> play(GamePlayDo gamePlay) {
-        //todo 逻辑代码
+        //todo 添加抽奖逻辑
         List<LamangGameRecordDo> gameRecordResult = new ArrayList<>();
         LinkedList<FreeWheelHandleDo> freeWheelList = new LinkedList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
         switch (gamePlay.getBetType()) {
             // 正常投注
             case NORMAL_BET:
-                generateFirstBatch(false);
+                generateFirstBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList, false);
                 break;
             // 购买投注
             case BUY_BET:
-                generateFirstBatch(true);
+                generateFirstBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList, true);
                 break;
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
 
         if (CollectionUtils.isNotEmpty(freeWheelList)) {
-            generateFreeBatch(freeWheelList);
+            generateFreeBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
         }
         return gameRecordResult;
     }
@@ -90,7 +89,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     private void fillWheel(GameInfoDo gameInfo,
                            LamangSymbolDo[][] symbolArr,
                            int totalScatterNumberInWheel,
-                           MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig) {
+                           LamangConfig.PlayProbabilisticConfig playProbabilisticConfig) {
 
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
@@ -141,7 +140,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         }
     }
 
-    private WheelDo<LamangSymbolDo> generateFirstWheel(MalakasConfig.PlayProbabilisticConfig config, boolean freeWheel){
+    private WheelDo<LamangSymbolDo> generateFirstWheel(LamangConfig.PlayProbabilisticConfig config, boolean freeWheel){
         LamangSymbolDo[][] symbolArr = new LamangSymbolDo[GAME_INFO.getRow()][GAME_INFO.getColumn()];
 
         fillWheel(GAME_INFO, symbolArr, 0, config);
@@ -154,7 +153,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     }
 
     private WheelDo<LamangSymbolDo> generateFromPreWheel(LamangGameRecordDo preGameRecord,
-                                                         MalakasConfig.PlayProbabilisticConfig config, boolean freeWheel){
+                                                         LamangConfig.PlayProbabilisticConfig config, boolean freeWheel){
 
         WheelDo<LamangSymbolDo> preWheel = preGameRecord.getWheel();
         RewardResultDo<LamangSymbolDo> preRewardResult = preGameRecord.getRewardResult();
@@ -167,11 +166,14 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         if (hasSuperWild(symbolArr)) {
             // 清除除superWild外的所有元素 并将中间元素中间（1，1）用超级wild占位 用超级wild配置表生成wheel
             symbolArr = initSuperWildWheel();
-            fillWheel(GAME_INFO, symbolArr, 0, config);
+            fillWheel(GAME_INFO, symbolArr, 0,
+                    lamangConfig.getProbabilisticConfig().getSupperWildRefreshProbabilisticConfig());
         } else {
             //下落
             rebuildSymbolArr(symbolArr, GAME_INFO);
             fillWheel(GAME_INFO, symbolArr, 0, config);
+            // 填充bigWild
+            holdBigWild(symbolArr);
         }
 
 //        int scatterNumberInWheel = LamangSymbolUtil.countIndexSymbol(symbolArr, SymbolEnum.Scatter);
@@ -185,8 +187,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 .build();
     }
 
-    private void wildPlaceHolder(LamangSymbolDo[][] symbolArr) {
-
+    private void holdBigWild(LamangSymbolDo[][] symbolArr) {
+        hasSuperWild(symbolArr);
     }
 
     private LamangSymbolDo[][] initSuperWildWheel() {
@@ -211,22 +213,11 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                                          AtomicLong totalRewardAmount,
                                          LamangGameRecordDo preGameRecord,
                                          LinkedList<FreeWheelHandleDo> freeWheelList,
-                                         MalakasConfig.PlayProbabilisticConfig config,
-                                         boolean freeWheelFlag) {
-
-        if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
-            WheelDo<LamangSymbolDo> wheel = generateFromPreWheel(
-                    preGameRecord,
-                    config,
-                    freeWheelFlag);
-            //todo 换成lamang中奖线计算
-            RewardResultDo<LamangSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
-            long gameRecordId = generateGameRecordId();
-            LamangGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
-            gameRecordResult.add(gameRecord);
-            totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            loopPlayOnPreGameRecord(gamePlay, gameRecordResult, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag);
-        } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
+                                         LamangConfig.PlayProbabilisticConfig config,
+                                         boolean freeWheelFlag,
+                                         boolean mustRewardFreeWheel) {
+        // 每一回合开始前都需要将上一回合获得的免费轮添加上
+        if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
             if (!reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), lamangConfig.getRewardMaxMultiple())) {
                 for (int times = 1; times <= preGameRecord.getRewardResult().getRewardFreeWheelTimes(); times++) {
                     freeWheelList.addLast(FreeWheelHandleDo.builder()
@@ -237,6 +228,24 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 // help gc
                 freeWheelList.clear();
             }
+        }
+
+        if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
+            WheelDo<LamangSymbolDo> wheel = generateFromPreWheel(
+                    preGameRecord,
+                    config,
+                    freeWheelFlag);
+            //todo 换成lamang中奖线计算
+            RewardResultDo<LamangSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
+            //todo  如果没有中奖&是购买免费轮，保证最后有三个scatter
+            if ((Objects.isNull(rewardResult) || Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) && mustRewardFreeWheel) {
+
+            }
+            long gameRecordId = generateGameRecordId();
+            LamangGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
+            gameRecordResult.add(gameRecord);
+            totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
+            loopPlayOnPreGameRecord(gamePlay, gameRecordResult, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag, mustRewardFreeWheel);
         }
     }
 
@@ -267,28 +276,65 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     /**
      * 生成一轮
      */
-    private void generateBatch(MalakasConfig.PlayProbabilisticConfig config, boolean freeWheelFlag) {
+    private void generateBatch(GamePlayDo gamePlay, List<LamangGameRecordDo> result, LamangConfig.PlayProbabilisticConfig config,
+                               AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList,
+                               boolean freeWheelFlag,
+                               boolean mustRewardFreeWheel) {
         WheelDo<LamangSymbolDo> wheel = generateFirstWheel(config, freeWheelFlag);
         //todo
-//        loopPlayOnPreGameRecord();
+        RewardResultDo<LamangSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
+        AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
+        // 组装-游戏记录
+        long gameRecordId = generateGameRecordId();
+        LamangGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
+        result.add(gameRecord);
+        totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
+        loopPlayOnPreGameRecord(gamePlay, result, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag, mustRewardFreeWheel);
     }
 
     /**
      * 生成首轮
      */
-    private void generateFirstBatch(boolean mustRewardFreeWheel) {
-        //todo 在本轮结束后，如果是购买免费轮，需要保障最后有3个scatter
-//        generateBatch();
+    private void generateFirstBatch(GamePlayDo gamePlay, List<LamangGameRecordDo> result, AtomicLong totalRewardAmount,
+                                    LinkedList<FreeWheelHandleDo> freeWheelList, boolean mustRewardFreeWheel) {
+        LamangConfig.PlayProbabilisticConfig firstBatchConfig = lamangConfig.getProbabilisticConfig().getCommonPlaySymbolProbabilisticConfig();
+        generateBatch(gamePlay, result, firstBatchConfig, totalRewardAmount, freeWheelList, false, mustRewardFreeWheel);
     }
 
     /**
      * 生成免费轮
      */
-    private void generateFreeBatch(LinkedList<FreeWheelHandleDo> freeWheelList) {
+    private void generateFreeBatch(GamePlayDo gamePlay, List<LamangGameRecordDo> result, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList) {
         while (!freeWheelList.isEmpty()) {
             FreeWheelHandleDo freeWheel = freeWheelList.removeFirst();
-//            generateBatch();
+            LamangGameRecordDo parentGameRecord = result.stream().filter(item -> Objects.equals(freeWheel.getParentGameRecordId(), item.getId())).findFirst().orElse(null);
+            AssertUtil.assertNotNull(parentGameRecord, ErrorCode.ERR_INTER);
+            LamangConfig.PlayProbabilisticConfig freeWheelConfig = lamangConfig.getProbabilisticConfig().getFreePlaySymbolProbabilisticConfig();
+            WheelDo<LamangSymbolDo> wheel = generateFirstWheel(freeWheelConfig, true);
+            wheel.setFreeFlag(true);
+            // 判奖-根据游戏滚轮和中奖线算法判断
+            BigDecimal multiply = getMultiple();
+            RewardResultDo<LamangSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, multiply));
+            AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
+            // 组装-游戏记录
+            long gameRecordId = generateGameRecordId();
+            LamangGameRecordDo gameRecord = buildGameRecord(gameRecordId, freeWheel.getParentGameRecordId(), gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
+            result.add(gameRecord);
+            totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
+            if (CollectionUtils.isEmpty(parentGameRecord.getGameRecordIds())) {
+                parentGameRecord.setGameRecordIds(new ArrayList<>());
+            }
+            parentGameRecord.getGameRecordIds().add(gameRecordId);
+            loopPlayOnPreGameRecord(gamePlay, result, totalRewardAmount, gameRecord, freeWheelList, freeWheelConfig, true, false);
         }
+    }
+
+    /**
+     * 获取倍率
+     * @return
+     */
+    private BigDecimal getMultiple() {
+        return BigDecimal.ONE;
     }
 
     /**
@@ -314,8 +360,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
 
 
-    private boolean generateSymbolGoldBorder(MalakasConfig.PlayProbabilisticConfig playProbabilisticConfig, int row, int column) {
-        List<BigDecimal> goldBoarderProbabilisticConfig = playProbabilisticConfig.getGoldBoarderProbabilisticConfig();
+    private boolean generateSymbolGoldBorder(LamangConfig.PlayProbabilisticConfig playProbabilisticConfig, int row, int column) {
+        List<BigDecimal> goldBoarderProbabilisticConfig = playProbabilisticConfig.getWheelGoldProbabilisticConfig();
         BigDecimal goldBoarderProbabilistic = null;
         if (Objects.equals(row, ONE_ROW_INDEX)) {
             goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(SEVEN_COLUM_INDEX);
