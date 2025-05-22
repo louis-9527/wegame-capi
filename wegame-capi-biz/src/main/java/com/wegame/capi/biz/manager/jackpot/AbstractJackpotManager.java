@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager.jackpot;
 
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolSummarizeDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -23,5 +24,7 @@ public abstract class AbstractJackpotManager {
     public abstract JackpotUserRewardRecordDo getMaxReward(GameTypeEnum gameType);
 
     public abstract JackpotUserRewardRecordDo getByGameRecordId(Long gameRecordId, GameTypeEnum gameType);
+
+    public abstract void batchAddJackpotRewardRecord (List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos);
 
 }

@@ -149,6 +149,19 @@ public class BetRecordDo<T> implements Serializable {
         private String campaignId;
 
         /**
+         * jackpot 奖池
+         */
+        private JackPotPoolAmount jackPotPoolAmount;
+
+    }
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class JackPotPoolAmount {
+        /**
          * grand奖池贡献金额
          */
         private Long grandContributionAmount;
@@ -168,8 +181,6 @@ public class BetRecordDo<T> implements Serializable {
          * mini奖池贡献金额
          */
         private Long miniContributionAmount;
-
-
     }
 }
 
