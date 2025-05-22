@@ -26,7 +26,7 @@ public class MariamakilingBetControllerTest extends BetControllerTest {
 
 
     @BeforeAll
-    public static void beforeTest() {
+    public void beforeTest() {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
                 .userName("system")
