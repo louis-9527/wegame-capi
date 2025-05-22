@@ -4,7 +4,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.common.enums.MultiplePieTypeEnum;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigDecimal;
 import java.util.List;
