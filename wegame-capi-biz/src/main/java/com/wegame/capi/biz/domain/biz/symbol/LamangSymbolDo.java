@@ -20,10 +20,7 @@ import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_SYMBOL_P
 public class LamangSymbolDo extends SymbolDo {
     private static final long serialVersionUID = -2266308987663710848L;
 
-    /**
-     * 元素大小
-     */
-    private LamangSymbolSizeEnum symbolSize;
+    
     /**
      * 元素金边
      */
