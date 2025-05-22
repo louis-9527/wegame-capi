@@ -6,7 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRecordRequest;
-import com.wegame.capi.client.domain.vo.JackpotUserRewardRecordVo;
+import com.wegame.capi.client.domain.vo.jackpot.JackpotUserRewardRecordVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
@@ -184,6 +184,8 @@ public class JackpotUserRewardRecordConverter {
         query.setLimit(request.getPageSize());
         query.setOffset(request.getOffset());
         query.setOrderByClause(orderClause);
+
+        query.setRewardPoolTypeList(request.getRewardPoolTypeList());
         return query;
     }
 

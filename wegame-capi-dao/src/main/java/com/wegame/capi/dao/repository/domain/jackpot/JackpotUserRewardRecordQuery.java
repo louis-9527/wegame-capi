@@ -5,6 +5,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户jackpot中奖记录查询模型
@@ -47,6 +48,11 @@ public class JackpotUserRewardRecordQuery extends JackpotUserRewardRecordPo impl
     private Date endUpdateTime;
 
     ///////////////  above auto generated ///////////////
+
+    /**
+     * 奖池类型列表
+     */
+    private List<Integer> rewardPoolTypeList;
 
 }
 

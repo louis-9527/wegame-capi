@@ -29,6 +29,10 @@ public enum GameTypeEnum {
             "IbongAdarna",
             "ibongadarna_bet_record",
             "ibongadarna_game_record", 300L),
+    LAM_ANG("zhumeng004",
+            "LamAng",
+            "lamang_bet_record",
+            "lamang_game_record", 300L),
 
 
     ;

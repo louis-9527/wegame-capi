@@ -1,4 +1,4 @@
-package com.wegame.capi.client.domain.vo;
+package com.wegame.capi.client.domain.vo.jackpot;
 
 import com.wegame.base.Validate;
 import com.wegame.base.enums.ErrorCode;
@@ -28,6 +28,12 @@ public class JackpotRewardPoolVo implements Validate, Serializable {
     private Integer type;
     @ApiModelProperty("奖池金额.单位：厘， 可以为负")
     private String amount;
+
+    @ApiModelProperty("奖池初始金额.单位：厘")
+    private String initAmount;
+
+    @ApiModelProperty("奖池可派奖金额.单位：厘，max(amount, 保底金额)")
+    private String availableAmount;
     @ApiModelProperty("创建人")
     private String creator;
     @ApiModelProperty("创建时间")

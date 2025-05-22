@@ -6,7 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolInputRecordRequest;
-import com.wegame.capi.client.domain.vo.JackpotRewardPoolInputRecordVo;
+import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolInputRecordVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordQuery;

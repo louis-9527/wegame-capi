@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 
 /**
  * 分页查询用户jackpot中奖记录请求参数
@@ -38,6 +40,9 @@ public class PageQueryJackpotUserRewardRecordRequest extends PageQueryRequest im
     private String rewardPoolId;
     @ApiModelProperty(value = "类型 1：grand 2:major 3:minor 4:mini 5:betBonus", required = false)
     private Integer rewardPoolType;
+
+    @ApiModelProperty(value = "类型列表 ： 类型 1：grand 2:major 3:minor 4:mini 5:betBonus", required = false)
+    private List<Integer> rewardPoolTypeList;
     @ApiModelProperty(value = "中奖金额.单位：厘", required = false)
     private String rewardAmount;
     @ApiModelProperty(value = "派奖流水号（refid）", required = false)

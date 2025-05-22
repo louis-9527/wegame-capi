@@ -1,14 +1,25 @@
 package com.wegame.capi.application.controller.jackpot;
 
+import com.google.common.collect.ImmutableMap;
 import com.wegame.base.Validate;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
+import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
 import com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolRequest;
-import com.wegame.capi.client.domain.vo.JackpotRewardPoolVo;
+import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolSummarizeVo;
+import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolVo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -37,83 +48,29 @@ import java.util.stream.Collectors;
 @Api(value = "jackpot奖池模块", tags = {"jackpot奖池模块"})
 public class JackpotRewardPoolController {
 
+    public static final Map<GameTypeEnum, String> JACKPOT_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
+            .put(GameTypeEnum.LAM_ANG, "lamangJackpotManager")
+            .build();
+
     @Autowired
-    JackpotRewardPoolService jackpotRewardPoolService;
+    Map<String, AbstractJackpotManager> jackpotManagerMap;
 
-    @ApiOperation(value = "新增（单条）", httpMethod = "POST")
-    @PostMapping("/add")
-    public CommonResponse<Boolean> add(@RequestBody JackpotRewardPoolVo vo) {
-        vo.validate();
-        Long id = jackpotRewardPoolService.add(JackpotRewardPoolConverter.voToDo(vo));
-        return CommonResponse.build(Objects.nonNull(id));
-    }
 
-    @ApiOperation(value = "新增（批量）", httpMethod = "POST")
-    @PostMapping("/batchAdd")
-    public CommonResponse<Boolean> batchAdd(@RequestBody List<JackpotRewardPoolVo> voList) {
-        Optional.ofNullable(voList)
-            .orElse(Collections.emptyList())
-            .forEach(Validate::validate);
-        return CommonResponse.build(jackpotRewardPoolService.batchAdd(JackpotRewardPoolConverter.voToDoList(voList)));
-    }
-
-    @ApiOperation(value = "删除（单条：根据唯一id）", httpMethod = "GET")
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "主键id", required = true, dataTypeClass = String.class, paramType = "path")})
-    @GetMapping("/delete/{id}")
-    public CommonResponse<Boolean> delete(@PathVariable String id) {
-        return CommonResponse.build(jackpotRewardPoolService.delete(Long.valueOf(id)));
-    }
-
-    @ApiOperation(value = "删除（批量：根据唯一id列表）", httpMethod = "POST")
-    @GetMapping("/batchDelete")
-    public CommonResponse<Boolean> batchDelete(@RequestBody List<String> ids) {
-        List<Long> idList = Optional.ofNullable(ids)
-            .orElse(Collections.emptyList())
-            .stream()
-            .filter(StringUtils::isNotEmpty)
-            .map(Long::parseLong)
-            .collect(Collectors.toList());
-        return CommonResponse.build(jackpotRewardPoolService.batchDelete(idList));
-    }
-
-    @ApiOperation(value = "更新（单条：根据唯一id）", httpMethod = "POST")
-    @PostMapping("/update")
-    public CommonResponse<Boolean> update(@RequestBody JackpotRewardPoolVo vo) {
-        vo.validate();
-        return CommonResponse.build(jackpotRewardPoolService.update(JackpotRewardPoolConverter.voToDo(vo)));
-    }
-
-    @ApiOperation(value = "查询（单条：根据唯一id）", httpMethod = "GET")
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "主键id", required = true, dataTypeClass = String.class, paramType = "path")})
-    @GetMapping("/get/{id}")
-    public CommonResponse<JackpotRewardPoolVo> get(@PathVariable String id) {
-        return CommonResponse.build(JackpotRewardPoolConverter.doToVo(jackpotRewardPoolService.get(Long.valueOf(id))));
-    }
-
-    @ApiOperation(value = "查询（批量：根据唯一id列表）", httpMethod = "POST")
-    @GetMapping("/listByIds")
-    public CommonResponse<List<JackpotRewardPoolVo>> listByIds(@RequestBody List<String> ids) {
-        List<Long> idList = Optional.ofNullable(ids)
-            .orElse(Collections.emptyList())
-            .stream()
-            .filter(StringUtils::isNotEmpty)
-            .map(Long::parseLong)
-            .collect(Collectors.toList());
-        return CommonResponse.build(JackpotRewardPoolConverter.doToVoList(jackpotRewardPoolService.listByIds(idList)));
-    }
-
-    @ApiOperation(value = "分页查询（批量：根据查询条件）", httpMethod = "POST")
-    @PostMapping("/pageQuery")
-    public CommonResponse<PageInfoVo<JackpotRewardPoolVo>> pageQuery(@RequestBody PageQueryJackpotRewardPoolRequest request) {
-        request.validate();
-        JackpotRewardPoolQuery query = JackpotRewardPoolConverter.requestToQuery(request, "order by `create_time` desc");
-        long cnt = jackpotRewardPoolService.count(query);
-        List<JackpotRewardPoolDo> list = jackpotRewardPoolService.list(query);
-        return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
-                            request.getPageSize(),
-                            JackpotRewardPoolConverter.doToVoList(list),
-                            cnt));
+    @ApiOperation(value = "获取奖池信息", httpMethod = "GET")
+    @GetMapping("/poolSummarize")
+    public CommonResponse<JackpotRewardPoolSummarizeVo> getPoolSummarize() {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        return CommonResponse.build(JackpotRewardPoolConverter.doToVo(jackpotManager(gameType).getPoolSummarize(gameType)));
     }
 
     ///////////////  above auto generated ///////////////
+
+    private AbstractJackpotManager jackpotManager(GameTypeEnum gameType) {
+        AbstractJackpotManager jackpotManager = jackpotManagerMap.get(JACKPOT_MANAGER_NAME_MAP.get(gameType));
+        AssertUtil.assertNotNull(jackpotManager, ErrorCode.ERR_INTER);
+        return jackpotManager;
+    }
 }
