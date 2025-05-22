@@ -202,7 +202,7 @@ public class UserLoginInfoService {
                 update(updateDo);
             }
         } catch (Exception e) {
-            log.error("asyncAddOrUpdate Exception, req: {}, errMsg: {}", userLoginInfoDo, e.getMessage(), e);
+            log.warn("asyncAddOrUpdate Exception, req: {}, errMsg: {}", userLoginInfoDo, e.getMessage(), e);
         }
     }
 }
