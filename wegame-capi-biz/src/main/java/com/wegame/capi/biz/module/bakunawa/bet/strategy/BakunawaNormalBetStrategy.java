@@ -4,7 +4,6 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
-import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.service.RewardService;

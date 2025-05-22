@@ -73,7 +73,7 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, wheelProbabilisticConfigMap);
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 Integer randomNumber = randomNumberList.get(randomNumberIndex);
-                SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
+                SymbolDo symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
                 symbolArr[row][column] = symbolDo;
             }
         }
