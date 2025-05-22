@@ -48,7 +48,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         validate(rewardHandle);
         // 2、计算中奖线
         RewardLineDo<SymbolDo> rewardLine = calcRewardLine(rewardHandle.getGameInfo(), rewardHandle.getWheel());
-        if (Objects.isNull(rewardLine) || CollectionUtils.isEmpty(rewardLine.getRewardSymbolList())) {
+        if (Objects.isNull(rewardLine)) {
             // 未中奖
             return RewardResultDo.<SymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
@@ -118,6 +118,9 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
                         .index(IndexFactory.buildDo(ONE_ROW_INDEX, column))
                         .build());
             }
+        }
+        if (CollectionUtils.isEmpty(rewardSymbolDoList)) {
+            return null;
         }
         return RewardLineDo.<SymbolDo>builder()
                 .rewardLineType(null)
