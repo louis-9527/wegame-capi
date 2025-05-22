@@ -18,7 +18,6 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import com.wegame.capi.common.enums.SymbolEnum;
-import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -34,12 +33,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.lamang.LamangGameHelper.*;
 import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.countIndexSymbol;
-import static com.wegame.capi.biz.module.malakas.MalakasProbabilisticUtil.getWheelProbabilisticConfig;
 import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.*;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.*;
-import static com.wegame.capi.common.enums.SymbolEnum.SuperWild;
 
 @Slf4j
 @Component("lamangGameNormalPlay")
