@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.bakunawa.BakunawaGameHelper.BAKUNAWA_GAME_INFO;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
@@ -33,7 +34,7 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
 
     private static final Integer DEFAULT_WHEEL_INDEX = 0;
-    private static final GameInfoDo gameInfo = BAKUNAWA_GAME_INFO;
+    private static final GameInfoDo GAME_INFO = BAKUNAWA_GAME_INFO;
     @Autowired
     BakunawaConfig bakunawaConfig;
     @Autowired
@@ -43,10 +44,10 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
     public List<BakunawaGameRecordDo> play(GamePlayDo gamePlay) {
         List<BakunawaGameRecordDo> ret = new ArrayList<>();
         // 生成滚轮
-        WheelDo<SymbolDo> wheel = generateNormalWheel(gameInfo);
+        WheelDo<SymbolDo> wheel = generateNormalWheel();
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
         // 中奖处理
-        RewardResultDo<SymbolDo> rewardResult = bakunawaRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheel, BigDecimal.ZERO));
+        RewardResultDo<SymbolDo> rewardResult = bakunawaRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
         // 构建返回
         BakunawaGameRecordDo record = buildGameRecord(generateGameRecordId(),
                 gamePlay.getBetRecordId(),
@@ -59,22 +60,21 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
 
     /**
      * 滚轮生成
-     * @param gameInfo 游戏信息
+     *
      * @return 滚轮
      */
-    private WheelDo<SymbolDo> generateNormalWheel(GameInfoDo gameInfo) {
-        SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+    private WheelDo<SymbolDo> generateNormalWheel() {
+        SymbolDo[][] symbolArr = new SymbolDo[GAME_INFO.getRow()][GAME_INFO.getColumn()];
         // 元素出现概率配置
         TreeMap<String, List<BigDecimal>> wheelProbabilisticConfigMap = bakunawaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
-        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
+        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, GAME_INFO.getRow() * GAME_INFO.getColumn());
         int randomNumberIndex = 0;
-        for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
+        for (int column = ONE_COLUM_INDEX; column < GAME_INFO.getColumn(); column++) {
             // 列概率
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, wheelProbabilisticConfigMap);
-            for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
+            for (int row = ONE_ROW_INDEX; row < GAME_INFO.getRow(); row++) {
                 Integer randomNumber = randomNumberList.get(randomNumberIndex);
-                SymbolDo symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
-                symbolArr[row][column] = symbolDo;
+                symbolArr[row][column] = randomNormalSymbol(randomNumber, GAME_INFO, columProbabilisticMap);
             }
         }
         return WheelDo.<SymbolDo>builder()
