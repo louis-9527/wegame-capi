@@ -39,18 +39,16 @@ public class BakunawaConfig {
          * Map<元素ID，<列坐标，概率列表>>
          */
         private TreeMap<String, List<BigDecimal>> commonPlayWheelProbabilisticConfig;
-
         /**
          * 倍率盘出现概率配置
          * Map<倍率，概率>
          */
-        private TreeMap<String, BigDecimal> multiplierWheelProbabilisticConfig;
-
+        private TreeMap<String, BigDecimal> multiplePieProbabilisticConfig;
         /**
          * 吞月倍率盘出现概率配置
          * Map<倍率，概率>
          */
-        private TreeMap<String, BigDecimal> superMultiplierWheelProbabilisticConfig;
+        private TreeMap<String, BigDecimal> superMultiplePieProbabilisticConfig;
     }
 
     public void validate() {
@@ -84,8 +82,8 @@ public class BakunawaConfig {
         }
 
         // 2、倍率盘出现概率配置校验
-        Assert.notNull(probabilisticConfig.multiplierWheelProbabilisticConfig, "multiplierWheelProbabilisticConfig is null");
-        Integer multiplierProbabilistic = probabilisticConfig.multiplierWheelProbabilisticConfig.values()
+        Assert.notNull(probabilisticConfig.multiplePieProbabilisticConfig, "multiplierWheelProbabilisticConfig is null");
+        Integer multiplierProbabilistic = probabilisticConfig.multiplePieProbabilisticConfig.values()
                 .stream()
                 .map(value -> value.multiply(new BigDecimal(10000)).intValue())
                 .reduce(0, Integer::sum);
@@ -93,8 +91,8 @@ public class BakunawaConfig {
 
 
         // 3、吞月倍率盘出现概率配置校验
-        Assert.notNull(probabilisticConfig.superMultiplierWheelProbabilisticConfig, "superMultiplierWheelProbabilisticConfig is null");
-        Integer superMultiplierProbabilistic = probabilisticConfig.superMultiplierWheelProbabilisticConfig.values()
+        Assert.notNull(probabilisticConfig.superMultiplePieProbabilisticConfig, "superMultiplierWheelProbabilisticConfig is null");
+        Integer superMultiplierProbabilistic = probabilisticConfig.superMultiplePieProbabilisticConfig.values()
                 .stream()
                 .map(value -> value.multiply(new BigDecimal(10000)).intValue())
                 .reduce(0, Integer::sum);

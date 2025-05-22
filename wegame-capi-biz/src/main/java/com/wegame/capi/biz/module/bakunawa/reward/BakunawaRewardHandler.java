@@ -2,12 +2,9 @@ package com.wegame.capi.biz.module.bakunawa.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
-import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
@@ -15,25 +12,23 @@ import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
-import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
+import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.*;
+import com.wegame.capi.common.utils.GameUtil;
+import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Component("bakunawaRewardHandler")
@@ -43,14 +38,17 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
     MultipleCalculateStrategy bakunawaMultipleCalculateStrategy;
     @Autowired
     BakunawaConfig bakunawaConfig;
+    @Autowired
+    RandomService randomService;
 
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
         List<RewardLineDo<SymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
-        // 3、计算倍率->随机生成倍率
+        // 3、计算基础倍率-> 根据wheel计算基础倍率
         BigDecimal totalMultiple = bakunawaMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
+        // 4、 计算倍率盘倍率
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
             return RewardResultDo.<SymbolDo>builder()
