@@ -3,31 +3,47 @@ package com.wegame.capi.biz.module.lamang;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.common.enums.SymbolEnum;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_SYMBOL_PLACEHOLDER;
+import static com.wegame.capi.biz.module.lamang.LamangGameHelper.*;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
 public class LamangSymbolUtil {
 
+
+    public static boolean hasSuperWild(LamangSymbolDo[][] symbolArr) {
+        for (int row = 0; row < symbolArr.length; row++) {
+            for (int col = 0; col < symbolArr[row].length; col++) {
+                if (Objects.nonNull(symbolArr[row][col]) && StringUtils.equals(symbolArr[row][col].getId(), LAMANG_SUPER_WILD.getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasBigWildInRow(LamangSymbolDo[][] symbolArr, int row) {
+        for (int col = 0; col < symbolArr[row].length; col++) {
+            if (Objects.nonNull(symbolArr[row][col]) && StringUtils.equals(symbolArr[row][col].getId(), LAMANG_BIG_WILD.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static int countIndexSymbol(LamangSymbolDo[][] symbolArr, SymbolEnum symbol) {
         int count = 0;
