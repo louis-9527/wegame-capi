@@ -40,6 +40,56 @@
 //    @Autowired
 //    JackpotRewardPoolInputRecordService jackpotRewardPoolInputRecordService;
 //
+//    @ApiOperation(value = "新增（单条）", httpMethod = "POST")
+//    @PostMapping("/add")
+//    public CommonResponse<Boolean> add(@RequestBody JackpotRewardPoolInputRecordVo vo) {
+//        vo.validate();
+//        Long id = jackpotRewardPoolInputRecordService.add(JackpotRewardPoolInputRecordConverter.voToDo(vo));
+//        return CommonResponse.build(Objects.nonNull(id));
+//    }
+//
+//    @ApiOperation(value = "新增（批量）", httpMethod = "POST")
+//    @PostMapping("/batchAdd")
+//    public CommonResponse<Boolean> batchAdd(@RequestBody List<JackpotRewardPoolInputRecordVo> voList) {
+//        Optional.ofNullable(voList)
+//            .orElse(Collections.emptyList())
+//            .forEach(Validate::validate);
+//        return CommonResponse.build(jackpotRewardPoolInputRecordService.batchAdd(JackpotRewardPoolInputRecordConverter.voToDoList(voList)));
+//    }
+//
+//    @ApiOperation(value = "删除（单条：根据唯一id）", httpMethod = "GET")
+//    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "主键id", required = true, dataTypeClass = String.class, paramType = "path")})
+//    @GetMapping("/delete/{id}")
+//    public CommonResponse<Boolean> delete(@PathVariable String id) {
+//        return CommonResponse.build(jackpotRewardPoolInputRecordService.delete(Long.valueOf(id)));
+//    }
+//
+//    @ApiOperation(value = "删除（批量：根据唯一id列表）", httpMethod = "POST")
+//    @GetMapping("/batchDelete")
+//    public CommonResponse<Boolean> batchDelete(@RequestBody List<String> ids) {
+//        List<Long> idList = Optional.ofNullable(ids)
+//            .orElse(Collections.emptyList())
+//            .stream()
+//            .filter(StringUtils::isNotEmpty)
+//            .map(Long::parseLong)
+//            .collect(Collectors.toList());
+//        return CommonResponse.build(jackpotRewardPoolInputRecordService.batchDelete(idList));
+//    }
+//
+//    @ApiOperation(value = "更新（单条：根据唯一id）", httpMethod = "POST")
+//    @PostMapping("/update")
+//    public CommonResponse<Boolean> update(@RequestBody JackpotRewardPoolInputRecordVo vo) {
+//        vo.validate();
+//        return CommonResponse.build(jackpotRewardPoolInputRecordService.update(JackpotRewardPoolInputRecordConverter.voToDo(vo)));
+//    }
+//
+//    @ApiOperation(value = "查询（单条：根据唯一id）", httpMethod = "GET")
+//    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "主键id", required = true, dataTypeClass = String.class, paramType = "path")})
+//    @GetMapping("/get/{id}")
+//    public CommonResponse<JackpotRewardPoolInputRecordVo> get(@PathVariable String id) {
+//        return CommonResponse.build(JackpotRewardPoolInputRecordConverter.doToVo(jackpotRewardPoolInputRecordService.get(Long.valueOf(id))));
+//    }
+//
 //    @ApiOperation(value = "查询（批量：根据唯一id列表）", httpMethod = "POST")
 //    @GetMapping("/listByIds")
 //    public CommonResponse<List<JackpotRewardPoolInputRecordVo>> listByIds(@RequestBody List<String> ids) {

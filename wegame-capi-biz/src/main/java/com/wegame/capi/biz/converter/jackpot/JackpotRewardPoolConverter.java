@@ -5,9 +5,7 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolSummarizeDo;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolRequest;
-import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolSummarizeVo;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
@@ -145,13 +143,5 @@ public class JackpotRewardPoolConverter {
     }
 
     ///////////////  above auto generated ///////////////
-
-    //todo
-    public static JackpotRewardPoolSummarizeVo doToVo(JackpotRewardPoolSummarizeDo summarizeDo) {
-        if (Objects.isNull(summarizeDo)) {
-            return null;
-        }
-        return null;
-    }
 
 }
