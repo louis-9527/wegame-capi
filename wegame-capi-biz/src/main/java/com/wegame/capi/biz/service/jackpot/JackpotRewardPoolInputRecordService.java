@@ -1,5 +1,8 @@
 package com.wegame.capi.biz.service.jackpot;
 
+import com.mongodb.DuplicateKeyException;
+import com.mongodb.MongoBulkWriteException;
+import com.mongodb.bulk.BulkWriteError;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
@@ -13,14 +16,17 @@ import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecor
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordQuery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.BulkOperationException;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static com.wegame.capi.biz.converter.BetRecordConverter.doToPoList;
+import static com.wegame.capi.infrastructure.config.mongo.LamangMongoConfig.lamangTransactionManager;
 
 /**
  * po服务
@@ -50,7 +56,7 @@ public class JackpotRewardPoolInputRecordService extends AbstractService {
      * 批量新增
      *
      * @param doList jackpot奖池流入记录列表
-     * @return 冲突的ID
+     * @return true/false
      */
     public List<Long> batchAdd(List<JackpotRewardPoolInputRecordDo> doList, JackpotTypeEnum jackpotTypeEnum) {
         AssertUtil.assertNotEmpty(doList, ErrorCode.ERR_PARAM);
@@ -61,15 +67,25 @@ public class JackpotRewardPoolInputRecordService extends AbstractService {
                 BetRecordPo.class,
                 jackpotTypeEnum.getJackpotRewardPoolInputCollectionName());
         poList.forEach(bulkOps::insert);
+        List<Long> duplicateIds = new ArrayList<>();
         try {
             bulkOps.execute();
-        }catch (Exception e){
-            //todo 主键冲突
-            return Collections.emptyList();
+        }catch (BulkOperationException ex) {
+            // 遍历所有错误
+            for (BulkWriteError error : ex.getErrors()) {
+                // 检查是否为重复键错误（错误码11000）
+                if (error.getCode() == 11000) {
+                    int index = error.getIndex();
+                    // 确保索引在合法范围内
+                    if (index >= 0 && index < doList.size()) {
+                        duplicateIds.add(doList.get(index).getId());
+                    }
+                }
+            }
         }
-
-        return new ArrayList<>();
+        return duplicateIds;
     }
+
 
     /**
      * 删除：物理删除

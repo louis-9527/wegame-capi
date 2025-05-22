@@ -37,7 +37,7 @@ public class LamangMongoConfig {
      * bean格式，游戏名称小写 + MongoTemplate
      */
     @Bean(lamangMongoTemplate)
-    public MongoTemplate lamangadarnaMongoTemplate() {
+    public MongoTemplate lamangMongoTemplate() {
         return new MongoTemplate(MongoClients.create(lamangMdbUri), lamangMdb);
     }
 
@@ -45,15 +45,15 @@ public class LamangMongoConfig {
      * bean格式，游戏名称小写 + PrimaryMongoTemplate
      */
     @Bean(lamangPrimaryMongoTemplate)
-    public MongoTemplate lamangdarnaPrimaryMongoTemplate() {
-        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(lamangMdbUri), lamangMdb);
+    public MongoTemplate lamangPrimaryMongoTemplate() {
+        MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(lamangMdbPrimaryUri), lamangMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
     }
 
     @Bean(name = lamangTransactionManager)
-    public MongoTransactionManager lamangTransactionManager(@Autowired MongoTemplate ibongadarnaMongoTemplate) {
-        MongoTransactionManager manager = new MongoTransactionManager(ibongadarnaMongoTemplate.getMongoDbFactory());
+    public MongoTransactionManager lamangTransactionManager(@Autowired MongoTemplate lamangMongoTemplate) {
+        MongoTransactionManager manager = new MongoTransactionManager(lamangMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)
                 .build();

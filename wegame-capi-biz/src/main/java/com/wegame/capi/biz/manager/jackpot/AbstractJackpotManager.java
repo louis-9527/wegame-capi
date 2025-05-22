@@ -30,6 +30,6 @@ public abstract class AbstractJackpotManager {
      * @param rewardPoolInputRecordDos
      * @return
      */
-    public abstract List<Long> batchAddJackpotRewardRecord (List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos);
+    public abstract void batchAddJackpotRewardRecord (List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos);
 
 }
