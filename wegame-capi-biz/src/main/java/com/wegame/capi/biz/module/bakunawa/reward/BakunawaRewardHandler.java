@@ -145,7 +145,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         // 校验：滚轮行数
         GameInfoDo gameInfo = rewardHandle.getGameInfo();
         AssertUtil.assertTrue(symbolArr.length == gameInfo.getRow(), ErrorCode.ERR_PARAM, "symbol arr err");
-        for (int row = 0; row < gameInfo.getRow(); row++) {
+        for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             // 校验：滚轮列数
             AssertUtil.assertTrue(symbolArr[row].length == gameInfo.getColumn(), ErrorCode.ERR_PARAM, "symbol colum arr err");
             // 滚轮：所有元素不能为空
