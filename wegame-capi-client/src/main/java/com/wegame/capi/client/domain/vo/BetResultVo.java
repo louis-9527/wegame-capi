@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.vo;
 
+import com.wegame.capi.client.domain.vo.lamang.LamangBetResultDetailVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -32,5 +33,5 @@ public class BetResultVo implements Serializable {
     private Long totalPayoutAmount;
     // todo 测试完成之后修改成object类型
     @ApiModelProperty("结果明细")
-    private Object resultDetail;
+    private LamangBetResultDetailVo resultDetail;
 }

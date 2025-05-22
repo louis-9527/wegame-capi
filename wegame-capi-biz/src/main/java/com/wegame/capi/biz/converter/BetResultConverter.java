@@ -25,9 +25,10 @@ public class BetResultConverter {
                 .credit(betResultDo.getCredit())
                 .overallRewardAmount(betResultDo.getOverallRewardAmount())
                 .totalPayoutAmount(betResultDo.getTotalPayoutAmount())
-                .resultDetail(Objects.nonNull(betResultDo.getResultDetail())
-                        ? betResultDo.getResultDetail().toResultVo()
-                        : null)
+                //todo 调试完成后修改
+//                .resultDetail(Objects.nonNull(betResultDo.getResultDetail())
+//                        ? betResultDo.getResultDetail().toResultVo()
+//                        : null)
                 .build();
     }
 }

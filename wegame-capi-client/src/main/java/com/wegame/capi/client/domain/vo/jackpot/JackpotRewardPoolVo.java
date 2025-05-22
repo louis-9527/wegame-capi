@@ -37,6 +37,12 @@ public class JackpotRewardPoolVo implements Validate, Serializable {
     //    @ApiModelProperty("更新时间")
     //    private Long updateTime;
 
+    @ApiModelProperty("奖池初始金额.单位：厘")
+    private String initAmount;
+
+    @ApiModelProperty("奖池可派奖金额.单位：厘，max(amount, 保底金额)")
+    private String availableAmount;
+
     @Override
     public void validateParam() {
         AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);

@@ -20,6 +20,11 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = false)
 public class JackpotRewardPoolSummarizeDo implements Validate, Serializable {
     /**
+     * 奖池总金额
+     */
+    private Long totalJackpotAmount;
+
+    /**
      * grand奖池信息
      */
     private JackpotRewardPoolDo grand;

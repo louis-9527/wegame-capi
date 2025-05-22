@@ -18,6 +18,9 @@ import java.io.Serializable;
 @ApiModel("jackpot奖池摘要信息")
 @EqualsAndHashCode(callSuper = false)
 public class JackpotRewardPoolSummarizeVo  implements Validate, Serializable {
+    @ApiModelProperty("奖池中的总金额")
+    private Long totalJackpotAmount;
+
     @ApiModelProperty("grand奖池信息")
     private JackpotRewardPoolVo grand;
 

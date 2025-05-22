@@ -12,7 +12,7 @@ import java.io.Serializable;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("Malakas元素")
+@ApiModel("Lamang元素")
 @EqualsAndHashCode(callSuper = false)
 public class LamangSymbolVo implements Serializable {
     private static final long serialVersionUID = 3447556878793626303L;

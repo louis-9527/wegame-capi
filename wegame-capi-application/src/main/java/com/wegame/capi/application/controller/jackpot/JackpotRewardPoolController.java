@@ -1,9 +1,18 @@
 package com.wegame.capi.application.controller.jackpot;
 
+import com.google.common.collect.ImmutableMap;
 import com.wegame.base.domain.CommonResponse;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
 import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolSummarizeVo;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolVo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * jackpot奖池模块
@@ -26,9 +36,16 @@ import java.util.List;
 @Api(value = "jackpot奖池模块", tags = {"jackpot奖池模块"})
 public class JackpotRewardPoolController {
 
+    public static final Map<GameTypeEnum, String> JACKPOT_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
+            .put(GameTypeEnum.LAM_ANG, "mariaMakilingBetRecordManager")
+            .build();
+
     // todo 走 manager @lyric 参考 BetRecordController
     @Autowired
     JackpotRewardPoolService jackpotRewardPoolService;
+
+    @Autowired
+    Map<String, AbstractJackpotManager> jackpotManagerMap;
 
     @ApiOperation(value = "查询列表", httpMethod = "GET")
     @GetMapping("/list")
@@ -36,5 +53,21 @@ public class JackpotRewardPoolController {
         return CommonResponse.build(JackpotRewardPoolConverter.doToVoList(jackpotRewardPoolService.list(JackpotRewardPoolQuery.builder().build())));
     }
 
+    @ApiOperation(value = "查询明细", httpMethod = "GET")
+    @GetMapping("/summarize")
+    public CommonResponse<JackpotRewardPoolSummarizeVo> Summarize() {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        return CommonResponse.build(JackpotRewardPoolConverter.doToVo(jackpotManager(gameType).getPoolSummarize(gameType)));
+    }
+
     ///////////////  above auto generated ///////////////
+
+    private AbstractJackpotManager jackpotManager(GameTypeEnum gameType) {
+        AbstractJackpotManager jackpotManager = jackpotManagerMap.get(JACKPOT_MANAGER_NAME_MAP.get(gameType));
+        AssertUtil.assertNotNull(jackpotManager, ErrorCode.ERR_INTER);
+        return jackpotManager;
+    }
 }

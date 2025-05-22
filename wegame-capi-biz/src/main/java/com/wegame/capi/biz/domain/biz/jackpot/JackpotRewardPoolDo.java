@@ -47,5 +47,15 @@ public class JackpotRewardPoolDo implements Serializable {
     private Date updateTime;
 
     ///////////////  above auto generated ///////////////
+
+    /**
+     * 初始金额
+     */
+    private Long initAmount;
+
+    /**
+     * 实际可派发的金额
+     */
+    private Long availableAmount;
 }
 

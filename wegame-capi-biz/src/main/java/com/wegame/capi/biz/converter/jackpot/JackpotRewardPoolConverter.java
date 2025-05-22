@@ -5,7 +5,9 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolSummarizeDo;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolRequest;
+import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolSummarizeVo;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
@@ -135,5 +137,26 @@ public class JackpotRewardPoolConverter {
     }
 
     ///////////////  above auto generated ///////////////
+
+    public static JackpotRewardPoolSummarizeVo doToVo(JackpotRewardPoolSummarizeDo summarize) {
+        if (Objects.isNull(summarize)) {
+            return null;
+        }
+        JackpotRewardPoolSummarizeVo vo = new JackpotRewardPoolSummarizeVo();
+        if (Objects.nonNull(summarize.getGrand())) {
+            vo.setGrand(doToVo(summarize.getGrand()));
+        }
+        if (Objects.nonNull(summarize.getMajor())) {
+            vo.setGrand(doToVo(summarize.getMajor()));
+        }
+        if (Objects.nonNull(summarize.getMinor())) {
+            vo.setGrand(doToVo(summarize.getMinor()));
+        }
+        if (Objects.nonNull(summarize.getMini())) {
+            vo.setGrand(doToVo(summarize.getMini()));
+        }
+        vo.setTotalJackpotAmount(summarize.getTotalJackpotAmount());
+        return vo;
+    }
 
 }
