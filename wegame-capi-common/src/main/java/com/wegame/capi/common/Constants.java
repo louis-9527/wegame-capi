@@ -34,7 +34,7 @@ public class Constants {
     public static final String MALAKAS_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
     // ibong推送大奖tips内容 XXXX won 20x rewards ，₱ 99999
     public static final String IBONG_ADARNA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
-    // bakunawa推送大奖tips内容 XXXX won 20x rewards ，₱ 99999
+    // bakunawa推送大奖tips内容 XXXX won 100x rewards ，₱ 99999
     public static final String BAKUNAWA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
 
     // go sec header

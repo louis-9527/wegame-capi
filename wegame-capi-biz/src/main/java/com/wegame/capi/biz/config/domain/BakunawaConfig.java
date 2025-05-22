@@ -24,6 +24,10 @@ public class BakunawaConfig {
      * 元素概率配置
      */
     private ProbabilisticConfig probabilisticConfig;
+    /**
+     * 中奖通知最小倍数
+     */
+    private Integer rewardNotifyMinMultiple;
 
     @Data
     @SuperBuilder
@@ -51,6 +55,7 @@ public class BakunawaConfig {
 
     public void validate() {
         probabilisticConfigValidate();
+        rewardNotifyMinMultipleValidate();
     }
 
     private void probabilisticConfigValidate() {
@@ -94,5 +99,10 @@ public class BakunawaConfig {
                 .map(value -> value.multiply(new BigDecimal(10000)).intValue())
                 .reduce(0, Integer::sum);
         AssertUtil.assertTrue(Objects.equals(superMultiplierProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.superMultiplierWheelProbabilisticConfig 概率总和不等于 1000000");
+    }
+
+    private void rewardNotifyMinMultipleValidate() {
+        AssertUtil.assertNotNull(rewardNotifyMinMultiple, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple is null");
+        AssertUtil.assertTrue(rewardNotifyMinMultiple > 0, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple must great than 0");
     }
 }

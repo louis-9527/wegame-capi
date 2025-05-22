@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.bakunawa.bet.strategy;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.config.domain.BakunawaConfig;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
@@ -30,8 +31,8 @@ public class BakunawaNormalBetStrategy extends AbstractBakunawaBetStrategy {
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
-    @Autowired   // todo @maidong
-    IbongAdarnaConfig ibongAdarnaConfig;
+    @Autowired
+    BakunawaConfig bakunawaConfig;
     @Autowired
     ThreadPoolExecutor defaultThreadPoolExecutor;
     @Autowired
@@ -40,10 +41,9 @@ public class BakunawaNormalBetStrategy extends AbstractBakunawaBetStrategy {
     @Override
     public void rewardAfterHandle(BetDo betDo, Long totalRewardAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        // todo @maidong
         defaultThreadPoolExecutor.execute(() -> {
             Integer multiple = rewardMultiple(betDo.getBetAmount(), totalRewardAmount);
-            Integer rewardNotifyMinMultiple = ibongAdarnaConfig.getRewardNotifyMinMultiple();
+            Integer rewardNotifyMinMultiple = bakunawaConfig.getRewardNotifyMinMultiple();
             if (multiple >= rewardNotifyMinMultiple) {
                 updateRewardNotifyInfo(GameTypeEnum.BAKUNAWA, userInfo, multiple, totalRewardAmount);
             }
