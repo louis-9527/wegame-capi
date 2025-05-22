@@ -27,7 +27,7 @@
         "90.800"
       ]
     },
-    "multiplierPieProbabilisticConfig": {
+    "multiplePieProbabilisticConfig": {
       "1.0": "48.400",
       "2.0": "20.600",
       "3.0": "15.000",
@@ -35,7 +35,7 @@
       "5.0": "5.500",
       "Bakunawa": "0.500"
     },
-    "superMultiplierPieProbabilisticConfig": {
+    "superMultiplePieProbabilisticConfig": {
       "8.0": "40.000",
       "10.0": "27.000",
       "20.0": "15.000",
@@ -45,5 +45,5 @@
       "1000.0": "0.200"
     }
   },
-  "rewardNotifyMinMultiple": "20"
+  "rewardNotifyMinMultiple": "100"
 }
