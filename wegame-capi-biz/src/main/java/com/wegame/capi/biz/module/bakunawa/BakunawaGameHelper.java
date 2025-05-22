@@ -23,6 +23,16 @@ public class BakunawaGameHelper {
             .name(Symbol1.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .build();
+    public static final SymbolDo BAKUNAWA_Symbol2 = SymbolDo.builder()
+            .id(Symbol2.getId())
+            .name(Symbol2.getName())
+            .symbolType(SymbolTypeEnum.COMMON)
+            .build();
+    public static final SymbolDo BAKUNAWA_Symbol3 = SymbolDo.builder()
+            .id(Symbol3.getId())
+            .name(Symbol3.getName())
+            .symbolType(SymbolTypeEnum.COMMON)
+            .build();
     public static final SymbolDo BAKUNAWA_Symbol5 = SymbolDo.builder()
             .id(Symbol5.getId())
             .name(Symbol5.getName())

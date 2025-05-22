@@ -38,7 +38,7 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 @Component("bakunawaRewardHandler")
 public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
 
-    private static final List<SymbolDo> REWARD_SYMBOL_LIST = Lists.newArrayList(BAKUNAWA_Symbol1, BAKUNAWA_Symbol5, BAKUNAWA_Symbol10);
+    private static final List<SymbolDo> REWARD_SYMBOL_LIST = Lists.newArrayList(BAKUNAWA_Symbol1, BAKUNAWA_Symbol2, BAKUNAWA_Symbol3, BAKUNAWA_Symbol5, BAKUNAWA_Symbol10);
 
     @Autowired
     MultipleCalculateStrategy bakunawaMultipleCalculateStrategy;
