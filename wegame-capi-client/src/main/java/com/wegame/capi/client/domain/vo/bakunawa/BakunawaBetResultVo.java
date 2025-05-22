@@ -35,7 +35,5 @@ public class BakunawaBetResultVo implements Serializable {
     @ApiModelProperty("中奖元素坐标集合")
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
-    private List<BakunawaRewardLineVo> rewardLineList;
-    @ApiModelProperty("免费轮标识,0:否,1:是")
-    private Integer freeWheelFlag;
+    private BakunawaRewardLineVo rewardLine;
 }

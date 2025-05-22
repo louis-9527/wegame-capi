@@ -44,7 +44,7 @@ public class RewardLineDetailDo<T extends SymbolDo> implements Serializable {
      */
     private BigDecimal multiple;
     /**
-     * 倍率
+     * 倍率盘类型
      */
     private MultiplePieTypeEnum multiplePieType;
     /**

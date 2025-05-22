@@ -37,6 +37,6 @@ public class BakunawaGameRecordVo implements Validate, Serializable {
     private Long overallRewardAmount;
     @ApiModelProperty("达到触发最大中奖倍数")
     private Boolean accumulateReachMaxMultiple;
-    @ApiModelProperty("中奖线列表")
-    private List<BakunawaRewardLineVo> rewardLineList; // todo
+    @ApiModelProperty("中奖线")
+    private BakunawaRewardLineVo rewardLine;
 }

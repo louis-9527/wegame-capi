@@ -21,17 +21,13 @@ public class BakunawaRewardLineVo implements Serializable {
     private static final long serialVersionUID = 64878887635380369L;
     @ApiModelProperty("中奖线元素Id: 中奖线第一个中奖元素id")
     private String symbolId;
-    @ApiModelProperty("倍率")
+    @ApiModelProperty("基础倍率")
     private BigDecimal multiple;
-    @ApiModelProperty("赔率")
-    private BigDecimal odds;
-    @ApiModelProperty("中奖线类型：THREE（三连），FOUR（四连）FIVE（5连）")
-    private String rewardLineType;
-    @ApiModelProperty("中奖线子类型：COMMON（普通），SCATTER（SCATTER）")
-    private String rewardLineSubType;
-    @ApiModelProperty("中奖线数量")
-    private Integer rewardLineCount;
-    @ApiModelProperty("中奖金额： COMMON中奖计算公式（投注金额 * 赔率 * (中奖线数量WAYS)*倍率  = 中奖金额")
+    @ApiModelProperty("倍率盘类型：NORMAL-正常倍率， Bakunawa-Bakunawa倍率 ")
+    private String multiplePieType;
+    @ApiModelProperty("倍率盘倍率")
+    private BigDecimal multiplePie;
+    @ApiModelProperty("中奖金额：（投注金额 * 基础倍率 * 倍率盘倍率 = 中奖金额")
     private Long rewardAmount;
     @ApiModelProperty("投注金额")
     private Long betAmount;

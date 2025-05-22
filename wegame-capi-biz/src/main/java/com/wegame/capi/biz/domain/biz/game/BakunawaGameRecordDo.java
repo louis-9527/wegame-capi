@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -71,8 +72,6 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<Bakunaw
      */
     private Long overallRewardAmount;
 
-    // todo
-
     /**
      * 是否中奖免费轮
      *
@@ -98,7 +97,6 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<Bakunaw
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
-                    .freeWheelFlag(0)
                     .build();
         } else {
             return BakunawaBetResultVo.builder()
@@ -117,8 +115,7 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<Bakunaw
                                     .collect(Collectors.toList())
                             ).flatMap(List::stream)
                             .collect(Collectors.toSet()))
-                    .rewardLineList(buildRewardLineList())
-                    .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? 1 : 0)
+                    .rewardLine(buildRewardLine())
                     .build();
         }
     }
@@ -133,25 +130,24 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<Bakunaw
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
                 .overallRewardAmount(this.overallRewardAmount)
                 .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
-                .rewardLineList(buildRewardLineList())
+                .rewardLine(buildRewardLine())
                 .build();
     }
 
-    private List<BakunawaRewardLineVo> buildRewardLineList() {
-        return Optional.ofNullable(rewardResult.getRewardLineDetailList())
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(subItem -> BakunawaRewardLineVo.builder()
-                        .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
-                        .multiple(subItem.getMultiple())
-                        .odds(subItem.getOdds())
-                        .rewardLineType(Objects.nonNull(subItem.getRewardLineType()) ? subItem.getRewardLineType().getCode() : "")
-                        .rewardLineSubType(Objects.nonNull(subItem.getRewardLineSubType()) ? subItem.getRewardLineSubType().getCode() : "")
-                        .rewardLineCount(subItem.getRewardLineCount())
-                        .betAmount(subItem.getBetAmount())
-                        .rewardAmount(subItem.getRewardAmount())
-                        .build()
-                ).collect(Collectors.toList());
+    private BakunawaRewardLineVo buildRewardLine() {
+        if (CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList())) {
+            RewardLineDetailDo<SymbolDo> subItem = rewardResult.getRewardLineDetailList().get(0);
+            return BakunawaRewardLineVo.builder()
+                    .symbolId(Objects.nonNull(subItem.getRewardSymbol()) ? subItem.getRewardSymbol().getId() : "")
+                    .multiple(subItem.getMultiple())
+                    .multiplePieType(subItem.getMultiplePieType().getCode())
+                    .multiplePie(subItem.getMultiplePie())
+                    .betAmount(subItem.getBetAmount())
+                    .rewardAmount(subItem.getRewardAmount())
+                    .build();
+        } else {
+            return null;
+        }
     }
 }
 
