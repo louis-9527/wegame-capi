@@ -1,6 +1,7 @@
 // ----------------------------
 //  Collection structure for mariamakiling_bet_record
 // ----------------------------
+use makiling;
 db.getCollection("mariamakiling_bet_record").drop();
 db.createCollection("mariamakiling_bet_record");
 // 索引mariamakiling_bet_record-c端查询需要

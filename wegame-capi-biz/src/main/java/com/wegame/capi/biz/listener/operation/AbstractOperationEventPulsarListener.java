@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.listener;
+package com.wegame.capi.biz.listener.operation;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.id.SnowflakeIdGenerator;
@@ -24,7 +24,7 @@ import static com.wegame.capi.biz.converter.operation.OperationEventConvert.mess
  */
 @Slf4j
 @Service
-public abstract class AbsOperationEventPulsarListener implements MessageListener<byte[]> {
+public abstract class AbstractOperationEventPulsarListener implements MessageListener<byte[]> {
 
     @Value("${api.game.cp.channelId}")
     String cpChannelId;
