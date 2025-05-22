@@ -20,9 +20,9 @@ import com.wegame.capi.common.enums.MultiplePieTypeEnum;
 import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
-import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
