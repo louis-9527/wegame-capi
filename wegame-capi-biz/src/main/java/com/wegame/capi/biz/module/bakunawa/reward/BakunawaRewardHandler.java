@@ -2,28 +2,25 @@ package com.wegame.capi.biz.module.bakunawa.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
-import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
-import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.*;
+import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
+import com.wegame.capi.common.enums.RewardSubTypeEnum;
+import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +28,17 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+
+import static com.wegame.capi.biz.module.bakunawa.BakunawaGameHelper.*;
+import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
+import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
 @Component("bakunawaRewardHandler")
 public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
-   
+    List<SymbolDo> REWARD_SYMBOL_ARR = Lists.newArrayList(BAKUNAWA_Symbol1, BAKUNAWA_Symbol5, BAKUNAWA_Symbol10);
+
     @Autowired
     MultipleCalculateStrategy bakunawaMultipleCalculateStrategy;
     @Autowired
@@ -49,7 +49,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         validate(rewardHandle);
         // 2、计算中奖线
         List<RewardLineDo<SymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
-        // 3、计算倍率->随机生成倍率
+        // 3、计算滚盘倍率
         BigDecimal totalMultiple = bakunawaMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
@@ -119,71 +119,61 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 .multiply(multiple);
     }
 
+    /**
+     * 计算中奖线
+     * 备注: 如果存在中奖构建单条中奖线，否则返回空列表
+     * @param gameInfo
+     * @param wheel
+     * @return
+     */
     private List<RewardLineDo<SymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<SymbolDo> wheel) {
         SymbolDo[][] symbolArr = wheel.getSymbolArr();
         List<RewardLineDo<SymbolDo>> rewardLineDoList = Lists.newArrayList();
-        // 获取固定线路
-        Map<Integer, List<List<Integer>>> rewardFixedLinesConfigMap = ibongAdarnaConfig.getRewardFixedLinesConfig();
-        rewardFixedLinesConfigMap.forEach((lineNo, lineIndexList) -> {
-            Set<String> rewardSymbolDoSet = Sets.newHashSet();
-            List<RewardSymbolDo<SymbolDo>> rewardSymbolDoList = Lists.newArrayList();
-            for (List<Integer> lineIndex : lineIndexList) {
-                SymbolDo symbolDo = symbolArr[lineIndex.get(0)][lineIndex.get(1)];
-                rewardSymbolDoSet.add(symbolDo.getId());
-                rewardSymbolDoList.add(RewardSymbolDo.<SymbolDo>builder()
-                        .symbol(symbolDo)
-                        .index(IndexFactory.buildDo(lineIndex.get(0), lineIndex.get(1)))
-                        .build());
-            }
-            // 当前线是否中奖
-            if (hasReward(rewardSymbolDoSet, gameInfo)) {
-                // 构建中奖线
-                rewardLineDoList.add(buildRewardLineDo(rewardSymbolDoList, lineNo));
-            }
-        });
+        // 当前线是否中奖
+        if (hasReward(symbolArr, gameInfo)) {
+            // 构建中奖线
+            rewardLineDoList.add(buildRewardLineDo(symbolArr, gameInfo));
+        }
         // 返回中奖线列表
         return rewardLineDoList;
     }
 
-    /**
-     * 构建中奖线
-     *
-     * @param rewardSymbolDoList 中奖元素列表
-     * @param lineNo             线号
-     * @return 中奖线
-     */
-    private RewardLineDo<SymbolDo> buildRewardLineDo(List<RewardSymbolDo<SymbolDo>> rewardSymbolDoList, Integer lineNo) {
-        int totalRewardLineCount = 1;
-        if (CollectionUtil.isEmpty(rewardSymbolDoList)) {
-            totalRewardLineCount = 0;
-        } else {
-            for (RewardSymbolDo<SymbolDo> symbol : CollectionUtil.emptyIfNull(rewardSymbolDoList)) {
-                totalRewardLineCount = totalRewardLineCount * symbol.getSymbol().getBreakUp().getTimes();
+    private boolean hasReward(SymbolDo[][] symbolArr, GameInfoDo gameInfo) {
+        boolean hasReward = false;
+        for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
+            for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
+                SymbolDo symbolDo = symbolArr[row][column];
+                if (REWARD_SYMBOL_ARR.contains(symbolDo)) {
+                    hasReward = true;
+                    break;
+                }
             }
         }
-        // 中奖元素选择
-        RewardSymbolDo<SymbolDo> rewardSymbolDo = rewardSymbolDoList.stream()
-                .filter(symbol -> !symbol.getSymbol().isWildSymbol()).findFirst().orElse(rewardSymbolDoList.get(0));
-        return RewardLineDo.<SymbolDo>builder()
-                .rewardLineType(RewardLineTypeEnum.THREE)
-                .rewardLineSubType(RewardLineSubTypeEnum.COMMON)
-                .rewardLineNo(lineNo)
-                .rewardLineCount(totalRewardLineCount)
-                .rewardSymbol(rewardSymbolDo.getSymbol())
-                .rewardSymbolList(rewardSymbolDoList)
-                .build();
+        return hasReward;
     }
 
-    private boolean hasReward(Set<String> rewardSymbolDoSet, GameInfoDo gameInfo) {
-        if (CollectionUtil.isEmpty(rewardSymbolDoSet)) {
-            return false;
-        } else if (rewardSymbolDoSet.size() == 1) {
-            return true;
-        } else if (rewardSymbolDoSet.size() == 2) {
-            return rewardSymbolDoSet.contains(SymbolEnum.Wild.getId());
-        } else {
-            return false;
+    private RewardLineDo<SymbolDo> buildRewardLineDo(SymbolDo[][] symbolArr, GameInfoDo gameInfo) {
+        List<RewardSymbolDo<SymbolDo>> rewardSymbolDoList = Lists.newArrayList();
+        for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
+            for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
+                SymbolDo symbolDo = symbolArr[row][column];
+                if (REWARD_SYMBOL_ARR.contains(symbolDo)) {
+                    rewardSymbolDoList.add(RewardSymbolDo.<SymbolDo>builder()
+                            .symbol(symbolDo)
+                            .index(IndexFactory.buildDo(row, column))
+                            .build());
+                    break;
+                }
+            }
         }
+        return RewardLineDo.<SymbolDo>builder()
+                .rewardLineType(null)
+                .rewardLineSubType(RewardLineSubTypeEnum.COMMON)
+                .rewardLineNo(null)
+                .rewardLineCount(1)
+                .rewardSymbol(null)
+                .rewardSymbolList(rewardSymbolDoList)
+                .build();
     }
 
     private void validate(RewardHandleDo<SymbolDo> rewardHandle) {

@@ -33,6 +33,11 @@ public class BakunawaGameHelper {
             .name(Symbol10.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .build();
+    public static final SymbolDo BAKUNAWA_SymbolNull = SymbolDo.builder()
+            .id(SymbolNull.getId())
+            .name(SymbolNull.getName())
+            .symbolType(SymbolTypeEnum.COMMON)
+            .build();
     
     public static final GameInfoDo BAKUNAWA_GAME_INFO = GameInfoDo.builder()
             .id(GameTypeEnum.BAKUNAWA.getId())
@@ -44,6 +49,7 @@ public class BakunawaGameHelper {
                     .put(BAKUNAWA_Symbol1.getId(), BAKUNAWA_Symbol1)
                     .put(BAKUNAWA_Symbol5.getId(), BAKUNAWA_Symbol5)
                     .put(BAKUNAWA_Symbol10.getId(), BAKUNAWA_Symbol10)
+                    .put(BAKUNAWA_SymbolNull.getId(), BAKUNAWA_SymbolNull)
                     .build())
             .build();
 }
