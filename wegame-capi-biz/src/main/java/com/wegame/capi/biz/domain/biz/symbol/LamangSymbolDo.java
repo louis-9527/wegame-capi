@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
+import com.wegame.capi.common.enums.lamang.LamangSymbolSizeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +20,10 @@ import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_SYMBOL_P
 public class LamangSymbolDo extends SymbolDo {
     private static final long serialVersionUID = -2266308987663710848L;
 
+    /**
+     * 元素大小
+     */
+    private LamangSymbolSizeEnum symbolSize;
     /**
      * 元素金边
      */

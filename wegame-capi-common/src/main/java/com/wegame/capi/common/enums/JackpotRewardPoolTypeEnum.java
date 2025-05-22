@@ -25,6 +25,7 @@ public enum JackpotRewardPoolTypeEnum {
      * 描述信息.
      */
     private final String desc;
+
     /**
      * 私有构造方法.
      *
@@ -39,6 +40,15 @@ public enum JackpotRewardPoolTypeEnum {
     public static JackpotRewardPoolTypeEnum valueOfCode(Integer code) {
         for (JackpotRewardPoolTypeEnum item : JackpotRewardPoolTypeEnum.values()) {
             if (Objects.equals(item.getCode(), code)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public static JackpotRewardPoolTypeEnum valueOfDesc(String desc) {
+        for (JackpotRewardPoolTypeEnum item : JackpotRewardPoolTypeEnum.values()) {
+            if (Objects.equals(item.getDesc(), desc)) {
                 return item;
             }
         }
