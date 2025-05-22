@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.lamang;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -79,11 +80,10 @@ public class LamangGameHelper {
             .build();
 
     // TODO 注意修改 @jayni
-    public static final MalakasSymbolDo LAMANG_SYMBOL_PLACEHOLDER = MalakasSymbolDo.builder()
+    public static final LamangSymbolDo LAMANG_SYMBOL_PLACEHOLDER = LamangSymbolDo.builder()
             .id(Symbol1000.getId())
             .name(Symbol1000.getName())
             .symbolType(SymbolTypeEnum.COMMON)
-            .symbolSize(S)
             .symbolGoldBorder(false)
             .build();
 
