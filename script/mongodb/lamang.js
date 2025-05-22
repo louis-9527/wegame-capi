@@ -1,6 +1,15 @@
 
 
+// 切换到目标数据库（若不存在会自动创建）
+use lamang;
 
+// 批量插入数据
+db.lamang_jackpot_reward_pool.insertMany([
+    { id: 1,type:1, amount: 200000000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { id: 2,type:2, amount: 50000000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { id: 3,type:3, amount: 1000000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { id: 4,type:4, amount: 100000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+]);
 
 
 

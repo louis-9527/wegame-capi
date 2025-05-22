@@ -4,7 +4,6 @@ import com.mongodb.bulk.BulkWriteResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.builder.jackpot.JackpotQueryBuilder;
 import com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
@@ -14,14 +13,12 @@ import com.wegame.capi.dao.mapper.business.JackpotRewardPoolMapper;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,11 +33,11 @@ public class JackpotRewardPoolService extends AbstractService {
 
     /**
      * 批量更新
+     *
      * @param jackpotRewardPoolDos
      * @param jackpotTypeEnum
-     * @return 返回更新成功的条数
      */
-    public Integer batchUpdate(List<JackpotRewardPoolDo> jackpotRewardPoolDos, JackpotTypeEnum jackpotTypeEnum) {
+    public void batchUpdate(List<JackpotRewardPoolDo> jackpotRewardPoolDos, JackpotTypeEnum jackpotTypeEnum) {
         AssertUtil.assertNotNull(jackpotRewardPoolDos, ErrorCode.ERR_PARAM, "jackpotRewardPoolDos is null");
         AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM, "gameType is null");
         List<JackpotRewardPoolPo> jackpotRewardPoolPos = JackpotRewardPoolConverter.doToPoList(jackpotRewardPoolDos,OptEnum.UPDATE);
@@ -56,7 +53,7 @@ public class JackpotRewardPoolService extends AbstractService {
             bulkOps.updateOne(query, JackpotQueryBuilder.buildUpdate(poolDo));
         });
         BulkWriteResult bulkWriteResult = bulkOps.execute();
-        return bulkWriteResult.getModifiedCount();
+        bulkWriteResult.getModifiedCount();
     }
 
     /**

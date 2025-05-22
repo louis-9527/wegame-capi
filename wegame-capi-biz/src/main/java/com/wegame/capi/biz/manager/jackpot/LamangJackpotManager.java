@@ -54,9 +54,9 @@ public class LamangJackpotManager extends AbstractJackpotManager {
 
     @Transactional(transactionManager = lamangTransactionManager)
     @Override
-    public void batchAddJackpotRewardRecord(List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos) {
+    public List<Long> batchAddJackpotRewardRecord(List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos) {
         if (CollectionUtils.isEmpty(rewardPoolInputRecordDos)) {
-            return;
+            return Collections.emptyList();
         }
         List<Long> failIds = jackpotRewardPoolInputRecordService.batchAdd(rewardPoolInputRecordDos, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
         if (!failIds.isEmpty()) {
@@ -104,5 +104,6 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         rewardPoolDos.add(miniDo);
 
         jackpotRewardPoolService.batchUpdate(rewardPoolDos, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+        return new ArrayList<>();
     }
 }

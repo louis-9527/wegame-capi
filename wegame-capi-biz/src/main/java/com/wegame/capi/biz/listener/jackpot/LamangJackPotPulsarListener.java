@@ -6,6 +6,8 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
+import com.wegame.capi.biz.manager.jackpot.LamangJackpotManager;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import org.apache.pulsar.client.api.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ import static com.wegame.capi.common.Constants.*;
 public class LamangJackPotPulsarListener extends AbstractJackPotPulsarListener<LamangGameRecordDo>{
     @Autowired
     private Consumer<byte[]> lamangJackPotPulsarConsumer;
+    @Autowired
+    private LamangJackpotManager lamangJackpotManager;
 
     private static final int corePoolSize = 1;
     private static final int maximumPoolSize = 1;
@@ -30,6 +34,11 @@ public class LamangJackPotPulsarListener extends AbstractJackPotPulsarListener<L
     @Override
     public GameTypeEnum getGameType() {
         return GameTypeEnum.LAM_ANG;
+    }
+
+    @Override
+    public AbstractJackpotManager jackpotManager() {
+        return lamangJackpotManager;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.jackpot;
 
+import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -27,7 +28,7 @@ public class JackpotRewardPoolInputRecordDo implements Serializable {
     /**
      * 类型.10派彩后流入
      */
-    private Integer type;
+    private JackpotRewardPoolInputTypeEnum type;
     /**
      * grand金额
      */
