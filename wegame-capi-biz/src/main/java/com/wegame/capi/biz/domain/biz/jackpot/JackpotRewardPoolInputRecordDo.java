@@ -5,6 +5,9 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * jackpot_reward_pool_input_record：jackpot奖池流入记录
@@ -59,5 +62,8 @@ public class JackpotRewardPoolInputRecordDo implements Serializable {
     private Date updateTime;
 
     ///////////////  above auto generated ///////////////
+
+
+
 }
 

@@ -5,22 +5,29 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolInputRecordConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
+import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.mapper.business.JackpotRewardPoolInputRecordMapper;
+import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordQuery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.wegame.capi.biz.converter.BetRecordConverter.doToPoList;
 
 /**
  * po服务
  * @author genereate
  */
 @Service
-public class JackpotRewardPoolInputRecordService {
+public class JackpotRewardPoolInputRecordService extends AbstractService {
 
     @Autowired
     JackpotRewardPoolInputRecordMapper jackpotRewardPoolInputRecordMapper;
@@ -43,12 +50,25 @@ public class JackpotRewardPoolInputRecordService {
      * 批量新增
      *
      * @param doList jackpot奖池流入记录列表
-     * @return true/false
+     * @return 冲突的ID
      */
-    public boolean batchAdd(List<JackpotRewardPoolInputRecordDo> doList) {
+    public List<Long> batchAdd(List<JackpotRewardPoolInputRecordDo> doList, JackpotTypeEnum jackpotTypeEnum) {
         AssertUtil.assertNotEmpty(doList, ErrorCode.ERR_PARAM);
-        jackpotRewardPoolInputRecordMapper.batchInsert(JackpotRewardPoolInputRecordConverter.doToPoList(doList, OptEnum.ADD));
-        return true;
+        AssertUtil.assertNotEmpty(doList, ErrorCode.ERR_PARAM, "doList is empty");
+        AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM, "gameType is null");
+        List<JackpotRewardPoolInputRecordPo> poList = JackpotRewardPoolInputRecordConverter.doToPoList(doList, OptEnum.ADD);
+        BulkOperations bulkOps = getMongoTemplate(jackpotTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED,
+                BetRecordPo.class,
+                jackpotTypeEnum.getJackpotRewardPoolInputCollectionName());
+        poList.forEach(bulkOps::insert);
+        try {
+            bulkOps.execute();
+        }catch (Exception e){
+            //todo 主键冲突
+            return Collections.emptyList();
+        }
+
+        return new ArrayList<>();
     }
 
     /**
