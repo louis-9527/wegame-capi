@@ -418,12 +418,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
     private boolean generateSymbolGoldBorder(LamangConfig.PlayProbabilisticConfig playProbabilisticConfig, int row, int column) {
         List<BigDecimal> goldBoarderProbabilisticConfig = playProbabilisticConfig.getWheelGoldProbabilisticConfig();
-        BigDecimal goldBoarderProbabilistic = null;
-        if (Objects.equals(row, ONE_ROW_INDEX)) {
-            goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(SEVEN_COLUM_INDEX);
-        } else {
-            goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(column);
-        }
+        BigDecimal goldBoarderProbabilistic = goldBoarderProbabilisticConfig.get(column);
+
         AssertUtil.assertNotNull(goldBoarderProbabilistic, ErrorCode.ERR_INTER);
         int probabilisticVal = goldBoarderProbabilistic.multiply(new BigDecimal(100)).intValue();
         if (Objects.equals(probabilisticVal, 0)) {
