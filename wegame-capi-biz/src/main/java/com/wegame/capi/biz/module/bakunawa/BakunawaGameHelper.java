@@ -57,6 +57,8 @@ public class BakunawaGameHelper {
             .symbolMap(new ImmutableMap.Builder<String, SymbolDo>()
                     .put(BAKUNAWA_Symbol0.getId(), BAKUNAWA_Symbol0)
                     .put(BAKUNAWA_Symbol1.getId(), BAKUNAWA_Symbol1)
+                    .put(BAKUNAWA_Symbol2.getId(), BAKUNAWA_Symbol2)
+                    .put(BAKUNAWA_Symbol3.getId(), BAKUNAWA_Symbol3)
                     .put(BAKUNAWA_Symbol5.getId(), BAKUNAWA_Symbol5)
                     .put(BAKUNAWA_Symbol10.getId(), BAKUNAWA_Symbol10)
                     .put(BAKUNAWA_SymbolNull.getId(), BAKUNAWA_SymbolNull)
