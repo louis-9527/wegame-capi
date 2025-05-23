@@ -27,7 +27,7 @@
 #        file-extension: yaml
 game:
   enable:
-    MariaMakiling: true
-    Malakas: true
-    IbongAdarna: true
+    MariaMakiling: false
+    Malakas: false
+    IbongAdarna: false
     Bakunawa: true
