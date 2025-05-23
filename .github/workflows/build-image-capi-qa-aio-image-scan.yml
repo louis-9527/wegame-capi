@@ -1,0 +1,91 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.###
+
+name: Java CI with Maven All in One (ImageScan) # actions name will appear during triggered
+
+on: #workflow_dispatch, job will only execute while being triggered
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Environment to deploy to'
+        required: false
+        default: 'qa'
+      version:
+        required: true
+        default: 'latest'
+      deployment:
+        required: true
+
+jobs:
+  image-scan:
+    runs-on: [ARM] #tag that match with your github-runner
+    permissions:
+      id-token: write
+      contents: read
+
+    env: 
+      AWS_REGION: ap-southeast-1
+      IMAGE_URI: 438465153243.dkr.ecr.ap-southeast-1.amazonaws.com/wegame-capi:4.1.19
+    steps:
+
+      - name: Update and install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          sudo apt-get install -y awscli
+          sudo apt-get install -y docker.io
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.TEST_OIDC }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Test ECR Pull
+        run: |
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin 438465153243.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          docker pull ${{ env.IMAGE_URI }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          skip-logout: true
+          mask-password: true
+          registry-type: 'private'
+          registries: "438465153243"
+
+      - name: Scan built image with Inspector
+        id: inspector
+        uses: aws-actions/vulnerability-scan-github-action-for-amazon-inspector@v1.2.1
+        with:
+          artifact_type: 'container'
+          artifact_path: ${{ env.IMAGE_URI }}
+          display_vulnerability_findings: "enabled"
+          scanners: 'alpine-apk,java-jar'
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+          ACTIONS_STEP_DEBUG: true
+          # critical_threshold: 1
+          # high_threshold: 1
+          # medium_threshold: 1
+          # low_threshold: 1
+          # other_threshold: 1
+
+      - name: Upload Scan Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Inspector Vulnerability Scan Artifacts
+          path: |
+            ${{ steps.inspector.outputs.inspector_scan_results }}
+            ${{ steps.inspector.outputs.inspector_scan_results_csv }}
+            ${{ steps.inspector.outputs.artifact_sbom }}
+            ${{ steps.inspector.outputs.inspector_scan_results_markdown }}
+
+      # - name: Fail job if vulnerability threshold is exceeded
+      #   run: exit ${{ steps.inspector.outputs.vulnerability_threshold_exceeded }}
+
