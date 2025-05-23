@@ -252,7 +252,7 @@ public abstract class AbstractOperationEventScheduler
                     .eventStatus(OperationEventStatusEnum.NONE.getCode())
                     .updateTimeGt(currentTimeMillis - Constants.TWO_HOURS_AGO)
                     .updateTimeLt(currentTimeMillis - Constants.FIVE_MINUTES_AGO)
-                    .finishMinAmount(gameType.getMinBetAmount() * Constants.MIN_BET_AMOUNT_M)
+                   // .finishMinAmount(gameType.getMinBetAmount() * Constants.MIN_BET_AMOUNT_M)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE).build();

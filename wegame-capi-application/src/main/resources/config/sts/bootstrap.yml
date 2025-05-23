@@ -28,5 +28,5 @@
 game:
   enable:
     MariaMakiling: true
-    Malakas: true
+    Malakas: false
     IbongAdarna: true

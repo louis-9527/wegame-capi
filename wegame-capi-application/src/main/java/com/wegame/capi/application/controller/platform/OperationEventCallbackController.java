@@ -40,6 +40,7 @@ public class OperationEventCallbackController {
     public static final Map<GameTypeEnum, String> OPERATION_EVENT_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingOperationEventManager")
             .put(GameTypeEnum.MALAKAS, "malakasOperationEventManager")
+            .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaOperationEventManager")
             .build();
 
     @Autowired

@@ -43,6 +43,7 @@ public class MariaMakilingBetHelper implements BetHelper<MariaMakilingGameRecord
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                null,
                 gameRecordList);
     }
 

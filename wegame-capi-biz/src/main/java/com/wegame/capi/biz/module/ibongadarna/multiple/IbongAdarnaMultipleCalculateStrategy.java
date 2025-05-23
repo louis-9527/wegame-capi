@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeMap;
 
 @Slf4j
@@ -31,6 +32,10 @@ public class IbongAdarnaMultipleCalculateStrategy
 
     @Override
     public BigDecimal calculateMultiple(RewardHandleDo<IbongAdarnaSymbolDo> rewardHandle, List<RewardLineDo<IbongAdarnaSymbolDo>> rewardLineList) {
+        // 传入当前倍率盘数据，则直接返回倍率盘数据，应用场景：dos
+        if (Objects.nonNull(rewardHandle.getCurrentMultiple()) && rewardHandle.getCurrentMultiple().compareTo(BigDecimal.ZERO) > 0) {
+            return rewardHandle.getCurrentMultiple();
+        }
         BetSubTypeEnum betSubType = rewardHandle.getBetSubType();
         AssertUtil.assertNotNull(betSubType, ErrorCode.ERR_INTER, "betSubType NOT SUPPORTED");
         return this.randomMultiple(betSubType);

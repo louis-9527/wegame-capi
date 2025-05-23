@@ -18,18 +18,17 @@ import lombok.ToString;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum SymbolRepeatTypeEnum {
 
-    ONE(1, "ONE"),
-    TWO(2, "TWO"),
+    ONE("ONE", 1),
+    TWO( "TWO", 2),
     ;
     /**
      * 枚举码.
      */
-    private final Integer times;
-
-    /**
-     * 描述信息.
-     */
     private final String code;
+    /**
+     * times.
+     */
+    private final Integer times;
 
     @JsonCreator
     public static SymbolRepeatTypeEnum valueOfCode(String code) {

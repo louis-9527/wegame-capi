@@ -133,8 +133,8 @@ spring:
           uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/malakas?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=20&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
           db: malakas
         ibong_adarna_mdb:
-          primary_uri: mongodb://makiling-qat-pri.anolx.mongodb.net/ibong?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=20&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=primary
-          uri: mongodb://makiling-qat-pri.anolx.mongodb.net/ibong?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=1000&minPoolSize=20&maxIdleTimeMS=60000&waitQueueTimeoutMS=120000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/ibong?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/ibong?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: ibong
 ## fastjson
 fastjson:
@@ -195,15 +195,17 @@ pulsar:
 dynamic:
   operation:
     switch: true
-    pulsar_url: pulsar://pulsar-proxy-sw-main-stress.client88.me:6650
+    pulsar_url: pulsar+ssl://pc-2ac35ef3.aws-apse5-test-j8swe.aws.snio.cloud:6651
     pulsar_topic: dos_game_slot_event
     pulsar_group:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
+      malakas: ${api.game.cp.channelId}_Malakas
+      ibong: ${api.game.cp.channelId}_Ibong
     pulsar:
       auth:
-        issuer_url: null
+        issuer_url: https://auth.streamnative.cloud/
         credentials_file_path: /operation_pulsar_privateKey.json
-        audience: urn:sn:pulsar:o-sn9dy:qat
+        audience: urn:sn:pulsar:o-sn9dy:stress-test-kl
     rsa:
       public_key: |
         -----BEGIN PUBLIC KEY-----
