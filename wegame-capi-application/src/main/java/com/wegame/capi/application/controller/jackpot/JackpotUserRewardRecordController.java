@@ -16,6 +16,7 @@ import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuer
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pulsar.shade.org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,17 +57,23 @@ public class JackpotUserRewardRecordController {
     @ApiOperation(value = "查询：根据投注记录ID & 游戏记录ID", httpMethod = "GET")
     @GetMapping("/get/{betRecordId}/{gameRecordId}")
     public CommonResponse<JackpotUserRewardRecordVo> get(@PathVariable String betRecordId, @PathVariable String gameRecordId) {
+        AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(gameRecordId, ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(NumberUtils.isNumber(betRecordId), ErrorCode.ERR_PARAM);
+        AssertUtil.assertTrue(NumberUtils.isNumber(gameRecordId), ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
-        return build(doToVo(jackpotManager(gameType).getUserRewardRecord(Long.valueOf(betRecordId), Long.valueOf(gameRecordId))));
+        return build(doToVo(jackpotManager(gameType).getUserRewardRecord(JackpotUserRewardRecordQuery.builder()
+                .betRecordId(Long.valueOf(betRecordId))
+                .gameRecordId(Long.valueOf(gameRecordId))
+                .build())));
     }
 
     @ApiOperation(value = "分页查询", httpMethod = "POST")
     @PostMapping("/pageQuery")
     public CommonResponse<PageInfoVo<JackpotUserRewardRecordVo>> pageQuery(@RequestBody PageQueryJackpotUserRewardRecordRequest request) {
-        request.validate();
         request.validate();
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);

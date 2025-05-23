@@ -53,11 +53,8 @@ public class LamangJackpotManager extends AbstractJackpotManager {
     }
 
     @Override
-    public JackpotUserRewardRecordDo getUserRewardRecord(Long betRecordId, Long gameRecordId) {
-        return jackpotUserRewardRecordService.selectOne(JackpotUserRewardRecordQuery.builder()
-                .betRecordId(betRecordId)
-                .gameRecordId(gameRecordId)
-                .build(), JackpotTypeEnum.LAM_ANG);
+    public JackpotUserRewardRecordDo getUserRewardRecord(JackpotUserRewardRecordQuery query) {
+        return jackpotUserRewardRecordService.selectOne(query, JackpotTypeEnum.LAM_ANG);
     }
 
     @Override

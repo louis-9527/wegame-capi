@@ -27,9 +27,9 @@ public abstract class AbstractJackpotManager {
     public abstract JackpotUserRewardRecordDo getHighestUserRewardRecord();
 
     /**
-     * 获取中奖记录：根据投注记录ID & 游戏记录ID
+     * 获取中奖记录
      */
-    public abstract JackpotUserRewardRecordDo getUserRewardRecord(Long betRecordId, Long gameRecordId);
+    public abstract JackpotUserRewardRecordDo getUserRewardRecord(JackpotUserRewardRecordQuery query);
 
     public abstract List<JackpotUserRewardRecordDo> listUserRewardRecord(JackpotUserRewardRecordQuery query);
 
