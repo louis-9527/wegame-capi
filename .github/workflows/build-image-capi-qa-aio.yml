@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.###
 
-name: Java CI with Maven All in One (ImageScan) # actions name will appear during triggered
+name: Scan Build & Push # actions name will appear during triggered
 
 on: #workflow_dispatch, job will only execute while being triggered
   workflow_dispatch:
