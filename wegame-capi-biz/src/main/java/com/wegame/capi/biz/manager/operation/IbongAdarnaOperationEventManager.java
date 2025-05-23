@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.manager.operation;
 
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventConfigQuery;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.wegame.capi.infrastructure.config.mongo.IbongadarnaMongoConfig.ibongadarnaTransactionManager;
+import static com.wegame.capi.infrastructure.config.mongo.MariamakilingMongoConfig.mariamakilingTransactionManager;
 
 
 @Service
@@ -23,10 +25,15 @@ public class IbongAdarnaOperationEventManager extends AbstractOperationEventMana
 
     @Override
     @Transactional(transactionManager = ibongadarnaTransactionManager)
+    public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
+        super.updateEventDetail(eventDetailDo, eventDo);
+    }
+
+    @Override
+    @Transactional(transactionManager = ibongadarnaTransactionManager)
     public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
         return super.addEventDetail(eventDetailDo);
     }
-
 
     @Override
     public OperationEventTypeEnum operationEventType() {
