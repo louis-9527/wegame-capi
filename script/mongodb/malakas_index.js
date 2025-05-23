@@ -1,3 +1,4 @@
+use malakas;
 db.getCollection("malakas_bet_record").drop();
 db.createCollection("malakas_bet_record");
 db.malakas_bet_record.createIndex({playerId: 1, status: 1, createTime: -1})

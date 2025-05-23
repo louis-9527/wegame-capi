@@ -1,0 +1,94 @@
+package com.wegame.capi.biz.module.ibongadarna.bet;
+
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.builder.BetRecordBuilder;
+import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
+import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
+import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
+import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
+import com.wegame.capi.biz.module.base.bet.BetHelper;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Objects;
+
+import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
+import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
+
+@Component
+public class IbongAdarnaBetHelper implements BetHelper<IbongAdarnaGameRecordDo, IbongAdarnaGameRecordDo> {
+
+    @Autowired
+    IbongAdarnaConfig ibongAdarnaConfig;
+
+    @Override
+    public BetRecordDo<IbongAdarnaGameRecordDo> buildBetRecord(long betRecordId,
+                                                               BetDo betDo,
+                                                               List<IbongAdarnaGameRecordDo> gameRecordList) {
+        // 构建投注记录
+        long totalRewardAmount = gameRecordList.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+        return BetRecordBuilder.build(betRecordId,
+                betDo,
+                totalRewardAmount,
+                false,
+                null,
+                gameRecordList);
+    }
+
+    @Override
+    public BetResultDo<IbongAdarnaGameRecordDo> handleBetResult(BetRecordDo<IbongAdarnaGameRecordDo> betRecord, SingleWalletBetResultDo resultDo) {
+        AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        IbongAdarnaGameRecordDo gameRecord = betRecord.getGameRecordList().get(0);
+        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
+            // 组装返回结果
+            return BetResultDo.<IbongAdarnaGameRecordDo>builder()
+                    .betRecordId(betRecord.getId())
+                    .gameId(betRecord.getGameId())
+                    .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
+                    .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
+                    .credit(resultDo.getCredit())
+                    .overallRewardAmount(Objects.nonNull(gameRecord.getRewardResult()) ? gameRecord.getRewardResult().getTotalRewardAmount() : 0L)
+                    .totalPayoutAmount(betRecord.getPayOutAmount())
+                    .resultDetail(gameRecord)
+                    .build();
+        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.FAIL)) {
+            if (resultDo.getErrorCode() != null) {
+                throw new BusinessException(resultDo.getErrorCode());
+            }
+            throw new BusinessException(ErrorCode.ERR_INTER);
+        } else if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.ING)) {
+            throw new BusinessException(ErrorCode.ERR_NET);
+        } else {
+            throw new BusinessException(ErrorCode.ERR_INTER);
+        }
+    }
+
+    @Override
+    public boolean hasRewardFreeWheel(List<IbongAdarnaGameRecordDo> gameRecordList) {
+        if (CollectionUtils.isEmpty(gameRecordList)) {
+            return false;
+        }
+        IbongAdarnaGameRecordDo gameRecord = gameRecordList.stream()
+                .filter(Objects::nonNull)
+                .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeWheel())
+                .findFirst()
+                .orElse(null);
+        return Objects.nonNull(gameRecord);
+    }
+}

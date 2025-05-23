@@ -26,10 +26,7 @@ import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -158,15 +155,13 @@ public abstract class AbstractJackPotPulsarListener<T extends ToVoConverter> imp
         if (!updateRecordList.isEmpty()) {
             List<JackpotRewardPoolInputRecordDo> recordList = new ArrayList<>();
             updateRecordList.forEach(record -> {
-                BetRecordDo.ExtendInfo extendInfo = record.getExtendInfo();
-                if (extendInfo != null && extendInfo.getJackPotPoolAmount() != null) {
-                    BetRecordDo.JackPotPoolAmount jackPotPoolAmount = extendInfo.getJackPotPoolAmount();
-                    recordList.add(JackpotRewardPoolInputRecordDo.builder()
+                if (Objects.nonNull(record.getJackpot())) {
+                     recordList.add(JackpotRewardPoolInputRecordDo.builder()
                             .type(JackpotRewardPoolInputTypeEnum.PAYOUT_IN)
-                            .grandAmount(jackPotPoolAmount.getGrandContributionAmount())
-                            .majorAmount(jackPotPoolAmount.getMajorContributionAmount())
-                            .minorAmount(jackPotPoolAmount.getMinorContributionAmount())
-                            .miniAmount(jackPotPoolAmount.getMiniContributionAmount())
+                            .grandAmount(record.getJackpot().getGrandContributionAmount())
+                            .majorAmount(record.getJackpot().getMajorContributionAmount())
+                            .minorAmount(record.getJackpot().getMinorContributionAmount())
+                            .miniAmount(record.getJackpot().getMiniContributionAmount())
                             .build());
                 } else {
                     try {
@@ -187,7 +182,5 @@ public abstract class AbstractJackPotPulsarListener<T extends ToVoConverter> imp
                 }
             }
         }
-
-
     }
 }
