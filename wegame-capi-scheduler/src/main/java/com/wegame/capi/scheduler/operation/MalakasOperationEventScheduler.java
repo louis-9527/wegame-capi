@@ -28,13 +28,13 @@ public class MalakasOperationEventScheduler extends AbstractOperationEventSchedu
     @Qualifier("malakasOperationEventManager")
     MalakasOperationEventManager malakasOperationEventManager;
 
-    @Scheduled(cron = "0 0/9 * * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
             long startTime = DateUtil.getCurrentMilli();
             scheduleWithLock(LockNameUtil.getOperationEventSchedulerLockName(operationEventType().getGameType()), this);
-            log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
+            log.info("schedule end, cost time: {}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
             log.info("schedule get lock fail");
         } catch (Exception e) {
