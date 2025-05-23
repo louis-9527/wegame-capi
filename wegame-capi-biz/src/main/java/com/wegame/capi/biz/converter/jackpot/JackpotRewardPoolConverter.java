@@ -31,7 +31,7 @@ public class JackpotRewardPoolConverter {
         }
         JackpotRewardPoolDo jackpotRewardPoolDo = new JackpotRewardPoolDo();
         jackpotRewardPoolDo.setType(JackpotRewardPoolTypeEnum.valueOfCode(vo.getType()));
-        jackpotRewardPoolDo.setAmount(StringUtils.isNotEmpty(vo.getAmount()) ? Long.valueOf(vo.getAmount()) : null);
+        jackpotRewardPoolDo.setAmount(vo.getAmount());
         return jackpotRewardPoolDo;
     }
 
@@ -79,7 +79,7 @@ public class JackpotRewardPoolConverter {
         JackpotRewardPoolVo vo = new JackpotRewardPoolVo();
         vo.setId(Objects.nonNull(jackpotRewardPoolDo.getId()) ? String.valueOf(jackpotRewardPoolDo.getId()) : null);
         vo.setType(jackpotRewardPoolDo.getType().getCode());
-        vo.setAmount(Objects.nonNull(jackpotRewardPoolDo.getAmount()) ? String.valueOf(jackpotRewardPoolDo.getAmount()) : null);
+        vo.setAmount(jackpotRewardPoolDo.getAmount());
         return vo;
     }
 

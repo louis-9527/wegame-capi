@@ -62,7 +62,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     LamangConfig lamangConfig;
 
     @Autowired
-    RewardHandler malakasRewardHandler;
+    RewardHandler lamangRewardHandler;
 
     @Override
     public List<LamangGameRecordDo> play(GamePlayDo gamePlay) {
@@ -277,7 +277,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                     mustRewardFreeWheel,
                     freeWheelFlag);
             //todo 换成lamang中奖线计算
-            RewardResultDo<LamangSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
+            RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
             long gameRecordId = generateGameRecordId();
             //todo 计算抽奖次数
             int drawTimes = countAndReleaseScatterDrawTimes(wheel.getSymbolArr());
@@ -347,7 +347,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
         WheelDo<LamangSymbolDo> wheel = generateFirstWheel(firstBatchConfig, mustRewardFreeWheel,false);
         //todo
-        RewardResultDo<LamangSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
+        RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
         long gameRecordId = generateGameRecordId();
@@ -373,7 +373,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             wheel.setFreeFlag(true);
             // 判奖-根据游戏滚轮和中奖线算法判断
             BigDecimal multiply = getMultiple();
-            RewardResultDo<LamangSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, multiply));
+            RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, multiply));
             AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
             // 组装-游戏记录
             long gameRecordId = generateGameRecordId();

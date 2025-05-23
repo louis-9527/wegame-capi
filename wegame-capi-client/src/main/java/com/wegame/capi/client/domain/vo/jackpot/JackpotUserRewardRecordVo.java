@@ -39,7 +39,7 @@ public class JackpotUserRewardRecordVo implements Validate, Serializable {
     @ApiModelProperty("类型 1：grand 2:major 3:minor 4:mini 5:betBonus")
     private Integer rewardPoolType;
     @ApiModelProperty("中奖金额.单位：厘")
-    private String rewardAmount;
+    private Long rewardAmount;
     @ApiModelProperty("派奖流水号（refid）")
     private String rewardGrantSerialNo;
     @ApiModelProperty("派奖状态.0:未派奖.1:派奖中（状态待定）.2:已派奖")
@@ -65,7 +65,7 @@ public class JackpotUserRewardRecordVo implements Validate, Serializable {
         AssertUtil.assertStrNotEmpty(betId, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(rewardPoolId, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(rewardPoolType, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(rewardAmount, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(rewardAmount, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(rewardGrantSerialNo, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(rewardGrantStatus, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(rewardGrantTime, ErrorCode.ERR_PARAM);
