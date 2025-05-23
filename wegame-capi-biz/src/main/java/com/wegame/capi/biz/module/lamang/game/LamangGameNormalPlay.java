@@ -122,26 +122,22 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
                 AssertUtil.assertTrue(MapUtils.isNotEmpty(columProbabilisticMap), ErrorCode.ERR_INTER);
                 Integer randomNumber = randomNumberList.get(randomNumberIndex);
-                if (Objects.equals(row, ONE_ROW_INDEX) || scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL) {
-                    // 第一行 || 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
+                SymbolDo symbolDo = null;
+                if (scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL) {
+                    // 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
                     // 生成元素：非scatter元素
-                    SymbolDo symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
-
-                    // 构建元素金边
-                    boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
-                    LamangSymbolDo lamangSymbolDo = LamangSymbolDo.buildFromSymbol(symbolDo, symbolGoldBorder);
-                    symbolArr[row][column] = lamangSymbolDo;
+                    symbolDo = randomNonScatterSymbol(randomNumber, gameInfo, columProbabilisticMap);
                 } else {
                     // 生成元素：随机生成
-                    SymbolDo symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
-                    // 构建元素金边
-                    boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
-                    LamangSymbolDo lamangSymbolDo = LamangSymbolDo.buildFromSymbol(symbolDo, symbolGoldBorder);
-                    symbolArr[row][column] = lamangSymbolDo;
-                    if (symbolDo.isScatterSymbol()) {
-                        scatterNumberInColumn = scatterNumberInColumn + 1;
-                        scatterNumberInWheel = scatterNumberInWheel + 1;
-                    }
+                    symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
+                }
+                // 构建元素金边
+                boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
+                LamangSymbolDo lamangSymbolDo = LamangSymbolDo.buildFromSymbol(symbolDo, symbolGoldBorder);
+                symbolArr[row][column] = lamangSymbolDo;
+                if (symbolDo.isScatterSymbol()) {
+                    scatterNumberInColumn = scatterNumberInColumn + 1;
+                    scatterNumberInWheel = scatterNumberInWheel + 1;
                 }
                 randomNumberIndex = randomNumberIndex + 1;
             }
@@ -211,19 +207,21 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         // 复制：元素数组
         LamangSymbolDo[][] symbolArr = copySymbolArr(preWheel.getSymbolArr());
         // 消除：中奖元素
-        clearRewardSymbol(symbolArr, preRewardResult, lamangConfig.getProbabilisticConfig().getWildTypeProbabilisticConfig());
+        clearRewardSymbol(symbolArr, preRewardResult);
 
         // 如果有超级wild就全部重新生成
         if (hasSuperWild(symbolArr)) {
-            // 清除除superWild外的所有元素 并将中间元素中间（1，1）用超级wild占位 用超级wild配置表生成wheel
+            // 生成一个 中间元素（1，1）为超级wild 2、3行的2-4列 添加占位符
             symbolArr = initSuperWildWheel();
             LamangConfig.PlayProbabilisticConfig superWild = lamangConfig.getProbabilisticConfig().getSupperWildRefreshProbabilisticConfig();
+            // 用超级wild配置表填充wheel
             fillWheel(GAME_INFO, symbolArr, superWild, mustRewardFreeWheel);
         } else {
             //下落
             rebuildSymbolArr(symbolArr, GAME_INFO);
+            //填充
             fillWheel(GAME_INFO, symbolArr, config, mustRewardFreeWheel);
-            // 填充bigWild
+            // 使用 占位符 覆盖bigWild的2-4列
             holdBigWild(symbolArr);
         }
         //todo 使用占位符
@@ -233,10 +231,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 .freeFlag(freeWheel)
                 .symbolArr(symbolArr)
                 .build();
-    }
-
-    private void holdBigWild(LamangSymbolDo[][] symbolArr) {
-        hasSuperWild(symbolArr);
     }
 
     private LamangSymbolDo[][] initSuperWildWheel() {
@@ -451,18 +445,16 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
      * @param symbolArr
      * @param rewardResult
      */
-    public void clearRewardSymbol(LamangSymbolDo[][] symbolArr, RewardResultDo<LamangSymbolDo> rewardResult,
-                                         TreeMap<String, BigDecimal> wildTypeProbabilisticConfig) {
+    public void clearRewardSymbol(LamangSymbolDo[][] symbolArr, RewardResultDo<LamangSymbolDo> rewardResult) {
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         AssertUtil.assertNotEmpty(rewardResult.getRewardLineDetailList(), ErrorCode.ERR_INTER);
         List<RewardSymbolDo<LamangSymbolDo>> rewardSymbolList = rewardResult.getRewardLineDetailList()
                 .stream()
                 .map(RewardLineDetailDo<LamangSymbolDo>::getRewardSymbolList).flatMap(List::stream).collect(Collectors.toList());
-        rewardSymbolList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol, wildTypeProbabilisticConfig));
+        rewardSymbolList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
     }
 
-    private void clearIndexRewardSymbol(LamangSymbolDo[][] symbolArr, RewardSymbolDo<LamangSymbolDo> rewardSymbol,
-                                               TreeMap<String, BigDecimal> wildTypeProbabilisticConfig) {
+    private void clearIndexRewardSymbol(LamangSymbolDo[][] symbolArr, RewardSymbolDo<LamangSymbolDo> rewardSymbol) {
         if (rewardSymbol.getSymbol().isScatterSymbol()) {
             // scatter 元素， 不做消除
         } else if (rewardSymbol.getSymbol().isWildSymbol()) {

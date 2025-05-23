@@ -14,6 +14,11 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 public class LamangSymbolUtil {
 
 
+    /**
+     * 是否有超级wild
+     * @param symbolArr
+     * @return
+     */
     public static boolean hasSuperWild(LamangSymbolDo[][] symbolArr) {
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
@@ -25,8 +30,33 @@ public class LamangSymbolUtil {
         return false;
     }
 
+    /**
+     * 处理大wild
+     * @param symbolArr
+     */
     public static void holdBigWild(LamangSymbolDo[][] symbolArr) {
         //todo 用占位符覆盖bigWild所在1-3列
+        // 按行处理
+        for (int row = 0; row < symbolArr.length; row++) {
+            boolean hasWild = false;
+            for (int col = 0; col < symbolArr[row].length; col++) {
+                LamangSymbolDo current = symbolArr[row][col];
+                if (Objects.nonNull(current) && current.getId().equals(LAMANG_BIG_WILD.getId())) {
+                    hasWild = true;
+                }
+            }
+            if (hasWild) {
+                for (int col = 1; col < 4; col++) { // 修改第2、3、4列（索引为1、2、3）
+                    LamangSymbolDo current = symbolArr[row][col];
+                    //如果是bigwild，不处理，不是bigwild则换位占位符
+                    if (Objects.nonNull(current) && current.getId().equals(LAMANG_BIG_WILD.getId())) {
+                        //不处理
+                    } else {
+                        symbolArr[row][col] = LamangSymbolDo.buildFromSymbol(LAMANG_SYMBOL_PLACEHOLDER, false);
+                    }
+                }
+            }
+        }
     }
 
     /**
