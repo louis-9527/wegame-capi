@@ -29,7 +29,7 @@ public class LamangSymbolDo extends SymbolDo {
     /**
      * 适用于scatter 和 scatter +1 ,是否已经被用于添加jackpot抽奖次数
      */
-    private boolean jackpotRewardAdded;
+    private boolean jackpotDrawTimesAdded;
 
     /**
      * 适用于 scatter +1 ,是否已经被用于添加免费轮

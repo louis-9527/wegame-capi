@@ -124,6 +124,8 @@ public class LamangGameHelper {
                     .put(LAMANG_Symbol1010.getId(), LAMANG_Symbol1010)
                     .put(LAMANG_SCATTER.getId(), LAMANG_SCATTER)
                     .put(LAMANG_Wild.getId(), LAMANG_Wild)
+                    .put(LAMANG_BIG_WILD.getId(), LAMANG_BIG_WILD)
+                    .put(LAMANG_SUPER_WILD.getId(), LAMANG_SUPER_WILD)
                     .build())
             .build();
 
