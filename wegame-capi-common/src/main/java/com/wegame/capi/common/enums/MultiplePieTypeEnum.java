@@ -20,7 +20,7 @@ import java.util.Objects;
 public enum MultiplePieTypeEnum {
 
     NORMAL("NORMAL", "正常倍率"),
-    BAKUNAWA("Bakunawa", "Bakunawa倍率"),
+    BAKUNAWA("BAKUNAWA", "Bakunawa倍率"),
     ;
 
     /**
