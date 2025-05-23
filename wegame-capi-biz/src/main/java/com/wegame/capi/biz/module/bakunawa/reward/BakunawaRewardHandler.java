@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.bakunawa.reward;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
@@ -44,6 +45,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
     MultipleCalculateStrategy bakunawaMultipleCalculateStrategy;
 
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
+        log.info("BakunawaRewardHandler.handle rewardHandle:{}", FastJsonUtils.toJSONString(rewardHandle));
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
