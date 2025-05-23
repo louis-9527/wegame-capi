@@ -31,15 +31,15 @@ public enum JackpotTypeEnum {
      */
     private final GameTypeEnum gameType;
     /**
-     * 集合名称(事件)
+     * 集合名称(奖池)
      */
     private final String jackpotRewardPoolCollectionName;
     /**
-     * 集合名称(事件明细)
+     * 集合名称(奖池流水)
      */
     private final String jackpotRewardPoolInputCollectionName;
     /**
-     * 集合名称(投注记录模版配置)
+     * 集合名称(派奖记录)
      */
     private final String jackpotUserRewardRewardCollectionName;
 
