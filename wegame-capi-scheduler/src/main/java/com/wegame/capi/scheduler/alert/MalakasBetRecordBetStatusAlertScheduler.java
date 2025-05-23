@@ -1,6 +1,7 @@
 package com.wegame.capi.scheduler.alert;
 
 import com.wegame.base.exception.LockException;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -26,14 +27,15 @@ public class MalakasBetRecordBetStatusAlertScheduler
      */
     @Scheduled(cron = "0 0 9 * * ?")
     public void schedule() {
-        log.info("MalakasBetRecordBetStatusAlertScheduler#schedule start");
         try {
+            log.info("schedule start");
+            long startTime = DateUtil.getCurrentMilli();
             scheduleWithLock(LockNameUtil.getBetRecordStatusAlertSchedulerLockName(getGameType()), this);
+            log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
-            log.info("MalakasBetRecordBetStatusAlertScheduler#get lock fail");
+            log.info("schedule get lock fail");
         } catch (Exception e) {
-            log.error("MalakasBetRecordBetStatusAlertScheduler#schedule failed", e);
+            log.error("schedule failed", e);
         }
-        log.info("MalakasBetRecordBetStatusAlertScheduler#schedule end");
     }
 }

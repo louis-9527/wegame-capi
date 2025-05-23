@@ -1,6 +1,7 @@
 package com.wegame.capi.scheduler.biz;
 
 import com.wegame.base.exception.LockException;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,14 +32,15 @@ public class IbongAdarnaBetRecordBetStatusScheduler
      */
     @Scheduled(cron = "30 * * * * ?")
     public void schedule() {
-        log.info("IbongAdarnaBetRecordBetStatusScheduler#schedule start");
         try {
+            log.info("schedule start");
+            long startTime = DateUtil.getCurrentMilli();
             scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(getGameType()), this);
+            log.info("schedule end, cost time: {}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
-            log.info("IbongAdarnaBetRecordBetStatusScheduler#get lock fail");
+            log.info("schedule get lock fail");
         } catch (Exception e) {
-            log.error("IbongAdarnaBetRecordBetStatusScheduler#schedule failed", e);
+            log.error("schedule failed", e);
         }
-        log.info("IbongAdarnaBetRecordBetStatusScheduler#schedule end");
     }
 }
