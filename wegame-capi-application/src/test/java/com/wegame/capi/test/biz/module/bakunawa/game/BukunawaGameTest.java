@@ -38,10 +38,12 @@ public class BukunawaGameTest extends BaseTest {
 
     @Test
     public void play_normal_test() {
-        List<BakunawaGameRecordDo> result = bakunawaGameNormalPlay.play(GameTestMocker.mockGamePlayDo(BetSubTypeEnum.NORMAL_BET, 100L));
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertNotNull(result.get(0).getWheel());
+        for (int i = 0; i < 100; i++) {
+            List<BakunawaGameRecordDo> result = bakunawaGameNormalPlay.play(GameTestMocker.mockGamePlayDo(BetSubTypeEnum.NORMAL_BET, 100L));
+            assertNotNull(result);
+            assertEquals(1, result.size());
+            assertNotNull(result.get(0).getWheel());
+        }
     }
 
 }
