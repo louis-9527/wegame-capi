@@ -32,7 +32,7 @@ public class BakunawaPulsarListener extends AbstractPulsarListener<BakunawaGameR
 
     @Override
     public GameTypeEnum getGameType() {
-        return GameTypeEnum.IBONG_ADARNA;
+        return GameTypeEnum.BAKUNAWA;
     }
 
     @Override
