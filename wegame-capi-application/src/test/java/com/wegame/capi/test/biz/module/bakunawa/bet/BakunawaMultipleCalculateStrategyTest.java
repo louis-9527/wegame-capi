@@ -28,11 +28,7 @@ public class BakunawaMultipleCalculateStrategyTest extends BaseTest {
                 .id("10000")
                 .userName("system")
                 .build());
-        OperatorContext.setOperator(Operator.builder()
-                .name("system")
-                .userId(10000L)
-                .playerId("10000")
-                .build());
+
     }
 
     @Test
@@ -40,6 +36,11 @@ public class BakunawaMultipleCalculateStrategyTest extends BaseTest {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
                 .userName("system")
+                .build());
+        OperatorContext.setOperator(Operator.builder()
+                .name("system")
+                .userId(10000L)
+                .playerId("10000")
                 .build());
         BetDo betDo = new BetDo();
         betDo.setBetType(BetTypeEnum.NORMAL_BET);
