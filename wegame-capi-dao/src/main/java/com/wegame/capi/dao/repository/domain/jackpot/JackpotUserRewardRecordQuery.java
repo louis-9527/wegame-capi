@@ -2,6 +2,7 @@ package com.wegame.capi.dao.repository.domain.jackpot;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.domain.Sort;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -48,11 +49,24 @@ public class JackpotUserRewardRecordQuery extends JackpotUserRewardRecordPo impl
     private Date endUpdateTime;
 
     ///////////////  above auto generated ///////////////
+    /**
+     * 排序语句
+     */
+    private Sort.Direction direction;
 
     /**
      * 奖池类型列表
      */
     private List<Integer> rewardPoolTypeList;
+
+    /**
+     * 小于最后一条的Id
+     */
+    private Long ltLastId;
+    /**
+     * 大于最后一条的Id
+     */
+    private Long gtLastId;
 
 }
 

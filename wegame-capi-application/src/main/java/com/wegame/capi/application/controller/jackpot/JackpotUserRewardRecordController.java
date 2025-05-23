@@ -12,6 +12,7 @@ import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRecordRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotUserRewardRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -49,14 +50,14 @@ public class JackpotUserRewardRecordController {
     @GetMapping("/get/history/highest/reward")
     public CommonResponse<JackpotUserRewardRecordVo> getHistoryHighestReward() {
         // todo @lyric
-        return CommonResponse.build(JackpotUserRewardRecordConverter.doToVo(jackpotUserRewardRecordService.get(Long.valueOf(0))));
+        return CommonResponse.build(JackpotUserRewardRecordConverter.doToVo(jackpotUserRewardRecordService.get(Long.valueOf(0), JackpotTypeEnum.LAM_ANG)));
     }
 
     @ApiOperation(value = "查询：根据投注记录ID & 游戏记录ID", httpMethod = "GET")
     @GetMapping("/get/{betRecordId}/{gameRecordId}")
     public CommonResponse<JackpotUserRewardRecordVo> getByGameRecordId(@PathVariable String betRecordId, @PathVariable String gameRecordId) {
         // todo @lyric
-        return CommonResponse.build(JackpotUserRewardRecordConverter.doToVo(jackpotUserRewardRecordService.get(Long.valueOf(0))));
+        return CommonResponse.build(JackpotUserRewardRecordConverter.doToVo(jackpotUserRewardRecordService.get(Long.valueOf(0), JackpotTypeEnum.LAM_ANG)));
     }
 
     @ApiOperation(value = "分页查询", httpMethod = "POST")

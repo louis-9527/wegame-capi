@@ -3,27 +3,85 @@ package com.wegame.capi.biz.service.jackpot;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
+import com.wegame.capi.biz.builder.jackpot.JackpotUserRewardRecordQueryBuilder;
 import com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
+import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.mapper.business.JackpotUserRewardRecordMapper;
+import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.wegame.capi.biz.converter.BetRecordConverter.poToDo;
 
 /**
  * po服务
+ *
  * @author genereate
  */
 @Service
-public class JackpotUserRewardRecordService {
+public class JackpotUserRewardRecordService extends AbstractService {
 
     @Autowired
     JackpotUserRewardRecordMapper jackpotUserRewardRecordMapper;
+
+
+    ///////////////  mongo done start ///////////////
+    /**
+     * 查询：根据主键id查询
+     *
+     * @param id 主键id
+     * @return JackpotUserRewardRecordDo 用户jackpot中奖记录
+     */
+    public JackpotUserRewardRecordDo get(Long id,JackpotTypeEnum jackpotType) {
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        Criteria criteria = new Criteria();
+        criteria.and("_id").is(id);
+        Query query = new Query(criteria);
+        JackpotUserRewardRecordPo rewardRecordPo = getMongoTemplate(jackpotType.getGameType()).findOne(
+                query,
+                JackpotUserRewardRecordPo.class,
+                jackpotType.getJackpotUserRewardRewardCollectionName());
+        return JackpotUserRewardRecordConverter.poToDo(rewardRecordPo);
+    }
+
+    /**
+     * 查询id列表
+     *
+     * @param query 查询参数
+     * @return List<Long> id列表
+     */
+    public List<Long> listId(JackpotUserRewardRecordQuery query, JackpotTypeEnum jackpotTypeEnum) {
+        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM);
+        Query recordQuery = JackpotUserRewardRecordQueryBuilder.buildMongodbQuery(query);
+        recordQuery.fields().include("_id");
+        List<JackpotUserRewardRecordPo> betRecordPoList = getMongoTemplate(jackpotTypeEnum.getGameType()).find(
+                recordQuery,
+                JackpotUserRewardRecordPo.class,
+                jackpotTypeEnum.getJackpotUserRewardRewardCollectionName());
+        return Optional.ofNullable(betRecordPoList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(JackpotUserRewardRecordPo::getId)
+                .collect(Collectors.toList());
+    }
+
+    ///////////////  mongo done end ///////////////
+
 
     /**
      * 新增
@@ -52,30 +110,6 @@ public class JackpotUserRewardRecordService {
     }
 
     /**
-     * 删除：物理删除
-     *
-     * @param id 主键id
-     * @return true/false
-     */
-    public boolean delete(Long id) {
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        jackpotUserRewardRecordMapper.deleteById(id);
-        return true;
-    }
-
-    /**
-     * 删除：批量物理删除
-     *
-     * @param ids 主键id列表
-     * @return true/false
-     */
-    public boolean batchDelete(List<Long> ids) {
-        AssertUtil.assertNotEmpty(ids, ErrorCode.ERR_PARAM);
-        jackpotUserRewardRecordMapper.deleteByIds(ids);
-        return true;
-    }
-
-    /**
      * 修改
      *
      * @param jackpotUserRewardRecordDo 用户jackpot中奖记录
@@ -86,17 +120,6 @@ public class JackpotUserRewardRecordService {
         AssertUtil.assertNotNull(jackpotUserRewardRecordDo.getId(), ErrorCode.ERR_PARAM);
         jackpotUserRewardRecordMapper.updateById(JackpotUserRewardRecordConverter.doToPo(jackpotUserRewardRecordDo, OptEnum.UPDATE));
         return true;
-    }
-
-    /**
-     * 查询：根据主键id查询
-     *
-     * @param id 主键id
-     * @return JackpotUserRewardRecordDo 用户jackpot中奖记录
-     */
-    public JackpotUserRewardRecordDo get(Long id) {
-        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        return JackpotUserRewardRecordConverter.poToDo(jackpotUserRewardRecordMapper.selectById(id));
     }
 
     /**
@@ -116,10 +139,10 @@ public class JackpotUserRewardRecordService {
      * @param query 查询条件
      * @return id
      */
-     public Long selectId(JackpotUserRewardRecordQuery query) {
+    public Long selectId(JackpotUserRewardRecordQuery query) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         return jackpotUserRewardRecordMapper.selectId(query);
-     }
+    }
 
     /**
      * 查询：根据id列表
@@ -141,17 +164,6 @@ public class JackpotUserRewardRecordService {
      */
     public List<JackpotUserRewardRecordDo> listAll() {
         return JackpotUserRewardRecordConverter.poToDoList(jackpotUserRewardRecordMapper.listAll());
-    }
-
-    /**
-     * 查询id列表
-     *
-     * @param query 查询参数
-     * @return List<Long> id列表
-     */
-    public List<Long> listId(JackpotUserRewardRecordQuery query) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return jackpotUserRewardRecordMapper.listId(query);
     }
 
     /**
