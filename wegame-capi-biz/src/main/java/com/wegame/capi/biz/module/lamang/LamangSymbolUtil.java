@@ -1,26 +1,13 @@
 package com.wegame.capi.biz.module.lamang;
 
-import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
-import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
-import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
 import com.wegame.capi.common.enums.SymbolEnum;
-import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.lamang.LamangGameHelper.*;
-import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
@@ -43,18 +30,19 @@ public class LamangSymbolUtil {
     }
 
     /**
-     * 计算中奖次数 (新增scatter & scatter+1数量)
+     * 计算中奖次数 (新增scatter & scatter+1数量) 并更新元素状态
      * @param symbolArr
      * @return
      */
     //todo 优化
-    public static int countAndReleaseDrawTimes(LamangSymbolDo[][] symbolArr) {
+    public static int countAndReleaseScatterDrawTimes(LamangSymbolDo[][] symbolArr) {
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
-                if (Objects.nonNull(symbolArr[row][col]) && symbolArr[row][col].isScatterSymbol()) {
+                LamangSymbolDo current = symbolArr[row][col];
+                if (Objects.nonNull(current) && current.isScatterSymbol() && !current.isJackpotDrawTimesAdded()) {
                     count = count + 1;
-                    symbolArr[row][col].setJackpotDrawTimesAdded(true);
+                    current.setJackpotDrawTimesAdded(true);
                 }
             }
         }
@@ -62,18 +50,19 @@ public class LamangSymbolUtil {
     }
 
     /**
-     * 计算
+     * 计算scatter+1赠送免费轮次数，并更新元素状态
      * @param symbolArr
      * @return
      */
     //todo 优化
-    public static int countAndReleaseFreeWheel(LamangSymbolDo[][] symbolArr) {
+    public static int countAndReleaseScatterFreeWheel(LamangSymbolDo[][] symbolArr) {
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
-                if (Objects.nonNull(symbolArr[row][col]) && symbolArr[row][col].getId().equals(LAMANG_SCATTER1.getId())) {
+                LamangSymbolDo current = symbolArr[row][col];
+                if (Objects.nonNull(current) && current.getId().equals(LAMANG_SCATTER1.getId()) && !current.isFreeWheelAdded()) {
                     count = count + 1;
-                    symbolArr[row][col].setFreeWheelAdded(true);
+                    current.setFreeWheelAdded(true);
                 }
             }
         }
