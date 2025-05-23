@@ -48,7 +48,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
 
     @Override
     public JackpotUserRewardRecordDo getHighestUserRewardRecord() {
-        // todo. 查询 & 缓存 & 缓存刷新 @lyric
+        // todo. 查询 & 缓存 & 缓存刷新 @lyric 参考 大奖记录
         return null;
     }
 
