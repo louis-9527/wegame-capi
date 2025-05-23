@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import static com.wegame.capi.common.Constants.*;
 
 /**
- * MariaMakiling干预事件定时任务
+ * IbongAdarna星卡定时任务
  */
 @Slf4j
 @Service

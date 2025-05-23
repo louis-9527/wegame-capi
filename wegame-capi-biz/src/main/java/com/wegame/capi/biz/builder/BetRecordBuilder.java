@@ -21,6 +21,7 @@ public class BetRecordBuilder {
                                            BetDo betDo,
                                            Long payOutAmount,
                                            Boolean reachMaxMultiple,
+                                           BetRecordDo.Jackpot jackpot,
                                            List<T> gameRecordList) {
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
@@ -61,6 +62,7 @@ public class BetRecordBuilder {
                 .payOutAmount(payOutAmount)
                 .reachMaxMultiple(reachMaxMultiple)
                 .status(BetStatusEnum.ING.getCode())
+                .jackpot(jackpot)
                 .extendInfo(extendInfo)
                 .creator(operator.getName())
                 .updater(operator.getName())

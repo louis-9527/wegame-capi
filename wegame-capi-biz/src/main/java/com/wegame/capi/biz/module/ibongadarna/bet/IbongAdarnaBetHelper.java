@@ -45,6 +45,7 @@ public class IbongAdarnaBetHelper implements BetHelper<IbongAdarnaGameRecordDo, 
                 betDo,
                 totalRewardAmount,
                 false,
+                null,
                 gameRecordList);
     }
 

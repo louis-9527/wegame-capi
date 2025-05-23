@@ -99,6 +99,10 @@ public class BetRecordPo implements Serializable {
      */
     private Long betTime;
     /**
+     * jackpot
+     */
+    private Jackpot jackpot;
+    /**
      * 扩展信息
      */
     private ExtendInfo extendInfo;
@@ -142,6 +146,32 @@ public class BetRecordPo implements Serializable {
          * 预定投注Id
          */
         private String campaignId;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class Jackpot implements Serializable {
+        /**
+         * grand奖池贡献金额
+         */
+        private Long grandContributionAmount;
+        /**
+         * major奖池贡献金额
+         */
+        private Long majorContributionAmount;
+
+        /**
+         * minor奖池贡献金额
+         */
+        private Long minorContributionAmount;
+        /**
+         * mini奖池贡献金额
+         */
+        private Long miniContributionAmount;
     }
 }
 
