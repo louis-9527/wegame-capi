@@ -48,6 +48,10 @@ public class LamangConfig {
      */
     private Integer rewardMaxMultiple;
     /**
+     * 免费次数
+     */
+    private Integer freeWheelTimes;
+    /**
      * jackpot 配置
      */
     private JackPotConfig jackPotConfig;
@@ -181,6 +185,8 @@ public class LamangConfig {
         multiPleConfigValidate();
         rewardMaxMultipleValidate();
         jackPotConfigValidate();
+        freeWheelTimesValidate();
+
     }
 
     private void jackPotConfigValidate() {
@@ -250,6 +256,11 @@ public class LamangConfig {
     private void rewardMaxMultipleValidate() {
         AssertUtil.assertNotNull(this.rewardMaxMultiple, ErrorCode.ERR_INTER, "rewardMaxMultiple is null");
         AssertUtil.assertTrue(this.rewardMaxMultiple > 0, ErrorCode.ERR_INTER, "rewardMaxMultiple is must great than 0");
+    }
+
+    private void freeWheelTimesValidate() {
+        AssertUtil.assertNotNull(this.freeWheelTimes, ErrorCode.ERR_INTER, "freeWheelTimes is null");
+        AssertUtil.assertTrue(this.freeWheelTimes > 0, ErrorCode.ERR_INTER, "freeWheelTimes is must great than 0");
     }
 
     private void oddsConfigValidate() {
