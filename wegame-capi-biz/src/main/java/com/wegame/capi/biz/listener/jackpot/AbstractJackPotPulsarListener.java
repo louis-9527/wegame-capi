@@ -9,9 +9,7 @@ import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
-import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
-import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
@@ -21,7 +19,6 @@ import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import javax.annotation.PostConstruct;
@@ -31,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * jackpot pulsar listener
@@ -172,7 +168,7 @@ public abstract class AbstractJackPotPulsarListener<T extends ToVoConverter> imp
                 }
             });
             // 批量处理
-            this.jackpotManager().batchAddJackpotRewardRecord(recordList);
+            this.jackpotManager().batchAddUserRewardRecord(recordList);
             if (!updateMessageIdMap.isEmpty()) {
                 // 批量ack
                 try {

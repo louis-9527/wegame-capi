@@ -1,66 +1,73 @@
 package com.wegame.capi.biz.manager.jackpot;
 
-import com.mongodb.DuplicateKeyException;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolSummarizeDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolInputRecordService;
 import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
+import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static com.wegame.capi.infrastructure.config.mongo.LamangMongoConfig.lamangTransactionManager;
-import static com.wegame.capi.infrastructure.config.mongo.MariamakilingMongoConfig.mariamakilingTransactionManager;
+import java.util.Optional;
 
 @Slf4j
 @Component("lamangJackpotManager")
 public class LamangJackpotManager extends AbstractJackpotManager {
     @Autowired
-    private JackpotRewardPoolInputRecordService jackpotRewardPoolInputRecordService;
+    JackpotRewardPoolInputRecordService jackpotRewardPoolInputRecordService;
     @Autowired
-    private JackpotRewardPoolService jackpotRewardPoolService;
+    JackpotRewardPoolService jackpotRewardPoolService;
+    @Autowired
+    JackpotUserRewardRecordService jackpotUserRewardRecordService;
+    @Autowired
+    LamangConfig lamangConfig;
 
     @Override
-    public JackpotRewardPoolSummarizeDo getPoolSummarize(GameTypeEnum gameType) {
+    public List<JackpotRewardPoolDo> listJackpotRewardPool() {
+        List<JackpotRewardPoolDo> doList = jackpotRewardPoolService.list(JackpotRewardPoolQuery.builder().build(), GameTypeEnum.LAM_ANG);
+        Optional.ofNullable(doList)
+                .orElse(Collections.emptyList())
+                .forEach(item -> {
+                    item.setInitAmount(lamangConfig.getJackPotConfig().getGuaranteedAmount().get(item.getType().getDesc()));
+                });
+        return doList;
+    }
+
+    @Override
+    public JackpotUserRewardRecordDo getHighestUserRewardRecord() {
+        // todo
         return null;
     }
 
     @Override
-    public List<JackpotUserRewardRecordDo> list(JackpotUserRewardRecordQuery query, GameTypeEnum gameType) {
-        return Collections.emptyList();
+    public JackpotUserRewardRecordDo getUserRewardRecord(Long betRecordId, Long gameRecordId) {
+        return jackpotUserRewardRecordService.selectOne(JackpotUserRewardRecordQuery.builder()
+                .betRecordId(betRecordId)
+                .gameRecordId(gameRecordId)
+                .build(), JackpotTypeEnum.LAM_ANG);
     }
 
     @Override
-    public JackpotUserRewardRecordDo getMaxReward(GameTypeEnum gameType) {
-        return null;
+    public List<JackpotUserRewardRecordDo> listUserRewardRecord(JackpotUserRewardRecordQuery query) {
+        return jackpotUserRewardRecordService.list(query, JackpotTypeEnum.LAM_ANG);
     }
 
+    // todo 事务 @tutu
     @Override
-    public JackpotUserRewardRecordDo getByGameRecordId(Long gameRecordId, GameTypeEnum gameType) {
-        return null;
-    }
-
-    /**
-     * 返回失败的ID列表
-     *
-     * @param rewardPoolInputRecordDos
-     * @return
-     */
-    @Override
-    public void batchAddJackpotRewardRecord(List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos) {
+    public void batchAddUserRewardRecord(List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos) {
         if (CollectionUtils.isEmpty(rewardPoolInputRecordDos)) {
             return;
         }

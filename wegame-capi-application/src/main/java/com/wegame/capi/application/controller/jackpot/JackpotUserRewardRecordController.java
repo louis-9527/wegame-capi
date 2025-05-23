@@ -6,24 +6,24 @@ import com.wegame.base.domain.PageInfoVo;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
-import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRecordRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotUserRewardRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
+
+import static com.wegame.base.domain.CommonResponse.build;
+import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.doToVo;
+import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.doToVoList;
 
 /**
  * 用户jackpot中奖记录模块
@@ -37,43 +37,48 @@ import java.util.Map;
 public class JackpotUserRewardRecordController {
 
     public static final Map<GameTypeEnum, String> JACKPOT_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
-            .put(GameTypeEnum.LAM_ANG, "mariaMakilingBetRecordManager")
+            .put(GameTypeEnum.LAM_ANG, "lamangJackpotManager")
             .build();
-    // todo 走 manager @lyric 参考 BetRecordController
-    @Autowired
-    JackpotUserRewardRecordService jackpotUserRewardRecordService;
 
     @Autowired
     Map<String, AbstractJackpotManager> jackpotManagerMap;
 
-    @ApiOperation(value = "查询历史最高中奖", httpMethod = "GET")
-    @GetMapping("/get/history/highest/reward")
-    public CommonResponse<JackpotUserRewardRecordVo> getHistoryHighestReward() {
-        // todo @lyric
-        return CommonResponse.build(JackpotUserRewardRecordConverter.doToVo(jackpotUserRewardRecordService.get(Long.valueOf(0), JackpotTypeEnum.LAM_ANG)));
+    @ApiOperation(value = "查询最高中奖记录", httpMethod = "GET")
+    @GetMapping("/get/highest/user/reward/record")
+    public CommonResponse<JackpotUserRewardRecordVo> getHighestUserRewardRecord() {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        return build(doToVo(jackpotManager(gameType).getHighestUserRewardRecord()));
     }
 
     @ApiOperation(value = "查询：根据投注记录ID & 游戏记录ID", httpMethod = "GET")
     @GetMapping("/get/{betRecordId}/{gameRecordId}")
-    public CommonResponse<JackpotUserRewardRecordVo> getByGameRecordId(@PathVariable String betRecordId, @PathVariable String gameRecordId) {
-        // todo @lyric
-        return CommonResponse.build(JackpotUserRewardRecordConverter.doToVo(jackpotUserRewardRecordService.get(Long.valueOf(0), JackpotTypeEnum.LAM_ANG)));
+    public CommonResponse<JackpotUserRewardRecordVo> get(@PathVariable String betRecordId, @PathVariable String gameRecordId) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        return build(doToVo(jackpotManager(gameType).getUserRewardRecord(Long.valueOf(betRecordId), Long.valueOf(gameRecordId))));
     }
 
     @ApiOperation(value = "分页查询", httpMethod = "POST")
     @PostMapping("/pageQuery")
     public CommonResponse<PageInfoVo<JackpotUserRewardRecordVo>> pageQuery(@RequestBody PageQueryJackpotUserRewardRecordRequest request) {
         request.validate();
-        JackpotUserRewardRecordQuery query = JackpotUserRewardRecordConverter.requestToQuery(request, "order by `create_time` desc");
-        long cnt = jackpotUserRewardRecordService.count(query);
-        List<JackpotUserRewardRecordDo> list = jackpotUserRewardRecordService.list(query);
-        return CommonResponse.build(PageInfoVo.build(request.getPageNo(),
+        request.validate();
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        JackpotUserRewardRecordQuery query = JackpotUserRewardRecordConverter.requestToQuery(request, "createTime");
+        return build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                JackpotUserRewardRecordConverter.doToVoList(list),
-                cnt));
+                doToVoList(jackpotManager(gameType).listUserRewardRecord(query)),
+                0L));
     }
 
-    ///////////////  above auto generated ///////////////
     private AbstractJackpotManager jackpotManager(GameTypeEnum gameType) {
         AbstractJackpotManager jackpotManager = jackpotManagerMap.get(JACKPOT_MANAGER_NAME_MAP.get(gameType));
         AssertUtil.assertNotNull(jackpotManager, ErrorCode.ERR_INTER);

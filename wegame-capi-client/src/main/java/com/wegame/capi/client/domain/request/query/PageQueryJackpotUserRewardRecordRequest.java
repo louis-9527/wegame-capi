@@ -40,7 +40,6 @@ public class PageQueryJackpotUserRewardRecordRequest extends PageQueryRequest im
     private String rewardPoolId;
     @ApiModelProperty(value = "类型 1：grand 2:major 3:minor 4:mini 5:betBonus", required = false)
     private Integer rewardPoolType;
-
     @ApiModelProperty(value = "类型列表 ： 类型 1：grand 2:major 3:minor 4:mini 5:betBonus", required = false)
     private List<Integer> rewardPoolTypeList;
     @ApiModelProperty(value = "中奖金额.单位：厘", required = false)

@@ -50,7 +50,7 @@ public class LamangJackpotManagerTest  extends BaseTest {
                 .minorAmount(2000L)
                 .miniAmount(3000L)
                 .majorAmount(4000L).build());
-        lamangJackpotManager.batchAddJackpotRewardRecord(rewardPoolInputRecordDos);
+        lamangJackpotManager.batchAddUserRewardRecord(rewardPoolInputRecordDos);
     }
 
 }

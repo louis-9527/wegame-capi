@@ -54,31 +54,5 @@ public class JackpotUserRewardRecordVo implements Validate, Serializable {
     private String updater;
     @ApiModelProperty("更新时间")
     private Long updateTime;
-
-    @Override
-    public void validateParam() {
-        AssertUtil.assertStrNotEmpty(id, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(userId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(playerName, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(betId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(rewardPoolId, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(rewardPoolType, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(rewardAmount, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(rewardGrantSerialNo, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(rewardGrantStatus, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(rewardGrantTime, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(creator, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(createTime, ErrorCode.ERR_PARAM);
-        AssertUtil.assertStrNotEmpty(updater, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotNull(updateTime, ErrorCode.ERR_PARAM);
-    }
-
-    @Override
-    public void validateBiz() {
-
-    }
-
 }
 

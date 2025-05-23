@@ -79,7 +79,11 @@ public class JackpotRewardPoolConverter {
         JackpotRewardPoolVo vo = new JackpotRewardPoolVo();
         vo.setId(Objects.nonNull(jackpotRewardPoolDo.getId()) ? String.valueOf(jackpotRewardPoolDo.getId()) : null);
         vo.setType(jackpotRewardPoolDo.getType().getCode());
-        vo.setAmount(jackpotRewardPoolDo.getAmount());
+        if (jackpotRewardPoolDo.getAmount() < 0) {
+            vo.setAmount(jackpotRewardPoolDo.getInitAmount());
+        } else {
+            vo.setAmount(jackpotRewardPoolDo.getAmount() + jackpotRewardPoolDo.getInitAmount());
+        }
         return vo;
     }
 

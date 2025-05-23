@@ -21,28 +21,28 @@ import java.util.stream.Collectors;
  */
 public class JackpotUserRewardRecordConverter {
 
-    public static JackpotUserRewardRecordDo voToDo(JackpotUserRewardRecordVo vo) {
-        if (Objects.isNull(vo)) {
-            return null;
-        }
-        JackpotUserRewardRecordDo jackpotUserRewardRecordDo = new JackpotUserRewardRecordDo();
-        jackpotUserRewardRecordDo.setUserId(StringUtils.isNotEmpty(vo.getUserId()) ? Long.valueOf(vo.getUserId()) : null);
-        jackpotUserRewardRecordDo.setPlayerName(vo.getPlayerName());
-        jackpotUserRewardRecordDo.setBetRecordId(Objects.nonNull(vo.getBetRecordId()) ? new Date(vo.getBetRecordId()) : null);
-        jackpotUserRewardRecordDo.setGameRecordId(Objects.nonNull(vo.getGameRecordId()) ? new Date(vo.getGameRecordId()) : null);
-        jackpotUserRewardRecordDo.setBetId(StringUtils.isNotEmpty(vo.getBetId()) ? Long.valueOf(vo.getBetId()) : null);
-        jackpotUserRewardRecordDo.setRewardPoolId(StringUtils.isNotEmpty(vo.getRewardPoolId()) ? Long.valueOf(vo.getRewardPoolId()) : null);
-        jackpotUserRewardRecordDo.setRewardPoolType(vo.getRewardPoolType());
-        jackpotUserRewardRecordDo.setRewardAmount(vo.getRewardAmount());
-        jackpotUserRewardRecordDo.setRewardGrantSerialNo(vo.getRewardGrantSerialNo());
-        jackpotUserRewardRecordDo.setRewardGrantStatus(vo.getRewardGrantStatus());
-        jackpotUserRewardRecordDo.setRewardGrantTime(Objects.nonNull(vo.getRewardGrantTime()) ? new Date(vo.getRewardGrantTime()) : null);
-        jackpotUserRewardRecordDo.setCreator(vo.getCreator());
-        jackpotUserRewardRecordDo.setCreateTime(Objects.nonNull(vo.getCreateTime()) ? new Date(vo.getCreateTime()) : null);
-        jackpotUserRewardRecordDo.setUpdater(vo.getUpdater());
-        jackpotUserRewardRecordDo.setUpdateTime(Objects.nonNull(vo.getUpdateTime()) ? new Date(vo.getUpdateTime()) : null);
-        return jackpotUserRewardRecordDo;
-    }
+    //    public static JackpotUserRewardRecordDo voToDo(JackpotUserRewardRecordVo vo) {
+    //        if (Objects.isNull(vo)) {
+    //            return null;
+    //        }
+    //        JackpotUserRewardRecordDo jackpotUserRewardRecordDo = new JackpotUserRewardRecordDo();
+    //        jackpotUserRewardRecordDo.setUserId(StringUtils.isNotEmpty(vo.getUserId()) ? Long.valueOf(vo.getUserId()) : null);
+    //        jackpotUserRewardRecordDo.setPlayerName(vo.getPlayerName());
+    //        jackpotUserRewardRecordDo.setBetRecordId(vo.getBetRecordId());
+    //        jackpotUserRewardRecordDo.setGameRecordId(vo.getGameRecordId());
+    //        jackpotUserRewardRecordDo.setBetId(vo.getBetId());
+    //        jackpotUserRewardRecordDo.setRewardPoolId(StringUtils.isNotEmpty(vo.getRewardPoolId()) ? Long.valueOf(vo.getRewardPoolId()) : null);
+    //        jackpotUserRewardRecordDo.setRewardPoolType(vo.getRewardPoolType());
+    //        jackpotUserRewardRecordDo.setRewardAmount(vo.getRewardAmount());
+    //        jackpotUserRewardRecordDo.setRewardGrantSerialNo(vo.getRewardGrantSerialNo());
+    //        jackpotUserRewardRecordDo.setRewardGrantStatus(vo.getRewardGrantStatus());
+    //        jackpotUserRewardRecordDo.setRewardGrantTime(Objects.nonNull(vo.getRewardGrantTime()) ? new Date(vo.getRewardGrantTime()) : null);
+    //        jackpotUserRewardRecordDo.setCreator(vo.getCreator());
+    //        jackpotUserRewardRecordDo.setCreateTime(Objects.nonNull(vo.getCreateTime()) ? new Date(vo.getCreateTime()) : null);
+    //        jackpotUserRewardRecordDo.setUpdater(vo.getUpdater());
+    //        jackpotUserRewardRecordDo.setUpdateTime(Objects.nonNull(vo.getUpdateTime()) ? new Date(vo.getUpdateTime()) : null);
+    //        return jackpotUserRewardRecordDo;
+    //    }
 
     public static JackpotUserRewardRecordDo poToDo(JackpotUserRewardRecordPo po) {
         if (Objects.isNull(po)) {
@@ -107,9 +107,9 @@ public class JackpotUserRewardRecordConverter {
         vo.setId(Objects.nonNull(jackpotUserRewardRecordDo.getId()) ? String.valueOf(jackpotUserRewardRecordDo.getId()) : null);
         vo.setUserId(Objects.nonNull(jackpotUserRewardRecordDo.getUserId()) ? String.valueOf(jackpotUserRewardRecordDo.getUserId()) : null);
         vo.setPlayerName(jackpotUserRewardRecordDo.getPlayerName());
-        vo.setBetRecordId(Objects.nonNull(jackpotUserRewardRecordDo.getBetRecordId()) ? jackpotUserRewardRecordDo.getBetRecordId().getTime() : null);
-        vo.setGameRecordId(Objects.nonNull(jackpotUserRewardRecordDo.getGameRecordId()) ? jackpotUserRewardRecordDo.getGameRecordId().getTime() : null);
-        vo.setBetId(Objects.nonNull(jackpotUserRewardRecordDo.getBetId()) ? String.valueOf(jackpotUserRewardRecordDo.getBetId()) : null);
+        vo.setBetRecordId(jackpotUserRewardRecordDo.getBetRecordId());
+        vo.setGameRecordId(jackpotUserRewardRecordDo.getGameRecordId());
+        vo.setBetId(jackpotUserRewardRecordDo.getBetId());
         vo.setRewardPoolId(Objects.nonNull(jackpotUserRewardRecordDo.getRewardPoolId()) ? String.valueOf(jackpotUserRewardRecordDo.getRewardPoolId()) : null);
         vo.setRewardPoolType(jackpotUserRewardRecordDo.getRewardPoolType());
         vo.setRewardAmount(jackpotUserRewardRecordDo.getRewardAmount());
@@ -123,14 +123,14 @@ public class JackpotUserRewardRecordConverter {
         return vo;
     }
 
-    public static List<JackpotUserRewardRecordDo> voToDoList(List<JackpotUserRewardRecordVo> voList) {
-        return Optional.ofNullable(voList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(JackpotUserRewardRecordConverter::voToDo)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
+    //    public static List<JackpotUserRewardRecordDo> voToDoList(List<JackpotUserRewardRecordVo> voList) {
+    //        return Optional.ofNullable(voList)
+    //                .orElse(Collections.emptyList())
+    //                .stream()
+    //                .map(JackpotUserRewardRecordConverter::voToDo)
+    //                .filter(Objects::nonNull)
+    //                .collect(Collectors.toList());
+    //    }
 
     public static List<JackpotUserRewardRecordDo> poToDoList(List<JackpotUserRewardRecordPo> poList) {
         return Optional.ofNullable(poList)
@@ -164,9 +164,9 @@ public class JackpotUserRewardRecordConverter {
         query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
         query.setUserId(StringUtils.isNotEmpty(request.getUserId()) ? Long.valueOf(request.getUserId()) : null);
         query.setPlayerName(request.getPlayerName());
-        query.setBetRecordId(Objects.nonNull(request.getBetRecordId()) ? new Date(request.getBetRecordId()) : null);
-        query.setGameRecordId(Objects.nonNull(request.getGameRecordId()) ? new Date(request.getGameRecordId()) : null);
-        query.setBetId(StringUtils.isNotEmpty(request.getBetId()) ? Long.valueOf(request.getBetId()) : null);
+        query.setBetRecordId(Objects.nonNull(request.getBetRecordId()) ? Long.valueOf(request.getBetRecordId()) : null);
+        query.setGameRecordId(Objects.nonNull(request.getGameRecordId()) ? Long.valueOf(request.getGameRecordId()) : null);
+        query.setBetId(request.getBetId());
         query.setRewardPoolId(StringUtils.isNotEmpty(request.getRewardPoolId()) ? Long.valueOf(request.getRewardPoolId()) : null);
         query.setRewardPoolType(request.getRewardPoolType());
         query.setRewardAmount(StringUtils.isNotEmpty(request.getRewardAmount()) ? Long.valueOf(request.getRewardAmount()) : null);

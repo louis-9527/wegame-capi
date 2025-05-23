@@ -32,15 +32,15 @@ public class JackpotUserRewardRecordDo implements Serializable {
     /**
      * 投注id
      */
-    private Date betRecordId;
+    private Long betRecordId;
     /**
      * 投注id
      */
-    private Date gameRecordId;
+    private Long gameRecordId;
     /**
      * 投注id（单钱包）
      */
-    private Long betId;
+    private String betId;
     /**
      * 奖池id
      */

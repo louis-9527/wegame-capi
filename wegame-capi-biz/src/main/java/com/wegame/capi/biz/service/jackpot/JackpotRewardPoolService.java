@@ -8,6 +8,7 @@ import com.wegame.capi.biz.builder.jackpot.JackpotQueryBuilder;
 import com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.mapper.business.JackpotRewardPoolMapper;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
@@ -61,7 +62,8 @@ public class JackpotRewardPoolService extends AbstractService {
      * @param query 查询参数
      * @return List<JackpotRewardPoolDo> jackpot奖池列表
      */
-    public List<JackpotRewardPoolDo> list(JackpotRewardPoolQuery query) {
+    //        @Cacheable("zhumeng004") todo @lyric
+    public List<JackpotRewardPoolDo> list(JackpotRewardPoolQuery query, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         return JackpotRewardPoolConverter.poToDoList(jackpotRewardPoolMapper.list(query));
     }
