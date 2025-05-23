@@ -29,9 +29,9 @@ public class LamangJackpotRewardGrantScheduler
     }
 
     /**
-     * 每分钟15秒执行
+     * 每5分钟执行
      */
-    @Scheduled(cron = "15 * * * * ?")
+    @Scheduled(cron = "*/5 * * * *")
     public void schedule() {
         log.info("LamangJackpotPayoutScheduler#schedule start");
         try {
