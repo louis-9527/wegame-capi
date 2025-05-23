@@ -419,5 +419,6 @@
             "mini": "100000"
         }
     },
-    "rewardMaxMultiple": "2500"
+    "rewardMaxMultiple": "2500",
+    "freeWheelTimes": 10
 }

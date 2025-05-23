@@ -6,6 +6,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_SYMBOL_PLACEHOLDER;
 
 /**
@@ -18,9 +20,8 @@ import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_SYMBOL_P
 @ToString(callSuper = true)
 @EqualsAndHashCode(of = {"id"}, callSuper = true)
 public class LamangSymbolDo extends SymbolDo {
-    private static final long serialVersionUID = -2266308987663710848L;
+    private static final long serialVersionUID = -226862643663710848L;
 
-    
     /**
      * 元素金边
      */
@@ -38,7 +39,8 @@ public class LamangSymbolDo extends SymbolDo {
 
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
-        return StringUtils.equals(getId(), LAMANG_SYMBOL_PLACEHOLDER.getId());
+        return StringUtils.equals(getId(), LAMANG_SYMBOL_PLACEHOLDER.getId())
+                && !Objects.equals(this.getSymbolType(), LAMANG_SYMBOL_PLACEHOLDER.getSymbolType());
     }
 
     public LamangSymbolDo copy() {

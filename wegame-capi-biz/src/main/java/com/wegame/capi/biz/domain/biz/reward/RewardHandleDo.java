@@ -48,4 +48,8 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
      * 当前倍率
      */
     private BigDecimal currentMultiple;
+    /**
+     * 当前回合倍率(倍率盘)
+     */
+    private BigDecimal currentRoundMultiple;
 }
