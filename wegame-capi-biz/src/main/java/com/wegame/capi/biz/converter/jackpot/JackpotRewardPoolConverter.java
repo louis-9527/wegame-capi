@@ -6,34 +6,38 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolSummarizeDo;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolSummarizeVo;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolVo;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * JackpotRewardPoolConverter
+ *
  * @author generate
  */
 public class JackpotRewardPoolConverter {
 
-    public static JackpotRewardPoolDo voToDo(JackpotRewardPoolVo vo) {
-        if (Objects.isNull(vo)) {
-            return null;
-        }
-        JackpotRewardPoolDo jackpotRewardPoolDo = new JackpotRewardPoolDo();
-        jackpotRewardPoolDo.setType(JackpotRewardPoolTypeEnum.valueOfCode(vo.getType()));
-        jackpotRewardPoolDo.setAmount(vo.getAmount());
-        return jackpotRewardPoolDo;
-    }
+    //    public static JackpotRewardPoolDo voToDo(JackpotRewardPoolVo vo) {
+    //        if (Objects.isNull(vo)) {
+    //            return null;
+    //        }
+    //        JackpotRewardPoolDo jackpotRewardPoolDo = new JackpotRewardPoolDo();
+    //        jackpotRewardPoolDo.setType(JackpotRewardPoolTypeEnum.valueOfCode(vo.getType()));
+    //        jackpotRewardPoolDo.setAmount(vo.getAmount());
+    //        return jackpotRewardPoolDo;
+    //    }
 
     public static JackpotRewardPoolDo poToDo(JackpotRewardPoolPo po) {
         if (Objects.isNull(po)) {
@@ -79,30 +83,26 @@ public class JackpotRewardPoolConverter {
         JackpotRewardPoolVo vo = new JackpotRewardPoolVo();
         vo.setId(Objects.nonNull(jackpotRewardPoolDo.getId()) ? String.valueOf(jackpotRewardPoolDo.getId()) : null);
         vo.setType(jackpotRewardPoolDo.getType().getCode());
-        if (jackpotRewardPoolDo.getAmount() < 0) {
-            vo.setAmount(jackpotRewardPoolDo.getInitAmount());
-        } else {
-            vo.setAmount(jackpotRewardPoolDo.getAmount() + jackpotRewardPoolDo.getInitAmount());
-        }
+        vo.setAmount(Math.max(jackpotRewardPoolDo.getInitAmount(), jackpotRewardPoolDo.getAmount() + jackpotRewardPoolDo.getInitAmount()));
         return vo;
     }
 
-    public static List<JackpotRewardPoolDo> voToDoList(List<JackpotRewardPoolVo> voList) {
-        return Optional.ofNullable(voList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(JackpotRewardPoolConverter::voToDo)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
+    //    public static List<JackpotRewardPoolDo> voToDoList(List<JackpotRewardPoolVo> voList) {
+    //        return Optional.ofNullable(voList)
+    //                .orElse(Collections.emptyList())
+    //                .stream()
+    //                .map(JackpotRewardPoolConverter::voToDo)
+    //                .filter(Objects::nonNull)
+    //                .collect(Collectors.toList());
+    //    }
 
     public static List<JackpotRewardPoolDo> poToDoList(List<JackpotRewardPoolPo> poList) {
         return Optional.ofNullable(poList)
-            .orElse(Collections.emptyList())
-            .stream()
-            .map(JackpotRewardPoolConverter::poToDo)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(JackpotRewardPoolConverter::poToDo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public static List<JackpotRewardPoolPo> doToPoList(List<JackpotRewardPoolDo> doList, OptEnum optEnum) {
@@ -135,14 +135,14 @@ public class JackpotRewardPoolConverter {
         query.setStartCreateTime(request.getStartCreateTime());
         query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? request.getStartCreateTime() : null);
         query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? request.getStartCreateTime() : null);
-        query.setEndUpdateTime(Objects.nonNull(request.getEndUpdateTime()) ? request.getEndUpdateTime(): null);
+        query.setEndUpdateTime(Objects.nonNull(request.getEndUpdateTime()) ? request.getEndUpdateTime() : null);
         query.setLimit(request.getPageSize());
         query.setOffset(request.getOffset());
         query.setOrderByClause(orderClause);
         return query;
     }
 
-    ///////////////  above auto generated ///////////////
+    /// ////////////  above auto generated ///////////////
 
     public static JackpotRewardPoolSummarizeVo doToVo(JackpotRewardPoolSummarizeDo summarize) {
         if (Objects.isNull(summarize)) {

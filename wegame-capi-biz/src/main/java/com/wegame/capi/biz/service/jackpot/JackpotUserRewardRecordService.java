@@ -2,8 +2,6 @@ package com.wegame.capi.biz.service.jackpot;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.jackpot.JackpotUserRewardRecordQueryBuilder;
-import com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
@@ -18,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.builder.jackpot.JackpotUserRewardRecordQueryBuilder.buildMongodbQuery;
+import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.poToDo;
 import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.poToDoList;
 
 /**
@@ -44,18 +44,18 @@ public class JackpotUserRewardRecordService extends AbstractService {
                 query,
                 JackpotUserRewardRecordPo.class,
                 jackpotType.getJackpotUserRewardRewardCollectionName());
-        return JackpotUserRewardRecordConverter.poToDo(rewardRecordPo);
+        return poToDo(rewardRecordPo);
     }
 
     public JackpotUserRewardRecordDo selectOne(JackpotUserRewardRecordQuery query, JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
-        Query recordQuery = JackpotUserRewardRecordQueryBuilder.buildMongodbQuery(query);
+        Query recordQuery = buildMongodbQuery(query);
         JackpotUserRewardRecordPo rewardRecordPo = getMongoTemplate(jackpotType.getGameType()).findOne(
                 recordQuery,
                 JackpotUserRewardRecordPo.class,
                 jackpotType.getJackpotUserRewardRewardCollectionName());
-        return JackpotUserRewardRecordConverter.poToDo(rewardRecordPo);
+        return poToDo(rewardRecordPo);
     }
 
     /**
@@ -67,7 +67,7 @@ public class JackpotUserRewardRecordService extends AbstractService {
     public List<Long> listId(JackpotUserRewardRecordQuery query, JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
-        Query recordQuery = JackpotUserRewardRecordQueryBuilder.buildMongodbQuery(query);
+        Query recordQuery = buildMongodbQuery(query);
         recordQuery.fields().include("_id");
         List<JackpotUserRewardRecordPo> betRecordPoList = getMongoTemplate(jackpotType.getGameType()).find(
                 recordQuery,
@@ -82,7 +82,7 @@ public class JackpotUserRewardRecordService extends AbstractService {
 
     public List<JackpotUserRewardRecordDo> list(JackpotUserRewardRecordQuery query, JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        List<JackpotUserRewardRecordPo> recordPoList = getMongoTemplate(jackpotType.getGameType()).find(JackpotUserRewardRecordQueryBuilder.buildMongodbQuery(query),
+        List<JackpotUserRewardRecordPo> recordPoList = getMongoTemplate(jackpotType.getGameType()).find(buildMongodbQuery(query),
                 JackpotUserRewardRecordPo.class,
                 jackpotType.getJackpotUserRewardRewardCollectionName());
         return poToDoList(recordPoList);
