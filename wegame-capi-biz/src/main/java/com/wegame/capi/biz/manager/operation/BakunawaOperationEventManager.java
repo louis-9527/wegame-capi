@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.manager.operation;
 
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
+import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventConfigQuery;
 import org.springframework.stereotype.Component;
@@ -11,8 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.wegame.capi.infrastructure.config.mongo.IbongadarnaMongoConfig.ibongadarnaTransactionManager;
-
+import static com.wegame.capi.infrastructure.config.mongo.BakunawaMongoConfig.bakunawaTransactionManager;
 
 @Service
 @Component("bakunawaOperationEventManager")
@@ -22,15 +22,20 @@ public class BakunawaOperationEventManager extends AbstractOperationEventManager
     private static final Map<Double, List<List<Long>>> normalConfigDetailArray = new ConcurrentHashMap<>();
 
     @Override
-    @Transactional(transactionManager = ibongadarnaTransactionManager)
+    @Transactional(transactionManager = bakunawaTransactionManager)
+    public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
+        super.updateEventDetail(eventDetailDo, eventDo);
+    }
+
+    @Override
+    @Transactional(transactionManager = bakunawaTransactionManager)
     public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
         return super.addEventDetail(eventDetailDo);
     }
 
-
     @Override
     public OperationEventTypeEnum operationEventType() {
-        return OperationEventTypeEnum.IBONG_ADARNA;
+        return OperationEventTypeEnum.BAKUNAUWA;
     }
 
     @Override
