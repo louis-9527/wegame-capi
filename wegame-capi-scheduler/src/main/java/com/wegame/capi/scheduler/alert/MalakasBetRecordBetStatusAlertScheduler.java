@@ -5,14 +5,19 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * 投注状态告警定时任务
  */
 @Slf4j
 @Service
+@ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
 public class MalakasBetRecordBetStatusAlertScheduler
         extends AbstractAlertScheduler
         implements Runnable {
