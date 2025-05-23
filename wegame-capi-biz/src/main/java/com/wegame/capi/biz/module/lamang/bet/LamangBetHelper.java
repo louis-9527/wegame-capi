@@ -4,15 +4,14 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
+import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.LamangBetRecordDetailDo;
-import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -31,9 +30,8 @@ import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 @Component
 public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, LamangGameRecordDo> {
 
-    //todo  切换config
     @Autowired
-    MalakasConfig malakasConfig;
+    LamangConfig lamangConfig;
 
     @Override
     public BetRecordDo<LamangGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<LamangGameRecordDo> gameRecordList) {
@@ -44,8 +42,8 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                 .sum();
         return BetRecordBuilder.build(betRecordId,
                 betDo,
-                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
+                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), lamangConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), lamangConfig.getRewardMaxMultiple()),
                 null, // todo set jackpot @lyric
                 gameRecordList
         );
