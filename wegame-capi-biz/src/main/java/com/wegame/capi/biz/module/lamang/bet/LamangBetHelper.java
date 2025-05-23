@@ -46,6 +46,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
+                null, // todo set jackpot @lyric
                 gameRecordList
         );
     }

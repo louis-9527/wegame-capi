@@ -56,7 +56,6 @@ public abstract   class AbstractLamangBetStrategy
     LamangBetRecordManager lamangBetRecordManager;
     @Autowired
     MalakasConfig malakasConfig;
-
     //todo
     @Autowired
     @Qualifier("malakasOperationEventManager")
@@ -70,12 +69,10 @@ public abstract   class AbstractLamangBetStrategy
         return lamangGameContext;
     }
 
-
     @Override
     public AbstractBetRecordManager<LamangGameRecordDo> betRecordManager() {
         return lamangBetRecordManager;
     }
-
 
     @Override
     public AbstractOperationEventManager operationEventManager() {
@@ -125,20 +122,10 @@ public abstract   class AbstractLamangBetStrategy
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<LamangGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
-        //// 总中奖金额
-        long totalRewardAmount = list.stream()
-                .filter(item -> Objects.nonNull(item.getRewardResult()))
-                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                .sum();
-        BetRecordDo<LamangGameRecordDo> betRecord = BetRecordBuilder.build(betRecordId,
-                betDo,
-                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
-                list);
+        BetRecordDo<LamangGameRecordDo> betRecord = lamangBetHelper.buildBetRecord(betRecordId, betDo, list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return lamangBetHelper.handleBetResult(betRecord, resultDo);
-
     }
 
     /**
