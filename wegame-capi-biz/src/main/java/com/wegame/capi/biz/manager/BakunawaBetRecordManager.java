@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.infrastructure.config.mongo.IbongadarnaMongoConfig.ibongadarnaTransactionManager;
+import static com.wegame.capi.infrastructure.config.mongo.BakunawaMongoConfig.bakunawaTransactionManager;
 
 @Slf4j
 @Component("bakunawaBetRecordManager")
@@ -34,7 +34,7 @@ public class BakunawaBetRecordManager extends AbstractBetRecordManager<BakunawaG
     GameRecordService<BakunawaGameRecordDo> gameRecordService;
 
     @Override
-    @Transactional(transactionManager = ibongadarnaTransactionManager, rollbackFor = Exception.class)
+    @Transactional(transactionManager = bakunawaTransactionManager, rollbackFor = Exception.class)
     public Long add(BetRecordDo<BakunawaGameRecordDo> betRecord, GameTypeEnum gameType) {
         try {
             AssertUtil.assertNotEmpty(betRecord.getGameRecordList(), ErrorCode.ERR_PARAM);
@@ -49,7 +49,7 @@ public class BakunawaBetRecordManager extends AbstractBetRecordManager<BakunawaG
     }
 
     @Override
-    @Transactional(transactionManager = ibongadarnaTransactionManager, rollbackFor = Exception.class)
+    @Transactional(transactionManager = bakunawaTransactionManager, rollbackFor = Exception.class)
     public boolean batchAdd(List<BetRecordDo<BakunawaGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
