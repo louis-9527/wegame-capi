@@ -68,7 +68,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                     .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
                     .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
                     .credit(result.getCredit())
-                    .overallRewardAmount(maxAmountControl(overallRewardAmount, betRecord.getBetAmount(), malakasConfig.getRewardMaxMultiple()))
+                    .overallRewardAmount(maxAmountControl(overallRewardAmount, betRecord.getBetAmount(), lamangConfig.getRewardMaxMultiple()))
                     .totalPayoutAmount(betRecord.getPayOutAmount())
                     .resultDetail(LamangBetRecordDetailDo.builder()
                             .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
