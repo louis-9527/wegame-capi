@@ -82,7 +82,7 @@ public class LamangConfig {
         private PlayProbabilisticConfig supperWildRefreshProbabilisticConfig;
         /**
          * wild类型出现概率配置
-         * TreeMap<类型(S,L,XL)，概率>
+         * TreeMap<元素id，概率>
          */
         private TreeMap<String, BigDecimal> wildTypeProbabilisticConfig;
     }
@@ -278,9 +278,7 @@ public class LamangConfig {
     private void wildTypeProbabilisticConfig() {
         TreeMap<String, BigDecimal> wildTypeProbabilisticConfig = probabilisticConfig.wildTypeProbabilisticConfig;
         int sum = 0;
-        for (LamangSymbolSizeEnum sizeEnum : LamangSymbolSizeEnum.values()) {
-            BigDecimal probability = wildTypeProbabilisticConfig.get(sizeEnum.getCode());
-            AssertUtil.assertNotNull(probability, ErrorCode.ERR_PARAM, "wildTypeProbabilisticConfig error," + sizeEnum.getCode() + " not exist");
+        for (BigDecimal probability : wildTypeProbabilisticConfig.values()) {
             int val = (probability.multiply(new BigDecimal(CONST_10000))).intValue();
             sum += val;
         }
