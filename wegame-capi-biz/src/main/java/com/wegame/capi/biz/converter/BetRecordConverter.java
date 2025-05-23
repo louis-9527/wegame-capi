@@ -56,6 +56,14 @@ public class BetRecordConverter {
                     .campaignId(po.getExtendInfo().getCampaignId())
                     .build());
         }
+        if (Objects.nonNull(po.getJackpot())) {
+            betRecordDo.setJackpot(BetRecordDo.Jackpot.builder()
+                    .grandContributionAmount(po.getJackpot().getGrandContributionAmount())
+                    .majorContributionAmount(po.getJackpot().getMajorContributionAmount())
+                    .minorContributionAmount(po.getJackpot().getMinorContributionAmount())
+                    .miniContributionAmount(po.getJackpot().getMiniContributionAmount())
+                    .build());
+        }
         betRecordDo.setCreator(po.getCreator());
         betRecordDo.setCreateTime(po.getCreateTime());
         betRecordDo.setUpdater(po.getUpdater());
@@ -91,6 +99,14 @@ public class BetRecordConverter {
                     .ieId(betRecordDo.getExtendInfo().getIeId())
                     .rewardUrl(betRecordDo.getExtendInfo().getRewardUrl())
                     .campaignId(betRecordDo.getExtendInfo().getCampaignId())
+                    .build());
+        }
+        if (Objects.nonNull(betRecordDo.getJackpot())) {
+            po.setJackpot(BetRecordPo.Jackpot.builder()
+                    .grandContributionAmount(betRecordDo.getJackpot().getGrandContributionAmount())
+                    .majorContributionAmount(betRecordDo.getJackpot().getMajorContributionAmount())
+                    .minorContributionAmount(betRecordDo.getJackpot().getMinorContributionAmount())
+                    .miniContributionAmount(betRecordDo.getJackpot().getMiniContributionAmount())
                     .build());
         }
         if (OptEnum.ADD.equals(optEnum)) {
