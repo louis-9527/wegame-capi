@@ -5,8 +5,11 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.TreeMap;
+
+import static com.wegame.capi.common.Constants.CONST_10000;
 
 public class GameUtil {
 
@@ -31,5 +34,20 @@ public class GameUtil {
         throw new BusinessException(ErrorCode.ERR_INTER, "GameUtil randomKey,no match randomKey");
     }
 
-
+    /**
+     * 随机一个map key
+     *
+     * @param sourceTreeMap source value：为概率，n%
+     * @param factorNumber  系数，为了保证BigDecimal*factorNumber 为一个整数
+     * @param randomNumber  随机数
+     * @return key
+     */
+    public static <T> T randomKey(TreeMap<T, BigDecimal> sourceTreeMap, int factorNumber, int randomNumber) {
+        AssertUtil.assertNotNull(sourceTreeMap, ErrorCode.ERR_PARAM, "sourceTreeMap is null");
+        AssertUtil.assertTrue(factorNumber % 10 == 0, ErrorCode.ERR_PARAM, "factorNumber is not multiple of 10");
+        TreeMap<T, Integer> valueIntegerMap = new TreeMap<>();
+        sourceTreeMap.forEach((key, probabilistic) ->
+                valueIntegerMap.put(key, probabilistic.multiply(new BigDecimal(factorNumber)).intValue()));
+        return randomKey(valueIntegerMap, randomNumber);
+    }
 }
