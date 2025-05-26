@@ -16,7 +16,7 @@ public class XxxTest extends BaseTest {
     UserController userController;
 
     @BeforeAll
-    public static void beforeTest() {
+    public void beforeTest() {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
                 .build());

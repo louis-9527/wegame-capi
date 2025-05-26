@@ -133,6 +133,10 @@ spring:
           primary_uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/ibong?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/ibong?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           db: ibong
+        bakunawa_mdb:
+          primary_uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/bakunawa?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=primary
+          uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/bakunawa?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
+          db: bakunawa
 ## fastjson
 fastjson:
   parser:
