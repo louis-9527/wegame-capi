@@ -43,6 +43,7 @@ public class MalakasBetHelper implements BetHelper<MalakasBetRecordDetailDo, Mal
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
+                null,
                 gameRecordList
         );
     }
