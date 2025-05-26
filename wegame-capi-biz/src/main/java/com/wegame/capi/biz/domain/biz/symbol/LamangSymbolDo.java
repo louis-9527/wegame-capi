@@ -49,6 +49,8 @@ public class LamangSymbolDo extends SymbolDo {
                 .name(getName())
                 .symbolType(getSymbolType())
                 .symbolGoldBorder(isSymbolGoldBorder())
+                .jackpotDrawTimesAdded(isJackpotDrawTimesAdded())
+                .freeWheelAdded(isFreeWheelAdded())
                 .build();
     }
 

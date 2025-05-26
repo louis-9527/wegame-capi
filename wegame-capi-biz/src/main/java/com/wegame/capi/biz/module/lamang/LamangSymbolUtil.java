@@ -72,7 +72,7 @@ public class LamangSymbolUtil {
                 LamangSymbolDo current = symbolArr[row][col];
                 if (Objects.nonNull(current) && current.isScatterSymbol() && !current.isJackpotDrawTimesAdded()) {
                     count = count + 1;
-                    current.setJackpotDrawTimesAdded(true);
+                    symbolArr[row][col].setJackpotDrawTimesAdded(true);
                 }
             }
         }
@@ -92,7 +92,7 @@ public class LamangSymbolUtil {
                 LamangSymbolDo current = symbolArr[row][col];
                 if (Objects.nonNull(current) && current.getId().equals(LAMANG_SCATTER1.getId()) && !current.isFreeWheelAdded()) {
                     count = count + 1;
-                    current.setFreeWheelAdded(true);
+                    symbolArr[row][col].setFreeWheelAdded(true);
                 }
             }
         }

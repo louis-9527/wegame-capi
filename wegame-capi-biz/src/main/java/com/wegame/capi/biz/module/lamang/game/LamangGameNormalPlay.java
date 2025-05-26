@@ -86,6 +86,9 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         if (CollectionUtils.isNotEmpty(freeWheelList)) {
             generateFreeBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
         }
+        if (CollectionUtils.isNotEmpty(gameRecordResult)) {
+            gameRecordResult.get(gameRecordResult.size() - 1).setLastGameFlag(true);
+        }
         return gameRecordResult;
     }
 
@@ -131,9 +134,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                     // 生成元素：随机生成
                     symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
                 }
-                if (Objects.isNull(symbolDo)) {
-                    log.error("symbolDo is null");
-                }
+
                 // 构建元素金边
                 boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
                 LamangSymbolDo lamangSymbolDo = LamangSymbolDo.buildFromSymbol(symbolDo, symbolGoldBorder);
@@ -492,27 +493,32 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
     /**
      * 重建元素数组：（按列下移处理）
-     *
-     * @param symbolArr
+     * 将每一列的非空元素下移到最底部，类似重力效果
+     * 
+     * @param symbolArr 符号数组
+     * @param gameInfoDo 游戏信息
      */
     public void rebuildSymbolArr(LamangSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
-
-        // 非空元素下落
+        // 对每一列进行处理
         for (int column = ONE_COLUM_INDEX; column < gameInfoDo.getColumn(); column++) {
-            int currentRow = gameInfoDo.getRow() - 1;
-            for (int row = gameInfoDo.getRow() - 1; row >= ONE_ROW_INDEX; row--) {
+            // 先收集当前列所有非空元素
+            List<LamangSymbolDo> nonNullSymbols = new ArrayList<>();
+            for (int row = ONE_ROW_INDEX; row < gameInfoDo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
-                    if (Objects.equals(currentRow, row)) {
-                        // 不做移动
-                        // do nothing
-                    } else {
-                        // 移动
-                        LamangSymbolDo temp = symbolArr[row][column];
-                        symbolArr[currentRow][column] = temp;
-                        symbolArr[row][column] = null;
-                    }
-                    currentRow--;
+                    nonNullSymbols.add(symbolArr[row][column]);
                 }
+            }
+            
+            // 清空当前列
+            for (int row = ONE_ROW_INDEX; row < gameInfoDo.getRow(); row++) {
+                symbolArr[row][column] = null;
+            }
+            
+            // 从底部开始填充非空元素
+            int currentRow = gameInfoDo.getRow() - 1;
+            for (int i = nonNullSymbols.size() - 1; i >= 0; i--) {
+                symbolArr[currentRow][column] = nonNullSymbols.get(i);
+                currentRow--;
             }
         }
     }
