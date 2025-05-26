@@ -92,42 +92,9 @@ public abstract class AbsJackpotHandler {
         }
     }
 
-    /**
-     * 按照金额提成
-     *
-     * @param betAmount        投注金额
-     * @param commissionConfig 提成配置
-     * @return TreeMap<JackpotRewardPoolTypeEnum, Long>
-     */
-    private Map<JackpotRewardPoolTypeEnum, Long> calculateRewardPoolCommissionByAmount(Long betAmount, LamangConfig.CommissionConfig commissionConfig) {
-        TreeMap<Long, TreeMap<String, Long>> amountCommissionConfig = commissionConfig.getAmountCommissionConfig();
-        TreeMap<String, Long> betAmountCommissionConfig = amountCommissionConfig.get(betAmount);
-        return Objects.nonNull(betAmountCommissionConfig) ? this.buildCommissionResultMap(betAmountCommissionConfig) : null;
-    }
 
-    /**
-     * 按比例提成
-     *
-     * @param betAmount        投注金额
-     * @param commissionConfig 提成配置
-     * @return TreeMap<JackpotRewardPoolTypeEnum, Long>
-     */
-    private Map<JackpotRewardPoolTypeEnum, Long> calculateRewardPoolCommissionByProportion(Long betAmount, LamangConfig.CommissionConfig commissionConfig) {
-        Map<JackpotRewardPoolTypeEnum, Long> commissionResultMap = new HashMap<>();
-        TreeMap<String, BigDecimal> proportionCommissionConfig = commissionConfig.getProportionCommissionConfig();
-        for (JackpotRewardPoolTypeEnum poolType : JackpotRewardPoolTypeEnum.values()) {
-            BigDecimal rate = proportionCommissionConfig.get(poolType.name());
-            if (Objects.isNull(rate)) {
-                commissionResultMap.put(poolType, 0L);
-            } else {
-                commissionResultMap.put(poolType, new BigDecimal(betAmount).multiply(rate).longValue());
-            }
-        }
-        return commissionResultMap;
-    }
 
-    public JackpotWinPrizeDo calculateWinPrize(Long betRecordId, Long amount,List<JackpotWinPrizeReqDo> prizeReqDos) {
-
+    public JackpotWinPrizeDo calculateWinPrize(Long betRecordId,String betId, Long amount,List<JackpotWinPrizeReqDo> prizeReqDos) {
         LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig = lamangConfig.getJackPotConfig().getJackpotTriggerBetAmountConfig();
         JackpotWinPrizeDo jackpotWinPrizeDo = this.checkWinPrize(amount, prizeReqDos, jackpotTriggerBetAmountConfig);
         if (jackpotWinPrizeDo == null){
@@ -200,6 +167,39 @@ public abstract class AbsJackpotHandler {
         Map<JackpotRewardPoolTypeEnum, Long> commissionResultMap = new HashMap<>();
         for (JackpotRewardPoolTypeEnum poolType : JackpotRewardPoolTypeEnum.values()) {
             commissionResultMap.put(poolType, 0L);
+        }
+        return commissionResultMap;
+    }
+    /**
+     * 按照金额提成
+     *
+     * @param betAmount        投注金额
+     * @param commissionConfig 提成配置
+     * @return TreeMap<JackpotRewardPoolTypeEnum, Long>
+     */
+    private Map<JackpotRewardPoolTypeEnum, Long> calculateRewardPoolCommissionByAmount(Long betAmount, LamangConfig.CommissionConfig commissionConfig) {
+        TreeMap<Long, TreeMap<String, Long>> amountCommissionConfig = commissionConfig.getAmountCommissionConfig();
+        TreeMap<String, Long> betAmountCommissionConfig = amountCommissionConfig.get(betAmount);
+        return Objects.nonNull(betAmountCommissionConfig) ? this.buildCommissionResultMap(betAmountCommissionConfig) : null;
+    }
+
+    /**
+     * 按比例提成
+     *
+     * @param betAmount        投注金额
+     * @param commissionConfig 提成配置
+     * @return TreeMap<JackpotRewardPoolTypeEnum, Long>
+     */
+    private Map<JackpotRewardPoolTypeEnum, Long> calculateRewardPoolCommissionByProportion(Long betAmount, LamangConfig.CommissionConfig commissionConfig) {
+        Map<JackpotRewardPoolTypeEnum, Long> commissionResultMap = new HashMap<>();
+        TreeMap<String, BigDecimal> proportionCommissionConfig = commissionConfig.getProportionCommissionConfig();
+        for (JackpotRewardPoolTypeEnum poolType : JackpotRewardPoolTypeEnum.values()) {
+            BigDecimal rate = proportionCommissionConfig.get(poolType.name());
+            if (Objects.isNull(rate)) {
+                commissionResultMap.put(poolType, 0L);
+            } else {
+                commissionResultMap.put(poolType, new BigDecimal(betAmount).multiply(rate).longValue());
+            }
         }
         return commissionResultMap;
     }
