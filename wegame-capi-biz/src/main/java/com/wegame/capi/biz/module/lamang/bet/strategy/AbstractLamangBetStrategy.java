@@ -3,6 +3,7 @@ package com.wegame.capi.biz.module.lamang.bet.strategy;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
+import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.LamangBetRecordDetailDo;
@@ -55,7 +56,7 @@ public abstract   class AbstractLamangBetStrategy
     @Autowired
     LamangBetRecordManager lamangBetRecordManager;
     @Autowired
-    MalakasConfig malakasConfig;
+    LamangConfig lamangConfig;
     //todo
     @Autowired
     @Qualifier("malakasOperationEventManager")
