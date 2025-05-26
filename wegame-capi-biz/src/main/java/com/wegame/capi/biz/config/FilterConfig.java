@@ -48,7 +48,7 @@ public class FilterConfig {
                 "/bet/*",
                 "/betRecord/*",
                 "/reward/*",
-//                "/user/*",
+                "/user/*",
                 "/inner/*",
                 "/achievement/*",
                 "/bag/*",
