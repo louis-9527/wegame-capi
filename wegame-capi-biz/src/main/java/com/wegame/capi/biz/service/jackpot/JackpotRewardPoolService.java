@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.service.jackpot;
 
 import com.mongodb.bulk.BulkWriteResult;
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
@@ -15,6 +16,7 @@ import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -59,13 +61,15 @@ public class JackpotRewardPoolService extends AbstractService {
     /**
      * 查询列表
      *
-     * @param query 查询参数
      * @return List<JackpotRewardPoolDo> jackpot奖池列表
      */
-    //        @Cacheable("zhumeng004") todo @lyric
-    public List<JackpotRewardPoolDo> list(JackpotRewardPoolQuery query, GameTypeEnum gameType) {
-        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        return JackpotRewardPoolConverter.poToDoList(jackpotRewardPoolMapper.list(query));
+    @Cacheable(value = CacheConstants.JACKPOT_REWARD_POOL_CONFIG, key = "#jackpotTypeEnum.gameType.id")
+    public List<JackpotRewardPoolDo> listAll(JackpotTypeEnum jackpotTypeEnum) {
+        AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM);
+        List<JackpotRewardPoolPo> pos= getMongoTemplate(jackpotTypeEnum.getGameType()).find(JackpotQueryBuilder.listAllQuery(),
+                JackpotRewardPoolPo.class,
+                jackpotTypeEnum.getJackpotRewardPoolCollectionName());
+        return JackpotRewardPoolConverter.poToDoList(pos);
     }
 
     //    /**

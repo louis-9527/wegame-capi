@@ -31,6 +31,13 @@ public class JackpotUserRewardRecordQueryBuilder {
         return query;
     }
 
+    public static Query buildHighestRecordQuery() {
+        Query query = new Query();
+        query.with(Sort.by(Sort.Direction.DESC, "rewardAmount"));
+        query.limit(1);
+        return query;
+    }
+
     public static Criteria buildMongodbCriteria(JackpotUserRewardRecordQuery recordQuery) {
         Criteria criteria = new Criteria();
         if (Objects.nonNull(recordQuery.getId())) {

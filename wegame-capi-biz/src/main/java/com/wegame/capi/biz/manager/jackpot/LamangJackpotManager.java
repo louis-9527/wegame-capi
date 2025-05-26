@@ -37,7 +37,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
 
     @Override
     public List<JackpotRewardPoolDo> listJackpotRewardPool() {
-        List<JackpotRewardPoolDo> doList = jackpotRewardPoolService.list(JackpotRewardPoolQuery.builder().build(), GameTypeEnum.LAM_ANG);
+        List<JackpotRewardPoolDo> doList = jackpotRewardPoolService.listAll(JackpotTypeEnum.LAM_ANG);
         Optional.ofNullable(doList)
                 .orElse(Collections.emptyList())
                 .forEach(item -> {
@@ -48,8 +48,8 @@ public class LamangJackpotManager extends AbstractJackpotManager {
 
     @Override
     public JackpotUserRewardRecordDo getHighestUserRewardRecord() {
+        return jackpotUserRewardRecordService.getHighestUserRewardRecord(JackpotTypeEnum.LAM_ANG);
         // todo. 查询 & 缓存 & 缓存刷新 @lyric 参考 大奖记录
-        return null;
     }
 
     @Override

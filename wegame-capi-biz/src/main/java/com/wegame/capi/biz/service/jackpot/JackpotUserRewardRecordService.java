@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.builder.jackpot.JackpotUserRewardRecordQueryBuilder.buildHighestRecordQuery;
 import static com.wegame.capi.biz.builder.jackpot.JackpotUserRewardRecordQueryBuilder.buildMongodbQuery;
 import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.poToDo;
 import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.poToDoList;
@@ -86,6 +87,14 @@ public class JackpotUserRewardRecordService extends AbstractService {
                 JackpotUserRewardRecordPo.class,
                 jackpotType.getJackpotUserRewardRewardCollectionName());
         return poToDoList(recordPoList);
+    }
+
+    public JackpotUserRewardRecordDo getHighestUserRewardRecord(JackpotTypeEnum jackpotType) {
+        AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
+        JackpotUserRewardRecordPo maxRecord = getMongoTemplate(jackpotType.getGameType()).findOne(buildHighestRecordQuery(),
+                JackpotUserRewardRecordPo.class,
+                jackpotType.getJackpotUserRewardRewardCollectionName());
+        return poToDo(maxRecord);
     }
 
     ///////////////  mongo done end ///////////////
