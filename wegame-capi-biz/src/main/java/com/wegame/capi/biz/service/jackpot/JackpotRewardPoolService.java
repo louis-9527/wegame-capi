@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.service.jackpot;
 
-import com.mongodb.bulk.BulkWriteResult;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
@@ -9,13 +8,8 @@ import com.wegame.capi.biz.builder.jackpot.JackpotQueryBuilder;
 import com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.service.AbstractService;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
-import com.wegame.capi.dao.mapper.business.JackpotRewardPoolMapper;
-import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
-import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -26,30 +20,27 @@ import java.util.List;
 
 /**
  * po服务
+ *
  * @author genereate
  */
 @Service
 public class JackpotRewardPoolService extends AbstractService {
 
-    @Autowired
-    JackpotRewardPoolMapper jackpotRewardPoolMapper;
-
     /**
      * 批量更新
      *
-     * @param jackpotRewardPoolDos
+     * @param doList
      * @param jackpotTypeEnum
      */
-    public void batchUpdate(List<JackpotRewardPoolDo> jackpotRewardPoolDos, JackpotTypeEnum jackpotTypeEnum) {
-        AssertUtil.assertNotNull(jackpotRewardPoolDos, ErrorCode.ERR_PARAM, "jackpotRewardPoolDos is null");
+    public void batchUpdate(List<JackpotRewardPoolDo> doList, JackpotTypeEnum jackpotTypeEnum) {
+        AssertUtil.assertNotEmpty(doList, ErrorCode.ERR_PARAM, "doList is null");
         AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM, "gameType is null");
-        List<JackpotRewardPoolPo> jackpotRewardPoolPos = JackpotRewardPoolConverter.doToPoList(jackpotRewardPoolDos,OptEnum.UPDATE);
-        AssertUtil.assertNotNull(jackpotRewardPoolPos, ErrorCode.ERR_PARAM, "jackpotRewardPoolPo is null");
-
+        List<JackpotRewardPoolPo> poList = JackpotRewardPoolConverter.doToPoList(doList, OptEnum.UPDATE);
+        AssertUtil.assertNotNull(poList, ErrorCode.ERR_PARAM, "jackpotRewardPoolPo is null");
         BulkOperations bulkOps = getMongoTemplate(jackpotTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.ORDERED,
                 JackpotRewardPoolPo.class,
                 jackpotTypeEnum.getJackpotRewardPoolCollectionName());
-        jackpotRewardPoolPos.forEach(poolPo -> {
+        poList.forEach(poolPo -> {
             Criteria criteria = new Criteria();
             criteria.and("type").is(poolPo.getType());
             Query query = new Query(criteria);
@@ -66,7 +57,7 @@ public class JackpotRewardPoolService extends AbstractService {
     @Cacheable(value = CacheConstants.JACKPOT_REWARD_POOL_CONFIG, key = "#jackpotTypeEnum.gameType.id")
     public List<JackpotRewardPoolDo> listAll(JackpotTypeEnum jackpotTypeEnum) {
         AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM);
-        List<JackpotRewardPoolPo> pos= getMongoTemplate(jackpotTypeEnum.getGameType()).find(JackpotQueryBuilder.listAllQuery(),
+        List<JackpotRewardPoolPo> pos = getMongoTemplate(jackpotTypeEnum.getGameType()).find(JackpotQueryBuilder.listAllQuery(),
                 JackpotRewardPoolPo.class,
                 jackpotTypeEnum.getJackpotRewardPoolCollectionName());
         return JackpotRewardPoolConverter.poToDoList(pos);
