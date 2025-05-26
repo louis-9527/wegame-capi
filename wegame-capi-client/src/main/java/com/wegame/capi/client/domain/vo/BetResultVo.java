@@ -33,5 +33,5 @@ public class BetResultVo implements Serializable {
     private Long totalPayoutAmount;
     // todo 测试完成之后修改成object类型
     @ApiModelProperty("结果明细")
-    private LamangBetResultDetailVo resultDetail;
+    private Object resultDetail;
 }

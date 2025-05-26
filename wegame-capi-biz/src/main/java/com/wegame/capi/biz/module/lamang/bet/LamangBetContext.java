@@ -16,8 +16,8 @@ import java.util.Map;
 public class LamangBetContext extends AbstractBetContext {
 
     private static final Map<BetTypeEnum, String> BET_STRATEGY_NAME_MAP = new ImmutableMap.Builder<BetTypeEnum, String>()
-            .put(BetTypeEnum.NORMAL_BET, "malakasNormalBetStrategy")
-            .put(BetTypeEnum.BUY_BET, "malakasBuyBetStrategy")
+            .put(BetTypeEnum.NORMAL_BET, "lamangNormalBetStrategy")
+            .put(BetTypeEnum.BUY_BET, "lamangBuyBetStrategy")
             .build();
 
     @Autowired

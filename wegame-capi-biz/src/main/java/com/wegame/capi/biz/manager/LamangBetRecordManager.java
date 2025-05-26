@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.infrastructure.config.mongo.MalakasMongoConfig.malakasTransactionManager;
+import static com.wegame.capi.infrastructure.config.mongo.LamangMongoConfig.lamangTransactionManager;
 
 @Slf4j
 @Component("lamangBetRecordManager")
@@ -33,7 +33,7 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
     @Autowired
     GameRecordService<LamangGameRecordDo> gameRecordService;
 
-    @Transactional(transactionManager = malakasTransactionManager)
+    @Transactional(transactionManager = lamangTransactionManager)
     public Long add(BetRecordDo<LamangGameRecordDo> betRecord, GameTypeEnum gameType) {
         // todo delete @maidong
         log.info("add: {}", betRecord.getId());
@@ -50,7 +50,7 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
         return betRecord.getId();
     }
 
-    @Transactional(transactionManager = malakasTransactionManager)
+    @Transactional(transactionManager = lamangTransactionManager)
     @Override
     public boolean batchAdd(List<BetRecordDo<LamangGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);

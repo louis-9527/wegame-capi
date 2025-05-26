@@ -224,7 +224,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         AssertUtil.assertNotNull(rewardHandle.getWheel(), ErrorCode.ERR_PARAM, "wheel is null");
         AssertUtil.assertNotNull(rewardHandle.getWheel().getIndex(), ErrorCode.ERR_PARAM, "wheel index is null");
         AssertUtil.assertNotNull(rewardHandle.getWheel().getSymbolArr(), ErrorCode.ERR_PARAM, "wheel symbolArr is null");
-        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.MALAKAS), ErrorCode.ERR_PARAM, "just support game type of malakas");
+        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.LAM_ANG), ErrorCode.ERR_PARAM, "just support game type of lamang");
         AssertUtil.assertTrue(rewardHandle.getBetAmount() > 0, ErrorCode.ERR_PARAM, "bet amount must greater than 0");
         SymbolDo[][] symbolArr = rewardHandle.getWheel().getSymbolArr();
         // 校验：滚轮行数

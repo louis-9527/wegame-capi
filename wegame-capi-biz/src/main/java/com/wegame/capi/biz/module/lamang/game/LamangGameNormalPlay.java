@@ -131,6 +131,9 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                     // 生成元素：随机生成
                     symbolDo = randomNormalSymbol(randomNumber, gameInfo, columProbabilisticMap);
                 }
+                if (Objects.isNull(symbolDo)) {
+                    log.error("symbolDo is null");
+                }
                 // 构建元素金边
                 boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
                 LamangSymbolDo lamangSymbolDo = LamangSymbolDo.buildFromSymbol(symbolDo, symbolGoldBorder);
@@ -165,7 +168,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 }
             }
             int tempCount = 0;
-            while (tempCount < needAddScatterNumber) {
+            while (tempCount < needAddScatterNumber && !indexList.isEmpty()) {
                 int randomIndex = randomService.randomInt(0, indexList.size() - 1);
                 IndexDo indexDo = indexList.get(randomIndex);
                 int row = indexDo.getRowIndex();
@@ -180,6 +183,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 }
                 symbolArr[row][column] = LamangSymbolDo.buildFromSymbol(LAMANG_SCATTER, false);
                 tempCount = tempCount + 1;
+                indexList.remove(randomIndex);
             }
         }
     }
