@@ -3,7 +3,6 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +11,7 @@ import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -144,19 +144,20 @@ public class LamangConfig {
         private CommissionConfig buyCommissionConfig;
         /**
          * 奖池中奖触发投注金额配置
-         * TreeMap<满足条件最小投注金额(从小到大配置), 解锁奖池类型名称列表>
+         * TreeMap<满足条件最小投注金额(从大到小配置), TreeMap<奖池名称, 中奖概率>>
+         * 为什么使用linkedHashMap？需要按照配置顺序进行赋值
          */
-        private TreeMap<Long, List<JackpotRewardPoolTypeEnum>> jackpotTriggerBetAmountConfig;
+        private LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig;
         /**
          * 中奖概率配置
          * TreeMap<奖池名称, 中奖概率>
          */
-        private TreeMap<JackpotRewardPoolTypeEnum, BigDecimal> jackPotRewardGrantProportionConfig;
+        private TreeMap<String, BigDecimal> jackPotRewardGrantProportionConfig;
         /**
          * jackpot保底金额配置
          * TreeMap<奖池名称, 保底金额>
          */
-        private TreeMap<JackpotRewardPoolTypeEnum, Long> guaranteedAmount;
+        private TreeMap<String, Long> guaranteedAmount;
 
     }
 
@@ -169,12 +170,12 @@ public class LamangConfig {
          * 按照金额提成
          * TreeMap<投注金额, TreeMap<奖池名称,提成金额>>
          */
-        private TreeMap<Long, TreeMap<JackpotRewardPoolTypeEnum, Long>> amountCommissionConfig;
+        private TreeMap<Long, TreeMap<String, Long>> amountCommissionConfig;
         /**
          * 按比例提成
          * TreeMap<奖池名称, 提成比例>
          */
-        private TreeMap<JackpotRewardPoolTypeEnum, BigDecimal> proportionCommissionConfig;
+        private TreeMap<String, BigDecimal> proportionCommissionConfig;
     }
 
 
@@ -205,33 +206,33 @@ public class LamangConfig {
     }
 
     private void guaranteedAmountValidate() {
-        TreeMap<JackpotRewardPoolTypeEnum, Long> config = jackPotConfig.guaranteedAmount;
+        TreeMap<String, Long> config = jackPotConfig.guaranteedAmount;
         config.keySet().forEach(poolName -> {
             AssertUtil.assertNotNull(poolName, ErrorCode.ERR_PARAM, "proportionCommissionConfig validate error,poolName " + poolName + " is not exist");
         });
     }
 
     private void proportionCommissionConfigValidate() {
-        TreeMap<JackpotRewardPoolTypeEnum, BigDecimal> config = jackPotConfig.jackPotRewardGrantProportionConfig;
+        TreeMap<String, BigDecimal> config = jackPotConfig.jackPotRewardGrantProportionConfig;
         config.keySet().forEach(poolName -> {
             AssertUtil.assertNotNull(poolName, ErrorCode.ERR_PARAM, "jackPotRewardGrantProportionConfig validate error,poolName " + poolName + " is not exist");
         });
     }
 
     private void jackpotTriggerBetAmountConfigValidate() {
-        TreeMap<Long, List<JackpotRewardPoolTypeEnum>> config = jackPotConfig.jackpotTriggerBetAmountConfig;
-        for (List<JackpotRewardPoolTypeEnum> valueList : config.values()) {
-            valueList.forEach(poolName -> {
+        LinkedHashMap<Long, TreeMap<String, BigDecimal>> config = jackPotConfig.jackpotTriggerBetAmountConfig;
+        config.values().forEach(item -> {
+            item.keySet().forEach(poolName -> {
                 AssertUtil.assertNotNull(poolName, ErrorCode.ERR_PARAM, "jackpotTriggerBetAmountConfig validate error,poolName " + poolName + " is not exist");
             });
-        }
+        });
     }
 
     private void commissionConfigValidate(CommissionConfig commonCommissionConfig) {
         AssertUtil.assertNotNull(commonCommissionConfig.amountCommissionConfig, ErrorCode.ERR_PARAM, "amountCommissionConfig is null");
         AssertUtil.assertNotNull(commonCommissionConfig.proportionCommissionConfig, ErrorCode.ERR_PARAM, "proportionCommissionConfig is null");
         // 按金额提成
-        TreeMap<Long, TreeMap<JackpotRewardPoolTypeEnum, Long>> amountCommissionConfig = commonCommissionConfig.amountCommissionConfig;
+        TreeMap<Long, TreeMap<String, Long>> amountCommissionConfig = commonCommissionConfig.amountCommissionConfig;
         // 确定所有奖池类型有数据
         amountCommissionConfig.values().forEach(item -> {
             item.keySet().forEach(poolName -> {
@@ -240,7 +241,7 @@ public class LamangConfig {
         });
 
         // 按比例提成
-        TreeMap<JackpotRewardPoolTypeEnum, BigDecimal> proportionCommissionConfig = commonCommissionConfig.proportionCommissionConfig;
+        TreeMap<String, BigDecimal> proportionCommissionConfig = commonCommissionConfig.proportionCommissionConfig;
         proportionCommissionConfig.keySet().forEach(poolName -> {
             AssertUtil.assertNotNull(poolName, ErrorCode.ERR_PARAM, "proportionCommissionConfig validate error, poolName " + poolName + " is not exist");
         });
