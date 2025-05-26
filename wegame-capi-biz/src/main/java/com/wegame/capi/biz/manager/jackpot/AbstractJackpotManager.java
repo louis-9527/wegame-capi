@@ -40,5 +40,11 @@ public abstract class AbstractJackpotManager {
      */
     public abstract void batchAddUserRewardRecord(List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos);
 
+    /**
+     * 派奖,返回派奖记录ID
+     * @param jackpotUserRewardRecordDo
+     */
+    public abstract Long winReward(JackpotUserRewardRecordDo jackpotUserRewardRecordDo);
+
 
 }

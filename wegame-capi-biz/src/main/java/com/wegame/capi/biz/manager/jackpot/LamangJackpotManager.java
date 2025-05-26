@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.manager.jackpot;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
@@ -11,12 +13,14 @@ import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
-import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
+
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
+import com.wegame.capi.infrastructure.config.mongo.LamangMongoConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,4 +117,18 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         rewardPoolDos.add(miniDo);
         jackpotRewardPoolService.batchUpdate(rewardPoolDos, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
     }
+
+    @Override
+    @Transactional(transactionManager = LamangMongoConfig.lamangTransactionManager)
+    public Long winReward(JackpotUserRewardRecordDo jackpotUserRewardRecordDo) {
+        Long add = jackpotUserRewardRecordService.add(JackpotTypeEnum.LAM_ANG, jackpotUserRewardRecordDo);
+
+        JackpotRewardPoolDo buildUpdate = JackpotRewardPoolDo.builder().type(jackpotUserRewardRecordDo.getRewardPoolType())
+                .amount(-jackpotUserRewardRecordDo.getRewardAmount()).build();
+        boolean update = jackpotRewardPoolService.update(buildUpdate, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+        AssertUtil.assertTrue(update, ErrorCode.ERR_INTER);
+        return add;
+    }
+
+
 }

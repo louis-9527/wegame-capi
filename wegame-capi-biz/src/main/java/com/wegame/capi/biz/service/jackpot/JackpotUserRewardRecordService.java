@@ -1,10 +1,16 @@
 package com.wegame.capi.biz.service.jackpot;
 
+import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.builder.jackpot.JackpotQueryBuilder;
+import com.wegame.capi.biz.builder.jackpot.JackpotUserRewardRecordQueryBuilder;
+import com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -95,6 +101,27 @@ public class JackpotUserRewardRecordService extends AbstractService {
                 JackpotUserRewardRecordPo.class,
                 jackpotType.getJackpotUserRewardRewardCollectionName());
         return poToDo(maxRecord);
+    }
+
+    public Long add(JackpotTypeEnum jackpotType,JackpotUserRewardRecordDo recordDo){
+        AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
+        JackpotUserRewardRecordPo jackpotUserRewardRecordPo = JackpotUserRewardRecordConverter.doToPo(recordDo, OptEnum.ADD);
+        AssertUtil.assertNotNull(jackpotUserRewardRecordPo, ErrorCode.ERR_PARAM);
+        JackpotUserRewardRecordPo insert = getMongoTemplate(jackpotType.getGameType()).insert(jackpotUserRewardRecordPo,
+                jackpotType.getJackpotUserRewardRewardCollectionName());
+        return insert.getId();
+    }
+
+    public Boolean update(JackpotTypeEnum jackpotType,JackpotUserRewardRecordDo recordDo){
+        AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
+        JackpotUserRewardRecordPo jackpotUserRewardRecordPo = JackpotUserRewardRecordConverter.doToPo(recordDo, OptEnum.ADD);
+        AssertUtil.assertNotNull(jackpotUserRewardRecordPo, ErrorCode.ERR_PARAM);
+        Query query = buildMongodbQuery(JackpotUserRewardRecordQuery.builder().id(recordDo.getId()).build());
+        UpdateResult result = getMongoTemplate(jackpotType.getGameType()).updateFirst(query,
+                JackpotUserRewardRecordQueryBuilder.buildUpdate(jackpotUserRewardRecordPo),
+                JackpotRewardPoolPo.class,
+                jackpotType.getJackpotRewardPoolCollectionName());
+        return result.getModifiedCount() > 0;
     }
 
     ///////////////  mongo done end ///////////////

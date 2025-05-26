@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service.jackpot;
 
+import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
@@ -8,7 +9,10 @@ import com.wegame.capi.biz.builder.jackpot.JackpotQueryBuilder;
 import com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
+import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
+import com.wegame.capi.dao.mapper.business.JackpotRewardPoolMapper;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -44,9 +48,26 @@ public class JackpotRewardPoolService extends AbstractService {
             Criteria criteria = new Criteria();
             criteria.and("type").is(poolPo.getType());
             Query query = new Query(criteria);
-            bulkOps.updateOne(query, JackpotQueryBuilder.buildUpdate(poolPo));
+            bulkOps.updateOne(query, JackpotQueryBuilder.buildAddAmount(poolPo));
         });
         bulkOps.execute();
+    }
+
+    public boolean update(JackpotRewardPoolDo jackpotRewardPoolDo, JackpotTypeEnum jackpotTypeEnum) {
+        AssertUtil.assertNotNull(jackpotRewardPoolDo, ErrorCode.ERR_PARAM, "jackpotRewardPoolDo is null");
+        AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM, "gameType is null");
+        JackpotRewardPoolPo jackpotRewardPoolPo = JackpotRewardPoolConverter.doToPo(jackpotRewardPoolDo,OptEnum.UPDATE);
+        AssertUtil.assertNotNull(jackpotRewardPoolPo, ErrorCode.ERR_PARAM, "jackpotRewardPoolPo is null");
+
+        Criteria criteria = new Criteria();
+        criteria.and("type").is(jackpotRewardPoolDo.getType());
+        Query query = new Query(criteria);
+        // 扣减金额
+        UpdateResult result = getMongoTemplate(jackpotTypeEnum.getGameType()).updateFirst(query,
+                JackpotQueryBuilder.buildAddAmount(jackpotRewardPoolPo),
+                JackpotRewardPoolPo.class,
+                jackpotTypeEnum.getJackpotRewardPoolCollectionName());
+        return result.getModifiedCount() > 0;
     }
 
     /**
@@ -61,6 +82,17 @@ public class JackpotRewardPoolService extends AbstractService {
                 JackpotRewardPoolPo.class,
                 jackpotTypeEnum.getJackpotRewardPoolCollectionName());
         return JackpotRewardPoolConverter.poToDoList(pos);
+    }
+
+    public JackpotRewardPoolDo getByType(JackpotTypeEnum jackpotTypeEnum, JackpotRewardPoolTypeEnum rewardPoolTypeEnum){
+        AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(rewardPoolTypeEnum, ErrorCode.ERR_PARAM);
+        JackpotRewardPoolQuery buildQuery = JackpotRewardPoolQuery.builder().type(rewardPoolTypeEnum.getCode()).build();
+        JackpotRewardPoolPo po= getMongoTemplate(jackpotTypeEnum.getGameType()).findOne(JackpotQueryBuilder.buildMongodbQuery(buildQuery),
+                JackpotRewardPoolPo.class,
+                jackpotTypeEnum.getJackpotRewardPoolCollectionName());
+        return JackpotRewardPoolConverter.poToDo(po);
+
     }
 
     //    /**
