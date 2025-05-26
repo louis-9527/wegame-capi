@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * lamang投注上下文
  */
-@Component("amangBetContext")
+@Component("lamangBetContext")
 public class LamangBetContext extends AbstractBetContext {
 
     private static final Map<BetTypeEnum, String> BET_STRATEGY_NAME_MAP = new ImmutableMap.Builder<BetTypeEnum, String>()
