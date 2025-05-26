@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Objects;
 
@@ -63,6 +64,9 @@ public class JackpotUserRewardRecordQueryBuilder {
         }
         if (Objects.nonNull(recordQuery.getRewardPoolType())) {
             criteria.and("rewardPoolType").is(recordQuery.getRewardPoolType());
+        }
+        if (!CollectionUtils.isEmpty(recordQuery.getRewardPoolTypeList())) {
+            criteria.and("rewardPoolType").in(recordQuery.getRewardPoolTypeList());
         }
         if (Objects.nonNull(recordQuery.getRewardAmount())) {
             criteria.and("rewardAmount").is(recordQuery.getRewardAmount());

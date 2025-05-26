@@ -5,6 +5,7 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRecordRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotUserRewardRecordVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
@@ -88,12 +89,12 @@ public class JackpotUserRewardRecordConverter {
         po.setRewardGrantTime(jackpotUserRewardRecordDo.getRewardGrantTime());
         if (OptEnum.ADD.equals(optEnum)) {
             po.setCreator(operator.getName());
-            po.setCreateTime(new Date());
+            po.setCreateTime(DateUtil.getCurrentMilli());
             po.setUpdater(operator.getName());
-            po.setUpdateTime(new Date());
+            po.setUpdateTime(DateUtil.getCurrentMilli());
         } else {
             po.setUpdater(operator.getName());
-            po.setUpdateTime(new Date());
+            po.setUpdateTime(DateUtil.getCurrentMilli());
             po.setId(jackpotUserRewardRecordDo.getId());
         }
         return po;
@@ -117,9 +118,9 @@ public class JackpotUserRewardRecordConverter {
         vo.setRewardGrantStatus(jackpotUserRewardRecordDo.getRewardGrantStatus());
         vo.setRewardGrantTime(Objects.nonNull(jackpotUserRewardRecordDo.getRewardGrantTime()) ? jackpotUserRewardRecordDo.getRewardGrantTime().getTime() : null);
         vo.setCreator(jackpotUserRewardRecordDo.getCreator());
-        vo.setCreateTime(Objects.nonNull(jackpotUserRewardRecordDo.getCreateTime()) ? jackpotUserRewardRecordDo.getCreateTime().getTime() : null);
+        vo.setCreateTime(Objects.nonNull(jackpotUserRewardRecordDo.getCreateTime()) ? jackpotUserRewardRecordDo.getCreateTime() : null);
         vo.setUpdater(jackpotUserRewardRecordDo.getUpdater());
-        vo.setUpdateTime(Objects.nonNull(jackpotUserRewardRecordDo.getUpdateTime()) ? jackpotUserRewardRecordDo.getUpdateTime().getTime() : null);
+        vo.setUpdateTime(Objects.nonNull(jackpotUserRewardRecordDo.getUpdateTime()) ? jackpotUserRewardRecordDo.getUpdateTime() : null);
         return vo;
     }
 
@@ -174,9 +175,9 @@ public class JackpotUserRewardRecordConverter {
         query.setRewardGrantStatus(request.getRewardGrantStatus());
         query.setRewardGrantTime(Objects.nonNull(request.getRewardGrantTime()) ? new Date(request.getRewardGrantTime()) : null);
         query.setCreator(request.getCreator());
-        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? new Date(request.getCreateTime()) : null);
+        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? DateUtil.getCurrentMilli() : null);
         query.setUpdater(request.getUpdater());
-        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? new Date(request.getUpdateTime()) : null);
+        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? DateUtil.getCurrentMilli() : null);
         query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) ? new Date(request.getStartCreateTime()) : null);
         query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);
         query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? new Date(request.getStartUpdateTime()) : null);

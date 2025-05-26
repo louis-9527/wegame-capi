@@ -79,7 +79,9 @@ public class FilterConfig {
                 "/bag/*",
                 "/mission/*",
                 "/treasure/*",
-                "/freeSpin/*"
+                "/freeSpin/*",
+                "/jackpotRewardPool/*",
+                "/jackpotUserRewardRecord/*"
         );
         return bean;
     }
