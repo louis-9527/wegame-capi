@@ -4,7 +4,6 @@ import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
-import com.wegame.capi.common.enums.lamang.LamangSymbolSizeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -152,7 +151,7 @@ public class LamangConfig {
          * 中奖概率配置
          * TreeMap<奖池名称, 中奖概率>
          */
-        private TreeMap<String, BigDecimal> proportionCommissionConfig;
+        private TreeMap<String, BigDecimal> jackPotRewardGrantProportionConfig;
         /**
          * jackpot保底金额配置
          * TreeMap<奖池名称, 保底金额>
@@ -194,7 +193,7 @@ public class LamangConfig {
         AssertUtil.assertNotNull(jackPotConfig.commonCommissionConfig, ErrorCode.ERR_PARAM, "commonCommissionConfig is null");
         AssertUtil.assertNotNull(jackPotConfig.buyCommissionConfig, ErrorCode.ERR_PARAM, "buyCommissionConfig is null");
         AssertUtil.assertNotNull(jackPotConfig.jackpotTriggerBetAmountConfig, ErrorCode.ERR_PARAM, "jackpotTriggerBetAmountConfig is null");
-        AssertUtil.assertNotNull(jackPotConfig.proportionCommissionConfig, ErrorCode.ERR_PARAM, "proportionCommissionConfig is null");
+        AssertUtil.assertNotNull(jackPotConfig.jackPotRewardGrantProportionConfig, ErrorCode.ERR_PARAM, "jackPotRewardGrantProportionConfig is null");
         AssertUtil.assertNotNull(jackPotConfig.guaranteedAmount, ErrorCode.ERR_PARAM, "guaranteedAmount is null");
 
         this.commissionConfigValidate(jackPotConfig.commonCommissionConfig);
@@ -213,9 +212,9 @@ public class LamangConfig {
     }
 
     private void proportionCommissionConfigValidate() {
-        TreeMap<String, BigDecimal> config = jackPotConfig.proportionCommissionConfig;
+        TreeMap<String, BigDecimal> config = jackPotConfig.jackPotRewardGrantProportionConfig;
         config.keySet().forEach(poolName -> {
-            AssertUtil.assertNotNull(JackpotRewardPoolTypeEnum.valueOfDesc(poolName), ErrorCode.ERR_PARAM, "proportionCommissionConfig validate error,poolName " + poolName + " is not exist");
+            AssertUtil.assertNotNull(JackpotRewardPoolTypeEnum.valueOfDesc(poolName), ErrorCode.ERR_PARAM, "jackPotRewardGrantProportionConfig validate error,poolName " + poolName + " is not exist");
         });
     }
 
