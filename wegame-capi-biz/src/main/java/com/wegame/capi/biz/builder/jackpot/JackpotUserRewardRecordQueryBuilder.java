@@ -1,10 +1,16 @@
 package com.wegame.capi.biz.builder.jackpot;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
+import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Objects;
@@ -19,6 +25,7 @@ public class JackpotUserRewardRecordQueryBuilder {
         if (Objects.nonNull(recordQuery.getLtLastId())) {
             query.addCriteria(Criteria.where("_id").lt(recordQuery.getLtLastId()));
         }
+
         if (Objects.nonNull(recordQuery.getGtLastId())) {
             query.addCriteria(Criteria.where("_id").gt(recordQuery.getGtLastId()));
         }
@@ -87,6 +94,25 @@ public class JackpotUserRewardRecordQueryBuilder {
             criteria.and("createTime").lte(recordQuery.getEndCreateTime());
         }
         return criteria;
+    }
+
+    public static Update buildUpdate(JackpotUserRewardRecordPo recordPo) {
+        if (recordPo == null) {
+            throw new BusinessException(ErrorCode.ERR_INTER);
+        }
+        Update update = new Update();
+        if (Objects.nonNull(recordPo.getRewardGrantStatus())) {
+            update.inc("rewardGrantStatus", recordPo.getRewardGrantStatus());
+        }
+        if (Objects.nonNull(recordPo.getUpdater())) {
+            update.set("updater", recordPo.getUpdater());
+        }
+        if (Objects.nonNull(recordPo.getUpdateTime())) {
+            update.set("updateTime", recordPo.getUpdateTime());
+        } else {
+            update.set("updateTime", DateUtil.getCurrentMilli());
+        }
+        return update;
     }
 
 

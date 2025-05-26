@@ -3,11 +3,8 @@ package com.wegame.capi.biz.builder.jackpot;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -50,7 +47,7 @@ public class JackpotQueryBuilder {
         return criteria;
     }
 
-    public static Update buildUpdate(JackpotRewardPoolPo rewardPool) {
+    public static Update buildAddAmount(JackpotRewardPoolPo rewardPool) {
         if (rewardPool == null) {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }
@@ -68,4 +65,4 @@ public class JackpotQueryBuilder {
         }
         return update;
     }
-}
+  }

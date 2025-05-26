@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.domain.biz.jackpot;
 
+import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
+import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -46,9 +48,9 @@ public class JackpotUserRewardRecordDo implements Serializable {
      */
     private Long rewardPoolId;
     /**
-     * 类型 1：grand 2:major 3:minor 4:mini 5:betBonus
+     * 类型 1：grand 2:major 3:minor 4:mini
      */
-    private Integer rewardPoolType;
+    private JackpotRewardPoolTypeEnum rewardPoolType;
     /**
      * 中奖金额.单位：厘
      */
@@ -60,7 +62,7 @@ public class JackpotUserRewardRecordDo implements Serializable {
     /**
      * 派奖状态.0:未派奖.1:派奖中（状态待定）.2:已派奖
      */
-    private Integer rewardGrantStatus;
+    private JackpotRewardGrantStatusEnum rewardGrantStatus;
     /**
      * 派奖成功时间
      */

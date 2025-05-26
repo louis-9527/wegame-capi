@@ -11,15 +11,17 @@ import java.util.Objects;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum JackpotRewardPoolTypeEnum {
 
-    grand(1, "grand"),
-    major(2, "major"),
-    minor(3, "minor"),
-    mini(4, "mini");
+    grand(1, "grand","grand"),
+    major(2, "major","major"),
+    minor(3, "minor","minor"),
+    mini(4, "mini","mini");
 
     /**
      * 枚举码.
      */
     private final Integer code;
+
+    private final String name;
 
     /**
      * 描述信息.
@@ -32,8 +34,9 @@ public enum JackpotRewardPoolTypeEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    JackpotRewardPoolTypeEnum(Integer code, String desc) {
+    JackpotRewardPoolTypeEnum(Integer code,String name, String desc) {
         this.code = code;
+        this.name = name;
         this.desc = desc;
     }
 
@@ -46,9 +49,9 @@ public enum JackpotRewardPoolTypeEnum {
         return null;
     }
 
-    public static JackpotRewardPoolTypeEnum valueOfDesc(String desc) {
+    public static JackpotRewardPoolTypeEnum valueOfName(String name) {
         for (JackpotRewardPoolTypeEnum item : JackpotRewardPoolTypeEnum.values()) {
-            if (Objects.equals(item.getDesc(), desc)) {
+            if (Objects.equals(item.getName(), name)) {
                 return item;
             }
         }
