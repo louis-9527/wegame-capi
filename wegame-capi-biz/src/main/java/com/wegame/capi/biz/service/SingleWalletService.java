@@ -17,7 +17,9 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
+import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.constants.FreeSpinErrorCode;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
@@ -55,6 +57,9 @@ public class SingleWalletService {
     @Autowired
     FreeSpinService freeSpinService;
 
+    @Autowired
+    JackpotRewardPoolService jackpotRewardPoolService;
+
     public boolean authLoginToken(UserLoginDo userLoginDo) {
         AuthLoginTokenRes res = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.buildReq(userLoginDo));
         AssertUtil.assertNotNull(res, ErrorCode.ERR_NET);
@@ -84,7 +89,15 @@ public class SingleWalletService {
             } else if (Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
                 commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo));
             } else {
-                commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
+                //todo 生成jackpot分成消息
+                GameTypeEnum   gameType = GameTypeEnum.valueOfId(betRecordDo.getGameId());
+                JackpotTypeEnum jackpotType = JackpotTypeEnum.valueOfGameType(gameType);
+                // 当前游戏不支持jackpot走原逻辑
+                if (Objects.nonNull(jackpotType)) {
+                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, jackpotRewardPoolService.listAll(jackpotType)));
+                } else {
+                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
+                }
             }
             AssertUtil.assertNotNull(commonRes, ErrorCode.ERR_NET);
             AssertUtil.assertNotNull(commonRes.getData(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);

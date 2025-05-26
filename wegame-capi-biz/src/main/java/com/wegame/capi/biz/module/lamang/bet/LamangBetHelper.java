@@ -5,7 +5,6 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.LamangConfig;
-import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.LamangBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -14,13 +13,18 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
+import com.wegame.capi.biz.module.base.jackpot.AbsJackpotHandler;
+import com.wegame.capi.biz.module.base.jackpot.JackpotHandlerContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -33,6 +37,9 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
     @Autowired
     LamangConfig lamangConfig;
 
+    @Autowired
+    JackpotHandlerContext jackpotHandlerContext;
+
     @Override
     public BetRecordDo<LamangGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<LamangGameRecordDo> gameRecordList) {
         //// 总中奖金额
@@ -44,7 +51,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), lamangConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), lamangConfig.getRewardMaxMultiple()),
-                null, // todo set jackpot @lyric
+                buildBetCommission(betDo), // todo set jackpot @lyric
                 gameRecordList
         );
     }
@@ -85,6 +92,25 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
         } else {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }
+    }
+
+    private BetRecordDo.Jackpot buildBetCommission(BetDo betDo) {
+        BetRecordDo.Jackpot jackpotCommission = null;
+        AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
+        if (Objects.nonNull(handler)){
+            jackpotCommission = new BetRecordDo.Jackpot();
+            Map<JackpotRewardPoolTypeEnum, Long> commissiontMap =  handler.calculateRewardPoolCommission(betDo.getBetType(), betDo.getBetAmount());
+            for(JackpotRewardPoolTypeEnum key : JackpotRewardPoolTypeEnum.values()){
+                Long amount = commissiontMap.get(key);
+                switch (key) {
+                    case grand: jackpotCommission.setGrandContributionAmount(amount); break;
+                    case major: jackpotCommission.setMajorContributionAmount(amount); break;
+                    case minor: jackpotCommission.setMinorContributionAmount(amount); break;
+                    case mini: jackpotCommission.setMiniContributionAmount(amount); break;
+                }
+            }
+        }
+        return jackpotCommission;
     }
 
     private List<LamangGameRecordDo> getFirstBatchGameRecordList(List<LamangGameRecordDo> list) {

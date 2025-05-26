@@ -14,6 +14,7 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.dao.mapper.business.JackpotRewardPoolMapper;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;

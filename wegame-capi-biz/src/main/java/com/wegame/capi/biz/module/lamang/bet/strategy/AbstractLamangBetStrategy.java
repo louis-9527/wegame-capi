@@ -17,11 +17,13 @@ import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.LamangBetRecordManager;
 import com.wegame.capi.biz.manager.MalakasBetRecordManager;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
+import com.wegame.capi.biz.manager.operation.LamangOperationEventManager;
 import com.wegame.capi.biz.manager.operation.MalakasOperationEventManager;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractCommonBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
+import com.wegame.capi.biz.module.base.jackpot.JackpotHandlerContext;
 import com.wegame.capi.biz.module.lamang.bet.LamangBetHelper;
 import com.wegame.capi.biz.module.lamang.game.LamangGameContext;
 import com.wegame.capi.biz.module.malakas.game.MalakasGameContext;
@@ -57,10 +59,13 @@ public abstract   class AbstractLamangBetStrategy
     LamangBetRecordManager lamangBetRecordManager;
     @Autowired
     LamangConfig lamangConfig;
+    @Autowired
+    private JackpotHandlerContext jackpotHandlerContext;
+
     //todo
     @Autowired
-    @Qualifier("malakasOperationEventManager")
-    private MalakasOperationEventManager malakasOperationEventManager;
+    @Qualifier("lamangOperationEventManager")
+    private LamangOperationEventManager lamangOperationEventManager;
 
     @Autowired
     private LamangBetHelper lamangBetHelper;
@@ -77,7 +82,7 @@ public abstract   class AbstractLamangBetStrategy
 
     @Override
     public AbstractOperationEventManager operationEventManager() {
-        return malakasOperationEventManager;
+        return lamangOperationEventManager;
     }
 
     @Override

@@ -9,6 +9,8 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRecordRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotUserRewardRecordVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
+import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
+import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import org.apache.commons.lang3.StringUtils;
@@ -57,10 +59,10 @@ public class JackpotUserRewardRecordConverter {
         jackpotUserRewardRecordDo.setGameRecordId(po.getGameRecordId());
         jackpotUserRewardRecordDo.setBetId(po.getBetId());
         jackpotUserRewardRecordDo.setRewardPoolId(po.getRewardPoolId());
-        jackpotUserRewardRecordDo.setRewardPoolType(po.getRewardPoolType());
+        jackpotUserRewardRecordDo.setRewardPoolType(JackpotRewardPoolTypeEnum.valueOfCode(po.getRewardPoolType()));
         jackpotUserRewardRecordDo.setRewardAmount(po.getRewardAmount());
         jackpotUserRewardRecordDo.setRewardGrantSerialNo(po.getRewardGrantSerialNo());
-        jackpotUserRewardRecordDo.setRewardGrantStatus(po.getRewardGrantStatus());
+        jackpotUserRewardRecordDo.setRewardGrantStatus(JackpotRewardGrantStatusEnum.valueOfCode(po.getRewardGrantStatus()));
         jackpotUserRewardRecordDo.setRewardGrantTime(po.getRewardGrantTime());
         jackpotUserRewardRecordDo.setCreator(po.getCreator());
         jackpotUserRewardRecordDo.setCreateTime(po.getCreateTime());
@@ -82,10 +84,10 @@ public class JackpotUserRewardRecordConverter {
         po.setGameRecordId(jackpotUserRewardRecordDo.getGameRecordId());
         po.setBetId(jackpotUserRewardRecordDo.getBetId());
         po.setRewardPoolId(jackpotUserRewardRecordDo.getRewardPoolId());
-        po.setRewardPoolType(jackpotUserRewardRecordDo.getRewardPoolType());
+        po.setRewardPoolType(jackpotUserRewardRecordDo.getRewardPoolType().getCode());
         po.setRewardAmount(jackpotUserRewardRecordDo.getRewardAmount());
         po.setRewardGrantSerialNo(jackpotUserRewardRecordDo.getRewardGrantSerialNo());
-        po.setRewardGrantStatus(jackpotUserRewardRecordDo.getRewardGrantStatus());
+        po.setRewardGrantStatus(jackpotUserRewardRecordDo.getRewardGrantStatus().getCode());
         po.setRewardGrantTime(jackpotUserRewardRecordDo.getRewardGrantTime());
         if (OptEnum.ADD.equals(optEnum)) {
             po.setCreator(operator.getName());
@@ -112,10 +114,10 @@ public class JackpotUserRewardRecordConverter {
         vo.setGameRecordId(jackpotUserRewardRecordDo.getGameRecordId());
         vo.setBetId(jackpotUserRewardRecordDo.getBetId());
         vo.setRewardPoolId(Objects.nonNull(jackpotUserRewardRecordDo.getRewardPoolId()) ? String.valueOf(jackpotUserRewardRecordDo.getRewardPoolId()) : null);
-        vo.setRewardPoolType(jackpotUserRewardRecordDo.getRewardPoolType());
+        vo.setRewardPoolType(jackpotUserRewardRecordDo.getRewardPoolType().getCode());
         vo.setRewardAmount(jackpotUserRewardRecordDo.getRewardAmount());
         vo.setRewardGrantSerialNo(jackpotUserRewardRecordDo.getRewardGrantSerialNo());
-        vo.setRewardGrantStatus(jackpotUserRewardRecordDo.getRewardGrantStatus());
+        vo.setRewardGrantStatus(jackpotUserRewardRecordDo.getRewardGrantStatus().getCode());
         vo.setRewardGrantTime(Objects.nonNull(jackpotUserRewardRecordDo.getRewardGrantTime()) ? jackpotUserRewardRecordDo.getRewardGrantTime().getTime() : null);
         vo.setCreator(jackpotUserRewardRecordDo.getCreator());
         vo.setCreateTime(Objects.nonNull(jackpotUserRewardRecordDo.getCreateTime()) ? jackpotUserRewardRecordDo.getCreateTime() : null);

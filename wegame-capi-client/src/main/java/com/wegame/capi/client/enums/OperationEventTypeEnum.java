@@ -36,6 +36,14 @@ public enum OperationEventTypeEnum {
             "ibongadarna_operation_event_config_record"
     ),
 
+    LAM_ANG(
+            GameTypeEnum.LAM_ANG,
+            "lamang_operation_event",
+            "lamang_operation_event_detail",
+            "lamang_operation_event_config",
+            "lamang_operation_event_config_record"
+    ),
+
     ;
 
 
