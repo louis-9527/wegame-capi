@@ -34,6 +34,7 @@ public class BakunawaBetHelper implements BetHelper<BakunawaGameRecordDo, Bakuna
                 betDo,
                 totalRewardAmount,
                 false,
+                null,
                 gameRecordList);
     }
 
