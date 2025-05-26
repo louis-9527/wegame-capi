@@ -406,7 +406,7 @@
                 "mini"
             ]
         },
-        "proportionCommissionConfig": {
+        "jackPotRewardGrantProportionConfig": {
             "grand": "0.0000016",
             "major": "0.0000080",
             "minor": "0.0000500",
