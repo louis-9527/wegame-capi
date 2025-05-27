@@ -38,5 +38,35 @@ public interface UserManualMapper {
             " where `player_id` = #{playerId} limit 1",
             "</script>"})
     int updateByPlayerId(UserPo po);
+
+    @Insert({"<script>",
+            "INSERT INTO `user` (id, p_id, player_id, player_name, nick_name, user_level, user_name, present_amount, extend, creator, updater, update_time)",
+            "VALUES (",
+            "   #{po.id}, ",
+            "   #{po.pId}, ",
+            "   #{po.playerId}, ",
+            "   #{po.playerName}, ",
+            "   #{po.nickName}, ",
+            "   #{po.userLevel}, ",
+            "   #{po.userName}, ",
+            "   #{po.presentAmount}, ",
+            "   #{po.extend}, ",
+            "   #{po.creator}, ",
+            "   #{po.updater}, ",
+            "   CURRENT_TIMESTAMP()",
+            ") ",
+            "ON DUPLICATE KEY UPDATE ",
+            "   p_id = VALUES(p_id), ",
+            "   player_name = VALUES(player_name), ",
+            "   nick_name = VALUES(nick_name), ",
+            "   user_level = VALUES(user_level), ",
+            "   user_name = VALUES(user_name), ",
+            "   present_amount = VALUES(present_amount), ",
+            "   extend = VALUES(extend), ",
+            "   updater = VALUES(updater), ",
+            "   update_time = CURRENT_TIMESTAMP()",
+            "</script>"})
+    @Options(useGeneratedKeys = true, keyProperty = "po.id")
+    int insertOrUpdateUser(@Param("po") UserPo po);
 }
 
