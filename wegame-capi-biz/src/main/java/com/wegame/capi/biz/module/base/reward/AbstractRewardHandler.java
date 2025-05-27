@@ -5,6 +5,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.lamang.LamangGameHelper;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -55,7 +56,8 @@ public abstract class AbstractRewardHandler<T extends SymbolDo> implements Rewar
 
     public Integer scatterCount(RewardHandleDo<T> rewardHandle) {
         WheelDo<T> wheel = rewardHandle.getWheel();
-        long count = Arrays.stream(wheel.getSymbolArr()).flatMap(Arrays::stream).filter(Objects::nonNull).filter(SymbolDo::isScatterSymbol).count();
+        long count = Arrays.stream(wheel.getSymbolArr()).flatMap(Arrays::stream).filter(Objects::nonNull).
+                filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER1.getId())).count();
         return (int) count;
     }
 
