@@ -161,7 +161,7 @@ public abstract class AbsJackpotHandler {
             Long recordId =  this.jackpotManager().winReward(buildRecord);
            buildRecord.setId(recordId);
            // 调用单钱包 并更新状态
-           this.singlePayAmount(JackpotAwardDo.build(drawAndAwardDo,buildRecord));
+           this.singleAward(JackpotAwardDo.build(drawAndAwardDo,buildRecord));
             return rewardAmount;
         },"error");
     }
@@ -170,7 +170,7 @@ public abstract class AbsJackpotHandler {
      * 调用单钱包派奖
      * @param jackpotAwardDo
      */
-    public void singlePayAmount(JackpotAwardDo jackpotAwardDo){
+    public void singleAward(JackpotAwardDo jackpotAwardDo){
         // 获取当前奖池类型所有金额
         List<JackpotRewardPoolDo> rewardPoolDos = jackpotRewardPoolService.listAll(this.getJackpotType());
         Map<JackpotRewardPoolTypeEnum, JackpotRewardPoolDo> rewardPoolMap = rewardPoolDos.stream()
@@ -183,7 +183,7 @@ public abstract class AbsJackpotHandler {
         // 成功后更新状态
         JackpotUserRewardRecordDo build = JackpotUserRewardRecordDo.builder().id(jackpotAwardDo.getJackpotUserRewardRecordDo().getId())
                 .rewardGrantStatus(JackpotRewardGrantStatusEnum.SUCCESS).build();
-        jackpotUserRewardRecordService.update(JackpotTypeEnum.LAM_ANG,build);
+        jackpotUserRewardRecordService.update(this.getJackpotType(),build);
     }
 
     private Map<JackpotRewardPoolTypeEnum, Long> buildCommissionResultMap(TreeMap<String, Long> betAmountCommissionConfig) {
