@@ -198,6 +198,7 @@ public abstract class AbsJackpotHandler {
             if (Objects.isNull(rate)) {
                 commissionResultMap.put(poolType, 0L);
             } else {
+                rate = rate.divide(new BigDecimal(100));
                 commissionResultMap.put(poolType, new BigDecimal(betAmount).multiply(rate).longValue());
             }
         }
