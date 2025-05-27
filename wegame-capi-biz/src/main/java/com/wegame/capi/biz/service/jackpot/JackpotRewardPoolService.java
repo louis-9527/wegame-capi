@@ -6,6 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.jackpot.JackpotQueryBuilder;
+import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.service.AbstractService;
@@ -15,13 +16,18 @@ import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.dao.mapper.business.JackpotRewardPoolMapper;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import javax.xml.ws.Action;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * po服务
@@ -30,6 +36,8 @@ import java.util.List;
  */
 @Service
 public class JackpotRewardPoolService extends AbstractService {
+    @Autowired
+    private LamangConfig lamangConfig;
 
     /**
      * 批量更新
@@ -82,7 +90,18 @@ public class JackpotRewardPoolService extends AbstractService {
         List<JackpotRewardPoolPo> pos = getMongoTemplate(jackpotTypeEnum.getGameType()).find(JackpotQueryBuilder.listAllQuery(),
                 JackpotRewardPoolPo.class,
                 jackpotTypeEnum.getJackpotRewardPoolCollectionName());
-        return JackpotRewardPoolConverter.poToDoList(pos);
+
+        List<JackpotRewardPoolDo> rewardPoolDos = JackpotRewardPoolConverter.poToDoList(pos);
+        if(CollectionUtils.isEmpty(rewardPoolDos)){
+            return rewardPoolDos;
+        }
+        // 修改初始化金额
+        TreeMap<String, Long> guaranteedAmount = lamangConfig.getJackPotConfig().getGuaranteedAmount();
+        rewardPoolDos.forEach(poolDo -> {
+            poolDo.setAmount(Math.max(guaranteedAmount.get(poolDo.getType().getName()),poolDo.getAmount()));
+            poolDo.setInitAmount(guaranteedAmount.get(poolDo.getType().getName()));
+        });
+        return rewardPoolDos;
     }
 
     public JackpotRewardPoolDo getByType(JackpotTypeEnum jackpotTypeEnum, JackpotRewardPoolTypeEnum rewardPoolTypeEnum){

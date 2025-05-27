@@ -6,25 +6,23 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.domain.req.singlewallet.BetStatusReq;
 import com.wegame.capi.api.domain.res.CommonRes;
-import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
-import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
-import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
-import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
+import com.wegame.capi.api.domain.res.singlewallet.*;
 import com.wegame.capi.biz.builder.req.BetStatusReqBuilder;
 import com.wegame.capi.biz.builder.req.GetAuthLoginTokenReqBuilder;
 import com.wegame.capi.biz.builder.req.GetCreditReqBuilder;
+import com.wegame.capi.biz.builder.req.JackpotReqBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
+import com.wegame.capi.biz.domain.biz.bet.SingleWalletJackpotResultDo;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotAwardDo;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.constants.FreeSpinErrorCode;
-import com.wegame.capi.common.enums.BetPromotionTypeEnum;
-import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
-import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
+import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.LockSupport;
 
@@ -176,6 +175,20 @@ public class SingleWalletService {
             }
         }
     }
+
+    public SingleWalletJackpotResultDo jackpot(JackpotAwardDo jackpotAwardDo, Map<JackpotRewardPoolTypeEnum, JackpotRewardPoolDo> jackpotRewardPoolMap) {
+        CommonRes<JackpotRes> jackpot = singleWalletApi.jackpot(JackpotReqBuilder.buildReq(jackpotAwardDo, jackpotRewardPoolMap));
+        return SingleWalletJackpotResultDo.builder()
+                .status(jackpot.getStatus())
+                .message(jackpot.getMessage())
+                .resultData(SingleWalletJackpotResultDo.resultData.builder()
+                        .playerName(jackpot.getData().getPlayerName())
+                        .credit(AmountUtil.toLong(jackpot.getData().getCredit()))
+                        .refId(jackpot.getData().getRefId()).build())
+                .build();
+
+    }
+
 
     public BetStatusRes getBetStatus(BetStatusReq req) {
         return singleWalletApi.getBetStatus(req);

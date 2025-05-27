@@ -1,22 +1,18 @@
 package com.wegame.capi.biz.module.base.jackpot;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeDo;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeReqDo;
+import com.wegame.capi.biz.domain.biz.jackpot.*;
 import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
 import com.wegame.capi.biz.service.RandomService;
+import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
 import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
@@ -27,6 +23,10 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.wegame.capi.common.Constants.CONST_10000000;
+
 @Slf4j
 @Component
 public abstract class AbsJackpotHandler {
@@ -42,6 +42,9 @@ public abstract class AbsJackpotHandler {
     private JackpotRewardPoolService jackpotRewardPoolService;
     @Autowired
     private JackpotUserRewardRecordService jackpotUserRewardRecordService;
+    @Autowired
+    private SingleWalletService singleWalletService;
+    private static final String jackpotKey ="jackpot:lock:poolType:";
 
 
     public abstract AbstractJackpotManager jackpotManager();
@@ -93,66 +96,95 @@ public abstract class AbsJackpotHandler {
     }
 
 
-
-    public JackpotWinPrizeDo calculateWinPrize(Long betRecordId,String betId, Long amount,List<JackpotWinPrizeReqDo> prizeReqDos) {
-        LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig = lamangConfig.getJackPotConfig().getJackpotTriggerBetAmountConfig();
-        JackpotWinPrizeDo jackpotWinPrizeDo = this.checkWinPrize(amount, prizeReqDos, jackpotTriggerBetAmountConfig);
-        if (jackpotWinPrizeDo == null){
-            // 未中奖
+    /**
+     * 判断是否中奖
+     * @return null:未中奖
+     */
+    public JackpotWinPrizeDo calculateWinPrize(JackpotDrawAndAwardDo reqDo) {
+        try {
+            LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig = lamangConfig.getJackPotConfig().getJackpotTriggerBetAmountConfig();
+            JackpotWinPrizeDo jackpotWinPrizeDo = this.checkReward(reqDo.getBetAmount(), reqDo.getGameCount(), jackpotTriggerBetAmountConfig);
+            if (jackpotWinPrizeDo == null){
+                // 未中奖
+                return null;
+            }
+            // 获取奖池保底金额
+            TreeMap<String, Long> guaranteedAmount = lamangConfig.getJackPotConfig().getGuaranteedAmount();
+            // 添加分布式锁 进行奖池扣减
+            JackpotRewardPoolTypeEnum jackpotRewardPoolType = jackpotWinPrizeDo.getJackpotRewardPoolType();
+            Long winAmount = this.buildRewardAmount(reqDo,jackpotRewardPoolType, guaranteedAmount.get(jackpotRewardPoolType.name()),jackpotWinPrizeDo.getBetGameId());
+            jackpotWinPrizeDo.setAmount(winAmount);
+            return jackpotWinPrizeDo;
+        }catch (Exception e){
+            log.error("calculateWinPrize error",e);
             return null;
         }
-        // 获取奖池保底金额
-        TreeMap<String, Long> guaranteedAmount = lamangConfig.getJackPotConfig().getGuaranteedAmount();
-        // 添加分布式锁 进行奖池扣减
-        JackpotRewardPoolTypeEnum jackpotRewardPoolType = jackpotWinPrizeDo.getJackpotRewardPoolType();
-        String lockKey = "jackpot:lock:poolType:" + jackpotRewardPoolType.getCode();
-       Long winAmount =  distributeLock.lockThenCall(lockKey,  () -> {
-            // 获取奖池金额
-            JackpotRewardPoolDo rewardPoolDo = jackpotRewardPoolService.getByType(this.getJackpotType(), jackpotRewardPoolType);
-            AssertUtil.assertNotNull(rewardPoolDo, ErrorCode.ERR_PARAM);
-            Long guaranteed= guaranteedAmount.get(jackpotRewardPoolType.getName());
-            Long pireAmount = guaranteed; // 中奖金额默认使用保底
-            if (rewardPoolDo.getAmount() != null && rewardPoolDo.getAmount() > guaranteed) {
-                pireAmount = rewardPoolDo.getAmount();
-            }
-            // 添加使用记录并更新奖池金额
-            JackpotUserRewardRecordDo buildRecord = JackpotUserRewardRecordDo.builder()
-                    .betRecordId(betRecordId)
-                    .gameRecordId(jackpotWinPrizeDo.getBetGameId())
-                    .rewardAmount(pireAmount)
-                    .rewardPoolId(rewardPoolDo.getId())
-                    .rewardPoolType(jackpotRewardPoolType)
-                    .rewardGrantSerialNo(String.valueOf(betRecordId))
-                    .rewardGrantStatus(JackpotRewardGrantStatusEnum.NONE).build();
-            Long recordId =  this.jackpotManager().winReward(buildRecord);
-            // todo 调用单钱包派奖
-            // 成功后更新状态
-            JackpotUserRewardRecordDo build = JackpotUserRewardRecordDo.builder().id(recordId).rewardGrantStatus(JackpotRewardGrantStatusEnum.SUCCESS).build();
-            jackpotUserRewardRecordService.update(JackpotTypeEnum.LAM_ANG,build);
-            return pireAmount;
-        },"error");
-        jackpotWinPrizeDo.setAmount(winAmount);
-        return jackpotWinPrizeDo;
+
  }
 
-    private JackpotWinPrizeDo checkWinPrize(Long amount,List<JackpotWinPrizeReqDo> prizeReqDos, LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig){
+    private JackpotWinPrizeDo checkReward(Long amount, Map<Long,Integer> gameCountMap, LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig){
         JackpotRewardPoolTypeEnum poolTypeEnum = null;
-        for (JackpotWinPrizeReqDo reqDo : prizeReqDos){
-            for (Long poolAmount : jackpotTriggerBetAmountConfig.keySet()){
-                if(amount>=poolAmount){
-                    TreeMap<String, BigDecimal> poolConfig = jackpotTriggerBetAmountConfig.get(poolAmount);
-                    String rewardPoolType = GameUtil.randomKey(poolConfig, randomService.randomInt(1, 1000000));
-                    poolTypeEnum = JackpotRewardPoolTypeEnum.valueOfName(rewardPoolType);
-                    if(poolTypeEnum !=null){
-                        return JackpotWinPrizeDo.builder().betGameId(reqDo.getBetGameId())
-                                .jackpotRewardPoolType(poolTypeEnum).build();
+        for (Map.Entry<Long, Integer> entry : gameCountMap.entrySet()) {
+            Long gameId = entry.getKey();   // 获取游戏 ID
+            Integer count = entry.getValue(); // 获取对应的游戏计数
+            for (int i=0;i<count;i++){
+                for (Long poolAmount : jackpotTriggerBetAmountConfig.keySet()){
+                    if(amount>=poolAmount){
+                        TreeMap<String, BigDecimal> poolConfig = jackpotTriggerBetAmountConfig.get(poolAmount);
+                        String rewardPoolType = GameUtil.randomKey(poolConfig,CONST_10000000, randomService.randomInt(1, CONST_10000000));
+                        poolTypeEnum = JackpotRewardPoolTypeEnum.valueOfName(rewardPoolType);
+                        if(poolTypeEnum !=null){
+                            return JackpotWinPrizeDo.builder().betGameId(gameId)
+                                    .jackpotRewardPoolType(poolTypeEnum).build();
+                        }
                     }
                 }
             }
         }
+
         return null;
     }
 
+    private Long buildRewardAmount(JackpotDrawAndAwardDo drawAndAwardDo, JackpotRewardPoolTypeEnum jackpotRewardPoolType, Long guaranteed, Long betGameId){
+        String lockKey = jackpotKey + jackpotRewardPoolType.getCode();
+
+       return distributeLock.lockThenCall(lockKey,  () -> {
+            // 获取奖池金额
+            JackpotRewardPoolDo rewardPoolDo = jackpotRewardPoolService.getByType(this.getJackpotType(), jackpotRewardPoolType);
+            AssertUtil.assertNotNull(rewardPoolDo, ErrorCode.ERR_PARAM);
+            Long rewardAmount = guaranteed; // 中奖金额默认使用保底
+            if (rewardPoolDo.getAmount() != null && rewardPoolDo.getAmount() > guaranteed) {
+                rewardAmount = rewardPoolDo.getAmount();
+            }
+            // 添加使用记录并更新奖池金额
+            JackpotUserRewardRecordDo buildRecord = JackpotUserRewardRecordDo.build(drawAndAwardDo,betGameId,rewardAmount,rewardPoolDo.getId(),jackpotRewardPoolType);
+            Long recordId =  this.jackpotManager().winReward(buildRecord);
+           buildRecord.setId(recordId);
+           // 调用单钱包 并更新状态
+           this.singlePayAmount(JackpotAwardDo.build(drawAndAwardDo,buildRecord));
+            return rewardAmount;
+        },"error");
+    }
+
+    /**
+     * 调用单钱包派奖
+     * @param jackpotAwardDo
+     */
+    public void singlePayAmount(JackpotAwardDo jackpotAwardDo){
+        // 获取当前奖池类型所有金额
+        List<JackpotRewardPoolDo> rewardPoolDos = jackpotRewardPoolService.listAll(this.getJackpotType());
+        Map<JackpotRewardPoolTypeEnum, JackpotRewardPoolDo> rewardPoolMap = rewardPoolDos.stream()
+                .collect(Collectors.toMap(
+                        JackpotRewardPoolDo::getType,
+                        pool -> pool,
+                        (existing, replacement) -> existing // 处理 key 冲突
+                ));
+        singleWalletService.jackpot(jackpotAwardDo,rewardPoolMap);
+        // 成功后更新状态
+        JackpotUserRewardRecordDo build = JackpotUserRewardRecordDo.builder().id(jackpotAwardDo.getJackpotUserRewardRecordDo().getId())
+                .rewardGrantStatus(JackpotRewardGrantStatusEnum.SUCCESS).build();
+        jackpotUserRewardRecordService.update(JackpotTypeEnum.LAM_ANG,build);
+    }
 
     private Map<JackpotRewardPoolTypeEnum, Long> buildCommissionResultMap(TreeMap<String, Long> betAmountCommissionConfig) {
         Map<JackpotRewardPoolTypeEnum, Long> commissionResultMap = new HashMap<>();
