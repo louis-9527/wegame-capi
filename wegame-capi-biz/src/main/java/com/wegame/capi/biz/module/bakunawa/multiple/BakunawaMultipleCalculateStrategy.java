@@ -66,6 +66,7 @@ public class BakunawaMultipleCalculateStrategy extends AbstractMultipleCalculate
         // 获取基础倍率
         String multiple = GameUtil.randomKey(multipleProbabilisticMap, randomService.randomInt(1, Constants.CONST_1000000));
         if (!MultiplePieTypeEnum.BAKUNAWA.getCode().equals(multiple)) {
+            log.info("基础倍率：{}", multiple);
             return ImmutablePair.of(MultiplePieTypeEnum.NORMAL, new BigDecimal(multiple));
         } else {
             // 计算吞月倍率盘倍率
