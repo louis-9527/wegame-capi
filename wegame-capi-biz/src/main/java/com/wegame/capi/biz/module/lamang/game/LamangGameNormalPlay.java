@@ -91,8 +91,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         if (CollectionUtils.isNotEmpty(gameRecordResult)) {
             gameRecordResult.get(gameRecordResult.size() - 1).setLastGameFlag(true);
         }
-        // 清理占位符
-        postProcessPlaceholderSymbol(gameRecordResult);
         return gameRecordResult;
     }
 
@@ -273,6 +271,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             int freeWheelCount = countAndReleaseScatterFreeWheel(preGameRecord.getWheel().getSymbolArr());
             addFreeWheelTimes(freeWheelList, freeWheelCount, preGameRecord.getId());
         }
+        // 清理前一轮的占位符
+        postProcessPlaceholderSymbol(preGameRecord.getWheel().getSymbolArr());
         if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
             WheelDo<LamangSymbolDo> wheel = generateFromPreWheel(
                     preGameRecord,
@@ -453,10 +453,10 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     private void clearIndexRewardSymbol(LamangSymbolDo[][] symbolArr, RewardSymbolDo<LamangSymbolDo> rewardSymbol) {
         if (rewardSymbol.getSymbol().isScatterSymbol()) {
             // scatter 元素， 不做消除
-        } else if (rewardSymbol.getSymbol().isWildSymbol()) {
-            // wild 元素,直接移除
+        } else if (rewardSymbol.getSymbol().isWildSymbol() || rewardSymbol.getSymbol().isPlaceholderSymbol()) {
+            // wild 和 占位符 元素,直接移除
             removeSymbol(symbolArr, rewardSymbol);
-        } else {
+        }else {
             // 普通元素消除
             IndexDo indexDo = rewardSymbol.getIndex();
             LamangSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
