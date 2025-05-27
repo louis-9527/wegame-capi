@@ -33,6 +33,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.LockSupport;
+import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder.*;
 import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode;
@@ -93,7 +94,13 @@ public class SingleWalletService {
                 JackpotTypeEnum jackpotType = JackpotTypeEnum.valueOfGameType(gameType);
                 // 当前游戏不支持jackpot走原逻辑
                 if (Objects.nonNull(jackpotType)) {
-                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, jackpotRewardPoolService.listAll(jackpotType)));
+                    Map<JackpotRewardPoolTypeEnum, JackpotRewardPoolDo> rewardPoolMap = jackpotRewardPoolService.listAll(jackpotType).stream()
+                            .collect(Collectors.toMap(
+                                    JackpotRewardPoolDo::getType,
+                                    pool -> pool,
+                                    (existing, replacement) -> existing // 处理 key 冲突
+                            ));
+                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, rewardPoolMap));
                 } else {
                     commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
                 }
