@@ -14,7 +14,7 @@ public class JackpotAwardDo {
     private JackpotUserRewardRecordDo jackpotUserRewardRecordDo;
 
     public static JackpotAwardDo build(JackpotDrawAndAwardDo drawAndAwardDo,  JackpotUserRewardRecordDo buildRecord){
-        JackpotAwardDo.builder()
+       return JackpotAwardDo.builder()
                 .pId(drawAndAwardDo.getPId())
                 .channelId(drawAndAwardDo.getChannelId())
                 .playerId(drawAndAwardDo.getPlayerId())

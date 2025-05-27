@@ -200,21 +200,22 @@ public class UserService {
         try {
             UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
             AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
-            Long id = userManualMapper.selectIdByPlayerId(userPo.getPlayerId());
-            if (Objects.isNull(id)) {
-                // 新增
-                userMapper.insert(userPo);
-                AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
-                id = userPo.getId();
-            }
+            // Long id = userManualMapper.selectIdByPlayerId(userPo.getPlayerId());
+            // if (Objects.isNull(id)) {
+            //     // 新增
+            //     userMapper.insert(userPo);
+            //     AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
+            //     id = userPo.getId();
+            // }
+            userManualMapper.insertOrUpdateUser(userPo);
             userLoginInfoService.asyncAddOrUpdate(UserLoginInfoDo.builder()
                     .channelId(Long.parseLong(channelId))
                     .gameId(gameId)
-                    .userId(id)
+                    .userId(userPo.getId())
                     .playerId(userPo.getPlayerId())
                     .loginTime(new Date())
                     .build());
-            return id;
+            return userPo.getId();
         } catch (Exception e) {
             log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");

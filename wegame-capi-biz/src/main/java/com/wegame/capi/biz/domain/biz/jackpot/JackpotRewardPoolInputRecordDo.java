@@ -6,9 +6,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * jackpot_reward_pool_input_record：jackpot奖池流入记录
@@ -63,8 +60,9 @@ public class JackpotRewardPoolInputRecordDo implements Serializable {
     private Long updateTime;
 
     ///////////////  above auto generated ///////////////
-
-
-
+    /**
+     * 在指定时间过期(mongodb ttl触发删除时间)
+     */
+    private Date expireAtTime;
 }
 

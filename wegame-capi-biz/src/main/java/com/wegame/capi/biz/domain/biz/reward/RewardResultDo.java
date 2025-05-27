@@ -48,10 +48,6 @@ public class RewardResultDo<T extends SymbolDo> implements Serializable {
      */
     private BigDecimal totalMultiple;
     /**
-     * 当前中奖后倍率盘倍率
-     */
-    private BigDecimal multipleWheelMultiple;
-    /**
      * 是否中了免费轮
      */
     private boolean hasRewardFreeWheel;
