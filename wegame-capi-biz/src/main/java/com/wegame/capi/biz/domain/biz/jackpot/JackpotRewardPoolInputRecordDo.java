@@ -9,6 +9,7 @@ import java.util.Date;
 
 /**
  * jackpot_reward_pool_input_record：jackpot奖池流入记录
+ *
  * @author generate
  */
 @Data
@@ -60,9 +61,5 @@ public class JackpotRewardPoolInputRecordDo implements Serializable {
     private Long updateTime;
 
     ///////////////  above auto generated ///////////////
-    /**
-     * 在指定时间过期(mongodb ttl触发删除时间)
-     */
-    private Date expireAtTime;
 }
 

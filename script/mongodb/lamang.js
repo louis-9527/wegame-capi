@@ -11,6 +11,11 @@ db.lamang_jackpot_reward_pool.insertMany([
     { _id: 4,type:4, amount: 100000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
 ]);
 
+// 奖池流水ttl，索引:在expireAtTime时间的时候删除
+db.getCollection("lamang_jackpot_reward_pool_input_record").createIndex(
+    { "expireAtTime": 1 },
+    { expireAfterSeconds: 0 }
+)
 
 
 
