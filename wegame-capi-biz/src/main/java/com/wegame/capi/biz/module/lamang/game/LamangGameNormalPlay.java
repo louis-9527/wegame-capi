@@ -83,12 +83,16 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
 
+        //生成免费轮
         if (CollectionUtils.isNotEmpty(freeWheelList)) {
             generateFreeBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
         }
+        // 设置结束
         if (CollectionUtils.isNotEmpty(gameRecordResult)) {
             gameRecordResult.get(gameRecordResult.size() - 1).setLastGameFlag(true);
         }
+        // 清理占位符
+        postProcessPlaceholderSymbol(gameRecordResult);
         return gameRecordResult;
     }
 

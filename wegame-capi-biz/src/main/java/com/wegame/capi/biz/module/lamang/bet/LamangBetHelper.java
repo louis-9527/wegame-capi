@@ -11,6 +11,8 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeDo;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeReqDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.jackpot.AbsJackpotHandler;
@@ -20,8 +22,10 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +35,7 @@ import java.util.stream.Collectors;
 import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 
+@Slf4j
 @Component
 public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, LamangGameRecordDo> {
 
@@ -69,6 +74,8 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                     .filter(item -> Objects.nonNull(item.getRewardResult()))
                     .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                     .sum();
+            // 计算中奖
+            JackpotWinPrizeDo jackpotWinPrizeDo = handleDrawJackpot(betRecord, result);
             return BetResultDo.<LamangBetRecordDetailDo>builder()
                     .betRecordId(betRecord.getId())
                     .gameId(betRecord.getGameId())
@@ -80,6 +87,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                     .resultDetail(LamangBetRecordDetailDo.builder()
                             .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
                             .gameRecordList(firstBatchList)
+                            .jackpotRewardGameRecordId(Objects.nonNull(jackpotWinPrizeDo) ? jackpotWinPrizeDo.getBetGameId() : null)
                             .build())
                     .build();
         } else if (Objects.equals(result.getBetStatus(), BetStatusEnum.FAIL)) {
@@ -92,6 +100,34 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
         } else {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }
+    }
+
+    public JackpotWinPrizeDo handleDrawJackpot(BetRecordDo<LamangGameRecordDo> betRecord, SingleWalletBetResultDo singleWalletBetResultDo) {
+        try {
+            AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
+            AssertUtil.assertNotNull(handler, ErrorCode.ERR_INTER);
+            List<JackpotWinPrizeReqDo> reqDos = betRecord.getGameRecordList()
+                    .stream()
+                    .map(this::buildFromGameRecord)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(reqDos)) {
+                return handler.calculateWinPrize(betRecord.getId(), singleWalletBetResultDo.getBetId(), betRecord.getBetAmount(), reqDos);
+            }
+        }catch (Exception e) {
+            log.error("draw jackpot error,betRecordId:{}", betRecord.getId(), e);
+        }
+        return null;
+    }
+
+    private JackpotWinPrizeReqDo buildFromGameRecord(LamangGameRecordDo gameRecordDo) {
+        if (Objects.isNull(gameRecordDo.getJackpotDrawTimes()) || gameRecordDo.getJackpotDrawTimes() <= 0) {
+            return null;
+        }
+        JackpotWinPrizeReqDo jackpotWinPrizeReqDo = new JackpotWinPrizeReqDo();
+        jackpotWinPrizeReqDo.setBetGameId(gameRecordDo.getBetRecordId());
+        jackpotWinPrizeReqDo.setCount(gameRecordDo.getJackpotDrawTimes());
+        return jackpotWinPrizeReqDo;
     }
 
     private BetRecordDo.Jackpot buildBetCommission(BetDo betDo) {

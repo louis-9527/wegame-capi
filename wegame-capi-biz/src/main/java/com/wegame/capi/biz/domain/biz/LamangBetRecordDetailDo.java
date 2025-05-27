@@ -34,6 +34,11 @@ public class LamangBetRecordDetailDo implements ToVoConverter<LamangBetResultDet
      */
     private List<LamangGameRecordDo> gameRecordList;
 
+    /**
+     * 中奖的游戏记录id
+     */
+    private Long jackpotRewardGameRecordId;
+
     @Override
     public LamangBetResultDetailVo toResultVo() {
         return LamangBetResultDetailVo.builder()
@@ -43,6 +48,7 @@ public class LamangBetRecordDetailDo implements ToVoConverter<LamangBetResultDet
                         .stream()
                         .map(ToVoConverter::toResultVo)
                         .collect(Collectors.toList()))
+                .jackpotRewardGameRecordId(jackpotRewardGameRecordId)
                 .build();
     }
 
