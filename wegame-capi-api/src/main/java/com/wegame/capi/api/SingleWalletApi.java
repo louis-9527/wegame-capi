@@ -7,10 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.base.SingleWalletBaseApi;
 import com.wegame.capi.api.domain.req.singlewallet.*;
 import com.wegame.capi.api.domain.res.CommonRes;
-import com.wegame.capi.api.domain.res.singlewallet.AuthLoginTokenRes;
-import com.wegame.capi.api.domain.res.singlewallet.BetStatusRes;
-import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
-import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
+import com.wegame.capi.api.domain.res.singlewallet.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -49,6 +46,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     private static final String BET_WITH_PAYOUT_URL_FORMAT = "%s/betWithPayout";
     private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
     private static final String BET_STAR_SPIN_URL_FORMAT = "%s/starSpin";
+    private static final String JACKPOT_FORMAT = "%s/jackpot";
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
@@ -244,6 +242,35 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             throw e;
         } catch (Exception e) {
             log.error("betStatus Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
+        }
+    }
+
+    /**
+     * jackpot 调用
+     * @param req
+     * @return
+     */
+    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    public CommonRes<JackpotRes> jackpot(JackpotReq req) {
+        try {
+            // 参数签名
+            assembleSingleSignature(req);
+            MultiValueMap<String, String> headers = buildHeaders();
+            RequestEntity<JackpotReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
+                    URI.create(String.format(JACKPOT_FORMAT, singleDomain)));
+            ResponseEntity<CommonRes<JackpotRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
+                    new ParameterizedTypeReference<CommonRes<JackpotRes>>() {
+                    });
+            AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
+            AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_SINGLE_WALLET_PLATFORM);
+            CommonRes<JackpotRes> commonRes = responseEntity.getBody();
+            return commonRes;
+        } catch (BusinessException e) {
+            log.error("jackpot BusinessException err, req: {}, errMsg: {}", req, e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("jackpot Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }

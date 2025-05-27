@@ -11,6 +11,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotDrawAndAwardDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeReqDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
@@ -106,7 +107,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
         try {
             AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
             AssertUtil.assertNotNull(handler, ErrorCode.ERR_INTER);
-            List<JackpotWinPrizeReqDo> reqDos = betRecord.getGameRecordList()
+            List<JackpotDrawAndAwardDo> reqDos = betRecord.getGameRecordList()
                     .stream()
                     .map(this::buildFromGameRecord)
                     .filter(Objects::nonNull)

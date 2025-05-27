@@ -5,6 +5,7 @@ import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolInputRecordRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolInputRecordVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
@@ -33,9 +34,9 @@ public class JackpotRewardPoolInputRecordConverter {
         jackpotRewardPoolInputRecordDo.setMinorAmount(StringUtils.isNotEmpty(vo.getMinorAmount()) ? Long.valueOf(vo.getMinorAmount()) : null);
         jackpotRewardPoolInputRecordDo.setMiniAmount(StringUtils.isNotEmpty(vo.getMiniAmount()) ? Long.valueOf(vo.getMiniAmount()) : null);
         jackpotRewardPoolInputRecordDo.setCreator(vo.getCreator());
-        jackpotRewardPoolInputRecordDo.setCreateTime(Objects.nonNull(vo.getCreateTime()) ? new Date(vo.getCreateTime()) : null);
+        jackpotRewardPoolInputRecordDo.setCreateTime(Objects.nonNull(vo.getCreateTime()) ? vo.getCreateTime() : null);
         jackpotRewardPoolInputRecordDo.setUpdater(vo.getUpdater());
-        jackpotRewardPoolInputRecordDo.setUpdateTime(Objects.nonNull(vo.getUpdateTime()) ? new Date(vo.getUpdateTime()) : null);
+        jackpotRewardPoolInputRecordDo.setUpdateTime(Objects.nonNull(vo.getUpdateTime()) ? vo.getUpdateTime() : null);
         return jackpotRewardPoolInputRecordDo;
     }
 
@@ -71,13 +72,14 @@ public class JackpotRewardPoolInputRecordConverter {
         po.setMinorAmount(jackpotRewardPoolInputRecordDo.getMinorAmount());
         po.setMiniAmount(jackpotRewardPoolInputRecordDo.getMiniAmount());
         if (OptEnum.ADD.equals(optEnum)) {
+            long currentMilli = DateUtil.getCurrentMilli();
             po.setCreator(operator.getName());
-            po.setCreateTime(new Date());
+            po.setCreateTime(currentMilli);
             po.setUpdater(operator.getName());
-            po.setUpdateTime(new Date());
+            po.setUpdateTime(currentMilli);
         } else {
             po.setUpdater(operator.getName());
-            po.setUpdateTime(new Date());
+            po.setUpdateTime(DateUtil.getCurrentMilli());
             po.setId(jackpotRewardPoolInputRecordDo.getId());
         }
         return po;
@@ -95,9 +97,9 @@ public class JackpotRewardPoolInputRecordConverter {
         vo.setMinorAmount(Objects.nonNull(jackpotRewardPoolInputRecordDo.getMinorAmount()) ? String.valueOf(jackpotRewardPoolInputRecordDo.getMinorAmount()) : null);
         vo.setMiniAmount(Objects.nonNull(jackpotRewardPoolInputRecordDo.getMiniAmount()) ? String.valueOf(jackpotRewardPoolInputRecordDo.getMiniAmount()) : null);
         vo.setCreator(jackpotRewardPoolInputRecordDo.getCreator());
-        vo.setCreateTime(Objects.nonNull(jackpotRewardPoolInputRecordDo.getCreateTime()) ? jackpotRewardPoolInputRecordDo.getCreateTime().getTime() : null);
+        vo.setCreateTime(Objects.nonNull(jackpotRewardPoolInputRecordDo.getCreateTime()) ? jackpotRewardPoolInputRecordDo.getCreateTime() : null);
         vo.setUpdater(jackpotRewardPoolInputRecordDo.getUpdater());
-        vo.setUpdateTime(Objects.nonNull(jackpotRewardPoolInputRecordDo.getUpdateTime()) ? jackpotRewardPoolInputRecordDo.getUpdateTime().getTime() : null);
+        vo.setUpdateTime(Objects.nonNull(jackpotRewardPoolInputRecordDo.getUpdateTime()) ? jackpotRewardPoolInputRecordDo.getUpdateTime() : null);
         return vo;
     }
 
@@ -146,9 +148,9 @@ public class JackpotRewardPoolInputRecordConverter {
         query.setMinorAmount(StringUtils.isNotEmpty(request.getMinorAmount()) ? Long.valueOf(request.getMinorAmount()) : null);
         query.setMiniAmount(StringUtils.isNotEmpty(request.getMiniAmount()) ? Long.valueOf(request.getMiniAmount()) : null);
         query.setCreator(request.getCreator());
-        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? new Date(request.getCreateTime()) : null);
+        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? request.getCreateTime() : null);
         query.setUpdater(request.getUpdater());
-        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? new Date(request.getUpdateTime()) : null);
+        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? request.getUpdateTime() : null);
         query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) ? new Date(request.getStartCreateTime()) : null);
         query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);
         query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? new Date(request.getStartUpdateTime()) : null);
