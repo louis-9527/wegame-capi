@@ -86,7 +86,7 @@ public abstract class AbstractJackpotRewardGrantScheduler
                     .channelId(betRecordDo.getChannelId())
                     .playerId(betRecordDo.getPlayerId())
                     .playerName(betRecordDo.getPlayerName())
-                    .userId(String.valueOf(betRecordDo.getUserId()))
+                    .userId(betRecordDo.getUserId())
                     .jackpotUserRewardRecordDo(rewardRecordDo)
                     .build();
             jackpotHandler.singleAward(jackpotAwardDo);

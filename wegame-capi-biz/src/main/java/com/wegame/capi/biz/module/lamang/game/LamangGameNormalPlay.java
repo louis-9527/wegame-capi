@@ -112,7 +112,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         int scatterNumberInWheel = countIndexSymbol(symbolArr, SymbolEnum.Scatter);
         // 如果必须中免费轮，需要维持scatter数量
         if (mustRewardFreeWheel) {
-            holdScatterSize(symbolArr, REWARD_FREE_WHEEL_SCATTER_NUMBER, scatterNumberInWheel);
+            holdScatterCount(symbolArr, REWARD_FREE_WHEEL_SCATTER_NUMBER, scatterNumberInWheel);
             scatterNumberInWheel = REWARD_FREE_WHEEL_SCATTER_NUMBER;
         }
         int randomNumberIndex = 0;
@@ -158,7 +158,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
      * @param needScatterNumber
      * @param scatterNumberInWheel
      */
-    private void holdScatterSize(LamangSymbolDo[][] symbolArr, int needScatterNumber, int scatterNumberInWheel) {
+    private void holdScatterCount(LamangSymbolDo[][] symbolArr, int needScatterNumber, int scatterNumberInWheel) {
         int needAddScatterNumber = needScatterNumber - scatterNumberInWheel;
         // 如果需要加入scatter
         if (needAddScatterNumber > 0) {
@@ -279,7 +279,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                     config,
                     mustRewardFreeWheel,
                     freeWheelFlag);
-            //todo 换成lamang中奖线计算
+            //后续生成wheel根据前一轮的倍率
             RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
             long gameRecordId = generateGameRecordId();
             //todo 计算抽奖次数
@@ -349,8 +349,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         LamangConfig.PlayProbabilisticConfig firstBatchConfig = lamangConfig.getProbabilisticConfig().getCommonPlaySymbolProbabilisticConfig();
 
         WheelDo<LamangSymbolDo> wheel = generateFirstWheel(firstBatchConfig, mustRewardFreeWheel,false);
-        //todo
-        RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
+        //首轮不穿入倍率
+        RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
         long gameRecordId = generateGameRecordId();
@@ -374,7 +374,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             LamangConfig.PlayProbabilisticConfig freeWheelConfig = lamangConfig.getProbabilisticConfig().getFreePlaySymbolProbabilisticConfig();
             WheelDo<LamangSymbolDo> wheel = generateFirstWheel(freeWheelConfig, false, true);
             wheel.setFreeFlag(true);
-            // 判奖-根据游戏滚轮和中奖线算法判断
+            // 首轮不传入倍率
             RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null));
             AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
             // 组装-游戏记录

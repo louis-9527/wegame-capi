@@ -40,7 +40,7 @@ public class LamangSymbolDo extends SymbolDo {
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
         return StringUtils.equals(getId(), LAMANG_SYMBOL_PLACEHOLDER.getId())
-                && !Objects.equals(this.getSymbolType(), LAMANG_SYMBOL_PLACEHOLDER.getSymbolType());
+                && Objects.equals(this.getSymbolType(), LAMANG_SYMBOL_PLACEHOLDER.getSymbolType());
     }
 
     public LamangSymbolDo copy() {

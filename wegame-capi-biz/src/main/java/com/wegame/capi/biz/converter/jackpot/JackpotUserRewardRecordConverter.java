@@ -85,10 +85,10 @@ public class JackpotUserRewardRecordConverter {
         po.setGameRecordId(jackpotUserRewardRecordDo.getGameRecordId());
         po.setBetId(jackpotUserRewardRecordDo.getBetId());
         po.setRewardPoolId(jackpotUserRewardRecordDo.getRewardPoolId());
-        po.setRewardPoolType(jackpotUserRewardRecordDo.getRewardPoolType().getCode());
+        po.setRewardPoolType(Objects.nonNull(jackpotUserRewardRecordDo.getRewardPoolType()) ? jackpotUserRewardRecordDo.getRewardPoolType().getCode() : null);
         po.setRewardAmount(jackpotUserRewardRecordDo.getRewardAmount());
         po.setRewardGrantSerialNo(jackpotUserRewardRecordDo.getRewardGrantSerialNo());
-        po.setRewardGrantStatus(jackpotUserRewardRecordDo.getRewardGrantStatus().getCode());
+        po.setRewardGrantStatus(Objects.nonNull(jackpotUserRewardRecordDo.getRewardGrantStatus()) ? jackpotUserRewardRecordDo.getRewardGrantStatus().getCode() : null);
         po.setRewardGrantTime(jackpotUserRewardRecordDo.getRewardGrantTime());
         if (OptEnum.ADD.equals(optEnum)) {
             po.setCreator(operator.getName());
