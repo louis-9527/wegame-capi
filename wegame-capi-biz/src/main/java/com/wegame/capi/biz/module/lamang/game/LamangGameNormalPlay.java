@@ -236,7 +236,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         //todo 使用占位符
 
         return WheelDo.<LamangSymbolDo>builder()
-                .index(WHEEL_DEFAULT_INDEX)
+                .index(preWheel.getIndex() + 1)
                 .freeFlag(freeWheel)
                 .symbolArr(symbolArr)
                 .build();
@@ -375,8 +375,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             WheelDo<LamangSymbolDo> wheel = generateFirstWheel(freeWheelConfig, false, true);
             wheel.setFreeFlag(true);
             // 判奖-根据游戏滚轮和中奖线算法判断
-            BigDecimal multiply = getMultiple();
-            RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, multiply));
+            RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null));
             AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
             // 组装-游戏记录
             long gameRecordId = generateGameRecordId();
@@ -392,14 +391,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             parentGameRecord.getGameRecordIds().add(gameRecordId);
             loopPlayOnPreGameRecord(gamePlay, result, totalRewardAmount, gameRecord, freeWheelList, freeWheelConfig, true, false);
         }
-    }
-
-    /**
-     * 获取倍率
-     * @return
-     */
-    private BigDecimal getMultiple() {
-        return BigDecimal.ONE;
     }
 
     /**
