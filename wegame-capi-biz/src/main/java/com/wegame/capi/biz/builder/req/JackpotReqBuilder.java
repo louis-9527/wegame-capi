@@ -36,9 +36,7 @@ public class JackpotReqBuilder {
         JackpotReq.JackpotPool.MiniPool miniBuilder = JackpotReq.JackpotPool.MiniPool.builder()
                 .amount(AmountUtil.toBigDecimal(miniPool.getAmount()))
                 .initAmount(AmountUtil.toBigDecimal(miniPool.getInitAmount())).build();
-        JackpotReq.JackpotPool.BetBonusPool betBonusBuilder = JackpotReq.JackpotPool.BetBonusPool.builder()
-                .amount(BigDecimal.ZERO)
-                .initAmount(BigDecimal.ZERO).build();
+
 
         BigDecimal jackpotAmount = grandBuilder.getAmount().add(majorBuilder.getAmount()).add(minorBuilder.getAmount()).add(miniBuilder.getAmount());
         JackpotReq.JackpotPool jackpotPool = JackpotReq.JackpotPool.builder()
@@ -46,8 +44,7 @@ public class JackpotReqBuilder {
                 .grandPool(grandBuilder)
                 .majorPool(majorBuilder)
                 .minorPool(minorBuilder)
-                .miniPool(miniBuilder)
-                .betBonusPool(betBonusBuilder).build();
+                .miniPool(miniBuilder).build();
 
         // 组装 jackpotDetails信息
         JackpotUserRewardRecordDo jackpotUserRewardRecordDo = jackpotAwardDo.getJackpotUserRewardRecordDo();
