@@ -10,8 +10,5 @@ import java.util.List;
 
 @Slf4j
 public abstract class AbstractMultipleCalculateStrategy<T extends SymbolDo> implements MultipleCalculateStrategy<T> {
-    @Override
-    public <R> R calculateMultipleWheelMultiple(RewardHandleDo<T> rewardHandle, List<RewardLineDo<T>> rewardLineList) {
-        return null;
-    }
+
 }

@@ -18,13 +18,6 @@ public interface MultipleCalculateStrategy<T extends SymbolDo> {
      * @return 倍率
      */
     BigDecimal calculateMultiple(RewardHandleDo<T> rewardHandle, List<RewardLineDo<T>> rewardLineList);
-
-    /**
-     * 计算倍率盘倍率
-     * @param rewardHandle
-     * @return 倍率
-     */
-    <R> R calculateMultipleWheelMultiple(RewardHandleDo<T> rewardHandle, List<RewardLineDo<T>> rewardLineList);
 }
 
 

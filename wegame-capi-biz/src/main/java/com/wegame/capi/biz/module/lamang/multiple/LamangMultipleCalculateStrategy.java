@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.lamang.multiple;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
@@ -22,36 +23,29 @@ public class LamangMultipleCalculateStrategy extends AbstractMultipleCalculateSt
 
     @Override
     public BigDecimal calculateMultiple(RewardHandleDo<LamangSymbolDo> rewardHandle, List<RewardLineDo<LamangSymbolDo>> rewardLineList) {
-        BigDecimal currentMultiple = Objects.isNull(rewardHandle.getCurrentMultiple()) ? BigDecimal.ZERO : rewardHandle.getCurrentMultiple();
-        BigDecimal multipleWheelMultiple = this.calculateMultipleWheelMultiple(rewardHandle, rewardLineList);
-        // 当前累计倍率+本次倍率盘倍率
-        return currentMultiple.add(multipleWheelMultiple);
-    }
+        int currentRoundIndex;
+        if (CollectionUtil.isEmpty(rewardLineList)) {
+            if (rewardHandle.getWheel().getIndex() <= 0) {
+                currentRoundIndex = 0;
+            } else {
+                currentRoundIndex = rewardHandle.getWheel().getIndex() - 1;
+            }
+        } else {
+            currentRoundIndex = rewardHandle.getWheel().getIndex();
+        }
 
-    @Override
-    public <R> R calculateMultipleWheelMultiple(RewardHandleDo<LamangSymbolDo> rewardHandle, List<RewardLineDo<LamangSymbolDo>> rewardLineList) {
-        // 第一回合返回1
-        if (rewardHandle.getWheel().getIndex() == 0) {
-            return (R) BigDecimal.ONE;
-        }
-        // 未中奖返回上一回合的倍率
-        if (CollectionUtils.isEmpty(rewardLineList)) {
-            // 未消除保留原有倍率
-            return (R) rewardHandle.getCurrentRoundMultiple();
-        }
         if (rewardHandle.getWheel().isFreeFlag()) {
             // 免费轮
-            return (R) calculateMultipleWheelMultiple(lamangConfig.getMultiPleConfig().getFreePlayMultiConfigList(), rewardHandle.getCurrentRoundMultiple());
+            return calculateMultipleWheelMultiple(lamangConfig.getMultiPleConfig().getFreePlayMultiConfigList(), currentRoundIndex);
         } else {
             // 普通轮
-            return (R) calculateMultipleWheelMultiple(lamangConfig.getMultiPleConfig().getCommonPlayMultiConfigList(), rewardHandle.getCurrentRoundMultiple());
+            return calculateMultipleWheelMultiple(lamangConfig.getMultiPleConfig().getCommonPlayMultiConfigList(), currentRoundIndex);
         }
     }
 
-    public BigDecimal calculateMultipleWheelMultiple(List<BigDecimal> playMultiConfigList, BigDecimal currentRoundMultiple) {
+    public BigDecimal calculateMultipleWheelMultiple(List<BigDecimal> playMultiConfigList, int currentRoundIndex) {
         int maxIndex = playMultiConfigList.size() - 1;
-        // 如果currentMultiple为null,则currentMultipleIndex会返回-1
-        int currentMultipleIndex = playMultiConfigList.indexOf(currentRoundMultiple);
-        return currentMultipleIndex >= maxIndex ? currentRoundMultiple : playMultiConfigList.get(currentMultipleIndex + 1);
+        // 如果currentRoundIndex为配置最大值,则去最大
+        return currentRoundIndex >= maxIndex ? playMultiConfigList.get(maxIndex) : playMultiConfigList.get(currentRoundIndex);
     }
 }
