@@ -89,6 +89,8 @@ public class JackpotUserRewardRecordDo implements Serializable {
 
     public static JackpotUserRewardRecordDo build(JackpotDrawAndAwardDo drawAndAwardDo,Long betGameId,Long rewardAmount,Long rewardPoolId,JackpotRewardPoolTypeEnum poolTypeEnum){
         return JackpotUserRewardRecordDo.builder()
+                .userId(drawAndAwardDo.getUserId())
+                .playerName(drawAndAwardDo.getPlayerName())
                 .betRecordId(drawAndAwardDo.getBetRecordId())
                 .betId(drawAndAwardDo.getBetId())
                 .gameRecordId(betGameId)

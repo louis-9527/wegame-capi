@@ -10,7 +10,7 @@ public class JackpotAwardDo {
     private String channelId;
     private String playerId;
     private String playerName;
-    private String userId;
+    private Long userId;
     private JackpotUserRewardRecordDo jackpotUserRewardRecordDo;
 
     public static JackpotAwardDo build(JackpotDrawAndAwardDo drawAndAwardDo,  JackpotUserRewardRecordDo buildRecord){

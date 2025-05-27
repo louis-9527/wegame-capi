@@ -12,7 +12,7 @@ public class JackpotDrawAndAwardDo {
     private String channelId;
     private String playerId;
     private String playerName;
-    private String userId;
+    private Long userId;
     private Long betRecordId;
     private String betId;
     private Long betAmount;

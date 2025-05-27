@@ -78,6 +78,7 @@ public class JackpotUserRewardRecordConverter {
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         JackpotUserRewardRecordPo po = new JackpotUserRewardRecordPo();
+        po.setId(jackpotUserRewardRecordDo.getId());
         po.setUserId(jackpotUserRewardRecordDo.getUserId());
         po.setPlayerName(jackpotUserRewardRecordDo.getPlayerName());
         po.setBetRecordId(jackpotUserRewardRecordDo.getBetRecordId());

@@ -2,12 +2,14 @@ package com.wegame.capi.biz.builder.req;
 
 import com.google.common.collect.Lists;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.singlewallet.JackpotReq;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotAwardDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
+import org.slf4j.MDC;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -37,14 +39,16 @@ public class JackpotReqBuilder {
                 .amount(AmountUtil.toBigDecimal(miniPool.getAmount()))
                 .initAmount(AmountUtil.toBigDecimal(miniPool.getInitAmount())).build();
 
-
-        BigDecimal jackpotAmount = grandBuilder.getAmount().add(majorBuilder.getAmount()).add(minorBuilder.getAmount()).add(miniBuilder.getAmount());
+        JackpotReq.JackpotPool.BetBonusPool betBonusBuilder = JackpotReq.JackpotPool.BetBonusPool.builder()
+                .amount(BigDecimal.ZERO)
+                .initAmount(BigDecimal.ZERO).build();
         JackpotReq.JackpotPool jackpotPool = JackpotReq.JackpotPool.builder()
-                .totalJackpotAmount(jackpotAmount)
+                .totalJackpotAmount(grandBuilder.getAmount().add(majorBuilder.getAmount()).add(minorBuilder.getAmount()).add(miniBuilder.getAmount()))
                 .grandPool(grandBuilder)
                 .majorPool(majorBuilder)
                 .minorPool(minorBuilder)
-                .miniPool(miniBuilder).build();
+                .miniPool(miniBuilder)
+                .betBonusPool(betBonusBuilder).build();
 
         // 组装 jackpotDetails信息
         JackpotUserRewardRecordDo jackpotUserRewardRecordDo = jackpotAwardDo.getJackpotUserRewardRecordDo();
@@ -62,8 +66,10 @@ public class JackpotReqBuilder {
                 .channelId(jackpotAwardDo.getChannelId())
                 .playerName(jackpotAwardDo.getPlayerName())
                 .refId(jackpotAwardDo.getJackpotUserRewardRecordDo().getRewardGrantSerialNo())
+                .betId(jackpotAwardDo.getJackpotUserRewardRecordDo().getBetId())
+                .roundNo(jackpotAwardDo.getJackpotUserRewardRecordDo().getRewardGrantSerialNo())
                 .createTime(DateUtil.toUTC(new Date(jackpotAwardDo.getJackpotUserRewardRecordDo().getCreateTime())))
-                .jackpotAmount(jackpotAmount)
+                .jackpotAmount(AmountUtil.toBigDecimal(jackpotUserRewardRecordDo.getRewardAmount()))
                 .jackpotDetails(jackpotDetails)
                 .build();
     }

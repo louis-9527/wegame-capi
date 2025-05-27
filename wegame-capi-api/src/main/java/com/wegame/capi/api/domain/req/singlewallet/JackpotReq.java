@@ -15,7 +15,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class JackpotReq extends BaseReq {
     private static final BigDecimal zero = BigDecimal.ZERO;
-
+    private String betId;
+    private String roundNo;
     private BigDecimal jackpotAmount;
     private JackpotDetails jackpotDetails;
 

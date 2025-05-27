@@ -7,18 +7,23 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class JackpotHandlerContext {
-    @Autowired
-    private Map<String, AbsJackpotHandler> jackpotManagerMap;
 
-    public static final Map<JackpotTypeEnum, String> JACKPOT_MANAGER_NAME_MAP = new ImmutableMap.Builder<JackpotTypeEnum, String>()
-            .put(JackpotTypeEnum.LAM_ANG, "lamangJackpotHandler")
-            .build();
+private final Map<JackpotTypeEnum, AbsJackpotHandler> jackpotManagerMap = new HashMap<>();
+    // 通过构造器注入所有策略实现
+    @Autowired
+    public JackpotHandlerContext(List<AbsJackpotHandler> jackpotManagerList) {
+        for (AbsJackpotHandler strategy : jackpotManagerList) {
+            jackpotManagerMap.put(strategy.getJackpotType(), strategy);
+        }
+    }
     public AbsJackpotHandler getHandler(JackpotTypeEnum jackpotTypeEnum){
         AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM);
-        return jackpotManagerMap.get(JACKPOT_MANAGER_NAME_MAP.get(jackpotTypeEnum));
+        return jackpotManagerMap.get(jackpotTypeEnum);
     }
  }

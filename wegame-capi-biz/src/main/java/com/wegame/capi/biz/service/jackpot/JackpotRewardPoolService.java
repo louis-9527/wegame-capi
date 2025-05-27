@@ -19,6 +19,7 @@ import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -63,13 +64,13 @@ public class JackpotRewardPoolService extends AbstractService {
     }
 
     public boolean update(JackpotRewardPoolDo jackpotRewardPoolDo, JackpotTypeEnum jackpotTypeEnum) {
-        AssertUtil.assertNotNull(jackpotRewardPoolDo, ErrorCode.ERR_PARAM, "jackpotRewardPoolDo is null");
+         AssertUtil.assertNotNull(jackpotRewardPoolDo, ErrorCode.ERR_PARAM, "jackpotRewardPoolDo is null");
         AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM, "gameType is null");
         JackpotRewardPoolPo jackpotRewardPoolPo = JackpotRewardPoolConverter.doToPo(jackpotRewardPoolDo,OptEnum.UPDATE);
         AssertUtil.assertNotNull(jackpotRewardPoolPo, ErrorCode.ERR_PARAM, "jackpotRewardPoolPo is null");
 
         Criteria criteria = new Criteria();
-        criteria.and("type").is(jackpotRewardPoolDo.getType());
+        criteria.and("type").is(jackpotRewardPoolPo.getType());
         Query query = new Query(criteria);
         // 扣减金额
         UpdateResult result = getMongoTemplate(jackpotTypeEnum.getGameType()).updateFirst(query,
@@ -102,6 +103,10 @@ public class JackpotRewardPoolService extends AbstractService {
             poolDo.setInitAmount(guaranteedAmount.get(poolDo.getType().getName()));
         });
         return rewardPoolDos;
+    }
+    @CacheEvict(value = CacheConstants.JACKPOT_REWARD_POOL_CONFIG, key = "#jackpotTypeEnum.gameType.id")
+    public void cacheClearListAll(JackpotTypeEnum jackpotTypeEnum) {
+        // ...
     }
 
     public JackpotRewardPoolDo getByType(JackpotTypeEnum jackpotTypeEnum, JackpotRewardPoolTypeEnum rewardPoolTypeEnum){
