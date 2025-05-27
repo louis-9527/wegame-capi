@@ -13,7 +13,6 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotDrawAndAwardDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeDo;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeReqDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.jackpot.AbsJackpotHandler;
@@ -107,28 +106,37 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
         try {
             AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
             AssertUtil.assertNotNull(handler, ErrorCode.ERR_INTER);
-            List<JackpotDrawAndAwardDo> reqDos = betRecord.getGameRecordList()
-                    .stream()
-                    .map(this::buildFromGameRecord)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            if (!CollectionUtils.isEmpty(reqDos)) {
-                return handler.calculateWinPrize(betRecord.getId(), singleWalletBetResultDo.getBetId(), betRecord.getBetAmount(), reqDos);
-            }
+
+            return handler.calculateWinPrize(buildDrawReq(betRecord));
+
         }catch (Exception e) {
             log.error("draw jackpot error,betRecordId:{}", betRecord.getId(), e);
         }
         return null;
     }
 
-    private JackpotWinPrizeReqDo buildFromGameRecord(LamangGameRecordDo gameRecordDo) {
-        if (Objects.isNull(gameRecordDo.getJackpotDrawTimes()) || gameRecordDo.getJackpotDrawTimes() <= 0) {
-            return null;
-        }
-        JackpotWinPrizeReqDo jackpotWinPrizeReqDo = new JackpotWinPrizeReqDo();
-        jackpotWinPrizeReqDo.setBetGameId(gameRecordDo.getBetRecordId());
-        jackpotWinPrizeReqDo.setCount(gameRecordDo.getJackpotDrawTimes());
-        return jackpotWinPrizeReqDo;
+    private JackpotDrawAndAwardDo buildDrawReq(BetRecordDo<LamangGameRecordDo> betRecord) {
+        return JackpotDrawAndAwardDo.builder()
+                .betId(betRecord.getBetId())
+                .betAmount(betRecord.getBetAmount())
+                .channelId(betRecord.getChannelId())
+                .playerName(betRecord.getPlayerName())
+                .betRecordId(betRecord.getId())
+                .pId(betRecord.getPId())
+                .playerId(betRecord.getPlayerId())
+                .userId(String.valueOf(betRecord.getUserId()))
+                .gameCount(buildGameDrawTimes(betRecord.getGameRecordList()))
+                .build();
+    }
+
+    private Map<Long, Integer> buildGameDrawTimes(List<LamangGameRecordDo> dos) {
+        return dos.stream()
+                .filter(gameRecord -> Objects.nonNull(gameRecord.getJackpotDrawTimes()) && gameRecord.getJackpotDrawTimes() > 0)
+                .collect(Collectors.toMap(
+                        LamangGameRecordDo::getId,
+                        LamangGameRecordDo::getJackpotDrawTimes,
+                        Integer::sum // 处理 key 冲突
+        ));
     }
 
     private BetRecordDo.Jackpot buildBetCommission(BetDo betDo) {

@@ -100,7 +100,7 @@ public class SingleWalletService {
                                     pool -> pool,
                                     (existing, replacement) -> existing // 处理 key 冲突
                             ));
-                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, rewardPoolMap));
+                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, jackpotRewardPoolService.listAll(jackpotType)));
                 } else {
                     commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
                 }
