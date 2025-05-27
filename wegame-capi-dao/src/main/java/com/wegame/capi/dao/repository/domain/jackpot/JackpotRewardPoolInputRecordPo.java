@@ -63,5 +63,10 @@ public class JackpotRewardPoolInputRecordPo implements Serializable {
     private Long updateTime;
 
    ///////////////  above auto generated ///////////////
+
+    /**
+     * 在指定时间过期(mongodb ttl触发删除时间)
+     */
+    private Date expireAtTime;
 }
 

@@ -58,8 +58,6 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         List<RewardLineDo<LamangSymbolDo>> rewardLineList = this.calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算倍率,累计总倍率
         BigDecimal totalMultiple = lamangMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
-        // 3.1 计算倍率,倍率盘倍率
-        BigDecimal multipleWheelMultiple = lamangMultipleCalculateStrategy.calculateMultipleWheelMultiple(rewardHandle, rewardLineList);
 
         if (CollectionUtil.isEmpty(rewardLineList)) {
             int scatterCount = scatterCount(rewardHandle);
@@ -73,7 +71,6 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                     .hasRewardFreeWheel(CollectionUtils.isEmpty(rewardLineList) && scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                     .rewardLineDetailList(null)
                     .rewardFreeWheelTimes(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0)
-                    .multipleWheelMultiple(multipleWheelMultiple)
                     .build();
         }
         // 4、中奖线处理
@@ -112,7 +109,6 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                 .hasRewardFreeWheel(Boolean.FALSE)
                 .rewardLineDetailList(rewardLineDetailList)
                 .rewardFreeWheelTimes(0)
-                .multipleWheelMultiple(multipleWheelMultiple)
                 .build();
         // 6.返回中奖信息
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
