@@ -1,7 +1,14 @@
 package com.wegame.capi.scheduler.jackpot;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotAwardDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
+import com.wegame.capi.biz.module.base.jackpot.AbsJackpotHandler;
+import com.wegame.capi.biz.module.base.jackpot.JackpotHandlerContext;
+import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
@@ -28,6 +35,10 @@ public abstract class AbstractJackpotRewardGrantScheduler
 
     @Autowired
     JackpotUserRewardRecordService jackpotUserRewardRecordService;
+    @Autowired
+    JackpotHandlerContext jackpotHandlerContext;
+    @Autowired
+    BetRecordService betRecordService;
 
     abstract JackpotTypeEnum getJackpotTypeEnum();
 
@@ -55,11 +66,32 @@ public abstract class AbstractJackpotRewardGrantScheduler
                 if (Objects.isNull(rewardRecordDo)) {
                     log.warn("rewardRecordDo is null, recordId: {}", recordId);
                 } else {
-                    // todo 调用奖池派彩服务@jayni @tutu
-
+                    // 调用奖池派奖
+                    this.jackPotHandler(rewardRecordDo);
                 }
             }
         } while (CollectionUtils.isNotEmpty(recordIdList));
         log.info("{} schedule run end...", taskName());
+    }
+
+    private void jackPotHandler(JackpotUserRewardRecordDo rewardRecordDo) {
+        try {
+            AbsJackpotHandler jackpotHandler = jackpotHandlerContext.getHandler(this.getJackpotTypeEnum());
+            AssertUtil.assertNotNull(jackpotHandler, ErrorCode.ERR_INTER, "jackpotHandler is null");
+            // 需要投注记录信息
+            BetRecordDo betRecordDo = betRecordService.get(rewardRecordDo.getBetRecordId(), this.getJackpotTypeEnum().getGameType());
+            AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_INTER, "betRecordDo is null betRecordId is: " + rewardRecordDo.getBetRecordId());
+            JackpotAwardDo jackpotAwardDo = JackpotAwardDo.builder()
+                    .pId(betRecordDo.getPId())
+                    .channelId(betRecordDo.getChannelId())
+                    .playerId(betRecordDo.getPlayerId())
+                    .playerName(betRecordDo.getPlayerName())
+                    .userId(String.valueOf(betRecordDo.getUserId()))
+                    .jackpotUserRewardRecordDo(rewardRecordDo)
+                    .build();
+            jackpotHandler.singleAward(jackpotAwardDo);
+        } catch (Exception e) {
+            log.error("AbstractJackpotRewardGrantScheduler#jackPotHandler error,jackPotType:{}", this.getJackpotTypeEnum());
+        }
     }
 }

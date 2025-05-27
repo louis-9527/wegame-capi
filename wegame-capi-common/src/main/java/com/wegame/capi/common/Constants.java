@@ -70,16 +70,11 @@ public class Constants {
 
     public static final Double MIN_BET_AMOUNT_M = 1.1;
 
-
     public static final String MONGOTEMPLATE = "MongoTemplate";
     public static final String PRIMARY_MONGOTEMPLATE = "PrimaryMongoTemplate";
 
     /**
-     * 24小时(毫秒)
+     * 奖池流水过期时间（秒）
      */
-    public static final long MILLISECONDS_FOR_HOURS_24 = 24 * 60 * 60 * 1000;
-    /**
-     * 奖池流水过期时间
-     */
-    public static final long JACKPOT_REWARD_POOL_EXPIRED_MILLISECONDS = MILLISECONDS_FOR_HOURS_24;
+    public static final long JACKPOT_REWARD_POOL_EXPIRED_SECONDS = 24 * 60 * 60;
 }

@@ -9,6 +9,7 @@ import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolInputRecordRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolInputRecordVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordQuery;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * JackpotRewardPoolInputRecordConverter
+ *
  * @author generate
  */
 public class JackpotRewardPoolInputRecordConverter {
@@ -77,6 +79,7 @@ public class JackpotRewardPoolInputRecordConverter {
             po.setCreateTime(currentMilli);
             po.setUpdater(operator.getName());
             po.setUpdateTime(currentMilli);
+            po.setExpireAtTime(DateUtil.addSeconds(new Date(), Constants.JACKPOT_REWARD_POOL_EXPIRED_SECONDS));
         } else {
             po.setUpdater(operator.getName());
             po.setUpdateTime(DateUtil.getCurrentMilli());
@@ -114,11 +117,11 @@ public class JackpotRewardPoolInputRecordConverter {
 
     public static List<JackpotRewardPoolInputRecordDo> poToDoList(List<JackpotRewardPoolInputRecordPo> poList) {
         return Optional.ofNullable(poList)
-            .orElse(Collections.emptyList())
-            .stream()
-            .map(JackpotRewardPoolInputRecordConverter::poToDo)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(JackpotRewardPoolInputRecordConverter::poToDo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public static List<JackpotRewardPoolInputRecordPo> doToPoList(List<JackpotRewardPoolInputRecordDo> doList, OptEnum optEnum) {
