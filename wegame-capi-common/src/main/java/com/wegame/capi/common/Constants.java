@@ -45,6 +45,7 @@ public class Constants {
     public static final int CONST_10000 = 10000;
     public static final int CONST_1000000 = 1000000;
     public static final int CONST_10000000 = 1000_000_0;
+    public static final int CONST_1000000000 = 1000_000_000;
 
     public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event_2:%s_%s";
     public static final String OPERATION_EVENT_ING_KEY = "wegame:cuser:operation_event_ing:%s_%s";

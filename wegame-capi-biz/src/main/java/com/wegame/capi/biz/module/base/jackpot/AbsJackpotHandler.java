@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.common.Constants.CONST_10000000;
+import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Component
@@ -131,7 +131,7 @@ public abstract class AbsJackpotHandler {
                 for (Long poolAmount : jackpotTriggerBetAmountConfig.keySet()){
                     if(amount>=poolAmount){
                         TreeMap<String, BigDecimal> poolConfig = jackpotTriggerBetAmountConfig.get(poolAmount);
-                        String rewardPoolType = GameUtil.randomKey(poolConfig,CONST_10000000, randomService.randomInt(1, CONST_10000000));
+                        String rewardPoolType = GameUtil.randomKey(poolConfig,CONST_10000000, randomService.randomInt(1, CONST_1000000000));
                         poolTypeEnum = JackpotRewardPoolTypeEnum.valueOfName(rewardPoolType);
                         if(poolTypeEnum !=null){
                             return JackpotWinPrizeDo.builder().betGameId(gameId)
