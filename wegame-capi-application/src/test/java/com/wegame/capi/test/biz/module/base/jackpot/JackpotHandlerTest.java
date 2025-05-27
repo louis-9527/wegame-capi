@@ -1,7 +1,7 @@
 package com.wegame.capi.test.biz.module.base.jackpot;
 
 import com.wegame.capi.biz.config.domain.LamangConfig;
-import com.wegame.capi.biz.module.base.jackpot.JackpotHandler;
+import com.wegame.capi.biz.module.base.jackpot.LamangJackpotHandler;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.test.BaseTest;
@@ -22,7 +22,7 @@ public class JackpotHandlerTest extends BaseTest {
     private LamangConfig.CommissionConfig commonCommissionConfig;
 
     @Autowired
-    JackpotHandler jackpotHandler;
+    LamangJackpotHandler lamangJackpotHandler;
     @Autowired
     LamangConfig lamangConfig;
 
@@ -38,7 +38,7 @@ public class JackpotHandlerTest extends BaseTest {
         // 按金额提成
         TreeMap<Long, TreeMap<String, Long>> amountCommissionConfig = commonCommissionConfig.getAmountCommissionConfig();
         amountCommissionConfig.keySet().forEach(amount -> {
-            Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap = jackpotHandler.calculateRewardPoolCommission(BetTypeEnum.NORMAL_BET, amount);
+            Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap = lamangJackpotHandler.calculateRewardPoolCommission(BetTypeEnum.NORMAL_BET, amount);
             TreeMap<String, Long> betAmountCommissionConfig = this.buildBetAmountCommissionConfig(BetTypeEnum.NORMAL_BET, amount);
             assertNotNull(jackpotRewardPoolTypeEnumLongMap);
             for (JackpotRewardPoolTypeEnum poolType : JackpotRewardPoolTypeEnum.values()) {
@@ -52,7 +52,7 @@ public class JackpotHandlerTest extends BaseTest {
 
 
         // 比例提成 5.5
-        Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap_5500 = jackpotHandler.calculateRewardPoolCommission(BetTypeEnum.NORMAL_BET, 5500L);
+        Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap_5500 = lamangJackpotHandler.calculateRewardPoolCommission(BetTypeEnum.NORMAL_BET, 5500L);
         TreeMap<String, BigDecimal> proportionCommission_5500 = this.buildProportionCommissionConfig(BetTypeEnum.NORMAL_BET);
         assertNotNull(jackpotRewardPoolTypeEnumLongMap_5500);
         for (JackpotRewardPoolTypeEnum poolType : JackpotRewardPoolTypeEnum.values()) {
@@ -65,7 +65,7 @@ public class JackpotHandlerTest extends BaseTest {
         }
 
         // 比例提成 60
-        Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap_60000 = jackpotHandler.calculateRewardPoolCommission(BetTypeEnum.NORMAL_BET, 60000L);
+        Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap_60000 = lamangJackpotHandler.calculateRewardPoolCommission(BetTypeEnum.NORMAL_BET, 60000L);
         TreeMap<String, BigDecimal> proportionCommission_60000 = this.buildProportionCommissionConfig(BetTypeEnum.NORMAL_BET);
         assertNotNull(jackpotRewardPoolTypeEnumLongMap_60000);
         for (JackpotRewardPoolTypeEnum poolType : JackpotRewardPoolTypeEnum.values()) {
@@ -84,7 +84,7 @@ public class JackpotHandlerTest extends BaseTest {
         // 按金额提成
         TreeMap<Long, TreeMap<String, Long>> amountCommissionConfig = commonCommissionConfig.getAmountCommissionConfig();
         amountCommissionConfig.keySet().forEach(amount -> {
-            Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap = jackpotHandler.calculateRewardPoolCommission(BetTypeEnum.BUY_BET, amount);
+            Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap = lamangJackpotHandler.calculateRewardPoolCommission(BetTypeEnum.BUY_BET, amount);
             TreeMap<String, Long> betAmountCommissionConfig = this.buildBetAmountCommissionConfig(BetTypeEnum.BUY_BET, amount);
             assertNotNull(jackpotRewardPoolTypeEnumLongMap);
             for (JackpotRewardPoolTypeEnum poolType : JackpotRewardPoolTypeEnum.values()) {
@@ -98,7 +98,7 @@ public class JackpotHandlerTest extends BaseTest {
 
 
         // 比例提成 5.5
-        Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap_5500 = jackpotHandler.calculateRewardPoolCommission(BetTypeEnum.BUY_BET, 5500L);
+        Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap_5500 = lamangJackpotHandler.calculateRewardPoolCommission(BetTypeEnum.BUY_BET, 5500L);
         TreeMap<String, BigDecimal> proportionCommission_5500 = this.buildProportionCommissionConfig(BetTypeEnum.BUY_BET);
         assertNotNull(jackpotRewardPoolTypeEnumLongMap_5500);
         for (JackpotRewardPoolTypeEnum poolType : JackpotRewardPoolTypeEnum.values()) {
@@ -111,7 +111,7 @@ public class JackpotHandlerTest extends BaseTest {
         }
 
         // 比例提成 60
-        Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap_60000 = jackpotHandler.calculateRewardPoolCommission(BetTypeEnum.BUY_BET, 60000L);
+        Map<JackpotRewardPoolTypeEnum, Long> jackpotRewardPoolTypeEnumLongMap_60000 = lamangJackpotHandler.calculateRewardPoolCommission(BetTypeEnum.BUY_BET, 60000L);
         TreeMap<String, BigDecimal> proportionCommission_60000 = this.buildProportionCommissionConfig(BetTypeEnum.BUY_BET);
         assertNotNull(jackpotRewardPoolTypeEnumLongMap_60000);
         for (JackpotRewardPoolTypeEnum poolType : JackpotRewardPoolTypeEnum.values()) {
