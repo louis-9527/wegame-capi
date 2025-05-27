@@ -69,7 +69,7 @@ public class BakunawaMultipleCalculateStrategy extends AbstractMultipleCalculate
             return ImmutablePair.of(MultiplePieTypeEnum.NORMAL, new BigDecimal(multiple));
         } else {
             // 计算吞月倍率盘倍率
-            TreeMap<String, BigDecimal> originalSuperMultiplePieProbabilisticConfig = bakunawaConfig.getProbabilisticConfig().getMultiplePieProbabilisticConfig();
+            TreeMap<String, BigDecimal> originalSuperMultiplePieProbabilisticConfig = bakunawaConfig.getProbabilisticConfig().getSuperMultiplePieProbabilisticConfig();
             TreeMap<String, Integer> superMultiPleProbabilisticMap = new TreeMap<>();
             originalSuperMultiplePieProbabilisticConfig.forEach((key, value) -> {
                 superMultiPleProbabilisticMap.put(key, value.multiply(new BigDecimal(Constants.CONST_10000)).intValue());
