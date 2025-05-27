@@ -49,14 +49,30 @@ public class BetWithPayoutReqBuilder {
     }
 
     public static BetWithPayoutReq buildReq(BetRecordDo betRecordDo, List<JackpotRewardPoolDo> jackpotRewardPoolDos) {
-        BetWithPayoutReq.BetDetails.JackpotDetails details = new BetWithPayoutReq.BetDetails.JackpotDetails();
-        BetWithPayoutReq.BetDetails.JackpotDetails
+        BetWithPayoutReq.BetDetails.JackpotDetails details = BetWithPayoutReq.BetDetails.JackpotDetails
                 .builder()
                 .jackpotContributionDetails(buildJackpotPoolCommission(betRecordDo))
-                .jackpotPool(buildJackpotPool(jackpotRewardPoolDos));
-        BetWithPayoutReq req = buildReq(betRecordDo);
-        req.getBetDetails().setJackpotDetails(details);
-        return req;
+                .jackpotPool(buildJackpotPool(jackpotRewardPoolDos))
+                .build();
+        long uctSecond = DateUtil.toUCTSecond(betRecordDo.getCreateTime());
+        return BetWithPayoutReq.builder()
+                .pId(betRecordDo.getPId())
+                .channelId(betRecordDo.getChannelId())
+                .playerName(betRecordDo.getPlayerName())
+                .refId(betRecordDo.getBetSerialNo())
+                .ieId(Objects.nonNull(betRecordDo.getExtendInfo()) ? betRecordDo.getExtendInfo().getIeId() : null)
+                .createTime(DateUtil.toUTC(new Date(betRecordDo.getCreateTime())))
+                .betAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()))
+                .payoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()))
+                .betDetails(BetWithPayoutReq.BetDetails.builder()
+                        .gameId(betRecordDo.getGameId())
+                        .roundNo(betRecordDo.getBetSerialNo())
+                        .wagersDate(uctSecond)
+                        .settlementDate(uctSecond)
+                        .isFreeRound(BetSubTypeEnum.isFreeWheel(betRecordDo.getBetSubType()))
+                        .jackpotDetails(details)
+                        .build())
+                .build();
     }
 
     private static BetWithPayoutReq.BetDetails.JackpotContributionDetails buildJackpotPoolCommission(BetRecordDo betRecordDo) {
