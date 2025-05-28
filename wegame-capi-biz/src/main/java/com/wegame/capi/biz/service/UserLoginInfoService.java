@@ -5,6 +5,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.user.UserLoginInfoConverter;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
+import com.wegame.capi.dao.mapper.user.UserLoginInfoManualMapper;
 import com.wegame.capi.dao.mapper.user.UserLoginInfoMapper;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoPo;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoQuery;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
 
@@ -31,6 +31,8 @@ public class UserLoginInfoService {
 
     @Autowired
     UserLoginInfoMapper userLoginInfoMapper;
+    @Autowired
+    UserLoginInfoManualMapper userLoginInfoManualMapper;
 
     /**
      * 新增
@@ -188,19 +190,22 @@ public class UserLoginInfoService {
     @Async(defaultThreadPoolExecutor)
     public void asyncAddOrUpdate(UserLoginInfoDo userLoginInfoDo) {
         try {
-            Long id = userLoginInfoMapper.selectId(UserLoginInfoQuery.builder()
-                    .channelId(userLoginInfoDo.getChannelId())
-                    .gameId(userLoginInfoDo.getGameId())
-                    .userId(userLoginInfoDo.getUserId())
-                    .playerId(userLoginInfoDo.getPlayerId())
-                    .build());
-            if (Objects.isNull(id)) {
-                userLoginInfoDo.setRegisterTime(new Date());
-                add(userLoginInfoDo);
-            } else {
-                UserLoginInfoDo updateDo = UserLoginInfoDo.builder().id(id).loginTime(userLoginInfoDo.getLoginTime()).build();
-                update(updateDo);
-            }
+            userLoginInfoDo.setRegisterTime(new Date());
+            UserLoginInfoPo po = UserLoginInfoConverter.doToPo(userLoginInfoDo, OptEnum.ADD);
+            userLoginInfoManualMapper.insertOrUpdateUser(po);
+//            Long id = userLoginInfoMapper.selectId(UserLoginInfoQuery.builder()
+//                    .channelId(userLoginInfoDo.getChannelId())
+//                    .gameId(userLoginInfoDo.getGameId())
+//                    .userId(userLoginInfoDo.getUserId())
+//                    .playerId(userLoginInfoDo.getPlayerId())
+//                    .build());
+//            if (Objects.isNull(id)) {
+//                userLoginInfoDo.setRegisterTime(new Date());
+//                add(userLoginInfoDo);
+//            } else {
+//                UserLoginInfoDo updateDo = UserLoginInfoDo.builder().id(id).loginTime(userLoginInfoDo.getLoginTime()).build();
+//                update(updateDo);
+//            }
         } catch (Exception e) {
             log.warn("asyncAddOrUpdate Exception, req: {}, errMsg: {}", userLoginInfoDo, e.getMessage(), e);
         }
