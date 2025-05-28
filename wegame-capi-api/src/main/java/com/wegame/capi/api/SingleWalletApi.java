@@ -62,9 +62,9 @@ public class SingleWalletApi extends SingleWalletBaseApi {
                 try {
                     try {
                         ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
-                        log.info("health check response: {}", response);
+                        log.info("singleWallet health check response suc");
                     } catch (Exception e) {
-                        log.warn("health check error", e);
+                        log.warn("singleWallet health check error", e);
                     }
                 } catch (Exception ignored) {
                     // 忽略所有异常

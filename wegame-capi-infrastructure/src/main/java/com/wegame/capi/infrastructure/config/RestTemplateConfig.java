@@ -49,10 +49,15 @@ public class RestTemplateConfig {
 
     @Bean(WALLET_REST_TEMPLATE_BEAN)
     public RestTemplate walletRestTemplate() {
-        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(3, TimeUnit.MINUTES);
+        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(30, TimeUnit.MINUTES);
         manager.setMaxTotal(walletConnectMaxTotal);
         manager.setDefaultMaxPerRoute(walletConnectDefaultMaxPerRoute);
-        HttpClient httpClient = HttpClientBuilder.create().setConnectionManager(manager).build();
+        manager.setValidateAfterInactivity(20000);
+        HttpClient httpClient = HttpClientBuilder.create()
+                .setConnectionManager(manager)
+                // 连接最大存活时间
+                .setConnectionTimeToLive(30, TimeUnit.MINUTES)
+                .build();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         factory.setConnectTimeout(walletConnectTimeout);
         factory.setReadTimeout(walletReadTimeout);
