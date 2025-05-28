@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service;
 
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.exception.BusinessException;
@@ -16,6 +17,7 @@ import com.wegame.capi.dao.mapper.user.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -194,27 +196,31 @@ public class UserService {
     }
 
     /// ////////////  above auto generated ///////////////
+    @Cacheable(value = CacheConstants.USER_ID, key = "#playerId_ + '_'  + #pid")
+    public Long selectIdByPlayerIdAndPid(String playerId, String pid) {
+        return userManualMapper.selectIdByPlayerIdAndPid(playerId, playerId);
+    }
 
     public Long insert(UserDo userDo, String channelId, String gameId) {
         long startTime = DateUtil.getCurrentMilli();
         try {
             UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
             AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
-            Long id = userManualMapper.selectIdByPlayerIdAndPid(userPo.getPlayerId(), userDo.getPId());
-            if (Objects.isNull(id)) {
-                // 新增
-                userMapper.insert(userPo);
-                AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
-                id = userPo.getId();
-            }
+            //            Long id = userManualMapper.selectIdByPlayerIdAndPid(userPo.getPlayerId(), userDo.getPId());
+            //            if (Objects.isNull(id)) {
+            // 新增
+            userMapper.insert(userPo);
+            AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
+            //    id = userPo.getId();
+            // }
             userLoginInfoService.asyncAddOrUpdate(UserLoginInfoDo.builder()
                     .channelId(Long.parseLong(channelId))
                     .gameId(gameId)
-                    .userId(id)
+                    .userId(userPo.getId())
                     .playerId(userPo.getPlayerId())
                     .loginTime(new Date())
                     .build());
-            return id;
+            return userPo.getId();
         } catch (Exception e) {
             log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");

@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -34,7 +35,10 @@ public class LoginService {
         String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);
         UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
-        Long userId = userService.insert(userDo, userLoginDo.getChannelId(), userLoginDo.getGameId());
+        Long userId = userService.selectIdByPlayerIdAndPid(userDo.getPlayerId(), userDo.getPId());
+        if (Objects.isNull(userId)) {
+            userId = userService.insert(userDo, userLoginDo.getChannelId(), userLoginDo.getGameId());
+        }
         UserInfo userInfo = UserInfoBuilder.buildUserInfo(userLoginDo, userId, token);
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
@@ -53,7 +57,7 @@ public class LoginService {
 
     @Cacheable(value = CacheConstants.USER_INFO, key = "#token")
     public UserInfo getUserInfoByToken(String token) {
-        return  (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, token));
+        return (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, token));
     }
 
     @CacheEvict(value = CacheConstants.USER_INFO, key = "#token")
