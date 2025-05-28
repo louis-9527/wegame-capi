@@ -167,6 +167,7 @@ public abstract class AbsJackpotHandler {
             this.jackpotManager().winReward(buildRecord);
             // 清除缓存
             jackpotRewardPoolService.cacheClearListAll(this.getJackpotType());
+            jackpotUserRewardRecordService.clearHighestUserRewardRecord(this.getJackpotType());
             // 调用单钱包 并更新状态
             this.singleAward(JackpotAwardDo.build(drawAndAwardDo, buildRecord));
             return rewardAmount;
