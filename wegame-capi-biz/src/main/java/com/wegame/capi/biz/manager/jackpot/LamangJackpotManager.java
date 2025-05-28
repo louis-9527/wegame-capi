@@ -15,7 +15,6 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
-import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordTypesQuery;
 import com.wegame.capi.infrastructure.config.mongo.LamangMongoConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -23,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Component("lamangJackpotManager")
@@ -61,21 +57,14 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         return jackpotUserRewardRecordService.list(query, JackpotTypeEnum.LAM_ANG);
     }
 
-    @Override
-    public List<JackpotUserRewardRecordDo> listUserRewardRecordByTypes(JackpotUserRewardRecordTypesQuery query) {
-        return jackpotUserRewardRecordService.listByTypes(query, JackpotTypeEnum.LAM_ANG);
-    }
 
-    // todo 事务 @tutu
+    @Transactional(transactionManager = LamangMongoConfig.lamangTransactionManager, rollbackFor = Exception.class)
     @Override
     public void batchAddUserRewardRecord(List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos) {
         if (CollectionUtils.isEmpty(rewardPoolInputRecordDos)) {
             return;
         }
-        List<Long> failIds = jackpotRewardPoolInputRecordService.batchAdd(rewardPoolInputRecordDos, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
-        if (!failIds.isEmpty()) {
-            rewardPoolInputRecordDos.removeIf(item -> failIds.contains(item.getId()));
-        }
+       jackpotRewardPoolInputRecordService.batchAdd(rewardPoolInputRecordDos, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
         // 按照奖池金额统计
         long grandAmount = 0;
         long majorAmount = 0;
@@ -88,6 +77,33 @@ public class LamangJackpotManager extends AbstractJackpotManager {
             minorAmount += record.getMinorAmount() == null ? 0 : record.getMinorAmount();
             miniAmount += record.getMiniAmount() == null ? 0 : record.getMiniAmount();
         }
+
+        jackpotRewardPoolService.batchUpdate(this.buildRewardPoolDos(grandAmount, majorAmount, minorAmount, miniAmount), JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+    }
+    @Transactional(transactionManager = LamangMongoConfig.lamangTransactionManager, rollbackFor = Exception.class)
+    @Override
+    public void addUserRewardRecord(JackpotRewardPoolInputRecordDo rewardPoolInputRecordDo) {
+        if (Objects.isNull(rewardPoolInputRecordDo)) {
+            return;
+        }
+        jackpotRewardPoolInputRecordService.add(rewardPoolInputRecordDo, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+        jackpotRewardPoolService.batchUpdate(this.buildRewardPoolDos(rewardPoolInputRecordDo.getGrandAmount(), rewardPoolInputRecordDo.getMajorAmount(), rewardPoolInputRecordDo.getMinorAmount(), rewardPoolInputRecordDo.getMiniAmount()),
+                JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+    }
+
+    @Override
+    @Transactional(transactionManager = LamangMongoConfig.lamangTransactionManager)
+    public Long winReward(JackpotUserRewardRecordDo jackpotUserRewardRecordDo) {
+        Long add = jackpotUserRewardRecordService.add(JackpotTypeEnum.LAM_ANG, jackpotUserRewardRecordDo);
+
+        JackpotRewardPoolDo buildUpdate = JackpotRewardPoolDo.builder().type(jackpotUserRewardRecordDo.getRewardPoolType())
+                .amount(-jackpotUserRewardRecordDo.getRewardAmount()).build();
+        boolean update = jackpotRewardPoolService.update(buildUpdate, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+        AssertUtil.assertTrue(update, ErrorCode.ERR_INTER);
+        return add;
+    }
+
+    private List<JackpotRewardPoolDo> buildRewardPoolDos(Long grandAmount,Long majorAmount,Long minorAmount,Long miniAmount) {
         // 组装奖池对象
         long currentMilli = DateUtil.getCurrentMilli();
         JackpotRewardPoolDo grandDo = JackpotRewardPoolDo.builder()
@@ -115,20 +131,6 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         rewardPoolDos.add(majorDo);
         rewardPoolDos.add(minorDo);
         rewardPoolDos.add(miniDo);
-        jackpotRewardPoolService.batchUpdate(rewardPoolDos, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+        return rewardPoolDos;
     }
-
-    @Override
-    @Transactional(transactionManager = LamangMongoConfig.lamangTransactionManager)
-    public Long winReward(JackpotUserRewardRecordDo jackpotUserRewardRecordDo) {
-        Long add = jackpotUserRewardRecordService.add(JackpotTypeEnum.LAM_ANG, jackpotUserRewardRecordDo);
-
-        JackpotRewardPoolDo buildUpdate = JackpotRewardPoolDo.builder().type(jackpotUserRewardRecordDo.getRewardPoolType())
-                .amount(-jackpotUserRewardRecordDo.getRewardAmount()).build();
-        boolean update = jackpotRewardPoolService.update(buildUpdate, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
-        AssertUtil.assertTrue(update, ErrorCode.ERR_INTER);
-        return add;
-    }
-
-
 }
