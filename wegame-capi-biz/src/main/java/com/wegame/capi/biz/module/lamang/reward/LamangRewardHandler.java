@@ -56,7 +56,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         this.validate(rewardHandle);
         // 2.计算中奖线
         List<RewardLineDo<LamangSymbolDo>> rewardLineList = this.calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
-        // 3、计算倍率,累计总倍率
+        // 3、计算倍率,倍率盘倍率
         BigDecimal totalMultiple = lamangMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
 
         if (CollectionUtil.isEmpty(rewardLineList)) {
