@@ -109,17 +109,17 @@ spring:
             initial-size: 30
             min-idle: 30
             max-active: 2000
-            max-wait: 1000
+            max-wait: 10
+            keep-alive: true
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL
-            initConnectionSqls: SELECT 1
+            initConnectionSqls: SELECT 1 FROM DUAL
             test-while-idle: true
             test-on-borrow: false
             test-on-return: false
             pool-prepared-statements: true
             max-pool-prepared-statement-per-connection-size: 100
-            filters: stat,log4j
         wegame_backend_db:
           url: jdbc:mysql://localhost:3306/wegame_backend_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: root
