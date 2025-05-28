@@ -175,6 +175,7 @@ public class JackpotUserRewardRecordConverter {
         query.setLimit(request.getPageSize());
         query.setOffset(request.getOffset());
         query.setRewardPoolTypeList(request.getRewardPoolTypeList());
+        query.setOrderByClause(orderClause);
         return query;
     }
 
