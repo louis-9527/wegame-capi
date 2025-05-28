@@ -1,9 +1,7 @@
 package com.wegame.capi.biz.module.lamang;
 
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

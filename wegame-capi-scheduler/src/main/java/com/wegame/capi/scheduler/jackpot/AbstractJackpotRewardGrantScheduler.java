@@ -91,7 +91,7 @@ public abstract class AbstractJackpotRewardGrantScheduler
                     .build();
             jackpotHandler.singleAward(jackpotAwardDo);
         } catch (Exception e) {
-            log.error("AbstractJackpotRewardGrantScheduler#jackPotHandler error,jackPotType:{}", this.getJackpotTypeEnum());
+            log.error("AbstractJackpotRewardGrantScheduler#jackPotHandler error,jackPotType:{}", this.getJackpotTypeEnum(), e);
         }
     }
 }

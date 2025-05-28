@@ -57,7 +57,7 @@ public abstract class AbstractRewardHandler<T extends SymbolDo> implements Rewar
     public Integer scatterCount(RewardHandleDo<T> rewardHandle) {
         WheelDo<T> wheel = rewardHandle.getWheel();
         long count = Arrays.stream(wheel.getSymbolArr()).flatMap(Arrays::stream).filter(Objects::nonNull).
-                filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER1.getId())).count();
+                filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER.getId())).count();
         return (int) count;
     }
 

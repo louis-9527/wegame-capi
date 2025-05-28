@@ -5,6 +5,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.user.UserLoginInfoConverter;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
+import com.wegame.capi.dao.mapper.user.UserLoginInfoManualMapper;
 import com.wegame.capi.dao.mapper.user.UserLoginInfoMapper;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoPo;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoQuery;
@@ -31,6 +32,8 @@ public class UserLoginInfoService {
 
     @Autowired
     UserLoginInfoMapper userLoginInfoMapper;
+    @Autowired
+    UserLoginInfoManualMapper userLoginInfoManualMapper;
 
     /**
      * 新增
@@ -198,8 +201,10 @@ public class UserLoginInfoService {
                 userLoginInfoDo.setRegisterTime(new Date());
                 add(userLoginInfoDo);
             } else {
-                UserLoginInfoDo updateDo = UserLoginInfoDo.builder().id(id).loginTime(userLoginInfoDo.getLoginTime()).build();
-                update(updateDo);
+                update(UserLoginInfoDo.builder()
+                        .id(id)
+                        .loginTime(userLoginInfoDo.getLoginTime())
+                        .build());
             }
         } catch (Exception e) {
             log.warn("asyncAddOrUpdate Exception, req: {}, errMsg: {}", userLoginInfoDo, e.getMessage(), e);

@@ -56,7 +56,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         this.validate(rewardHandle);
         // 2.计算中奖线
         List<RewardLineDo<LamangSymbolDo>> rewardLineList = this.calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
-        // 3、计算倍率,累计总倍率
+        // 3、计算倍率,倍率盘倍率
         BigDecimal totalMultiple = lamangMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
 
         if (CollectionUtil.isEmpty(rewardLineList)) {
@@ -124,7 +124,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         // 1、处理第一列
         for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             LamangSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
-            if (targetSymbol.isPlaceholderSymbol() || targetSymbol.isScatterSymbol()) {
+            if (targetSymbol.isScatterSymbol()) {
                 continue;
             }
 
@@ -139,9 +139,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 int currentRow = row;
                 LamangSymbolDo currentSymbol = symbolArr[row][currentColum];
-                if (currentSymbol.isPlaceholderSymbol()) {
-                    continue;
-                }
+
                 for (LamangSymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
                     if (!isMatchTargetSymbol(currentSymbol, targetSymbol)) {
                         continue;
@@ -226,13 +224,5 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         // 校验：滚轮行数
         GameInfoDo gameInfo = rewardHandle.getGameInfo();
         AssertUtil.assertTrue(symbolArr.length == gameInfo.getRow(), ErrorCode.ERR_PARAM, "symbol arr err");
-        // for (int row = 0; row < gameInfo.getRow(); row++) {
-        //     // 校验：滚轮列数
-        //     AssertUtil.assertTrue(symbolArr[row].length == gameInfo.getColumn(), ErrorCode.ERR_PARAM, "symbol arr err");
-        //     for (int column = 0; column < gameInfo.getColumn(); column++) {
-        //         // 校验：所有元素不能为空
-        //         AssertUtil.assertNotNull(symbolArr[row][column], ErrorCode.ERR_PARAM, "all symbol can not be null");
-        //     }
-        // }
     }
 }
