@@ -220,7 +220,12 @@ public class UserService {
             log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");
         } finally {
-            log.info("insert cost:{}", DateUtil.getCurrentMilli() - startTime);
+            long costTime = DateUtil.getCurrentMilli() - startTime;
+            if (costTime > 50L) {
+                log.info("insert cost, more than 50 :{}", costTime);
+            } else {
+                log.info("insert cost:{}", costTime);
+            }
         }
     }
 
