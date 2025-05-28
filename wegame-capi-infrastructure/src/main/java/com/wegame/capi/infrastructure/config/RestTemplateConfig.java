@@ -72,7 +72,7 @@ public class RestTemplateConfig {
 
     @Bean(PROMOTION_REST_TEMPLATE_BEAN)
     public RestTemplate promotionRestTemplate() {
-        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(3, TimeUnit.MINUTES);
+        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(30, TimeUnit.MINUTES);
         manager.setMaxTotal(promotionConnectMaxTotal);
         manager.setDefaultMaxPerRoute(promotionConnectDefaultMaxPerRoute);
         HttpClient httpClient = HttpClientBuilder.create().setConnectionManager(manager).build();

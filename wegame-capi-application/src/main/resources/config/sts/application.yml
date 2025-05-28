@@ -92,10 +92,10 @@ spring:
           driver-class-name: com.mysql.jdbc.Driver
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 200
-            min-idle: 200
+            initial-size: 250
+            min-idle: 250
             max-active: 500
-            max-wait: 1000
+            max-wait: 10
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL

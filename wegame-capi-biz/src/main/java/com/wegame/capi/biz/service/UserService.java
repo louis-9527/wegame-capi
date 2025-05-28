@@ -200,7 +200,7 @@ public class UserService {
         try {
             UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
             AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
-            Long id = userManualMapper.selectIdByPlayerId(userPo.getPlayerId());
+            Long id = userManualMapper.selectIdByPlayerIdAndPid(userPo.getPlayerId(), userPo.getPId());
             if (Objects.isNull(id)) {
                 // 新增
                 userMapper.insert(userPo);

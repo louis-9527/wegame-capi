@@ -21,10 +21,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
+import java.util.stream.IntStream;
 
 import static com.wegame.capi.common.enums.SingleWalletResStatusEnum.DUPLICATE_REFERENCE_ID;
 
@@ -49,6 +51,31 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     private static final String BET_WITH_PAYOUT_URL_FORMAT = "%s/betWithPayout";
     private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
     private static final String BET_STAR_SPIN_URL_FORMAT = "%s/starSpin";
+    private static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check";
+
+    @PostConstruct
+    public void init() {
+        try {
+            String url = String.format(HEALTH_CHECK_FORMAT, singleDomain);
+            //  String url = "http://server1.makillingslot.net/capi/game/common/ping";
+            IntStream.range(0, 1000).parallel().forEach(i -> {
+                try {
+                    try {
+                        ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
+                        log.info("health check response: {}", response);
+                    } catch (Exception e) {
+                        log.warn("health check error", e);
+                    }
+                } catch (Exception ignored) {
+                    // 忽略所有异常
+                }
+            });
+            //            ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
+            //            log.info("health check response: {}", response);
+        } catch (Exception e) {
+
+        }
+    }
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
