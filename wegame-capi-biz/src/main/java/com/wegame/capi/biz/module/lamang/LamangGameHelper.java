@@ -57,16 +57,6 @@ public class LamangGameHelper {
             .name(Symbol1008.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .build();
-    private static final SymbolDo LAMANG_Symbol1009 = SymbolDo.builder()
-            .id(Symbol1009.getId())
-            .name(Symbol1009.getName())
-            .symbolType(SymbolTypeEnum.COMMON)
-            .build();
-    private static final SymbolDo LAMANG_Symbol1010 = SymbolDo.builder()
-            .id(Symbol1010.getId())
-            .name(Symbol1010.getName())
-            .symbolType(SymbolTypeEnum.COMMON)
-            .build();
     public static final SymbolDo LAMANG_SCATTER = SymbolDo.builder()
             .id(Scatter.getId())
             .name(Scatter.getName())
@@ -120,8 +110,6 @@ public class LamangGameHelper {
                     .put(LAMANG_Symbol1006.getId(), LAMANG_Symbol1006)
                     .put(LAMANG_Symbol1007.getId(), LAMANG_Symbol1007)
                     .put(LAMANG_Symbol1008.getId(), LAMANG_Symbol1008)
-                    .put(LAMANG_Symbol1009.getId(), LAMANG_Symbol1009)
-                    .put(LAMANG_Symbol1010.getId(), LAMANG_Symbol1010)
                     .put(LAMANG_SCATTER.getId(), LAMANG_SCATTER)
                     .put(LAMANG_SCATTER1.getId(), LAMANG_SCATTER1)
                     .put(LAMANG_Wild.getId(), LAMANG_Wild)

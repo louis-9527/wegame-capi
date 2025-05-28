@@ -24,32 +24,27 @@ public class LamangMultipleCalculateStrategy extends AbstractMultipleCalculateSt
     public BigDecimal calculateMultiple(RewardHandleDo<LamangSymbolDo> rewardHandle, List<RewardLineDo<LamangSymbolDo>> rewardLineList) {
         boolean isReward = CollectionUtil.isNotEmpty(rewardLineList);
         BigDecimal currentMultiple = rewardHandle.getCurrentMultiple();
+        Integer currentWheelIndex = rewardHandle.getWheel().getIndex();
         if (rewardHandle.getWheel().isFreeFlag()) {
             // 免费轮
-            return calculateMultipleWheelMultiple(lamangConfig.getMultiPleConfig().getFreePlayMultiConfigList(), currentMultiple, isReward);
+            return calculateMultipleWheelMultiple(lamangConfig.getMultiPleConfig().getFreePlayMultiConfigList(), currentMultiple, currentWheelIndex, isReward);
         } else {
             // 普通轮
-            return calculateMultipleWheelMultiple(lamangConfig.getMultiPleConfig().getCommonPlayMultiConfigList(), currentMultiple, isReward);
+            return calculateMultipleWheelMultiple(lamangConfig.getMultiPleConfig().getCommonPlayMultiConfigList(), currentMultiple, currentWheelIndex, isReward);
         }
     }
 
-    private BigDecimal calculateMultipleWheelMultiple(List<BigDecimal> playMultiConfigList, BigDecimal currentMultiple, boolean isReward) {
+    private BigDecimal calculateMultipleWheelMultiple(List<BigDecimal> playMultiConfigList, BigDecimal currentMultiple, Integer currentWheelIndex, boolean isReward) {
         // 当前回合无倍率(上一回合(第一回合))，使用最小倍率
-        if (Objects.isNull(currentMultiple)) {
+        if (Objects.isNull(currentMultiple) || Objects.isNull(currentWheelIndex) || currentWheelIndex <= 0) {
             return playMultiConfigList.get(0);
         }
         // 未中奖，使用前一回合的倍率
         if (!isReward) {
             return currentMultiple;
         }
-        int maxIndex = playMultiConfigList.size() - 1;
-        int currentMultipleIndex = playMultiConfigList.indexOf(currentMultiple);
-        // 兜一下,记录
-        if (currentMultipleIndex == -1) {
-            log.warn("LamangMultipleCalculateStrategy#calculateMultipleWheelMultiple" +
-                    ",no match Multiple config Index,will return min index value,currentMultiple:{}", currentMultiple);
-        }
+        // 当前回合数和最大倍率配置索引比较，取小
         // 如果currentMultipleIndex为配置最大值,则取最大
-        return currentMultipleIndex >= maxIndex ? playMultiConfigList.get(maxIndex) : playMultiConfigList.get(currentMultipleIndex + 1);
+        return playMultiConfigList.get(Math.min(playMultiConfigList.size() - 1, currentWheelIndex));
     }
 }
