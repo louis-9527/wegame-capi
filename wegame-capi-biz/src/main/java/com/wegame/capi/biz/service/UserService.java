@@ -200,27 +200,33 @@ public class UserService {
         try {
             UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
             AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
-            // Long id = userManualMapper.selectIdByPlayerId(userPo.getPlayerId());
-            // if (Objects.isNull(id)) {
-            //     // 新增
-            //     userMapper.insert(userPo);
-            //     AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
-            //     id = userPo.getId();
-            // }
-            userManualMapper.insertOrUpdateUser(userPo);
+            Long id = userManualMapper.selectIdByPlayerIdAndPid(userPo.getPlayerId(), userDo.getPId());
+            if (Objects.isNull(id)) {
+                // 新增
+                userMapper.insert(userPo);
+                AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
+                id = userPo.getId();
+            }
             userLoginInfoService.asyncAddOrUpdate(UserLoginInfoDo.builder()
                     .channelId(Long.parseLong(channelId))
                     .gameId(gameId)
-                    .userId(userPo.getId())
+                    .userId(id)
                     .playerId(userPo.getPlayerId())
                     .loginTime(new Date())
                     .build());
-            return userPo.getId();
+            return id;
         } catch (Exception e) {
             log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");
         } finally {
-            log.info("insert cost:{}", DateUtil.getCurrentMilli() - startTime);
+            long costTime = DateUtil.getCurrentMilli() - startTime;
+            if (costTime > 1000L) {
+                log.info("insert cost time more than 1000: {}", costTime);
+            } else if (costTime > 100L) {
+                log.info("insert cost time more than 100: {}", costTime);
+            } else {
+                log.info("insert cost time: {}", costTime);
+            }
         }
     }
 
