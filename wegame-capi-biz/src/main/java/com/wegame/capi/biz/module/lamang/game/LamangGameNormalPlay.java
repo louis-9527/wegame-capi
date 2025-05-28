@@ -91,6 +91,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         if (CollectionUtils.isNotEmpty(gameRecordResult)) {
             gameRecordResult.get(gameRecordResult.size() - 1).setLastGameFlag(true);
         }
+        // 清理前一轮的占位符
+        postProcessPlaceholderSymbol(gameRecordResult);
         return gameRecordResult;
     }
 
@@ -271,8 +273,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             int freeWheelCount = countAndReleaseScatterFreeWheel(preGameRecord.getWheel().getSymbolArr());
             addFreeWheelTimes(freeWheelList, freeWheelCount, preGameRecord.getId());
         }
-        // 清理前一轮的占位符
-        postProcessPlaceholderSymbol(preGameRecord.getWheel().getSymbolArr());
         if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
             WheelDo<LamangSymbolDo> wheel = generateFromPreWheel(
                     preGameRecord,

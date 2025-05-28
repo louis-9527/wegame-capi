@@ -124,7 +124,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         // 1、处理第一列
         for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             LamangSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
-            if (targetSymbol.isPlaceholderSymbol() || targetSymbol.isScatterSymbol()) {
+            if (targetSymbol.isScatterSymbol()) {
                 continue;
             }
 
@@ -139,9 +139,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 int currentRow = row;
                 LamangSymbolDo currentSymbol = symbolArr[row][currentColum];
-                if (currentSymbol.isPlaceholderSymbol()) {
-                    continue;
-                }
+
                 for (LamangSymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
                     if (!isMatchTargetSymbol(currentSymbol, targetSymbol)) {
                         continue;
