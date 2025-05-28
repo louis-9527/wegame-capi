@@ -4,10 +4,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.LamangBetRecordManager;
-import com.wegame.capi.biz.manager.MariaMakilingBetRecordManager;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
@@ -19,7 +17,7 @@ import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(name = LAMANG_ADARNA_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangPulsarListener extends AbstractPulsarListener<LamangGameRecordDo> {
     @Autowired
     LamangBetRecordManager lamangBetRecordManager;

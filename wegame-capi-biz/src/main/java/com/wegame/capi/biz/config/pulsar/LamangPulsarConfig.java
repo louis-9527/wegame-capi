@@ -21,7 +21,7 @@ import static com.wegame.capi.common.Constants.*;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(name = LAMANG_ADARNA_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangPulsarConfig {
 
 

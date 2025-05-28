@@ -3,9 +3,7 @@ package com.wegame.capi.biz.listener.jackpot;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
-import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
 import com.wegame.capi.biz.manager.jackpot.LamangJackpotManager;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -16,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import static com.wegame.capi.common.Constants.*;
 
-@ConditionalOnProperty(name = LAMANG_ADARNA_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 @Service
 public class LamangJackPotPulsarListener extends AbstractJackPotPulsarListener<LamangGameRecordDo>{
     @Autowired
