@@ -16,6 +16,7 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.module.lamang.LamangProbabilisticUtil;
+import com.wegame.capi.biz.module.lamang.LamangSymbolUtil;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.Constants;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.lamang.LamangGameHelper.*;
-import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.countIndexSymbol;
+import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.countScatterInColumn;
 import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.*;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -109,7 +110,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
         // 最大
-        int scatterNumberInWheel = countIndexSymbol(symbolArr, SymbolEnum.Scatter);
+        int scatterNumberInWheel = LamangSymbolUtil.countScatterInWheel(symbolArr);
         // 如果必须中免费轮，需要维持scatter数量
         if (mustRewardFreeWheel) {
             holdScatterCount(symbolArr, REWARD_FREE_WHEEL_SCATTER_NUMBER, scatterNumberInWheel);
@@ -117,8 +118,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         }
         int randomNumberIndex = 0;
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
-            // 一个reel只能包含一个reel
-            int scatterNumberInColumn = countIndexSymbol(symbolArr, SymbolEnum.Scatter, column);
+            // 一个reel只能包含一个scatter
+            int scatterNumberInColumn = LamangSymbolUtil.countScatterInColumn(symbolArr, column);
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
@@ -180,7 +181,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 int column = indexDo.getColumnIndex();
                 AssertUtil.assertNull(symbolArr[row][column], ErrorCode.ERR_INTER);
 
-                int columnScatterNum = countIndexSymbol(symbolArr, SymbolEnum.Scatter, column);
+                int columnScatterNum = LamangSymbolUtil.countScatterInColumn(symbolArr, column);
                 if (columnScatterNum >= MAX_SCATTER_NUMBER_IN_REEL) {
                     // 不符合的坐标 直接移除
                     indexList.remove(randomIndex);

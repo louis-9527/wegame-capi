@@ -103,11 +103,11 @@ public class LamangSymbolUtil {
         return count;
     }
 
-    public static int countIndexSymbol(LamangSymbolDo[][] symbolArr, SymbolEnum symbol) {
+    public static int countScatterInWheel(LamangSymbolDo[][] symbolArr) {
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
-                if (Objects.nonNull(symbolArr[row][col]) && StringUtils.equals(symbolArr[row][col].getId(), symbol.getId())) {
+                if (Objects.nonNull(symbolArr[row][col]) && symbolArr[row][col].isScatterSymbol()) {
                     count = count + 1;
                 }
             }
@@ -115,15 +115,16 @@ public class LamangSymbolUtil {
         return count;
     }
 
-    public static int countIndexSymbol(LamangSymbolDo[][] symbolArr, SymbolEnum symbol, int column) {
+    public static int countScatterInColumn(LamangSymbolDo[][] symbolArr, int column) {
         int count = 0;
         for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
-            if (Objects.nonNull(symbolArr[row][column]) && StringUtils.equals(symbolArr[row][column].getId(), symbol.getId())) {
+            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isScatterSymbol()) {
                 count = count + 1;
             }
         }
         return count;
     }
+
 
     public static LamangSymbolDo[][] copySymbolArr(LamangSymbolDo[][] symbolArr) {
         int row = symbolArr.length;
@@ -165,4 +166,18 @@ public class LamangSymbolUtil {
     }
 
 
+    public static void print(LamangSymbolDo[][] symbolArr, String scene) {
+        System.out.println("symbolArr: " + scene);
+        for (int row = 0; row < symbolArr.length; row++) {
+            for (int column = 0; column < symbolArr[row].length; column++) {
+                if (Objects.nonNull(symbolArr[row][column])) {
+                    System.out.print(symbolArr[row][column].getId()+"\t");
+                } else {
+                    System.out.print("null\t");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
 }
