@@ -134,10 +134,14 @@ spring:
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL
+            validation-query-timeout: 100
+            query-timeout: 1000
+            transaction-query-timeout: 1000
             test-while-idle: true
             test-on-borrow: false
             test-on-return: false
-            pool-prepared-statements: false
+            pool-prepared-statements: true
+            share-prepared-statements: true
   data:
     mongodb:
         dynamic:
