@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.service.jackpot;
 
 import com.mongodb.client.result.UpdateResult;
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
@@ -13,6 +14,8 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -95,6 +98,7 @@ public class JackpotUserRewardRecordService extends AbstractService {
         return poToDoList(recordPoList);
     }
 
+    @Cacheable(value = CacheConstants.JACKPOT_USER_REWARD_RECORD_CONFIG, key = "#jackpotType.gameType.id")
     public JackpotUserRewardRecordDo getHighestUserRewardRecord(JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
         JackpotUserRewardRecordPo maxRecord = getMongoTemplate(jackpotType.getGameType()).findOne(buildHighestRecordQuery(),
@@ -102,6 +106,13 @@ public class JackpotUserRewardRecordService extends AbstractService {
                 jackpotType.getJackpotUserRewardRewardCollectionName());
         return poToDo(maxRecord);
     }
+
+    @CacheEvict(value = CacheConstants.JACKPOT_REWARD_POOL_CONFIG, key = "#jackpotType.gameType.id")
+    public void clearHighestUserRewardRecord(JackpotTypeEnum jackpotType) {
+        // ...
+    }
+
+
 
     public Long add(JackpotTypeEnum jackpotType,JackpotUserRewardRecordDo recordDo){
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
