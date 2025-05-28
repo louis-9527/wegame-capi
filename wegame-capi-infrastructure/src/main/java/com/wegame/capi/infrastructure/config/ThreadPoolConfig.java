@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
-import java.util.concurrent.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author apple
@@ -23,6 +25,7 @@ public class ThreadPoolConfig {
     public static final String operationEventThreadPoolExecutor = "operationEventThreadPoolExecutor";
     public static final String operationEventReportThreadPoolExecutor = "operationEventReportThreadPoolExecutor";
     public static final String starCardUseRecordThreadPoolExecutor = "starCardUseRecordThreadPoolExecutor";
+    public static final String userThreadPoolExecutor = "userThreadPoolExecutor";
 
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
@@ -131,6 +134,20 @@ public class ThreadPoolConfig {
                 new LinkedBlockingQueue<>(10000),
                 new CustomizableThreadFactory("star-card-use-record-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
+    @Bean(userThreadPoolExecutor)
+    public ThreadPoolExecutor userThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(20,
+                100,
+                300L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue(100000),
+                new CustomizableThreadFactory("user-pool-"),
+                new ThreadPoolExecutor.CallerRunsPolicy());
         executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
         return executor;
