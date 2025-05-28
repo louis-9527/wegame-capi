@@ -122,10 +122,7 @@ public class JackpotUserRewardRecordConverter {
         vo.setRewardGrantSerialNo(jackpotUserRewardRecordDo.getRewardGrantSerialNo());
         vo.setRewardGrantStatus(jackpotUserRewardRecordDo.getRewardGrantStatus().getCode());
         vo.setRewardGrantTime(Objects.nonNull(jackpotUserRewardRecordDo.getRewardGrantTime()) ? jackpotUserRewardRecordDo.getRewardGrantTime().getTime() : null);
-        vo.setCreator(jackpotUserRewardRecordDo.getCreator());
         vo.setCreateTime(Objects.nonNull(jackpotUserRewardRecordDo.getCreateTime()) ? jackpotUserRewardRecordDo.getCreateTime() : null);
-        vo.setUpdater(jackpotUserRewardRecordDo.getUpdater());
-        vo.setUpdateTime(Objects.nonNull(jackpotUserRewardRecordDo.getUpdateTime()) ? jackpotUserRewardRecordDo.getUpdateTime() : null);
         return vo;
     }
 

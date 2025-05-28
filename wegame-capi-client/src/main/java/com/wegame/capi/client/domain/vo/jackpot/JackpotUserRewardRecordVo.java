@@ -46,13 +46,7 @@ public class JackpotUserRewardRecordVo implements Validate, Serializable {
     private Integer rewardGrantStatus;
     @ApiModelProperty("派奖成功时间")
     private Long rewardGrantTime;
-    @ApiModelProperty("创建人")
-    private String creator;
     @ApiModelProperty("创建时间/中奖时间")
     private Long createTime;
-    @ApiModelProperty("更新人")
-    private String updater;
-    @ApiModelProperty("更新时间")
-    private Long updateTime;
 }
 

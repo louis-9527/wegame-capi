@@ -15,6 +15,7 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordTypesQuery;
 import com.wegame.capi.infrastructure.config.mongo.LamangMongoConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,6 +58,10 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         return jackpotUserRewardRecordService.list(query, JackpotTypeEnum.LAM_ANG);
     }
 
+    @Override
+    public List<JackpotUserRewardRecordDo> listUserRewardRecordByTypes(JackpotUserRewardRecordTypesQuery query) {
+        return jackpotUserRewardRecordService.listByTypes(query, JackpotTypeEnum.LAM_ANG);
+    }
 
     @Transactional(transactionManager = LamangMongoConfig.lamangTransactionManager, rollbackFor = Exception.class)
     @Override
