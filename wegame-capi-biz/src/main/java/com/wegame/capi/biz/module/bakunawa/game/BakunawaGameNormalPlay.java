@@ -67,11 +67,10 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
         // 元素出现概率配置
         TreeMap<String, List<BigDecimal>> wheelProbabilisticConfigMap = bakunawaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, GAME_INFO.getRow() * GAME_INFO.getColumn());
-        int randomNumberIndex = 0;
         for (int column = ONE_COLUM_INDEX; column < GAME_INFO.getColumn(); column++) {
             // 列概率
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, wheelProbabilisticConfigMap);
-            Integer randomNumber = randomNumberList.get(randomNumberIndex);
+            Integer randomNumber = randomNumberList.get(column);
             SymbolDo symbolDo = randomNormalSymbol(randomNumber, GAME_INFO, columProbabilisticMap);
             AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
             symbolArr[ONE_ROW_INDEX][column] = symbolDo;
