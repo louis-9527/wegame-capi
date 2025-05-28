@@ -95,19 +95,14 @@ spring:
             initial-size: 200
             min-idle: 200
             max-active: 500
-            max-wait: 10
-            keep-alive: true
+            max-wait: 1000
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL
-            validation-query-timeout: 100
-            query-timeout: 1000
-            transaction-query-timeout: 1000
             test-while-idle: true
             test-on-borrow: false
             test-on-return: false
-            pool-prepared-statements: true
-            share-prepared-statements: true
+            pool-prepared-statements: false
         wegame_backend_db:
           url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: QATmakilingService
