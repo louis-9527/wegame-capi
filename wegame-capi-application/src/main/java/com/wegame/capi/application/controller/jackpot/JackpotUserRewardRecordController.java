@@ -1,6 +1,7 @@
 package com.wegame.capi.application.controller.jackpot;
 
 import com.google.common.collect.ImmutableMap;
+import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
 import com.wegame.base.enums.ErrorCode;
@@ -45,6 +46,7 @@ public class JackpotUserRewardRecordController {
     @Autowired
     Map<String, AbstractJackpotManager> jackpotManagerMap;
 
+    @LoginRequired
     @ApiOperation(value = "查询最高中奖记录", httpMethod = "GET")
     @GetMapping("/get/highest/user/reward/record")
     public CommonResponse<JackpotUserRewardRecordVo> getHighestUserRewardRecord() {
@@ -55,6 +57,7 @@ public class JackpotUserRewardRecordController {
         return build(doToVo(jackpotManager(gameType).getHighestUserRewardRecord()));
     }
 
+    @LoginRequired
     @ApiOperation(value = "查询：根据投注记录ID & 游戏记录ID", httpMethod = "GET")
     @GetMapping("/get/{betRecordId}/{gameRecordId}")
     public CommonResponse<JackpotUserRewardRecordVo> get(@PathVariable String betRecordId, @PathVariable String gameRecordId) {
@@ -72,6 +75,7 @@ public class JackpotUserRewardRecordController {
                 .build())));
     }
 
+    @LoginRequired
     @ApiOperation(value = "根据jackpot奖池类型列表分页查询", httpMethod = "POST")
     @PostMapping("/pageQuery")
     public CommonResponse<PageInfoVo<JackpotUserRewardRecordVo>> pageQuery(@RequestBody PageQueryJackpotUserRewardRecordRequest request) {

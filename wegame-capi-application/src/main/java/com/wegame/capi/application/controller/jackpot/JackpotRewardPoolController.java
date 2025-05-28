@@ -1,6 +1,7 @@
 package com.wegame.capi.application.controller.jackpot;
 
 import com.google.common.collect.ImmutableMap;
+import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -41,6 +42,7 @@ public class JackpotRewardPoolController {
     @Autowired
     Map<String, AbstractJackpotManager> jackpotManagerMap;
 
+    @LoginRequired
     @ApiOperation(value = "查询列表", httpMethod = "GET")
     @GetMapping("/list")
     public CommonResponse<List<JackpotRewardPoolVo>> list() {
