@@ -80,6 +80,7 @@ public class RestTemplateConfig {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(30, TimeUnit.MINUTES);
         manager.setMaxTotal(promotionConnectMaxTotal);
         manager.setDefaultMaxPerRoute(promotionConnectDefaultMaxPerRoute);
+        manager.setValidateAfterInactivity(20000);
         HttpClient httpClient = HttpClientBuilder.create().setConnectionManager(manager).build();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         factory.setConnectTimeout(promotionConnectTimeout);
