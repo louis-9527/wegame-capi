@@ -31,10 +31,10 @@ public class LoginService {
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
         AssertUtil.assertTrue(singleWalletService.authLoginToken(userLoginDo), ErrorCode.ERR_MIDDLE_PLATFORM);
-        UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
-        Long userId = userService.insert(userDo, userLoginDo.getChannelId(), userLoginDo.getGameId());
         String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);
+        UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
+        Long userId = userService.insert(userDo, userLoginDo.getChannelId(), userLoginDo.getGameId());
         UserInfo userInfo = UserInfoBuilder.buildUserInfo(userLoginDo, userId, token);
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
