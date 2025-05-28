@@ -26,7 +26,7 @@ public class BetResultConverter {
                 .overallRewardAmount(betResultDo.getOverallRewardAmount())
                 .totalPayoutAmount(betResultDo.getTotalPayoutAmount())
                 .resultDetail(Objects.nonNull(betResultDo.getResultDetail())
-                        ? (BakunawaBetResultVo) betResultDo.getResultDetail().toResultVo()
+                        ? betResultDo.getResultDetail().toResultVo()
                         : null)
                 .build();
     }
