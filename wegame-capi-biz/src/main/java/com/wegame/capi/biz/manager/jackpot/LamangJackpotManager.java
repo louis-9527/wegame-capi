@@ -41,13 +41,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
 
     @Override
     public List<JackpotRewardPoolDo> listJackpotRewardPool() {
-        List<JackpotRewardPoolDo> doList = jackpotRewardPoolService.listAll(JackpotTypeEnum.LAM_ANG);
-        Optional.ofNullable(doList)
-                .orElse(Collections.emptyList())
-                .forEach(item -> {
-                    item.setInitAmount(lamangConfig.getJackPotConfig().getGuaranteedAmount().get(item.getType().getDesc()));
-                });
-        return doList;
+        return jackpotRewardPoolService.listAll(JackpotTypeEnum.LAM_ANG);
     }
 
     @Override
