@@ -224,13 +224,5 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         // 校验：滚轮行数
         GameInfoDo gameInfo = rewardHandle.getGameInfo();
         AssertUtil.assertTrue(symbolArr.length == gameInfo.getRow(), ErrorCode.ERR_PARAM, "symbol arr err");
-        // for (int row = 0; row < gameInfo.getRow(); row++) {
-        //     // 校验：滚轮列数
-        //     AssertUtil.assertTrue(symbolArr[row].length == gameInfo.getColumn(), ErrorCode.ERR_PARAM, "symbol arr err");
-        //     for (int column = 0; column < gameInfo.getColumn(); column++) {
-        //         // 校验：所有元素不能为空
-        //         AssertUtil.assertNotNull(symbolArr[row][column], ErrorCode.ERR_PARAM, "all symbol can not be null");
-        //     }
-        // }
     }
 }
