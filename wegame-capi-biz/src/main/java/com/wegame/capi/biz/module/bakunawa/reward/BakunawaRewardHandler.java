@@ -23,6 +23,7 @@ import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -114,7 +115,12 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         List<RewardSymbolDo<SymbolDo>> rewardSymbolDoList = Lists.newArrayList();
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             SymbolDo symbolDo = symbolArr[ONE_ROW_INDEX][column];
-            if (REWARD_SYMBOL_LIST.contains(symbolDo)) {
+            if (CollectionUtils.isEmpty(rewardSymbolDoList) && REWARD_SYMBOL_LIST.contains(symbolDo)) {
+                rewardSymbolDoList.add(RewardSymbolDo.<SymbolDo>builder()
+                        .symbol(symbolDo)
+                        .index(IndexFactory.buildDo(ONE_ROW_INDEX, column))
+                        .build());
+            } else if (CollectionUtils.isNotEmpty(rewardSymbolDoList) && !StringUtils.equals(BAKUNAWA_SymbolNull.getId(), symbolDo.getId())) {
                 rewardSymbolDoList.add(RewardSymbolDo.<SymbolDo>builder()
                         .symbol(symbolDo)
                         .index(IndexFactory.buildDo(ONE_ROW_INDEX, column))
