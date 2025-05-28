@@ -13,6 +13,7 @@ import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRec
 import com.wegame.capi.client.domain.vo.jackpot.JackpotUserRewardRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordTypesQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +72,7 @@ public class JackpotUserRewardRecordController {
                 .build())));
     }
 
-    @ApiOperation(value = "分页查询", httpMethod = "POST")
+    @ApiOperation(value = "根据jackpot奖池类型列表分页查询", httpMethod = "POST")
     @PostMapping("/pageQuery")
     public CommonResponse<PageInfoVo<JackpotUserRewardRecordVo>> pageQuery(@RequestBody PageQueryJackpotUserRewardRecordRequest request) {
         request.validate();
@@ -79,10 +80,10 @@ public class JackpotUserRewardRecordController {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
-        JackpotUserRewardRecordQuery query = JackpotUserRewardRecordConverter.requestToQuery(request, "createTime");
+        JackpotUserRewardRecordTypesQuery query = JackpotUserRewardRecordConverter.requestToTypesQuery(request, "createTime");
         return build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                doToVoList(jackpotManager(gameType).listUserRewardRecord(query)),
+                doToVoList(jackpotManager(gameType).listUserRewardRecordByTypes(query)),
                 0L));
     }
 

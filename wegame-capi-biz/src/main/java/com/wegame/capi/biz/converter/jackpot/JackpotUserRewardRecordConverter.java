@@ -11,9 +11,10 @@ import com.wegame.capi.client.domain.vo.jackpot.JackpotUserRewardRecordVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
+import com.wegame.capi.common.utils.DesensitizationUtil;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
-import org.apache.commons.lang3.StringUtils;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordTypesQuery;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -110,7 +111,8 @@ public class JackpotUserRewardRecordConverter {
         JackpotUserRewardRecordVo vo = new JackpotUserRewardRecordVo();
         vo.setId(Objects.nonNull(jackpotUserRewardRecordDo.getId()) ? String.valueOf(jackpotUserRewardRecordDo.getId()) : null);
         vo.setUserId(Objects.nonNull(jackpotUserRewardRecordDo.getUserId()) ? String.valueOf(jackpotUserRewardRecordDo.getUserId()) : null);
-        vo.setPlayerName(jackpotUserRewardRecordDo.getPlayerName());
+        vo.setPlayerName(DesensitizationUtil
+                .desensitizePlayerName(jackpotUserRewardRecordDo.getPlayerName(), 0, 4, 3));
         vo.setBetRecordId(jackpotUserRewardRecordDo.getBetRecordId());
         vo.setGameRecordId(jackpotUserRewardRecordDo.getGameRecordId());
         vo.setBetId(jackpotUserRewardRecordDo.getBetId());
@@ -165,30 +167,16 @@ public class JackpotUserRewardRecordConverter {
 
     public static JackpotUserRewardRecordQuery requestToQuery(PageQueryJackpotUserRewardRecordRequest request, String orderClause) {
         JackpotUserRewardRecordQuery query = new JackpotUserRewardRecordQuery();
-        query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
-        query.setUserId(StringUtils.isNotEmpty(request.getUserId()) ? Long.valueOf(request.getUserId()) : null);
-        query.setPlayerName(request.getPlayerName());
-        query.setBetRecordId(Objects.nonNull(request.getBetRecordId()) ? Long.valueOf(request.getBetRecordId()) : null);
-        query.setGameRecordId(Objects.nonNull(request.getGameRecordId()) ? Long.valueOf(request.getGameRecordId()) : null);
-        query.setBetId(request.getBetId());
-        query.setRewardPoolId(StringUtils.isNotEmpty(request.getRewardPoolId()) ? Long.valueOf(request.getRewardPoolId()) : null);
-        query.setRewardPoolType(request.getRewardPoolType());
-        query.setRewardAmount(StringUtils.isNotEmpty(request.getRewardAmount()) ? Long.valueOf(request.getRewardAmount()) : null);
-        query.setRewardGrantSerialNo(request.getRewardGrantSerialNo());
-        query.setRewardGrantStatus(request.getRewardGrantStatus());
-        query.setRewardGrantTime(Objects.nonNull(request.getRewardGrantTime()) ? new Date(request.getRewardGrantTime()) : null);
-        query.setCreator(request.getCreator());
-        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? DateUtil.getCurrentMilli() : null);
-        query.setUpdater(request.getUpdater());
-        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? DateUtil.getCurrentMilli() : null);
-        query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) ? new Date(request.getStartCreateTime()) : null);
-        query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);
-        query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? new Date(request.getStartUpdateTime()) : null);
-        query.setEndUpdateTime(Objects.nonNull(request.getEndUpdateTime()) ? new Date(request.getEndUpdateTime()) : null);
         query.setLimit(request.getPageSize());
         query.setOffset(request.getOffset());
-        query.setOrderByClause(orderClause);
+        query.setRewardPoolTypeList(request.getRewardPoolTypeList());
+        return query;
+    }
 
+    public static JackpotUserRewardRecordTypesQuery requestToTypesQuery(PageQueryJackpotUserRewardRecordRequest request, String orderClause) {
+        JackpotUserRewardRecordTypesQuery query = new JackpotUserRewardRecordTypesQuery();
+        query.setLimit(request.getPageSize());
+        query.setOffset(request.getOffset());
         query.setRewardPoolTypeList(request.getRewardPoolTypeList());
         return query;
     }

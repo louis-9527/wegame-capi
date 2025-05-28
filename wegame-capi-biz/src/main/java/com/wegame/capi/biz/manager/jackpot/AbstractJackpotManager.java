@@ -4,6 +4,7 @@ import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordTypesQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,19 @@ public abstract class AbstractJackpotManager {
      */
     public abstract JackpotUserRewardRecordDo getUserRewardRecord(JackpotUserRewardRecordQuery query);
 
+    /**
+     * 通用查询
+     * @param query
+     * @return
+     */
     public abstract List<JackpotUserRewardRecordDo> listUserRewardRecord(JackpotUserRewardRecordQuery query);
+
+    /**
+     * 根据类型查询 包含pageSize types
+     * @param query
+     * @return
+     */
+    public abstract List<JackpotUserRewardRecordDo> listUserRewardRecordByTypes(JackpotUserRewardRecordTypesQuery query);
 
     /**
      * 批量新增,返回失败的ID列表

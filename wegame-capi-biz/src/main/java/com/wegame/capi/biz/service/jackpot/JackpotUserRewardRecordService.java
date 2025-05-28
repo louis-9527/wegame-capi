@@ -14,6 +14,7 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
+import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordTypesQuery;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -98,6 +99,24 @@ public class JackpotUserRewardRecordService extends AbstractService {
         return poToDoList(recordPoList);
     }
 
+
+    /**
+     * 根据奖池类型返回固定条数的列表
+     * @param query
+     * @param jackpotType
+     * @return
+     */
+    @Cacheable(value = CacheConstants.JACKPOT_USER_REWARD_RECORD_CONFIG,
+            key = "#query.getCacheKey() + ':' + #jackpotType.gameType.id")
+    public List<JackpotUserRewardRecordDo> listByTypes(JackpotUserRewardRecordTypesQuery query, JackpotTypeEnum jackpotType) {
+        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        List<JackpotUserRewardRecordPo> recordPoList = getMongoTemplate(jackpotType.getGameType())
+                .find(buildMongodbQuery(query),
+                JackpotUserRewardRecordPo.class,
+                jackpotType.getJackpotUserRewardRewardCollectionName());
+        return poToDoList(recordPoList);
+    }
+
     @Cacheable(value = CacheConstants.JACKPOT_USER_REWARD_RECORD_CONFIG, key = "#jackpotType.gameType.id")
     public JackpotUserRewardRecordDo getHighestUserRewardRecord(JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
@@ -107,7 +126,7 @@ public class JackpotUserRewardRecordService extends AbstractService {
         return poToDo(maxRecord);
     }
 
-    @CacheEvict(value = CacheConstants.JACKPOT_REWARD_POOL_CONFIG, key = "#jackpotType.gameType.id")
+    @CacheEvict(value = CacheConstants.JACKPOT_USER_REWARD_RECORD_CONFIG, key = "#jackpotType.gameType.id")
     public void clearHighestUserRewardRecord(JackpotTypeEnum jackpotType) {
         // ...
     }
