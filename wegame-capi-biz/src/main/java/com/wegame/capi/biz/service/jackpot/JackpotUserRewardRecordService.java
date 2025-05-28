@@ -120,7 +120,7 @@ public class JackpotUserRewardRecordService extends AbstractService {
         UpdateResult result = getMongoTemplate(jackpotType.getGameType()).updateFirst(query,
                 JackpotUserRewardRecordQueryBuilder.buildUpdate(jackpotUserRewardRecordPo),
                 JackpotRewardPoolPo.class,
-                jackpotType.getJackpotRewardPoolCollectionName());
+                jackpotType.getJackpotUserRewardRewardCollectionName());
         return result.getModifiedCount() > 0;
     }
 
