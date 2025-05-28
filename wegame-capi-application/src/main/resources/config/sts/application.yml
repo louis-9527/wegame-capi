@@ -93,16 +93,18 @@ spring:
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
             initial-size: 200
-            min-idle: 200
+            min-idle: 100
             max-active: 500
-            max-wait: 1000
+            max-wait: 10
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL
+            initConnectionSqls: SELECT 1
             test-while-idle: true
             test-on-borrow: false
             test-on-return: false
-            pool-prepared-statements: false
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 100
         wegame_backend_db:
           url: jdbc:mysql://qat-makiling-mysql-sg.cluster-cfgtyy7annj0.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: QATmakilingService

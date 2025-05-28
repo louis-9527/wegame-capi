@@ -6,7 +6,9 @@ logging:
 #    org.springframework.web: trace
 #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: trace
-#    org.apache.ibatis: trace
+    com.alibaba.druid: trace
+    com.mysql: trace
+    org.apache.ibatis: trace
 #    org.mongodb: DEBUG
 #    org.springframework.data.redis: DEBUG
 #    com.mongodb.internal.connection: DEBUG
@@ -104,17 +106,20 @@ spring:
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 1
-            min-idle: 1
+            initial-size: 30
+            min-idle: 30
             max-active: 2000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30001
             validation-query: SELECT 1 FROM DUAL
+            initConnectionSqls: SELECT 1
             test-while-idle: true
             test-on-borrow: false
             test-on-return: false
-            pool-prepared-statements: false
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 100
+            filters: stat,log4j
         wegame_backend_db:
           url: jdbc:mysql://localhost:3306/wegame_backend_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
           username: root
