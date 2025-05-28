@@ -1,11 +1,14 @@
 package com.wegame.capi.test.biz.manager;
 
+import com.mongodb.DuplicateKeyException;
+import com.mongodb.bulk.BulkWriteError;
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.manager.jackpot.LamangJackpotManager;
 import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
 import com.wegame.capi.test.BaseTest;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,6 +16,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
+
+@Slf4j
 public class LamangJackpotManagerTest  extends BaseTest {
     @Autowired
     @Qualifier("lamangJackpotManager")
@@ -50,7 +56,25 @@ public class LamangJackpotManagerTest  extends BaseTest {
                 .minorAmount(2000L)
                 .miniAmount(3000L)
                 .majorAmount(4000L).build());
-        lamangJackpotManager.batchAddUserRewardRecord(rewardPoolInputRecordDos);
+
+        try {
+            lamangJackpotManager.batchAddUserRewardRecord(rewardPoolInputRecordDos);
+        }catch (Exception e){
+            List<Long> failList = new ArrayList<>();
+            rewardPoolInputRecordDos.forEach(record->{
+                try {
+                    lamangJackpotManager.addUserRewardRecord(record);
+                }catch (DuplicateKeyException t){
+                    log.warn("Error add user reward record, record: {}, error: {}", record, t.getErrorMessage());
+                }catch (Exception t){
+                    failList.add(record.getId());
+                    log.error("Error add user reward record", t);
+                }
+
+            });
+
+        }
+
     }
 
 }

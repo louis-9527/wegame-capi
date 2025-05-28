@@ -124,7 +124,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                 .betRecordId(betRecord.getId())
                 .pId(betRecord.getPId())
                 .playerId(betRecord.getPlayerId())
-                .userId(String.valueOf(betRecord.getUserId()))
+                .userId(betRecord.getUserId())
                 .gameCount(buildGameDrawTimes(betRecord.getGameRecordList()))
                 .build();
     }

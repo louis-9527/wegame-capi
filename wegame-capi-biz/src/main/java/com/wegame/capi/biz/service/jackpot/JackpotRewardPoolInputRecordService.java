@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -58,34 +59,21 @@ public class JackpotRewardPoolInputRecordService extends AbstractService {
      * @param doList jackpot奖池流入记录列表
      * @return true/false
      */
-    public List<Long> batchAdd(List<JackpotRewardPoolInputRecordDo> doList, JackpotTypeEnum jackpotTypeEnum) {
+    public void batchAdd(List<JackpotRewardPoolInputRecordDo> doList, JackpotTypeEnum jackpotTypeEnum) {
         AssertUtil.assertNotEmpty(doList, ErrorCode.ERR_PARAM);
-        AssertUtil.assertNotEmpty(doList, ErrorCode.ERR_PARAM, "doList is empty");
         AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM, "gameType is null");
         List<JackpotRewardPoolInputRecordPo> poList = JackpotRewardPoolInputRecordConverter.doToPoList(doList, OptEnum.ADD);
-        BulkOperations bulkOps = getMongoTemplate(jackpotTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED,
-                BetRecordPo.class,
-                jackpotTypeEnum.getJackpotRewardPoolInputCollectionName());
-        poList.forEach(bulkOps::insert);
-        List<Long> duplicateIds = new ArrayList<>();
-        try {
-            bulkOps.execute();
-        }catch (BulkOperationException ex) {
-            // 遍历所有错误
-            for (BulkWriteError error : ex.getErrors()) {
-                // 检查是否为重复键错误（错误码11000）
-                if (error.getCode() == 11000) {
-                    int index = error.getIndex();
-                    // 确保索引在合法范围内
-                    if (index >= 0 && index < doList.size()) {
-                        duplicateIds.add(doList.get(index).getId());
-                    }
-                }
-            }
-        }
-        return duplicateIds;
+        getMongoTemplate(jackpotTypeEnum.getGameType())
+                .insert(poList, jackpotTypeEnum.getJackpotRewardPoolInputCollectionName());
     }
-
+    public void add(JackpotRewardPoolInputRecordDo recordDo, JackpotTypeEnum jackpotTypeEnum) {
+        AssertUtil.assertNotNull(recordDo, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM, "gameType is null");
+        JackpotRewardPoolInputRecordPo poRecord = JackpotRewardPoolInputRecordConverter.doToPo(recordDo, OptEnum.ADD);
+        AssertUtil.assertNotNull(poRecord, ErrorCode.ERR_PARAM);
+        getMongoTemplate(jackpotTypeEnum.getGameType())
+                .insert(poRecord, jackpotTypeEnum.getJackpotRewardPoolInputCollectionName());
+    }
 
     /**
      * 删除：物理删除
