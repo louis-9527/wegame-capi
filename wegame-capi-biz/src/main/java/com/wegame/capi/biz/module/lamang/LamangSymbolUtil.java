@@ -1,9 +1,7 @@
 package com.wegame.capi.biz.module.lamang;
 
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -145,16 +143,25 @@ public class LamangSymbolUtil {
         return newSymbolArr;
     }
 
-    public static void postProcessPlaceholderSymbol(LamangSymbolDo[][] symbolArr) {
-        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
-            for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
-                if (Objects.nonNull(symbolArr[row][column])) {
-                    if (symbolArr[row][column].isPlaceholderSymbol()) {
-                        symbolArr[row][column] = null;
+    public static void postProcessPlaceholderSymbol(List<LamangGameRecordDo> gameRecordList) {
+        if (CollectionUtils.isEmpty(gameRecordList)) {
+            return;
+        }
+        long startTime = System.currentTimeMillis();
+        gameRecordList.parallelStream().forEach(gameRecord -> {
+            LamangSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
+            for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+                for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
+                    if (Objects.nonNull(symbolArr[row][column])) {
+                        if (symbolArr[row][column].isPlaceholderSymbol()) {
+                            symbolArr[row][column] = null;
+                        }
                     }
                 }
             }
-        }
+        });
+        long endTime = System.currentTimeMillis();
+        log.info("postPlaceholderSymbol cost time: {} ms", (endTime - startTime));
     }
 
 
