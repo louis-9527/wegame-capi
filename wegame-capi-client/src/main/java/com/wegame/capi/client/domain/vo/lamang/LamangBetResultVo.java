@@ -40,4 +40,6 @@ public class LamangBetResultVo implements Serializable {
     private Integer freeWheelFlag;
     @ApiModelProperty("免费轮游戏记录Id列表")
     private List<String> gameRecordIds;
+    @ApiModelProperty("是否到达最大倍数")
+    private Boolean accumulateReachMaxMultiple;
 }

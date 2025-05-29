@@ -269,14 +269,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                                          boolean freeWheelFlag,
                                          boolean mustRewardFreeWheel) {
 
-        //计算scatter+1免费轮
-        if (freeWheelFlag) {
-            int freeWheelCount = countAndReleaseScatterFreeWheel(preGameRecord.getWheel().getSymbolArr());
-            if (freeWheelCount > 0) {
-                preGameRecord.getRewardResult().setRewardFreeWheelTimes(freeWheelCount);
-                preGameRecord.getRewardResult().setHasRewardFreeWheel(true);
-            }
-        }
+        boolean reachMaxMultiple = reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), lamangConfig.getRewardMaxMultiple());
         if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
             WheelDo<LamangSymbolDo> wheel = generateFromPreWheel(
                     preGameRecord,
@@ -293,15 +286,23 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             gameRecordResult.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             loopPlayOnPreGameRecord(gamePlay, gameRecordResult, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag, mustRewardFreeWheel);
+        } else if (reachMaxMultiple){
+            //打到上限设置前一回合设置为到达最大倍数
+            preGameRecord.setAccumulateReachMaxMultiple(true);
+            //到达上限避免继续执行
+            freeWheelList.clear();
         }
-        // 每回合都需要添加免费轮
-        if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
-            if (!reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), lamangConfig.getRewardMaxMultiple())) {
-                addFreeWheelTimes(freeWheelList, preGameRecord.getRewardResult().getRewardFreeWheelTimes(), preGameRecord.getId());
-            } else {
-                // help gc
-                freeWheelList.clear();
+        // 计算scatter+1免费轮
+        if (freeWheelFlag) {
+            int freeWheelCount = countAndReleaseScatterFreeWheel(preGameRecord.getWheel().getSymbolArr());
+            if (freeWheelCount > 0) {
+                preGameRecord.getRewardResult().setRewardFreeWheelTimes(freeWheelCount);
+                preGameRecord.getRewardResult().setHasRewardFreeWheel(true);
             }
+        }
+        // 没有到达上限 & 赢得免费轮 -> 每回合都需要添加免费轮
+        if (!reachMaxMultiple && preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
+            addFreeWheelTimes(freeWheelList, preGameRecord.getRewardResult().getRewardFreeWheelTimes(), preGameRecord.getId());
         }
     }
 
@@ -344,6 +345,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 .gameRecordIds(null)
                 .lastGameFlag(false)
                 .jackpotDrawTimes(jackpotDrawTimes)
+                .accumulateReachMaxMultiple(false)
                 .build();
     }
 
@@ -355,7 +357,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         LamangConfig.PlayProbabilisticConfig firstBatchConfig = lamangConfig.getProbabilisticConfig().getCommonPlaySymbolProbabilisticConfig();
 
         WheelDo<LamangSymbolDo> wheel = generateFirstWheel(firstBatchConfig, mustRewardFreeWheel,false);
-        //首轮不穿入倍率
+        //首轮不传入倍率
         RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录

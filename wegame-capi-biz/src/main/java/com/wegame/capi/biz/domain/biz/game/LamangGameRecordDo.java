@@ -94,6 +94,11 @@ public class LamangGameRecordDo implements Serializable, ToVoConverter<LamangBet
      */
     private Integer jackpotDrawTimes;
 
+    /**
+     * 达到触发最大中奖倍数
+     */
+    private Boolean accumulateReachMaxMultiple;
+
     @Transient
     @JsonIgnore
     @Override
@@ -109,6 +114,7 @@ public class LamangGameRecordDo implements Serializable, ToVoConverter<LamangBet
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                     .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? BooleanEnum.TRUE.getCode() : BooleanEnum.FALSE.getCode())
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .build();
@@ -121,6 +127,7 @@ public class LamangGameRecordDo implements Serializable, ToVoConverter<LamangBet
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .rewardSymbolIndexSet(buildRewardSymbolIndexSet())
                     .rewardLineList(buildRewardLineList())
+                    .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                     .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? BooleanEnum.TRUE.getCode() : BooleanEnum.FALSE.getCode())
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .build();
@@ -140,6 +147,7 @@ public class LamangGameRecordDo implements Serializable, ToVoConverter<LamangBet
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
                 .rewardLineList(buildRewardLineList())
                 .freeWheelFlag(wheel.isFreeFlag())
+                .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                 .build();
     }
 
