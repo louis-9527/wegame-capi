@@ -60,36 +60,40 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     }
 
     private void buildUserIdCache() {
-        distributeLock.lockThenRun(LockNameUtil.getbuildUserIdCacheLockName(), 100, TimeUnit.MILLISECONDS, () -> {
-            try {
-                log.info("buildUserIdCache begin");
-                List<UserDo> userList;
-                UserQuery userQuery = UserQuery.builder()
-                        .limit(1000)
-                        .orderByClause(" order by id asc ")
-                        .build();
-                Long maxId = 0L;
-                do {
-                    if (Objects.nonNull(maxId)) {
-                        userQuery.setGreaterThanId(maxId);
-                    }
-                    userList = userService.list(userQuery);
-                    if (CollectionUtils.isNotEmpty(userList)) {
-                        maxId = userList.get(userList.size() - 1).getId();
-                        log.info("buildUserIdCache maxId: {}", maxId);
-                    }
-                    Optional.ofNullable(userList)
-                            .orElse(Collections.emptyList())
-                            .forEach(item -> {
-                                userService.asyncPutUserIdCache(item.getId(), item.getPlayerId(), item.getPId());
-                            });
-                } while (CollectionUtils.isNotEmpty(userList));
-                log.info("buildUserIdCache end");
-            } catch (LockException e) {
-                // do nothing
-            } catch (Exception e) {
-                log.error("buildUserIdCache error", e);
-            }
-        }, null);
+        try {
+            distributeLock.lockThenRun(LockNameUtil.getbuildUserIdCacheLockName(), 1, TimeUnit.SECONDS, () -> {
+                try {
+                    log.info("buildUserIdCache begin");
+                    List<UserDo> userList;
+                    UserQuery userQuery = UserQuery.builder()
+                            .limit(1000)
+                            .orderByClause(" order by id asc ")
+                            .build();
+                    Long maxId = 0L;
+                    do {
+                        if (Objects.nonNull(maxId)) {
+                            userQuery.setGreaterThanId(maxId);
+                        }
+                        userList = userService.list(userQuery);
+                        if (CollectionUtils.isNotEmpty(userList)) {
+                            maxId = userList.get(userList.size() - 1).getId();
+                            log.info("buildUserIdCache maxId: {}", maxId);
+                        }
+                        Optional.ofNullable(userList)
+                                .orElse(Collections.emptyList())
+                                .forEach(item -> {
+                                    userService.asyncPutUserIdCache(item.getId(), item.getPlayerId(), item.getPId());
+                                });
+                    } while (CollectionUtils.isNotEmpty(userList));
+                    log.info("buildUserIdCache end");
+                } catch (LockException e) {
+                    // do nothing
+                } catch (Exception e) {
+                    log.error("buildUserIdCache error", e);
+                }
+            }, null);
+        } catch (Exception e) {
+            log.error("buildUserIdCache error", e);
+        }
     }
 }
