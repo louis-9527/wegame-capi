@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.capi.biz.config.domain.BakunawaConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
@@ -43,7 +44,10 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
     private static final List<SymbolDo> REWARD_SYMBOL_LIST = Lists.newArrayList(BAKUNAWA_Symbol1, BAKUNAWA_Symbol2, BAKUNAWA_Symbol3, BAKUNAWA_Symbol5, BAKUNAWA_Symbol10);
 
     @Autowired
+    BakunawaConfig bakunawaConfig;
+    @Autowired
     MultipleCalculateStrategy bakunawaMultipleCalculateStrategy;
+
 
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
         log.info("BakunawaRewardHandler.handle rewardHandle:{}", FastJsonUtils.toJSONString(rewardHandle));
@@ -105,6 +109,11 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
      */
     @Override
     public BigDecimal calculateLineRewardAmount(RewardLineDo rewardLine, Long betAmount, BigDecimal odds, BigDecimal multiple) {
+        BigDecimal multiply = odds.multiply(multiple);
+        Integer rewardMaxMultiple = bakunawaConfig.getRewardMaxMultiple();
+        if (multiply.intValue() > rewardMaxMultiple) {
+            return BigDecimal.valueOf(betAmount).multiply(new BigDecimal(rewardMaxMultiple));
+        }
         return BigDecimal.valueOf(betAmount)
                 .multiply(odds)
                 .multiply(multiple);

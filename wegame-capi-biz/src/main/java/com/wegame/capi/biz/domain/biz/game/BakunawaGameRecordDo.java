@@ -71,6 +71,10 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<Bakunaw
      * 累计中奖总金额
      */
     private Long overallRewardAmount;
+    /**
+     * 达到触发最大中奖倍数
+     */
+    private Boolean accumulateReachMaxMultiple;
 
     /**
      * 是否中奖免费轮
@@ -129,6 +133,7 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<Bakunaw
                 .rewardAmount(Objects.nonNull(rewardResult) ? rewardResult.getTotalRewardAmount() : null)
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
                 .overallRewardAmount(this.overallRewardAmount)
+                .accumulateReachMaxMultiple(this.accumulateReachMaxMultiple)
                 .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                 .rewardLine(buildRewardLine())
                 .build();
