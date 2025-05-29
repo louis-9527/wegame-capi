@@ -142,12 +142,12 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     }
 
     private void initDomainConnections() {
-//        initConnections(walletConnectionManager, singleDomainIntConnections, HttpHost.create(singleDomain));
-//        initConnections(walletConnectionManager, freeSpinDomainIntConnections, HttpHost.create(freeSpinDomain));
-//        initConnections(promotionConnectionManager, promotionDomainIntConnections, HttpHost.create(promotionDomain));
-        String domain = "http://server1.makillingslot.net";
-        HttpHost httpHost = HttpHost.create(domain);
-        initConnections(walletConnectionManager, 30, httpHost);
+        initConnections(walletConnectionManager, singleDomainIntConnections, HttpHost.create(singleDomain));
+        initConnections(walletConnectionManager, freeSpinDomainIntConnections, HttpHost.create(freeSpinDomain));
+        initConnections(promotionConnectionManager, promotionDomainIntConnections, HttpHost.create(promotionDomain));
+        //        String domain = "http://server1.makillingslot.net";
+        //        HttpHost httpHost = HttpHost.create(domain);
+        //        initConnections(walletConnectionManager, 30, httpHost);
     }
 
     private void initConnections(PoolingHttpClientConnectionManager manager, int numConnections, HttpHost httpHost) {
