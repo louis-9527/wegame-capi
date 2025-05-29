@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service;
 
+import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.exception.BusinessException;
@@ -16,6 +17,9 @@ import com.wegame.capi.dao.mapper.user.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,6 +27,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
 
 /**
  * po服务
@@ -194,27 +200,37 @@ public class UserService {
     }
 
     /// ////////////  above auto generated ///////////////
+    @Cacheable(value = CacheConstants.USER_ID, key = "#playerId_ + '_'  + #pid")
+    public Long selectIdByPlayerIdAndPid(String playerId, String pid) {
+        return userManualMapper.selectIdByPlayerIdAndPid(playerId, playerId);
+    }
+
+    @Async(defaultThreadPoolExecutor)
+    @CachePut(value = CacheConstants.USER_ID, key = "#playerId_ + '_'  + #pid")
+    public Long asyncPutUserIdCache(Long userId, String playerId, String pid) {
+        return userManualMapper.selectIdByPlayerIdAndPid(playerId, playerId);
+    }
 
     public Long insert(UserDo userDo, String channelId, String gameId) {
         long startTime = DateUtil.getCurrentMilli();
+        Long userId = userDo.getId();
         try {
-            UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
-            AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
-            Long id = userManualMapper.selectIdByPlayerIdAndPid(userPo.getPlayerId(), userPo.getPId());
-            if (Objects.isNull(id)) {
+            if (Objects.isNull(userId)) {
+                UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
+                AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
                 // 新增
                 userMapper.insert(userPo);
                 AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
-                id = userPo.getId();
+                userId = userPo.getId();
             }
             userLoginInfoService.asyncAddOrUpdate(UserLoginInfoDo.builder()
                     .channelId(Long.parseLong(channelId))
                     .gameId(gameId)
-                    .userId(id)
-                    .playerId(userPo.getPlayerId())
+                    .userId(userId)
+                    .playerId(userDo.getPlayerId())
                     .loginTime(new Date())
                     .build());
-            return id;
+            return userId;
         } catch (Exception e) {
             log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");

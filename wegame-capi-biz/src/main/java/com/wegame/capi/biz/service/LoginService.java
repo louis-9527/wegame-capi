@@ -33,7 +33,8 @@ public class LoginService {
         AssertUtil.assertTrue(singleWalletService.authLoginToken(userLoginDo), ErrorCode.ERR_MIDDLE_PLATFORM);
         String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);
-        UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
+        Long existUserId = userService.selectIdByPlayerIdAndPid(userLoginDo.getPlayerId(), userLoginDo.getPId());
+        UserDo userDo = UserInfoBuilder.buildUserDo(existUserId, userLoginDo);
         Long userId = userService.insert(userDo, userLoginDo.getChannelId(), userLoginDo.getGameId());
         UserInfo userInfo = UserInfoBuilder.buildUserInfo(userLoginDo, userId, token);
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
