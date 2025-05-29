@@ -277,6 +277,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                                          boolean freeWheelFlag,
                                          boolean mustRewardFreeWheel) {
 
+        boolean reachMaxMultiple = reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), lamangConfig.getRewardMaxMultiple());
         // 计算scatter+1免费轮
         if (freeWheelFlag) {
             int freeWheelCount = countAndReleaseScatterFreeWheel(preGameRecord.getWheel().getSymbolArr());
@@ -285,7 +286,10 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 preGameRecord.getRewardResult().setHasRewardFreeWheel(true);
             }
         }
-        boolean reachMaxMultiple = reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), lamangConfig.getRewardMaxMultiple());
+        // 没有到达上限 & 赢得免费轮 -> 每回合都需要添加免费轮
+        if (!reachMaxMultiple && preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
+            addFreeWheelTimes(freeWheelList, preGameRecord.getRewardResult().getRewardFreeWheelTimes(), preGameRecord.getId());
+        }
         if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
             WheelDo<LamangSymbolDo> wheel = generateFromPreWheel(
                     preGameRecord,
@@ -302,15 +306,11 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             gameRecordResult.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             loopPlayOnPreGameRecord(gamePlay, gameRecordResult, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag, mustRewardFreeWheel);
-        } else if (reachMaxMultiple){
+        } else if (reachMaxMultiple) {
             //打到上限设置前一回合设置为到达最大倍数
             preGameRecord.setAccumulateReachMaxMultiple(true);
             //到达上限避免继续执行
             freeWheelList.clear();
-        }
-        // 没有到达上限 & 赢得免费轮 -> 每回合都需要添加免费轮
-        if (!reachMaxMultiple && preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
-            addFreeWheelTimes(freeWheelList, preGameRecord.getRewardResult().getRewardFreeWheelTimes(), preGameRecord.getId());
         }
     }
 
