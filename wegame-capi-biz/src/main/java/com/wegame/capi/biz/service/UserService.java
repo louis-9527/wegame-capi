@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
 
@@ -212,24 +213,24 @@ public class UserService {
 
     public Long insert(UserDo userDo, String channelId, String gameId) {
         long startTime = DateUtil.getCurrentMilli();
+        Long userId = userDo.getId();
         try {
-            UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
-            AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
-            //            Long id = userManualMapper.selectIdByPlayerIdAndPid(userPo.getPlayerId(), userDo.getPId());
-            //            if (Objects.isNull(id)) {
-            // 新增
-            userMapper.insert(userPo);
-            AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
-            //    id = userPo.getId();
-            // }
+            if (Objects.isNull(userId)) {
+                UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
+                AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
+                // 新增
+                userMapper.insert(userPo);
+                AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
+                userId = userPo.getId();
+            }
             userLoginInfoService.asyncAddOrUpdate(UserLoginInfoDo.builder()
                     .channelId(Long.parseLong(channelId))
                     .gameId(gameId)
-                    .userId(userPo.getId())
-                    .playerId(userPo.getPlayerId())
+                    .userId(userId)
+                    .playerId(userDo.getPlayerId())
                     .loginTime(new Date())
                     .build());
-            return userPo.getId();
+            return userId;
         } catch (Exception e) {
             log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");
