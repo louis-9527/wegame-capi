@@ -30,10 +30,10 @@ public class LoginService {
     SingleWalletService singleWalletService;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
-        AssertUtil.assertTrue(singleWalletService.authLoginToken(userLoginDo), ErrorCode.ERR_MIDDLE_PLATFORM);
+//        AssertUtil.assertTrue(singleWalletService.authLoginToken(userLoginDo), ErrorCode.ERR_MIDDLE_PLATFORM);
         String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);
-        Long existUserId = userService.selectIdByPlayerIdAndPid(userLoginDo.getPlayerId(), userLoginDo.getPId());
+        String existUserId = userService.selectIdByPlayerIdAndPid(userLoginDo.getPlayerId(), userLoginDo.getPId());
         UserDo userDo = UserInfoBuilder.buildUserDo(existUserId, userLoginDo);
         Long userId = userService.insert(userDo, userLoginDo.getChannelId(), userLoginDo.getGameId());
         UserInfo userInfo = UserInfoBuilder.buildUserInfo(userLoginDo, userId, token);

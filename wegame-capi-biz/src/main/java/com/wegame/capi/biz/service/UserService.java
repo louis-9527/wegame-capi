@@ -200,15 +200,20 @@ public class UserService {
     }
 
     /// ////////////  above auto generated ///////////////
-    @Cacheable(value = CacheConstants.USER_ID, key = "#playerId_ + '_'  + #pid")
-    public Long selectIdByPlayerIdAndPid(String playerId, String pid) {
-        return userManualMapper.selectIdByPlayerIdAndPid(playerId, playerId);
+    @Cacheable(value = CacheConstants.USER_ID, key = "#playerId + '_'  + #pid")
+    public String selectIdByPlayerIdAndPid(String playerId, String pid) {
+        Long id = userManualMapper.selectIdByPlayerIdAndPid(playerId, pid);
+        if (Objects.nonNull(id)) {
+            return String.valueOf(id);
+        } else {
+            return null;
+        }
     }
 
     @Async(defaultThreadPoolExecutor)
-    @CachePut(value = CacheConstants.USER_ID, key = "#playerId_ + '_'  + #pid")
-    public Long asyncPutUserIdCache(Long userId, String playerId, String pid) {
-        return userManualMapper.selectIdByPlayerIdAndPid(playerId, playerId);
+    @CachePut(value = CacheConstants.USER_ID, key = "#playerId + '_' + #pid")
+    public String asyncPutUserIdCache(Long userId, String playerId, String pid) {
+        return String.valueOf(userId);
     }
 
     public Long insert(UserDo userDo, String channelId, String gameId) {
