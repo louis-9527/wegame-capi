@@ -8,7 +8,7 @@ public class MysqlPasswordTest {
 
     public static void main(String[] args) throws Exception {
         // 公钥加密
-        String encrypt = CryptoUtils.encrypt(public_key, "izRRnE6Bd4iGYkzVjK4I");
+        String encrypt = CryptoUtils.encrypt(public_key, "Sports-live-qwe123!@#");
         System.out.println("密码加密为：" + encrypt);
         // 私钥进行解密
         System.out.println("密码解密为：" + CryptoUtils.decrypt(private_key, encrypt));
