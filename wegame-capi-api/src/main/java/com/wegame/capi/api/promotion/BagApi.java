@@ -37,24 +37,26 @@ public class BagApi extends PromotionBaseApi {
     private static final String GET_HISTORY_MESSAGE_URL_FORMAT = "%s/getHistoryMessage";
     private static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check";
 
+
     @PostConstruct
     public void init() {
         try {
             String url = String.format(HEALTH_CHECK_FORMAT, promotionDomain);
+            // String url = "http://server1.makillingslot.net/capi/game/common/ping";
             IntStream.range(0, 1000).parallel().forEach(i -> {
                 try {
-                    try {
-                        ResponseEntity<Object> response = promotionRestTemplate.getForEntity(url, Object.class);
-                        log.info("singleWallet health check response suc");
-                    } catch (Exception e) {
-                        log.warn("promotion health check error", e);
-                    }
+                    domainWarmUpThreadPoolExecutor.submit(() -> {
+                        try {
+                            ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
+                            log.info("singleWallet health check response suc");
+                        } catch (Exception e) {
+                            log.warn("singleWallet health check error", e);
+                        }
+                    });
                 } catch (Exception ignored) {
                     // 忽略所有异常
                 }
             });
-            //            ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
-            //            log.info("health check response: {}", response);
         } catch (Exception e) {
 
         }

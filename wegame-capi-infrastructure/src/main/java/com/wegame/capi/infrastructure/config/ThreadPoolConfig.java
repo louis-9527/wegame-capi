@@ -25,6 +25,7 @@ public class ThreadPoolConfig {
     public static final String operationEventThreadPoolExecutor = "operationEventThreadPoolExecutor";
     public static final String operationEventReportThreadPoolExecutor = "operationEventReportThreadPoolExecutor";
     public static final String starCardUseRecordThreadPoolExecutor = "starCardUseRecordThreadPoolExecutor";
+    public static final String domainWarmUpThreadPoolExecutor = "domainWarmUpThreadPoolExecutor";
 
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
@@ -131,6 +132,20 @@ public class ThreadPoolConfig {
                 100L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(10000),
+                new CustomizableThreadFactory("star-card-use-record-pool-"),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
+    @Bean(domainWarmUpThreadPoolExecutor)
+    public ThreadPoolExecutor domainWarmUpThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(300,
+                300,
+                100L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(100000),
                 new CustomizableThreadFactory("star-card-use-record-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);

@@ -57,21 +57,21 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     public void init() {
         try {
             String url = String.format(HEALTH_CHECK_FORMAT, singleDomain);
-            //  String url = "http://server1.makillingslot.net/capi/game/common/ping";
+            // String url = "http://server1.makillingslot.net/capi/game/common/ping";
             IntStream.range(0, 1000).parallel().forEach(i -> {
                 try {
-                    try {
-                        ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
-                        log.info("singleWallet health check response suc");
-                    } catch (Exception e) {
-                        log.warn("singleWallet health check error", e);
-                    }
+                    domainWarmUpThreadPoolExecutor.submit(() -> {
+                        try {
+                            ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
+                            log.info("singleWallet health check response suc");
+                        } catch (Exception e) {
+                            log.warn("singleWallet health check error", e);
+                        }
+                    });
                 } catch (Exception ignored) {
                     // 忽略所有异常
                 }
             });
-            //            ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
-            //            log.info("health check response: {}", response);
         } catch (Exception e) {
 
         }
