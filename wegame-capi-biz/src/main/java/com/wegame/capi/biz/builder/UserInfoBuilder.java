@@ -1,9 +1,11 @@
 package com.wegame.capi.biz.builder;
 
+import com.wegame.base.utils.StringUtil;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.client.context.UserInfo;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.Optional;
@@ -25,9 +27,9 @@ public class UserInfoBuilder {
                 .build();
     }
 
-    public static UserDo buildUserDo(Long id, UserLoginDo userLoginDo) {
+    public static UserDo buildUserDo(String id, UserLoginDo userLoginDo) {
         return UserDo.builder()
-                .id(id)
+                .id(StringUtils.isNotEmpty(id) ? Long.valueOf(id) : null)
                 .pId(userLoginDo.getPId())
                 .playerId(userLoginDo.getPlayerId())
                 .playerName(userLoginDo.getPlayerName())

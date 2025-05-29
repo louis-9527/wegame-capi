@@ -68,7 +68,7 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
                         .limit(1000)
                         .orderByClause(" order by id asc ")
                         .build();
-                Long maxId = null;
+                Long maxId = 0L;
                 do {
                     if (Objects.nonNull(maxId)) {
                         userQuery.setGreaterThanId(maxId);

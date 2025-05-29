@@ -57,8 +57,8 @@ spring:
   freemarker:
     checkTemplateLocation: false
   redis:
-    connectTimeout: 500
-    timeout: 500
+    connectTimeout: 5000
+    timeout: 5000
     cluster:
       nodes:
         - localhost:7001
