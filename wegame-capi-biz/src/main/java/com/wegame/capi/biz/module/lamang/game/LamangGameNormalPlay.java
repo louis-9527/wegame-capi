@@ -273,6 +273,10 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         if (freeWheelFlag) {
             int freeWheelCount = countAndReleaseScatterFreeWheel(preGameRecord.getWheel().getSymbolArr());
             addFreeWheelTimes(freeWheelList, freeWheelCount, preGameRecord.getId());
+            if (freeWheelCount > 0) {
+                preGameRecord.getRewardResult().setRewardFreeWheelTimes(freeWheelCount);
+                preGameRecord.getRewardResult().setHasRewardFreeWheel(true);
+            }
         }
         if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
             WheelDo<LamangSymbolDo> wheel = generateFromPreWheel(
