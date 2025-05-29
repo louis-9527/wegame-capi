@@ -60,7 +60,7 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     }
 
     private void buildUserIdCache() {
-        distributeLock.lockThenRun(LockNameUtil.getbuildUserIdCacheLockName(), 100, TimeUnit.MILLISECONDS, () -> {
+        distributeLock.lockThenRun(LockNameUtil.getbuildUserIdCacheLockName(), 1, TimeUnit.SECONDS, () -> {
             try {
                 log.info("buildUserIdCache begin");
                 List<UserDo> userList;
