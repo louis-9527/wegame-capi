@@ -82,11 +82,11 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
     }
 
 
-    private static BakunawaGameRecordDo buildGameRecord(Long id,
-                                                        Long betRecordId,
-                                                        WheelDo<SymbolDo> wheel,
-                                                        RewardResultDo<SymbolDo> rewardResult,
-                                                        Long overallRewardAmount) {
+    private BakunawaGameRecordDo buildGameRecord(Long id,
+                                                 Long betRecordId,
+                                                 WheelDo<SymbolDo> wheel,
+                                                 RewardResultDo<SymbolDo> rewardResult,
+                                                 Long overallRewardAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         return BakunawaGameRecordDo.builder()
@@ -97,6 +97,7 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
                 .wheel(wheel)
                 .rewardResult(rewardResult)
                 .overallRewardAmount(overallRewardAmount)
+                .accumulateReachMaxMultiple(rewardResult.getTotalMultiple().intValue() > bakunawaConfig.getRewardMaxMultiple())
                 .build();
     }
 }
