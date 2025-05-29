@@ -85,7 +85,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         }
 
         //生成免费轮
-        if (CollectionUtils.isNotEmpty(freeWheelList)) {
+        boolean reachMaxMultiple = reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), lamangConfig.getRewardMaxMultiple());
+        if (CollectionUtils.isNotEmpty(freeWheelList) && !reachMaxMultiple) {
             generateFreeBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
         }
         // 设置结束
@@ -276,6 +277,14 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                                          boolean freeWheelFlag,
                                          boolean mustRewardFreeWheel) {
 
+        // 计算scatter+1免费轮
+        if (freeWheelFlag) {
+            int freeWheelCount = countAndReleaseScatterFreeWheel(preGameRecord.getWheel().getSymbolArr());
+            if (freeWheelCount > 0) {
+                preGameRecord.getRewardResult().setRewardFreeWheelTimes(freeWheelCount);
+                preGameRecord.getRewardResult().setHasRewardFreeWheel(true);
+            }
+        }
         boolean reachMaxMultiple = reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), lamangConfig.getRewardMaxMultiple());
         if (canContinuePlayOnPreWheel(gamePlay, preGameRecord.getRewardResult(), totalRewardAmount)) {
             WheelDo<LamangSymbolDo> wheel = generateFromPreWheel(
@@ -298,14 +307,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             preGameRecord.setAccumulateReachMaxMultiple(true);
             //到达上限避免继续执行
             freeWheelList.clear();
-        }
-        // 计算scatter+1免费轮
-        if (freeWheelFlag) {
-            int freeWheelCount = countAndReleaseScatterFreeWheel(preGameRecord.getWheel().getSymbolArr());
-            if (freeWheelCount > 0) {
-                preGameRecord.getRewardResult().setRewardFreeWheelTimes(freeWheelCount);
-                preGameRecord.getRewardResult().setHasRewardFreeWheel(true);
-            }
         }
         // 没有到达上限 & 赢得免费轮 -> 每回合都需要添加免费轮
         if (!reachMaxMultiple && preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
