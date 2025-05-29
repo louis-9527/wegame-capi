@@ -11,8 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.wegame.base.config.HttpClientConfig.COMMON_REST_TEMPLATE_BEAN;
-import static com.wegame.capi.infrastructure.config.RestTemplateConfig.PROMOTION_REST_TEMPLATE_BEAN;
-import static com.wegame.capi.infrastructure.config.RestTemplateConfig.WALLET_REST_TEMPLATE_BEAN;
+import static com.wegame.capi.infrastructure.config.rest.PromotionRestTemplateConfig.PROMOTION_REST_TEMPLATE_BEAN;
+import static com.wegame.capi.infrastructure.config.rest.WalletRestTemplateConfig.WALLET_REST_TEMPLATE_BEAN;
 
 /**
  * base客户端

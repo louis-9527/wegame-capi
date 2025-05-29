@@ -2,10 +2,9 @@ package com.wegame.capi.api.base;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-
-import java.util.stream.IntStream;
 
 @Slf4j
 public class FreeSpinBaseApi extends CommonBaseApi {
@@ -21,25 +20,34 @@ public class FreeSpinBaseApi extends CommonBaseApi {
         return headers;
     }
 
-    public void initConnections() {
+    public void healthCheck() {
         try {
-            String url = String.format(HEALTH_CHECK_FORMAT, freeSpinDomain);
-            IntStream.range(0, 200).forEach(i -> {
-                try {
-                    domainWarmUpThreadPoolExecutor.submit(() -> {
-                        try {
-                            walletRestTemplate.getForEntity(url, Object.class);
-                            log.info("promotion health check suc");
-                        } catch (Exception e) {
-                            log.warn("promotion health check error", e);
-                        }
-                    });
-                } catch (Exception ignored) {
-                    // 忽略所有异常
-                }
-            });
+            ResponseEntity<Object> response = walletRestTemplate.getForEntity(String.format(HEALTH_CHECK_FORMAT, freeSpinDomain), Object.class);
+            log.info("freeSpin health check: {}", response);
         } catch (Exception e) {
-            // 忽略所有异常
+            log.warn("freeSpin health check error", e);
         }
     }
+
+    //    public void initConnections() {
+    //        try {
+    //            String url = String.format(HEALTH_CHECK_FORMAT, freeSpinDomain);
+    //            IntStream.range(0, 200).forEach(i -> {
+    //                try {
+    //                    domainWarmUpThreadPoolExecutor.submit(() -> {
+    //                        try {
+    //                            walletRestTemplate.getForEntity(url, Object.class);
+    //                            log.info("promotion health check suc");
+    //                        } catch (Exception e) {
+    //                            log.warn("promotion health check error", e);
+    //                        }
+    //                    });
+    //                } catch (Exception ignored) {
+    //                    // 忽略所有异常
+    //                }
+    //            });
+    //        } catch (Exception e) {
+    //            // 忽略所有异常
+    //        }
+    //    }
 }
