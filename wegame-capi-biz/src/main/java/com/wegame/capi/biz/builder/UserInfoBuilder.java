@@ -27,9 +27,9 @@ public class UserInfoBuilder {
                 .build();
     }
 
-    public static UserDo buildUserDo(String id, UserLoginDo userLoginDo) {
+    public static UserDo buildUserDo(UserLoginDo userLoginDo) {
         return UserDo.builder()
-                .id(StringUtils.isNotEmpty(id) ? Long.valueOf(id) : null)
+                .id(null)
                 .pId(userLoginDo.getPId())
                 .playerId(userLoginDo.getPlayerId())
                 .playerName(userLoginDo.getPlayerName())

@@ -19,6 +19,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -216,26 +217,18 @@ public class UserService {
         return String.valueOf(userId);
     }
 
-    public Long insert(UserDo userDo, String channelId, String gameId) {
+    @CachePut(value = CacheConstants.USER_ID, key = "#userDo.playerId + '_' + #userDo.pid")
+    public String insert(UserDo userDo) {
         long startTime = DateUtil.getCurrentMilli();
-        Long userId = userDo.getId();
         try {
-            if (Objects.isNull(userId)) {
-                UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
-                AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
-                // 新增
-                userMapper.insert(userPo);
-                AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
-                userId = userPo.getId();
-            }
-            userLoginInfoService.asyncAddOrUpdate(UserLoginInfoDo.builder()
-                    .channelId(Long.parseLong(channelId))
-                    .gameId(gameId)
-                    .userId(userId)
-                    .playerId(userDo.getPlayerId())
-                    .loginTime(new Date())
-                    .build());
-            return userId;
+            UserPo userPo = UserConverter.doToPo(userDo, OptEnum.ADD);
+            AssertUtil.assertNotNull(userPo, ErrorCode.ERR_PARAM);
+            userMapper.insert(userPo);
+            AssertUtil.assertNotNull(userPo.getId(), ErrorCode.ERR_INTER, "login error, please try again later");
+            return String.valueOf(userPo.getId());
+        } catch (DuplicateKeyException e) {
+            Long id = userManualMapper.selectIdByPlayerIdAndPid(userDo.getPlayerId(), userDo.getPId());
+            return Objects.nonNull(id) ? String.valueOf(id) : null;
         } catch (Exception e) {
             log.error("insert err, errMsg: {}, userDo: {}", e.getMessage(), userDo, e);
             throw new BusinessException(ErrorCode.ERR_INTER, "login error, please try again later");
