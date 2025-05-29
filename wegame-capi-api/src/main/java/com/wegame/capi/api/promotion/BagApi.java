@@ -43,7 +43,7 @@ public class BagApi extends PromotionBaseApi {
         try {
             String url = String.format(HEALTH_CHECK_FORMAT, promotionDomain);
             // String url = "http://server1.makillingslot.net/capi/game/common/ping";
-            IntStream.range(0, 1000).parallel().forEach(i -> {
+            IntStream.range(0, 1000).forEach(i -> {
                 try {
                     domainWarmUpThreadPoolExecutor.submit(() -> {
                         try {
