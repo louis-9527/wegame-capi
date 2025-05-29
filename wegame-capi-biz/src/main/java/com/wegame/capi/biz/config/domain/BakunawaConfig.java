@@ -28,6 +28,10 @@ public class BakunawaConfig {
      * 中奖通知最小倍数
      */
     private Integer rewardNotifyMinMultiple;
+    /**
+     * 中奖最大倍数
+     */
+    private Integer rewardMaxMultiple;
 
     @Data
     @SuperBuilder
@@ -102,5 +106,7 @@ public class BakunawaConfig {
     private void rewardNotifyMinMultipleValidate() {
         AssertUtil.assertNotNull(rewardNotifyMinMultiple, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple is null");
         AssertUtil.assertTrue(rewardNotifyMinMultiple > 0, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple must great than 0");
+        AssertUtil.assertNotNull(rewardMaxMultiple, ErrorCode.ERR_INTER, "rewardMaxMultiple is null");
+        AssertUtil.assertTrue(rewardMaxMultiple > 0, ErrorCode.ERR_INTER, "rewardMaxMultiple must great than 0");
     }
 }

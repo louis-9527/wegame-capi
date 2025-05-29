@@ -55,5 +55,6 @@
       "1000": "0.200000"
     }
   },
-  "rewardNotifyMinMultiple": "100"
+  "rewardNotifyMinMultiple": "100",
+  "rewardMaxMultiple": "1000000"
 }
