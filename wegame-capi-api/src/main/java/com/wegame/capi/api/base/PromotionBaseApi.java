@@ -2,12 +2,17 @@ package com.wegame.capi.api.base;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import javax.annotation.PostConstruct;
+import java.util.stream.IntStream;
 
 @Slf4j
 public class PromotionBaseApi extends CommonBaseApi {
 
+    private static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check";
     @Value("${api.game.promotionDomain}")
     public String promotionDomain;
 
@@ -17,5 +22,27 @@ public class PromotionBaseApi extends CommonBaseApi {
         headers.add("Keep-Alive", "timeout=180");
         headers.add("uid", uid);
         return headers;
+    }
+
+    public void initConnections() {
+        try {
+            String url = String.format(HEALTH_CHECK_FORMAT, promotionDomain);
+            IntStream.range(0, 200).forEach(i -> {
+                try {
+                    domainWarmUpThreadPoolExecutor.submit(() -> {
+                        try {
+                            walletRestTemplate.getForEntity(url, Object.class);
+                            log.info("promotion health check suc");
+                        } catch (Exception e) {
+                            log.warn("promotion health check error", e);
+                        }
+                    });
+                } catch (Exception ignored) {
+                    // 忽略所有异常
+                }
+            });
+        } catch (Exception e) {
+            // 忽略所有异常
+        }
     }
 }

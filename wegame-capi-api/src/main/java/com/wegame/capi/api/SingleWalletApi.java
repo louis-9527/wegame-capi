@@ -51,31 +51,6 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     private static final String BET_WITH_PAYOUT_URL_FORMAT = "%s/betWithPayout";
     private static final String BET_STATUS_URL_FORMAT = "%s/betStatus";
     private static final String BET_STAR_SPIN_URL_FORMAT = "%s/starSpin";
-    private static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check";
-
-    @PostConstruct
-    public void init() {
-        try {
-            String url = String.format(HEALTH_CHECK_FORMAT, singleDomain);
-            // String url = "http://server1.makillingslot.net/capi/game/common/ping";
-            IntStream.range(0, 1000).forEach(i -> {
-                try {
-                    domainWarmUpThreadPoolExecutor.submit(() -> {
-                        try {
-                            ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
-                            log.info("singleWallet health check response suc");
-                        } catch (Exception e) {
-                            log.warn("singleWallet health check error", e);
-                        }
-                    });
-                } catch (Exception ignored) {
-                    // 忽略所有异常
-                }
-            });
-        } catch (Exception e) {
-
-        }
-    }
 
     @Retryable(value = RetryException.class, exclude = BusinessException.class)
     public AuthLoginTokenRes authLoginToken(GetAuthLoginTokenReq req) {
