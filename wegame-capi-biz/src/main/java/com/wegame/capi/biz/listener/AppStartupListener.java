@@ -2,7 +2,10 @@ package com.wegame.capi.biz.listener;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.lock.DistributeLock;
+import com.wegame.capi.api.SingleWalletApi;
+import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.domain.user.UserDo;
+import com.wegame.capi.biz.service.LoginService;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.biz.service.backend.GameMaintainConfigService;
@@ -36,6 +39,12 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     DistributeLock distributeLock;
     @Autowired
     UserService userService;
+    @Autowired
+    SingleWalletApi singleWalletApi;
+    @Autowired
+    BagApi bagApi;
+    @Autowired
+    private LoginService loginService;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -43,6 +52,7 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
         log.info("Application started. Performing business warm-up start...");
         businessWarmUp();
         buildUserIdCache();
+        initConnectionPool();
         log.info("Application started. Performing business warm-up start...");
     }
 
@@ -95,5 +105,12 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
         } catch (Exception e) {
             log.error("buildUserIdCache error", e);
         }
+    }
+
+    private void initConnectionPool() {
+        log.info("begin initConnectionPool");
+        singleWalletApi.initConnections();
+        bagApi.initConnections();
+        log.info("end initConnectionPool");
     }
 }
