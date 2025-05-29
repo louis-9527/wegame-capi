@@ -13,7 +13,6 @@ public class SingleWalletBaseApi extends CommonBaseApi {
     @Value("${api.game.singleDomain}")
     public String singleDomain;
 
-
     public MultiValueMap<String, String> buildHeaders(String uid) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Connection", "Keep-Alive");
@@ -24,8 +23,8 @@ public class SingleWalletBaseApi extends CommonBaseApi {
 
     public void initConnections() {
         try {
-            String url = String.format(HEALTH_CHECK_FORMAT, singleDomain);
-            //            String url = "http://server1.makillingslot.net/capi/game/common/ping";
+//            String url = String.format(HEALTH_CHECK_FORMAT, singleDomain);
+                        String url = "http://server1.makillingslot.net/capi/game/common/ping";
             IntStream.range(0, 200).forEach(i -> {
                 try {
                     domainWarmUpThreadPoolExecutor.submit(() -> {

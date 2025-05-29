@@ -217,7 +217,7 @@ public class UserService {
         return String.valueOf(userId);
     }
 
-    @CachePut(value = CacheConstants.USER_ID, key = "#userDo.playerId + '_' + #userDo.pid")
+    //@CachePut(value = CacheConstants.USER_ID, key = "#userDo.playerId + '_' + #userDo.pId")
     public String insert(UserDo userDo) {
         long startTime = DateUtil.getCurrentMilli();
         try {
