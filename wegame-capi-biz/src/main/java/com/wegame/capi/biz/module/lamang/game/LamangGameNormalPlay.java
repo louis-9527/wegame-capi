@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.lamang.LamangGameHelper.*;
-import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.countScatterInColumn;
 import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.*;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -48,6 +47,7 @@ import static com.wegame.capi.common.constants.GameConstants.*;
 public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
     private static final int MAX_SCATTER_NUMBER_IN_REEL = 1;
+    private static final int MAX_GOLDEN_NUMBER_IN_ROW = 1;
     private static final int MAX_SCATTER_NUMBER_IN_WHEEL = 3;
     private static final int REWARD_FREE_WHEEL_SCATTER_NUMBER = 3;
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
@@ -141,9 +141,16 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 }
 
                 // 构建元素金边
-                boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
-                LamangSymbolDo lamangSymbolDo = LamangSymbolDo.buildFromSymbol(symbolDo, symbolGoldBorder);
-                symbolArr[row][column] = lamangSymbolDo;
+                int goldenInRow  = countGoldenBorderInRow(symbolArr, row);
+                // 如果当前列有金边元素，则生成非金边元素
+                if (goldenInRow < MAX_GOLDEN_NUMBER_IN_ROW) {
+                    boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
+                    LamangSymbolDo lamangSymbolDo = LamangSymbolDo.buildFromSymbol(symbolDo, symbolGoldBorder);
+                    symbolArr[row][column] = lamangSymbolDo;
+                } else {
+                    LamangSymbolDo lamangSymbolDo = LamangSymbolDo.buildFromSymbol(symbolDo, false);
+                    symbolArr[row][column] = lamangSymbolDo;
+                }
                 if (symbolDo.isScatterSymbol()) {
                     scatterNumberInColumn = scatterNumberInColumn + 1;
                     scatterNumberInWheel = scatterNumberInWheel + 1;

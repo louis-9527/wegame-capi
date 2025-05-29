@@ -125,6 +125,16 @@ public class LamangSymbolUtil {
         return count;
     }
 
+    public static int countGoldenBorderInRow(LamangSymbolDo[][] symbolArr, int row) {
+        int count = 0;
+        for (int column = ONE_COLUM_INDEX; column < symbolArr[0].length; column++) {
+            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isSymbolGoldBorder()) {
+                count = count + 1;
+            }
+        }
+        return count;
+    }
+
 
     public static LamangSymbolDo[][] copySymbolArr(LamangSymbolDo[][] symbolArr) {
         int row = symbolArr.length;
