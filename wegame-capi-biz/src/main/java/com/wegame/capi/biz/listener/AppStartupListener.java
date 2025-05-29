@@ -3,6 +3,7 @@ package com.wegame.capi.biz.listener;
 import com.wegame.base.exception.LockException;
 import com.wegame.base.lock.DistributeLock;
 import com.wegame.capi.api.SingleWalletApi;
+import com.wegame.capi.api.SingleWalletFreeSpinApi;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.biz.service.LoginService;
@@ -42,9 +43,9 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     @Autowired
     SingleWalletApi singleWalletApi;
     @Autowired
-    BagApi bagApi;
+    SingleWalletFreeSpinApi singleWalletFreeSpinApi;
     @Autowired
-    private LoginService loginService;
+    BagApi bagApi;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -110,6 +111,7 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     private void initConnectionPool() {
         log.info("begin initConnectionPool");
         singleWalletApi.initConnections();
+        singleWalletFreeSpinApi.initConnections();
         bagApi.initConnections();
         log.info("end initConnectionPool");
     }

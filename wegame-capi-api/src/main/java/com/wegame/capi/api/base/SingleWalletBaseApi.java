@@ -2,17 +2,13 @@ package com.wegame.capi.api.base;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import javax.annotation.PostConstruct;
 import java.util.stream.IntStream;
 
 @Slf4j
 public class SingleWalletBaseApi extends CommonBaseApi {
-
-    private static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check";
 
     @Value("${api.game.singleDomain}")
     public String singleDomain;
@@ -29,7 +25,7 @@ public class SingleWalletBaseApi extends CommonBaseApi {
     public void initConnections() {
         try {
             String url = String.format(HEALTH_CHECK_FORMAT, singleDomain);
-            // String url = "http://server1.makillingslot.net/capi/game/common/ping";
+            //            String url = "http://server1.makillingslot.net/capi/game/common/ping";
             IntStream.range(0, 200).forEach(i -> {
                 try {
                     domainWarmUpThreadPoolExecutor.submit(() -> {

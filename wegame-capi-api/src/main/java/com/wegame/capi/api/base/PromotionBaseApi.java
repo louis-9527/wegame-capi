@@ -12,7 +12,6 @@ import java.util.stream.IntStream;
 @Slf4j
 public class PromotionBaseApi extends CommonBaseApi {
 
-    private static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check";
     @Value("${api.game.promotionDomain}")
     public String promotionDomain;
 

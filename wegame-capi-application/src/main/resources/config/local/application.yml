@@ -106,8 +106,8 @@ spring:
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 30
-            min-idle: 30
+            initial-size: 0
+            min-idle: 0
             max-active: 2000
             max-wait: 10
             keep-alive: true
@@ -127,8 +127,8 @@ spring:
           public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
-            initial-size: 1
-            min-idle: 1
+            initial-size: 0
+            min-idle: 0
             max-active: 1000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
