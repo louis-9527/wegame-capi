@@ -39,7 +39,7 @@ public class LoginService {
         String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);
         String userId = userService.selectIdByPlayerIdAndPid(userLoginDo.getPlayerId(), userLoginDo.getPId());
-        if (StringUtils.isNotEmpty(userId)) {
+        if (StringUtils.isEmpty(userId)) {
             UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
             userId = userService.insert(userDo);
         }

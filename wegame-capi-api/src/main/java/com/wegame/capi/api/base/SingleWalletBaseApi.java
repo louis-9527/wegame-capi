@@ -23,8 +23,8 @@ public class SingleWalletBaseApi extends CommonBaseApi {
 
     public void initConnections() {
         try {
-//            String url = String.format(HEALTH_CHECK_FORMAT, singleDomain);
-                        String url = "http://server1.makillingslot.net/capi/game/common/ping";
+            String url = String.format(HEALTH_CHECK_FORMAT, singleDomain);
+            //String url = "http://server1.makillingslot.net/capi/game/common/ping";
             IntStream.range(0, 200).forEach(i -> {
                 try {
                     domainWarmUpThreadPoolExecutor.submit(() -> {
