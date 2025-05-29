@@ -22,7 +22,7 @@ public class SingleWalletBaseApi extends CommonBaseApi {
 
     public void healthCheck() {
         try {
-            ResponseEntity<Object> response = walletRestTemplate.getForEntity(String.format(HEALTH_CHECK_FORMAT, walletRestTemplate), Object.class);
+            ResponseEntity<Object> response = walletRestTemplate.getForEntity(String.format(HEALTH_CHECK_FORMAT, singleDomain), Object.class);
             log.info("singleWallet health check: {}", response);
         } catch (Exception e) {
             log.warn("singleWallet health check error", e);
