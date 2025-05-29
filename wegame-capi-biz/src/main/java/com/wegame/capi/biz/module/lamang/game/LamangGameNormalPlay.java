@@ -293,7 +293,9 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             gameRecordResult.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             loopPlayOnPreGameRecord(gamePlay, gameRecordResult, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag, mustRewardFreeWheel);
-        }else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
+        }
+        // 每回合都需要添加免费轮
+        if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
             if (!reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), lamangConfig.getRewardMaxMultiple())) {
                 addFreeWheelTimes(freeWheelList, preGameRecord.getRewardResult().getRewardFreeWheelTimes(), preGameRecord.getId());
             } else {
