@@ -6,6 +6,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class RestTemplateConfig {
 
+    public static final String WALLET_CONNECTION_MANAGER = "walletConnectionManager";
     public static final String WALLET_REST_TEMPLATE_BEAN = "walletRestTemplate";
     public static final String PROMOTION_REST_TEMPLATE_BEAN = "promotionRestTemplate";
     // wallet resTemplate
@@ -48,13 +50,18 @@ public class RestTemplateConfig {
     int promotionConnectionRequestTimeout;
 
     @Bean(WALLET_REST_TEMPLATE_BEAN)
-    public RestTemplate walletRestTemplate() {
+    PoolingHttpClientConnectionManager walletConnectionManager() {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(30, TimeUnit.MINUTES);
         manager.setMaxTotal(walletConnectMaxTotal);
         manager.setDefaultMaxPerRoute(walletConnectDefaultMaxPerRoute);
         manager.setValidateAfterInactivity(20000);
+        return manager;
+    }
+
+    @Bean(WALLET_REST_TEMPLATE_BEAN)
+    public RestTemplate walletRestTemplate(@Autowired PoolingHttpClientConnectionManager walletConnectionManager) {
         HttpClient httpClient = HttpClientBuilder.create()
-                .setConnectionManager(manager)
+                .setConnectionManager(walletConnectionManager)
                 // 连接最大存活时间
                 .setConnectionTimeToLive(30, TimeUnit.MINUTES)
                 .build();
