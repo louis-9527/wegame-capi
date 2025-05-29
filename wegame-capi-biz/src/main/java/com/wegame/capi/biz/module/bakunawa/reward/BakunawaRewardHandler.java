@@ -112,7 +112,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         BigDecimal multiply = odds.multiply(multiple);
         Integer rewardMaxMultiple = bakunawaConfig.getRewardMaxMultiple();
         if (multiply.intValue() > rewardMaxMultiple) {
-            return new BigDecimal(rewardMaxMultiple);
+            return BigDecimal.valueOf(betAmount).multiply(new BigDecimal(rewardMaxMultiple));
         }
         return BigDecimal.valueOf(betAmount)
                 .multiply(odds)
