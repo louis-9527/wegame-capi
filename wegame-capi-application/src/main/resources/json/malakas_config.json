@@ -217,12 +217,12 @@
         "freePlayProbabilisticConfig": {
             "wheelProbabilisticConfig": {
                 "1001": [
-                    "52.00",
-                    "52.00",
-                    "52.00",
-                    "52.00",
-                    "52.00",
-                    "52.00",
+                    "53.00",
+                    "53.00",
+                    "53.00",
+                    "53.00",
+                    "53.00",
+                    "53.00",
                     "55.00"
                 ],
                 "1002": [
@@ -363,11 +363,6 @@
                 "0.0",
                 "0.0"
             ]
-        },
-        "freeWheelScatterProbabilisticConfig": {
-            "4": "40",
-            "5": "30",
-            "6": "30"
         }
     },
     "scatterFreeWheelTimesConfig": {
