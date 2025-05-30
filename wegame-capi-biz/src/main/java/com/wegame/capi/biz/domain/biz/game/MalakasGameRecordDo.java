@@ -102,6 +102,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
                     .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? BooleanEnum.TRUE.getCode() : BooleanEnum.FALSE.getCode())
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
+                    .accumulateReachMaxMultiple(rewardResult.getAccumulateReachMaxMultiple())
                     .build();
         } else {
             return MalakasBetResultVo.builder()
@@ -114,6 +115,7 @@ public class MalakasGameRecordDo implements Serializable, ToVoConverter<MalakasB
                     .rewardLineList(buildRewardLineList())
                     .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? BooleanEnum.TRUE.getCode() : BooleanEnum.FALSE.getCode())
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
+                    .accumulateReachMaxMultiple(rewardResult.getAccumulateReachMaxMultiple())
                     .build();
         }
     }
