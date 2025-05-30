@@ -5,14 +5,13 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.user.UserLoginInfoConverter;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
-import com.wegame.capi.dao.mapper.user.UserLoginInfoManualMapper;
-import com.wegame.capi.dao.mapper.user.UserLoginInfoMapper;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoPo;
 import com.wegame.capi.dao.mapper.domain.user.UserLoginInfoQuery;
+import com.wegame.capi.dao.mapper.user.UserLoginInfoManualMapper;
+import com.wegame.capi.dao.mapper.user.UserLoginInfoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -20,10 +19,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
-
 /**
  * po服务
+ *
  * @author genereate
  */
 @Slf4j
@@ -126,10 +124,10 @@ public class UserLoginInfoService {
      * @param query 查询条件
      * @return id
      */
-     public Long selectId(UserLoginInfoQuery query) {
+    public Long selectId(UserLoginInfoQuery query) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         return userLoginInfoMapper.selectId(query);
-     }
+    }
 
     /**
      * 查询：根据id列表
@@ -186,9 +184,7 @@ public class UserLoginInfoService {
         return userLoginInfoMapper.count(query);
     }
 
-    ///////////////  above auto generated ///////////////
-
-    @Async(defaultThreadPoolExecutor)
+    /// ////////////  above auto generated ///////////////
     public void asyncAddOrUpdate(UserLoginInfoDo userLoginInfoDo) {
         try {
             Long id = userLoginInfoMapper.selectId(UserLoginInfoQuery.builder()

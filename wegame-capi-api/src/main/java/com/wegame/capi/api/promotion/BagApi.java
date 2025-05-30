@@ -22,6 +22,7 @@ import java.net.URI;
 
 /**
  * 背包api
+ *
  * @see <a href="https://casinoplus.sg.larksuite.com/docx/XZzMdmW4aonhYfxtMEili1qGgkb"/>
  */
 @Slf4j
@@ -88,22 +89,23 @@ public class BagApi extends PromotionBaseApi {
 
     /**
      * 核销星卡
-     *  •   00 成功
-     * 	•	5001 无效的奖励
-     * 	•	5002 未找到成就
-     * 	•	5003 无效的兑换 ID
-     * 	•	5004 成就未完成
-     * 	•	5005 操作进行中
-     * 	•	5006 成就已兑换
-     * 	•	5007 奖励已过期
-     * 	•	5008 无效的宝藏配置
-     * 	•	5009 宝藏已兑换
-     * 	•	5010 未找到提供者任务
-     * 	•	5011 等级未达到要求
-     * 	•	5012 经验未达到要求
-     * 	•	5013 未找到宝藏
-     * 	•	5014 无与频道 ID 匹配的配置
-     * 	•	5015 无效的奖励支付
+     * •   00 成功
+     * •	5001 无效的奖励
+     * •	5002 未找到成就
+     * •	5003 无效的兑换 ID
+     * •	5004 成就未完成
+     * •	5005 操作进行中
+     * •	5006 成就已兑换
+     * •	5007 奖励已过期
+     * •	5008 无效的宝藏配置
+     * •	5009 宝藏已兑换
+     * •	5010 未找到提供者任务
+     * •	5011 等级未达到要求
+     * •	5012 经验未达到要求
+     * •	5013 未找到宝藏
+     * •	5014 无与频道 ID 匹配的配置
+     * •	5015 无效的奖励支付
+     *
      * @param req 请求参数
      * @return
      */
@@ -152,6 +154,7 @@ public class BagApi extends PromotionBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
+
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetHistoryMessageRes getHistoryMessage(GetHistoryMessageReq req) {
         try {
