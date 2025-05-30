@@ -190,6 +190,12 @@ pulsar:
       namespace: ${spring.application.env}
       bet_topic: IbongAdarna_topic
       bet_deadLetter_topic: IbongAdarna_deadLetter_topic
+    bakunawa:
+      url: pulsar://pulsar.makillingslot.org:6650
+      tenant: ${spring.application.name}_Bakunawa
+      namespace: ${spring.application.env}
+      bet_topic: Bakunawa_topic
+      bet_deadLetter_topic: Bakunawa_deadLetter_topic
 
 dynamic:
   operation:
