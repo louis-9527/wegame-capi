@@ -251,7 +251,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     private MultiValueMap<String, String> buildHeaders() {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Connection", "Keep-Alive");
-        headers.add("Keep-Alive", "timeout=180");
+        headers.add("Keep-Alive", "timeout=59");
         return headers;
     }
 }

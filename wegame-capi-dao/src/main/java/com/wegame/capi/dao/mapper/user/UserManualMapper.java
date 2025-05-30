@@ -17,6 +17,10 @@ public interface UserManualMapper {
     UserPo selectByPlayerId(@Param("playerId") String playerId);
 
     /** 查 */
+
+    @Select("select id from `user` where `player_id` = #{playerId} limit 1")
+    Long selectIdByPlayerId(@Param("playerId") String playerId);
+
     @Select("select id from `user` where `player_id` = #{playerId} and `p_id` = #{pid} limit 1")
     Long selectIdByPlayerIdAndPid(@Param("playerId") String playerId, @Param("pid") String pid);
 

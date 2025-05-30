@@ -1,11 +1,12 @@
 //package com.wegame.capi.application.controller;
 //
-//import com.wegame.capi.biz.listener.MariamakilingOperationEventPulsarListener;
-//import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
-//import com.wegame.capi.biz.service.freespin.FreeSpinService;
+//import com.wegame.base.domain.CommonResponse;
+//import com.wegame.capi.api.base.TestApi;
 //import io.swagger.annotations.Api;
+//import io.swagger.annotations.ApiOperation;
 //import lombok.extern.slf4j.Slf4j;
 //import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.web.bind.annotation.GetMapping;
 //import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RestController;
 //
@@ -16,11 +17,11 @@
 //@Api(value = "测试模块", tags = {"测试模块"})
 //public class TestController {
 //
+//    //    @Autowired
+////    MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
 //    @Autowired
-//    MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
-//    @Autowired
-//    FreeSpinService freeSpinService;
-////
+//    TestApi testApi;
+//
 ////    @ApiOperation(value = "eventMsg", httpMethod = "POST")
 ////    @PostMapping("/event/msg")
 ////    public CommonResponse<Boolean> handleEventMessage(@RequestBody String event) {
@@ -42,10 +43,18 @@
 ////        OperationEventMessageDo msgDo = JSON.parseObject(event, OperationEventMessageDo.class);
 ////        mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
 ////
-//////        for (int i = 0; i <= 210; i++) {
-//////            msgDo.setEventId(msgDo.getEventId() + "_" + i);
-//////            mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
-//////        }
+//
+//    /// /        for (int i = 0; i <= 210; i++) {
+//    /// /            msgDo.setEventId(msgDo.getEventId() + "_" + i);
+//    /// /            mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
+//    /// /        }
 ////        return CommonResponse.build(true);
 ////    }
+//    @ApiOperation(value = "test/api", httpMethod = "GET")
+//    @GetMapping("/test/api")
+//    public CommonResponse<Boolean> testApi() {
+//        testApi.initConnections();
+//        return CommonResponse.build(true);
+//    }
+//
 //}
