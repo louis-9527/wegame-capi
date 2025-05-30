@@ -363,11 +363,6 @@
                 "0.0",
                 "0.0"
             ]
-        },
-        "freeWheelScatterProbabilisticConfig": {
-            "4": "40",
-            "5": "30",
-            "6": "30"
         }
     },
     "scatterFreeWheelTimesConfig": {
