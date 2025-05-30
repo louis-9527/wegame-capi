@@ -24,7 +24,6 @@ import org.apache.http.protocol.HttpContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
@@ -58,17 +57,17 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     BagApi bagApi;
     // init Connections
     @Value("${api.game.singleDomain}")
-    public String singleDomain;
+    String singleDomain;
     @Value("${api.game.singleDomainIntConnections:150}")
-    public int singleDomainIntConnections;
+    int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
-    public String freeSpinDomain;
+    String freeSpinDomain;
     @Value("${api.game.freeSpinDomainIntConnections:150}")
-    public int freeSpinDomainIntConnections;
+    int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
-    public String promotionDomain;
+    String promotionDomain;
     @Value("${api.game.promotionDomainIntConnections:150}")
-    public int promotionDomainIntConnections;
+    int promotionDomainIntConnections;
     @Autowired
     PoolingHttpClientConnectionManager walletConnectionManager;
     @Autowired
@@ -86,8 +85,6 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
         healthCheck();
         log.info("Application started. Performing business warm-up start...");
     }
-
-
 
     private void businessWarmUp() {
         try {
@@ -146,7 +143,7 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
         initConnections(promotionConnectionManager, promotionDomainIntConnections, HttpHost.create(promotionDomain));
         //        String domain = "http://server1.makillingslot.net";
         //        HttpHost httpHost = HttpHost.create(domain);
-        //        initConnections(walletConnectionManager, 30, httpHost);
+        //        initConnections(walletConnectionManager, 20, httpHost);
     }
 
     private void initConnections(PoolingHttpClientConnectionManager manager, int numConnections, HttpHost httpHost) {
@@ -158,22 +155,14 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
                 HttpClientConnection connection = connectionRequest.get(10, TimeUnit.SECONDS);
                 manager.connect(connection, httpRoute, 1000, httpContext);
             } catch (Exception e) {
-                log.error("initConnections {}, [{}] error", httpHost, i, e);
+                log.error("initConnections {} error", httpHost, e);
             }
         });
     }
 
-    //    private void initConnectionPool() {
-    //        log.info("begin initConnectionPool");
-    //        singleWalletApi.initConnections();
-    //        singleWalletFreeSpinApi.initConnections();
-    //        bagApi.initConnections();
-    //        log.info("end initConnectionPool");
-    //    }
-
     private void healthCheck() {
-        bagApi.healthCheck();
         singleWalletApi.healthCheck();
         singleWalletFreeSpinApi.healthCheck();
+        bagApi.healthCheck();
     }
 }
