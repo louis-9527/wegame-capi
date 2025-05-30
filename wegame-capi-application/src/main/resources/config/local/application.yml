@@ -5,10 +5,11 @@ logging:
 #    org.apache.pulsar: DEBUG
 #    org.springframework.web: trace
 #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-    com.wegame: trace
-    com.alibaba.druid: trace
-    com.mysql: trace
-    org.apache.ibatis: trace
+    com.wegame: INFO
+#    com.alibaba.druid: trace
+#    com.mysql: trace
+    org.apache.http: trace
+    org.apache.pulsar: ERROR
 #    org.mongodb: DEBUG
 #    org.springframework.data.redis: DEBUG
 #    com.mongodb.internal.connection: DEBUG

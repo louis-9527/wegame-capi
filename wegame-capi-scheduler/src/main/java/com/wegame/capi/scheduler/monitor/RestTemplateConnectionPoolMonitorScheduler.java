@@ -36,7 +36,6 @@ public class RestTemplateConnectionPoolMonitorScheduler {
         Optional.ofNullable(managerList)
                 .orElse(Collections.emptyList())
                 .forEach(connectionManager -> {
-                    log.info("connection manager: {}", connectionManager);
                     log.info("connection manager status: {}", connectionManager.getTotalStats());
                 });
     }

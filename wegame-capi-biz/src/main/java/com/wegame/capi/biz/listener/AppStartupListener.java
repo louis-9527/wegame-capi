@@ -27,10 +27,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
@@ -58,15 +55,15 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:150}")
+    @Value("${api.game.singleDomainIntConnections:80}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
-    @Value("${api.game.freeSpinDomainIntConnections:150}")
+    @Value("${api.game.freeSpinDomainIntConnections:80}")
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:150}")
+    @Value("${api.game.promotionDomainIntConnections:80}")
     int promotionDomainIntConnections;
     @Autowired
     PoolingHttpClientConnectionManager walletConnectionManager;
@@ -143,21 +140,42 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
         initConnections(promotionConnectionManager, promotionDomainIntConnections, HttpHost.create(promotionDomain));
         //        String domain = "http://server1.makillingslot.net";
         //        HttpHost httpHost = HttpHost.create(domain);
-        //        initConnections(walletConnectionManager, 20, httpHost);
+        //        initConnections(walletConnectionManager, 10, httpHost);
     }
 
     private void initConnections(PoolingHttpClientConnectionManager manager, int numConnections, HttpHost httpHost) {
         HttpRoute httpRoute = new HttpRoute(httpHost);
         HttpContext httpContext = new BasicHttpContext();
+        List<HttpClientConnection> connections = new ArrayList<>();
         IntStream.range(0, numConnections).forEach(i -> {
             try {
                 ConnectionRequest connectionRequest = manager.requestConnection(httpRoute, null);
                 HttpClientConnection connection = connectionRequest.get(10, TimeUnit.SECONDS);
-                manager.connect(connection, httpRoute, 1000, httpContext);
+                manager.connect(connection, httpRoute, 10000, httpContext);
+                manager.routeComplete(connection, httpRoute, httpContext);
+                connections.add(connection);
+                log.info("connection: {}", Objects.nonNull(connection) && connection.isOpen());
             } catch (Exception e) {
                 log.error("initConnections {} error", httpHost, e);
             }
         });
+        try {
+            Optional.ofNullable(connections)
+                    .orElse(Collections.emptyList())
+                    .forEach(connection -> {
+                        if (Objects.nonNull(connection) && connection.isOpen()) {
+                            manager.releaseConnection(connection, null, 30, TimeUnit.MINUTES);
+                        } else {
+                            try {
+                                connection.close();
+                            } catch (Exception e) {
+                                log.error("connection close error. {} ", httpHost, e);
+                            }
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("initConnections {} error", httpHost, e);
+        }
     }
 
     private void healthCheck() {
