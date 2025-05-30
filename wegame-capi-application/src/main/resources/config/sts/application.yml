@@ -93,7 +93,7 @@ spring:
           type: com.alibaba.druid.pool.DruidDataSource
           druid:
             initial-size: 50
-            min-idle: 5
+            min-idle: 10
             max-active: 200
             max-wait: 10
             time-between-eviction-runs-millis: 6000
