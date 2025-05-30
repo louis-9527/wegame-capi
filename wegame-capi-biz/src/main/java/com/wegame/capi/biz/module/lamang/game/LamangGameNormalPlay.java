@@ -85,8 +85,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         }
 
         //生成免费轮
-        boolean reachMaxMultiple = reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), lamangConfig.getRewardMaxMultiple());
-        if (CollectionUtils.isNotEmpty(freeWheelList) && !reachMaxMultiple) {
+        if (CollectionUtils.isNotEmpty(freeWheelList)) {
             generateFreeBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
         }
         // 设置结束
