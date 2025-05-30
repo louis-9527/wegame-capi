@@ -71,6 +71,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .hasRewardFreeWheel(CollectionUtils.isEmpty(rewardLineList) && scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                     .rewardLineDetailList(null)
                     .rewardFreeWheelTimes(Objects.isNull(freeWheelTimes) ? 0 : freeWheelTimes)
+                    .accumulateReachMaxMultiple(Boolean.FALSE)
                     .build();
         }
 
@@ -110,6 +111,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 .hasRewardFreeWheel(Boolean.FALSE)
                 .rewardLineDetailList(rewardLineDetailList)
                 .rewardFreeWheelTimes(0)
+                .accumulateReachMaxMultiple(totalMultiple.intValue() > malakasConfig.getRewardMaxMultiple())
                 .build();
         // 6.返回中奖信息
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);

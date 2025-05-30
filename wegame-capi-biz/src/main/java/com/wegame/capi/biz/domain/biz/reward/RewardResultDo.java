@@ -59,6 +59,10 @@ public class RewardResultDo<T extends SymbolDo> implements Serializable {
      * 中奖线列表
      */
     private List<RewardLineDetailDo<T>> rewardLineDetailList;
+    /**
+     * 累计达到最大中奖倍数：true是，false否
+     */
+    private Boolean accumulateReachMaxMultiple;
 
     @JsonIgnore
     public void print() {
