@@ -164,7 +164,7 @@ api:
     singleDomain: http://sw-http-main-apisix.igo8.me
     freeSpinDomain: https://sw-http-freespin.igo8.me
     operationDomain: https://dos-egame.dos88.me
-    invokeSingle: false
+    invokeSingle: true
     cp:
       platformId: 50
       channelId: 1050
