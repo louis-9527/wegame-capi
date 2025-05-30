@@ -6,7 +6,6 @@ import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.SingleWalletFreeSpinApi;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.biz.service.LoginService;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.biz.service.backend.GameMaintainConfigService;
@@ -35,8 +34,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
-
-import static com.wegame.capi.infrastructure.config.rest.WalletRestTemplateConfig.WALLET_CONNECTION_MANAGER_BEAN;
 
 @Slf4j
 @Component
@@ -74,6 +71,8 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     public int promotionDomainIntConnections;
     @Autowired
     PoolingHttpClientConnectionManager walletConnectionManager;
+    @Autowired
+    PoolingHttpClientConnectionManager freeSpinConnectionManager;
     @Autowired
     PoolingHttpClientConnectionManager promotionConnectionManager;
 
@@ -143,7 +142,7 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
 
     private void initDomainConnections() {
         initConnections(walletConnectionManager, singleDomainIntConnections, HttpHost.create(singleDomain));
-        initConnections(walletConnectionManager, freeSpinDomainIntConnections, HttpHost.create(freeSpinDomain));
+        initConnections(freeSpinConnectionManager, freeSpinDomainIntConnections, HttpHost.create(freeSpinDomain));
         initConnections(promotionConnectionManager, promotionDomainIntConnections, HttpHost.create(promotionDomain));
         //        String domain = "http://server1.makillingslot.net";
         //        HttpHost httpHost = HttpHost.create(domain);

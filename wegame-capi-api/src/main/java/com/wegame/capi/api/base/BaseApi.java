@@ -4,13 +4,11 @@ import com.wegame.capi.common.annotation.Client;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
 import static com.wegame.base.config.HttpClientConfig.COMMON_REST_TEMPLATE_BEAN;
+import static com.wegame.capi.infrastructure.config.rest.FreeSpinRestTemplateConfig.FREE_SPIN_REST_TEMPLATE_BEAN;
 import static com.wegame.capi.infrastructure.config.rest.PromotionRestTemplateConfig.PROMOTION_REST_TEMPLATE_BEAN;
 import static com.wegame.capi.infrastructure.config.rest.WalletRestTemplateConfig.WALLET_REST_TEMPLATE_BEAN;
 
@@ -31,7 +29,8 @@ public class BaseApi {
     @Qualifier(PROMOTION_REST_TEMPLATE_BEAN)
     public RestTemplate promotionRestTemplate;
     @Autowired
-    public ThreadPoolExecutor domainWarmUpThreadPoolExecutor;
+    @Qualifier(FREE_SPIN_REST_TEMPLATE_BEAN)
+    public RestTemplate freeSpinRestTemplate;
 }
 
 
