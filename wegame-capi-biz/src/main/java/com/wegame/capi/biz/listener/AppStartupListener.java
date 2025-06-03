@@ -55,15 +55,15 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:80}")
+    @Value("${api.game.singleDomainIntConnections:100}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
-    @Value("${api.game.freeSpinDomainIntConnections:80}")
+    @Value("${api.game.freeSpinDomainIntConnections:100}")
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:80}")
+    @Value("${api.game.promotionDomainIntConnections:100}")
     int promotionDomainIntConnections;
     @Autowired
     PoolingHttpClientConnectionManager walletConnectionManager;
@@ -154,7 +154,7 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
                 manager.connect(connection, httpRoute, 10000, httpContext);
                 manager.routeComplete(connection, httpRoute, httpContext);
                 connections.add(connection);
-                log.info("connection: {}", Objects.nonNull(connection) && connection.isOpen());
+                log.info("connection status: {}", Objects.nonNull(connection) && connection.isOpen());
             } catch (Exception e) {
                 log.error("initConnections {} error", httpHost, e);
             }
