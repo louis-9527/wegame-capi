@@ -8,7 +8,6 @@ import com.wegame.capi.biz.domain.biz.jackpot.JackpotDrawAndAwardDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeDo;
 import com.wegame.capi.biz.module.base.jackpot.AbsJackpotHandler;
 import com.wegame.capi.biz.module.base.jackpot.JackpotHandlerContext;
-import com.wegame.capi.biz.module.base.jackpot.LamangJackpotHandler;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.test.BaseTest;
 import org.junit.Test;

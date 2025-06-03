@@ -1,7 +1,7 @@
 package com.wegame.capi.test.biz.module.base.jackpot;
 
 import com.wegame.capi.biz.config.domain.LamangConfig;
-import com.wegame.capi.biz.module.base.jackpot.LamangJackpotHandler;
+import com.wegame.capi.biz.module.jackpot.LamangJackpotHandler;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.test.BaseTest;
