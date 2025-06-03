@@ -190,9 +190,11 @@ public abstract class AbsJackpotHandler {
                 ));
         singleWalletService.jackpot(jackpotAwardDo, rewardPoolMap);
         // 成功后更新状态
-        JackpotUserRewardRecordDo build = JackpotUserRewardRecordDo.builder().id(jackpotAwardDo.getJackpotUserRewardRecordDo().getId())
-                .rewardGrantStatus(JackpotRewardGrantStatusEnum.SUCCESS).build();
-        jackpotUserRewardRecordService.update(this.getJackpotType(), build);
+        jackpotUserRewardRecordService.update(JackpotUserRewardRecordDo.builder()
+                .id(jackpotAwardDo.getJackpotUserRewardRecordDo().getId())
+                .rewardGrantStatus(JackpotRewardGrantStatusEnum.SUCCESS)
+                .build(),
+                getJackpotType());
     }
 
     private Map<JackpotRewardPoolTypeEnum, Long> buildCommissionResultMap(TreeMap<String, Long> betAmountCommissionConfig) {

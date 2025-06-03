@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.module.base.jackpot;
 
-import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
@@ -14,7 +13,8 @@ import java.util.Map;
 @Service
 public class JackpotHandlerContext {
 
-private final Map<JackpotTypeEnum, AbsJackpotHandler> jackpotManagerMap = new HashMap<>();
+    private final Map<JackpotTypeEnum, AbsJackpotHandler> jackpotManagerMap = new HashMap<>();
+
     // 通过构造器注入所有策略实现
     @Autowired
     public JackpotHandlerContext(List<AbsJackpotHandler> jackpotManagerList) {
@@ -22,8 +22,9 @@ private final Map<JackpotTypeEnum, AbsJackpotHandler> jackpotManagerMap = new Ha
             jackpotManagerMap.put(strategy.getJackpotType(), strategy);
         }
     }
-    public AbsJackpotHandler getHandler(JackpotTypeEnum jackpotTypeEnum){
+
+    public AbsJackpotHandler getHandler(JackpotTypeEnum jackpotTypeEnum) {
         AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM);
         return jackpotManagerMap.get(jackpotTypeEnum);
     }
- }
+}

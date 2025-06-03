@@ -40,12 +40,10 @@ public class JackpotUserRewardRecordTypesQuery implements Serializable {
      * 排序语句
      */
     private Sort.Direction direction;
-
     /**
      * 奖池类型列表
      */
     private List<Integer> rewardPoolTypeList;
-
     /**
      * 小于最后一条的Id
      */
@@ -55,8 +53,6 @@ public class JackpotUserRewardRecordTypesQuery implements Serializable {
      */
     private Long gtLastId;
 
-
-    //todo 抽象成接口
     public String getCacheKey() {
         return "types:" +
                 rewardPoolTypeList.stream().map(String::valueOf).collect(Collectors.joining("-")) +

@@ -80,15 +80,7 @@ public class JackpotUserRewardRecordService extends AbstractService {
         return poToDoList(poList);
     }
 
-
-    /**
-     * 根据奖池类型返回固定条数的列表
-     * @param query
-     * @param jackpotType
-     * @return
-     */
-    @Cacheable(value = CacheConstants.JACKPOT_USER_REWARD_RECORD_LIST,
-            key = "#query.getCacheKey() + ':' + #jackpotType.gameType.id")
+    @Cacheable(value = CacheConstants.JACKPOT_USER_REWARD_RECORD_LIST, key = "#jackpotType.gameType.id + ':' + #query.getCacheKey()")
     public List<JackpotUserRewardRecordDo> listByTypes(JackpotUserRewardRecordTypesQuery query, JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         List<JackpotUserRewardRecordPo> recordPoList = getMongoTemplate(jackpotType.getGameType())
@@ -112,16 +104,17 @@ public class JackpotUserRewardRecordService extends AbstractService {
         // do nothing
     }
 
-    public Long add(JackpotTypeEnum jackpotType, JackpotUserRewardRecordDo recordDo) {
+    public Long add(JackpotUserRewardRecordDo recordDo, JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
-        JackpotUserRewardRecordPo jackpotUserRewardRecordPo = doToPo(recordDo, OptEnum.ADD);
-        AssertUtil.assertNotNull(jackpotUserRewardRecordPo, ErrorCode.ERR_PARAM);
-        JackpotUserRewardRecordPo insert = getMongoTemplate(jackpotType.getGameType()).insert(jackpotUserRewardRecordPo,
+        JackpotUserRewardRecordPo po = doToPo(recordDo, OptEnum.ADD);
+        AssertUtil.assertNotNull(po, ErrorCode.ERR_PARAM);
+        JackpotUserRewardRecordPo insert = getMongoTemplate(jackpotType.getGameType()).insert(
+                po,
                 jackpotType.getJackpotUserRewardRewardCollectionName());
         return insert.getId();
     }
 
-    public Boolean update(JackpotTypeEnum jackpotType, JackpotUserRewardRecordDo recordDo) {
+    public Boolean update(JackpotUserRewardRecordDo recordDo, JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
         JackpotUserRewardRecordPo po = doToPo(recordDo, OptEnum.ADD);
         AssertUtil.assertNotNull(po, ErrorCode.ERR_PARAM);
