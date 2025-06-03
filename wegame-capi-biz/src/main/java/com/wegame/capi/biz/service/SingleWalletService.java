@@ -61,9 +61,13 @@ public class SingleWalletService {
     JackpotRewardPoolService jackpotRewardPoolService;
 
     public boolean authLoginToken(UserLoginDo userLoginDo) {
-        AuthLoginTokenRes res = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.buildReq(userLoginDo));
-        AssertUtil.assertNotNull(res, ErrorCode.ERR_NET);
-        return true;
+        if (!invokeSingle) {
+            return true;
+        } else {
+            AuthLoginTokenRes res = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.buildReq(userLoginDo));
+            AssertUtil.assertNotNull(res, ErrorCode.ERR_NET);
+            return true;
+        }
     }
 
     public BigDecimal getCredit() {

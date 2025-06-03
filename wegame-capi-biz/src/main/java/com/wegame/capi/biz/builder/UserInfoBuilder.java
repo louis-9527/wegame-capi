@@ -1,9 +1,11 @@
 package com.wegame.capi.biz.builder;
 
+import com.wegame.base.utils.StringUtil;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.client.context.UserInfo;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.Optional;
