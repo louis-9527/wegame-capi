@@ -101,7 +101,7 @@ public class JackpotRewardPoolService extends AbstractService {
         return rewardPoolDos;
     }
     @CacheEvict(value = CacheConstants.JACKPOT_REWARD_POOL, key = "#jackpotTypeEnum.gameType.id")
-    public void cacheClearListAll(JackpotTypeEnum jackpotTypeEnum) {
+    public void evictJackpotRewardPoolListCache(JackpotTypeEnum jackpotTypeEnum) {
     }
 
     public JackpotRewardPoolDo getByType(JackpotTypeEnum jackpotTypeEnum, JackpotRewardPoolTypeEnum rewardPoolTypeEnum){
