@@ -91,9 +91,9 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         if (Objects.isNull(rewardPoolInputRecordDo)) {
             return;
         }
-        jackpotRewardPoolInputRecordService.add(rewardPoolInputRecordDo, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+        jackpotRewardPoolInputRecordService.add(rewardPoolInputRecordDo,JackpotTypeEnum.LAM_ANG);
         jackpotRewardPoolService.batchUpdate(this.buildRewardPoolDos(rewardPoolInputRecordDo.getGrandAmount(), rewardPoolInputRecordDo.getMajorAmount(), rewardPoolInputRecordDo.getMinorAmount(), rewardPoolInputRecordDo.getMiniAmount()),
-                JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+                JackpotTypeEnum.LAM_ANG);
     }
 
     @Override
@@ -103,12 +103,15 @@ public class LamangJackpotManager extends AbstractJackpotManager {
 
         JackpotRewardPoolDo buildUpdate = JackpotRewardPoolDo.builder().type(jackpotUserRewardRecordDo.getRewardPoolType())
                 .amount(-jackpotUserRewardRecordDo.getRewardAmount()).build();
-        boolean update = jackpotRewardPoolService.update(buildUpdate, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+        boolean update = jackpotRewardPoolService.update(buildUpdate,JackpotTypeEnum.LAM_ANG);
         AssertUtil.assertTrue(update, ErrorCode.ERR_INTER);
         return add;
     }
 
-    private List<JackpotRewardPoolDo> buildRewardPoolDos(Long grandAmount,Long majorAmount,Long minorAmount,Long miniAmount) {
+    private List<JackpotRewardPoolDo> buildRewardPoolDos(Long grandAmount,
+                                                         Long majorAmount,
+                                                         Long minorAmount,
+                                                         Long miniAmount) {
         // 组装奖池对象
         long currentMilli = DateUtil.getCurrentMilli();
         JackpotRewardPoolDo grandDo = JackpotRewardPoolDo.builder()
