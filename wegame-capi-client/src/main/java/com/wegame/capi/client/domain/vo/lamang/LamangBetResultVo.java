@@ -36,7 +36,7 @@ public class LamangBetResultVo implements Serializable {
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
     private List<LamangRewardLineVo> rewardLineList;
-    @ApiModelProperty("免费轮标识,0:否,1:是")
+    @ApiModelProperty("是否中了免费轮: 0:否,1:是")
     private Integer freeWheelFlag;
     @ApiModelProperty("免费轮游戏记录Id列表")
     private List<String> gameRecordIds;
