@@ -7,9 +7,7 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolSummarizeDo;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolRequest;
-import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolSummarizeVo;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolVo;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
@@ -28,16 +26,6 @@ import java.util.stream.Collectors;
  * @author generate
  */
 public class JackpotRewardPoolConverter {
-
-    //    public static JackpotRewardPoolDo voToDo(JackpotRewardPoolVo vo) {
-    //        if (Objects.isNull(vo)) {
-    //            return null;
-    //        }
-    //        JackpotRewardPoolDo jackpotRewardPoolDo = new JackpotRewardPoolDo();
-    //        jackpotRewardPoolDo.setType(JackpotRewardPoolTypeEnum.valueOfCode(vo.getType()));
-    //        jackpotRewardPoolDo.setAmount(vo.getAmount());
-    //        return jackpotRewardPoolDo;
-    //    }
 
     public static JackpotRewardPoolDo poToDo(JackpotRewardPoolPo po) {
         if (Objects.isNull(po)) {
@@ -87,15 +75,6 @@ public class JackpotRewardPoolConverter {
         return vo;
     }
 
-    //    public static List<JackpotRewardPoolDo> voToDoList(List<JackpotRewardPoolVo> voList) {
-    //        return Optional.ofNullable(voList)
-    //                .orElse(Collections.emptyList())
-    //                .stream()
-    //                .map(JackpotRewardPoolConverter::voToDo)
-    //                .filter(Objects::nonNull)
-    //                .collect(Collectors.toList());
-    //    }
-
     public static List<JackpotRewardPoolDo> poToDoList(List<JackpotRewardPoolPo> poList) {
         return Optional.ofNullable(poList)
                 .orElse(Collections.emptyList())
@@ -143,26 +122,4 @@ public class JackpotRewardPoolConverter {
     }
 
     /// ////////////  above auto generated ///////////////
-
-    public static JackpotRewardPoolSummarizeVo doToVo(JackpotRewardPoolSummarizeDo summarize) {
-        if (Objects.isNull(summarize)) {
-            return null;
-        }
-        JackpotRewardPoolSummarizeVo vo = new JackpotRewardPoolSummarizeVo();
-        if (Objects.nonNull(summarize.getGrand())) {
-            vo.setGrand(doToVo(summarize.getGrand()));
-        }
-        if (Objects.nonNull(summarize.getMajor())) {
-            vo.setGrand(doToVo(summarize.getMajor()));
-        }
-        if (Objects.nonNull(summarize.getMinor())) {
-            vo.setGrand(doToVo(summarize.getMinor()));
-        }
-        if (Objects.nonNull(summarize.getMini())) {
-            vo.setGrand(doToVo(summarize.getMini()));
-        }
-        vo.setTotalJackpotAmount(summarize.getTotalJackpotAmount());
-        return vo;
-    }
-
 }

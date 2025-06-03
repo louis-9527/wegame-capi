@@ -27,14 +27,15 @@ import java.util.List;
 import java.util.TreeMap;
 
 /**
- * po服务
+ * Jackpot奖池服务
  *
  * @author genereate
  */
 @Service
 public class JackpotRewardPoolService extends AbstractService {
+
     @Autowired
-    private LamangConfig lamangConfig;
+    LamangConfig lamangConfig;
 
     /**
      * 批量更新
@@ -100,6 +101,7 @@ public class JackpotRewardPoolService extends AbstractService {
         });
         return rewardPoolDos;
     }
+
     @CacheEvict(value = CacheConstants.JACKPOT_REWARD_POOL, key = "#jackpotTypeEnum.gameType.id")
     public void evictJackpotRewardPoolListCache(JackpotTypeEnum jackpotTypeEnum) {
     }
@@ -114,17 +116,4 @@ public class JackpotRewardPoolService extends AbstractService {
         return JackpotRewardPoolConverter.poToDo(po);
 
     }
-
-    //    /**
-    //     * 数量统计
-    //     *
-    //     * @param query 查询参数
-    //     * @return 数量
-    //     */
-    //    public long count(JackpotRewardPoolQuery query) {
-    //        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-    //        return jackpotRewardPoolMapper.count(query);
-    //    }
-
-    ///////////////  above auto generated ///////////////
 }
