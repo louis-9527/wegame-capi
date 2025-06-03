@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
@@ -103,6 +104,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         }
 
         // 5.构建中奖结果
+        boolean reachMaxMultiple = reachMaxMultiple(rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount, rewardHandle.getBetAmount(), malakasConfig.getRewardMaxMultiple());
         RewardResultDo<MalakasSymbolDo> rewardResult = RewardResultDo.<MalakasSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
@@ -112,7 +114,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 .hasRewardFreeWheel(Boolean.FALSE)
                 .rewardLineDetailList(rewardLineDetailList)
                 .rewardFreeWheelTimes(0)
-                .accumulateReachMaxMultiple(Boolean.FALSE)
+                .accumulateReachMaxMultiple(reachMaxMultiple)
                 .build();
         // 6.返回中奖信息
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);

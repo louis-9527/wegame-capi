@@ -51,5 +51,5 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
     /**
      * 当前累计中奖金额
      */
-    private Long totalRewardAmount;
+    private Long currentTotalRewardAmount;
 }
