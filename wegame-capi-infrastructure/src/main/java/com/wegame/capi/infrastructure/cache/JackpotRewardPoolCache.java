@@ -8,8 +8,9 @@ import static com.wegame.base.CacheConstants.*;
 
 @Component(JACKPOT_REWARD_POOL)
 public class JackpotRewardPoolCache extends AbstractMultiCache {
+
     public JackpotRewardPoolCache() {
-        super(CommonCacheEnvEnum.JACKPOT_REWARD_POOL.cacheKeyPrefixName(),  60, 30, 20);
+        super(CommonCacheEnvEnum.JACKPOT_REWARD_POOL.cacheKeyPrefixName(),  60, 5, 20);
     }
 
     @Override
