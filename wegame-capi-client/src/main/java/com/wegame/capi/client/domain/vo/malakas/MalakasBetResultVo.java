@@ -40,4 +40,6 @@ public class MalakasBetResultVo implements Serializable {
     private Integer freeWheelFlag;
     @ApiModelProperty("免费轮游戏记录Id列表")
     private List<String> gameRecordIds;
+    @ApiModelProperty("累计达到最大中奖倍数：true是，false否")
+    private Boolean accumulateReachMaxMultiple;
 }

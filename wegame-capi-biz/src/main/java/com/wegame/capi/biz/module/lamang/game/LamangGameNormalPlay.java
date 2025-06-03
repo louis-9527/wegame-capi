@@ -11,7 +11,10 @@ import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
-import com.wegame.capi.biz.domain.biz.symbol.*;
+import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
+import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
+import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
@@ -21,7 +24,6 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.RewardTypeEnum;
-import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +42,8 @@ import static com.wegame.capi.biz.module.lamang.LamangGameHelper.*;
 import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.*;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
-import static com.wegame.capi.common.constants.GameConstants.*;
+import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
+import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
 @Component("lamangGameNormalPlay")
@@ -97,7 +100,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     }
 
 
-
     /**
      * 填充滚轮
      */
@@ -140,7 +142,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 }
 
                 // 构建元素金边
-                int goldenInRow  = countGoldenBorderInRow(symbolArr, row);
+                int goldenInRow = countGoldenBorderInRow(symbolArr, row);
                 // 如果当前行有金边元素，则生成非金边元素
                 if (goldenInRow < MAX_GOLDEN_NUMBER_IN_ROW) {
                     boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
@@ -161,6 +163,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
     /**
      * 维持wheel中的scatter数量
+     *
      * @param symbolArr
      * @param needScatterNumber
      * @param currentScatterNumberInWheel
@@ -203,13 +206,14 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
     /**
      * 生成一轮第一个wheel
+     *
      * @param config
      * @param mustRewardFreeWheel
      * @param freeWheel
      * @return
      */
     private WheelDo<LamangSymbolDo> generateFirstWheel(LamangConfig.PlayProbabilisticConfig config,
-                                                       boolean mustRewardFreeWheel, boolean freeWheel){
+                                                       boolean mustRewardFreeWheel, boolean freeWheel) {
         LamangSymbolDo[][] symbolArr = new LamangSymbolDo[LamangGameNormalPlay.GAME_INFO.getRow()][LamangGameNormalPlay.GAME_INFO.getColumn()];
 
         fillWheel(LamangGameNormalPlay.GAME_INFO, symbolArr, config, mustRewardFreeWheel);
@@ -223,6 +227,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
     /**
      * 根据前一个wheel生成后续
+     *
      * @param preGameRecord
      * @param config
      * @param mustRewardFreeWheel
@@ -232,7 +237,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     private WheelDo<LamangSymbolDo> generateFromPreWheel(LamangGameRecordDo preGameRecord,
                                                          LamangConfig.PlayProbabilisticConfig config,
                                                          boolean mustRewardFreeWheel,
-                                                         boolean freeWheel){
+                                                         boolean freeWheel) {
 
         WheelDo<LamangSymbolDo> preWheel = preGameRecord.getWheel();
         RewardResultDo<LamangSymbolDo> preRewardResult = preGameRecord.getRewardResult();
@@ -266,6 +271,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
     /**
      * 初始化superWild轮盘
+     *
      * @return
      */
     private LamangSymbolDo[][] initSuperWildWheel() {
@@ -308,7 +314,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                     mustRewardFreeWheel,
                     freeWheelFlag);
             //后续生成wheel根据前一轮的倍率
-            RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
+            RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple(), totalRewardAmount.get()));
             long gameRecordId = generateGameRecordId();
             //todo 计算抽奖次数
             int drawTimes = countAndReleaseScatterDrawTimes(wheel.getSymbolArr());
@@ -318,8 +324,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             loopPlayOnPreGameRecord(gamePlay, gameRecordResult, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag, mustRewardFreeWheel);
         } else if (reachMaxMultiple) {
-            //达到金额上限则设置前一回合为到达最大倍数
-            preGameRecord.setAccumulateReachMaxMultiple(true);
             //到达上限避免继续执行
             freeWheelList.clear();
         }
@@ -327,6 +331,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
     /**
      * 处理scatter+1赢得的奖励轮
+     *
      * @param gameRecord
      * @param freeWheelFlag
      */
@@ -343,6 +348,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
     /**
      * 增加免费轮次数
+     *
      * @param freeWheelList
      * @param addTimes
      */
@@ -358,12 +364,12 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     }
 
     private LamangGameRecordDo buildGameRecord(Long id,
-                                                Long parentId,
-                                                Long betRecordId,
-                                                Long batchId,
-                                                WheelDo<LamangSymbolDo> wheel,
-                                                RewardResultDo<LamangSymbolDo> rewardResult,
-                                                int jackpotDrawTimes) {
+                                               Long parentId,
+                                               Long betRecordId,
+                                               Long batchId,
+                                               WheelDo<LamangSymbolDo> wheel,
+                                               RewardResultDo<LamangSymbolDo> rewardResult,
+                                               int jackpotDrawTimes) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         return LamangGameRecordDo.builder()
@@ -380,7 +386,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 .gameRecordIds(null)
                 .lastGameFlag(false)
                 .jackpotDrawTimes(jackpotDrawTimes)
-                .accumulateReachMaxMultiple(false)
                 .build();
     }
 
@@ -391,9 +396,9 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                                     LinkedList<FreeWheelHandleDo> freeWheelList, boolean mustRewardFreeWheel) {
         LamangConfig.PlayProbabilisticConfig firstBatchConfig = lamangConfig.getProbabilisticConfig().getCommonPlaySymbolProbabilisticConfig();
 
-        WheelDo<LamangSymbolDo> wheel = generateFirstWheel(firstBatchConfig, mustRewardFreeWheel,false);
+        WheelDo<LamangSymbolDo> wheel = generateFirstWheel(firstBatchConfig, mustRewardFreeWheel, false);
         //首轮不传入倍率
-        RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null));
+        RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
         long gameRecordId = generateGameRecordId();
@@ -418,7 +423,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             WheelDo<LamangSymbolDo> wheel = generateFirstWheel(freeWheelConfig, false, true);
             wheel.setFreeFlag(true);
             // 首轮不传入倍率
-            RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null));
+            RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
             AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
             // 组装-游戏记录
             long gameRecordId = generateGameRecordId();
@@ -438,6 +443,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
     /**
      * 是否能继续游戏
+     *
      * @param gamePlay
      * @param rewardResult
      * @param totalRewardAmount
@@ -456,7 +462,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         }
         return CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
     }
-
 
 
     private boolean generateSymbolGoldBorder(LamangConfig.PlayProbabilisticConfig playProbabilisticConfig, int row, int column) {
@@ -482,7 +487,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
      * 2.2 不带金边，直接消除<br/>
      * 3、 wild元素 和占位符元素: 直接消除
      *
-     *
      * @param symbolArr
      * @param rewardResult
      */
@@ -501,7 +505,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         } else if (rewardSymbol.getSymbol().isWildSymbol() || rewardSymbol.getSymbol().isPlaceholderSymbol()) {
             // wild 和 占位符 元素,直接移除
             removeSymbol(symbolArr, rewardSymbol);
-        }else {
+        } else {
             // 普通元素消除
             IndexDo indexDo = rewardSymbol.getIndex();
             LamangSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
@@ -534,8 +538,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     /**
      * 重建元素数组：（按列下移处理）
      * 将每一列的非空元素下移到最底部，类似重力效果
-     * 
-     * @param symbolArr 符号数组
+     *
+     * @param symbolArr  符号数组
      * @param gameInfoDo 游戏信息
      */
     public void rebuildSymbolArr(LamangSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
@@ -548,12 +552,12 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                     nonNullSymbols.add(symbolArr[row][column]);
                 }
             }
-            
+
             // 清空当前列
             for (int row = ONE_ROW_INDEX; row < gameInfoDo.getRow(); row++) {
                 symbolArr[row][column] = null;
             }
-            
+
             // 从底部开始填充非空元素
             int currentRow = gameInfoDo.getRow() - 1;
             for (int i = nonNullSymbols.size() - 1; i >= 0; i--) {

@@ -1,7 +1,6 @@
 package com.wegame.capi.test.biz.manager;
 
 import com.mongodb.DuplicateKeyException;
-import com.mongodb.bulk.BulkWriteError;
 import com.wegame.base.context.Operator;
 import com.wegame.base.context.OperatorContext;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
@@ -15,8 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 @Slf4j
 public class LamangJackpotManagerTest  extends BaseTest {
@@ -58,12 +55,12 @@ public class LamangJackpotManagerTest  extends BaseTest {
                 .majorAmount(4000L).build());
 
         try {
-            lamangJackpotManager.batchAddUserRewardRecord(rewardPoolInputRecordDos);
+            lamangJackpotManager.batchAddRewardPoolInputRecord(rewardPoolInputRecordDos);
         }catch (Exception e){
             List<Long> failList = new ArrayList<>();
             rewardPoolInputRecordDos.forEach(record->{
                 try {
-                    lamangJackpotManager.addUserRewardRecord(record);
+                    lamangJackpotManager.addRewardPoolInputRecord(record);
                 }catch (DuplicateKeyException t){
                     log.warn("Error add user reward record, record: {}, error: {}", record, t.getErrorMessage());
                 }catch (Exception t){

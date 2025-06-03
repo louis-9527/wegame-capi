@@ -21,6 +21,7 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
@@ -71,6 +73,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                     .hasRewardFreeWheel(CollectionUtils.isEmpty(rewardLineList) && scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                     .rewardLineDetailList(null)
                     .rewardFreeWheelTimes(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0)
+                    .accumulateReachMaxMultiple(Boolean.FALSE)
                     .build();
         }
         // 4、中奖线处理
@@ -99,6 +102,8 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                     .rewardSymbolList(rewardLine.getRewardSymbolList())
                     .build());
         }
+        long totalAmount = Objects.equals(rewardHandle.getGamePlayType(), GamePlayTypeEnum.EVENT_PLAY) ? 0L : rewardHandle.getCurrentTotalRewardAmount();
+        boolean reachMaxMultiple = reachMaxMultiple(totalAmount + totalRewardAmount, rewardHandle.getBetAmount(), lamangConfig.getRewardMaxMultiple());
         // 5.构建中奖结果
         RewardResultDo<LamangSymbolDo> rewardResult = RewardResultDo.<LamangSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
@@ -108,6 +113,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                 .totalMultiple(totalMultiple)
                 .hasRewardFreeWheel(Boolean.FALSE)
                 .rewardLineDetailList(rewardLineDetailList)
+                .accumulateReachMaxMultiple(reachMaxMultiple)
                 .rewardFreeWheelTimes(0)
                 .build();
         // 6.返回中奖信息

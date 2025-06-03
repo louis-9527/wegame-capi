@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户jackpot中奖记录查询模型
@@ -67,6 +68,13 @@ public class JackpotUserRewardRecordQuery extends JackpotUserRewardRecordPo impl
      * 大于最后一条的Id
      */
     private Long gtLastId;
+
+    public String getCacheKey() {
+        return "types:" +
+                rewardPoolTypeList.stream().map(String::valueOf).collect(Collectors.joining("-")) +
+                ":limit:" + limit +
+                ":offset:" + offset;
+    }
 
 }
 

@@ -61,9 +61,13 @@ public class SingleWalletService {
     JackpotRewardPoolService jackpotRewardPoolService;
 
     public boolean authLoginToken(UserLoginDo userLoginDo) {
-        AuthLoginTokenRes res = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.buildReq(userLoginDo));
-        AssertUtil.assertNotNull(res, ErrorCode.ERR_NET);
-        return true;
+        if (!invokeSingle) {
+            return true;
+        } else {
+            AuthLoginTokenRes res = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.buildReq(userLoginDo));
+            AssertUtil.assertNotNull(res, ErrorCode.ERR_NET);
+            return true;
+        }
     }
 
     public BigDecimal getCredit() {
@@ -94,7 +98,7 @@ public class SingleWalletService {
                 JackpotTypeEnum jackpotType = JackpotTypeEnum.valueOfGameType(gameType);
                 // 当前游戏不支持jackpot走原逻辑
                 if (Objects.nonNull(jackpotType)) {
-                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, jackpotRewardPoolService.listAll(jackpotType)));
+                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, jackpotRewardPoolService.listAllWithCache(jackpotType)));
                 } else {
                     commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
                 }

@@ -6,21 +6,24 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRecordRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotUserRewardRecordVo;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.DesensitizationUtil;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
-import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordTypesQuery;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * JackpotUserRewardRecordConverter
+ *
  * @author generate
  */
 public class JackpotUserRewardRecordConverter {
@@ -137,11 +140,11 @@ public class JackpotUserRewardRecordConverter {
 
     public static List<JackpotUserRewardRecordDo> poToDoList(List<JackpotUserRewardRecordPo> poList) {
         return Optional.ofNullable(poList)
-            .orElse(Collections.emptyList())
-            .stream()
-            .map(JackpotUserRewardRecordConverter::poToDo)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(JackpotUserRewardRecordConverter::poToDo)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public static List<JackpotUserRewardRecordPo> doToPoList(List<JackpotUserRewardRecordDo> doList, OptEnum optEnum) {
@@ -166,16 +169,8 @@ public class JackpotUserRewardRecordConverter {
         JackpotUserRewardRecordQuery query = new JackpotUserRewardRecordQuery();
         query.setLimit(request.getPageSize());
         query.setOffset(request.getOffset());
-        query.setRewardPoolTypeList(request.getRewardPoolTypeList());
-        return query;
-    }
-
-    public static JackpotUserRewardRecordTypesQuery requestToTypesQuery(PageQueryJackpotUserRewardRecordRequest request, String orderClause) {
-        JackpotUserRewardRecordTypesQuery query = new JackpotUserRewardRecordTypesQuery();
-        query.setLimit(request.getPageSize());
-        query.setOffset(request.getOffset());
-        query.setRewardPoolTypeList(request.getRewardPoolTypeList());
         query.setOrderByClause(orderClause);
+        query.setRewardPoolTypeList(request.getRewardPoolTypeList());
         return query;
     }
 

@@ -10,8 +10,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
 
+/**
+ * promotionDomain: https://reward-http-internal-stress.igo8.me/v1/health-check
+ *     singleDomain: https://sw-http-main-apisix-internal-stress.igo8.me/v1/health-check
+ *     freeSpinDomain: https://sw-http-freespin-stress.igo8.me/v1/health-check
+ *     operationDomain: http://dos-egame-stresstest-internal.dos88.me/healthCheck
+ */
 @Slf4j
 public class CommonBaseApi extends BaseApi {
+    public static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check";
     // cp
     @Value("${api.game.cp.platformId}")
     public String cpPlatformId;

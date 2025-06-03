@@ -27,15 +27,9 @@ public class PageQueryJackpotUserRewardRecordRequest extends PageQueryRequest im
     @ApiModelProperty(value = "类型列表 ： 类型 1：grand 2:major 3:minor 4:mini 5:betBonus", required = true)
     private List<Integer> rewardPoolTypeList;
 
-
     @Override
     public void validateParam() {
         AssertUtil.assertNotEmpty(rewardPoolTypeList, ErrorCode.ERR_PARAM);
-    }
-
-    @Override
-    public void validateBiz() {
-
     }
 }
 

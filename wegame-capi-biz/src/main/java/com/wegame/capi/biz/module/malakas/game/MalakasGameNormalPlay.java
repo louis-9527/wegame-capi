@@ -80,7 +80,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
         // 判奖-根据游戏滚轮和中奖线算法判断
-        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
+        RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO, totalRewardAmount.get()));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
         MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
@@ -110,18 +110,20 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
             WheelDo<MalakasSymbolDo> wheel = generateNormalWheelFromPreWheel(
                     getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), freeWheelFlag),
                     preGameRecord);
-            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple()));
+            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple(), totalRewardAmount.get()));
             long gameRecordId = generateGameRecordId();
             MalakasGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(), gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
             ret.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList, freeWheelFlag);
-        } else if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
-            if (!reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), malakasConfig.getRewardMaxMultiple())) {
-                for (int times = 1; times <= preGameRecord.getRewardResult().getRewardFreeWheelTimes(); times++) {
-                    freeWheelList.addLast(FreeWheelHandleDo.builder()
-                            .parentGameRecordId(preGameRecord.getId())
-                            .build());
+        } else {
+            if (!preGameRecord.getRewardResult().getAccumulateReachMaxMultiple()) {
+                if (preGameRecord.getRewardResult().isHasRewardFreeWheel()) {
+                    for (int times = 1; times <= preGameRecord.getRewardResult().getRewardFreeWheelTimes(); times++) {
+                        freeWheelList.addLast(FreeWheelHandleDo.builder()
+                                .parentGameRecordId(preGameRecord.getId())
+                                .build());
+                    }
                 }
             } else {
                 // help gc
@@ -142,7 +144,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
             WheelDo<MalakasSymbolDo> wheel = generateNormalWheel(getWheelProbabilisticConfig(gamePlay, malakasConfig.getProbabilisticConfig(), true), true);
             wheel.setFreeFlag(true);
             // 判奖-根据游戏滚轮和中奖线算法判断
-            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, totalMultipleAmount));
+            RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, totalMultipleAmount, totalRewardAmount.get()));
             AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
             // 组装-游戏记录
             long gameRecordId = generateGameRecordId();
@@ -327,7 +329,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
         if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return false;
         }
-        if (reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), malakasConfig.getRewardMaxMultiple())) {
+        if (rewardResult.getAccumulateReachMaxMultiple()) {
             log.warn("reach max reward multiple bet. totalRewardAmount: {}, payAmount: {}", totalRewardAmount.get(), gamePlay.getPayAmount());
             return false;
         }
