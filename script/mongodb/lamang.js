@@ -15,9 +15,7 @@ db.lamang_jackpot_reward_pool.insertMany([
 db.getCollection("lamang_jackpot_reward_pool_input_record").createIndex(
     { "expireAtTime": 1 },
     { expireAfterSeconds: 0 }
-)
-
-
+);
 
 // -- ----------------------------
 //     -- Table structure for xxx_jackpot_pool: xxx_jackpot奖池

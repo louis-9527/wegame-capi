@@ -25,5 +25,5 @@ public class LamangBetResultDetailVo implements Serializable {
     private List<LamangBetResultVo> resultList;
 
     @ApiModelProperty("jackpot中奖的游戏记录id")
-    private Long jackpotRewardGameRecordId;
+    private String jackpotRewardGameRecordId;
 }

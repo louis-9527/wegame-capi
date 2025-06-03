@@ -48,7 +48,7 @@ public class LamangBetRecordDetailDo implements ToVoConverter<LamangBetResultDet
                         .stream()
                         .map(ToVoConverter::toResultVo)
                         .collect(Collectors.toList()))
-                .jackpotRewardGameRecordId(jackpotRewardGameRecordId)
+                .jackpotRewardGameRecordId(Objects.nonNull(jackpotRewardGameRecordId)? String.valueOf(jackpotRewardGameRecordId) : null)
                 .build();
     }
 
