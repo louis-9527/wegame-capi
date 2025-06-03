@@ -3,7 +3,6 @@ package com.wegame.capi.biz.manager.jackpot;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
@@ -34,8 +33,6 @@ public class LamangJackpotManager extends AbstractJackpotManager {
     JackpotRewardPoolService jackpotRewardPoolService;
     @Autowired
     JackpotUserRewardRecordService jackpotUserRewardRecordService;
-    @Autowired
-    LamangConfig lamangConfig;
 
     @Override
     public List<JackpotRewardPoolDo> listJackpotRewardPool() {
