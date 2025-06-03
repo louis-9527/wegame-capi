@@ -21,6 +21,7 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
@@ -101,7 +103,10 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .rewardSymbolList(rewardLine.getRewardSymbolList())
                     .build());
         }
+
         // 5.构建中奖结果
+        long totalAmount = Objects.equals(rewardHandle.getGamePlayType(), GamePlayTypeEnum.EVENT_PLAY) ? 0L : rewardHandle.getCurrentTotalRewardAmount();
+        boolean reachMaxMultiple = reachMaxMultiple(totalAmount + totalRewardAmount, rewardHandle.getBetAmount(), malakasConfig.getRewardMaxMultiple());
         RewardResultDo<MalakasSymbolDo> rewardResult = RewardResultDo.<MalakasSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
@@ -111,7 +116,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 .hasRewardFreeWheel(Boolean.FALSE)
                 .rewardLineDetailList(rewardLineDetailList)
                 .rewardFreeWheelTimes(0)
-                .accumulateReachMaxMultiple(totalMultiple.intValue() > malakasConfig.getRewardMaxMultiple())
+                .accumulateReachMaxMultiple(reachMaxMultiple)
                 .build();
         // 6.返回中奖信息
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
@@ -220,9 +225,14 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         AssertUtil.assertNotNull(rewardHandle.getGameType(), ErrorCode.ERR_INTER, "not support gameType");
         AssertUtil.assertNotNull(rewardHandle.getBetType(), ErrorCode.ERR_PARAM, "not support betType");
         AssertUtil.assertNotNull(rewardHandle.getBetSubType(), ErrorCode.ERR_PARAM, "not support betSubType");
+        AssertUtil.assertNotNull(rewardHandle.getGamePlayType(), ErrorCode.ERR_PARAM, "not support gamePlayType");
         AssertUtil.assertNotNull(rewardHandle.getWheel(), ErrorCode.ERR_PARAM, "wheel is null");
         AssertUtil.assertNotNull(rewardHandle.getWheel().getIndex(), ErrorCode.ERR_PARAM, "wheel index is null");
         AssertUtil.assertNotNull(rewardHandle.getWheel().getSymbolArr(), ErrorCode.ERR_PARAM, "wheel symbolArr is null");
+        AssertUtil.assertNotNull(rewardHandle.getCurrentMultiple(), ErrorCode.ERR_PARAM, "currentMultiple is null");
+        if (Objects.equals(GamePlayTypeEnum.NORMAL_PLAY, rewardHandle.getGamePlayType())) {
+            AssertUtil.assertNotNull(rewardHandle.getCurrentTotalRewardAmount(), ErrorCode.ERR_PARAM, "currentTotalRewardAmount is null");
+        }
         AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.MALAKAS), ErrorCode.ERR_PARAM, "just support game type of malakas");
         AssertUtil.assertTrue(rewardHandle.getBetAmount() > 0, ErrorCode.ERR_PARAM, "bet amount must greater than 0");
         SymbolDo[][] symbolArr = rewardHandle.getWheel().getSymbolArr();
