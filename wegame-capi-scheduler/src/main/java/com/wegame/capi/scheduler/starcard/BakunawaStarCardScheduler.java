@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.alert;
+package com.wegame.capi.scheduler.starcard;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
@@ -13,34 +13,30 @@ import static com.wegame.capi.common.Constants.BAKUNAWA_ADARNA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
- * 投注状态告警定时任务
+ * Bakunawa星卡定时任务
  */
 @Slf4j
 @Service
 @ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)
-public class BakunawaAdarnaBetRecordBetStatusAlertScheduler
-        extends AbstractAlertScheduler
-        implements Runnable {
+public class BakunawaStarCardScheduler extends AbstractStarCardScheduler {
 
-    @Override
-    GameTypeEnum getGameType() {
-        return GameTypeEnum.BAKUNAWA;
-    }
 
-    /**
-     * 每天8点运行
-     */
-    @Scheduled(cron = "0 0 10 * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
             long startTime = DateUtil.getCurrentMilli();
-            scheduleWithLock(LockNameUtil.getBetRecordStatusAlertSchedulerLockName(getGameType()), this);
+            scheduleWithLock(LockNameUtil.getStarCardReportSchedulerLockName(gameTypeEnum()), this);
             log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
             log.info("schedule get lock fail");
         } catch (Exception e) {
             log.error("schedule failed", e);
         }
+    }
+
+    @Override
+    GameTypeEnum gameTypeEnum() {
+        return GameTypeEnum.BAKUNAWA;
     }
 }

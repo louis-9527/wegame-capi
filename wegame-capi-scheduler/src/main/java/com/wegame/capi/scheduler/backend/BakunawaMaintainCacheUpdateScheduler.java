@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import static com.wegame.capi.common.Constants.BAKUNAWA_ADARNA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
+/**
+ * Bakunawa维护配置定时任务
+ */
 @Slf4j
 @Service
 @ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)

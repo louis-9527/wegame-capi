@@ -19,7 +19,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Service
 @ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)
-public class BakunawaAdarnaBetRecordBetStatusScheduler
+public class BakunawaBetRecordBetStatusScheduler
         extends AbstractBetRecordBetStatusScheduler {
 
     @Override
@@ -28,9 +28,9 @@ public class BakunawaAdarnaBetRecordBetStatusScheduler
     }
 
     /**
-     * 每分钟30秒执行
+     * 每分钟0秒执行
      */
-    @Scheduled(cron = "30 * * * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
