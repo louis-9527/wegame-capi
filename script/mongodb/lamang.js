@@ -11,11 +11,34 @@ db.lamang_jackpot_reward_pool.insertMany([
     { _id: 4,type:4, amount: 100000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
 ]);
 
+// jackpot中奖记录唯一键
+db.lamang_jackpot_user_reward_record.createIndex(
+    { gamRecordId: 1,betRecordId: 1},
+    { unique: true}
+);
+
 // 奖池流水ttl，索引:在expireAtTime时间的时候删除
 db.getCollection("lamang_jackpot_reward_pool_input_record").createIndex(
     { "expireAtTime": 1 },
     { expireAfterSeconds: 0 }
 );
+
+db.getCollection("lamang_bet_record").drop();
+db.createCollection("lamang_bet_record");
+// 索引lamang_bet_record-c端查询需要
+db.lamang_bet_record.createIndex({playerId: 1, channelId: 1, status: 1, createTime: -1})
+db.lamang_bet_record.createIndex({createTime: -1, status: 1, _id: 1})
+// 索引lamang_bet_record-b端查询需要-使用覆盖索引
+db.lamang_bet_record.createIndex({createTime: -1, channelId: 1, status:1, payAmount:1, payOutAmount:1 ,userId:1, betPromotionType:1})
+
+
+// ----------------------------
+//  Collection structure for lamang_game_record
+// ----------------------------
+db.getCollection("lamang_game_record").drop();
+db.createCollection("lamang_game_record");
+// 索引lamang_game_record-c端查询需要-新
+db.lamang_game_record.createIndex({betRecordId: 1, batchId: 1})
 
 // -- ----------------------------
 //     -- Table structure for xxx_jackpot_pool: xxx_jackpot奖池
