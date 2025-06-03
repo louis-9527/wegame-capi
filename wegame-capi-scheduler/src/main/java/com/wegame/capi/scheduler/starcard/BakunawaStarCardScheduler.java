@@ -18,7 +18,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Service
 @ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)
-public class BakunawaAdarnaStarCardScheduler extends AbstractStarCardScheduler {
+public class BakunawaStarCardScheduler extends AbstractStarCardScheduler {
 
 
     @Scheduled(cron = "0 0/12 * * * ?")

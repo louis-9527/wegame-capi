@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.biz;
+package com.wegame.capi.scheduler.alert;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 import static com.wegame.capi.common.Constants.BAKUNAWA_ADARNA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
-
 /**
- * 投注记录兜底定时任务
+ * 投注状态告警定时任务
  */
 @Slf4j
 @Service
 @ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)
-public class BakunawaAdarnaBetRecordBetStatusScheduler
-        extends AbstractBetRecordBetStatusScheduler {
+public class BakunawaBetRecordBetStatusAlertScheduler
+        extends AbstractAlertScheduler
+        implements Runnable {
 
     @Override
     GameTypeEnum getGameType() {
@@ -28,15 +28,15 @@ public class BakunawaAdarnaBetRecordBetStatusScheduler
     }
 
     /**
-     * 每分钟30秒执行
+     * 每天8点运行
      */
-    @Scheduled(cron = "30 * * * * ?")
+    @Scheduled(cron = "0 0 10 * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
             long startTime = DateUtil.getCurrentMilli();
-            scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(getGameType()), this);
-            log.info("schedule end, cost time: {}", DateUtil.getCurrentMilli() - startTime);
+            scheduleWithLock(LockNameUtil.getBetRecordStatusAlertSchedulerLockName(getGameType()), this);
+            log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
             log.info("schedule get lock fail");
         } catch (Exception e) {
