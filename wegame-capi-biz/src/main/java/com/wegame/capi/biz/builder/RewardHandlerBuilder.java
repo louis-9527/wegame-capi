@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 
 public class RewardHandlerBuilder {
 
-    public static <T extends SymbolDo> RewardHandleDo<T> build(GameInfoDo gameInfo, GamePlayDo gamePlay, WheelDo<T> wheel, BigDecimal currentMultiple, Long totalRewardAmount) {
+    public static <T extends SymbolDo> RewardHandleDo<T> build(GameInfoDo gameInfo, GamePlayDo gamePlay, WheelDo<T> wheel, BigDecimal currentMultiple) {
         AssertUtil.assertNotNull(gameInfo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(gamePlay, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
@@ -25,7 +25,6 @@ public class RewardHandlerBuilder {
                 .betAmount(gamePlay.getBetAmount())
                 .wheel(wheel)
                 .currentMultiple(currentMultiple)
-                .totalRewardAmount(totalRewardAmount)
                 .build();
     }
 

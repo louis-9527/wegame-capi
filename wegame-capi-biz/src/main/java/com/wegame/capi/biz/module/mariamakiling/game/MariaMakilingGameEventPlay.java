@@ -57,7 +57,7 @@ public class MariaMakilingGameEventPlay extends AbstractGame<MariaMakilingGameRe
         // 生成首轮结果
         long firstGameRecordId = generateGameRecordId();
         WheelDo<SymbolDo> wheel = convertWheel(firstConfigRecord.getWheel());
-        RewardResultDo<SymbolDo> firstWheelRewardResult = mariaMakilingRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO, null));
+        RewardResultDo<SymbolDo> firstWheelRewardResult = mariaMakilingRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
         long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
         List<MariaMakilingGameRecordDo> freeWheelGameRecordList = new ArrayList<>();
         List<Long> freeWheelGameRecordIds = new ArrayList<>();
@@ -68,7 +68,7 @@ public class MariaMakilingGameEventPlay extends AbstractGame<MariaMakilingGameRe
             for (Long recordId : gameRecordIds) {
                 OperationEventConfigRecordDo configRecord = configRecordMap.get(recordId);
                 WheelDo<SymbolDo> wheelRecord = convertWheel(configRecord.getWheel());
-                RewardResultDo<SymbolDo> rewardResultDo = mariaMakilingRewardHandler.handle(build(GAME_INFO, gamePlay, wheelRecord, BigDecimal.ZERO, null));
+                RewardResultDo<SymbolDo> rewardResultDo = mariaMakilingRewardHandler.handle(build(GAME_INFO, gamePlay, wheelRecord, BigDecimal.ZERO));
                 overallRewardAmount = overallRewardAmount + rewardResultDo.getTotalRewardAmount();
                 MariaMakilingGameRecordDo gameRecord = buildGameRecord(
                         userInfo,
