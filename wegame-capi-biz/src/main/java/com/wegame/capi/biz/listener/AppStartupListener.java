@@ -45,7 +45,7 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     DistributeLock distributeLock;
     @Autowired
     UserService userService;
-    // helthCheck
+    // healthCheck
     @Autowired
     SingleWalletApi singleWalletApi;
     @Autowired
