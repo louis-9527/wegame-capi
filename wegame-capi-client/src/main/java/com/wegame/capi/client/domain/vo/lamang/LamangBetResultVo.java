@@ -22,6 +22,9 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 public class LamangBetResultVo implements Serializable {
     private static final long serialVersionUID = -4792907227811616042L;
+
+    @ApiModelProperty("游戏记录id")
+    private String id;
     @ApiModelProperty("中奖类型: NONE未中奖，SINGLE单奖励，MULTIPLE多奖励 ")
     private String rewardType;
     @ApiModelProperty("中奖子类型: NONE:未中奖,other,nice,mega,super,sensational")
