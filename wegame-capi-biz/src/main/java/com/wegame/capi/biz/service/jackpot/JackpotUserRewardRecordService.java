@@ -11,7 +11,6 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
-import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordTypesQuery;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -81,17 +80,16 @@ public class JackpotUserRewardRecordService extends AbstractService {
     }
 
     @Cacheable(value = CacheConstants.JACKPOT_USER_REWARD_RECORD_LIST, key = "#jackpotType.gameType.id + ':' + #query.getCacheKey()")
-    public List<JackpotUserRewardRecordDo> listByTypes(JackpotUserRewardRecordTypesQuery query, JackpotTypeEnum jackpotType) {
+    public List<JackpotUserRewardRecordDo> listWithCache(JackpotUserRewardRecordQuery query, JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
-        List<JackpotUserRewardRecordPo> recordPoList = getMongoTemplate(jackpotType.getGameType())
-                .find(buildMongodbQuery(query),
-                        JackpotUserRewardRecordPo.class,
-                        jackpotType.getJackpotUserRewardRewardCollectionName());
-        return poToDoList(recordPoList);
+        List<JackpotUserRewardRecordPo> poList = getMongoTemplate(jackpotType.getGameType()).find(buildMongodbQuery(query),
+                JackpotUserRewardRecordPo.class,
+                jackpotType.getJackpotUserRewardRewardCollectionName());
+        return poToDoList(poList);
     }
 
     @Cacheable(value = CacheConstants.HIGHEST_JACKPOT_USER_REWARD_RECORD, key = "#jackpotType.gameType.id")
-    public JackpotUserRewardRecordDo getHighestUserRewardRecord(JackpotTypeEnum jackpotType) {
+    public JackpotUserRewardRecordDo getHighestUserRewardRecordWithCache(JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
         JackpotUserRewardRecordPo maxRecord = getMongoTemplate(jackpotType.getGameType()).findOne(buildHighestRecordQuery(),
                 JackpotUserRewardRecordPo.class,

@@ -3,9 +3,13 @@ package com.wegame.capi.biz.manager.jackpot;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
+import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolInputRecordService;
+import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
+import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
-import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordTypesQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,46 +21,53 @@ import java.util.List;
 @Component
 public abstract class AbstractJackpotManager {
 
+    @Autowired
+    JackpotRewardPoolInputRecordService jackpotRewardPoolInputRecordService;
+    @Autowired
+    JackpotRewardPoolService jackpotRewardPoolService;
+    @Autowired
+    JackpotUserRewardRecordService jackpotUserRewardRecordService;
+
+    public abstract JackpotTypeEnum jackpotType();
+
     /**
      * 获取奖池列表
      */
-    public abstract List<JackpotRewardPoolDo> listJackpotRewardPool();
+    public List<JackpotRewardPoolDo> listJackpotRewardPool() {
+        return jackpotRewardPoolService.listAll(jackpotType());
+    }
 
     /**
-     * 获取历史最高中奖记录
+     * 获取用户最高中奖记录
      */
-    public abstract JackpotUserRewardRecordDo getHighestUserRewardRecord();
+    public JackpotUserRewardRecordDo getHighestUserRewardRecord() {
+        return jackpotUserRewardRecordService.getHighestUserRewardRecordWithCache(jackpotType());
+    }
 
     /**
-     * 获取中奖记录
+     * 获取用户中奖记录
      */
-    public abstract JackpotUserRewardRecordDo getUserRewardRecord(JackpotUserRewardRecordQuery query);
+    public JackpotUserRewardRecordDo getUserRewardRecord(JackpotUserRewardRecordQuery query) {
+        return jackpotUserRewardRecordService.selectOne(query, jackpotType());
+    }
 
     /**
-     * 通用查询
-     * @param query
-     * @return
+     * 查询用户中奖列表
      */
     public abstract List<JackpotUserRewardRecordDo> listUserRewardRecord(JackpotUserRewardRecordQuery query);
 
     /**
-     * 根据类型查询 包含pageSize types
-     * @param query
-     * @return
+     * 新增奖池记录
      */
-    public abstract List<JackpotUserRewardRecordDo> listUserRewardRecordByTypes(JackpotUserRewardRecordTypesQuery query);
+    public abstract void addRewardPoolInputRecord(JackpotRewardPoolInputRecordDo jackpotRewardPoolInputRecordDo);
 
     /**
-     * 批量新增,返回失败的ID列表
-     * @param rewardPoolInputRecordDos
-     * @return
+     * 批量新增奖池记录
      */
-    public abstract void batchAddUserRewardRecord(List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos);
-    public abstract void addUserRewardRecord(JackpotRewardPoolInputRecordDo jackpotRewardPoolInputRecordDo);
+    public abstract void batchAddRewardPoolInputRecord(List<JackpotRewardPoolInputRecordDo> rewardPoolInputRecordDos);
 
     /**
      * 派奖,返回派奖记录ID
-     * @param jackpotUserRewardRecordDo
      */
     public abstract Long winReward(JackpotUserRewardRecordDo jackpotUserRewardRecordDo);
 

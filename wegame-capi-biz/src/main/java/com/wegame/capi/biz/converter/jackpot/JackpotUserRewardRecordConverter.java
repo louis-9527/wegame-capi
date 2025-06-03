@@ -166,16 +166,8 @@ public class JackpotUserRewardRecordConverter {
         JackpotUserRewardRecordQuery query = new JackpotUserRewardRecordQuery();
         query.setLimit(request.getPageSize());
         query.setOffset(request.getOffset());
-        query.setRewardPoolTypeList(request.getRewardPoolTypeList());
-        return query;
-    }
-
-    public static JackpotUserRewardRecordTypesQuery requestToTypesQuery(PageQueryJackpotUserRewardRecordRequest request, String orderClause) {
-        JackpotUserRewardRecordTypesQuery query = new JackpotUserRewardRecordTypesQuery();
-        query.setLimit(request.getPageSize());
-        query.setOffset(request.getOffset());
-        query.setRewardPoolTypeList(request.getRewardPoolTypeList());
         query.setOrderByClause(orderClause);
+        query.setRewardPoolTypeList(request.getRewardPoolTypeList());
         return query;
     }
 

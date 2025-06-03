@@ -3,10 +3,8 @@ package com.wegame.capi.biz.builder.jackpot;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
-import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordTypesQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -35,32 +33,6 @@ public class JackpotUserRewardRecordQueryBuilder {
                 query.with(Sort.by(Sort.Direction.DESC, recordQuery.getOrderByClause()));
             } else {
                 query.with(Sort.by(recordQuery.getDirection(), recordQuery.getOrderByClause()));
-            }
-        }
-        return query;
-    }
-
-    public static Query buildMongodbQuery(JackpotUserRewardRecordTypesQuery typesQuery) {
-        Criteria criteria = new Criteria();
-        if (!CollectionUtils.isEmpty(typesQuery.getRewardPoolTypeList())) {
-            criteria.and("rewardPoolType").in(typesQuery.getRewardPoolTypeList());
-        }
-        Query query = new Query(criteria);
-        if (Objects.nonNull(typesQuery.getLimit())) {
-            query.limit(typesQuery.getLimit());
-        }
-        if (Objects.nonNull(typesQuery.getLtLastId())) {
-            query.addCriteria(Criteria.where("_id").lt(typesQuery.getLtLastId()));
-        }
-
-        if (Objects.nonNull(typesQuery.getGtLastId())) {
-            query.addCriteria(Criteria.where("_id").gt(typesQuery.getGtLastId()));
-        }
-        if (StringUtils.isNotBlank(typesQuery.getOrderByClause())) {
-            if (Objects.isNull(typesQuery.getDirection())) {
-                query.with(Sort.by(Sort.Direction.DESC, typesQuery.getOrderByClause()));
-            } else {
-                query.with(Sort.by(typesQuery.getDirection(), typesQuery.getOrderByClause()));
             }
         }
         return query;

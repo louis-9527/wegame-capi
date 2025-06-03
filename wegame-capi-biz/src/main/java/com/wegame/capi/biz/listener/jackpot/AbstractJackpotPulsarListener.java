@@ -168,7 +168,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             });
             // 批量处理
             try {
-                this.jackpotManager().batchAddUserRewardRecord(recordList);
+                this.jackpotManager().batchAddRewardPoolInputRecord(recordList);
             }catch (Exception e){
                 log.error("Error batch add user reward record", e);
                 List<Long> failList = this.addUserRewardRecord(recordList);
@@ -190,7 +190,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
         List<Long> failList = new ArrayList<>();
         recordList.forEach(record -> {
             try {
-                this.jackpotManager().addUserRewardRecord(record);
+                this.jackpotManager().addRewardPoolInputRecord(record);
             }catch (DuplicateKeyException e){
                 log.warn("Error add user reward record, record: {}, error: {}", record, e.getErrorMessage());
             }catch (Exception e){

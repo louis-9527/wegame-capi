@@ -25,8 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 import static com.wegame.base.domain.CommonResponse.build;
-import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.doToVo;
-import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.doToVoList;
+import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.*;
 
 /**
  * 用户jackpot中奖记录模块
@@ -84,10 +83,10 @@ public class JackpotUserRewardRecordController {
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
-        JackpotUserRewardRecordTypesQuery query = JackpotUserRewardRecordConverter.requestToTypesQuery(request, "createTime");
+        JackpotUserRewardRecordQuery query = requestToQuery(request, "createTime");
         return build(PageInfoVo.build(request.getPageNo(),
                 request.getPageSize(),
-                doToVoList(jackpotManager(gameType).listUserRewardRecordByTypes(query)),
+                doToVoList(jackpotManager(gameType).listUserRewardRecord(query)),
                 0L));
     }
 
