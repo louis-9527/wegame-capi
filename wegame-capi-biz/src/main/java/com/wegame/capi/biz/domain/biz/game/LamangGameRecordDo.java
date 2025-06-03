@@ -106,6 +106,7 @@ public class LamangGameRecordDo implements Serializable, ToVoConverter<LamangBet
         if (Objects.isNull(rewardResult)) {
             return LamangBetResultVo.builder()
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .id(String.valueOf(id))
                     .build();
         } else if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return LamangBetResultVo.builder()
@@ -117,6 +118,7 @@ public class LamangGameRecordDo implements Serializable, ToVoConverter<LamangBet
                     .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                     .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? BooleanEnum.TRUE.getCode() : BooleanEnum.FALSE.getCode())
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
+                    .id(String.valueOf(id))
                     .build();
         } else {
             return LamangBetResultVo.builder()
@@ -130,6 +132,7 @@ public class LamangGameRecordDo implements Serializable, ToVoConverter<LamangBet
                     .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                     .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? BooleanEnum.TRUE.getCode() : BooleanEnum.FALSE.getCode())
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
+                    .id(String.valueOf(id))
                     .build();
         }
     }

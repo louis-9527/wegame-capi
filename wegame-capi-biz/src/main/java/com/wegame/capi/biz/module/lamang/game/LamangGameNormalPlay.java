@@ -163,11 +163,11 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
      * 维持wheel中的scatter数量
      * @param symbolArr
      * @param needScatterNumber
-     * @param scatterNumberInWheel
+     * @param currentScatterNumberInWheel
      */
-    private void holdScatterCount(LamangSymbolDo[][] symbolArr, int needScatterNumber, int scatterNumberInWheel) {
+    private void holdScatterCount(LamangSymbolDo[][] symbolArr, int needScatterNumber, int currentScatterNumberInWheel) {
         // 计算需要新增的scatter数量
-        int needAddScatterNumber = needScatterNumber - scatterNumberInWheel;
+        int needAddScatterNumber = needScatterNumber - currentScatterNumberInWheel;
         // 如果需要加入scatter
         if (needAddScatterNumber > 0) {
             // 将没有元素的位置加入列表
