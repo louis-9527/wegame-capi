@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service;
 
 import static com.wegame.capi.common.Constants.*;
 
-@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 @Service
-public class LamangJackPotPulsarListener extends AbstractJackPotPulsarListener<LamangGameRecordDo>{
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
+public class LamangJackpotPulsarListener extends AbstractJackpotPulsarListener<LamangGameRecordDo> {
     @Autowired
-    private Consumer<byte[]> lamangJackPotPulsarConsumer;
+    private Consumer<byte[]> lamangJackpotPulsarConsumer;
     @Autowired
     private LamangJackpotManager lamangJackpotManager;
 
@@ -26,7 +26,7 @@ public class LamangJackPotPulsarListener extends AbstractJackPotPulsarListener<L
     private static final int maximumPoolSize = 1;
     @Override
     public Consumer<byte[]> getConsumer() {
-        return lamangJackPotPulsarConsumer;
+        return lamangJackpotPulsarConsumer;
     }
 
     @Override

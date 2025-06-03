@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * @param <T>
  */
 @Slf4j
-public abstract class AbstractJackPotPulsarListener<T extends ToVoConverter> implements Runnable {
+public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> implements Runnable {
     private volatile boolean start = false;
     ExecutorService executor;
 

@@ -16,7 +16,7 @@ import static com.wegame.capi.common.Constants.*;
 @Slf4j
 @Configuration
 @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
-public class LamangJackPotPulsarConfig {
+public class LamangJackpotPulsarConfig {
 
     @Value("${pulsar.dynamic.lamang.url}")
     String lamangUrl;
@@ -27,10 +27,8 @@ public class LamangJackPotPulsarConfig {
     @Value("${pulsar.dynamic.lamang.bet_topic}")
     String lamangBetTopic;
 
-    @Bean(name = "lamangJackPotPulsarClient", destroyMethod = "close")
-    public PulsarClient lamangJackPotPulsarClient() throws Exception {
-        //                .operationTimeout(100, TimeUnit.MILLISECONDS)
-        // 10分钟打印一次统计信息
+    @Bean(name = "lamangJackpotPulsarClient", destroyMethod = "close")
+    public PulsarClient lamangJackpotPulsarClient() throws Exception {
         return PulsarClient.builder()
                 .serviceUrl(lamangUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -47,12 +45,12 @@ public class LamangJackPotPulsarConfig {
     }
 
 
-    @Bean(name = "lamangJackPotPulsarConsumer", destroyMethod = "close")
-    public Consumer<byte[]> lamangJackPotPulsarConsumer(@Autowired PulsarClient lamangJackPotPulsarClient) throws PulsarClientException {
+    @Bean(name = "lamangJackpotPulsarConsumer", destroyMethod = "close")
+    public Consumer<byte[]> lamangJackpotPulsarConsumer(@Autowired PulsarClient lamangJackpotPulsarClient) throws PulsarClientException {
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetTopic);
-        return lamangJackPotPulsarClient.newConsumer()
+        return lamangJackpotPulsarClient.newConsumer()
                 .topic(fullTopic)
-                .subscriptionName(lamangTenant+"_jackpot")
+                .subscriptionName(lamangTenant + "_jackpot")
                 // 关键点：使用 Key_Shared 模式, 集群消费
                 .subscriptionType(SubscriptionType.Shared)
                 // 增加内部缓存，提高吞吐量
