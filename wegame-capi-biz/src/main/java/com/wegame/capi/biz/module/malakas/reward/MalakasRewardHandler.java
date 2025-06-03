@@ -17,6 +17,7 @@ import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.base.AmountHelper;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
@@ -101,6 +102,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                     .rewardSymbolList(rewardLine.getRewardSymbolList())
                     .build());
         }
+        boolean reachMaxMultiple = AmountHelper.reachMaxMultiple(totalRewardAmount, rewardHandle.getBetAmount(), malakasConfig.getRewardMaxMultiple());
         // 5.构建中奖结果
         RewardResultDo<MalakasSymbolDo> rewardResult = RewardResultDo.<MalakasSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
@@ -111,7 +113,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
                 .hasRewardFreeWheel(Boolean.FALSE)
                 .rewardLineDetailList(rewardLineDetailList)
                 .rewardFreeWheelTimes(0)
-                .accumulateReachMaxMultiple(totalMultiple.intValue() > malakasConfig.getRewardMaxMultiple())
+                .accumulateReachMaxMultiple(reachMaxMultiple)
                 .build();
         // 6.返回中奖信息
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
