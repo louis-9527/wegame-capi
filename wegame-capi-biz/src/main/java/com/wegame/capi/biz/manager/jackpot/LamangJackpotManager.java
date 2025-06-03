@@ -24,7 +24,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
 
     @Override
     public JackpotTypeEnum jackpotType() {
-        return jackpotType();
+        return JackpotTypeEnum.LAM_ANG;
     }
 
     @Override
