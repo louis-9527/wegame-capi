@@ -59,16 +59,17 @@ public class BetWithPayoutReqBuilder {
     }
 
     private static BetWithPayoutReq.BetDetails.JackpotContributionDetails buildJackpotPoolCommission(BetRecordDo betRecordDo) {
-        BetWithPayoutReq.BetDetails.JackpotContributionDetails contributionDetails = new BetWithPayoutReq.BetDetails.JackpotContributionDetails();
         BetRecordDo.Jackpot jackpot =betRecordDo.getJackpot();
         if (Objects.nonNull(jackpot)) {
-            contributionDetails.setGrandContributionAmount(AmountUtil.toBigDecimal(jackpot.getGrandContributionAmount()));
-            contributionDetails.setMajorContributionAmount(AmountUtil.toBigDecimal(jackpot.getMajorContributionAmount()));
-            contributionDetails.setMinorContributionAmount(AmountUtil.toBigDecimal(jackpot.getMinorContributionAmount()));
-            contributionDetails.setMiniContributionAmount(AmountUtil.toBigDecimal(jackpot.getMiniContributionAmount()));
-
+            return BetWithPayoutReq.BetDetails.JackpotContributionDetails.builder()
+                    .grandContributionAmount(AmountUtil.toBigDecimal(jackpot.getGrandContributionAmount()))
+                    .majorContributionAmount(AmountUtil.toBigDecimal(jackpot.getMajorContributionAmount()))
+                    .minorContributionAmount(AmountUtil.toBigDecimal(jackpot.getMinorContributionAmount()))
+                    .miniContributionAmount(AmountUtil.toBigDecimal(jackpot.getMiniContributionAmount()))
+                    .betBonusContributionAmount(BigDecimal.ZERO)
+                    .build();
         }
-        return contributionDetails;
+        return new BetWithPayoutReq.BetDetails.JackpotContributionDetails();
     }
 
     private static BetWithPayoutReq.BetDetails.JackpotPool buildJackpotPool(List<JackpotRewardPoolDo> jackpotRewardPoolDos) {

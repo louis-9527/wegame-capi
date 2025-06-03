@@ -140,22 +140,17 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
     }
 
     private BetRecordDo.Jackpot buildBetCommission(BetDo betDo) {
-        BetRecordDo.Jackpot jackpotCommission = null;
         AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
         if (Objects.nonNull(handler)){
-            jackpotCommission = new BetRecordDo.Jackpot();
             Map<JackpotRewardPoolTypeEnum, Long> commissiontMap =  handler.calculateRewardPoolCommission(betDo.getBetType(), betDo.getBetAmount());
-            for(JackpotRewardPoolTypeEnum key : JackpotRewardPoolTypeEnum.values()){
-                Long amount = commissiontMap.get(key);
-                switch (key) {
-                    case grand: jackpotCommission.setGrandContributionAmount(amount); break;
-                    case major: jackpotCommission.setMajorContributionAmount(amount); break;
-                    case minor: jackpotCommission.setMinorContributionAmount(amount); break;
-                    case mini: jackpotCommission.setMiniContributionAmount(amount); break;
-                }
-            }
+            return BetRecordDo.Jackpot.builder()
+                    .grandContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.grand))
+                    .majorContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.major))
+                    .minorContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.minor))
+                    .miniContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.mini))
+                    .build();
         }
-        return jackpotCommission;
+        return null;
     }
 
     private List<LamangGameRecordDo> getFirstBatchGameRecordList(List<LamangGameRecordDo> list) {
