@@ -4,10 +4,9 @@ import com.wegame.base.cache.AbstractMultiCache;
 import com.wegame.base.enums.CommonCacheEnvEnum;
 import org.springframework.stereotype.Component;
 
-import static com.wegame.base.CacheConstants.GAME_MAINTAIN_CONFIG;
-import static com.wegame.base.CacheConstants.JACKPOT_REWARD_POOL_CONFIG;
+import static com.wegame.base.CacheConstants.*;
 
-@Component(JACKPOT_REWARD_POOL_CONFIG)
+@Component(JACKPOT_REWARD_POOL)
 public class JackpotRewardPoolCache extends AbstractMultiCache {
     public JackpotRewardPoolCache() {
         super(CommonCacheEnvEnum.JACKPOT_REWARD_POOL.cacheKeyPrefixName(),  60, 30, 20);

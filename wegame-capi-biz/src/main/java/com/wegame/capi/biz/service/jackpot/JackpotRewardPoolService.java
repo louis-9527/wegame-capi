@@ -85,7 +85,7 @@ public class JackpotRewardPoolService extends AbstractService {
      *
      * @return List<JackpotRewardPoolDo> jackpot奖池列表
      */
-    @Cacheable(value = CacheConstants.JACKPOT_REWARD_POOL_CONFIG, key = "#jackpotTypeEnum.gameType.id")
+    @Cacheable(value = CacheConstants.JACKPOT_REWARD_POOL, key = "#jackpotTypeEnum.gameType.id")
     public List<JackpotRewardPoolDo> listAll(JackpotTypeEnum jackpotTypeEnum) {
         AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM);
         List<JackpotRewardPoolPo> pos = getMongoTemplate(jackpotTypeEnum.getGameType()).find(JackpotQueryBuilder.listAllQuery(),
@@ -104,7 +104,7 @@ public class JackpotRewardPoolService extends AbstractService {
         });
         return rewardPoolDos;
     }
-    @CacheEvict(value = CacheConstants.JACKPOT_REWARD_POOL_CONFIG, key = "#jackpotTypeEnum.gameType.id")
+    @CacheEvict(value = CacheConstants.JACKPOT_REWARD_POOL, key = "#jackpotTypeEnum.gameType.id")
     public void cacheClearListAll(JackpotTypeEnum jackpotTypeEnum) {
         // ...
     }
