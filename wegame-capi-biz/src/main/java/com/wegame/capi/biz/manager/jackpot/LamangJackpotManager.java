@@ -3,7 +3,6 @@ package com.wegame.capi.biz.manager.jackpot;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
@@ -34,8 +33,6 @@ public class LamangJackpotManager extends AbstractJackpotManager {
     JackpotRewardPoolService jackpotRewardPoolService;
     @Autowired
     JackpotUserRewardRecordService jackpotUserRewardRecordService;
-    @Autowired
-    LamangConfig lamangConfig;
 
     @Override
     public List<JackpotRewardPoolDo> listJackpotRewardPool() {
@@ -91,9 +88,9 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         if (Objects.isNull(rewardPoolInputRecordDo)) {
             return;
         }
-        jackpotRewardPoolInputRecordService.add(rewardPoolInputRecordDo, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+        jackpotRewardPoolInputRecordService.add(rewardPoolInputRecordDo,JackpotTypeEnum.LAM_ANG);
         jackpotRewardPoolService.batchUpdate(this.buildRewardPoolDos(rewardPoolInputRecordDo.getGrandAmount(), rewardPoolInputRecordDo.getMajorAmount(), rewardPoolInputRecordDo.getMinorAmount(), rewardPoolInputRecordDo.getMiniAmount()),
-                JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+                JackpotTypeEnum.LAM_ANG);
     }
 
     @Override
@@ -103,12 +100,15 @@ public class LamangJackpotManager extends AbstractJackpotManager {
 
         JackpotRewardPoolDo buildUpdate = JackpotRewardPoolDo.builder().type(jackpotUserRewardRecordDo.getRewardPoolType())
                 .amount(-jackpotUserRewardRecordDo.getRewardAmount()).build();
-        boolean update = jackpotRewardPoolService.update(buildUpdate, JackpotTypeEnum.valueOfGameType(GameTypeEnum.LAM_ANG));
+        boolean update = jackpotRewardPoolService.update(buildUpdate,JackpotTypeEnum.LAM_ANG);
         AssertUtil.assertTrue(update, ErrorCode.ERR_INTER);
         return add;
     }
 
-    private List<JackpotRewardPoolDo> buildRewardPoolDos(Long grandAmount,Long majorAmount,Long minorAmount,Long miniAmount) {
+    private List<JackpotRewardPoolDo> buildRewardPoolDos(Long grandAmount,
+                                                         Long majorAmount,
+                                                         Long minorAmount,
+                                                         Long miniAmount) {
         // 组装奖池对象
         long currentMilli = DateUtil.getCurrentMilli();
         JackpotRewardPoolDo grandDo = JackpotRewardPoolDo.builder()
