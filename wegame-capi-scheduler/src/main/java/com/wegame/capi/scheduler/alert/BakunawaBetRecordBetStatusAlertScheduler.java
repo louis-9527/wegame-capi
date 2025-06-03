@@ -30,7 +30,7 @@ public class BakunawaBetRecordBetStatusAlertScheduler
     /**
      * 每天8点运行
      */
-    @Scheduled(cron = "0 0 10 * * ?")
+    @Scheduled(cron = "0 0 8 * * ?")
     public void schedule() {
         try {
             log.info("schedule start");

@@ -28,9 +28,9 @@ public class BakunawaBetRecordBetStatusScheduler
     }
 
     /**
-     * 每分钟30秒执行
+     * 每分钟0秒执行
      */
-    @Scheduled(cron = "30 * * * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");

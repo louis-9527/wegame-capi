@@ -21,7 +21,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 public class BakunawaStarCardScheduler extends AbstractStarCardScheduler {
 
 
-    @Scheduled(cron = "0 0/12 * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
