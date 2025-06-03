@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component;
 
 import static com.wegame.base.CacheConstants.*;
 
-@Component(JACKPOT_USER_REWARD_HIGHEST_RECORD)
+@Component(HIGHEST_JACKPOT_USER_REWARD_RECORD)
 public class JackpotUserRewardHighestRecordCache extends AbstractCache {
     public JackpotUserRewardHighestRecordCache() {
-        super(CommonCacheEnvEnum.JACKPOT_USER_REWARD_HIGHEST_RECORD.cacheKeyPrefixName(),  60);
+        super(CommonCacheEnvEnum.HIGHEST_JACKPOT_USER_REWARD_RECORD.cacheKeyPrefixName(),  60);
     }
 
     @Override
     public String getName() {
-        return CommonCacheEnvEnum.JACKPOT_USER_REWARD_HIGHEST_RECORD.cacheName();
+        return CommonCacheEnvEnum.HIGHEST_JACKPOT_USER_REWARD_RECORD.cacheName();
     }
 }

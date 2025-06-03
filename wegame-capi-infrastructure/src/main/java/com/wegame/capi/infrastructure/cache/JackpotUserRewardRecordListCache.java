@@ -4,7 +4,6 @@ import com.wegame.base.cache.AbstractCache;
 import com.wegame.base.enums.CommonCacheEnvEnum;
 import org.springframework.stereotype.Component;
 
-import static com.wegame.base.CacheConstants.JACKPOT_USER_REWARD_HIGHEST_RECORD;
 import static com.wegame.base.CacheConstants.JACKPOT_USER_REWARD_RECORD_LIST;
 
 @Component(JACKPOT_USER_REWARD_RECORD_LIST)

@@ -98,7 +98,7 @@ public class JackpotUserRewardRecordService extends AbstractService {
         return poToDoList(recordPoList);
     }
 
-    @Cacheable(value = CacheConstants.JACKPOT_USER_REWARD_HIGHEST_RECORD, key = "#jackpotType.gameType.id")
+    @Cacheable(value = CacheConstants.HIGHEST_JACKPOT_USER_REWARD_RECORD, key = "#jackpotType.gameType.id")
     public JackpotUserRewardRecordDo getHighestUserRewardRecord(JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
         JackpotUserRewardRecordPo maxRecord = getMongoTemplate(jackpotType.getGameType()).findOne(buildHighestRecordQuery(),
@@ -107,7 +107,7 @@ public class JackpotUserRewardRecordService extends AbstractService {
         return poToDo(maxRecord);
     }
 
-    @CacheEvict(value = CacheConstants.JACKPOT_USER_REWARD_HIGHEST_RECORD, key = "#jackpotType.gameType.id")
+    @CacheEvict(value = CacheConstants.HIGHEST_JACKPOT_USER_REWARD_RECORD, key = "#jackpotType.gameType.id")
     public void evictHighestUserRewardRecordCache(JackpotTypeEnum jackpotType) {
         // do nothing
     }
