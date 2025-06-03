@@ -1,12 +1,10 @@
 package com.wegame.capi.application.controller.jackpot;
 
-import com.google.common.collect.ImmutableMap;
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.base.domain.PageInfoVo;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRecordRequest;
@@ -17,10 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.shade.org.apache.commons.lang.math.NumberUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 import static com.wegame.base.domain.CommonResponse.build;
 import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConverter.*;
@@ -34,14 +29,7 @@ import static com.wegame.capi.biz.converter.jackpot.JackpotUserRewardRecordConve
 @RestController
 @RequestMapping("jackpotUserRewardRecord")
 @Api(value = "用户jackpot中奖记录模块", tags = {"用户jackpot中奖记录模块"})
-public class JackpotUserRewardRecordController {
-
-    public static final Map<GameTypeEnum, String> JACKPOT_MANAGER_NAME_MAP = new ImmutableMap.Builder<GameTypeEnum, String>()
-            .put(GameTypeEnum.LAM_ANG, "lamangJackpotManager")
-            .build();
-
-    @Autowired
-    Map<String, AbstractJackpotManager> jackpotManagerMap;
+public class JackpotUserRewardRecordController extends AbstractJackpotController {
 
     @LoginRequired
     @ApiOperation(value = "查询最高中奖记录", httpMethod = "GET")
@@ -86,11 +74,5 @@ public class JackpotUserRewardRecordController {
                 request.getPageSize(),
                 doToVoList(jackpotManager(gameType).listUserRewardRecord(query)),
                 0L));
-    }
-
-    private AbstractJackpotManager jackpotManager(GameTypeEnum gameType) {
-        AbstractJackpotManager jackpotManager = jackpotManagerMap.get(JACKPOT_MANAGER_NAME_MAP.get(gameType));
-        AssertUtil.assertNotNull(jackpotManager, ErrorCode.ERR_INTER);
-        return jackpotManager;
     }
 }
