@@ -143,15 +143,15 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
         });
         // 批量ack
         if (!addMessageIdList.isEmpty()) {
-         this.acknowledge(addMessageIdList);
+            this.acknowledge(addMessageIdList);
         }
         // 批量处理落库
         if (!updateRecordList.isEmpty()) {
             List<JackpotRewardPoolInputRecordDo> recordList = new ArrayList<>();
             updateRecordList.forEach(record -> {
                 if (Objects.nonNull(record.getJackpot())) {
-                     recordList.add(JackpotRewardPoolInputRecordDo.builder()
-                             .id(record.getId())
+                    recordList.add(JackpotRewardPoolInputRecordDo.builder()
+                            .id(record.getId())
                             .type(JackpotRewardPoolInputTypeEnum.PAYOUT_IN)
                             .grandAmount(record.getJackpot().getGrandContributionAmount())
                             .majorAmount(record.getJackpot().getMajorContributionAmount())
@@ -169,10 +169,10 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             // 批量处理
             try {
                 this.jackpotManager().batchAddRewardPoolInputRecord(recordList);
-            }catch (Exception e){
+            } catch (Exception e) {
                 log.error("Error batch add user reward record", e);
-                List<Long> failList = this.addUserRewardRecord(recordList);
-                if(CollectionUtils.isNotEmpty(failList)){
+                List<Long> failList = this.addRewardPoolInputRecord(recordList);
+                if (CollectionUtils.isNotEmpty(failList)) {
                     failList.forEach(updateMessageIdMap::remove);
                 }
             }
@@ -180,20 +180,17 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
         }
     }
 
-
     /**
      * 循环单个添加,返回失败的ID
-     * @param recordList
-     * @return
      */
-    private List<Long> addUserRewardRecord(List<JackpotRewardPoolInputRecordDo> recordList){
+    private List<Long> addRewardPoolInputRecord(List<JackpotRewardPoolInputRecordDo> recordList) {
         List<Long> failList = new ArrayList<>();
         recordList.forEach(record -> {
             try {
                 this.jackpotManager().addRewardPoolInputRecord(record);
-            }catch (DuplicateKeyException e){
+            } catch (DuplicateKeyException e) {
                 log.warn("Error add user reward record, record: {}, error: {}", record, e.getErrorMessage());
-            }catch (Exception e){
+            } catch (Exception e) {
                 failList.add(record.getId());
                 log.error("Error add user reward record", e);
             }
@@ -201,7 +198,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
         return failList;
     }
 
-    private void acknowledge(List<MessageId> messageIds){
+    private void acknowledge(List<MessageId> messageIds) {
         // 批量ack
         try {
             this.getConsumer().acknowledge(messageIds);
