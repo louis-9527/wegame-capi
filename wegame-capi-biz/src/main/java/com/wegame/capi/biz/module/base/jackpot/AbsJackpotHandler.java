@@ -158,7 +158,7 @@ public abstract class AbsJackpotHandler {
 
         return distributeLock.lockThenCall(lockKey, () -> {
             // 获取奖池金额
-            JackpotRewardPoolDo rewardPoolDo = jackpotRewardPoolService.getByType(this.getJackpotType(), jackpotRewardPoolType);
+            JackpotRewardPoolDo rewardPoolDo = jackpotRewardPoolService.selectOneByType(jackpotRewardPoolType, getJackpotType());
             AssertUtil.assertNotNull(rewardPoolDo, ErrorCode.ERR_PARAM);
             Long rewardAmount = Math.max(guaranteed, rewardPoolDo.getAmount()); // 中奖金额默认使用保底
             // 添加使用记录并更新奖池金额

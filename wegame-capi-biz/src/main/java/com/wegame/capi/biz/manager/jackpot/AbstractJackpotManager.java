@@ -34,7 +34,7 @@ public abstract class AbstractJackpotManager {
      * 获取奖池列表
      */
     public List<JackpotRewardPoolDo> listJackpotRewardPool() {
-        return jackpotRewardPoolService.listAll(jackpotType());
+        return jackpotRewardPoolService.listAllWithCache(jackpotType());
     }
 
     /**

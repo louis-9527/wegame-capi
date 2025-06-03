@@ -75,7 +75,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         Long recordId = jackpotUserRewardRecordService.add(jackpotUserRewardRecord, jackpotType());
         AssertUtil.assertNotNull(recordId, ErrorCode.ERR_INTER);
         // 扣减对应奖池金额
-        boolean update = jackpotRewardPoolService.update(JackpotRewardPoolDo.builder()
+        boolean update = jackpotRewardPoolService.updateAmountByType(JackpotRewardPoolDo.builder()
                 .type(jackpotUserRewardRecord.getRewardPoolType())
                 .amount(-jackpotUserRewardRecord.getRewardAmount())
                 .build(), jackpotType());

@@ -98,7 +98,7 @@ public class SingleWalletService {
                 JackpotTypeEnum jackpotType = JackpotTypeEnum.valueOfGameType(gameType);
                 // 当前游戏不支持jackpot走原逻辑
                 if (Objects.nonNull(jackpotType)) {
-                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, jackpotRewardPoolService.listAll(jackpotType)));
+                    commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, jackpotRewardPoolService.listAllWithCache(jackpotType)));
                 } else {
                     commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
                 }
