@@ -24,7 +24,7 @@ import java.util.List;
 @ApiModel(description = "分页查询用户jackpot中奖记录请求参数", parent = PageQueryRequest.class)
 public class PageQueryJackpotUserRewardRecordRequest extends PageQueryRequest implements Validate {
 
-    @ApiModelProperty(value = "类型列表 ： 类型 1：grand 2:major 3:minor 4:mini 5:betBonus", required = false)
+    @ApiModelProperty(value = "类型列表 ： 类型 1：grand 2:major 3:minor 4:mini 5:betBonus", required = true)
     private List<Integer> rewardPoolTypeList;
 
 
