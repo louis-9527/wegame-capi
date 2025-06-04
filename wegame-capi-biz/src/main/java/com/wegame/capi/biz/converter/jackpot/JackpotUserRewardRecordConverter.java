@@ -11,7 +11,7 @@ import com.wegame.capi.client.domain.request.query.PageQueryJackpotUserRewardRec
 import com.wegame.capi.client.domain.vo.jackpot.JackpotUserRewardRecordVo;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
-import com.wegame.capi.common.utils.DesensitizationUtil;
+import com.wegame.capi.common.utils.MaskUtil;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 
@@ -114,8 +114,8 @@ public class JackpotUserRewardRecordConverter {
         JackpotUserRewardRecordVo vo = new JackpotUserRewardRecordVo();
         vo.setId(Objects.nonNull(jackpotUserRewardRecordDo.getId()) ? String.valueOf(jackpotUserRewardRecordDo.getId()) : null);
         vo.setUserId(Objects.nonNull(jackpotUserRewardRecordDo.getUserId()) ? String.valueOf(jackpotUserRewardRecordDo.getUserId()) : null);
-        vo.setPlayerName(DesensitizationUtil
-                .desensitizePlayerName(jackpotUserRewardRecordDo.getPlayerName(), 0, 4, 3));
+        vo.setPlayerName(MaskUtil
+                .maskPlayerName(jackpotUserRewardRecordDo.getPlayerName(), 0, 4, 3));
         vo.setBetRecordId(jackpotUserRewardRecordDo.getBetRecordId());
         vo.setGameRecordId(jackpotUserRewardRecordDo.getGameRecordId());
         vo.setBetId(jackpotUserRewardRecordDo.getBetId());
