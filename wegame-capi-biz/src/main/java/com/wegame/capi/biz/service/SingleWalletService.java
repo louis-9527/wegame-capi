@@ -187,12 +187,14 @@ public class SingleWalletService {
     public SingleWalletJackpotResultDo jackpot(JackpotAwardDo jackpotAwardDo, Map<JackpotRewardPoolTypeEnum, JackpotRewardPoolDo> jackpotRewardPoolMap) {
         CommonRes<JackpotRes> jackpot = singleWalletApi.jackpot(JackpotReqBuilder.buildReq(jackpotAwardDo, jackpotRewardPoolMap));
         return SingleWalletJackpotResultDo.builder()
+                .success(jackpot.isSuc())
                 .status(jackpot.getStatus())
                 .message(jackpot.getMessage())
                 .resultData(SingleWalletJackpotResultDo.resultData.builder()
                         .playerName(jackpot.getData().getPlayerName())
                         .credit(AmountUtil.toLong(jackpot.getData().getCredit()))
-                        .refId(jackpot.getData().getRefId()).build())
+                        .refId(jackpot.getData().getRefId())
+                        .build())
                 .build();
 
     }

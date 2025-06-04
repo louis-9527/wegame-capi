@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.config.pulsar.jackpot;
 
+import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +51,7 @@ public class LamangJackpotPulsarConfig {
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetTopic);
         return lamangJackpotPulsarClient.newConsumer()
                 .topic(fullTopic)
-                .subscriptionName(lamangTenant + "_jackpot")
-                // 关键点：使用 Key_Shared 模式, 集群消费
+                .subscriptionName(lamangTenant + Constants.JACKPOT_LAMANG_PULSAR_SUBSCRIPTION)
                 .subscriptionType(SubscriptionType.Shared)
                 // 增加内部缓存，提高吞吐量
                 .receiverQueueSize(2000)

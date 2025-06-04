@@ -24,6 +24,9 @@ public class LockNameUtil {
     private static final String BUILD_USER_ID_CACHE_LOCK = "lock:build_user_id_cache_lock";
 
 
+    private static final String JACKPOT_REWARD_LOCK  = "lock:jackpot_reward_lock:%s";
+
+
     private LockNameUtil() {
     }
 
@@ -70,5 +73,10 @@ public class LockNameUtil {
     public static String getJackpotRewardGrantSchedulerLock(GameTypeEnum gameType) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         return String.format(JACKPOT_REWARD_GRANT_STATUS_SCHEDULER_LOCK, gameType.getName());
+    }
+
+    public static String getJackpotRewardLock(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(JACKPOT_REWARD_LOCK, gameType.getName());
     }
 }
