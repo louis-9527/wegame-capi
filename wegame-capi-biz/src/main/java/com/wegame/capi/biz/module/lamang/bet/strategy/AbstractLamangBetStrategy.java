@@ -167,14 +167,6 @@ public abstract class AbstractLamangBetStrategy
                 .build();
     }
 
-    private boolean hasRewardFreeWheel(List<LamangGameRecordDo> firstBatchList) {
-        LamangGameRecordDo gameRecord = firstBatchList.stream()
-                .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeWheel())
-                .findFirst()
-                .orElse(null);
-        return Objects.nonNull(gameRecord);
-    }
-
     private List<LamangGameRecordDo> getFirstBatchGameRecordList(List<LamangGameRecordDo> list) {
         Long batchId = list.get(0).getBatchId();
         return list.stream()
