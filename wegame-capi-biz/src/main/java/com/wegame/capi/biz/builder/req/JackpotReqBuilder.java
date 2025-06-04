@@ -2,14 +2,12 @@ package com.wegame.capi.biz.builder.req;
 
 import com.google.common.collect.Lists;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.singlewallet.JackpotReq;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotAwardDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import org.slf4j.MDC;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -52,7 +50,7 @@ public class JackpotReqBuilder {
 
         // 组装 jackpotDetails信息
         JackpotUserRewardRecordDo jackpotUserRewardRecordDo = jackpotAwardDo.getJackpotUserRewardRecordDo();
-        JackpotReq.jackpotWinDetails jackpotWinDetails = JackpotReq.jackpotWinDetails.builder()
+        JackpotReq.JackpotWinDetails jackpotWinDetails = JackpotReq.JackpotWinDetails.builder()
                 .jackpotType(jackpotUserRewardRecordDo.getRewardPoolType().getCode())
                 .winAmount(AmountUtil.toBigDecimal(jackpotUserRewardRecordDo.getRewardAmount()))
                 .build();
