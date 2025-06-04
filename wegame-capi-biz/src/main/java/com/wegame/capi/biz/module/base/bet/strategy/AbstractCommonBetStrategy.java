@@ -238,18 +238,6 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(betDo.isUseFreeSpin(), ErrorCode.ERR_INTER);
         AssertUtil.assertStrNotEmpty(betDo.getCampaignId(), ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), FREE_SPIN), ErrorCode.ERR_INTER);
-        FreeSpinDetailDo freeSpinDetailDo = freeSpinService.freeSpinDetail(betDo.getCampaignId());
-        AssertUtil.assertNotNull(freeSpinDetailDo, ErrorCode.ERR_INTER);
-        AssertUtil.assertNotNull(freeSpinDetailDo.getConfig(), ErrorCode.ERR_INTER);
-        AssertUtil.assertNotNull(freeSpinDetailDo.getConfig().getBetValue(), ErrorCode.ERR_INTER);
-        BigDecimal betValue = freeSpinDetailDo.getConfig().getBetValue();
-        AssertUtil.assertTrue(NumberUtil.mul(betValue, 1000).longValue() == betDo.getBetAmount(), ErrorCode.ERR_INTER);
-        Integer startDateSecond = freeSpinDetailDo.getConfig().getStartDate();
-        AssertUtil.assertNotNull(startDateSecond, ErrorCode.ERR_INTER);
-        Integer endDateSecond = freeSpinDetailDo.getConfig().getEndDate();
-        AssertUtil.assertNotNull(endDateSecond, ErrorCode.ERR_INTER);
-        long currentSecond = DateUtil.getCurrentSecond();
-        AssertUtil.assertTrue(startDateSecond <= currentSecond && currentSecond <= endDateSecond, ErrorCode.FREE_SPIN_HAS_EXPIRED);
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, syncOpt);

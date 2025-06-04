@@ -79,6 +79,7 @@ public class BetWithPayoutReqBuilder {
                         .build())
                 .freeSpinType(1)
                 .campaignId(betRecordDo.getExtendInfo().getCampaignId())
+                .betValue(AmountUtil.toBigDecimal(betRecordDo.getBetAmount()))
                 .build();
     }
 }
