@@ -25,7 +25,6 @@ import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -107,15 +106,24 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
             AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
             AssertUtil.assertNotNull(handler, ErrorCode.ERR_INTER);
 
-            return handler.calculateWinPrize(buildDrawReq(betRecord, singleWalletBetResultDo));
+            return handler.calculateWinPrize(buildJackpotDrawAndAwardDo(betRecord, singleWalletBetResultDo));
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("draw jackpot error,betRecordId:{}", betRecord.getId(), e);
         }
         return null;
     }
+    
+    @Override
+    public boolean hasRewardFreeWheel(List<LamangGameRecordDo> gameRecordList) {
+        LamangGameRecordDo gameRecord = gameRecordList.stream()
+                .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeWheel())
+                .findFirst()
+                .orElse(null);
+        return Objects.nonNull(gameRecord);
+    }
 
-    private JackpotDrawAndAwardDo buildDrawReq(BetRecordDo<LamangGameRecordDo> betRecord, SingleWalletBetResultDo singleWalletBetResultDo) {
+    private JackpotDrawAndAwardDo buildJackpotDrawAndAwardDo(BetRecordDo<LamangGameRecordDo> betRecord, SingleWalletBetResultDo singleWalletBetResultDo) {
         return JackpotDrawAndAwardDo.builder()
                 .betId(singleWalletBetResultDo.getBetId())
                 .betAmount(betRecord.getBetAmount())
@@ -136,13 +144,13 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                         LamangGameRecordDo::getId,
                         LamangGameRecordDo::getJackpotDrawTimes,
                         Integer::sum // 处理 key 冲突
-        ));
+                ));
     }
 
     private BetRecordDo.Jackpot buildBetCommission(BetDo betDo) {
         AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
-        if (Objects.nonNull(handler)){
-            Map<JackpotRewardPoolTypeEnum, Long> commissiontMap =  handler.calculateRewardPoolCommission(betDo.getBetType(), betDo.getBetAmount());
+        if (Objects.nonNull(handler)) {
+            Map<JackpotRewardPoolTypeEnum, Long> commissiontMap = handler.calculateRewardPoolCommission(betDo.getBetType(), betDo.getBetAmount());
             return BetRecordDo.Jackpot.builder()
                     .grandContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.grand))
                     .majorContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.major))
@@ -158,14 +166,5 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
         return list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean hasRewardFreeWheel(List<LamangGameRecordDo> gameRecordList) {
-        LamangGameRecordDo gameRecord = gameRecordList.stream()
-                .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeWheel())
-                .findFirst()
-                .orElse(null);
-        return Objects.nonNull(gameRecord);
     }
 }
