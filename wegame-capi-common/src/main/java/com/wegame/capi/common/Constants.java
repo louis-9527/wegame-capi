@@ -28,6 +28,7 @@ public class Constants {
     public static final Integer IBONG_ADARNA_REWARD_NOTIFY_SIZE = 10;
     public static final Integer BAKUNAWA_ADARNA_REWARD_NOTIFY_SIZE = 10;
 
+    public static final Integer LAMANG_REWARD_NOTIFY_SIZE = 20;
     // maria推送大奖tips内容
     public static final String MARIA_MARKILING_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
     // malakas推送大奖tips内容
@@ -37,6 +38,9 @@ public class Constants {
     // bakunawa推送大奖tips内容 XXXX won 100x rewards ，₱ 99999
     public static final String BAKUNAWA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
 
+    // lamang推送大奖tips内容
+    public static final String LAMANG_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
@@ -44,6 +48,8 @@ public class Constants {
     public static final int CONST_100 = 100;
     public static final int CONST_10000 = 10000;
     public static final int CONST_1000000 = 1000000;
+    public static final int CONST_10000000 = 1000_000_0;
+    public static final int CONST_1000000000 = 1000_000_000;
 
     public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event_2:%s_%s";
     public static final String OPERATION_EVENT_ING_KEY = "wegame:cuser:operation_event_ing:%s_%s";
@@ -61,6 +67,7 @@ public class Constants {
     public static final String MALAKAS_PROP = "game.enable.Malakas";
     public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";
     public static final String BAKUNAWA_ADARNA_PROP = "game.enable.Bakunawa";
+    public static final String LAMANG_PROP = "game.enable.lamang";
 
 
     public static final long FIVE_MINUTES_AGO = 5 * 60 * 1000;
@@ -69,10 +76,11 @@ public class Constants {
 
     public static final Double MIN_BET_AMOUNT_M = 1.1;
 
-
-
     public static final String MONGOTEMPLATE = "MongoTemplate";
     public static final String PRIMARY_MONGOTEMPLATE = "PrimaryMongoTemplate";
 
-
+    /**
+     * 奖池流水过期时间（秒）
+     */
+    public static final long JACKPOT_REWARD_POOL_EXPIRED_SECONDS = 24 * 60 * 60;
 }

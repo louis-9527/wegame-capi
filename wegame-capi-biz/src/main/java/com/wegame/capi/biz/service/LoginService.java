@@ -40,8 +40,7 @@ public class LoginService {
         response.addHeader(Constants._TOKEN_, token);
         String userId = userService.selectIdByPlayerIdAndPid(userLoginDo.getPlayerId(), userLoginDo.getPId());
         if (StringUtils.isEmpty(userId)) {
-            UserDo userDo = UserInfoBuilder.buildUserDo(userLoginDo);
-            userId = userService.insert(userDo);
+            userId = userService.insert(UserInfoBuilder.buildUserDo(userLoginDo));
         }
         UserInfo userInfo = UserInfoBuilder.buildUserInfo(userLoginDo, Long.valueOf(userId), token);
         userLoginInfoService.asyncAddOrUpdate(UserLoginInfoDo.builder()

@@ -29,6 +29,7 @@ public class BetService {
             .put(GameTypeEnum.MALAKAS, "malakasBetContext")
             .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaBetContext")
             .put(GameTypeEnum.BAKUNAWA, "bakunawaBetContext")
+            .put(GameTypeEnum.LAM_ANG, "lamangBetContext")
             .build();
 
     @Autowired

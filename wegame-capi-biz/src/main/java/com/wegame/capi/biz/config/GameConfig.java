@@ -2,6 +2,7 @@ package com.wegame.capi.biz.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
+import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
@@ -50,7 +51,7 @@ public class GameConfig {
         String path = "/ibong_adarna_config.json";
         InputStream inputStream = getClass().getResourceAsStream(path);
         if (inputStream == null) {
-            throw new RuntimeException("read maria_makiling_config.json file err！！！");
+            throw new RuntimeException("read ibong_adarna_config.json file err！！！");
         } else {
             IbongAdarnaConfig config = new ObjectMapper().readValue(inputStream, IbongAdarnaConfig.class);
             config.validate();
@@ -66,6 +67,19 @@ public class GameConfig {
             throw new RuntimeException("read bakunawa.json file err！！！");
         } else {
             BakunawaConfig config = new ObjectMapper().readValue(inputStream, BakunawaConfig.class);
+            config.validate();
+            return config;
+        }
+    }
+
+    @Bean
+    LamangConfig lamangConfig() throws IOException {
+        String path = "/lamang_config.json";
+        InputStream inputStream = getClass().getResourceAsStream(path);
+        if (inputStream == null) {
+            throw new RuntimeException("read lamang_config.json file err！！！");
+        } else {
+            LamangConfig config = new ObjectMapper().readValue(inputStream, LamangConfig.class);
             config.validate();
             return config;
         }

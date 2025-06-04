@@ -18,6 +18,8 @@ public class GameProperty {
     private boolean enableIbongAdarna;
     @Value("${game.enable.bakunawa}")
     private boolean enableBakunawa;
+    @Value("${game.enable.lamang}")
+    private boolean enableLamang;
 
     public List<GameTypeEnum> enabledGameTypes() {
         List<GameTypeEnum> gameTypeList = new ArrayList<>();
@@ -32,6 +34,9 @@ public class GameProperty {
         }
         if (enableBakunawa) {
             gameTypeList.add(GameTypeEnum.BAKUNAWA);
+        }
+        if (enableLamang) {
+            gameTypeList.add(GameTypeEnum.LAM_ANG);
         }
         return gameTypeList;
     }

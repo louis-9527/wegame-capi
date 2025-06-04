@@ -54,7 +54,9 @@ public class FilterConfig {
                 "/bag/*",
                 "/mission/*",
                 "/treasure/*",
-                "/freeSpin/*"
+                "/freeSpin/*",
+                "/jackpotRewardPool/*",
+                "/jackpotUserRewardRecord/*"
         );
         return bean;
     }
@@ -79,7 +81,9 @@ public class FilterConfig {
                 "/bag/*",
                 "/mission/*",
                 "/treasure/*",
-                "/freeSpin/*"
+                "/freeSpin/*",
+                "/jackpotRewardPool/*",
+                "/jackpotUserRewardRecord/*"
         );
         return bean;
     }

@@ -15,6 +15,7 @@ import java.util.List;
 public interface MultipleCalculateStrategy<T extends SymbolDo> {
 
     /**
+     * 计算倍率
      * 计算(基础)倍率
      * @param rewardHandle
      * @return 倍率

@@ -102,7 +102,10 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             } else if (Objects.equals(gameType, GameTypeEnum.BAKUNAWA)) {
                 bakunawaValidateParam(gameType, betType, betSubType);
                 validateFreeSpinBet(gameType, betType, betSubType);
-            } else {
+            } else if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
+                //todo 其他校验
+                lamangValidateParam(gameType, betType, betSubType);
+            }else {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORT");
             }
         }
@@ -247,6 +250,57 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                 AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
                 if (Objects.equals(BetSubTypeEnum.NORMAL_BET, betSubType)) {
                     AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
+                } else {
+                    throw new BusinessException(ErrorCode.ERR_PARAM);
+                }
+            }
+        }
+
+        //todo 参数校验
+        public void lamangValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+            AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+            if(useStarCard){
+                AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
+            }else if(useFreeSpin){
+                AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(payAmount == 0L, ErrorCode.ERR_PARAM);
+            } else {
+                AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
+            }
+            if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
+                if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {
+                    AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                    if (useFreeSpin) {
+                        AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
+                    } else {
+                        AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
+                    }
+                } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_NORMAL_BET)) {
+                    AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(NumberUtil.isLong(betRecordId), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(NumberUtil.isLong(gameRecordId), ErrorCode.ERR_PARAM);
+                } else {
+                    throw new BusinessException(ErrorCode.ERR_PARAM);
+                }
+            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
+                if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
+                    AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                    if (useStarCard) {
+                        AssertUtil.assertTrue(Objects.equals(payAmount, betAmount), ErrorCode.ERR_PARAM);
+                    } else {
+                        AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
+                    }
+                } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
+                    AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(NumberUtil.isLong(betRecordId), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(NumberUtil.isLong(gameRecordId), ErrorCode.ERR_PARAM);
                 } else {
                     throw new BusinessException(ErrorCode.ERR_PARAM);
                 }
