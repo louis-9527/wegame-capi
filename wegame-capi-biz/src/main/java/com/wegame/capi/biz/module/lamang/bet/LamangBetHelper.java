@@ -99,7 +99,16 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
         }
     }
 
-    public JackpotWinPrizeDo handleDrawJackpot(BetRecordDo<LamangGameRecordDo> betRecord, SingleWalletBetResultDo singleWalletBetResultDo) {
+    @Override
+    public boolean hasRewardFreeWheel(List<LamangGameRecordDo> gameRecordList) {
+        LamangGameRecordDo gameRecord = gameRecordList.stream()
+                .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeWheel())
+                .findFirst()
+                .orElse(null);
+        return Objects.nonNull(gameRecord);
+    }
+
+    private JackpotWinPrizeDo handleDrawJackpot(BetRecordDo<LamangGameRecordDo> betRecord, SingleWalletBetResultDo singleWalletBetResultDo) {
         try {
             AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
             AssertUtil.assertNotNull(handler, ErrorCode.ERR_INTER);
@@ -108,15 +117,6 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
             log.error("draw jackpot error,betRecordId:{}", betRecord.getId(), e);
         }
         return null;
-    }
-
-    @Override
-    public boolean hasRewardFreeWheel(List<LamangGameRecordDo> gameRecordList) {
-        LamangGameRecordDo gameRecord = gameRecordList.stream()
-                .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeWheel())
-                .findFirst()
-                .orElse(null);
-        return Objects.nonNull(gameRecord);
     }
 
     private JackpotDrawAndAwardDo buildJackpotDrawAndAwardDo(BetRecordDo<LamangGameRecordDo> betRecord, SingleWalletBetResultDo singleWalletBetResultDo) {
