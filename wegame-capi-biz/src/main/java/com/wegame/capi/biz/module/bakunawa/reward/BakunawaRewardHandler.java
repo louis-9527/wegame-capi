@@ -113,8 +113,9 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         Integer rewardMaxMultiple = bakunawaConfig.getRewardMaxMultiple();
         if (totalMultiply.intValue() > rewardMaxMultiple) {
             return BigDecimal.valueOf(betAmount * rewardMaxMultiple);
+        } else {
+            return BigDecimal.valueOf(betAmount).multiply(totalMultiply);
         }
-        return BigDecimal.valueOf(betAmount).multiply(totalMultiply);
     }
 
     private RewardLineDo<SymbolDo> calcRewardLine(GameInfoDo gameInfo, WheelDo<SymbolDo> wheel) {
