@@ -144,7 +144,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 // 构建元素金边
                 int goldenInRow = countGoldenBorderInRow(symbolArr, row);
                 // 如果当前行有金边元素，则生成非金边元素
-                if (goldenInRow < MAX_GOLDEN_NUMBER_IN_ROW) {
+                if (!symbolDo.isScatterSymbol() && goldenInRow < MAX_GOLDEN_NUMBER_IN_ROW) {
                     boolean symbolGoldBorder = generateSymbolGoldBorder(playProbabilisticConfig, row, column);
                     LamangSymbolDo lamangSymbolDo = LamangSymbolDo.buildFromSymbol(symbolDo, symbolGoldBorder);
                     symbolArr[row][column] = lamangSymbolDo;
