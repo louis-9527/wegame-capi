@@ -119,7 +119,7 @@ public abstract class AbstractLamangBetStrategy
         List<LamangGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
         BetRecordDo<LamangGameRecordDo> betRecord = lamangBetHelper.buildBetRecord(betRecordId, betDo, list);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, betHelper().hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return lamangBetHelper.handleBetResult(betRecord, resultDo);
     }
