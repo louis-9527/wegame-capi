@@ -8,7 +8,7 @@ import com.wegame.capi.api.base.PromotionBaseApi;
 import com.wegame.capi.api.domain.req.promotion.*;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.*;
-import com.wegame.capi.common.constants.AchievementErrorCode;
+import com.wegame.capi.common.enums.AchievementErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
