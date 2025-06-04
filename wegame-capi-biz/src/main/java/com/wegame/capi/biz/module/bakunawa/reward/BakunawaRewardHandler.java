@@ -75,12 +75,12 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         List<RewardLineDetailDo<SymbolDo>> rewardLineDetailList = Lists.newArrayList();
         // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 基础倍率 * 倍率盘倍率
         BigDecimal lineRewardAmount = this.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), basicMultiple, pieMultiple.getRight());
-        // 中奖总金额x
+        // 中奖总金额
         long totalRewardAmount = lineRewardAmount.longValue();
         // 中奖线明细列表
         rewardLineDetailList.add(RewardLineDetailDo.<SymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
-                .rewardAmount(lineRewardAmount.longValue())
+                .rewardAmount(totalRewardAmount)
                 .odds(BigDecimal.ZERO)
                 .multiple(basicMultiple)
                 .multiplePieType(pieMultiple.getKey())
