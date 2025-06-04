@@ -22,6 +22,8 @@ public class FreeSpinReq extends BaseReq {
     private Integer freeSpinType;
     /** Campaign id of the free spin  */
     private String campaignId;
+    /** Bet value of campaign  */
+    private BigDecimal betValue;
 
     @Data
     @SuperBuilder
