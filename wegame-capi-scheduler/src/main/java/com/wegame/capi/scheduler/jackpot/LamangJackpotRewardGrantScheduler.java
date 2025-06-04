@@ -8,8 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.MALAKAS_PROP;
-import static com.wegame.capi.common.Constants.TRUE_VAL;
+import static com.wegame.capi.common.Constants.*;
 
 
 /**
@@ -17,7 +16,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangJackpotRewardGrantScheduler
         extends AbstractJackpotRewardGrantScheduler
         implements Runnable {
@@ -31,7 +30,7 @@ public class LamangJackpotRewardGrantScheduler
     /**
      * 每5分钟执行
      */
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 */5 * * * *")
     public void schedule() {
         log.info("LamangJackpotPayoutScheduler#schedule start");
         try {
