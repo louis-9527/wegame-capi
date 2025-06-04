@@ -50,7 +50,6 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
 
 
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
-        log.info("BakunawaRewardHandler.handle rewardHandle:{}", FastJsonUtils.toJSONString(rewardHandle));
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
