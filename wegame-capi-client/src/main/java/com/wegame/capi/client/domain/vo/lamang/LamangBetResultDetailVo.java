@@ -23,7 +23,6 @@ public class LamangBetResultDetailVo implements Serializable {
     private String allWheelRewardSubType;
     @ApiModelProperty("投注结果列表")
     private List<LamangBetResultVo> resultList;
-
     @ApiModelProperty("jackpot中奖的游戏记录id")
     private String jackpotRewardGameRecordId;
 }
