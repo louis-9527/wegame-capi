@@ -108,15 +108,13 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
      * 中奖线中奖金额计算公式 = 投注金额 * 基础倍率 * 倍率盘倍率
      */
     @Override
-    public BigDecimal calculateLineRewardAmount(RewardLineDo rewardLine, Long betAmount, BigDecimal odds, BigDecimal multiple) {
-        BigDecimal multiply = odds.multiply(multiple);
+    public BigDecimal calculateLineRewardAmount(RewardLineDo rewardLine, Long betAmount, BigDecimal basicMultiple, BigDecimal pieMultiple) {
+        BigDecimal totalMultiply = basicMultiple.multiply(pieMultiple);
         Integer rewardMaxMultiple = bakunawaConfig.getRewardMaxMultiple();
-        if (multiply.intValue() > rewardMaxMultiple) {
-            return BigDecimal.valueOf(betAmount).multiply(new BigDecimal(rewardMaxMultiple));
+        if (totalMultiply.intValue() > rewardMaxMultiple) {
+            return BigDecimal.valueOf(betAmount * rewardMaxMultiple);
         }
-        return BigDecimal.valueOf(betAmount)
-                .multiply(odds)
-                .multiply(multiple);
+        return BigDecimal.valueOf(betAmount).multiply(totalMultiply);
     }
 
     private RewardLineDo<SymbolDo> calcRewardLine(GameInfoDo gameInfo, WheelDo<SymbolDo> wheel) {
