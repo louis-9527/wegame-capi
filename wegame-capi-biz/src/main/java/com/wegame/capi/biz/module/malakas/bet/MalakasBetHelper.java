@@ -99,5 +99,6 @@ public class MalakasBetHelper implements BetHelper<MalakasBetRecordDetailDo, Mal
                 .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeWheel())
                 .findFirst()
                 .orElse(null);
-        return Objects.nonNull(gameRecord);    }
+        return Objects.nonNull(gameRecord);
+    }
 }
