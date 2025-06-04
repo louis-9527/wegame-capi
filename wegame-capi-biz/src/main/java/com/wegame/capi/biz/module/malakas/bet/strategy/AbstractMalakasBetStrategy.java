@@ -1,24 +1,19 @@
 package com.wegame.capi.biz.module.malakas.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.BetRecordBuilder;
-import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MalakasBetRecordManager;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.operation.MalakasOperationEventManager;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
-import com.wegame.capi.biz.module.base.bet.strategy.AbstractBetStrategy;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractCommonBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.module.malakas.bet.MalakasBetHelper;
@@ -26,8 +21,6 @@ import com.wegame.capi.biz.module.malakas.game.MalakasGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.common.enums.BetPromotionTypeEnum;
-import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,8 +32,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
@@ -55,8 +46,6 @@ public abstract   class AbstractMalakasBetStrategy
     MalakasGameContext<MalakasGameRecordDo> malakasGameContext;
     @Autowired
     MalakasBetRecordManager malakasBetRecordManager;
-    @Autowired
-    MalakasConfig malakasConfig;
 
     @Autowired
     @Qualifier("malakasOperationEventManager")
