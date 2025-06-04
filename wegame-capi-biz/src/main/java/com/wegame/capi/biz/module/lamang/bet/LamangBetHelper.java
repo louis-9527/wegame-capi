@@ -103,7 +103,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
         try {
             AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
             AssertUtil.assertNotNull(handler, ErrorCode.ERR_INTER);
-            return handler.calculateWinPrize(buildDrawReq(betRecord, singleWalletBetResultDo));
+            return handler.calculateWinPrize(buildJackpotDrawAndAwardDo(betRecord, singleWalletBetResultDo));
         } catch (Exception e) {
             log.error("draw jackpot error,betRecordId:{}", betRecord.getId(), e);
         }
