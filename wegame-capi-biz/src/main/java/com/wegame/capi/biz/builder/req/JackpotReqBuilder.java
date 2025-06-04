@@ -14,8 +14,8 @@ import java.util.Date;
 import java.util.Map;
 
 public class JackpotReqBuilder {
-    public static JackpotReq buildReq(JackpotAwardDo jackpotAwardDo, Map<JackpotRewardPoolTypeEnum,JackpotRewardPoolDo> jackpotRewardPoolMap) {
 
+    public static JackpotReq buildReq(JackpotAwardDo jackpotAwardDo, Map<JackpotRewardPoolTypeEnum, JackpotRewardPoolDo> jackpotRewardPoolMap) {
         // 组装奖池信息
         JackpotRewardPoolDo grandPool = jackpotRewardPoolMap.get(JackpotRewardPoolTypeEnum.grand);
         JackpotReq.JackpotPool.GrandPool grandBuilder = JackpotReq.JackpotPool.GrandPool.builder()

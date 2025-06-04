@@ -5,7 +5,7 @@ import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.jackpot.JackpotQueryBuilder;
+import com.wegame.capi.biz.builder.jackpot.JackpotRewardPoolQueryBuilder;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
@@ -14,7 +14,6 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -51,7 +50,7 @@ public class JackpotRewardPoolService extends AbstractService {
             Criteria criteria = new Criteria();
             criteria.and("type").is(poolPo.getType());
             Query query = new Query(criteria);
-            bulkOps.updateOne(query, JackpotQueryBuilder.buildAddAmount(poolPo));
+            bulkOps.updateOne(query, JackpotRewardPoolQueryBuilder.buildAddAmountUpdate(poolPo));
         });
         bulkOps.execute();
     }
@@ -67,7 +66,7 @@ public class JackpotRewardPoolService extends AbstractService {
         Query query = new Query(criteria);
         // 更新金额
         UpdateResult result = getMongoTemplate(jackpotType.getGameType()).updateFirst(query,
-                JackpotQueryBuilder.buildAddAmount(po),
+                JackpotRewardPoolQueryBuilder.buildAddAmountUpdate(po),
                 JackpotRewardPoolPo.class,
                 jackpotType.getJackpotRewardPoolCollectionName());
         return result.getModifiedCount() > 0;
@@ -80,7 +79,7 @@ public class JackpotRewardPoolService extends AbstractService {
 
     public List<JackpotRewardPoolDo> listAll(JackpotTypeEnum jackpotTypeEnum) {
         AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM);
-        List<JackpotRewardPoolPo> poList = getMongoTemplate(jackpotTypeEnum.getGameType()).find(JackpotQueryBuilder.listAllQuery(),
+        List<JackpotRewardPoolPo> poList = getMongoTemplate(jackpotTypeEnum.getGameType()).find(JackpotRewardPoolQueryBuilder.buildListAllQuery(),
                 JackpotRewardPoolPo.class,
                 jackpotTypeEnum.getJackpotRewardPoolCollectionName());
         List<JackpotRewardPoolDo> doList = poToDoList(poList);
@@ -103,7 +102,7 @@ public class JackpotRewardPoolService extends AbstractService {
         JackpotRewardPoolQuery buildQuery = JackpotRewardPoolQuery.builder()
                 .type(rewardPoolTypeEnum.getCode())
                 .build();
-        JackpotRewardPoolPo po = getMongoTemplate(jackpotTypeEnum.getGameType()).findOne(JackpotQueryBuilder.buildMongodbQuery(buildQuery),
+        JackpotRewardPoolPo po = getMongoTemplate(jackpotTypeEnum.getGameType()).findOne(JackpotRewardPoolQueryBuilder.buildMongodbQuery(buildQuery),
                 JackpotRewardPoolPo.class,
                 jackpotTypeEnum.getJackpotRewardPoolCollectionName());
         return JackpotRewardPoolConverter.poToDo(po);

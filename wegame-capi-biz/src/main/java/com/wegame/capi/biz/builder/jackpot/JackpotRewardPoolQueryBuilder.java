@@ -11,9 +11,9 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Objects;
 
-public class JackpotQueryBuilder {
+public class JackpotRewardPoolQueryBuilder {
 
-    public static Query listAllQuery() {
+    public static Query buildListAllQuery() {
         Query query = new Query();
         query.limit(10);
         return query;
@@ -47,7 +47,7 @@ public class JackpotQueryBuilder {
         return criteria;
     }
 
-    public static Update buildAddAmount(JackpotRewardPoolPo rewardPool) {
+    public static Update buildAddAmountUpdate(JackpotRewardPoolPo rewardPool) {
         if (rewardPool == null) {
             throw new BusinessException(ErrorCode.ERR_INTER);
         }
@@ -65,4 +65,4 @@ public class JackpotQueryBuilder {
         }
         return update;
     }
-  }
+}

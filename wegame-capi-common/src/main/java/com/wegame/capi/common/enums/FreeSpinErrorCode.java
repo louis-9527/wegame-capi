@@ -1,4 +1,4 @@
-package com.wegame.capi.common.constants;
+package com.wegame.capi.common.enums;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
