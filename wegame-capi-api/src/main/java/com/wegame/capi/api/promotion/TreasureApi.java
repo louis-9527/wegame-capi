@@ -10,8 +10,7 @@ import com.wegame.capi.api.domain.req.promotion.RedeemTreasureReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.GetTreasureRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemTreasureRes;
-import com.wegame.capi.common.constants.AchievementErrorCode;
-import com.wegame.capi.common.enums.SingleWalletPromotionResStatusEnum;
+import com.wegame.capi.common.enums.AchievementErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
 import java.net.URI;
-import java.util.Objects;
 
 /**
  * 宝箱api

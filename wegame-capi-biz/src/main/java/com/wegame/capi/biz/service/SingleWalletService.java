@@ -18,7 +18,7 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.constants.FreeSpinErrorCode;
+import com.wegame.capi.common.enums.FreeSpinErrorCode;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
