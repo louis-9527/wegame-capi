@@ -3,7 +3,6 @@ package com.wegame.capi.common.utils;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.JackpotTypeEnum;
 
 public class LockNameUtil {
 
@@ -48,9 +47,9 @@ public class LockNameUtil {
         return String.format(OPERATION_EVENT_SCHEDULER_LOCK, gameType.getName());
     }
 
-    public static String getOperationEventReportLockName(GameTypeEnum gameType,Long betRecordId) {
+    public static String getOperationEventReportLockName(GameTypeEnum gameType, Long betRecordId) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
-        return String.format(OPERATION_EVENT_REPORT_LOCK, gameType.getName(),betRecordId);
+        return String.format(OPERATION_EVENT_REPORT_LOCK, gameType.getName(), betRecordId);
     }
 
 
@@ -64,7 +63,7 @@ public class LockNameUtil {
         return String.format(MAINTAIN_CONFIG_UPDATE_LOCK, gameType.getName());
     }
 
-    public static String getbuildUserIdCacheLockName() {
+    public static String getBuildUserIdCacheLockName() {
         return BUILD_USER_ID_CACHE_LOCK;
     }
 
