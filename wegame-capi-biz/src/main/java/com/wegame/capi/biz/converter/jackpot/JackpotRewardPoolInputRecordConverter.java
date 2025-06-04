@@ -6,13 +6,11 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolInputRecordRequest;
-import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolInputRecordVo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
+import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolInputRecordVo;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordPo;
-import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordQuery;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -140,28 +138,6 @@ public class JackpotRewardPoolInputRecordConverter {
                 .map(JackpotRewardPoolInputRecordConverter::doToVo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-    }
-
-    public static JackpotRewardPoolInputRecordQuery requestToQuery(PageQueryJackpotRewardPoolInputRecordRequest request, String orderClause) {
-        JackpotRewardPoolInputRecordQuery query = new JackpotRewardPoolInputRecordQuery();
-        query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
-        query.setType(request.getType());
-        query.setGrandAmount(StringUtils.isNotEmpty(request.getGrandAmount()) ? Long.valueOf(request.getGrandAmount()) : null);
-        query.setMajorAmount(StringUtils.isNotEmpty(request.getMajorAmount()) ? Long.valueOf(request.getMajorAmount()) : null);
-        query.setMinorAmount(StringUtils.isNotEmpty(request.getMinorAmount()) ? Long.valueOf(request.getMinorAmount()) : null);
-        query.setMiniAmount(StringUtils.isNotEmpty(request.getMiniAmount()) ? Long.valueOf(request.getMiniAmount()) : null);
-        query.setCreator(request.getCreator());
-        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? request.getCreateTime() : null);
-        query.setUpdater(request.getUpdater());
-        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? request.getUpdateTime() : null);
-        query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) ? new Date(request.getStartCreateTime()) : null);
-        query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? new Date(request.getEndCreateTime()) : null);
-        query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? new Date(request.getStartUpdateTime()) : null);
-        query.setEndUpdateTime(Objects.nonNull(request.getEndUpdateTime()) ? new Date(request.getEndUpdateTime()) : null);
-        query.setLimit(request.getPageSize());
-        query.setOffset(request.getOffset());
-        query.setOrderByClause(orderClause);
-        return query;
     }
 
     ///////////////  above auto generated ///////////////
