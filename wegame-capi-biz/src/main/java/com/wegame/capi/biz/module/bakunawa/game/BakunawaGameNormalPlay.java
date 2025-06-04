@@ -24,6 +24,7 @@ import java.util.TreeMap;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.bakunawa.BakunawaGameHelper.BAKUNAWA_GAME_INFO;
+import static com.wegame.capi.common.Constants.CONST_1;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
@@ -66,7 +67,7 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
         SymbolDo[][] symbolArr = new SymbolDo[GAME_INFO.getRow()][GAME_INFO.getColumn()];
         // 元素出现概率配置
         TreeMap<String, List<BigDecimal>> wheelProbabilisticConfigMap = bakunawaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
-        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, GAME_INFO.getRow() * GAME_INFO.getColumn());
+        List<Integer> randomNumberList = randomService.randomIntList(CONST_1, CONST_1000000, GAME_INFO.getRow() * GAME_INFO.getColumn());
         for (int column = ONE_COLUM_INDEX; column < GAME_INFO.getColumn(); column++) {
             // 列概率
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, wheelProbabilisticConfigMap);

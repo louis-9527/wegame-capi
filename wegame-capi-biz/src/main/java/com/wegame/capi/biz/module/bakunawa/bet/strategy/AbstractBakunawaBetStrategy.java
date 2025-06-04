@@ -34,7 +34,7 @@ public abstract class AbstractBakunawaBetStrategy
         implements BakunawaBetStrategy<BakunawaGameRecordDo> {
 
     @Autowired
-    BakunawaGameContext ibongAdarnaGameContext;
+    BakunawaGameContext bakunawaGameContext;
     @Autowired
     BakunawaBetRecordManager bakunawaBetRecordManager;
     @Autowired
@@ -45,7 +45,7 @@ public abstract class AbstractBakunawaBetStrategy
 
     @Override
     public AbstractGameContext<BakunawaGameRecordDo> gameContext() {
-        return ibongAdarnaGameContext;
+        return bakunawaGameContext;
     }
 
     @Override
