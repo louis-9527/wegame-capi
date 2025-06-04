@@ -50,7 +50,7 @@ public class JackpotReqBuilder {
 
         // 组装 jackpotDetails信息
         JackpotUserRewardRecordDo jackpotUserRewardRecordDo = jackpotAwardDo.getJackpotUserRewardRecordDo();
-        JackpotReq.jackpotWinDetails jackpotWinDetails = JackpotReq.jackpotWinDetails.builder()
+        JackpotReq.JackpotWinDetails jackpotWinDetails = JackpotReq.JackpotWinDetails.builder()
                 .jackpotType(jackpotUserRewardRecordDo.getRewardPoolType().getCode())
                 .winAmount(AmountUtil.toBigDecimal(jackpotUserRewardRecordDo.getRewardAmount()))
                 .build();

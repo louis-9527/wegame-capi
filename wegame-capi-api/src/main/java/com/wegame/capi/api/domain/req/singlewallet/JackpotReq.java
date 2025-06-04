@@ -27,14 +27,14 @@ public class JackpotReq extends BaseReq {
     @AllArgsConstructor
     public static class JackpotDetails{
         private List<Integer> jackpotTypes;
-        private List<jackpotWinDetails> jackpotWinDetails;
+        private List<JackpotWinDetails> jackpotWinDetails;
         private JackpotPool jackpotPool;
     }
     @Data
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class jackpotWinDetails{
+    public static class JackpotWinDetails {
         private Integer jackpotType;
         private BigDecimal winAmount;
         private List<Integer> jackpotResult;
