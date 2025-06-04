@@ -69,7 +69,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                     .rewardType(RewardTypeEnum.NONE)
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
-                    .totalMultiple(rewardHandle.getCurrentMultiple())
+                    .totalMultiple(totalMultiple)
                     .hasRewardFreeWheel(CollectionUtils.isEmpty(rewardLineList) && scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
                     .rewardLineDetailList(null)
                     .rewardFreeWheelTimes(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0)

@@ -7,12 +7,9 @@ import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
-import com.wegame.capi.client.domain.request.query.PageQueryJackpotRewardPoolRequest;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolVo;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
-import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolQuery;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -100,25 +97,6 @@ public class JackpotRewardPoolConverter {
                 .map(JackpotRewardPoolConverter::doToVo)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-    }
-
-    public static JackpotRewardPoolQuery requestToQuery(PageQueryJackpotRewardPoolRequest request, String orderClause) {
-        JackpotRewardPoolQuery query = new JackpotRewardPoolQuery();
-        query.setId(StringUtils.isNotEmpty(request.getId()) ? Long.valueOf(request.getId()) : null);
-        query.setType(request.getType());
-        query.setAmount(StringUtils.isNotEmpty(request.getAmount()) ? Long.valueOf(request.getAmount()) : null);
-        query.setCreator(request.getCreator());
-        query.setCreateTime(Objects.nonNull(request.getCreateTime()) ? DateUtil.getCurrentMilli() : null);
-        query.setUpdater(request.getUpdater());
-        query.setUpdateTime(Objects.nonNull(request.getUpdateTime()) ? DateUtil.getCurrentMilli() : null);
-        query.setStartCreateTime(request.getStartCreateTime());
-        query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) ? request.getStartCreateTime() : null);
-        query.setStartUpdateTime(Objects.nonNull(request.getStartUpdateTime()) ? request.getStartCreateTime() : null);
-        query.setEndUpdateTime(Objects.nonNull(request.getEndUpdateTime()) ? request.getEndUpdateTime() : null);
-        query.setLimit(request.getPageSize());
-        query.setOffset(request.getOffset());
-        query.setOrderByClause(orderClause);
-        return query;
     }
 
     /// ////////////  above auto generated ///////////////
