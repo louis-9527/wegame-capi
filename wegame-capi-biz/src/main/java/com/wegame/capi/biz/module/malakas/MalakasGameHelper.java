@@ -5,14 +5,10 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static com.wegame.capi.common.enums.SymbolEnum.*;
-import static com.wegame.capi.common.enums.SymbolSizeEnum.*;
+import static com.wegame.capi.common.enums.SymbolSizeEnum.S;
 
 public class MalakasGameHelper {
 
@@ -107,35 +103,4 @@ public class MalakasGameHelper {
                     .put(MALAKAS_Wild.getId(), MALAKAS_Wild)
                     .build())
             .build();
-
-
-    public static final List<List<SymbolSizeEnum>> MALAKAS_REEL_TEMPLATE = Arrays.asList(
-            // S
-            Arrays.asList(S, S, S, S, S),
-            // M，S
-            //// 1M，3S，
-            Arrays.asList(M, S, S, S),
-            Arrays.asList(S, M, S, S),
-            Arrays.asList(S, S, M, S),
-            Arrays.asList(S, S, S, M),
-            //// 2M，1S
-            Arrays.asList(M, M, S),
-            Arrays.asList(M, S, M),
-            Arrays.asList(S, M, M),
-            // L，S
-            //// 1L，2S
-            Arrays.asList(L, S, S),
-            Arrays.asList(S, L, S),
-            Arrays.asList(S, S, L),
-            // L，M
-            //// 1L，1M
-            Arrays.asList(L, M),
-            Arrays.asList(M, L),
-            // XL、S
-            //// 1XL，1S
-            Arrays.asList(XL, S),
-            Arrays.asList(S, XL)
-    );
-
-
 }
