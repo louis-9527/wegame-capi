@@ -114,7 +114,7 @@ public abstract   class AbstractMalakasBetStrategy
         List<MalakasGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
         BetRecordDo<MalakasGameRecordDo> betRecord = malakasBetHelper.buildBetRecord(betRecordId, betDo, list);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, hasRewardFreeWheel(firstBatchList));
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, malakasBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return malakasBetHelper.handleBetResult(betRecord, resultDo);
 
@@ -161,14 +161,6 @@ public abstract   class AbstractMalakasBetStrategy
                         .gameRecordList(gameRecordList)
                         .build())
                 .build();
-    }
-
-    private boolean hasRewardFreeWheel(List<MalakasGameRecordDo> firstBatchList) {
-        MalakasGameRecordDo gameRecord = firstBatchList.stream()
-                .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeWheel())
-                .findFirst()
-                .orElse(null);
-        return Objects.nonNull(gameRecord);
     }
 
     private List<MalakasGameRecordDo> getFirstBatchGameRecordList(List<MalakasGameRecordDo> list) {
