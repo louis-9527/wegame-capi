@@ -1,14 +1,19 @@
 package com.wegame.capi.biz.module.lamang;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
+import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
-import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.lamang.LamangGameHelper.*;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
@@ -20,8 +25,6 @@ public class LamangSymbolUtil {
 
     /**
      * 是否有超级wild
-     * @param symbolArr
-     * @return
      */
     public static boolean hasSuperWild(LamangSymbolDo[][] symbolArr) {
         for (int row = 0; row < symbolArr.length; row++) {
@@ -36,11 +39,8 @@ public class LamangSymbolUtil {
 
     /**
      * 处理大wild
-     * @param symbolArr
      */
     public static void holdBigWild(LamangSymbolDo[][] symbolArr) {
-        //todo 用占位符覆盖bigWild所在1-3列
-        // 按行处理
         for (int row = 0; row < symbolArr.length; row++) {
             boolean hasWild = false;
             for (int col = 0; col < symbolArr[row].length; col++) {
@@ -65,10 +65,7 @@ public class LamangSymbolUtil {
 
     /**
      * 计算中奖次数 (新增scatter & scatter+1数量) 并更新元素状态
-     * @param symbolArr
-     * @return
      */
-    //todo 优化
     public static int countAndReleaseScatterDrawTimes(LamangSymbolDo[][] symbolArr) {
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
@@ -85,10 +82,10 @@ public class LamangSymbolUtil {
 
     /**
      * 计算scatter+1赠送免费轮次数，并更新元素状态
+     *
      * @param symbolArr
      * @return
      */
-    //todo 优化
     public static int countAndReleaseScatterFreeWheel(LamangSymbolDo[][] symbolArr) {
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
@@ -181,7 +178,7 @@ public class LamangSymbolUtil {
         for (int row = 0; row < symbolArr.length; row++) {
             for (int column = 0; column < symbolArr[row].length; column++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
-                    System.out.print(symbolArr[row][column].getId()+"\t");
+                    System.out.print(symbolArr[row][column].getId() + "\t");
                 } else {
                     System.out.print("null\t");
                 }
@@ -189,5 +186,13 @@ public class LamangSymbolUtil {
             System.out.println();
         }
         System.out.println();
+    }
+
+    public static List<RewardSymbolDo<LamangSymbolDo>> getRewardSymbolDoList(RewardResultDo<LamangSymbolDo> rewardResult) {
+        AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotEmpty(rewardResult.getRewardLineDetailList(), ErrorCode.ERR_INTER);
+        return rewardResult.getRewardLineDetailList()
+                .stream()
+                .map(RewardLineDetailDo<LamangSymbolDo>::getRewardSymbolList).flatMap(List::stream).collect(Collectors.toList());
     }
 }
