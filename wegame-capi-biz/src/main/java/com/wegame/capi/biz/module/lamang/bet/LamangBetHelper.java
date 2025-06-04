@@ -25,7 +25,6 @@ import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), lamangConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), lamangConfig.getRewardMaxMultiple()),
-                buildBetCommission(betDo), // todo set jackpot @lyric
+                buildBetCommission(betDo),
                 gameRecordList
         );
     }
@@ -64,10 +63,8 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
     @Override
     public BetResultDo<LamangBetRecordDetailDo> handleBetResult(BetRecordDo<LamangGameRecordDo> betRecord, SingleWalletBetResultDo result) {
         AssertUtil.assertNotNull(result, ErrorCode.ERR_INTER);
-
         if (Objects.equals(result.getBetStatus(), BetStatusEnum.SUCCESS)) {
             List<LamangGameRecordDo> firstBatchList = getFirstBatchGameRecordList(betRecord.getGameRecordList());
-
             // 4、组装返回结果
             //// 合计中奖总金额
             long overallRewardAmount = firstBatchList.stream()
@@ -106,10 +103,8 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
         try {
             AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
             AssertUtil.assertNotNull(handler, ErrorCode.ERR_INTER);
-
             return handler.calculateWinPrize(buildDrawReq(betRecord, singleWalletBetResultDo));
-
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("draw jackpot error,betRecordId:{}", betRecord.getId(), e);
         }
         return null;
@@ -136,13 +131,13 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                         LamangGameRecordDo::getId,
                         LamangGameRecordDo::getJackpotDrawTimes,
                         Integer::sum // 处理 key 冲突
-        ));
+                ));
     }
 
     private BetRecordDo.Jackpot buildBetCommission(BetDo betDo) {
         AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
-        if (Objects.nonNull(handler)){
-            Map<JackpotRewardPoolTypeEnum, Long> commissiontMap =  handler.calculateRewardPoolCommission(betDo.getBetType(), betDo.getBetAmount());
+        if (Objects.nonNull(handler)) {
+            Map<JackpotRewardPoolTypeEnum, Long> commissiontMap = handler.calculateRewardPoolCommission(betDo.getBetType(), betDo.getBetAmount());
             return BetRecordDo.Jackpot.builder()
                     .grandContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.grand))
                     .majorContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.major))
