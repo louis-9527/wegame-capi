@@ -5,10 +5,8 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.vo.lamang.LamangGameRecordVo;
-import com.wegame.capi.client.domain.vo.malakas.MalakasGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -35,15 +33,10 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
 
     @Transactional(transactionManager = lamangTransactionManager)
     public Long add(BetRecordDo<LamangGameRecordDo> betRecord, GameTypeEnum gameType) {
-        // todo delete @maidong
-        log.info("add: {}", betRecord.getId());
         Long id = betRecordService.add(betRecord, gameType);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<LamangGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            gameRecordList.forEach(item -> {
-                log.info("add GameRecord id:{}", item.getId());
-            });
             boolean ret = gameRecordService.batchAdd(gameRecordList, gameType, LamangGameRecordDo.class);
             AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         }
@@ -54,10 +47,6 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
     @Override
     public boolean batchAdd(List<BetRecordDo<LamangGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
-        // todo delete @maidong
-        for (int i = 0; i < betRecordList.size(); i++) {
-            log.info("batchAdd index: {} betRecordId:{}", i, betRecordList.get(i).getId());
-        }
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
         boolean ret = betRecordService.batchAdd(betRecordDos, gameType);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
@@ -66,10 +55,6 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            // todo delete log
-            gameRecordList.forEach(item -> {
-                log.info("batchAdd GameRecord id:{}", item.getId());
-            });
             boolean batchAddRet = gameRecordService.batchAdd(gameRecordList, gameType, LamangGameRecordDo.class);
             AssertUtil.assertTrue(batchAddRet, ErrorCode.ERR_INTER);
         }

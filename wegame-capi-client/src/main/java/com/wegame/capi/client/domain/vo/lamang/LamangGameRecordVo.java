@@ -37,7 +37,6 @@ public class LamangGameRecordVo implements Validate, Serializable {
     private List<LamangRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识 false否 true是")
     private Boolean freeWheelFlag;
-
     @ApiModelProperty("达到触发最大中奖倍数")
     private Boolean accumulateReachMaxMultiple;
 }

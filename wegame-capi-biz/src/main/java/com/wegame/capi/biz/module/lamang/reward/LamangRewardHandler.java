@@ -21,6 +21,7 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
+import com.wegame.capi.biz.module.lamang.LamangGameHelper;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
@@ -62,7 +63,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         BigDecimal totalMultiple = lamangMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
 
         if (CollectionUtil.isEmpty(rewardLineList)) {
-            int scatterCount = scatterCount(rewardHandle);
+            int scatterCount = this.scatterCount(rewardHandle);
             // 未中奖
             return RewardResultDo.<LamangSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
@@ -214,6 +215,14 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         return StringUtils.equals(symbol.getId(), targetSymbol.getId())
                 || Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.WILD)
                 || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
+    }
+
+    @Override
+    public Integer scatterCount(RewardHandleDo<LamangSymbolDo> rewardHandle) {
+        WheelDo<LamangSymbolDo> wheel = rewardHandle.getWheel();
+        long count = Arrays.stream(wheel.getSymbolArr()).flatMap(Arrays::stream).filter(Objects::nonNull).
+                filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER.getId())).count();
+        return (int) count;
     }
 
     private void validate(RewardHandleDo<LamangSymbolDo> rewardHandle) {

@@ -29,7 +29,6 @@ public class OperationEventPulsarConfig {
     private static final String mariaMakilingOperationEventConsumer = "mariaMakilingOperationEventConsumer";
     private static final String malakasOperationEventConsumer = "malakasOperationEventConsumer";
     private static final String ibongOperationEventConsumer = "ibongOperationEventConsumer";
-    // todo fix
     @Value("${dynamic.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
     @Value("${dynamic.operation.pulsar_topic}")

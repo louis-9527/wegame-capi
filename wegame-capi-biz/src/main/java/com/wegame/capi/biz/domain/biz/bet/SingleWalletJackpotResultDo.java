@@ -14,6 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class SingleWalletJackpotResultDo implements Serializable {
+    private Boolean success;
     /**
      * status
      */

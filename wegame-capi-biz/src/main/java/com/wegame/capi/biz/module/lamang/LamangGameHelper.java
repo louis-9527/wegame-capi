@@ -87,7 +87,6 @@ public class LamangGameHelper {
             .symbolType(SymbolTypeEnum.WILD)
             .build();
 
-    // TODO 注意修改 @jayni
     public static final LamangSymbolDo LAMANG_SYMBOL_PLACEHOLDER = LamangSymbolDo.builder()
             .id(Symbol1000.getId())
             .name(Symbol1000.getName())
