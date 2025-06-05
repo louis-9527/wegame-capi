@@ -1,31 +1,14 @@
 package com.wegame.capi.test.biz.module.bakunawa.multiple;
 
 import com.wegame.capi.biz.module.bakunawa.multiple.BakunawaMultipleCalculateStrategy;
-import com.wegame.capi.biz.module.mariamakiling.bet.strategy.MariaMakilingNormalBetStrategy;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 
-import com.wegame.base.context.Operator;
-import com.wegame.base.context.OperatorContext;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
-import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
-import com.wegame.capi.biz.domain.biz.game.BakunawaGameRecordDo;
-import com.wegame.capi.biz.module.bakunawa.bet.strategy.BakunawaNormalBetStrategy;
-import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.test.BaseTest;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
-public class MariaMakilingMultipleTest extends BaseTest {
+public class BakunawaMultipleTest extends BaseTest {
     @Autowired
     BakunawaMultipleCalculateStrategy bakunawaMultipleCalculateStrategy;
     @Test
