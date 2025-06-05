@@ -61,6 +61,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
                     .totalRewardAmount(0L)
                     .totalMultiple(BigDecimal.ZERO)
                     .hasRewardFreeWheel(false)
+                    .rewardFreeWheelTimes(0)
                     .rewardLineDetailList(null)
                     .build();
         }
@@ -95,6 +96,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
                 .hasRewardFreeWheel(false)
+                .rewardFreeWheelTimes(0)
                 .rewardLineDetailList(rewardLineDetailList)
                 .totalMultiple(basicMultiple.multiply(pieMultiple.getValue()))
                 .build();
