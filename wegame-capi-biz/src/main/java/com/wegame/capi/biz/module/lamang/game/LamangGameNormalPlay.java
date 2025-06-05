@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
@@ -51,6 +52,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     private static final int MAX_GOLDEN_NUMBER_IN_ROW = 1;
     private static final int MAX_SCATTER_NUMBER_IN_WHEEL = 3;
     private static final int REWARD_FREE_WHEEL_SCATTER_NUMBER = 3;
+    private static final int MAX_SCATTER1_NUMBER_IN_BATCH = 3;
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final GameInfoDo GAME_INFO = LAMANG_GAME_INFO;
@@ -103,8 +105,11 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
      */
     private void fillWheel(LamangSymbolDo[][] symbolArr,
                            LamangConfig.PlayProbabilisticConfig playProbabilisticConfig,
-                           boolean mustRewardFreeWheel) {
+                           boolean mustRewardFreeWheel,
+                           boolean freeWheel,
+                           AtomicInteger scatter1CountInBatch) {
 
+        AssertUtil.assertNotNull(scatter1CountInBatch, ErrorCode.ERR_INTER);
         // 生成整盘随机数(row*column)
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, GAME_INFO.getRow() * GAME_INFO.getColumn());
         // 当前scatter数量
@@ -129,15 +134,26 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 AssertUtil.assertTrue(MapUtils.isNotEmpty(columProbabilisticMap), ErrorCode.ERR_INTER);
                 Integer randomNumber = randomNumberList.get(randomNumberIndex);
                 SymbolDo symbolDo = null;
-                if (scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL) {
-                    // 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
-                    // 生成元素：非scatter元素
-                    symbolDo = randomNonScatterSymbol(randomNumber, LamangGameNormalPlay.GAME_INFO, columProbabilisticMap);
+                if (freeWheel) {
+                    if (scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL || scatter1CountInBatch.get() >= MAX_SCATTER1_NUMBER_IN_BATCH) {
+                        // 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素 || 一轮中产生的scatter+1元素超过3个
+                        // 生成元素：非scatter元素
+                        symbolDo = randomNonScatterSymbol(randomNumber, LamangGameNormalPlay.GAME_INFO, columProbabilisticMap);
+                    } else {
+                        // 生成元素：随机生成
+                        symbolDo = randomNormalSymbol(randomNumber, LamangGameNormalPlay.GAME_INFO, columProbabilisticMap);
+                    }
                 } else {
-                    // 生成元素：随机生成
-                    symbolDo = randomNormalSymbol(randomNumber, LamangGameNormalPlay.GAME_INFO, columProbabilisticMap);
+                    if (scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL) {
+                        // 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
+                        // 生成元素：非scatter元素
+                        symbolDo = randomNonScatterSymbol(randomNumber, LamangGameNormalPlay.GAME_INFO, columProbabilisticMap);
+                    } else {
+                        // 生成元素：随机生成
+                        symbolDo = randomNormalSymbol(randomNumber, LamangGameNormalPlay.GAME_INFO, columProbabilisticMap);
+                    }
                 }
-
+                AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
                 // 构建元素金边
                 int goldenInRow = countGoldenBorderInRow(symbolArr, row);
                 // 如果当前行有金边元素，则生成非金边元素
@@ -152,6 +168,10 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 if (symbolDo.isScatterSymbol()) {
                     scatterNumberInColumn = scatterNumberInColumn + 1;
                     scatterNumberInWheel = scatterNumberInWheel + 1;
+                }
+                // 如果是scatter+1 增加计数
+                if (symbolDo.getId().equals(LAMANG_SCATTER1.getId())) {
+                    scatter1CountInBatch.incrementAndGet();
                 }
                 randomNumberIndex = randomNumberIndex + 1;
             }
@@ -201,10 +221,12 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
      * 生成一轮第一个wheel
      */
     private WheelDo<LamangSymbolDo> generateFirstWheel(LamangConfig.PlayProbabilisticConfig config,
-                                                       boolean mustRewardFreeWheel, boolean freeWheel) {
+                                                       boolean mustRewardFreeWheel,
+                                                       boolean freeWheel,
+                                                       AtomicInteger scatter1CountInBatch) {
         LamangSymbolDo[][] symbolArr = new LamangSymbolDo[LamangGameNormalPlay.GAME_INFO.getRow()][LamangGameNormalPlay.GAME_INFO.getColumn()];
 
-        fillWheel(symbolArr, config, mustRewardFreeWheel);
+        fillWheel(symbolArr, config, mustRewardFreeWheel, freeWheel, scatter1CountInBatch);
 
         return WheelDo.<LamangSymbolDo>builder()
                 .index(WHEEL_DEFAULT_INDEX)
@@ -219,7 +241,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     private WheelDo<LamangSymbolDo> generateFromPreWheel(LamangGameRecordDo preGameRecord,
                                                          LamangConfig.PlayProbabilisticConfig config,
                                                          boolean mustRewardFreeWheel,
-                                                         boolean freeWheel) {
+                                                         boolean freeWheel,
+                                                         AtomicInteger scatter1CountInBatch) {
 
         WheelDo<LamangSymbolDo> preWheel = preGameRecord.getWheel();
         RewardResultDo<LamangSymbolDo> preRewardResult = preGameRecord.getRewardResult();
@@ -234,12 +257,12 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             symbolArr = initSuperWildWheel();
             LamangConfig.PlayProbabilisticConfig superWildConfig = lamangConfig.getProbabilisticConfig().getSupperWildRefreshProbabilisticConfig();
             // 用超级wild配置表填充wheel
-            fillWheel(symbolArr, superWildConfig, mustRewardFreeWheel);
+            fillWheel(symbolArr, superWildConfig, mustRewardFreeWheel, freeWheel, scatter1CountInBatch);
         } else {
             //下落
             rebuildSymbolArr(symbolArr, GAME_INFO);
             //填充
-            fillWheel(symbolArr, config, mustRewardFreeWheel);
+            fillWheel(symbolArr, config, mustRewardFreeWheel, freeWheel, scatter1CountInBatch);
             // 使用 占位符 覆盖bigWild的2-4列
             holdBigWild(symbolArr);
         }
@@ -278,7 +301,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                                          LinkedList<FreeWheelHandleDo> freeWheelList,
                                          LamangConfig.PlayProbabilisticConfig config,
                                          boolean freeWheelFlag,
-                                         boolean mustRewardFreeWheel) {
+                                         boolean mustRewardFreeWheel,
+                                         AtomicInteger scatter1CountInBatch) {
 
         boolean reachMaxMultiple = reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), lamangConfig.getRewardMaxMultiple());
         // 处理scatter+1赢取免费轮
@@ -292,7 +316,9 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                     preGameRecord,
                     config,
                     mustRewardFreeWheel,
-                    freeWheelFlag);
+                    freeWheelFlag,
+                    scatter1CountInBatch
+            );
             //后续生成wheel根据前一轮的倍率
             RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple(), totalRewardAmount.get()));
             long gameRecordId = generateGameRecordId();
@@ -301,7 +327,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                     gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult, drawTimes);
             gameRecordResult.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-            loopPlayOnPreGameRecord(gamePlay, gameRecordResult, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag, mustRewardFreeWheel);
+            loopPlayOnPreGameRecord(gamePlay, gameRecordResult, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag, mustRewardFreeWheel, scatter1CountInBatch);
         } else if (reachMaxMultiple) {
             //到达上限避免继续执行
             freeWheelList.clear();
@@ -368,8 +394,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     private void generateFirstBatch(GamePlayDo gamePlay, List<LamangGameRecordDo> result, AtomicLong totalRewardAmount,
                                     LinkedList<FreeWheelHandleDo> freeWheelList, boolean mustRewardFreeWheel) {
         LamangConfig.PlayProbabilisticConfig firstBatchConfig = lamangConfig.getProbabilisticConfig().getCommonPlaySymbolProbabilisticConfig();
-
-        WheelDo<LamangSymbolDo> wheel = generateFirstWheel(firstBatchConfig, mustRewardFreeWheel, false);
+        AtomicInteger scatter1CountInBatch = new AtomicInteger(0);
+        WheelDo<LamangSymbolDo> wheel = generateFirstWheel(firstBatchConfig, mustRewardFreeWheel, false, scatter1CountInBatch);
         //首轮不传入倍率
         RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
@@ -381,7 +407,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 gameRecordId, wheel, rewardResult, drawTimes);
         result.add(gameRecord);
         totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
-        loopPlayOnPreGameRecord(gamePlay, result, totalRewardAmount, gameRecord, freeWheelList, firstBatchConfig, false, mustRewardFreeWheel);
+        loopPlayOnPreGameRecord(gamePlay, result, totalRewardAmount, gameRecord, freeWheelList, firstBatchConfig, false, mustRewardFreeWheel, scatter1CountInBatch);
     }
 
     /**
@@ -393,7 +419,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             LamangGameRecordDo parentGameRecord = result.stream().filter(item -> Objects.equals(freeWheel.getParentGameRecordId(), item.getId())).findFirst().orElse(null);
             AssertUtil.assertNotNull(parentGameRecord, ErrorCode.ERR_INTER);
             LamangConfig.PlayProbabilisticConfig freeWheelConfig = lamangConfig.getProbabilisticConfig().getFreePlaySymbolProbabilisticConfig();
-            WheelDo<LamangSymbolDo> wheel = generateFirstWheel(freeWheelConfig, false, true);
+            AtomicInteger scatter1CountInBatch = new AtomicInteger(0);
+            WheelDo<LamangSymbolDo> wheel = generateFirstWheel(freeWheelConfig, false, true, scatter1CountInBatch);
             wheel.setFreeFlag(true);
             // 首轮不传入倍率
             RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
@@ -410,7 +437,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 parentGameRecord.setGameRecordIds(new ArrayList<>());
             }
             parentGameRecord.getGameRecordIds().add(gameRecordId);
-            loopPlayOnPreGameRecord(gamePlay, result, totalRewardAmount, gameRecord, freeWheelList, freeWheelConfig, true, false);
+            loopPlayOnPreGameRecord(gamePlay, result, totalRewardAmount, gameRecord, freeWheelList, freeWheelConfig, true, false, scatter1CountInBatch);
         }
     }
 
