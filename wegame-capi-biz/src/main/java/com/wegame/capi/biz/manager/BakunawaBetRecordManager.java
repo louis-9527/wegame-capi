@@ -7,7 +7,6 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.BakunawaGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.vo.bakunawa.BakunawaGameRecordVo;
-import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
