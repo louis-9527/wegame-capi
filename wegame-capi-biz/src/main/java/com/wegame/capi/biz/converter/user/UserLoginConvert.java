@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.converter;
+package com.wegame.capi.biz.converter.user;
 
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.client.domain.request.UserLoginRequest;
