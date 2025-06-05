@@ -107,6 +107,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                            LamangConfig.PlayProbabilisticConfig playProbabilisticConfig,
                            boolean mustRewardFreeWheel,
                            boolean freeWheel,
+                           boolean hasSuperWild,
                            AtomicInteger scatter1CountInBatch) {
 
         AssertUtil.assertNotNull(scatter1CountInBatch, ErrorCode.ERR_INTER);
@@ -114,8 +115,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, GAME_INFO.getRow() * GAME_INFO.getColumn());
         // 当前scatter数量
         int scatterNumberInWheel = LamangSymbolUtil.countScatterInWheel(symbolArr);
-        // 如果必须中免费轮，需要维持scatter数量 == 3
-        if (mustRewardFreeWheel) {
+        // 如果必须中免费轮，需要维持scatter数量 == 3, 有超级wild时候不触发
+        if (mustRewardFreeWheel && !hasSuperWild) {
             holdScatterCount(symbolArr, scatterNumberInWheel);
             scatterNumberInWheel = REWARD_FREE_WHEEL_SCATTER_NUMBER;
         }
@@ -226,7 +227,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                                                        AtomicInteger scatter1CountInBatch) {
         LamangSymbolDo[][] symbolArr = new LamangSymbolDo[LamangGameNormalPlay.GAME_INFO.getRow()][LamangGameNormalPlay.GAME_INFO.getColumn()];
 
-        fillWheel(symbolArr, config, mustRewardFreeWheel, freeWheel, scatter1CountInBatch);
+        fillWheel(symbolArr, config, mustRewardFreeWheel, freeWheel, false, scatter1CountInBatch);
 
         return WheelDo.<LamangSymbolDo>builder()
                 .index(WHEEL_DEFAULT_INDEX)
@@ -257,12 +258,12 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             symbolArr = initSuperWildWheel();
             LamangConfig.PlayProbabilisticConfig superWildConfig = lamangConfig.getProbabilisticConfig().getSupperWildRefreshProbabilisticConfig();
             // 用超级wild配置表填充wheel
-            fillWheel(symbolArr, superWildConfig, mustRewardFreeWheel, freeWheel, scatter1CountInBatch);
+            fillWheel(symbolArr, superWildConfig, mustRewardFreeWheel, freeWheel, true, scatter1CountInBatch);
         } else {
             //下落
             rebuildSymbolArr(symbolArr, GAME_INFO);
             //填充
-            fillWheel(symbolArr, config, mustRewardFreeWheel, freeWheel, scatter1CountInBatch);
+            fillWheel(symbolArr, config, mustRewardFreeWheel, freeWheel, false, scatter1CountInBatch);
             // 使用 占位符 覆盖bigWild的2-4列
             holdBigWild(symbolArr);
         }
