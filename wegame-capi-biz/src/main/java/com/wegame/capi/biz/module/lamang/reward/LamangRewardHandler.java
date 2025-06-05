@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.module.lamang.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.Pair;
 import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
@@ -61,9 +62,10 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         List<RewardLineDo<LamangSymbolDo>> rewardLineList = this.calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         // 3、计算倍率,倍率盘倍率
         BigDecimal totalMultiple = lamangMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
+        // 4.计算免费轮
+        int freeWheelTimes = this.calcRewardFreeWheelTimes(rewardHandle);
 
         if (CollectionUtil.isEmpty(rewardLineList)) {
-            int scatterCount = this.scatterCount(rewardHandle);
             // 未中奖
             return RewardResultDo.<LamangSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
@@ -71,9 +73,9 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
                     .totalMultiple(totalMultiple)
-                    .hasRewardFreeWheel(CollectionUtils.isEmpty(rewardLineList) && scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN)
+                    .hasRewardFreeWheel(freeWheelTimes > 0)
                     .rewardLineDetailList(null)
-                    .rewardFreeWheelTimes(scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0)
+                    .rewardFreeWheelTimes(freeWheelTimes)
                     .accumulateReachMaxMultiple(Boolean.FALSE)
                     .build();
         }
@@ -112,10 +114,10 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                 .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .totalRewardAmount(totalRewardAmount)
                 .totalMultiple(totalMultiple)
-                .hasRewardFreeWheel(Boolean.FALSE)
+                .hasRewardFreeWheel(freeWheelTimes > 0)
                 .rewardLineDetailList(rewardLineDetailList)
                 .accumulateReachMaxMultiple(reachMaxMultiple)
-                .rewardFreeWheelTimes(0)
+                .rewardFreeWheelTimes(freeWheelTimes)
                 .build();
         // 6.返回中奖信息
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
@@ -215,6 +217,34 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         return StringUtils.equals(symbol.getId(), targetSymbol.getId())
                 || Objects.equals(symbol.getSymbolType(), SymbolTypeEnum.WILD)
                 || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
+    }
+
+
+    /**
+     * 计算免费轮次数
+     * 统计scatter个数，和scatter+1的个数，将两个计算的免费轮次数相加
+     *
+     * @param rewardHandle rewardHandle
+     * @return freeWheelTimes
+     */
+    private Integer calcRewardFreeWheelTimes(RewardHandleDo<LamangSymbolDo> rewardHandle) {
+        int scatterCount = 0;
+        int newScatter1Count = 0;
+
+        WheelDo<LamangSymbolDo> wheel = rewardHandle.getWheel();
+        for (LamangSymbolDo[] columSymbols : wheel.getSymbolArr()) {
+            for (LamangSymbolDo symbol : columSymbols) {
+                if (Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER.getId())) {
+                    // scatter
+                    scatterCount++;
+                } else if (Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER1.getId()) && symbol.isNewSymbol()) {
+                    // scatter +1
+                    newScatter1Count++;
+                }
+            }
+        }
+        int scatterFreeWheelTimes = scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0;
+        return scatterFreeWheelTimes + newScatter1Count;
     }
 
     @Override
