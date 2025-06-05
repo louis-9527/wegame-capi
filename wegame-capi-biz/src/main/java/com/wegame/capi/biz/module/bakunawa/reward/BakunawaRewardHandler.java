@@ -3,7 +3,6 @@ package com.wegame.capi.biz.module.bakunawa.reward;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
@@ -46,8 +45,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
     @Autowired
     BakunawaConfig bakunawaConfig;
     @Autowired
-    MultipleCalculateStrategy bakunawaMultipleCalculateStrategy;
-
+    MultipleCalculateStrategy<SymbolDo> bakunawaMultipleCalculateStrategy;
 
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
         // 1、业务校验
@@ -119,22 +117,22 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
 
     private RewardLineDo<SymbolDo> calcRewardLine(GameInfoDo gameInfo, WheelDo<SymbolDo> wheel) {
         SymbolDo[][] symbolArr = wheel.getSymbolArr();
-        List<RewardSymbolDo<SymbolDo>> rewardSymbolDoList = Lists.newArrayList();
+        List<RewardSymbolDo<SymbolDo>> rewardSymbolList = Lists.newArrayList();
         for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
             SymbolDo symbolDo = symbolArr[ONE_ROW_INDEX][column];
-            if (CollectionUtils.isEmpty(rewardSymbolDoList) && REWARD_SYMBOL_LIST.contains(symbolDo)) {
-                rewardSymbolDoList.add(RewardSymbolDo.<SymbolDo>builder()
+            if (CollectionUtils.isEmpty(rewardSymbolList) && REWARD_SYMBOL_LIST.contains(symbolDo)) {
+                rewardSymbolList.add(RewardSymbolDo.<SymbolDo>builder()
                         .symbol(symbolDo)
                         .index(IndexFactory.buildDo(ONE_ROW_INDEX, column))
                         .build());
-            } else if (CollectionUtils.isNotEmpty(rewardSymbolDoList) && !StringUtils.equals(BAKUNAWA_SymbolNull.getId(), symbolDo.getId())) {
-                rewardSymbolDoList.add(RewardSymbolDo.<SymbolDo>builder()
+            } else if (CollectionUtils.isNotEmpty(rewardSymbolList) && !StringUtils.equals(BAKUNAWA_SymbolNull.getId(), symbolDo.getId())) {
+                rewardSymbolList.add(RewardSymbolDo.<SymbolDo>builder()
                         .symbol(symbolDo)
                         .index(IndexFactory.buildDo(ONE_ROW_INDEX, column))
                         .build());
             }
         }
-        if (CollectionUtils.isEmpty(rewardSymbolDoList)) {
+        if (CollectionUtils.isEmpty(rewardSymbolList)) {
             return null;
         }
         return RewardLineDo.<SymbolDo>builder()
@@ -142,7 +140,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 .rewardLineSubType(RewardLineSubTypeEnum.COMMON)
                 .rewardLineCount(1)
                 .rewardSymbol(null)
-                .rewardSymbolList(rewardSymbolDoList)
+                .rewardSymbolList(rewardSymbolList)
                 .build();
     }
 
