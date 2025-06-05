@@ -40,6 +40,7 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.betRecordSt
 public class BetStatusService {
 
     private static final long THREE_MINUTES = 3 * 60 * 1000;
+    private static final long MS_800 = 800;
     private static final String MESSAGE_FORMAT = "%s, 记录id：%s，投注失败";
     @Value("${spring.application.name}")
     private String appName;
@@ -49,8 +50,6 @@ public class BetStatusService {
     private String warningRobot;
     @Autowired
     SingleWalletApi singleWalletApi;
-    @Autowired
-    BetRecordService betRecordService;
     @Autowired
     PulsarProducer pulsarProducer;
 
@@ -97,7 +96,7 @@ public class BetStatusService {
             } catch (Exception e) {
                 log.error("convertBetStatus error, betRecordId: {}, errMsg: {}", betRecordDo.getId(), e.getMessage(), e);
             }
-        } while (System.currentTimeMillis() - betRecordDo.getCreateTime() <= THREE_MINUTES - 800);
+        } while (System.currentTimeMillis() - betRecordDo.getCreateTime() <= THREE_MINUTES - MS_800);
     }
 
     @Async(betRecordStatusThreadPoolExecutor)
@@ -108,7 +107,7 @@ public class BetStatusService {
     private void handle(BetRecordDo betRecordDo, GameTypeEnum gameType, BetStatusEnum betStatus, BetStatusRes betStatusRes) {
         log.info("handle betStatus betRecordId: {}, betStatus: {}, betStatusRes: {}", betRecordDo.getId(), betStatus, betStatusRes);
         MessageId messageId = pulsarProducer.syncSendMessage(gameType,
-                buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betStatusRes.getBetId()),
+                buildUpdateMessage(betRecordDo, betStatus, betStatusRes.getBetId()),
                 100);
         if (Objects.isNull(messageId)) {
             log.error("handle betStatus betRecordId: {}, betStatus: {}, send message fail", betRecordDo.getId(), betStatus);
