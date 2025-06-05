@@ -88,7 +88,7 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
                                                  RewardResultDo<SymbolDo> rewardResult,
                                                  Long overallRewardAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER, "Not Login");
         return BakunawaGameRecordDo.builder()
                 .id(id)
                 .betRecordId(betRecordId)
