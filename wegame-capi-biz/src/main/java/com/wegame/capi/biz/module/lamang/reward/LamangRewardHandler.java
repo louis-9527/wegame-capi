@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -62,7 +63,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         // 3、计算倍率,倍率盘倍率
         BigDecimal totalMultiple = lamangMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
         // 4.计算免费轮
-        int freeWheelTimes = this.calcRewardFreeWheelTimes(rewardHandle);
+        Pair<Integer, Integer> freeWheelTimesPair = this.calcRewardFreeWheelTimes(rewardHandle);
 
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
@@ -72,9 +73,9 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
                     .totalMultiple(totalMultiple)
-                    .hasRewardFreeWheel(freeWheelTimes > 0)
+                    .hasRewardFreeWheel(freeWheelTimesPair.getLeft() > 0)
                     .rewardLineDetailList(null)
-                    .rewardFreeWheelTimes(freeWheelTimes)
+                    .rewardFreeWheelTimes(freeWheelTimesPair.getLeft())
                     .accumulateReachMaxMultiple(Boolean.FALSE)
                     .build();
         }
@@ -113,10 +114,10 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                 .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .totalRewardAmount(totalRewardAmount)
                 .totalMultiple(totalMultiple)
-                .hasRewardFreeWheel(freeWheelTimes > 0)
+                .hasRewardFreeWheel(freeWheelTimesPair.getRight() > 0)
                 .rewardLineDetailList(rewardLineDetailList)
                 .accumulateReachMaxMultiple(reachMaxMultiple)
-                .rewardFreeWheelTimes(freeWheelTimes)
+                .rewardFreeWheelTimes(freeWheelTimesPair.getRight())
                 .build();
         // 6.返回中奖信息
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
@@ -226,7 +227,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
      * @param rewardHandle rewardHandle
      * @return freeWheelTimes
      */
-    private Integer calcRewardFreeWheelTimes(RewardHandleDo<LamangSymbolDo> rewardHandle) {
+    private Pair<Integer, Integer> calcRewardFreeWheelTimes(RewardHandleDo<LamangSymbolDo> rewardHandle) {
         int scatterCount = 0;
         int newScatter1Count = 0;
 
@@ -243,7 +244,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
             }
         }
         int scatterFreeWheelTimes = scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0;
-        return scatterFreeWheelTimes + newScatter1Count;
+        return Pair.of(scatterFreeWheelTimes, newScatter1Count);
     }
 
     private void validate(RewardHandleDo<LamangSymbolDo> rewardHandle) {
