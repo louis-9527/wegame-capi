@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.module.lamang.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.lang.Pair;
 import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
@@ -245,14 +244,6 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         }
         int scatterFreeWheelTimes = scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0;
         return scatterFreeWheelTimes + newScatter1Count;
-    }
-
-    @Override
-    public Integer scatterCount(RewardHandleDo<LamangSymbolDo> rewardHandle) {
-        WheelDo<LamangSymbolDo> wheel = rewardHandle.getWheel();
-        long count = Arrays.stream(wheel.getSymbolArr()).flatMap(Arrays::stream).filter(Objects::nonNull).
-                filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER.getId())).count();
-        return (int) count;
     }
 
     private void validate(RewardHandleDo<LamangSymbolDo> rewardHandle) {
