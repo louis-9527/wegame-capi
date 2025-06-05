@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.bakunawa.game;
 
+import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -42,7 +42,6 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
 
     @Override
     public List<BakunawaGameRecordDo> play(GamePlayDo gamePlay) {
-        List<BakunawaGameRecordDo> ret = new ArrayList<>();
         // 生成滚轮
         WheelDo<SymbolDo> wheel = generateNormalWheel();
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
@@ -54,8 +53,7 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
                 wheel,
                 rewardResult,
                 rewardResult.getTotalRewardAmount());
-        ret.add(record);
-        return ret;
+        return Lists.newArrayList(record);
     }
 
     /**
@@ -90,7 +88,7 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
                                                  RewardResultDo<SymbolDo> rewardResult,
                                                  Long overallRewardAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER, "Not Login");
         return BakunawaGameRecordDo.builder()
                 .id(id)
                 .betRecordId(betRecordId)
