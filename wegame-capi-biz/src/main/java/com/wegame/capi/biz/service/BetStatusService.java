@@ -108,7 +108,7 @@ public class BetStatusService {
     private void handle(BetRecordDo betRecordDo, GameTypeEnum gameType, BetStatusEnum betStatus, BetStatusRes betStatusRes) {
         log.info("handle betStatus betRecordId: {}, betStatus: {}, betStatusRes: {}", betRecordDo.getId(), betStatus, betStatusRes);
         MessageId messageId = pulsarProducer.syncSendMessage(gameType,
-                buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betStatusRes.getBetId()),
+                buildUpdateMessage(betRecordDo, betStatus, betStatusRes.getBetId()),
                 100);
         if (Objects.isNull(messageId)) {
             log.error("handle betStatus betRecordId: {}, betStatus: {}, send message fail", betRecordDo.getId(), betStatus);
