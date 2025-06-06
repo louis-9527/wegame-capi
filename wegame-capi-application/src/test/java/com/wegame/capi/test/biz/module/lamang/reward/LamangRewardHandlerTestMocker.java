@@ -129,8 +129,7 @@ public class LamangRewardHandlerTestMocker {
         symbolDo.setName(symbol.getName());
         symbolDo.setSymbolType(symbolType);
         symbolDo.setSymbolGoldBorder(symbolGoldBorder);
-        symbolDo.setJackpotDrawTimesAdded(jackpotDrawTimesAdded);
-        symbolDo.setFreeWheelAdded(freeWheelAdded);
+        symbolDo.setNewSymbol(true);
         return symbolDo;
     }
 
