@@ -68,7 +68,7 @@ public class Constants {
     public static final String MALAKAS_PROP = "game.enable.Malakas";
     public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";
     public static final String BAKUNAWA_ADARNA_PROP = "game.enable.Bakunawa";
-    public static final String LAMANG_PROP = "game.enable.lamang";
+    public static final String LAMANG_PROP = "game.enable.Lamang";
 
 
     public static final long FIVE_MINUTES_AGO = 5 * 60 * 1000;
@@ -84,6 +84,8 @@ public class Constants {
      * 奖池流水过期时间（秒）
      */
     public static final long JACKPOT_REWARD_POOL_EXPIRED_SECONDS = 24 * 60 * 60;
+    public static final String BUILD_BEAN_FORMAT = "build bean: {}";
+    public static final String COMMON_CLOSE_METHOD = "close";
 
     public static final String JACKPOT_LAMANG_PULSAR_SUBSCRIPTION= "_jackpot";
 }

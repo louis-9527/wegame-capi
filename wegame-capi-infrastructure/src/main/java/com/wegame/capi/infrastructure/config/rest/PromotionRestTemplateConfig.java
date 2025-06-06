@@ -18,6 +18,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+import static com.wegame.capi.common.Constants.COMMON_CLOSE_METHOD;
+
 @Slf4j
 @Configuration
 public class PromotionRestTemplateConfig {
@@ -38,7 +40,7 @@ public class PromotionRestTemplateConfig {
     @Value("${httpclient.promotion.timeToLive:59}")
     int promotionTimeToLive;
 
-    @Bean(value = PROMOTION_CONNECTION_MANAGER_BEAN, destroyMethod = "close")
+    @Bean(value = PROMOTION_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager promotionConnectionManager() {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(promotionTimeToLive, TimeUnit.SECONDS);
         manager.setMaxTotal(promotionConnectMaxTotal);
