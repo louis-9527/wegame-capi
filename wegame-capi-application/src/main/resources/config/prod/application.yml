@@ -166,6 +166,12 @@ pulsar:
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
       bet_deadLetter_topic: MariaMakiling_deadLetter_topic
+    ibong_adarna:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_IbongAdarna
+      namespace: ${spring.application.env}
+      bet_topic: IbongAdarna_topic
+      bet_deadLetter_topic: IbongAdarna_deadLetter_topic
 dynamic:
   operation:
     switch: true
