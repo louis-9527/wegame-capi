@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static com.wegame.capi.common.Constants.CONST_10000000;
+import static com.wegame.capi.common.Constants.CONST_1000000000;
 
 @Slf4j
 @Service
@@ -133,7 +134,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
             Long gameId = entry.getKey();   // 获取游戏 ID
             Integer count = entry.getValue(); // 获取对应的游戏计数
             for (int i = 0; i < count; i++) {
-                String rewardPoolType = GameUtil.randomKey(jackpotTriggerBetAmountConfig, CONST_10000000, randomService.randomInt(1, CONST_10000000));
+                String rewardPoolType = GameUtil.randomKey(jackpotTriggerBetAmountConfig, CONST_10000000, randomService.randomInt(1, CONST_1000000000));
                 poolTypeEnum = JackpotRewardPoolTypeEnum.valueOfName(rewardPoolType);
                 log.info("jackpot checkReward,index:{},result:{}", i, poolTypeEnum == null ? "null" : poolTypeEnum.name());
                 if (poolTypeEnum != null) {
