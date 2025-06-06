@@ -16,9 +16,9 @@ import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
-import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.module.lamang.LamangProbabilisticUtil;
 import com.wegame.capi.biz.module.lamang.LamangSymbolUtil;
+import com.wegame.capi.biz.module.lamang.reward.LamangRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.Constants;
@@ -66,7 +66,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     LamangConfig lamangConfig;
 
     @Autowired
-    RewardHandler<LamangSymbolDo> lamangRewardHandler;
+    LamangRewardHandler lamangRewardHandler;
 
     @Override
     public List<LamangGameRecordDo> play(GamePlayDo gamePlay) {
