@@ -23,6 +23,11 @@ import static com.wegame.capi.common.Constants.*;
 @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
 public class MariamakilingPulsarConfig {
 
+    public static final String mariaMakilingPulsarClient = "mariaMakilingPulsarClient";
+    public static final String mariamakilingProducer = "mariamakilingProducer";
+    public static final String mariamakilingConsumer = "mariamakilingConsumer";
+    public static final String mariamakilingDeadLetterConsumer = "mariamakilingDeadLetterConsumer";
+
     @Value("${pulsar.dynamic.maria_makiling.url}")
     String mariaMakilingUrl;
     @Value("${pulsar.dynamic.maria_makiling.tenant}")
@@ -34,9 +39,9 @@ public class MariamakilingPulsarConfig {
     @Value("${pulsar.dynamic.maria_makiling.bet_deadLetter_topic}")
     String mariaMakilingBetDeadLetterTopic;
 
-    @Bean(name = "mariaMakilingPulsarClient", destroyMethod = "close")
+    @Bean(name = mariaMakilingPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient mariaMakilingPulsarClient() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, "mariaMakilingPulsarClient");
+        log.info(BUILD_BEAN_FORMAT, mariaMakilingPulsarClient);
         PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(mariaMakilingUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -53,9 +58,9 @@ public class MariamakilingPulsarConfig {
         return pulsarClient;
     }
 
-    @Bean(name = "mariamakilingProducer", destroyMethod = "close")
+    @Bean(name = mariamakilingProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> mariamakilingProducer(@Autowired PulsarClient mariaMakilingPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "mariamakilingProducer");
+        log.info(BUILD_BEAN_FORMAT, mariamakilingProducer);
         return mariaMakilingPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, mariaMakilingTenant, mariaMakilingNamespace, mariaMakilingBetTopic))
                 .producerName(mariaMakilingTenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -75,10 +80,9 @@ public class MariamakilingPulsarConfig {
                 .create();
     }
 
-
-    @Bean(name = "mariamakilingConsumer", destroyMethod = "close")
+    @Bean(name = mariamakilingConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> mariamakilingConsumer(@Autowired PulsarClient mariaMakilingPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "mariamakilingConsumer");
+        log.info(BUILD_BEAN_FORMAT, mariamakilingConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, mariaMakilingTenant, mariaMakilingNamespace, mariaMakilingBetTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, mariaMakilingTenant, mariaMakilingNamespace, mariaMakilingBetDeadLetterTopic);
         return mariaMakilingPulsarClient.newConsumer()
@@ -106,9 +110,9 @@ public class MariamakilingPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "mariamakilingDeadLetterConsumer", destroyMethod = "close")
+    @Bean(name = mariamakilingDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> mariamakilingDeadLetterConsumer(@Autowired PulsarClient mariaMakilingPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "mariamakilingDeadLetterConsumer");
+        log.info(BUILD_BEAN_FORMAT, mariamakilingDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, mariaMakilingTenant, mariaMakilingNamespace, mariaMakilingBetDeadLetterTopic);
         return mariaMakilingPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
