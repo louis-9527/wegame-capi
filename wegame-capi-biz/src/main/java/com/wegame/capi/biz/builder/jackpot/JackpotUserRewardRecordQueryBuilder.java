@@ -101,7 +101,7 @@ public class JackpotUserRewardRecordQueryBuilder {
         }
         Update update = new Update();
         if (Objects.nonNull(recordPo.getRewardGrantStatus())) {
-            update.inc("rewardGrantStatus", recordPo.getRewardGrantStatus());
+            update.set("rewardGrantStatus", recordPo.getRewardGrantStatus());
         }
         if (Objects.nonNull(recordPo.getUpdater())) {
             update.set("updater", recordPo.getUpdater());
