@@ -2,7 +2,7 @@ package com.wegame.capi.application.controller;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.biz.converter.UserLoginConvert;
+import com.wegame.capi.biz.converter.user.UserLoginConvert;
 import com.wegame.capi.biz.service.LoginService;
 import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.client.domain.request.UserLoginRequest;

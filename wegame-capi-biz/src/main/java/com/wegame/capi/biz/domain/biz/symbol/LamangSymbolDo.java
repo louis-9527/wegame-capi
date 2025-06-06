@@ -25,14 +25,9 @@ public class LamangSymbolDo extends SymbolDo {
     private boolean symbolGoldBorder;
 
     /**
-     * 适用于scatter 和 scatter +1 ,是否已经被用于添加jackpot抽奖次数
+     * 是否是新元素
      */
-    private boolean jackpotDrawTimesAdded;
-
-    /**
-     * 适用于 scatter +1 ,是否已经被用于添加免费轮
-     */
-    private boolean freeWheelAdded;
+    private boolean newSymbol;
 
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
@@ -45,8 +40,7 @@ public class LamangSymbolDo extends SymbolDo {
                 .name(getName())
                 .symbolType(getSymbolType())
                 .symbolGoldBorder(isSymbolGoldBorder())
-                .jackpotDrawTimesAdded(isJackpotDrawTimesAdded())
-                .freeWheelAdded(isFreeWheelAdded())
+                .newSymbol(false)
                 .build();
     }
 
@@ -56,6 +50,7 @@ public class LamangSymbolDo extends SymbolDo {
                 .name(symbol.getName())
                 .symbolType(symbol.getSymbolType())
                 .symbolGoldBorder(symbolGoldBorder)
+                .newSymbol(true)
                 .build();
     }
 }

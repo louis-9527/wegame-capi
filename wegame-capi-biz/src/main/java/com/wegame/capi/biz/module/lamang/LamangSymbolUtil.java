@@ -40,7 +40,7 @@ public class LamangSymbolUtil {
     /**
      * 处理大wild
      */
-    public static void holdBigWild(LamangSymbolDo[][] symbolArr) {
+    public static void handleBigWild(LamangSymbolDo[][] symbolArr) {
         for (int row = 0; row < symbolArr.length; row++) {
             boolean hasWild = false;
             for (int col = 0; col < symbolArr[row].length; col++) {
@@ -52,7 +52,7 @@ public class LamangSymbolUtil {
             if (hasWild) {
                 for (int col = 1; col < 4; col++) { // 修改第2、3、4列（索引为1、2、3）
                     LamangSymbolDo current = symbolArr[row][col];
-                    //如果是bigwild，不处理，不是bigwild则换位占位符
+                    //如果是bigwild，不处理，不是bigwild则替换成占位符
                     if (Objects.nonNull(current) && current.getId().equals(LAMANG_BIG_WILD.getId())) {
                         //不处理
                     } else {
@@ -66,14 +66,13 @@ public class LamangSymbolUtil {
     /**
      * 计算中奖次数 (新增scatter & scatter+1数量) 并更新元素状态
      */
-    public static int countAndReleaseScatterDrawTimes(LamangSymbolDo[][] symbolArr) {
+    public static int countNewScatterAndScatter1InWheel(LamangSymbolDo[][] symbolArr) {
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
                 LamangSymbolDo current = symbolArr[row][col];
-                if (Objects.nonNull(current) && current.isScatterSymbol() && !current.isJackpotDrawTimesAdded()) {
+                if (Objects.nonNull(current) && current.isScatterSymbol() && current.isNewSymbol()) {
                     count = count + 1;
-                    symbolArr[row][col].setJackpotDrawTimesAdded(true);
                 }
             }
         }
@@ -81,19 +80,18 @@ public class LamangSymbolUtil {
     }
 
     /**
-     * 计算scatter+1赠送免费轮次数，并更新元素状态
+     * 统计新的scatter+1
      *
      * @param symbolArr
      * @return
      */
-    public static int countAndReleaseScatterFreeWheel(LamangSymbolDo[][] symbolArr) {
+    public static int countNewScatter1InWheel(LamangSymbolDo[][] symbolArr) {
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
                 LamangSymbolDo current = symbolArr[row][col];
-                if (Objects.nonNull(current) && current.getId().equals(LAMANG_SCATTER1.getId()) && !current.isFreeWheelAdded()) {
+                if (Objects.nonNull(current) && current.getId().equals(LAMANG_SCATTER1.getId()) && current.isNewSymbol()) {
                     count = count + 1;
-                    symbolArr[row][col].setFreeWheelAdded(true);
                 }
             }
         }
@@ -141,8 +139,6 @@ public class LamangSymbolUtil {
             for (int j = 0; j < col; j++) {
                 if (Objects.isNull(symbolArr[i][j])) {
                     newSymbolArr[i][j] = null;
-                } else if (symbolArr[i][j].isPlaceholderSymbol()) {
-                    newSymbolArr[i][j] = LAMANG_SYMBOL_PLACEHOLDER;
                 } else {
                     newSymbolArr[i][j] = symbolArr[i][j].copy();
                 }
