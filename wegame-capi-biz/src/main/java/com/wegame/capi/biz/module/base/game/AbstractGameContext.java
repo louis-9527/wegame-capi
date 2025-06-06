@@ -37,6 +37,7 @@ public abstract class AbstractGameContext<R> {
     public abstract GameInfoDo gameInfo();
 
     public List<R> play(GamePlayDo gamePlayDo) {
+        AssertUtil.assertNotNull(gamePlayDo, ErrorCode.ERR_INTER);
         String strategyName = playStrategyNameMap().get(gamePlayDo.getGamePlayType());
         AssertUtil.assertStrNotEmpty(strategyName, ErrorCode.ERR_PARAM, "Not Support GamePlayType");
         Game<R> game = playStrategyMap().get(strategyName);
