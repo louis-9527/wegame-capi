@@ -225,6 +225,7 @@ dynamic:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
       malakas: ${api.game.cp.channelId}_Malakas
       ibong: ${api.game.cp.channelId}_Ibong
+      bakunawa: ${api.game.cp.channelId}_Bakunawa
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud
