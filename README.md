@@ -49,6 +49,13 @@ http://localhost:9000/capi/doc.html
 测试环境接口文档地址：
 http://client.sportslive.com.ph:9000/capi/doc.html
 
+备注：
+
+1、 定时任务：schedule模块（alert、backend、biz、operation、startcard）
+2、 mongodb配置：infrastructure模块
+3、 listener：biz模块listener（betRecord、operation）
+4、 pulsar配置：biz模块config（xxxPulsarConfig、OperationEventPulsarConfig）
+
 
 
 线上请求链路：

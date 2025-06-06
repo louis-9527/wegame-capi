@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.MessageListener;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,14 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 import static com.wegame.capi.biz.converter.operation.OperationEventConvert.messageToDo;
+import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 
 /**
  * 干预事件消息监听
  */
 @Slf4j
 @Service
-public abstract class AbstractOperationEventPulsarListener implements MessageListener<byte[]> {
+public abstract class AbstractOperationEventPulsarListener implements MessageListener<byte[]>, InitializingBean {
 
     @Value("${api.game.cp.channelId}")
     String cpChannelId;
@@ -32,6 +34,11 @@ public abstract class AbstractOperationEventPulsarListener implements MessageLis
     OperationEventService operationEventService;
     @Autowired
     SnowflakeIdGenerator snowflakeIdGenerator;
+
+    @Override
+    public void afterPropertiesSet() {
+        log.info(BUILD_BEAN_FORMAT, getClass().getSimpleName());
+    }
 
     @Override
     public void received(Consumer<byte[]> consumer, Message<byte[]> msg) {
