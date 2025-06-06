@@ -48,7 +48,6 @@ public class BakunawaMultipleCalculateStrategy extends AbstractMultipleCalculate
                 .map(RewardSymbolDo::getSymbol)
                 .map(SymbolDo::getId)
                 .collect(Collectors.joining(""));
-        // todo 测试 “010” 是否是有效的数字
         AssertUtil.assertTrue(NumberUtil.isNumber(multipleStr), ErrorCode.ERR_PARAM, "multiples is error");
         return new BigDecimal(multipleStr);
     }
