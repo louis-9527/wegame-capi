@@ -16,5 +16,10 @@ public class JackpotDrawAndAwardDo {
     private Long betRecordId;
     private String betId;
     private Long betAmount;
-    private Map<Long,Integer> gameCount;
+    private Map<Long, Integer> gameCount;
+
+    /**
+     * 营销类型
+     */
+    private Integer betPromotionType;
 }

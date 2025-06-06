@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -37,6 +36,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
 
     @Autowired
     private RandomService randomService;
+
     @Override
     public AbstractJackpotManager jackpotManager() {
         return lamangJackpotManager;
@@ -46,6 +46,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     public JackpotTypeEnum getJackpotType() {
         return JackpotTypeEnum.LAM_ANG;
     }
+
     /**
      * 计算奖池提成
      *
@@ -56,34 +57,34 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
      */
     @Override
     public Map<JackpotRewardPoolTypeEnum, Long> calculateRewardPoolCommission(BetTypeEnum betTypeEnum, Long betAmount) {
-            AssertUtil.assertNotNull(betTypeEnum, ErrorCode.ERR_PARAM, "betTypeEnum is null");
-            AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM, "betAmount is null");
-            AssertUtil.assertTrue(betAmount >= 0, ErrorCode.ERR_PARAM, "betAmount is low than 0");
-            // 如果投注金额为0,则提成0
-            if (betAmount == 0) {
-                log.warn("JackpotHandler#calculateRewardPoolCommission betAmount is 0,commission return 0");
-                return super.buildDefaultCommissionResultMap();
-            }
-
-            LamangConfig.JackPotConfig jackPotConfig = lamangConfig.getJackPotConfig();
-            switch (betTypeEnum) {
-                case NORMAL_BET:
-                    // 先匹配按照金额提成
-                    Map<JackpotRewardPoolTypeEnum, Long> normalAmountCommissionMap = super.calculateRewardPoolCommissionByAmount(betAmount, jackPotConfig.getCommonCommissionConfig());
-                    return CollectionUtil.isNotEmpty(normalAmountCommissionMap) ? normalAmountCommissionMap
-                            // 按照比例提成
-                            : super.calculateRewardPoolCommissionByProportion(betAmount, jackPotConfig.getCommonCommissionConfig());
-                case BUY_BET:
-                    // 先匹配按照金额提成
-                    Map<JackpotRewardPoolTypeEnum, Long> buyAmountCommissionMap = super.calculateRewardPoolCommissionByAmount(betAmount, jackPotConfig.getBuyCommissionConfig());
-                    return CollectionUtil.isNotEmpty(buyAmountCommissionMap) ? buyAmountCommissionMap
-                            // 按照比例提成
-                            : super.calculateRewardPoolCommissionByProportion(betAmount, jackPotConfig.getBuyCommissionConfig());
-                default:
-                    throw new BusinessException(ErrorCode.ERR_INTER, "JackpotHandler#calculateRewardPoolCommission, not support betType");
-
-            }
+        AssertUtil.assertNotNull(betTypeEnum, ErrorCode.ERR_PARAM, "betTypeEnum is null");
+        AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM, "betAmount is null");
+        AssertUtil.assertTrue(betAmount >= 0, ErrorCode.ERR_PARAM, "betAmount is low than 0");
+        // 如果投注金额为0,则提成0
+        if (betAmount == 0) {
+            log.warn("JackpotHandler#calculateRewardPoolCommission betAmount is 0,commission return 0");
+            return super.buildDefaultCommissionResultMap();
         }
+
+        LamangConfig.JackPotConfig jackPotConfig = lamangConfig.getJackPotConfig();
+        switch (betTypeEnum) {
+            case NORMAL_BET:
+                // 先匹配按照金额提成
+                Map<JackpotRewardPoolTypeEnum, Long> normalAmountCommissionMap = super.calculateRewardPoolCommissionByAmount(betAmount, jackPotConfig.getCommonCommissionConfig());
+                return CollectionUtil.isNotEmpty(normalAmountCommissionMap) ? normalAmountCommissionMap
+                        // 按照比例提成
+                        : super.calculateRewardPoolCommissionByProportion(betAmount, jackPotConfig.getCommonCommissionConfig());
+            case BUY_BET:
+                // 先匹配按照金额提成
+                Map<JackpotRewardPoolTypeEnum, Long> buyAmountCommissionMap = super.calculateRewardPoolCommissionByAmount(betAmount, jackPotConfig.getBuyCommissionConfig());
+                return CollectionUtil.isNotEmpty(buyAmountCommissionMap) ? buyAmountCommissionMap
+                        // 按照比例提成
+                        : super.calculateRewardPoolCommissionByProportion(betAmount, jackPotConfig.getBuyCommissionConfig());
+            default:
+                throw new BusinessException(ErrorCode.ERR_INTER, "JackpotHandler#calculateRewardPoolCommission, not support betType");
+
+        }
+    }
 
     /**
      * 判断是否中奖
@@ -93,6 +94,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     @Override
     public JackpotWinPrizeDo calculateWinPrize(JackpotDrawAndAwardDo reqDo) {
         try {
+            //todo 根据betPromotionType决定是否抽奖
             JackpotWinPrizeDo jackpotWinPrizeDo = this.checkReward(reqDo.getBetAmount(), reqDo.getGameCount());
             if (jackpotWinPrizeDo == null) {
                 // 未中奖
@@ -111,6 +113,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
         }
 
     }
+
     private TreeMap<String, BigDecimal> getJackpotTriggerBetAmountConfig(Long amount) {
         LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig = lamangConfig.getJackPotConfig().getJackpotTriggerBetAmountConfig();
         for (Long poolAmount : jackpotTriggerBetAmountConfig.keySet()) {
@@ -120,7 +123,6 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
         }
         return null;
     }
-
 
 
     private JackpotWinPrizeDo checkReward(Long amount, Map<Long, Integer> gameCountMap) {
