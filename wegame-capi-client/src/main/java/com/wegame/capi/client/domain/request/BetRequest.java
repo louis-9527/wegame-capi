@@ -87,13 +87,13 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(payAmount >= 0, ErrorCode.ERR_PARAM);
             if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
-                mariaMakilingValidateParam(gameType, betType, betSubType);
-                validateStartCartBet(gameType, betType, betSubType);
-                validateFreeSpinBet(gameType, betType, betSubType);
+                mariaMakilingValidateParam(betType, betSubType);
+                validateStartCartBet(betType, betSubType);
+                validateFreeSpinBet(betType, betSubType);
             }
         }
 
-        private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        private void mariaMakilingValidateParam(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
             if(useStarCard){
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
@@ -141,7 +141,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             }
         }
 
-        private void validateStartCartBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        private void validateStartCartBet(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用星卡
             if (useStarCard) {
                 AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
@@ -152,7 +152,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                 }
             }
         }
-        private void validateFreeSpinBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        private void validateFreeSpinBet(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用预定投注
             if (useFreeSpin) {
                 AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET == betType, ErrorCode.ERR_PARAM);

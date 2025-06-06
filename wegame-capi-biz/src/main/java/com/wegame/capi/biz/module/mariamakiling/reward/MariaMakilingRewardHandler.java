@@ -55,9 +55,9 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
             .put(SymbolEnum.WildX10.getId(), SymbolEnum.WildX10)
             .build();
     @Autowired
-    OddsCalculateStrategy mariaMakilingOddsCalculateStrategy;
+    OddsCalculateStrategy<SymbolDo> mariaMakilingOddsCalculateStrategy;
     @Autowired
-    MultipleCalculateStrategy mariaMakilingMultipleCalculateStrategy;
+    MultipleCalculateStrategy<SymbolDo> mariaMakilingMultipleCalculateStrategy;
     @Autowired
     RandomService randomService;
     @Autowired
