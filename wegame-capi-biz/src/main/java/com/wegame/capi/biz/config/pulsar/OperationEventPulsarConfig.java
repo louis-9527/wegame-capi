@@ -47,7 +47,7 @@ public class OperationEventPulsarConfig {
     @Value("${dynamic.operation.pulsar.auth.audience}")
     String dynamicOperationAuthAudience;
 
-    @Bean(name = operationEventPulsarClient, destroyMethod = "close")
+    @Bean(name = operationEventPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient operationEventPulsarClient() throws Exception {
         log.info(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
         if (StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)) {
@@ -70,7 +70,7 @@ public class OperationEventPulsarConfig {
     }
 
 
-    @Bean(name = mariaMakilingOperationEventConsumer, destroyMethod = "close")
+    @Bean(name = mariaMakilingOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
     public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                 @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
@@ -83,7 +83,7 @@ public class OperationEventPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = malakasOperationEventConsumer, destroyMethod = "close")
+    @Bean(name = malakasOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
     public Consumer<byte[]> malakasOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                           @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
@@ -96,7 +96,7 @@ public class OperationEventPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = ibongOperationEventConsumer, destroyMethod = "close")
+    @Bean(name = ibongOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
     public Consumer<byte[]> ibongOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                         @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
