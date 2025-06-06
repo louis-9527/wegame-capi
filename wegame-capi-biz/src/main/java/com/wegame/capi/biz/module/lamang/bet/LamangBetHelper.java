@@ -11,12 +11,12 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
-import com.wegame.capi.biz.domain.biz.jackpot.JackpotDrawAndAwardDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.jackpot.AbsJackpotHandler;
 import com.wegame.capi.biz.module.base.jackpot.JackpotHandlerContext;
+import com.wegame.capi.biz.module.lamang.LamangJackpotHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
@@ -112,41 +112,17 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
         try {
             AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
             AssertUtil.assertNotNull(handler, ErrorCode.ERR_INTER);
-            return handler.calculateWinPrize(buildJackpotDrawAndAwardDo(betRecord, singleWalletBetResultDo));
+            return handler.calculateWinPrize(LamangJackpotHelper.buildJackpotDrawAndAwardDo(betRecord, singleWalletBetResultDo));
         } catch (Exception e) {
             log.error("draw jackpot error,betRecordId:{}", betRecord.getId(), e);
         }
         return null;
     }
 
-    private JackpotDrawAndAwardDo buildJackpotDrawAndAwardDo(BetRecordDo<LamangGameRecordDo> betRecord, SingleWalletBetResultDo singleWalletBetResultDo) {
-        return JackpotDrawAndAwardDo.builder()
-                .betId(singleWalletBetResultDo.getBetId())
-                .betAmount(betRecord.getBetAmount())
-                .channelId(betRecord.getChannelId())
-                .playerName(betRecord.getPlayerName())
-                .betRecordId(betRecord.getId())
-                .pId(betRecord.getPId())
-                .playerId(betRecord.getPlayerId())
-                .userId(betRecord.getUserId())
-                .gameCount(buildGameDrawTimes(betRecord.getGameRecordList()))
-                .build();
-    }
-
-    private Map<Long, Integer> buildGameDrawTimes(List<LamangGameRecordDo> dos) {
-        return dos.stream()
-                .filter(gameRecord -> Objects.nonNull(gameRecord.getJackpotDrawTimes()) && gameRecord.getJackpotDrawTimes() > 0)
-                .collect(Collectors.toMap(
-                        LamangGameRecordDo::getId,
-                        LamangGameRecordDo::getJackpotDrawTimes,
-                        Integer::sum // 处理 key 冲突
-                ));
-    }
-
     private BetRecordDo.Jackpot buildBetCommission(BetDo betDo) {
         AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
         if (Objects.nonNull(handler)) {
-            Map<JackpotRewardPoolTypeEnum, Long> commissiontMap = handler.calculateRewardPoolCommission(betDo.getBetType(), betDo.getBetAmount());
+            Map<JackpotRewardPoolTypeEnum, Long> commissiontMap = handler.calculateRewardPoolCommission(betDo.getBetPromotionType(), betDo.getBetType(), betDo.getBetAmount());
             return BetRecordDo.Jackpot.builder()
                     .grandContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.grand))
                     .majorContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.major))

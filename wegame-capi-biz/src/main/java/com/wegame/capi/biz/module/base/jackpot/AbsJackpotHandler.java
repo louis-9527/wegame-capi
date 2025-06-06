@@ -13,7 +13,7 @@ import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
 import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
-import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
@@ -50,12 +50,10 @@ public abstract class AbsJackpotHandler {
 
     public abstract JackpotTypeEnum getJackpotType();
 
-    public abstract  Map<JackpotRewardPoolTypeEnum, Long> calculateRewardPoolCommission(BetTypeEnum betTypeEnum, Long betAmount);
+    public abstract Map<JackpotRewardPoolTypeEnum, Long> calculateRewardPoolCommission(BetPromotionTypeEnum betPromotionTypeEnum, BetTypeEnum betTypeEnum, Long betAmount);
 
 
     public abstract JackpotWinPrizeDo calculateWinPrize(JackpotDrawAndAwardDo reqDo);
-
-
 
 
     protected Long buildRewardAmount(JackpotDrawAndAwardDo drawAndAwardDo, JackpotRewardPoolTypeEnum jackpotRewardPoolType, Long guaranteed, Long betGameId) {
