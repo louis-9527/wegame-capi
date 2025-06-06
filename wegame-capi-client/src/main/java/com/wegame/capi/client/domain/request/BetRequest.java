@@ -23,7 +23,7 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "投注请求参数")
 public class BetRequest extends BaseRequest implements Validate, Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7256326783223327817L;
     @ApiModelProperty(value = "游戏Id", required = true)
     private String gameId;
     @ApiModelProperty(value = "投注类型:NORMAL_BET,购买投注:BUY_BET", required = true)
@@ -55,6 +55,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
     @EqualsAndHashCode(callSuper = false)
     @ApiModel(description = "投注详情")
     public static class BetDetail implements BetRequestValidate, Serializable {
+        private static final long serialVersionUID = 196176475253019928L;
         private static final long MIN_BET_AMOUNT = 300L;
         private static final long MAX_BET_AMOUNT = 10000000L;
         private static final long MULTIPLE = 35;
