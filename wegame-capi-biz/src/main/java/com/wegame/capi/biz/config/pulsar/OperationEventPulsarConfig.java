@@ -87,6 +87,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = malakasOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
     public Consumer<byte[]> malakasOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                           @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, malakasOperationEventConsumer);
@@ -100,6 +101,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = ibongOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(IbongOperationEventPulsarListener.class)
     public Consumer<byte[]> ibongOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                         @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, ibongOperationEventConsumer);
