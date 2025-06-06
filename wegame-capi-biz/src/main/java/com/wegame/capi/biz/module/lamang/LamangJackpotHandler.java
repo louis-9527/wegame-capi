@@ -134,6 +134,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
             for (int i = 0; i < count; i++) {
                 String rewardPoolType = GameUtil.randomKey(jackpotTriggerBetAmountConfig, CONST_10000000, randomService.randomInt(1, CONST_10000000));
                 poolTypeEnum = JackpotRewardPoolTypeEnum.valueOfName(rewardPoolType);
+                log.info("jackpot checkReward,index:{},result:{}", i, poolTypeEnum == null ? "null" : poolTypeEnum.name());
                 if (poolTypeEnum != null) {
                     return JackpotWinPrizeDo.builder().betGameId(gameId)
                             .jackpotRewardPoolType(poolTypeEnum).build();
