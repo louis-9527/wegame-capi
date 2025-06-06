@@ -23,6 +23,11 @@ import static com.wegame.capi.common.Constants.*;
 @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
 public class MalakasPulsarConfig {
 
+    public static final String malakasPulsarClient = "malakasPulsarClient";
+    public static final String malakasProducer = "malakasProducer";
+    public static final String malakasConsumer = "malakasConsumer";
+    public static final String malakasDeadLetterConsumer = "malakasDeadLetterConsumer";
+
     @Value("${pulsar.dynamic.malakas.url}")
     String url;
     @Value("${pulsar.dynamic.malakas.tenant}")
@@ -34,18 +39,18 @@ public class MalakasPulsarConfig {
     @Value("${pulsar.dynamic.malakas.bet_deadLetter_topic}")
     String betDeadLetterTopic;
 
-    @Bean(name = "malakasPulsarClient", destroyMethod = "close")
+    @Bean(name = malakasPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient malakasPulsarClient() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, "malakasPulsarClient");
+        log.info(BUILD_BEAN_FORMAT, malakasPulsarClient);
         return PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
                 .build();
     }
 
-    @Bean(name = "malakasProducer", destroyMethod = "close")
+    @Bean(name = malakasProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> malakasProducer(@Autowired PulsarClient malakasPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "malakasProducer");
+        log.info(BUILD_BEAN_FORMAT, malakasProducer);
         return malakasPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic))
                 .producerName(tenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -64,10 +69,9 @@ public class MalakasPulsarConfig {
                 .create();
     }
 
-
-    @Bean(name = "malakasConsumer", destroyMethod = "close")
+    @Bean(name = malakasConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> malakasConsumer(@Autowired PulsarClient malakasPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "malakasConsumer");
+        log.info(BUILD_BEAN_FORMAT, malakasConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return malakasPulsarClient.newConsumer()
@@ -93,9 +97,9 @@ public class MalakasPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "malakasDeadLetterConsumer", destroyMethod = "close")
+    @Bean(name = malakasDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> malakasDeadLetterConsumer(@Autowired PulsarClient malakasPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "malakasDeadLetterConsumer");
+        log.info(BUILD_BEAN_FORMAT, malakasDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return malakasPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

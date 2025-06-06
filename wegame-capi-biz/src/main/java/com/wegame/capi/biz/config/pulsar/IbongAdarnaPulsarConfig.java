@@ -23,6 +23,11 @@ import static com.wegame.capi.common.Constants.*;
 @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
 public class IbongAdarnaPulsarConfig {
 
+    public static final String ibongadarnaPulsarClient = "ibongadarnaPulsarClient";
+    public static final String ibongadarnaProducer = "ibongadarnaProducer";
+    public static final String ibongadarnaConsumer = "ibongadarnaConsumer";
+    public static final String ibongadarnaDeadLetterConsumer = "ibongadarnaDeadLetterConsumer";
+    
     @Value("${pulsar.dynamic.ibong_adarna.url}")
     String ibongAdarnaUrl;
     @Value("${pulsar.dynamic.ibong_adarna.tenant}")
@@ -34,9 +39,9 @@ public class IbongAdarnaPulsarConfig {
     @Value("${pulsar.dynamic.ibong_adarna.bet_deadLetter_topic}")
     String ibongAdarnaBetDeadLetterTopic;
 
-    @Bean(name = "ibongadarnaPulsarClient", destroyMethod = "close")
+    @Bean(name = ibongadarnaPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient ibongadarnaPulsarClient() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, "ibongadarnaPulsarClient");
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaPulsarClient);
         PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(ibongAdarnaUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -53,9 +58,9 @@ public class IbongAdarnaPulsarConfig {
         return pulsarClient;
     }
 
-    @Bean(name = "ibongadarnaProducer", destroyMethod = "close")
+    @Bean(name = ibongadarnaProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> ibongadarnaProducer(@Autowired PulsarClient ibongadarnaPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "ibongadarnaProducer");
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaProducer);
         return ibongadarnaPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetTopic))
                 .producerName(ibongAdarnaTenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -75,10 +80,9 @@ public class IbongAdarnaPulsarConfig {
                 .create();
     }
 
-
-    @Bean(name = "ibongadarnaConsumer", destroyMethod = "close")
+    @Bean(name = ibongadarnaConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> ibongadarnaConsumer(@Autowired PulsarClient ibongadarnaPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "ibongadarnaConsumer");
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetDeadLetterTopic);
         return ibongadarnaPulsarClient.newConsumer()
@@ -106,9 +110,9 @@ public class IbongAdarnaPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "ibongadarnaDeadLetterConsumer", destroyMethod = "close")
+    @Bean(name = ibongadarnaDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> ibongadarnaDeadLetterConsumer(@Autowired PulsarClient ibongadarnaPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, "ibongadarnaDeadLetterConsumer");
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetDeadLetterTopic);
         return ibongadarnaPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

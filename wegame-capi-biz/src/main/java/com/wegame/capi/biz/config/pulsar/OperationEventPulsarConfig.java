@@ -98,7 +98,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = ibongOperationEventConsumer, destroyMethod = "close")
     @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
-    public Consumer<byte[]> IbongOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+    public Consumer<byte[]> ibongOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                         @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, ibongOperationEventConsumer);
         String deadLetterTopic = dynamicOperationTopic;
