@@ -403,12 +403,6 @@
         "none": "99.9995000"
       }
     },
-    "jackPotRewardGrantProportionConfig": {
-      "grand": "0.0001000",
-      "major": "0.0010080",
-      "minor": "0.0100500",
-      "mini": "0.1000000"
-    },
     "guaranteedAmount": {
       "grand": "200000000",
       "major": "50000000",
