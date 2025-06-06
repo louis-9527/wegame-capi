@@ -44,10 +44,11 @@ public class BakunawaMultipleCalculateStrategy extends AbstractMultipleCalculate
         // 中奖元素id字符串拼接得到滚盘倍率
         String multipleStr = rewardLineDo.getRewardSymbolList()
                 .stream()
-                .filter(item -> !item.getSymbol().getId().equals(SymbolEnum.SymbolNull.getId()))
+                .filter(item -> !SymbolEnum.SymbolNull.getId().equals(item.getSymbol().getId()))
                 .map(RewardSymbolDo::getSymbol)
                 .map(SymbolDo::getId)
                 .collect(Collectors.joining(""));
+        // todo 测试 “010” 是否是有效的数字
         AssertUtil.assertTrue(NumberUtil.isNumber(multipleStr), ErrorCode.ERR_PARAM, "multiples is error");
         return new BigDecimal(multipleStr);
     }

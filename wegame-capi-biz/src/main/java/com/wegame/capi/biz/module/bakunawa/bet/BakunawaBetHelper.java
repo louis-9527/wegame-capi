@@ -30,6 +30,7 @@ public class BakunawaBetHelper implements BetHelper<BakunawaGameRecordDo, Bakuna
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
+        // todo 是否达到最大倍数检查 maidong
         return BetRecordBuilder.build(betRecordId,
                 betDo,
                 totalRewardAmount,

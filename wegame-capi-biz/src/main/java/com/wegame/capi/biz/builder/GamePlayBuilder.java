@@ -10,6 +10,7 @@ import java.util.Objects;
 public class GamePlayBuilder {
 
     public static GamePlayDo build(GamePlayTypeEnum gamePlayType, BetDo betDo, long betRecordId, GameOperationEventDo gameEventDo) {
+        // todo maidong 添加校验
         return GamePlayDo.builder()
                 .gamePlayType(gamePlayType)
                 .gameType(betDo.getGameType())
