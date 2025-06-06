@@ -226,7 +226,7 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
      * 正常轮,有中奖，返回0
      *
      * @param rewardHandle rewardHandle
-     * @return left:scatter产生的免费轮次数.right:scatter+1 产生的免费轮次数
+     * @return 免费轮次数
      */
     private Integer calcRewardFreeWheelTimes(RewardHandleDo<LamangSymbolDo> rewardHandle, List<RewardLineDo<LamangSymbolDo>> rewardLineList) {
         // 区分正常轮和免费轮
