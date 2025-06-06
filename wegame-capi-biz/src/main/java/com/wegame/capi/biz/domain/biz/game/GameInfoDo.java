@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.game;
 
+import com.esotericsoftware.kryo.util.Null;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.*;
@@ -34,17 +35,20 @@ public class GameInfoDo implements Serializable {
     /**
      * 行
      */
-    private Integer row;
+    private int row;
     /**
      * 列
      */
-    private Integer column;
+    private int column;
     /**
      * 元素Map<元素id，元素>
      */
     private Map<String, SymbolDo> symbolMap;
 
     public SymbolDo getSymbolById(String symbolId) {
+        if (symbolMap == null) {
+            return null;
+        }
         return symbolMap.get(symbolId);
     }
 }
