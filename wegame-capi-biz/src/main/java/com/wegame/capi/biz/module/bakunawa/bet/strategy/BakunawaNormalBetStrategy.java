@@ -41,8 +41,7 @@ public class BakunawaNormalBetStrategy extends AbstractBakunawaBetStrategy {
     public void rewardAfterHandle(BetDo betDo, Long totalRewardAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         defaultThreadPoolExecutor.execute(() -> {
-            // todo maidong 小转大丢失精度
-            Integer multiple = rewardMultiple(betDo.getBetAmount(), totalRewardAmount);
+            Long multiple = rewardMultiple(betDo.getBetAmount(), totalRewardAmount);
             Integer rewardNotifyMinMultiple = bakunawaConfig.getRewardNotifyMinMultiple();
             if (multiple >= rewardNotifyMinMultiple) {
                 updateRewardNotifyInfo(GameTypeEnum.BAKUNAWA, userInfo, multiple, totalRewardAmount);
@@ -50,11 +49,11 @@ public class BakunawaNormalBetStrategy extends AbstractBakunawaBetStrategy {
         });
     }
 
-    private Integer rewardMultiple(Long betAmount, Long totalRewardAmount) {
-        return Math.toIntExact(totalRewardAmount / betAmount);
+    private Long rewardMultiple(Long betAmount, Long totalRewardAmount) {
+        return totalRewardAmount / betAmount;
     }
 
-    private void updateRewardNotifyInfo(GameTypeEnum gameType, UserInfo userInfo, Integer multiple, long totalRewardAmount) {
+    private void updateRewardNotifyInfo(GameTypeEnum gameType, UserInfo userInfo, Long multiple, long totalRewardAmount) {
         try {
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
