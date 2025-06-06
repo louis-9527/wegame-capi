@@ -29,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -63,11 +62,9 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
         // 3、计算倍率,倍率盘倍率
         BigDecimal totalMultiple = lamangMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
         // 4.计算免费轮
-        Pair<Integer, Integer> freeWheelTimesPair = this.calcRewardFreeWheelTimes(rewardHandle);
-
+        int freeWheelTimes = this.calcRewardFreeWheelTimes(rewardHandle, rewardLineList);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
-            int freeWheelTimes = freeWheelTimesPair.getLeft() + freeWheelTimesPair.getRight();
             return RewardResultDo.<LamangSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardType(RewardTypeEnum.NONE)
@@ -115,10 +112,10 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                 .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .totalRewardAmount(totalRewardAmount)
                 .totalMultiple(totalMultiple)
-                .hasRewardFreeWheel(freeWheelTimesPair.getRight() > 0)
+                .hasRewardFreeWheel(freeWheelTimes > 0)
                 .rewardLineDetailList(rewardLineDetailList)
                 .accumulateReachMaxMultiple(reachMaxMultiple)
-                .rewardFreeWheelTimes(freeWheelTimesPair.getRight())
+                .rewardFreeWheelTimes(freeWheelTimes)
                 .build();
         // 6.返回中奖信息
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
@@ -223,29 +220,29 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
 
     /**
      * 计算免费轮次数
-     * 统计scatter个数，和scatter+1的个数
+     * 区分正常轮和免费轮
+     * 免费轮,计算scatter+1
+     * 正常轮，没有中奖，计算scatter产生的免费轮
+     * 正常轮,有中奖，返回0
      *
      * @param rewardHandle rewardHandle
      * @return left:scatter产生的免费轮次数.right:scatter+1 产生的免费轮次数
      */
-    private Pair<Integer, Integer> calcRewardFreeWheelTimes(RewardHandleDo<LamangSymbolDo> rewardHandle) {
-        int scatterCount = 0;
-        int newScatter1Count = 0;
-
-        WheelDo<LamangSymbolDo> wheel = rewardHandle.getWheel();
-        for (LamangSymbolDo[] columSymbols : wheel.getSymbolArr()) {
-            for (LamangSymbolDo symbol : columSymbols) {
-                if (Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER.getId())) {
-                    // scatter
-                    scatterCount++;
-                } else if (Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER1.getId()) && symbol.isNewSymbol()) {
-                    // scatter +1
-                    newScatter1Count++;
-                }
-            }
+    private Integer calcRewardFreeWheelTimes(RewardHandleDo<LamangSymbolDo> rewardHandle, List<RewardLineDo<LamangSymbolDo>> rewardLineList) {
+        // 区分正常轮和免费轮
+        if (rewardHandle.getWheel().isFreeFlag()) {
+            // 免费轮,计算scatter+1
+            long newScatter1Count = Arrays.stream(rewardHandle.getWheel().getSymbolArr()).flatMap(Arrays::stream)
+                    .filter(Objects::nonNull).filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER1.getId()) && symbol.isNewSymbol()).count();
+            return (int) newScatter1Count;
+        } else if (CollectionUtil.isEmpty(rewardLineList)) {
+            // 正常轮，没有中奖，计算scatter产生的免费轮
+            long scatterCount = Arrays.stream(rewardHandle.getWheel().getSymbolArr()).flatMap(Arrays::stream)
+                    .filter(Objects::nonNull).filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER.getId())).count();
+            return scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0;
         }
-        int scatterFreeWheelTimes = scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0;
-        return Pair.of(scatterFreeWheelTimes, newScatter1Count);
+        // 正常轮,有中奖，返回0
+        return 0;
     }
 
     private void validate(RewardHandleDo<LamangSymbolDo> rewardHandle) {
