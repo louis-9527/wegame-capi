@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.jackpot;
+package com.wegame.capi.biz.module.lamang;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
