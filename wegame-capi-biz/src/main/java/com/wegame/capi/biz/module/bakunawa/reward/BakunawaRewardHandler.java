@@ -13,8 +13,8 @@ import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.bakunawa.multiple.BakunawaMultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.RewardHelper;
-import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.MultiplePieTypeEnum;
@@ -45,7 +45,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
     @Autowired
     BakunawaConfig bakunawaConfig;
     @Autowired
-    MultipleCalculateStrategy<SymbolDo> bakunawaMultipleCalculateStrategy;
+    BakunawaMultipleCalculateStrategy bakunawaMultipleCalculateStrategy;
 
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
         // 1、业务校验

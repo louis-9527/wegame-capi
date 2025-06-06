@@ -52,10 +52,6 @@ public class MalakasBetRecordManager extends AbstractBetRecordManager<MalakasGam
     @Override
     public boolean batchAdd(List<BetRecordDo<MalakasGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
-        // todo delete @maidong
-        for (int i = 0; i < betRecordList.size(); i++) {
-            log.info("batchAdd index: {} betRecordId:{}", i, betRecordList.get(i).getId());
-        }
         List<BetRecordDo> betRecordDos = betRecordList.stream().collect(Collectors.toList());
         boolean ret = betRecordService.batchAdd(betRecordDos, gameType);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
@@ -64,10 +60,6 @@ public class MalakasBetRecordManager extends AbstractBetRecordManager<MalakasGam
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            // todo delete log
-            gameRecordList.forEach(item -> {
-                log.info("batchAdd GameRecord id:{}", item.getId());
-            });
             boolean batchAddRet = gameRecordService.batchAdd(gameRecordList, gameType, MalakasGameRecordDo.class);
             AssertUtil.assertTrue(batchAddRet, ErrorCode.ERR_INTER);
         }
