@@ -23,17 +23,21 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
+
+/**
+ * app启动后处理器
+ */
 @Slf4j
 @Component
-public class AppStartupListener implements ApplicationListener<ContextRefreshedEvent> {
+public class AppLaunchPostProcessor {
 
     @Autowired
     GameProperty gameProperty;
@@ -72,15 +76,13 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     @Autowired
     PoolingHttpClientConnectionManager promotionConnectionManager;
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
-        // 执行业务预热操作
-        log.info("Application started. Performing business warm-up start...");
+    @Async(defaultThreadPoolExecutor)
+    public void postProcess() {
         businessWarmUp();
+        // todo 第一次上线后， 后续屏蔽该动作
         buildUserIdCache();
         initDomainConnections();
         healthCheck();
-        log.info("Application started. Performing business warm-up start...");
     }
 
     private void businessWarmUp() {
@@ -139,12 +141,12 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
             initConnections(walletConnectionManager, singleDomainIntConnections, HttpHost.create(singleDomain));
             initConnections(freeSpinConnectionManager, freeSpinDomainIntConnections, HttpHost.create(freeSpinDomain));
             initConnections(promotionConnectionManager, promotionDomainIntConnections, HttpHost.create(promotionDomain));
+            //        String domain = "http://server1.makillingslot.net";
+            //        HttpHost httpHost = HttpHost.create(domain);
+            //        initConnections(walletConnectionManager, 10, httpHost);
         } catch (Exception e) {
             log.error("initDomainConnections error", e);
         }
-        //        String domain = "http://server1.makillingslot.net";
-        //        HttpHost httpHost = HttpHost.create(domain);
-        //        initConnections(walletConnectionManager, 10, httpHost);
     }
 
     private void initConnections(PoolingHttpClientConnectionManager manager, int numConnections, HttpHost httpHost) {
