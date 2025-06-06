@@ -122,7 +122,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
     private BetRecordDo.Jackpot buildBetCommission(BetDo betDo) {
         AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
         if (Objects.nonNull(handler)) {
-            Map<JackpotRewardPoolTypeEnum, Long> commissiontMap = handler.calculateRewardPoolCommission(betDo.getBetType(), betDo.getBetAmount());
+            Map<JackpotRewardPoolTypeEnum, Long> commissiontMap = handler.calculateRewardPoolCommission(betDo.getBetPromotionType(), betDo.getBetType(), betDo.getBetAmount());
             return BetRecordDo.Jackpot.builder()
                     .grandContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.grand))
                     .majorContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.major))
