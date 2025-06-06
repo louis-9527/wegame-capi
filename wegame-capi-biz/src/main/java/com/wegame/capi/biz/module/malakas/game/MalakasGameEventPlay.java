@@ -14,7 +14,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
-import com.wegame.capi.biz.module.base.reward.RewardHandler;
+import com.wegame.capi.biz.module.malakas.reward.MalakasRewardHandler;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -39,7 +39,7 @@ public class MalakasGameEventPlay extends AbstractGame<MalakasGameRecordDo> {
     private static final GameInfoDo gameInfo = MALAKAS_GAME_INFO;
 
     @Autowired
-    RewardHandler malakasRewardHandler;
+    MalakasRewardHandler malakasRewardHandler;
 
     @Autowired
     OperationEventConfigRecordService operationEventConfigRecordService;
