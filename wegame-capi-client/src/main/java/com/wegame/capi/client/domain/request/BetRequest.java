@@ -99,10 +99,13 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
                 ibongAdarnaValidateParam(betType, betSubType);
                 validateFreeSpinBet(betType, betSubType);
-                ibongAdarnaValidateParam(betType, betSubType);
-                validateFreeSpinBet(betType, betSubType);
             } else if (Objects.equals(gameType, GameTypeEnum.BAKUNAWA)) {
                 bakunawaValidateParam(betType, betSubType);
+                validateFreeSpinBet(betType, betSubType);
+            } else if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
+                //todo 其他校验
+                lamangValidateParam(betType, betSubType);
+                validateStartCartBet(betType, betSubType);
                 validateFreeSpinBet(betType, betSubType);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORT");
@@ -111,9 +114,9 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
 
         private void mariaMakilingValidateParam(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-            if(useStarCard){
+            if (useStarCard) {
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
-            }else if(useFreeSpin){
+            } else if (useFreeSpin) {
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(payAmount == 0L, ErrorCode.ERR_PARAM);
             } else {
@@ -160,9 +163,9 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
 
         public void malakasValidateParam(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
-            if(useStarCard){
+            if (useStarCard) {
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
-            }else if(useFreeSpin){
+            } else if (useFreeSpin) {
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(payAmount == 0L, ErrorCode.ERR_PARAM);
             } else {
@@ -306,6 +309,57 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             }
         }
 
+        //todo 参数校验
+        public void lamangValidateParam(BetTypeEnum betType, BetSubTypeEnum betSubType) {
+            AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+            if (useStarCard) {
+                AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
+            } else if (useFreeSpin) {
+                AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(payAmount == 0L, ErrorCode.ERR_PARAM);
+            } else {
+                AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
+            }
+            if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
+                if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {
+                    AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                    if (useFreeSpin) {
+                        AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
+                    } else {
+                        AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
+                    }
+                } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_NORMAL_BET)) {
+                    AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(NumberUtil.isLong(betRecordId), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(NumberUtil.isLong(gameRecordId), ErrorCode.ERR_PARAM);
+                } else {
+                    throw new BusinessException(ErrorCode.ERR_PARAM);
+                }
+            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
+                if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
+                    AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                    if (useStarCard) {
+                        AssertUtil.assertTrue(Objects.equals(payAmount, betAmount), ErrorCode.ERR_PARAM);
+                    } else {
+                        AssertUtil.assertTrue(Objects.equals(payAmount, betAmount * MULTIPLE), ErrorCode.ERR_PARAM);
+                    }
+                } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
+                    AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(Objects.equals(0L, payAmount), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertStrNotEmpty(betRecordId, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(NumberUtil.isLong(betRecordId), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertNotNull(gameRecordId, ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(NumberUtil.isLong(gameRecordId), ErrorCode.ERR_PARAM);
+                } else {
+                    throw new BusinessException(ErrorCode.ERR_PARAM);
+                }
+            }
+        }
+
         private void validateStartCartBet(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用星卡
             if (useStarCard) {
@@ -317,6 +371,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                 }
             }
         }
+
         private void validateFreeSpinBet(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用预定投注
             if (useFreeSpin) {
