@@ -24,7 +24,7 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "投注请求参数")
 public class BetRequest extends BaseRequest implements Validate, Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7256326783223327817L;
     @ApiModelProperty(value = "游戏Id", required = true)
     private String gameId;
     @ApiModelProperty(value = "投注类型:NORMAL_BET,购买投注:BUY_BET", required = true)
@@ -56,7 +56,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
     @EqualsAndHashCode(callSuper = false)
     @ApiModel(description = "投注详情")
     public static class BetDetail implements BetRequestValidate, Serializable {
-        private static final long serialVersionUID = 7551644737494774350L;
+        private static final long serialVersionUID = 196176475253019928L;
         private static final long MIN_BET_AMOUNT = 300L;
         private static final long MAX_BET_AMOUNT = 10000000L;
         private static final long MULTIPLE = 35;
@@ -65,12 +65,12 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
         private Long betAmount;
         @ApiModelProperty(value = "支付金额/购买金额", required = true)
         private Long payAmount;
-        @ApiModelProperty(value = "投注记录ID, 获得免费轮的投注记录的投注id，非必填", required = false)
+        @ApiModelProperty(value = "投注记录ID, 获得免费轮的投注记录的投注id，非必填")
         private String betRecordId;
-        @ApiModelProperty(value = "免费轮游戏记录ID, 非必填", required = false)
+        @ApiModelProperty(value = "免费轮游戏记录ID, 非必填")
         private String gameRecordId;
         // 星卡投注
-        @ApiModelProperty(value = "使用星卡, 非必填", required = false)
+        @ApiModelProperty(value = "使用星卡, 非必填")
         private boolean useStarCard;
         @ApiModelProperty(value = "奖励配置id, 使用星卡时必填")
         private String rewardConfigId;
@@ -89,18 +89,17 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(payAmount >= 0, ErrorCode.ERR_PARAM);
             if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
-                mariaMakilingValidateParam(gameType, betType, betSubType);
-                validateStartCartBet(gameType, betType, betSubType);
-                validateFreeSpinBet(gameType, betType, betSubType);
+                mariaMakilingValidateParam(betType, betSubType);
+                validateStartCartBet(betType, betSubType);
+                validateFreeSpinBet(betType, betSubType);
             } else if (Objects.equals(gameType, GameTypeEnum.MALAKAS)) {
-                malakasValidateParam(gameType, betType, betSubType);
-                validateStartCartBet(gameType, betType, betSubType);
-                validateFreeSpinBet(gameType, betType, betSubType);
+                malakasValidateParam(betType, betSubType);
+                validateStartCartBet(betType, betSubType);
+                validateFreeSpinBet(betType, betSubType);
             } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
                 ibongAdarnaValidateParam(gameType, betType, betSubType);
                 validateFreeSpinBet(gameType, betType, betSubType);
-            }
-            else if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
+            } else if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
                 //todo 其他校验
                 lamangValidateParam(gameType, betType, betSubType);
             }else {
@@ -108,7 +107,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             }
         }
 
-        private void mariaMakilingValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        private void mariaMakilingValidateParam(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
             if(useStarCard){
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
@@ -157,7 +156,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             }
         }
 
-        public void malakasValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        public void malakasValidateParam(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
             if(useStarCard){
                 AssertUtil.assertTrue(betAmount >= 10, ErrorCode.ERR_PARAM);
@@ -207,7 +206,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             }
         }
 
-        public void ibongAdarnaValidateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        public void ibongAdarnaValidateParam(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
             // 投注类型只能正常投注
             AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET.equals(betType), ErrorCode.ERR_PARAM);
@@ -284,7 +283,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             }
         }
 
-        private void validateStartCartBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        private void validateStartCartBet(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用星卡
             if (useStarCard) {
                 AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
@@ -295,7 +294,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                 }
             }
         }
-        private void validateFreeSpinBet(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
+        private void validateFreeSpinBet(BetTypeEnum betType, BetSubTypeEnum betSubType) {
             // 判断是否使用预定投注
             if (useFreeSpin) {
                 AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET == betType, ErrorCode.ERR_PARAM);
