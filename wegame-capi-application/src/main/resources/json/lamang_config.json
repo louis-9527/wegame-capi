@@ -381,11 +381,11 @@
     },
     "jackpotTriggerBetAmountConfig": {
       "2000": {
-        "grand": "0.0000016",
-        "major": "0.0000080",
-        "minor": "0.0000500",
-        "mini": "0.0005000",
-        "none": "99.9994404"
+        "grand": "20",
+        "major": "20",
+        "minor": "20",
+        "mini": "20",
+        "none": "20"
       },
       "1000": {
         "major": "0.1000000",
