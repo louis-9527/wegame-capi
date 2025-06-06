@@ -60,5 +60,5 @@ public class Constants {
     public static final String MONGOTEMPLATE = "MongoTemplate";
     public static final String PRIMARY_MONGOTEMPLATE = "PrimaryMongoTemplate";
 
-
+    public static final String BUILD_BEAN_FORMAT = "build bean: {}";
 }
