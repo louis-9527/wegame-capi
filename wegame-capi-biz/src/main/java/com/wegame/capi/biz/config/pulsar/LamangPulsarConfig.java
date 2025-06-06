@@ -24,6 +24,10 @@ import static com.wegame.capi.common.Constants.*;
 @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangPulsarConfig {
 
+    public static final String lamangPulsarClient = "lamangPulsarClient";
+    public static final String lamangProducer = "lamangProducer";
+    public static final String lamangConsumer = "lamangConsumer";
+    public static final String lamangDeadLetterConsumer = "lamangDeadLetterConsumer";
 
     @Value("${pulsar.dynamic.lamang.url}")
     String lamangUrl;
@@ -36,8 +40,9 @@ public class LamangPulsarConfig {
     @Value("${pulsar.dynamic.lamang.bet_deadLetter_topic}")
     String lamangBetDeadLetterTopic;
 
-    @Bean(name = "lamangPulsarClient", destroyMethod = "close")
+    @Bean(name = lamangPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient lamangPulsarClient() throws Exception {
+        log.info(BUILD_BEAN_FORMAT, lamangPulsarClient);
         PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(lamangUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -54,8 +59,9 @@ public class LamangPulsarConfig {
         return pulsarClient;
     }
 
-    @Bean(name = "lamangProducer", destroyMethod = "close")
+    @Bean(name = lamangProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> lamangProducer(@Autowired @Qualifier("lamangPulsarClient") PulsarClient lamangPulsarClient) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, lamangProducer);
         return lamangPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetTopic))
                 .producerName(lamangTenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -76,8 +82,9 @@ public class LamangPulsarConfig {
     }
 
 
-    @Bean(name = "lamangConsumer", destroyMethod = "close")
+    @Bean(name = lamangConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> lamangConsumer(@Autowired @Qualifier("lamangPulsarClient") PulsarClient lamangPulsarClient) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, lamangConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetDeadLetterTopic);
         return lamangPulsarClient.newConsumer()
@@ -105,8 +112,9 @@ public class LamangPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "lamangDeadLetterConsumer", destroyMethod = "close")
+    @Bean(name = lamangDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> lamangDeadLetterConsumer(@Autowired @Qualifier("lamangPulsarClient") PulsarClient lamangPulsarClient) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, lamangDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetDeadLetterTopic);
         return lamangPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

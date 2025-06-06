@@ -21,6 +21,7 @@ import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import javax.annotation.PostConstruct;
@@ -31,15 +32,22 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
+
 /**
  * jackpot pulsar listener
  *
  * @param <T>
  */
 @Slf4j
-public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> implements Runnable {
+public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> implements Runnable, InitializingBean {
     private volatile boolean start = false;
     ExecutorService executor;
+
+    @Override
+    public void afterPropertiesSet() {
+        log.info(BUILD_BEAN_FORMAT, getClass().getSimpleName());
+    }
 
     public abstract Consumer<byte[]> getConsumer();
 
@@ -55,7 +63,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
 
     @PostConstruct
     public void init() {
-        CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(getGameType().getName() + "-jackPot-consumber-pool-");
+        CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(getGameType().getName() + "-jackpot-consumber-pool-");
         threadFactory.setDaemon(true);
         executor = new WsThreadPoolExecutor(getCorePoolSize(),
                 getMaximumPoolSize(),

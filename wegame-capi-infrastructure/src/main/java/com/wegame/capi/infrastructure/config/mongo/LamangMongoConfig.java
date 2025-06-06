@@ -25,7 +25,6 @@ public class LamangMongoConfig {
     private static final String lamangPrimaryMongoTemplate= "lamangPrimaryMongoTemplate";
     public static final String lamangTransactionManager = "lamangTransactionManager";
 
-
     @Value("${spring.data.mongodb.dynamic.lamang_mdb.uri}")
     String lamangMdbUri;
     @Value("${spring.data.mongodb.dynamic.lamang_mdb.primary_uri}")
@@ -38,6 +37,7 @@ public class LamangMongoConfig {
      */
     @Bean(lamangMongoTemplate)
     public MongoTemplate lamangMongoTemplate() {
+        log.info(BUILD_BEAN_FORMAT, lamangMongoTemplate);
         return new MongoTemplate(MongoClients.create(lamangMdbUri), lamangMdb);
     }
 
@@ -46,6 +46,7 @@ public class LamangMongoConfig {
      */
     @Bean(lamangPrimaryMongoTemplate)
     public MongoTemplate lamangPrimaryMongoTemplate() {
+        log.info(BUILD_BEAN_FORMAT, lamangPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(lamangMdbPrimaryUri), lamangMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -53,6 +54,7 @@ public class LamangMongoConfig {
 
     @Bean(name = lamangTransactionManager)
     public MongoTransactionManager lamangTransactionManager(@Autowired MongoTemplate lamangMongoTemplate) {
+        log.info(BUILD_BEAN_FORMAT, lamangTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(lamangMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)

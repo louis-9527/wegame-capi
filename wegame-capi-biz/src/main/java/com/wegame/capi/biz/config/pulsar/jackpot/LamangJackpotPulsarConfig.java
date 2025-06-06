@@ -4,6 +4,7 @@ import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,9 @@ import static com.wegame.capi.common.Constants.*;
 @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
 public class LamangJackpotPulsarConfig {
 
+    public static final String lamangJackpotPulsarClient = "lamangJackpotPulsarClient";
+    public static final String lamangJackpotPulsarConsumer = "lamangJackpotPulsarConsumer";
+
     @Value("${pulsar.dynamic.lamang.url}")
     String lamangUrl;
     @Value("${pulsar.dynamic.lamang.tenant}")
@@ -28,8 +32,9 @@ public class LamangJackpotPulsarConfig {
     @Value("${pulsar.dynamic.lamang.bet_topic}")
     String lamangBetTopic;
 
-    @Bean(name = "lamangJackpotPulsarClient", destroyMethod = "close")
+    @Bean(name = lamangJackpotPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient lamangJackpotPulsarClient() throws Exception {
+        log.info(BUILD_BEAN_FORMAT, lamangJackpotPulsarClient);
         return PulsarClient.builder()
                 .serviceUrl(lamangUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -45,9 +50,9 @@ public class LamangJackpotPulsarConfig {
                 .build();
     }
 
-
-    @Bean(name = "lamangJackpotPulsarConsumer", destroyMethod = "close")
-    public Consumer<byte[]> lamangJackpotPulsarConsumer(@Autowired PulsarClient lamangJackpotPulsarClient) throws PulsarClientException {
+    @Bean(name = lamangJackpotPulsarConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    public Consumer<byte[]> lamangJackpotPulsarConsumer(@Autowired @Qualifier("lamangJackpotPulsarClient") PulsarClient lamangJackpotPulsarClient) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, lamangJackpotPulsarConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetTopic);
         return lamangJackpotPulsarClient.newConsumer()
                 .topic(fullTopic)
