@@ -183,8 +183,12 @@ public class AppStartupListener implements ApplicationListener<ContextRefreshedE
     }
 
     private void healthCheck() {
-        singleWalletApi.healthCheck();
-        singleWalletFreeSpinApi.healthCheck();
-        bagApi.healthCheck();
+        try {
+            singleWalletApi.healthCheck();
+            singleWalletFreeSpinApi.healthCheck();
+            bagApi.healthCheck();
+        } catch (Exception e) {
+            log.error("healthCheck error", e);
+        }
     }
 }
