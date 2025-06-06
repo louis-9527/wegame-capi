@@ -13,8 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static com.wegame.base.PulsarConstants.PULSAR_TOPIC_FORMAT;
-import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
-import static com.wegame.capi.common.Constants.TRUE_VAL;
+import static com.wegame.capi.common.Constants.*;
 
 /**
  * @author apple
@@ -37,6 +36,7 @@ public class MariamakilingPulsarConfig {
 
     @Bean(name = "mariaMakilingPulsarClient", destroyMethod = "close")
     public PulsarClient mariaMakilingPulsarClient() throws Exception {
+        log.info(BUILD_BEAN_FORMAT, "mariaMakilingPulsarClient");
         PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(mariaMakilingUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -55,6 +55,7 @@ public class MariamakilingPulsarConfig {
 
     @Bean(name = "mariamakilingProducer", destroyMethod = "close")
     public Producer<byte[]> mariamakilingProducer(@Autowired PulsarClient mariaMakilingPulsarClient) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "mariamakilingProducer");
         return mariaMakilingPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, mariaMakilingTenant, mariaMakilingNamespace, mariaMakilingBetTopic))
                 .producerName(mariaMakilingTenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -77,6 +78,7 @@ public class MariamakilingPulsarConfig {
 
     @Bean(name = "mariamakilingConsumer", destroyMethod = "close")
     public Consumer<byte[]> mariamakilingConsumer(@Autowired PulsarClient mariaMakilingPulsarClient) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "mariamakilingConsumer");
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, mariaMakilingTenant, mariaMakilingNamespace, mariaMakilingBetTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, mariaMakilingTenant, mariaMakilingNamespace, mariaMakilingBetDeadLetterTopic);
         return mariaMakilingPulsarClient.newConsumer()
@@ -106,6 +108,7 @@ public class MariamakilingPulsarConfig {
 
     @Bean(name = "mariamakilingDeadLetterConsumer", destroyMethod = "close")
     public Consumer<byte[]> mariamakilingDeadLetterConsumer(@Autowired PulsarClient mariaMakilingPulsarClient) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, "mariamakilingDeadLetterConsumer");
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, mariaMakilingTenant, mariaMakilingNamespace, mariaMakilingBetDeadLetterTopic);
         return mariaMakilingPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

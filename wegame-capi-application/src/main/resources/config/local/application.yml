@@ -6,11 +6,10 @@ logging:
 #    org.springframework.web: trace
 #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
     com.wegame: INFO
-#    com.alibaba.druid: trace
-#    com.mysql: trace
-    org.apache.http: trace
+    com.wegame.base.config: ERROR
     org.apache.pulsar: ERROR
-#    org.mongodb: DEBUG
+#    org.apache.ibatis: trace
+    org.mongodb: ERROR
 #    org.springframework.data.redis: DEBUG
 #    com.mongodb.internal.connection: DEBUG
 #    org.apache.http: DEBUG
@@ -60,8 +59,8 @@ spring:
   freemarker:
     checkTemplateLocation: false
   redis:
-    connectTimeout: 5000
-    timeout: 5000
+    connectTimeout: 500
+    timeout: 500
     cluster:
       nodes:
         - localhost:7001
