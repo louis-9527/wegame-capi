@@ -45,7 +45,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
-    RewardHandler mariaMakilingRewardHandler;
+    RewardHandler<SymbolDo> mariaMakilingRewardHandler;
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {

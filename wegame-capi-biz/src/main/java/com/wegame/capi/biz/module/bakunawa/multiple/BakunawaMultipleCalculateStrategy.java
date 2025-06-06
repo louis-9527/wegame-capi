@@ -44,7 +44,7 @@ public class BakunawaMultipleCalculateStrategy extends AbstractMultipleCalculate
         // 中奖元素id字符串拼接得到滚盘倍率
         String multipleStr = rewardLineDo.getRewardSymbolList()
                 .stream()
-                .filter(item -> !item.getSymbol().getId().equals(SymbolEnum.SymbolNull.getId()))
+                .filter(item -> !SymbolEnum.SymbolNull.getId().equals(item.getSymbol().getId()))
                 .map(RewardSymbolDo::getSymbol)
                 .map(SymbolDo::getId)
                 .collect(Collectors.joining(""));
@@ -60,9 +60,7 @@ public class BakunawaMultipleCalculateStrategy extends AbstractMultipleCalculate
         //        }
         TreeMap<String, BigDecimal> originalMultiplePieProbabilisticConfig = bakunawaConfig.getProbabilisticConfig().getMultiplePieProbabilisticConfig();
         TreeMap<String, Integer> multipleProbabilisticMap = new TreeMap<>();
-        originalMultiplePieProbabilisticConfig.forEach((key, value) -> {
-            multipleProbabilisticMap.put(key, value.multiply(new BigDecimal(Constants.CONST_10000)).intValue());
-        });
+        originalMultiplePieProbabilisticConfig.forEach((key, value) -> multipleProbabilisticMap.put(key, value.multiply(new BigDecimal(Constants.CONST_10000)).intValue()));
         // 获取基础倍率
         String multiple = GameUtil.randomKey(multipleProbabilisticMap, randomService.randomInt(1, Constants.CONST_1000000));
         if (!MultiplePieTypeEnum.BAKUNAWA.getCode().equals(multiple)) {
@@ -72,9 +70,7 @@ public class BakunawaMultipleCalculateStrategy extends AbstractMultipleCalculate
             // 计算吞月倍率盘倍率
             TreeMap<String, BigDecimal> originalSuperMultiplePieProbabilisticConfig = bakunawaConfig.getProbabilisticConfig().getSuperMultiplePieProbabilisticConfig();
             TreeMap<String, Integer> superMultiPleProbabilisticMap = new TreeMap<>();
-            originalSuperMultiplePieProbabilisticConfig.forEach((key, value) -> {
-                superMultiPleProbabilisticMap.put(key, value.multiply(new BigDecimal(Constants.CONST_10000)).intValue());
-            });
+            originalSuperMultiplePieProbabilisticConfig.forEach((key, value) -> superMultiPleProbabilisticMap.put(key, value.multiply(new BigDecimal(Constants.CONST_10000)).intValue()));
             // 获取赔率盘倍率
             String finalMultiple = GameUtil.randomKey(superMultiPleProbabilisticMap, randomService.randomInt(1, Constants.CONST_1000000));
             return ImmutablePair.of(MultiplePieTypeEnum.BAKUNAWA, new BigDecimal(finalMultiple));

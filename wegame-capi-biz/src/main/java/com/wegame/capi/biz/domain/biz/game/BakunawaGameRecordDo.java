@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "bakunawa_game_record")
 public class BakunawaGameRecordDo implements Serializable, ToVoConverter<BakunawaBetResultVo, BakunawaGameRecordVo> {
-    private static final long serialVersionUID = -2266308277093710848L;
+    private static final long serialVersionUID = -8472383043410674809L;
     /**
      * id
      */

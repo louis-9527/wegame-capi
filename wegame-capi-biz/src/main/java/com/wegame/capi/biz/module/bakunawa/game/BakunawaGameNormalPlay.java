@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.bakunawa.game;
 
+import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
@@ -9,8 +10,8 @@ import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.bakunawa.reward.BakunawaRewardHandler;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
-import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.bakunawa.BakunawaGameHelper.BAKUNAWA_GAME_INFO;
+import static com.wegame.capi.common.Constants.CONST_1;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
@@ -37,11 +38,10 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
     @Autowired
     BakunawaConfig bakunawaConfig;
     @Autowired
-    RewardHandler bakunawaRewardHandler;
+    BakunawaRewardHandler bakunawaRewardHandler;
 
     @Override
     public List<BakunawaGameRecordDo> play(GamePlayDo gamePlay) {
-        List<BakunawaGameRecordDo> ret = new ArrayList<>();
         // 生成滚轮
         WheelDo<SymbolDo> wheel = generateNormalWheel();
         AssertUtil.assertNotNull(wheel, ErrorCode.ERR_INTER);
@@ -53,8 +53,7 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
                 wheel,
                 rewardResult,
                 rewardResult.getTotalRewardAmount());
-        ret.add(record);
-        return ret;
+        return Lists.newArrayList(record);
     }
 
     /**
@@ -66,7 +65,8 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
         SymbolDo[][] symbolArr = new SymbolDo[GAME_INFO.getRow()][GAME_INFO.getColumn()];
         // 元素出现概率配置
         TreeMap<String, List<BigDecimal>> wheelProbabilisticConfigMap = bakunawaConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
-        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, GAME_INFO.getRow() * GAME_INFO.getColumn());
+        // 当前游戏仅有一行，所以只需要按列生成随机数个数即可
+        List<Integer> randomNumberList = randomService.randomIntList(CONST_1, CONST_1000000, GAME_INFO.getColumn());
         for (int column = ONE_COLUM_INDEX; column < GAME_INFO.getColumn(); column++) {
             // 列概率
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, wheelProbabilisticConfigMap);
@@ -88,7 +88,7 @@ public class BakunawaGameNormalPlay extends AbstractGame<BakunawaGameRecordDo> {
                                                  RewardResultDo<SymbolDo> rewardResult,
                                                  Long overallRewardAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER, "Not Login");
         return BakunawaGameRecordDo.builder()
                 .id(id)
                 .betRecordId(betRecordId)

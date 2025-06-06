@@ -9,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.BakunawaGameRecordDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 public class BakunawaBetHelper implements BetHelper<BakunawaGameRecordDo, BakunawaGameRecordDo> {
@@ -25,15 +27,20 @@ public class BakunawaBetHelper implements BetHelper<BakunawaGameRecordDo, Bakuna
     public BetRecordDo<BakunawaGameRecordDo> buildBetRecord(long betRecordId,
                                                             BetDo betDo,
                                                             List<BakunawaGameRecordDo> gameRecordList) {
+        AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
         // 构建投注记录
         long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
+        Boolean reachMaxMultiple = Optional.ofNullable(gameRecordList.get(0))
+                .map(BakunawaGameRecordDo::getRewardResult)
+                .map(RewardResultDo::getAccumulateReachMaxMultiple)
+                .orElse(false);
         return BetRecordBuilder.build(betRecordId,
                 betDo,
                 totalRewardAmount,
-                false,
+                reachMaxMultiple,
                 null,
                 gameRecordList);
     }
