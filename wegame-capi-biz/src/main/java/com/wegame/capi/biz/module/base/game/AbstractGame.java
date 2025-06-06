@@ -55,6 +55,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
     }
 
     public SymbolEnum randomOneSymbol(TreeMap<String, Integer> map, int randomNumber) {
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
         int startVal = 0;
         for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {

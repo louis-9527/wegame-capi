@@ -149,11 +149,6 @@ public class LamangConfig {
          */
         private LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig;
         /**
-         * 中奖概率配置
-         * TreeMap<奖池名称, 中奖概率>
-         */
-        private TreeMap<String, BigDecimal> jackPotRewardGrantProportionConfig;
-        /**
          * jackpot保底金额配置
          * TreeMap<奖池名称, 保底金额>
          */
@@ -194,13 +189,11 @@ public class LamangConfig {
         AssertUtil.assertNotNull(jackPotConfig.commonCommissionConfig, ErrorCode.ERR_PARAM, "commonCommissionConfig is null");
         AssertUtil.assertNotNull(jackPotConfig.buyCommissionConfig, ErrorCode.ERR_PARAM, "buyCommissionConfig is null");
         AssertUtil.assertNotNull(jackPotConfig.jackpotTriggerBetAmountConfig, ErrorCode.ERR_PARAM, "jackpotTriggerBetAmountConfig is null");
-        AssertUtil.assertNotNull(jackPotConfig.jackPotRewardGrantProportionConfig, ErrorCode.ERR_PARAM, "jackPotRewardGrantProportionConfig is null");
         AssertUtil.assertNotNull(jackPotConfig.guaranteedAmount, ErrorCode.ERR_PARAM, "guaranteedAmount is null");
 
         this.commissionConfigValidate(jackPotConfig.commonCommissionConfig);
         this.commissionConfigValidate(jackPotConfig.buyCommissionConfig);
         this.jackpotTriggerBetAmountConfigValidate();
-        this.proportionCommissionConfigValidate();
         this.guaranteedAmountValidate();
 
     }
@@ -209,13 +202,6 @@ public class LamangConfig {
         TreeMap<String, Long> config = jackPotConfig.guaranteedAmount;
         config.keySet().forEach(poolName -> {
             AssertUtil.assertNotNull(poolName, ErrorCode.ERR_PARAM, "proportionCommissionConfig validate error,poolName " + poolName + " is not exist");
-        });
-    }
-
-    private void proportionCommissionConfigValidate() {
-        TreeMap<String, BigDecimal> config = jackPotConfig.jackPotRewardGrantProportionConfig;
-        config.keySet().forEach(poolName -> {
-            AssertUtil.assertNotNull(poolName, ErrorCode.ERR_PARAM, "jackPotRewardGrantProportionConfig validate error,poolName " + poolName + " is not exist");
         });
     }
 

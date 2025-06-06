@@ -13,6 +13,7 @@ import com.wegame.capi.biz.module.base.jackpot.AbsJackpotHandler;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.GameUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +57,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
      * 只要方法正常返回，一定会包含所有的 JackpotRewardPoolTypeEnum类型，没有提成，则对应type value为0L
      */
     @Override
-    public Map<JackpotRewardPoolTypeEnum, Long> calculateRewardPoolCommission(BetTypeEnum betTypeEnum, Long betAmount) {
+    public Map<JackpotRewardPoolTypeEnum, Long> calculateRewardPoolCommission(BetPromotionTypeEnum betPromotionTypeEnum, BetTypeEnum betTypeEnum, Long betAmount) {
         AssertUtil.assertNotNull(betTypeEnum, ErrorCode.ERR_PARAM, "betTypeEnum is null");
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM, "betAmount is null");
         AssertUtil.assertTrue(betAmount >= 0, ErrorCode.ERR_PARAM, "betAmount is low than 0");
