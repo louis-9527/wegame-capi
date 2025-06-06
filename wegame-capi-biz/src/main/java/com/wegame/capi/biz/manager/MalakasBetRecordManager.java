@@ -33,8 +33,6 @@ public class MalakasBetRecordManager extends AbstractBetRecordManager<MalakasGam
 
     @Transactional(transactionManager = malakasTransactionManager)
     public Long add(BetRecordDo<MalakasGameRecordDo> betRecord, GameTypeEnum gameType) {
-        // todo delete @maidong
-        log.info("add: {}", betRecord.getId());
         Long id = betRecordService.add(betRecord, gameType);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> gameRecordList = betRecord.getGameRecordList();

@@ -18,9 +18,9 @@ import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
-import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
-import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
+import com.wegame.capi.biz.module.ibongadarna.multiple.IbongAdarnaMultipleCalculateStrategy;
+import com.wegame.capi.biz.module.ibongadarna.odds.IbongAdarnaOddsCalculateStrategy;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +38,9 @@ import java.util.Set;
 @Component("ibongAdarnaRewardHandler")
 public class IbongAdarnaRewardHandler extends AbstractRewardHandler<IbongAdarnaSymbolDo> {
     @Autowired
-    OddsCalculateStrategy ibongAdarnaOddsCalculateStrategy;
+    IbongAdarnaOddsCalculateStrategy ibongAdarnaOddsCalculateStrategy;
     @Autowired
-    MultipleCalculateStrategy ibongAdarnaMultipleCalculateStrategy;
+    IbongAdarnaMultipleCalculateStrategy ibongAdarnaMultipleCalculateStrategy;
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
 

@@ -15,6 +15,7 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
+import com.wegame.capi.biz.module.ibongadarna.reward.IbongAdarnaRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.Constants;
@@ -41,7 +42,7 @@ public class IbongAdarnaGameNormalPlay extends AbstractGame<IbongAdarnaGameRecor
     @Autowired
     IbongAdarnaConfig ibongAdarnaConfig;
     @Autowired
-    RewardHandler ibongAdarnaRewardHandler;
+    IbongAdarnaRewardHandler ibongAdarnaRewardHandler;
 
     @Override
     public List<IbongAdarnaGameRecordDo> play(GamePlayDo gamePlay) {
