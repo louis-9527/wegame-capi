@@ -55,7 +55,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      * 保存投注记录并投注派彩
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
-        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) && Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.LAM_ANG)) {
+        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
             return asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
         } else {
             if (syncOpt) {
