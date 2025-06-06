@@ -16,6 +16,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+import static com.wegame.capi.common.Constants.COMMON_CLOSE_METHOD;
+
 @Slf4j
 @Configuration
 public class FreeSpinRestTemplateConfig {
@@ -35,7 +37,7 @@ public class FreeSpinRestTemplateConfig {
     @Value("${httpclient.freeSpin.timeToLive:59}")
     int freeSpinTimeToLive;
 
-    @Bean(value = FREE_SPIN_CONNECTION_MANAGER_BEAN, destroyMethod = "close")
+    @Bean(value = FREE_SPIN_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager freeSpinConnectionManager() {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(freeSpinTimeToLive, TimeUnit.SECONDS);
         manager.setMaxTotal(freeSpinConnectMaxTotal);

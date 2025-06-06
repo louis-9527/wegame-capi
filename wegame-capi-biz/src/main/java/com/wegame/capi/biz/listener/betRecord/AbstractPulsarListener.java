@@ -19,6 +19,7 @@ import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
@@ -32,12 +33,20 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
+
 @Slf4j
-public abstract class AbstractPulsarListener<T extends ToVoConverter> implements Runnable {
+public abstract class AbstractPulsarListener<T extends ToVoConverter>
+        implements Runnable, InitializingBean {
     private volatile boolean start = false;
     @Autowired
     BetRecordService betRecordService;
     ExecutorService executor;
+
+    @Override
+    public void afterPropertiesSet() {
+        log.info(BUILD_BEAN_FORMAT, getClass().getSimpleName());
+    }
 
     public abstract Consumer<byte[]> getConsumer();
 
