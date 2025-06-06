@@ -6,6 +6,7 @@ import com.wegame.base.domain.ServiceShutdownMessage;
 import com.wegame.base.enums.EnvEnum;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.base.utils.LarkUtil;
+import com.wegame.capi.biz.listener.AppLaunchPostProcessor;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
@@ -55,6 +56,8 @@ public class Application implements CommandLineRunner {
     private String shutDownRobot;
     @Autowired
     List<Executor> executorList;
+    @Autowired
+    AppLaunchPostProcessor appLaunchPostProcessor;
 
     public static void main(String[] args) {
         log.info("Begin Start Application 😄😄😄😄😄😄");
@@ -67,6 +70,7 @@ public class Application implements CommandLineRunner {
     public void run(String... args) {
         log.info("start Application after env: {}", env);
         sendPublishMessage();
+        appLaunchPostProcessor.postProcess();
     }
 
     @PreDestroy
