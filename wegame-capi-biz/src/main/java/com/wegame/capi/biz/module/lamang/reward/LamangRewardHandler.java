@@ -67,15 +67,16 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
 
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
+            int freeWheelTimes = freeWheelTimesPair.getLeft() + freeWheelTimesPair.getRight();
             return RewardResultDo.<LamangSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardType(RewardTypeEnum.NONE)
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
                     .totalMultiple(totalMultiple)
-                    .hasRewardFreeWheel(freeWheelTimesPair.getLeft() > 0)
+                    .hasRewardFreeWheel(freeWheelTimes > 0)
                     .rewardLineDetailList(null)
-                    .rewardFreeWheelTimes(freeWheelTimesPair.getLeft())
+                    .rewardFreeWheelTimes(freeWheelTimes)
                     .accumulateReachMaxMultiple(Boolean.FALSE)
                     .build();
         }
@@ -222,10 +223,10 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
 
     /**
      * 计算免费轮次数
-     * 统计scatter个数，和scatter+1的个数，将两个计算的免费轮次数相加
+     * 统计scatter个数，和scatter+1的个数
      *
      * @param rewardHandle rewardHandle
-     * @return freeWheelTimes
+     * @return left:scatter产生的免费轮次数.right:scatter+1 产生的免费轮次数
      */
     private Pair<Integer, Integer> calcRewardFreeWheelTimes(RewardHandleDo<LamangSymbolDo> rewardHandle) {
         int scatterCount = 0;
