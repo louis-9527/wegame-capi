@@ -78,6 +78,8 @@ public class Constants {
      * 奖池流水过期时间（秒）
      */
     public static final long JACKPOT_REWARD_POOL_EXPIRED_SECONDS = 24 * 60 * 60;
+    public static final String BUILD_BEAN_FORMAT = "build bean: {}";
+    public static final String COMMON_CLOSE_METHOD = "close";
 
     public static final String JACKPOT_LAMANG_PULSAR_SUBSCRIPTION= "_jackpot";
 }

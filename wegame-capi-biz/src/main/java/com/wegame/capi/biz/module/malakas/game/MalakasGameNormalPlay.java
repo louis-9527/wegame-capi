@@ -15,9 +15,9 @@ import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
-import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.module.malakas.MalakasProbabilisticUtil;
 import com.wegame.capi.biz.module.malakas.MalakasSymbolUtil;
+import com.wegame.capi.biz.module.malakas.reward.MalakasRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.RewardTypeEnum;
@@ -36,7 +36,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 import static com.wegame.capi.biz.module.malakas.MalakasProbabilisticUtil.getWheelProbabilisticConfig;
@@ -58,7 +57,7 @@ public class MalakasGameNormalPlay extends AbstractGame<MalakasGameRecordDo> {
     @Autowired
     MalakasConfig malakasConfig;
     @Autowired
-    RewardHandler malakasRewardHandler;
+    MalakasRewardHandler malakasRewardHandler;
 
     @Override
     public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
