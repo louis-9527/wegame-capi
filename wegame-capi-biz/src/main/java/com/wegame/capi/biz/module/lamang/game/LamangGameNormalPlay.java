@@ -189,7 +189,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         if (needAddScatterNumber > 0) {
             // 将没有元素的位置加入列表
             List<IndexDo> indexList = new ArrayList<>();
-            for (int row = 1; row < GAME_INFO.getRow(); row++) {
+            for (int row = 0; row < GAME_INFO.getRow(); row++) {
                 for (int column = 0; column < GAME_INFO.getColumn(); column++) {
                     LamangSymbolDo symbol = symbolArr[row][column];
                     if (Objects.isNull(symbol)) {
