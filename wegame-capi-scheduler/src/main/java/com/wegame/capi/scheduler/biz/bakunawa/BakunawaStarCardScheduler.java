@@ -1,9 +1,10 @@
-package com.wegame.capi.scheduler.backend;
+package com.wegame.capi.scheduler.biz.bakunawa;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
+import com.wegame.capi.scheduler.biz.common.AbstractStarCardScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,29 +14,30 @@ import static com.wegame.capi.common.Constants.BAKUNAWA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
- * Bakunawa维护配置定时任务
+ * Bakunawa星卡定时任务
  */
 @Slf4j
 @Service
 @ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
-public class BakunawaMaintainCacheUpdateScheduler extends AbstractMaintainCacheUpdateScheduler {
+public class BakunawaStarCardScheduler extends AbstractStarCardScheduler {
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
             long startTime = DateUtil.getCurrentMilli();
-            scheduleWithLock(LockNameUtil.getMaintainConfigUpdateLock(gameType()), this);
+            scheduleWithLock(LockNameUtil.getStarCardReportSchedulerLockName(gameTypeEnum()), this);
             log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
-            log.info("get lock fail");
+            log.info("schedule get lock fail");
         } catch (Exception e) {
             log.error("schedule failed", e);
         }
     }
 
     @Override
-    GameTypeEnum gameType() {
+    public GameTypeEnum gameTypeEnum() {
         return GameTypeEnum.BAKUNAWA;
     }
 }
