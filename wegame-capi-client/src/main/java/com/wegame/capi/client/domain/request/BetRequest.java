@@ -99,6 +99,9 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
                 ibongAdarnaValidateParam(betType, betSubType);
                 validateFreeSpinBet(betType, betSubType);
+            } else if (Objects.equals(gameType, GameTypeEnum.BAKUNAWA)) {
+                bakunawaValidateParam(betType, betSubType);
+                validateFreeSpinBet(betType, betSubType);
             } else if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
                 //todo 其他校验
                 lamangValidateParam(betType, betSubType);
@@ -228,6 +231,27 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                     // ex类型，支付金额必须是投注金额的1.5倍
                     long exceptPayAmount = new BigDecimal(String.valueOf(betAmount)).multiply(new BigDecimal("1.5")).longValue();
                     AssertUtil.assertTrue(exceptPayAmount == payAmount, ErrorCode.ERR_PARAM);
+                } else {
+                    throw new BusinessException(ErrorCode.ERR_PARAM);
+                }
+            }
+        }
+
+        public void bakunawaValidateParam(BetTypeEnum betType, BetSubTypeEnum betSubType) {
+            AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM);
+            // 投注类型只能正常投注
+            AssertUtil.assertTrue(BetTypeEnum.NORMAL_BET.equals(betType), ErrorCode.ERR_PARAM);
+            // 投注子类型只能是正常投注
+            AssertUtil.assertTrue(BetSubTypeEnum.NORMAL_BET.equals(betSubType), ErrorCode.ERR_PARAM);
+            if (useFreeSpin) {
+                AssertUtil.assertTrue(Objects.equals(payAmount, 0L), ErrorCode.ERR_PARAM);
+            } else {
+                AssertUtil.assertTrue(betAmount >= MIN_BET_AMOUNT, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(betAmount <= MAX_BET_AMOUNT, ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
+                AssertUtil.assertTrue(payAmount > 0L, ErrorCode.ERR_PARAM);
+                if (Objects.equals(BetSubTypeEnum.NORMAL_BET, betSubType)) {
+                    AssertUtil.assertTrue(Objects.equals(betAmount, payAmount), ErrorCode.ERR_PARAM);
                 } else {
                     throw new BusinessException(ErrorCode.ERR_PARAM);
                 }

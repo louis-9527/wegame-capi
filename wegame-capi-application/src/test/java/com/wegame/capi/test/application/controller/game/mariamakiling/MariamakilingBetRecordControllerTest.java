@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 public class MariamakilingBetRecordControllerTest extends BetRecordControllerTest {
 
     @BeforeAll
-    public static void beforeTest() {
+    public void beforeTest() {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
                 .userName("system")

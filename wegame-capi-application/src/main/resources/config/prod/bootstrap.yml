@@ -28,6 +28,7 @@
 game:
   enable:
     MariaMakiling: true
-    Malakas: false
-    IbongAdarna: false
-    Lamang: false
+    Malakas: true
+    IbongAdarna: true
+    Bakunawa: true
+    lamang: true

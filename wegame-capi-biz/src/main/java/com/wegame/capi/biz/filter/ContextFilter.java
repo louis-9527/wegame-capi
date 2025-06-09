@@ -81,6 +81,7 @@ public class ContextFilter extends OncePerRequestFilter {
                     .clientIp(clientIp)
                     .build();
             SystemInfoContext.setSysContext(systemInfo);
+            log.info("SystemInfoContextInfo: {}", systemInfo);
         } catch (Exception e) {
             log.error("buildSystemInfoContextInfo err: {}", e.getMessage(), e);
         }

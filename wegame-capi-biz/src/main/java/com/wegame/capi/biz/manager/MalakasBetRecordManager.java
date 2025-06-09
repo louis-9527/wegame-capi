@@ -58,10 +58,6 @@ public class MalakasBetRecordManager extends AbstractBetRecordManager<MalakasGam
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            // todo delete log
-            gameRecordList.forEach(item -> {
-                log.info("batchAdd GameRecord id:{}", item.getId());
-            });
             boolean batchAddRet = gameRecordService.batchAdd(gameRecordList, gameType, MalakasGameRecordDo.class);
             AssertUtil.assertTrue(batchAddRet, ErrorCode.ERR_INTER);
         }
