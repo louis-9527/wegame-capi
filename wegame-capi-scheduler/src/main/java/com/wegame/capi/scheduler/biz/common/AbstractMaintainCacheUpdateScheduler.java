@@ -16,7 +16,7 @@ public abstract class AbstractMaintainCacheUpdateScheduler
         extends AbstractScheduler
         implements Runnable {
 
-    abstract GameTypeEnum gameType();
+    public abstract GameTypeEnum gameType();
 
     @Autowired
     GameMaintainConfigService gameMaintainConfigService;

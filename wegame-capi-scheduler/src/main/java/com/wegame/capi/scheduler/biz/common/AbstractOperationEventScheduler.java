@@ -46,9 +46,9 @@ public abstract class AbstractOperationEventScheduler
     @Autowired
     public BetRecordService betRecordService;
 
-    abstract OperationEventTypeEnum operationEventType();
+    public abstract OperationEventTypeEnum operationEventType();
 
-    abstract AbstractOperationEventManager operationEventManager();
+    public abstract AbstractOperationEventManager operationEventManager();
 
     @Override
     public void run() {

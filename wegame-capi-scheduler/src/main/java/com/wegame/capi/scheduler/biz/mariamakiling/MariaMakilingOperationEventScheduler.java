@@ -44,12 +44,12 @@ public class MariaMakilingOperationEventScheduler extends AbstractOperationEvent
     }
 
     @Override
-    OperationEventTypeEnum operationEventType() {
+    public OperationEventTypeEnum operationEventType() {
         return OperationEventTypeEnum.MARIA_MAKILING;
     }
 
     @Override
-    AbstractOperationEventManager operationEventManager() {
+    public AbstractOperationEventManager operationEventManager() {
         return mariaMakilingOperationEventManager;
     }
 }

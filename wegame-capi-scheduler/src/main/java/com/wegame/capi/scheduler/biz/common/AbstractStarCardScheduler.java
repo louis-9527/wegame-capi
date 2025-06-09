@@ -30,13 +30,12 @@ public abstract class AbstractStarCardScheduler
         extends AbstractScheduler
         implements Runnable {
 
-
     @Autowired
     private StarCardUseRecordService starCardUseRecordService;
     @Autowired
     public BetRecordService betRecordService;
 
-    abstract GameTypeEnum gameTypeEnum();
+    public abstract GameTypeEnum gameTypeEnum();
 
     @Override
     public void run() {
