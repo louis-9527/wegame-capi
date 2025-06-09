@@ -35,6 +35,7 @@ public class BakunawaMongoConfig {
      */
     @Bean(bakunawaMongoTemplate)
     public MongoTemplate bakunawaMongoTemplate() {
+        log.info(BUILD_BEAN_FORMAT, bakunawaMongoTemplate);
         return new MongoTemplate(MongoClients.create(bakunawaMdbUri), bakunawaMdb);
     }
 
@@ -43,6 +44,7 @@ public class BakunawaMongoConfig {
      */
     @Bean(bakunawaPrimaryMongoTemplate)
     public MongoTemplate bakunawaPrimaryMongoTemplate() {
+        log.info(BUILD_BEAN_FORMAT, bakunawaPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(bakunawaMdbUri), bakunawaMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -50,6 +52,7 @@ public class BakunawaMongoConfig {
 
     @Bean(name = bakunawaTransactionManager)
     public MongoTransactionManager bakunawaTransactionManager(@Autowired MongoTemplate bakunawaMongoTemplate) {
+        log.info(BUILD_BEAN_FORMAT, bakunawaTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(bakunawaMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)

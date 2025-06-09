@@ -35,6 +35,7 @@ public class IbongadarnaMongoConfig {
      */
     @Bean(ibongadarnaMongoTemplate)
     public MongoTemplate ibongadarnaMongoTemplate() {
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaMongoTemplate);
         return new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdb);
     }
 
@@ -43,6 +44,7 @@ public class IbongadarnaMongoConfig {
      */
     @Bean(ibongadarnaPrimaryMongoTemplate)
     public MongoTemplate ibongadarnaPrimaryMongoTemplate() {
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(ibongAdarnaMdbUri), ibongAdarnaMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -50,6 +52,7 @@ public class IbongadarnaMongoConfig {
 
     @Bean(name = ibongadarnaTransactionManager)
     public MongoTransactionManager ibongadarnaTransactionManager(@Autowired MongoTemplate ibongadarnaMongoTemplate) {
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(ibongadarnaMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)
