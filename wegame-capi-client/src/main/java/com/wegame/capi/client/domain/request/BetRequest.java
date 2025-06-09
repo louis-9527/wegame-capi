@@ -1,6 +1,5 @@
 package com.wegame.capi.client.domain.request;
 
-import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.Validate;
 import com.wegame.base.domain.BaseRequest;
 import com.wegame.base.enums.ErrorCode;
@@ -15,7 +14,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Data
@@ -100,7 +98,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
                 IbongAdarnaValidator.validateParam(betType, betSubType, this);
                 CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
-            }  else if (Objects.equals(gameType, GameTypeEnum.BAKUNAWA)) {
+            } else if (Objects.equals(gameType, GameTypeEnum.BAKUNAWA)) {
                 BakunawaValidator.validateParam(betType, betSubType, this);
                 CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
             } else {

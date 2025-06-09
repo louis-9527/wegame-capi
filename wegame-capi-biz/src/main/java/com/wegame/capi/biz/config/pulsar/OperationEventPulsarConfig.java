@@ -3,7 +3,6 @@ package com.wegame.capi.biz.config.pulsar;
 import com.wegame.capi.biz.listener.operation.BakunawaOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.operation.IbongOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.operation.MalakasOperationEventPulsarListener;
-import com.wegame.capi.biz.listener.operation.MalakasOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -119,7 +118,7 @@ public class OperationEventPulsarConfig {
     }
 
     @Bean(name = bakunawaOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
-    @ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(BakunawaOperationEventPulsarListener.class)
     public Consumer<byte[]> bakunawaOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                            @Autowired BakunawaOperationEventPulsarListener bakunawaOperationEventPulsarListener) throws PulsarClientException {
