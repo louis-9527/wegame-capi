@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.operation;
+package com.wegame.capi.scheduler.biz.common;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.utils.DateUtil;
@@ -46,9 +46,9 @@ public abstract class AbstractOperationEventScheduler
     @Autowired
     public BetRecordService betRecordService;
 
-    abstract OperationEventTypeEnum operationEventType();
+    public abstract OperationEventTypeEnum operationEventType();
 
-    abstract AbstractOperationEventManager operationEventManager();
+    public abstract AbstractOperationEventManager operationEventManager();
 
     @Override
     public void run() {

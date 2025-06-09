@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.alert;
+package com.wegame.capi.scheduler.biz.common;
 
 import com.alibaba.druid.util.StringUtils;
 import com.wegame.base.domain.BizAlertMessage;
@@ -36,7 +36,7 @@ public abstract class AbstractAlertScheduler
     @Autowired
     BetRecordService betRecordService;
 
-    abstract GameTypeEnum getGameType();
+    public abstract GameTypeEnum getGameType();
 
     /**
      * 获取前一天，检查是否存储在投注中的投注记录，若存在，则告警通知

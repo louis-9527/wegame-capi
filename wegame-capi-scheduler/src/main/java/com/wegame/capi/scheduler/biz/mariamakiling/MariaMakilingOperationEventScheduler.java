@@ -1,11 +1,12 @@
-package com.wegame.capi.scheduler.operation;
+package com.wegame.capi.scheduler.biz.mariamakiling;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
-import com.wegame.capi.biz.manager.operation.MalakasOperationEventManager;
+import com.wegame.capi.biz.manager.operation.MariaMakilingOperationEventManager;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
+import com.wegame.capi.scheduler.biz.common.AbstractOperationEventScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,20 +14,20 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
- * Marakas干预事件定时任务
+ * MariaMakiling干预事件定时任务
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
-public class MalakasOperationEventScheduler extends AbstractOperationEventScheduler {
+@ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
+public class MariaMakilingOperationEventScheduler extends AbstractOperationEventScheduler {
 
     @Autowired
-    @Qualifier("malakasOperationEventManager")
-    MalakasOperationEventManager malakasOperationEventManager;
+    @Qualifier("mariaMakilingOperationEventManager")
+    MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
 
     @Scheduled(cron = "0 0/30 * * * ?")
     public void schedule() {
@@ -43,12 +44,12 @@ public class MalakasOperationEventScheduler extends AbstractOperationEventSchedu
     }
 
     @Override
-    OperationEventTypeEnum operationEventType() {
-        return OperationEventTypeEnum.MALAKAS_DYNAMIC;
+    public OperationEventTypeEnum operationEventType() {
+        return OperationEventTypeEnum.MARIA_MAKILING;
     }
 
     @Override
-    AbstractOperationEventManager operationEventManager() {
-        return malakasOperationEventManager;
+    public AbstractOperationEventManager operationEventManager() {
+        return mariaMakilingOperationEventManager;
     }
 }

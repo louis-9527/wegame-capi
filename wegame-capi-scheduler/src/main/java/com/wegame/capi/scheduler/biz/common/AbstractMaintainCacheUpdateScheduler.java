@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.backend;
+package com.wegame.capi.scheduler.biz.common;
 
 import com.wegame.capi.biz.domain.backend.GameMaintainConfigDo;
 import com.wegame.capi.biz.service.backend.GameMaintainConfigService;
@@ -16,7 +16,7 @@ public abstract class AbstractMaintainCacheUpdateScheduler
         extends AbstractScheduler
         implements Runnable {
 
-    abstract GameTypeEnum gameType();
+    public abstract GameTypeEnum gameType();
 
     @Autowired
     GameMaintainConfigService gameMaintainConfigService;

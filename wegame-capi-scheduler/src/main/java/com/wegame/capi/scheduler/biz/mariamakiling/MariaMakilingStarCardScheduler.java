@@ -1,32 +1,33 @@
-package com.wegame.capi.scheduler.starcard;
+package com.wegame.capi.scheduler.biz.mariamakiling;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
+import com.wegame.capi.scheduler.biz.common.AbstractStarCardScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
- * IbongAdarna星卡定时任务
+ * MariaMakiling干预事件定时任务
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
-public class IbongAdarnaStarCardScheduler extends AbstractStarCardScheduler {
+@ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
+public class MariaMakilingStarCardScheduler extends AbstractStarCardScheduler {
 
-
-    @Scheduled(cron = "0 0/12 * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
             long startTime = DateUtil.getCurrentMilli();
             scheduleWithLock(LockNameUtil.getStarCardReportSchedulerLockName(gameTypeEnum()), this);
-            log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
+            log.info("schedule end, cost time: {}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
             log.info("schedule get lock fail");
         } catch (Exception e) {
@@ -35,7 +36,7 @@ public class IbongAdarnaStarCardScheduler extends AbstractStarCardScheduler {
     }
 
     @Override
-    GameTypeEnum gameTypeEnum() {
-        return GameTypeEnum.IBONG_ADARNA;
+    public GameTypeEnum gameTypeEnum() {
+        return GameTypeEnum.MARIA_MAKILING;
     }
 }
