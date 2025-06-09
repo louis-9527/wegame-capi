@@ -1,0 +1,43 @@
+## spring:datasource
+spring:
+  datasource:
+    dynamic:
+      primary: wegame_user_db
+      strict: true
+      datasource:
+        wegame_user_db:
+          url: jdbc:mysql://43.199.119.200:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: root
+          password: ENC(cLgvk81CoiK2/V32BRs7VzTYCyY2SNPTRNYhIBJOPF3YunMyzWpNFMnQ16/M96iq39MIyiBxQenzOLbOrAnblg==)
+          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
+          type: com.alibaba.druid.pool.DruidDataSource
+          druid:
+            initial-size: 10
+            min-idle: 10
+            max-active: 5000
+            max-wait: 1000
+            time-between-eviction-runs-millis: 6000
+            min-evictable-idle-time-millis: 30001
+            validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            pool-prepared-statements: false
+        wegame_backend_db:
+          url: jdbc:mysql://43.199.119.200:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: root
+          password: ENC(cLgvk81CoiK2/V32BRs7VzTYCyY2SNPTRNYhIBJOPF3YunMyzWpNFMnQ16/M96iq39MIyiBxQenzOLbOrAnblg==)
+          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
+          type: com.alibaba.druid.pool.DruidDataSource
+          druid:
+            initial-size: 10
+            min-idle: 10
+            max-active: 100
+            max-wait: 1000
+            time-between-eviction-runs-millis: 6000
+            min-evictable-idle-time-millis: 30001
+            validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            pool-prepared-statements: false
