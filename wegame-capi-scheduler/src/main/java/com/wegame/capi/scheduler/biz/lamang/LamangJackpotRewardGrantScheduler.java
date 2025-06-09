@@ -1,8 +1,9 @@
-package com.wegame.capi.scheduler.jackpot;
+package com.wegame.capi.scheduler.biz.lamang;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
+import com.wegame.capi.scheduler.biz.common.AbstractJackpotRewardGrantScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,7 +24,7 @@ public class LamangJackpotRewardGrantScheduler
 
 
     @Override
-    JackpotTypeEnum getJackpotTypeEnum() {
+    public JackpotTypeEnum getJackpotTypeEnum() {
         return JackpotTypeEnum.LAM_ANG;
     }
 

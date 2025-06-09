@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.jackpot;
+package com.wegame.capi.scheduler.biz.common;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
@@ -40,7 +40,7 @@ public abstract class AbstractJackpotRewardGrantScheduler
     @Autowired
     BetRecordService betRecordService;
 
-    abstract JackpotTypeEnum getJackpotTypeEnum();
+    public abstract JackpotTypeEnum getJackpotTypeEnum();
 
     /**
      * 查询中奖记录派奖派奖状态为（未派奖，派奖中)的记录，扭转为已派奖
