@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.wegame.capi.infrastructure.config.mongo.LamangMongoConfig.lamangTransactionManager;
+import static com.wegame.capi.biz.config.mongo.LamangMongoConfig.lamangTransactionManager;
 
 @Component("lamangOperationEventManager")
 public class LamangOperationEventManager extends AbstractOperationEventManager {

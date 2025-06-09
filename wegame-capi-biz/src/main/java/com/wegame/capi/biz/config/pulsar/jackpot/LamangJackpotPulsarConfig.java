@@ -34,7 +34,7 @@ public class LamangJackpotPulsarConfig {
 
     @Bean(name = lamangJackpotPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient lamangJackpotPulsarClient() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, lamangJackpotPulsarClient);
+        log.debug(BUILD_BEAN_FORMAT, lamangJackpotPulsarClient);
         return PulsarClient.builder()
                 .serviceUrl(lamangUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -52,7 +52,7 @@ public class LamangJackpotPulsarConfig {
 
     @Bean(name = lamangJackpotPulsarConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> lamangJackpotPulsarConsumer(@Autowired @Qualifier("lamangJackpotPulsarClient") PulsarClient lamangJackpotPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, lamangJackpotPulsarConsumer);
+        log.debug(BUILD_BEAN_FORMAT, lamangJackpotPulsarConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetTopic);
         return lamangJackpotPulsarClient.newConsumer()
                 .topic(fullTopic)

@@ -7,7 +7,6 @@ import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
-import com.wegame.capi.infrastructure.config.mongo.LamangMongoConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.wegame.capi.biz.builder.jackpot.JackpotRewardPoolBuilder.buildList;
+import static com.wegame.capi.biz.config.mongo.LamangMongoConfig.lamangTransactionManager;
 
 @Slf4j
 @Component("lamangJackpotManager")
@@ -33,7 +33,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
     }
 
     @Override
-    @Transactional(transactionManager = LamangMongoConfig.lamangTransactionManager, rollbackFor = Exception.class)
+    @Transactional(transactionManager = lamangTransactionManager, rollbackFor = Exception.class)
     public void batchAddRewardPoolInputRecord(List<JackpotRewardPoolInputRecordDo> recordList) {
         if (CollectionUtils.isEmpty(recordList)) {
             return;
@@ -55,7 +55,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
     }
 
     @Override
-    @Transactional(transactionManager = LamangMongoConfig.lamangTransactionManager, rollbackFor = Exception.class)
+    @Transactional(transactionManager = lamangTransactionManager, rollbackFor = Exception.class)
     public void addRewardPoolInputRecord(JackpotRewardPoolInputRecordDo rewardPoolInputRecord) {
         if (Objects.isNull(rewardPoolInputRecord)) {
             return;
@@ -69,7 +69,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
     }
 
     @Override
-    @Transactional(transactionManager = LamangMongoConfig.lamangTransactionManager)
+    @Transactional(transactionManager = lamangTransactionManager)
     public Long winReward(JackpotUserRewardRecordDo jackpotUserRewardRecord) {
         // 新增用户中奖记录
         Long recordId = jackpotUserRewardRecordService.add(jackpotUserRewardRecord, jackpotType());

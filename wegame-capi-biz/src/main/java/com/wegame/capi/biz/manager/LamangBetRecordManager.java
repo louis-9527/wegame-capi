@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.infrastructure.config.mongo.LamangMongoConfig.lamangTransactionManager;
+import static com.wegame.capi.biz.config.mongo.LamangMongoConfig.lamangTransactionManager;
 
 @Slf4j
 @Component("lamangBetRecordManager")

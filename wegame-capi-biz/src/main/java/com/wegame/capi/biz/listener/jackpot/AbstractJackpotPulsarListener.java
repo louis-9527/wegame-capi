@@ -46,7 +46,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
 
     @Override
     public void afterPropertiesSet() {
-        log.info(BUILD_BEAN_FORMAT, getClass().getSimpleName());
+        log.debug(BUILD_BEAN_FORMAT, getClass().getSimpleName());
     }
 
     public abstract Consumer<byte[]> getConsumer();

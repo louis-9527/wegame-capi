@@ -49,7 +49,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = operationEventPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient operationEventPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
+        // log.debug(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
         if (StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)) {
             return PulsarClient.builder()
                     .serviceUrl(dynamicOperationTopicUrl)
