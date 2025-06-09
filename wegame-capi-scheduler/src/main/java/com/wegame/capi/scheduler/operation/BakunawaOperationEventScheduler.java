@@ -6,6 +6,7 @@ import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.operation.BakunawaOperationEventManager;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
+import com.wegame.capi.scheduler.biz.common.AbstractOperationEventScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,12 +44,12 @@ public class BakunawaOperationEventScheduler extends AbstractOperationEventSched
     }
 
     @Override
-    OperationEventTypeEnum operationEventType() {
+    public OperationEventTypeEnum operationEventType() {
         return OperationEventTypeEnum.BAKUNAUWA;
     }
 
     @Override
-    AbstractOperationEventManager operationEventManager() {
+    public AbstractOperationEventManager operationEventManager() {
         return bakunawaOperationEventManager;
     }
 }
