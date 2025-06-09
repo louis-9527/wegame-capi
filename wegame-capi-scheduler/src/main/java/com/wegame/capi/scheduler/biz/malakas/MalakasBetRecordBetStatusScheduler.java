@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.backend;
+package com.wegame.capi.scheduler.biz.malakas;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
@@ -9,30 +9,38 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.MALAKAS_PROP;
-import static com.wegame.capi.common.Constants.TRUE_VAL;
+import static com.wegame.capi.common.Constants.*;
 
+
+/**
+ * 投注记录兜底定时任务
+ */
 @Slf4j
 @Service
 @ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
-public class MalakasMaintainCacheUpdateScheduler extends AbstractMaintainCacheUpdateScheduler {
+public class MalakasBetRecordBetStatusScheduler
+        extends AbstractBetRecordBetStatusScheduler
+        implements Runnable {
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Override
+    GameTypeEnum getGameType() {
+        return GameTypeEnum.MALAKAS;
+    }
+
+    /**
+     * 每分钟15秒执行
+     */
+    @Scheduled(cron = "15 * * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
             long startTime = DateUtil.getCurrentMilli();
-            scheduleWithLock(LockNameUtil.getMaintainConfigUpdateLock(gameType()), this);
+            scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(getGameType()), this);
             log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
-            log.info("get lock fail");
+            log.info("schedule get lock fail");
         } catch (Exception e) {
             log.error("schedule failed", e);
         }
-    }
-
-    @Override
-    GameTypeEnum gameType() {
-        return GameTypeEnum.MALAKAS;
     }
 }

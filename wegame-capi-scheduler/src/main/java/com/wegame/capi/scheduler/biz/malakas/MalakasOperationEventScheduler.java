@@ -1,11 +1,12 @@
-package com.wegame.capi.scheduler.operation;
+package com.wegame.capi.scheduler.biz.malakas;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
-import com.wegame.capi.biz.manager.operation.IbongAdarnaOperationEventManager;
+import com.wegame.capi.biz.manager.operation.MalakasOperationEventManager;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
+import com.wegame.capi.scheduler.biz.common.AbstractOperationEventScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,20 +14,20 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.IBONG_ADARNA_PROP;
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
- * IbongAdarna干预事件定时任务
+ * Marakas干预事件定时任务
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
-public class IbongAdarnaOperationEventScheduler extends AbstractOperationEventScheduler {
+@ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
+public class MalakasOperationEventScheduler extends AbstractOperationEventScheduler {
 
     @Autowired
-    @Qualifier("ibongAdarnaOperationEventManager")
-    IbongAdarnaOperationEventManager ibongAdarnaOperationEventManager;
+    @Qualifier("malakasOperationEventManager")
+    MalakasOperationEventManager malakasOperationEventManager;
 
     @Scheduled(cron = "0 0/30 * * * ?")
     public void schedule() {
@@ -44,11 +45,11 @@ public class IbongAdarnaOperationEventScheduler extends AbstractOperationEventSc
 
     @Override
     OperationEventTypeEnum operationEventType() {
-        return OperationEventTypeEnum.IBONG_ADARNA;
+        return OperationEventTypeEnum.MALAKAS_DYNAMIC;
     }
 
     @Override
     AbstractOperationEventManager operationEventManager() {
-        return ibongAdarnaOperationEventManager;
+        return malakasOperationEventManager;
     }
 }

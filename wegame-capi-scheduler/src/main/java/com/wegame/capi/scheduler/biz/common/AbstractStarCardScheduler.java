@@ -38,7 +38,7 @@ public abstract class AbstractStarCardScheduler
     @Autowired
     public BetRecordService betRecordService;
 
-    abstract GameTypeEnum gameTypeEnum();
+    public abstract GameTypeEnum gameTypeEnum();
 
     @Override
     public void run() {

@@ -1,9 +1,9 @@
-package com.wegame.capi.scheduler.operation;
+package com.wegame.capi.scheduler.biz.ibong;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
-import com.wegame.capi.biz.manager.operation.MalakasOperationEventManager;
+import com.wegame.capi.biz.manager.operation.IbongAdarnaOperationEventManager;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -13,20 +13,20 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.IBONG_ADARNA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
- * Marakas干预事件定时任务
+ * IbongAdarna干预事件定时任务
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
-public class MalakasOperationEventScheduler extends AbstractOperationEventScheduler {
+@ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
+public class IbongAdarnaOperationEventScheduler extends AbstractOperationEventScheduler {
 
     @Autowired
-    @Qualifier("malakasOperationEventManager")
-    MalakasOperationEventManager malakasOperationEventManager;
+    @Qualifier("ibongAdarnaOperationEventManager")
+    IbongAdarnaOperationEventManager ibongAdarnaOperationEventManager;
 
     @Scheduled(cron = "0 0/30 * * * ?")
     public void schedule() {
@@ -44,11 +44,11 @@ public class MalakasOperationEventScheduler extends AbstractOperationEventSchedu
 
     @Override
     OperationEventTypeEnum operationEventType() {
-        return OperationEventTypeEnum.MALAKAS_DYNAMIC;
+        return OperationEventTypeEnum.IBONG_ADARNA;
     }
 
     @Override
     AbstractOperationEventManager operationEventManager() {
-        return malakasOperationEventManager;
+        return ibongAdarnaOperationEventManager;
     }
 }

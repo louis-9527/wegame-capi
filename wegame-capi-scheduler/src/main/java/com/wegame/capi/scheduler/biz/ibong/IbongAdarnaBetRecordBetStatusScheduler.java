@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.starcard;
+package com.wegame.capi.scheduler.biz.ibong;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
@@ -9,33 +9,38 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.IBONG_ADARNA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
+
 /**
- * Malakas星卡定时任务
+ * 投注记录兜底定时任务
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
-public class MalakasStarCardScheduler extends AbstractStarCardScheduler {
+@ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
+public class IbongAdarnaBetRecordBetStatusScheduler
+        extends AbstractBetRecordBetStatusScheduler {
 
-    @Scheduled(cron = "0 0/9 * * * ?")
+    @Override
+    GameTypeEnum getGameType() {
+        return GameTypeEnum.IBONG_ADARNA;
+    }
+
+    /**
+     * 每分钟30秒执行
+     */
+    @Scheduled(cron = "30 * * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
             long startTime = DateUtil.getCurrentMilli();
-            scheduleWithLock(LockNameUtil.getStarCardReportSchedulerLockName(gameTypeEnum()), this);
-            log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
+            scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(getGameType()), this);
+            log.info("schedule end, cost time: {}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
             log.info("schedule get lock fail");
         } catch (Exception e) {
             log.error("schedule failed", e);
         }
-    }
-
-    @Override
-    GameTypeEnum gameTypeEnum() {
-        return GameTypeEnum.MALAKAS;
     }
 }

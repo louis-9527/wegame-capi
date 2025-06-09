@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.alert;
+package com.wegame.capi.scheduler.biz.ibong;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
