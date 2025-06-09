@@ -37,7 +37,7 @@ public abstract class AbstractOperationEventPulsarListener implements MessageLis
 
     @Override
     public void afterPropertiesSet() {
-        log.info(BUILD_BEAN_FORMAT, getClass().getSimpleName());
+        log.debug(BUILD_BEAN_FORMAT, getClass().getSimpleName());
     }
 
     @Override

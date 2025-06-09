@@ -100,7 +100,7 @@ public class AppLaunchPostProcessor {
 
     private void buildUserIdCache() {
         try {
-            distributeLock.lockThenRun(LockNameUtil.getbuildUserIdCacheLockName(), 60, TimeUnit.SECONDS, () -> {
+            distributeLock.lockThenRun(LockNameUtil.getBuildUserIdCacheLockName(), 60, TimeUnit.SECONDS, () -> {
                 try {
                     log.info("buildUserIdCache begin");
                     List<UserDo> userList;

@@ -59,7 +59,7 @@ public class LockNameUtil {
         return String.format(MAINTAIN_CONFIG_UPDATE_LOCK, gameType.getName());
     }
 
-    public static String getbuildUserIdCacheLockName() {
+    public static String getBuildUserIdCacheLockName() {
         return BUILD_USER_ID_CACHE_LOCK;
     }
 }
