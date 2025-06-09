@@ -18,7 +18,7 @@ import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Configuration
-@ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
 public class BakunawaMongoConfig {
 
     private static final String bakunawaMongoTemplate = "bakunawaMongoTemplate";

@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.BAKUNAWA_ADARNA_PROP;
+import static com.wegame.capi.common.Constants.BAKUNAWA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
@@ -21,7 +21,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
 public class BakunawaOperationEventScheduler extends AbstractOperationEventScheduler {
 
     @Autowired
