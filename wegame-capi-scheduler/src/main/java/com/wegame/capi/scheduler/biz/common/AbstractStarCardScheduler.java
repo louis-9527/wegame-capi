@@ -32,7 +32,6 @@ public abstract class AbstractStarCardScheduler
         extends AbstractScheduler
         implements Runnable {
 
-
     @Autowired
     private StarCardUseRecordService starCardUseRecordService;
     @Autowired

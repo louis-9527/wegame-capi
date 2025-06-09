@@ -33,7 +33,7 @@ public abstract class AbstractBetRecordBetStatusScheduler
     @Autowired
     BetStatusService betStatusService;
 
-    abstract GameTypeEnum getGameType();
+    public abstract GameTypeEnum getGameType();
 
     /**
      * 扫描投注状态为投注中 && 创建时间在[当前时间-3分钟，当前时间-2分钟]的投注记录，扭转其投注状态

@@ -36,7 +36,7 @@ public class MariaMakilingStarCardScheduler extends AbstractStarCardScheduler {
     }
 
     @Override
-    GameTypeEnum gameTypeEnum() {
+    public GameTypeEnum gameTypeEnum() {
         return GameTypeEnum.MARIA_MAKILING;
     }
 }

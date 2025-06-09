@@ -33,7 +33,9 @@ public class MariaMakilingMaintainCacheUpdateScheduler extends AbstractMaintainC
     }
 
     @Override
-    GameTypeEnum gameType() {
+    public GameTypeEnum gameType() {
         return GameTypeEnum.MARIA_MAKILING;
     }
+
+
 }

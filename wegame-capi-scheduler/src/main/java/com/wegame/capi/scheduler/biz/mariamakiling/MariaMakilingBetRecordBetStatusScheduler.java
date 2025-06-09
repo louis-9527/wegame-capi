@@ -24,7 +24,7 @@ public class MariaMakilingBetRecordBetStatusScheduler
         implements Runnable {
 
     @Override
-    GameTypeEnum getGameType() {
+    public GameTypeEnum getGameType() {
         return GameTypeEnum.MARIA_MAKILING;
     }
 

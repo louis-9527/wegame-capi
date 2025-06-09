@@ -23,11 +23,6 @@ public class MariaMakilingBetRecordBetStatusAlertScheduler
         extends AbstractAlertScheduler
         implements Runnable {
 
-    @Override
-    GameTypeEnum getGameType() {
-        return GameTypeEnum.MARIA_MAKILING;
-    }
-
     /**
      * 每天8点运行
      */
@@ -44,4 +39,10 @@ public class MariaMakilingBetRecordBetStatusAlertScheduler
             log.error("schedule failed", e);
         }
     }
+
+    @Override
+    public GameTypeEnum getGameType() {
+        return GameTypeEnum.MARIA_MAKILING;
+    }
+
 }
