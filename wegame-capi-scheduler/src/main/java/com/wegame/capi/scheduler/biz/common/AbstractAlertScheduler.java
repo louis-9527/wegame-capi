@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.alert;
+package com.wegame.capi.scheduler.biz.common;
 
 import com.alibaba.druid.util.StringUtils;
 import com.wegame.base.domain.BizAlertMessage;

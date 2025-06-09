@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.backend;
+package com.wegame.capi.scheduler.biz.common;
 
 import com.wegame.capi.biz.domain.backend.GameMaintainConfigDo;
 import com.wegame.capi.biz.service.backend.GameMaintainConfigService;
