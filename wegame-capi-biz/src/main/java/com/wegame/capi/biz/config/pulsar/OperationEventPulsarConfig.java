@@ -122,7 +122,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(BakunawaOperationEventPulsarListener.class)
     public Consumer<byte[]> bakunawaOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                            @Autowired BakunawaOperationEventPulsarListener bakunawaOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, bakunawaOperationEventConsumer);
+        log.debug(BUILD_BEAN_FORMAT, bakunawaOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupBakunawa)

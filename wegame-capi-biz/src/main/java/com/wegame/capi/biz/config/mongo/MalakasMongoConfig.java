@@ -34,13 +34,13 @@ public class MalakasMongoConfig {
 
     @Bean(malakasMongoTemplate)
     public MongoTemplate malakasMongoTemplate() {
-        log.info(BUILD_BEAN_FORMAT, malakasMongoTemplate);
+        log.debug(BUILD_BEAN_FORMAT, malakasMongoTemplate);
         return new MongoTemplate(MongoClients.create(malakasMdbUri), malakasMdb);
     }
 
     @Bean(malakasPrimaryMongoTemplate)
     public MongoTemplate malakasPrimaryMongoTemplate() {
-        log.info(BUILD_BEAN_FORMAT, malakasPrimaryMongoTemplate);
+        log.debug(BUILD_BEAN_FORMAT, malakasPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(malakasMdbPrimaryUri), malakasMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -48,7 +48,7 @@ public class MalakasMongoConfig {
 
     @Bean(name = malakasTransactionManager)
     public MongoTransactionManager malakasTransactionManager(@Autowired MongoTemplate malakasMongoTemplate) {
-        log.info(BUILD_BEAN_FORMAT, malakasTransactionManager);
+        log.debug(BUILD_BEAN_FORMAT, malakasTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(malakasMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)
