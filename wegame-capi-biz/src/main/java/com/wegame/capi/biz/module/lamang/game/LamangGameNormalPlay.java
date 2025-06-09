@@ -321,9 +321,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             //后续生成wheel根据前一轮的倍率
             RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, preGameRecord.getRewardResult().getTotalMultiple(), totalRewardAmount.get()));
             long gameRecordId = generateGameRecordId();
-            int drawTimes = countNewScatterAndScatter1InWheel(wheel.getSymbolArr());
             LamangGameRecordDo gameRecord = buildGameRecord(gameRecordId, preGameRecord.getId(),
-                    gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult, drawTimes);
+                    gamePlay.getBetRecordId(), preGameRecord.getBatchId(), wheel, rewardResult);
             gameRecordResult.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             loopPlayOnPreGameRecord(gamePlay, gameRecordResult, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag, mustRewardFreeWheel, scatter1CountInBatch);
@@ -352,10 +351,10 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                                                Long betRecordId,
                                                Long batchId,
                                                WheelDo<LamangSymbolDo> wheel,
-                                               RewardResultDo<LamangSymbolDo> rewardResult,
-                                               int jackpotDrawTimes) {
+                                               RewardResultDo<LamangSymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
+        int drawTimes = LamangSymbolUtil.countNewScatterAndScatter1InWheel(wheel.getSymbolArr());
         return LamangGameRecordDo.builder()
                 .id(id)
                 .parentId(parentId)
@@ -369,7 +368,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
                 .lastGameFlag(false)
-                .jackpotDrawTimes(jackpotDrawTimes)
+                .jackpotDrawTimes(drawTimes)
                 .build();
     }
 
@@ -387,9 +386,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         // 组装-游戏记录
         long gameRecordId = generateGameRecordId();
         // 计算抽奖次数
-        int drawTimes = countNewScatterAndScatter1InWheel(wheel.getSymbolArr());
         LamangGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(),
-                gameRecordId, wheel, rewardResult, drawTimes);
+                gameRecordId, wheel, rewardResult);
         result.add(gameRecord);
         totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
         loopPlayOnPreGameRecord(gamePlay, result, totalRewardAmount, gameRecord, freeWheelList, firstBatchConfig, false, mustRewardFreeWheel, scatter1CountInBatch);
@@ -413,9 +411,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             // 组装-游戏记录
             long gameRecordId = generateGameRecordId();
             // 计算抽奖次数
-            int drawTimes = countNewScatterAndScatter1InWheel(wheel.getSymbolArr());
             LamangGameRecordDo gameRecord = buildGameRecord(gameRecordId, freeWheel.getParentGameRecordId(),
-                    gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult, drawTimes);
+                    gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
             result.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             if (CollectionUtils.isEmpty(parentGameRecord.getGameRecordIds())) {
