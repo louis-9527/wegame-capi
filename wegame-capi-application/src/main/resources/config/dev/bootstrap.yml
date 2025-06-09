@@ -11,7 +11,8 @@ logging:
 #game switch
 game:
   enable:
-    MariaMakiling: false
-    Malakas: false
-    IbongAdarna: false
-    Lamang: true
+    MariaMakiling: true
+    Malakas: true
+    IbongAdarna: true
+    Bakunawa: true
+    lamang: true

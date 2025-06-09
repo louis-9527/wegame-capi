@@ -26,10 +26,18 @@ db.getCollection("lamang_jackpot_reward_pool_input_record").createIndex(
 db.getCollection("lamang_bet_record").drop();
 db.createCollection("lamang_bet_record");
 // 索引lamang_bet_record-c端查询需要
-db.lamang_bet_record.createIndex({playerId: 1, channelId: 1, status: 1, createTime: -1})
-db.lamang_bet_record.createIndex({createTime: -1, status: 1, _id: 1})
+db.lamang_bet_record.createIndex({playerId: 1, channelId: 1, status: 1, createTime: -1});
+db.lamang_bet_record.createIndex({createTime: -1, status: 1, _id: 1});
 // 索引lamang_bet_record-b端查询需要-使用覆盖索引
-db.lamang_bet_record.createIndex({createTime: -1, channelId: 1, status:1, payAmount:1, payOutAmount:1 ,userId:1, betPromotionType:1})
+db.lamang_bet_record.createIndex({
+    createTime: -1,
+    channelId: 1,
+    status: 1,
+    payAmount: 1,
+    payOutAmount: 1,
+    userId: 1,
+    betPromotionType: 1
+});
 
 
 // ----------------------------
@@ -38,7 +46,7 @@ db.lamang_bet_record.createIndex({createTime: -1, channelId: 1, status:1, payAmo
 db.getCollection("lamang_game_record").drop();
 db.createCollection("lamang_game_record");
 // 索引lamang_game_record-c端查询需要-新
-db.lamang_game_record.createIndex({betRecordId: 1, batchId: 1})
+db.lamang_game_record.createIndex({betRecordId: 1, batchId: 1});
 
 // -- ----------------------------
 //     -- Table structure for xxx_jackpot_pool: xxx_jackpot奖池
