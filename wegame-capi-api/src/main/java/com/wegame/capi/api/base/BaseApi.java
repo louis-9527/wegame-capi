@@ -31,9 +31,6 @@ public class BaseApi {
     @Autowired
     @Qualifier(PROMOTION_REST_TEMPLATE_BEAN)
     public RestTemplate promotionRestTemplate;
-    @Autowired
-    @Qualifier(FREE_SPIN_REST_TEMPLATE_BEAN)
-    public RestTemplate freeSpinRestTemplate;
 }
 
 
