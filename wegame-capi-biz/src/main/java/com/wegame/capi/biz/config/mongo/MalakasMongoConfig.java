@@ -1,4 +1,4 @@
-package com.wegame.capi.infrastructure.config.mongo;
+package com.wegame.capi.biz.config.mongo;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;

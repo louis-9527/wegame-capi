@@ -26,11 +26,11 @@ public class BaseApi {
     @Qualifier(WALLET_REST_TEMPLATE_BEAN)
     public RestTemplate walletRestTemplate;
     @Autowired
-    @Qualifier(PROMOTION_REST_TEMPLATE_BEAN)
-    public RestTemplate promotionRestTemplate;
-    @Autowired
     @Qualifier(FREE_SPIN_REST_TEMPLATE_BEAN)
     public RestTemplate freeSpinRestTemplate;
+    @Autowired
+    @Qualifier(PROMOTION_REST_TEMPLATE_BEAN)
+    public RestTemplate promotionRestTemplate;
 }
 
 

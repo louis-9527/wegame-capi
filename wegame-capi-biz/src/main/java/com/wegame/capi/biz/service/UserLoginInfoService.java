@@ -12,12 +12,15 @@ import com.wegame.capi.dao.mapper.user.UserLoginInfoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
 
 /**
  * po服务
@@ -185,6 +188,7 @@ public class UserLoginInfoService {
     }
 
     /// ////////////  above auto generated ///////////////
+    @Async(defaultThreadPoolExecutor)
     public void asyncAddOrUpdate(UserLoginInfoDo userLoginInfoDo) {
         try {
             Long id = userLoginInfoMapper.selectId(UserLoginInfoQuery.builder()

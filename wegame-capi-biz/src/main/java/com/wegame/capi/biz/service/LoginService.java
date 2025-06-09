@@ -5,7 +5,6 @@ import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
-import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
 import com.wegame.capi.client.context.UserInfo;
