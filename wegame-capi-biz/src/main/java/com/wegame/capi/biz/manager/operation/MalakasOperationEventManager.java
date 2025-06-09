@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.wegame.capi.infrastructure.config.mongo.MalakasMongoConfig.malakasTransactionManager;
-import static com.wegame.capi.infrastructure.config.mongo.MariamakilingMongoConfig.mariamakilingTransactionManager;
+import static com.wegame.capi.biz.config.mongo.MalakasMongoConfig.malakasTransactionManager;
 
 @Component("malakasOperationEventManager")
 public class MalakasOperationEventManager extends AbstractOperationEventManager {

@@ -1,6 +1,5 @@
 package com.wegame.capi.client.domain.request;
 
-import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.Validate;
 import com.wegame.base.domain.BaseRequest;
 import com.wegame.base.enums.ErrorCode;
@@ -9,12 +8,15 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.validator.CommonGameValidator;
+import com.wegame.capi.client.validator.IbongAdarnaValidator;
+import com.wegame.capi.client.validator.MalakasValidator;
+import com.wegame.capi.client.validator.MariaMakilingValidator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Data
@@ -57,9 +59,9 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
     @ApiModel(description = "投注详情")
     public static class BetDetail implements BetRequestValidate, Serializable {
         private static final long serialVersionUID = 196176475253019928L;
-        private static final long MIN_BET_AMOUNT = 300L;
-        private static final long MAX_BET_AMOUNT = 10000000L;
-        private static final long MULTIPLE = 35;
+        public static final long MIN_BET_AMOUNT = 300L;
+        public static final long MAX_BET_AMOUNT = 10000000L;
+        public static final long MULTIPLE = 35;
 
         @ApiModelProperty(value = "投注金额", required = true)
         private Long betAmount;
@@ -89,16 +91,16 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             AssertUtil.assertNotNull(payAmount, ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(payAmount >= 0, ErrorCode.ERR_PARAM);
             if (Objects.equals(gameType, GameTypeEnum.MARIA_MAKILING)) {
-                mariaMakilingValidateParam(betType, betSubType);
-                validateStartCartBet(betType, betSubType);
-                validateFreeSpinBet(betType, betSubType);
+                MariaMakilingValidator.validateParam(betType, betSubType, this);
+                CommonGameValidator.validateStarCardBet(betType, betSubType, this);
+                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
             } else if (Objects.equals(gameType, GameTypeEnum.MALAKAS)) {
-                malakasValidateParam(betType, betSubType);
-                validateStartCartBet(betType, betSubType);
-                validateFreeSpinBet(betType, betSubType);
+                MalakasValidator.validateParam(betType, betSubType, this);
+                CommonGameValidator.validateStarCardBet(betType, betSubType, this);
+                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
             } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
-                ibongAdarnaValidateParam(betType, betSubType);
-                validateFreeSpinBet(betType, betSubType);
+                IbongAdarnaValidator.validateParam(betType, betSubType, this);
+                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
             } else if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
                 //todo 其他校验
                 lamangValidateParam(betType, betSubType);

@@ -25,7 +25,7 @@ public abstract class AbstractScheduler implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        log.info(BUILD_BEAN_FORMAT, taskName());
+        log.debug(BUILD_BEAN_FORMAT, taskName());
     }
 
     public String taskName() {

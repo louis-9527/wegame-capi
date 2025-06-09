@@ -49,7 +49,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = operationEventPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient operationEventPulsarClient() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
+        log.debug(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
         if (StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)) {
             return PulsarClient.builder()
                     .serviceUrl(dynamicOperationTopicUrl)
@@ -75,7 +75,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(MariamakilingOperationEventPulsarListener.class)
     public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                 @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, mariaMakilingOperationEventConsumer);
+        log.debug(BUILD_BEAN_FORMAT, mariaMakilingOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMariaMakiling)
@@ -89,7 +89,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
     public Consumer<byte[]> malakasOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                           @Autowired MalakasOperationEventPulsarListener malakasOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, malakasOperationEventConsumer);
+        log.debug(BUILD_BEAN_FORMAT, malakasOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMalakas)
@@ -103,10 +103,9 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(IbongOperationEventPulsarListener.class)
     public Consumer<byte[]> ibongOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                         @Autowired IbongOperationEventPulsarListener ibongOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, ibongOperationEventConsumer);
-        String deadLetterTopic = dynamicOperationTopic;
+        log.debug(BUILD_BEAN_FORMAT, ibongOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
-                .topic(deadLetterTopic)
+                .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupIbong)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(ibongOperationEventPulsarListener)

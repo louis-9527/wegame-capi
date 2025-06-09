@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        malakas_mdb:
+          primary_uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/malakas?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=primary
+          uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/malakas?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
+          db: malakas
+## pulsar
+pulsar:
+  dynamic:
+    malakas:
+      url: pulsar://pulsar.makillingslot.org:6650
+      tenant: ${spring.application.name}_Malakas
+      namespace: ${spring.application.env}
+      bet_topic: Malakas_topic
+      bet_deadLetter_topic: Malakas_deadLetter_topic

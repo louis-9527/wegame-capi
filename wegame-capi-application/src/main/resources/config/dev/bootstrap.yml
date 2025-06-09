@@ -1,30 +1,14 @@
-#spring:
-#  application:
-#    name: wegame-capi
-#    env: dev
-#  profiles:
-#    active: dev
-##  config:
-##    import:
-##      - "optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml"
-##      - "optional:nacos:${spring.application.name}-maria-makiling-config-${spring.profiles.active}.json"
-#  cloud:
-#    nacos:
-#      username: nacos
-#      password: nacos
-##      discovery:
-##        server-addr: 16.162.139.203:8847,16.162.139.203:8849,16.162.139.203:8851
-##        group: ${spring.profiles.active}
-##        namespace: cd274f91-247f-4b5d-8bd1-0a8c7fd386ec
-##        metadata:
-##          application: ${spring.application.name}-${spring.profiles.active}
-#      config:
-#        import-check:
-#          enabled: true
-#        server-addr: 16.162.139.203:8847,16.162.139.203:8849,16.162.139.203:8851
-#        group: ${spring.profiles.active}
-#        namespace: cd274f91-247f-4b5d-8bd1-0a8c7fd386ec
-#        file-extension: yaml
+## log
+logging:
+  level:
+    org.apache.pulsar: DEBUG
+#    com.wegame: info
+#    org.mongodb: error
+#    org.springframework.web: trace
+#    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+#    com.wegame: trace
+#    org.apache.ibatis: trace
+#game switch
 game:
   enable:
     MariaMakiling: false

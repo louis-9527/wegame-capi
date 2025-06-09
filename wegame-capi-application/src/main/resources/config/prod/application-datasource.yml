@@ -1,0 +1,44 @@
+## spring:datasource
+spring:
+  datasource:
+    dynamic:
+      primary: wegame_user_db
+      strict: true
+      datasource:
+        wegame_user_db:
+          url: jdbc:mysql://prod-makiling-mysql-sg.cluster-cnidxkef2jeq.ap-southeast-1.rds.amazonaws.com:3306/wegame_user_db?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: PROD_Makiling_Service_User
+          password: ENC(QdOoUQKWq8Sg7gyhwSLhK1Gf2UH3ZoNIMKyBqMSlYLv4FOrByxPHoT1xoLnyOH9Ts1vrzTbAnhDlm33b4/3vxA==)
+          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
+          driver-class-name: com.mysql.jdbc.Driver
+          type: com.alibaba.druid.pool.DruidDataSource
+          druid:
+            initial-size: 250
+            min-idle: 50
+            max-active: 500
+            max-wait: 1000
+            time-between-eviction-runs-millis: 6000
+            min-evictable-idle-time-millis: 30001
+            validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            pool-prepared-statements: false
+        wegame_backend_db:
+          url: jdbc:mysql://prod-makiling-mysql-sg.cluster-cnidxkef2jeq.ap-southeast-1.rds.amazonaws.com:3306/wegame_backend_db?serverTimezone=Asia/Kuala_Lumpur&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useAffectedRows=TRUE
+          username: PROD_Makiling_Service_User
+          password: ENC(QdOoUQKWq8Sg7gyhwSLhK1Gf2UH3ZoNIMKyBqMSlYLv4FOrByxPHoT1xoLnyOH9Ts1vrzTbAnhDlm33b4/3vxA==)
+          public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDugBIm/9xWXyM4pb/FgyCLC7qZhMzGm4T7sIZ3Faq2/ueVLPkJ5scHUUrdGNph3OTEwxSQGb4EDvvP2xSruAsCAwEAAQ==
+          driver-class-name: com.mysql.jdbc.Driver
+          druid:
+            initial-size: 1
+            min-idle: 2
+            max-active: 10
+            max-wait: 1000
+            time-between-eviction-runs-millis: 6000
+            min-evictable-idle-time-millis: 30001
+            validation-query: SELECT 1 FROM DUAL
+            test-while-idle: true
+            test-on-borrow: false
+            test-on-return: false
+            pool-prepared-statements: false
