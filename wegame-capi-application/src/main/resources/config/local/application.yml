@@ -6,12 +6,12 @@ server:
   tomcat:
     uri-encoding: UTF-8
     connection-timeout: 10000
-    max-connections: 110000
-    keep-alive-timeout: 120000
-    accept-count: 10000
+    max-connections: 100
+    keep-alive-timeout: 1200
+    accept-count: 100
     threads:
       max: 250000
-      min-spare: 100
+      min-spare: 1
   servlet:
     context-path: /capi/game
     encoding:
