@@ -22,7 +22,7 @@ public class MariaMakilingBetRecordManagerTest extends BaseTest {
     MariaMakilingBetRecordManager mariaMakilingBetRecordManager;
 
     @BeforeAll
-    public void beforeTest() {
+    public static void beforeTest() {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
                 .build());

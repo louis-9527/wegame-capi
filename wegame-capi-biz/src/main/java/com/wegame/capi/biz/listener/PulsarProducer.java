@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.listener;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
@@ -74,7 +75,7 @@ public class PulsarProducer implements InitializingBean {
             return getProducer(gameType)
                     .newMessage()
                     .key(mqMessage.getMsgId())
-                    .value(JSON.toJSONBytes(mqMessage))
+                    .value(JSON.toJSONBytes(mqMessage, SerializerFeature.DisableCircularReferenceDetect))
                     .send();
         } catch (Exception e) {
             log.error("{}Producer syncSendMessage fail, msgId={}", gameType.getName(), mqMessage.getMsgId(), e);

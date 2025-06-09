@@ -35,13 +35,6 @@ public enum OperationEventTypeEnum {
             "ibongadarna_operation_event_config",
             "ibongadarna_operation_event_config_record"
     ),
-    BAKUNAUWA(
-            GameTypeEnum.BAKUNAWA,
-            "bakunawa_operation_event",
-            "bakunawa_operation_event_detail",
-            "bakunawa_operation_event_config",
-            "bakunawa_operation_event_config_record"
-    ),
 
     LAM_ANG(
             GameTypeEnum.LAM_ANG,

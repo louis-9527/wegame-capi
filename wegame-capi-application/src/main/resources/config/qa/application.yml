@@ -96,7 +96,7 @@ spring:
           druid:
             initial-size: 10
             min-idle: 10
-            max-active: 100
+            max-active: 4000
             max-wait: 1000
             time-between-eviction-runs-millis: 6000
             min-evictable-idle-time-millis: 30001
@@ -141,15 +141,9 @@ spring:
           uri: mongodb://43.199.119.200:27017/ibong?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
           # uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/ibong?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&readPreference=secondaryPreferred
           db: ibong
-        bakunawa_mdb:
-          primary_uri: mongodb://43.199.119.200:27017/bakunawa?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
-          uri: mongodb://43.199.119.200:27017/bakunawa?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
-          # uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/bakunawa?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&readPreference=secondaryPreferred
-          db: bakunawa
         lamang_mdb:
-          primary_uri: mongodb://43.199.119.200:27017/lamang?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
-          uri: mongodb://43.199.119.200:27017/lamang?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
-          # uri: mongodb+srv://makiling-qat-pri.anolx.mongodb.net/lamang?retryWrites=true&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&readPreference=secondaryPreferred
+          primary_uri: mongodb://43.199.119.200:27017/lamang?maxPoolSize=100&minPoolSize=10&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&readPreference=primary
+          uri: mongodb://43.199.119.200:27017/lamang?maxPoolSize=100&minPoolSize=10&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
           db: lamang
 ## fastjson
 fastjson:
@@ -204,12 +198,6 @@ pulsar:
       namespace: ${spring.application.env}
       bet_topic: IbongAdarna_topic
       bet_deadLetter_topic: IbongAdarna_deadLetter_topic
-    bakunawa:
-      url: pulsar://pulsar.makillingslot.net:6650
-      tenant: ${spring.application.name}_Bakunawa
-      namespace: ${spring.application.env}
-      bet_topic: Bakunawa_topic
-      bet_deadLetter_topic: Bakunawa_deadLetter_topic
     lamang:
       url: pulsar://pulsar.makillingslot.net:6650
       tenant: ${spring.application.name}_Lamang
@@ -225,7 +213,6 @@ dynamic:
       maria_makiling: ${api.game.cp.channelId}_MariaMakiling
       malakas: ${api.game.cp.channelId}_Malakas
       ibong: ${api.game.cp.channelId}_Ibong
-      bakunawa: ${api.game.cp.channelId}_Bakunawa
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud

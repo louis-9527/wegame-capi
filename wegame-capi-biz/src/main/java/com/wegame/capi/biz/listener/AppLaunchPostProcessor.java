@@ -49,7 +49,7 @@ public class AppLaunchPostProcessor {
     DistributeLock distributeLock;
     @Autowired
     UserService userService;
-    // healthCheck
+    // helthCheck
     @Autowired
     SingleWalletApi singleWalletApi;
     @Autowired

@@ -16,7 +16,7 @@ public class RandomServiceTest extends BaseTest {
     RandomService randomService;
 
     @BeforeAll
-    public void beforeTest() {
+    public static void beforeTest() {
         UserInfoContext.setUserInfo(UserInfo.builder()
                 .id("10000")
                 .build());

@@ -26,8 +26,6 @@ public class Constants {
     public static final Integer MARIA_MARKILING_REWARD_NOTIFY_SIZE = 10;
     public static final Integer MALAKAS_REWARD_NOTIFY_SIZE = 10;
     public static final Integer IBONG_ADARNA_REWARD_NOTIFY_SIZE = 10;
-    public static final Integer BAKUNAWA_ADARNA_REWARD_NOTIFY_SIZE = 10;
-
     public static final Integer LAMANG_REWARD_NOTIFY_SIZE = 20;
     // maria推送大奖tips内容
     public static final String MARIA_MARKILING_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
@@ -35,8 +33,6 @@ public class Constants {
     public static final String MALAKAS_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
     // ibong推送大奖tips内容 XXXX won 20x rewards ，₱ 99999
     public static final String IBONG_ADARNA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
-    // bakunawa推送大奖tips内容 XXXX won 100x rewards ，₱ 99999
-    public static final String BAKUNAWA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
 
     // lamang推送大奖tips内容
     public static final String LAMANG_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
@@ -45,7 +41,6 @@ public class Constants {
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
 
-    public static final int CONST_1 = 1;
     public static final int CONST_100 = 100;
     public static final int CONST_10000 = 10000;
     public static final int CONST_1000000 = 1000000;
@@ -67,7 +62,6 @@ public class Constants {
     public static final String MARIA_MAKILING_PROP = "game.enable.MariaMakiling";
     public static final String MALAKAS_PROP = "game.enable.Malakas";
     public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";
-    public static final String BAKUNAWA_ADARNA_PROP = "game.enable.Bakunawa";
     public static final String LAMANG_PROP = "game.enable.Lamang";
 
 

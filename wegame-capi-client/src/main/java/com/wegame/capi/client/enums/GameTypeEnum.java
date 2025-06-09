@@ -35,13 +35,8 @@ public enum GameTypeEnum {
             "lamang_game_record", 300L, 1.2),
 
 
-    BAKUNAWA("zhumeng005",
-            "Bakunawa",
-            "bakunawa_bet_record",
-            "bakunawa_game_record", 300L,1.2),
-
-
     ;
+
 
     /**
      * 枚举码.
