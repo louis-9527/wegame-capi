@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.module.bakunawa.bet;
+package com.wegame.capi.biz.module.bakunawa.bet.strategy;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.module.base.bet.AbstractBetContext;

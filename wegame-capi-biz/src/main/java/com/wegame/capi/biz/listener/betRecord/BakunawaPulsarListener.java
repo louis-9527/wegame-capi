@@ -13,12 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-import static com.wegame.capi.common.Constants.BAKUNAWA_ADARNA_PROP;
+import static com.wegame.capi.common.Constants.BAKUNAWA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
 public class BakunawaPulsarListener extends AbstractPulsarListener<BakunawaGameRecordDo> {
     @Autowired
     BakunawaBetRecordManager bakunawaBetRecordManager;

@@ -1,4 +1,4 @@
-package com.wegame.capi.infrastructure.config.mongo;
+package com.wegame.capi.biz.config.mongo;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;
@@ -18,7 +18,7 @@ import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Configuration
-@ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
 public class BakunawaMongoConfig {
 
     private static final String bakunawaMongoTemplate = "bakunawaMongoTemplate";
@@ -35,7 +35,7 @@ public class BakunawaMongoConfig {
      */
     @Bean(bakunawaMongoTemplate)
     public MongoTemplate bakunawaMongoTemplate() {
-        log.info(BUILD_BEAN_FORMAT, bakunawaMongoTemplate);
+        log.debug(BUILD_BEAN_FORMAT, bakunawaMongoTemplate);
         return new MongoTemplate(MongoClients.create(bakunawaMdbUri), bakunawaMdb);
     }
 
@@ -44,7 +44,7 @@ public class BakunawaMongoConfig {
      */
     @Bean(bakunawaPrimaryMongoTemplate)
     public MongoTemplate bakunawaPrimaryMongoTemplate() {
-        log.info(BUILD_BEAN_FORMAT, bakunawaPrimaryMongoTemplate);
+        log.debug(BUILD_BEAN_FORMAT, bakunawaPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(bakunawaMdbUri), bakunawaMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -52,7 +52,7 @@ public class BakunawaMongoConfig {
 
     @Bean(name = bakunawaTransactionManager)
     public MongoTransactionManager bakunawaTransactionManager(@Autowired MongoTemplate bakunawaMongoTemplate) {
-        log.info(BUILD_BEAN_FORMAT, bakunawaTransactionManager);
+        log.debug(BUILD_BEAN_FORMAT, bakunawaTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(bakunawaMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)

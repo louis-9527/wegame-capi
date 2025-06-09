@@ -20,7 +20,7 @@ import static com.wegame.capi.common.Constants.*;
  */
 @Slf4j
 @Configuration
-@ConditionalOnProperty(name = BAKUNAWA_ADARNA_PROP, havingValue = TRUE_VAL)
+@ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
 public class BakunawaPulsarConfig {
 
     private static final String bakunawaPulsarClient = "bakunawaPulsarClient";
@@ -41,7 +41,7 @@ public class BakunawaPulsarConfig {
 
     @Bean(name = bakunawaPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient bakunawaPulsarClient() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, bakunawaPulsarClient);
+        log.debug(BUILD_BEAN_FORMAT, bakunawaPulsarClient);
         PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(bakunawaUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -60,7 +60,7 @@ public class BakunawaPulsarConfig {
 
     @Bean(name = bakunawaProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> bakunawaProducer(@Autowired PulsarClient bakunawaPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, bakunawaProducer);
+        log.debug(BUILD_BEAN_FORMAT, bakunawaProducer);
         return bakunawaPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, bakunawaTenant, bakunawaNamespace, bakunawaBetTopic))
                 .producerName(bakunawaTenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -82,7 +82,7 @@ public class BakunawaPulsarConfig {
 
     @Bean(name = bakunawaConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> bakunawaConsumer(@Autowired PulsarClient bakunawaPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, bakunawaConsumer);
+        log.debug(BUILD_BEAN_FORMAT, bakunawaConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, bakunawaTenant, bakunawaNamespace, bakunawaBetTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, bakunawaTenant, bakunawaNamespace, bakunawaBetDeadLetterTopic);
         return bakunawaPulsarClient.newConsumer()
@@ -112,7 +112,7 @@ public class BakunawaPulsarConfig {
 
     @Bean(name = bakunawaDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> bakunawaDeadLetterConsumer(@Autowired PulsarClient bakunawaPulsarClient) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, bakunawaDeadLetterConsumer);
+        log.debug(BUILD_BEAN_FORMAT, bakunawaDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, bakunawaTenant, bakunawaNamespace, bakunawaBetDeadLetterTopic);
         return bakunawaPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
