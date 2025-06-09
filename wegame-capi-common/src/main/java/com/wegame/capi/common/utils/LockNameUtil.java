@@ -17,6 +17,7 @@ public class LockNameUtil {
 
     private static final String MAINTAIN_CONFIG_UPDATE_LOCK = "lock:maintain_config_update_scheduler_lock:%s";
 
+    private static final String BUILD_USER_ID_CACHE_LOCK = "lock:build_user_id_cache_lock";
 
 
     private LockNameUtil() {
@@ -56,5 +57,9 @@ public class LockNameUtil {
     public static String getMaintainConfigUpdateLock(GameTypeEnum gameType) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         return String.format(MAINTAIN_CONFIG_UPDATE_LOCK, gameType.getName());
+    }
+
+    public static String getBuildUserIdCacheLockName() {
+        return BUILD_USER_ID_CACHE_LOCK;
     }
 }
