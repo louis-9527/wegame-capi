@@ -24,6 +24,19 @@ import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 @Configuration
 public class FilterConfig {
 
+    private static final String[] URL_PATTERNS = new String[]{
+            "/bet/*",
+            "/betRecord/*",
+            "/reward/*",
+            "/user/*",
+            "/inner/*",
+            "/achievement/*",
+            "/bag/*",
+            "/mission/*",
+            "/treasure/*",
+            "/freeSpin/*"
+    };
+
     @Bean
     public FilterRegistrationBean mdcFilter() {
         MdcFilter mdcFilter = new MdcFilter();
@@ -46,18 +59,7 @@ public class FilterConfig {
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(signatureFilter);
         bean.setOrder(1);
-        bean.addUrlPatterns(
-                "/bet/*",
-                "/betRecord/*",
-                "/reward/*",
-                "/user/*",
-                "/inner/*",
-                "/achievement/*",
-                "/bag/*",
-                "/mission/*",
-                "/treasure/*",
-                "/freeSpin/*"
-        );
+        bean.addUrlPatterns(URL_PATTERNS);
         return bean;
     }
 
@@ -71,18 +73,7 @@ public class FilterConfig {
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(contextFilter);
         bean.setOrder(2);
-        bean.addUrlPatterns(
-                "/bet/*",
-                "/betRecord/*",
-                "/reward/*",
-                "/user/*",
-                "/inner/*",
-                "/achievement/*",
-                "/bag/*",
-                "/mission/*",
-                "/treasure/*",
-                "/freeSpin/*"
-        );
+        bean.addUrlPatterns(URL_PATTERNS);
         return bean;
     }
 }
