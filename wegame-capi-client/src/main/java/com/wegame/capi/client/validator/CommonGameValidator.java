@@ -9,9 +9,9 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 /**
  * @author bruce
  */
-public class GameCommonValidator {
+public class CommonGameValidator {
 
-    public static void validateStarCartBet(BetTypeEnum betType, BetSubTypeEnum betSubType, BetRequest.BetDetail betDetail) {
+    public static void validateStarCardBet(BetTypeEnum betType, BetSubTypeEnum betSubType, BetRequest.BetDetail betDetail) {
         // 判断是否使用星卡
         if (betDetail.isUseStarCard()) {
             AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);

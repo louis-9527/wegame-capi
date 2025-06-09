@@ -10,6 +10,8 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,7 +51,10 @@ public class GameEnableInterceptor extends HandlerInterceptorAdapter {
 
     private boolean isGameEnabled(HttpServletRequest request) {
         String gameId = getGameId(request);
-        for (GameTypeEnum gameType : gameProperty.enabledGameTypes()) {
+        if (StringUtils.isEmpty(gameId)) {
+            return false;
+        }
+        for (GameTypeEnum gameType : CollectionUtils.emptyIfNull(gameProperty.enabledGameTypes())) {
             if (gameType.getId().equals(gameId)) {
                 return true;
             }
