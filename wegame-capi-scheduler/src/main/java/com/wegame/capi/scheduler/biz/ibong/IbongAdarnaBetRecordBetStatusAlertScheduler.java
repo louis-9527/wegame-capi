@@ -1,36 +1,36 @@
-package com.wegame.capi.scheduler.alert;
+package com.wegame.capi.scheduler.biz.ibong;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
+import com.wegame.capi.scheduler.biz.common.AbstractAlertScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
-import static com.wegame.capi.common.Constants.TRUE_VAL;
+import static com.wegame.capi.common.Constants.*;
 
 /**
  * 投注状态告警定时任务
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
-public class MariaMakilingBetRecordBetStatusAlertScheduler
+@ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
+public class IbongAdarnaBetRecordBetStatusAlertScheduler
         extends AbstractAlertScheduler
         implements Runnable {
 
     @Override
-    GameTypeEnum getGameType() {
-        return GameTypeEnum.MARIA_MAKILING;
+    public GameTypeEnum getGameType() {
+        return GameTypeEnum.IBONG_ADARNA;
     }
 
     /**
      * 每天8点运行
      */
-    @Scheduled(cron = "0 0 8 * * ?")
+    @Scheduled(cron = "0 0 10 * * ?")
     public void schedule() {
         try {
             log.info("schedule start");

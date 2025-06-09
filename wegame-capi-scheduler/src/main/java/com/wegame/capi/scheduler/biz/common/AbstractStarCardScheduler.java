@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.starcard;
+package com.wegame.capi.scheduler.biz.common;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.utils.DateUtil;
@@ -32,13 +32,12 @@ public abstract class AbstractStarCardScheduler
         extends AbstractScheduler
         implements Runnable {
 
-
     @Autowired
     private StarCardUseRecordService starCardUseRecordService;
     @Autowired
     public BetRecordService betRecordService;
 
-    abstract GameTypeEnum gameTypeEnum();
+    public abstract GameTypeEnum gameTypeEnum();
 
     @Override
     public void run() {
