@@ -81,7 +81,6 @@ public abstract class AbstractBakunawaBetStrategy
                 return normalBet(betDo);
             }
         }
-        return normalBet(betDo);
     }
 
     private BetResultDo<BakunawaGameRecordDo> normalBet(BetDo betDo) {
