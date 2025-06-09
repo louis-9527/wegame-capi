@@ -6,6 +6,7 @@ import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.manager.operation.IbongAdarnaOperationEventManager;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
+import com.wegame.capi.scheduler.biz.common.AbstractOperationEventScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,12 +44,12 @@ public class IbongAdarnaOperationEventScheduler extends AbstractOperationEventSc
     }
 
     @Override
-    OperationEventTypeEnum operationEventType() {
+    public OperationEventTypeEnum operationEventType() {
         return OperationEventTypeEnum.IBONG_ADARNA;
     }
 
     @Override
-    AbstractOperationEventManager operationEventManager() {
+    public AbstractOperationEventManager operationEventManager() {
         return ibongAdarnaOperationEventManager;
     }
 }

@@ -36,7 +36,7 @@ public class MalakasStarCardScheduler extends AbstractStarCardScheduler {
     }
 
     @Override
-    GameTypeEnum gameTypeEnum() {
+    public GameTypeEnum gameTypeEnum() {
         return GameTypeEnum.MALAKAS;
     }
 }

@@ -23,11 +23,6 @@ public class MalakasBetRecordBetStatusAlertScheduler
         extends AbstractAlertScheduler
         implements Runnable {
 
-    @Override
-    public GameTypeEnum getGameType() {
-        return GameTypeEnum.MALAKAS;
-    }
-
     /**
      * 每天8点运行
      */
@@ -44,4 +39,11 @@ public class MalakasBetRecordBetStatusAlertScheduler
             log.error("schedule failed", e);
         }
     }
+
+
+    @Override
+    public GameTypeEnum getGameType() {
+        return GameTypeEnum.MALAKAS;
+    }
+
 }

@@ -44,12 +44,12 @@ public class MalakasOperationEventScheduler extends AbstractOperationEventSchedu
     }
 
     @Override
-    OperationEventTypeEnum operationEventType() {
+    public OperationEventTypeEnum operationEventType() {
         return OperationEventTypeEnum.MALAKAS_DYNAMIC;
     }
 
     @Override
-    AbstractOperationEventManager operationEventManager() {
+    public AbstractOperationEventManager operationEventManager() {
         return malakasOperationEventManager;
     }
 }

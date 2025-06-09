@@ -4,6 +4,7 @@ import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
+import com.wegame.capi.scheduler.biz.common.AbstractMaintainCacheUpdateScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,7 +32,7 @@ public class IbongAdarnaMaintainCacheUpdateScheduler extends AbstractMaintainCac
     }
 
     @Override
-    GameTypeEnum gameType() {
+    public GameTypeEnum gameType() {
         return GameTypeEnum.IBONG_ADARNA;
     }
 }
