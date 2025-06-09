@@ -1,4 +1,4 @@
-package com.wegame.capi.scheduler.biz;
+package com.wegame.capi.scheduler.biz.common;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
