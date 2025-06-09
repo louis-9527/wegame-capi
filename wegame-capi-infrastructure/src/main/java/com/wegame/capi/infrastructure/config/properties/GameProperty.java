@@ -16,7 +16,7 @@ public class GameProperty {
     private boolean enableMalakas;
     @Value("${game.enable.IbongAdarna}")
     private boolean enableIbongAdarna;
-    @Value("${game.enable.bakunawa}")
+    @Value("${game.enable.Bakunawa}")
     private boolean enableBakunawa;
 
     public List<GameTypeEnum> enabledGameTypes() {

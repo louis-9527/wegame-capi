@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.infrastructure.config.mongo.BakunawaMongoConfig.bakunawaTransactionManager;
+import static com.wegame.capi.biz.config.mongo.BakunawaMongoConfig.bakunawaTransactionManager;
 
 @Slf4j
 @Component("bakunawaBetRecordManager")
