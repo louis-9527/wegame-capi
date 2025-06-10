@@ -85,7 +85,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
-
         //生成免费轮
         if (CollectionUtils.isNotEmpty(freeWheelList)) {
             generateFreeBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
