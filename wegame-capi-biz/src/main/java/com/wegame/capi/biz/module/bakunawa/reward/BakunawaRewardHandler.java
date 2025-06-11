@@ -101,8 +101,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 .rewardFreeWheelTimes(0)
                 .rewardLineDetailList(rewardLineDetailList)
                 .totalMultiple(multiply)
-//                .accumulateReachMaxMultiple(multiply.intValue() > bakunawaConfig.getRewardMaxMultiple())
-                .accumulateReachMaxMultiple(true)
+                .accumulateReachMaxMultiple(multiply.intValue() > bakunawaConfig.getRewardMaxMultiple())
                 .build();
     }
 
