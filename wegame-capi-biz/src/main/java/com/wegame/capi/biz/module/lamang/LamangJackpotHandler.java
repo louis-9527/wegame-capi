@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import static com.wegame.capi.common.Constants.CONST_10000000;
@@ -60,10 +61,16 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     public Map<JackpotRewardPoolTypeEnum, Long> calculateRewardPoolCommission(BetPromotionTypeEnum betPromotionTypeEnum, BetTypeEnum betTypeEnum, Long betAmount) {
         AssertUtil.assertNotNull(betTypeEnum, ErrorCode.ERR_PARAM, "betTypeEnum is null");
         AssertUtil.assertNotNull(betAmount, ErrorCode.ERR_PARAM, "betAmount is null");
+        AssertUtil.assertNotNull(betPromotionTypeEnum, ErrorCode.ERR_PARAM, "betPromotionType is null");
         AssertUtil.assertTrue(betAmount >= 0, ErrorCode.ERR_PARAM, "betAmount is low than 0");
         // 如果投注金额为0,则提成0
         if (betAmount == 0) {
             log.warn("JackpotHandler#calculateRewardPoolCommission betAmount is 0,commission return 0");
+            return super.buildDefaultCommissionResultMap();
+        }
+
+        // 只有BetPromotionType == 0 才参与jackpot提成
+        if (!Objects.equals(betPromotionTypeEnum.getCode(), BetPromotionTypeEnum.NONE.getCode())) {
             return super.buildDefaultCommissionResultMap();
         }
 
@@ -95,7 +102,12 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     @Override
     public JackpotWinPrizeDo calculateWinPrize(JackpotDrawAndAwardDo reqDo) {
         try {
-            //todo 根据betPromotionType决定是否抽奖
+            AssertUtil.assertNotNull(reqDo, ErrorCode.ERR_PARAM, "reqDo is null");
+            AssertUtil.assertNotNull(reqDo.getBetPromotionType(), ErrorCode.ERR_PARAM, "BetPromotionType is null");
+            // BetPromotionTypeEnum == 0 才参与jackpot抽奖
+            if (!Objects.equals(reqDo.getBetPromotionType(), BetPromotionTypeEnum.NONE.getCode())) {
+                return null;
+            }
             JackpotWinPrizeDo jackpotWinPrizeDo = this.checkReward(reqDo.getBetAmount(), reqDo.getGameCount());
             if (jackpotWinPrizeDo == null) {
                 // 未中奖

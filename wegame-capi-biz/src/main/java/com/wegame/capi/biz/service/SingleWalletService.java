@@ -22,10 +22,6 @@ import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.*;
-import com.wegame.capi.common.enums.BetPromotionTypeEnum;
-import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
-import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +32,6 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.LockSupport;
-import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.req.BetWithPayoutReqBuilder.*;
 import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode;
@@ -91,17 +86,23 @@ public class SingleWalletService {
         }
         CommonRes<SingleWalletBetWithPayoutRes> commonRes = null;
         try {
-            if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
-                commonRes = freeSpinService.freeSpin(buildFreeSpinReq(betRecordDo));
-            } else if (Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
-                commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo));
-            } else {
-                //todo 生成jackpot分成消息
-                GameTypeEnum   gameType = GameTypeEnum.valueOfId(betRecordDo.getGameId());
-                JackpotTypeEnum jackpotType = JackpotTypeEnum.valueOfGameType(gameType);
-                // 当前游戏不支持jackpot走原逻辑
-                if (Objects.nonNull(jackpotType)) {
+            //todo 生成jackpot分成消息
+            GameTypeEnum gameType = GameTypeEnum.valueOfId(betRecordDo.getGameId());
+            JackpotTypeEnum jackpotType = JackpotTypeEnum.valueOfGameType(gameType);
+            // 当前游戏支持jackpot则需要用jackpot 构建请求
+            if (Objects.nonNull(jackpotType)) {
+                if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
+                    commonRes = freeSpinService.freeSpin(buildFreeSpinReq(betRecordDo));
+                } else if (Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
+                    commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo, jackpotRewardPoolService.listAllWithCache(jackpotType)));
+                } else {
                     commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo, jackpotRewardPoolService.listAllWithCache(jackpotType)));
+                }
+            } else {
+                if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
+                    commonRes = freeSpinService.freeSpin(buildFreeSpinReq(betRecordDo));
+                } else if (Objects.equals(BetPromotionTypeEnum.STAR_CARD.getCode(), betRecordDo.getBetPromotionType())) {
+                    commonRes = singleWalletApi.starSpin(buildStarSpinReq(betRecordDo));
                 } else {
                     commonRes = singleWalletApi.betWithPayout(buildReq(betRecordDo));
                 }
