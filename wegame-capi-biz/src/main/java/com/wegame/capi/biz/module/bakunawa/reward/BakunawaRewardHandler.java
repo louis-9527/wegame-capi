@@ -60,9 +60,10 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
                     .totalMultiple(BigDecimal.ZERO)
-                    .hasRewardFreeWheel(false)
+                    .hasRewardFreeWheel(Boolean.FALSE)
                     .rewardFreeWheelTimes(0)
                     .rewardLineDetailList(null)
+                    .accumulateReachMaxMultiple(Boolean.FALSE)
                     .build();
         }
         // 3、计算基础倍率-> 根据wheel计算基础倍率
@@ -90,6 +91,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 .rewardSymbolList(rewardLine.getRewardSymbolList())
                 .build());
         // 5.构建中奖结果
+        BigDecimal multiply = basicMultiple.multiply(pieMultiple.getValue());
         return RewardResultDo.<SymbolDo>builder()
                 .rewardType(RewardTypeEnum.SINGLE)
                 .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
@@ -98,7 +100,9 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 .hasRewardFreeWheel(false)
                 .rewardFreeWheelTimes(0)
                 .rewardLineDetailList(rewardLineDetailList)
-                .totalMultiple(basicMultiple.multiply(pieMultiple.getValue()))
+                .totalMultiple(multiply)
+//                .accumulateReachMaxMultiple(multiply.intValue() > bakunawaConfig.getRewardMaxMultiple())
+                .accumulateReachMaxMultiple(true)
                 .build();
     }
 
