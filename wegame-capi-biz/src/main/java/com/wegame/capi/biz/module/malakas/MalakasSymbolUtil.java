@@ -45,7 +45,6 @@ public class MalakasSymbolUtil {
         return newSymbolArr;
     }
 
-
     public static MalakasSymbolDo[][] handleSymbolNullArr(MalakasSymbolDo[][] symbolArr) {
         int row = symbolArr.length;
         int col = symbolArr[0].length;
