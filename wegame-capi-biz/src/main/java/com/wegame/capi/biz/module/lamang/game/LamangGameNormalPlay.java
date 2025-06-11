@@ -484,7 +484,8 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                 // 带金边普通元素，根据概率表 转换为Wild元素
                 int randomInt = randomService.randomInt(1, Constants.CONST_1000000);
                 SymbolDo wildSymbol = randomNormalSymbol(randomInt, GAME_INFO,
-                        LamangProbabilisticUtil.buildWildProbabilisticMap(lamangConfig.getProbabilisticConfig().getWildTypeProbabilisticConfig()));
+                        // todo 概率更改，业务需要变更 @liric
+                        LamangProbabilisticUtil.buildWildProbabilisticMap(null));
                 LamangSymbolDo current = LamangSymbolDo.buildFromSymbol(wildSymbol, false);
                 symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = current;
             } else {
