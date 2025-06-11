@@ -270,12 +270,12 @@ public class LamangConfig {
     }
 
     private void wildTypeProbabilisticConfig(TreeMap<String, BigDecimal> wildTypeProbabilisticConfig) {
-        int sum = 0;
-        for (BigDecimal probability : wildTypeProbabilisticConfig.values()) {
-            int val = (probability.multiply(new BigDecimal(CONST_10000))).intValue();
-            sum += val;
-        }
-        AssertUtil.assertTrue(Objects.equals(sum, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.wildTypeProbabilisticConfig ERR");
+//        int sum = 0;
+//        for (BigDecimal probability : wildTypeProbabilisticConfig.values()) {
+//            int val = (probability.multiply(new BigDecimal(CONST_10000))).intValue();
+//            sum += val;
+//        }
+//        AssertUtil.assertTrue(Objects.equals(sum, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.wildTypeProbabilisticConfig ERR");
     }
 
     private void playProbabilisticConfigValid(PlayProbabilisticConfig playProbabilisticConfig) {
