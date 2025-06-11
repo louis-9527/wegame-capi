@@ -249,7 +249,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         // 复制：元素数组
         LamangSymbolDo[][] symbolArr = copySymbolArr(preWheel.getSymbolArr());
         // 消除：中奖元素
-        clearRewardSymbol(symbolArr, preRewardResult);
+        clearRewardSymbol(symbolArr, preRewardResult, config);
 
         // 如果有超级wild就全部重新生成
         if (hasSuperWild(symbolArr)) {
@@ -463,14 +463,14 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
      * 2.2 不带金边，直接消除<br/>
      * 3、 wild元素 和占位符元素: 直接消除
      */
-    private void clearRewardSymbol(LamangSymbolDo[][] symbolArr, RewardResultDo<LamangSymbolDo> rewardResult) {
+    private void clearRewardSymbol(LamangSymbolDo[][] symbolArr, RewardResultDo<LamangSymbolDo> rewardResult, LamangConfig.PlayProbabilisticConfig config) {
         List<RewardSymbolDo<LamangSymbolDo>> rewardSymbolDoList = getRewardSymbolDoList(rewardResult);
         if (CollectionUtils.isNotEmpty(rewardSymbolDoList)) {
-            rewardSymbolDoList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
+            rewardSymbolDoList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol, config));
         }
     }
 
-    private void clearIndexRewardSymbol(LamangSymbolDo[][] symbolArr, RewardSymbolDo<LamangSymbolDo> rewardSymbol) {
+    private void clearIndexRewardSymbol(LamangSymbolDo[][] symbolArr, RewardSymbolDo<LamangSymbolDo> rewardSymbol, LamangConfig.PlayProbabilisticConfig config) {
         if (rewardSymbol.getSymbol().isScatterSymbol()) {
             // scatter 元素， 不做消除
         } else if (rewardSymbol.getSymbol().isWildSymbol() || rewardSymbol.getSymbol().isPlaceholderSymbol()) {
@@ -480,11 +480,12 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             // 普通元素消除
             IndexDo indexDo = rewardSymbol.getIndex();
             LamangSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
+            //// 可能的改动（当前不会出现）： 前一轮有超级wild 并且有金边，需要用超级wild概率表中的生成wild概率来生成wild
             if (commonSymbol.isSymbolGoldBorder()) {
                 // 带金边普通元素，根据概率表 转换为Wild元素
                 int randomInt = randomService.randomInt(1, Constants.CONST_1000000);
                 SymbolDo wildSymbol = randomNormalSymbol(randomInt, GAME_INFO,
-                        LamangProbabilisticUtil.buildWildProbabilisticMap(lamangConfig.getProbabilisticConfig().getWildTypeProbabilisticConfig()));
+                        LamangProbabilisticUtil.buildWildProbabilisticMap(config.getWildTypeProbabilisticConfig()));
                 LamangSymbolDo current = LamangSymbolDo.buildFromSymbol(wildSymbol, false);
                 symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = current;
             } else {
