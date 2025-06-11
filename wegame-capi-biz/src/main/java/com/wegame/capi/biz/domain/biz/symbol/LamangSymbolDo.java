@@ -44,6 +44,16 @@ public class LamangSymbolDo extends SymbolDo {
                 .build();
     }
 
+    public LamangSymbolDo allCopy() {
+        return LamangSymbolDo.builder()
+                .id(getId())
+                .name(getName())
+                .symbolType(getSymbolType())
+                .symbolGoldBorder(isSymbolGoldBorder())
+                .newSymbol(this.newSymbol)
+                .build();
+    }
+
     public static LamangSymbolDo buildFromSymbol(SymbolDo symbol, boolean symbolGoldBorder) {
         return LamangSymbolDo.builder()
                 .id(symbol.getId())
