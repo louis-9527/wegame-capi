@@ -35,7 +35,6 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     private LamangConfig lamangConfig;
     @Autowired
     private LamangJackpotManager lamangJackpotManager;
-
     @Autowired
     private RandomService randomService;
 
@@ -126,7 +125,6 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
         return null;
     }
 
-
     private JackpotWinPrizeDo checkReward(Long amount, Map<Long, Integer> gameCountMap) {
         JackpotRewardPoolTypeEnum poolTypeEnum = null;
         TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig = this.getJackpotTriggerBetAmountConfig(amount);
@@ -146,6 +144,4 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
 
         return null;
     }
-
-
 }

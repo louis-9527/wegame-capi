@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.module.lamang.odds;
 
 import com.wegame.capi.biz.config.domain.LamangConfig;
-import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.odds.OddsCalculateDo;
 import com.wegame.capi.biz.module.base.odds.AbstractOddsCalculateStrategy;
 import lombok.extern.slf4j.Slf4j;

@@ -5,9 +5,7 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotDrawAndAwardDo;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LamangJackpotHelper {
@@ -26,13 +24,14 @@ public class LamangJackpotHelper {
                 .build();
     }
 
-    public static Map<Long, Integer> buildGameDrawTimes(List<LamangGameRecordDo> dos) {
-        return dos.stream()
+    public static Map<Long, Integer> buildGameDrawTimes(List<LamangGameRecordDo> recordList) {
+        return Optional.ofNullable(recordList)
+                .orElse(Collections.emptyList())
+                .stream()
                 .filter(gameRecord -> Objects.nonNull(gameRecord.getJackpotDrawTimes()) && gameRecord.getJackpotDrawTimes() > 0)
                 .collect(Collectors.toMap(
                         LamangGameRecordDo::getId,
                         LamangGameRecordDo::getJackpotDrawTimes,
-                        Integer::sum // 处理 key 冲突
-                ));
+                        Integer::sum));
     }
 }
