@@ -47,6 +47,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
     @Autowired
     BakunawaMultipleCalculateStrategy bakunawaMultipleCalculateStrategy;
 
+    @Override
     public RewardResultDo<SymbolDo> handle(RewardHandleDo<SymbolDo> rewardHandle) {
         // 1、业务校验
         validate(rewardHandle);
