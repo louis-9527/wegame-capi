@@ -120,6 +120,7 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<Bakunaw
                             ).flatMap(List::stream)
                             .collect(Collectors.toSet()))
                     .rewardLine(buildRewardLine())
+                    .accumulateReachMaxMultiple(this.accumulateReachMaxMultiple)
                     .build();
         }
     }
