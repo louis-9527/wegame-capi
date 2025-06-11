@@ -197,9 +197,9 @@
         "0.0"
       ],
       "wildTypeProbabilisticConfig": {
-        "4001": "30.00",
-        "4006": "20.00",
-        "4007": "50.00"
+        "4001": "90.00",
+        "4006": "5.00",
+        "4007": "5.00"
       }
     },
     "supperWildRefreshProbabilisticConfig": {
