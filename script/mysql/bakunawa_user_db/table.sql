@@ -1,5 +1,5 @@
 use
-    `ibong_user_db`;
+    `bakunawa_user_db`;
 
 -- ----------------------------
 -- Table structure for user
