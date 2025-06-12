@@ -101,6 +101,7 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<Bakunaw
                     .totalRewardAmount(rewardResult.getTotalRewardAmount())
                     .totalRewardMultiple(rewardResult.getTotalMultiple())
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))
+                    .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                     .build();
         } else {
             return BakunawaBetResultVo.builder()
@@ -120,6 +121,7 @@ public class BakunawaGameRecordDo implements Serializable, ToVoConverter<Bakunaw
                             ).flatMap(List::stream)
                             .collect(Collectors.toSet()))
                     .rewardLine(buildRewardLine())
+                    .accumulateReachMaxMultiple(accumulateReachMaxMultiple)
                     .build();
         }
     }

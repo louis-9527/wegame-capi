@@ -67,13 +67,11 @@ public class MalakasGameHelper {
             .name(Scatter.getName())
             .symbolType(SymbolTypeEnum.SCATTER)
             .build();
-
     private static final SymbolDo MALAKAS_Wild = SymbolDo.builder()
             .id(Wild.getId())
             .name(Wild.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
-
     public static final MalakasSymbolDo MALAKAS_SYMBOL_PLACEHOLDER = MalakasSymbolDo.builder()
             .id(Symbol1000.getId())
             .name(Symbol1000.getName())
@@ -81,7 +79,6 @@ public class MalakasGameHelper {
             .symbolSize(S)
             .symbolGoldBorder(false)
             .build();
-
     public static final GameInfoDo MALAKAS_GAME_INFO = GameInfoDo.builder()
             .id(GameTypeEnum.MALAKAS.getId())
             .gameType(GameTypeEnum.MALAKAS)

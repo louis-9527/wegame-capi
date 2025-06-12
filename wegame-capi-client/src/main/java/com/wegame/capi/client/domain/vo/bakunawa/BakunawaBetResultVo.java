@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -36,4 +35,6 @@ public class BakunawaBetResultVo implements Serializable {
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
     private BakunawaRewardLineVo rewardLine;
+    @ApiModelProperty("累计达到最大中奖倍数：true是，false否")
+    private Boolean accumulateReachMaxMultiple;
 }
