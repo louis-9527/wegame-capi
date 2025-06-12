@@ -5,15 +5,20 @@ use lamang;
 
 // 批量插入数据
 db.lamang_jackpot_reward_pool.insertMany([
-    { _id: 1,type:1, amount: 200000000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
-    { _id: 2,type:2, amount: 50000000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
-    { _id: 3,type:3, amount: 1000000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
-    { _id: 4,type:4, amount: 100000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { _id: 1,type:1, amount: 0, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { _id: 2,type:2, amount: 0, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { _id: 3,type:3, amount: 0, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { _id: 4,type:4, amount: 0, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
 ]);
+// jackpot中奖记录唯一键
+db.lamang_jackpot_reward_pool.createIndex(
+    { type: 1},
+    { unique: true}
+);
 
 // jackpot中奖记录唯一键
 db.lamang_jackpot_user_reward_record.createIndex(
-    { gamRecordId: 1,betRecordId: 1},
+    { gameRecordId: 1,betRecordId: 1},
     { unique: true}
 );
 
