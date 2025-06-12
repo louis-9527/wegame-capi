@@ -1,3 +1,0 @@
-DROP DATABASE IF EXISTS `ibong_user_db`;
-CREATE DATABASE `ibong_user_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-
