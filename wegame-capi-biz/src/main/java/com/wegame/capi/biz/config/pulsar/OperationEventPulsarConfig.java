@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.config.pulsar;
 
+import com.wegame.capi.biz.listener.operation.DiwataMayariOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.operation.MalakasOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.operation.IbongOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
@@ -30,6 +31,8 @@ public class OperationEventPulsarConfig {
     private static final String mariaMakilingOperationEventConsumer = "mariaMakilingOperationEventConsumer";
     private static final String malakasOperationEventConsumer = "malakasOperationEventConsumer";
     private static final String ibongOperationEventConsumer = "ibongOperationEventConsumer";
+    private static final String diwataMayariOperationEventConsumer = "diwataMayariOperationEventConsumer";
+
     // todo fix
     @Value("${dynamic.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
@@ -41,6 +44,8 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupMalakas;
     @Value("${dynamic.operation.pulsar_group.ibong}")
     String dynamicOperationGroupIbong;
+    @Value("${dynamic.operation.pulsar_group.diwata_mayari}")
+    String dynamicOperationGroupDiwataMayari;
     @Value("${dynamic.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.operation.pulsar.auth.credentials_file_path}")
@@ -110,6 +115,20 @@ public class OperationEventPulsarConfig {
                 .subscriptionName(dynamicOperationGroupIbong)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(ibongOperationEventPulsarListener)
+                .subscribe();
+    }
+
+    @Bean(name = diwataMayariOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
+    public Consumer<byte[]> diwataMayariOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                               @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, diwataMayariOperationEventConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupDiwataMayari)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(diwataMayariOperationEventPulsarListener)
                 .subscribe();
     }
 }

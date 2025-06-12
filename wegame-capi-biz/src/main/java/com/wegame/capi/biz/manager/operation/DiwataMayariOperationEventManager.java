@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager.operation;
 
+import com.wegame.capi.biz.config.mongo.DiwataMayariMongoConfig;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
@@ -26,13 +27,13 @@ public class DiwataMayariOperationEventManager extends AbstractOperationEventMan
 
     // todo
     @Override
-    @Transactional(transactionManager = "")
+    @Transactional(transactionManager = DiwataMayariMongoConfig.diwataMayariTransactionManager)
     public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
         super.updateEventDetail(eventDetailDo, eventDo);
     }
 
     @Override
-    @Transactional(transactionManager = "")
+    @Transactional(transactionManager = DiwataMayariMongoConfig.diwataMayariTransactionManager)
     public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
         return super.addEventDetail(eventDetailDo);
     }

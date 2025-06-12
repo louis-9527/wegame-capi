@@ -3,12 +3,11 @@ package com.wegame.capi.biz.manager;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.mongo.DiwataMayariMongoConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.vo.diwatamayari.DiwataMayariGameRecordVo;
-import com.wegame.capi.client.domain.vo.malakas.MalakasGameRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.config.mongo.MalakasMongoConfig.malakasTransactionManager;
 
 
 @Slf4j
@@ -34,7 +32,7 @@ public class DiwataMayariBetRecordManager extends AbstractBetRecordManager<Diwat
     @Autowired
     GameRecordService<DiwataMayariGameRecordDo> gameRecordService;
 
-    @Transactional(transactionManager = malakasTransactionManager)
+    @Transactional(transactionManager = DiwataMayariMongoConfig.diwataMayariTransactionManager)
     public Long add(BetRecordDo<DiwataMayariGameRecordDo> betRecord, GameTypeEnum gameType) {
         Long id = betRecordService.add(betRecord, gameType);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
@@ -49,7 +47,7 @@ public class DiwataMayariBetRecordManager extends AbstractBetRecordManager<Diwat
         return betRecord.getId();
     }
 
-    @Transactional(transactionManager = malakasTransactionManager)
+    @Transactional(transactionManager = DiwataMayariMongoConfig.diwataMayariTransactionManager)
     @Override
     public boolean batchAdd(List<BetRecordDo<DiwataMayariGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
