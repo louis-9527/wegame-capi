@@ -66,11 +66,10 @@ public class OperationEventQueryBuilder {
         if (Objects.nonNull(recordQuery.getGtLastId())) {
             criteria.and("_id").gt(recordQuery.getGtLastId());
         }
-        if (Objects.nonNull(recordQuery.getFinishMinAmount())) {
+        if (Objects.nonNull(recordQuery.getFinish()) && recordQuery.getFinish()) {
             criteria.and("$expr").is(
                     new Document("$gt", Arrays.asList(
-                            "$finishBonus",
-                            new Document("$subtract", Arrays.asList("$maxBonus", recordQuery.getFinishMinAmount()))
+                            "$finishBonus","$minBonus"
                     ))
             );
         }
