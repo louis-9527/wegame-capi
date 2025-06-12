@@ -147,13 +147,11 @@ public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
         WheelDo<LamangSymbolDo> malakasSymbolWheel = this.convertWheel(recordDo.getWheel());
         LamangSymbolDo[][] symbolArr = malakasSymbolWheel.getSymbolArr();
         // 处理空值
-        malakasSymbolWheel.setSymbolArr(LamangSymbolUtil.handleSymbolNullArr(symbolArr));
+        malakasSymbolWheel.setSymbolArr(LamangSymbolUtil.copySymbolArrWithPlaceHolder(symbolArr));
         RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, malakasSymbolWheel, totalMultiple));
         // 构建时还原
         malakasSymbolWheel.setSymbolArr(symbolArr);
         return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, malakasSymbolWheel, rewardResult);
-
-
     }
 
     private LamangGameRecordDo buildGameRecord(Long id,
