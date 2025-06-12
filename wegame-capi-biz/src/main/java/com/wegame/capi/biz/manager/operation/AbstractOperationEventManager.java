@@ -75,7 +75,7 @@ public abstract class AbstractOperationEventManager {
     public abstract OperationEventTypeEnum operationEventType();
 
     /**
-     * 获取当前玩家在生效中的干预时间,并按时间取第一条
+     * 获取当前玩家在生效中的干预事件,并按时间取第一条
      */
     public OperationEventDo getEffectedEvent(String playName) {
         OperationEventTypeEnum dynamicOperationGame = operationEventType();
