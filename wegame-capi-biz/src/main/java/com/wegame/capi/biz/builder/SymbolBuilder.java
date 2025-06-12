@@ -1,8 +1,10 @@
 package com.wegame.capi.biz.builder;
 
+import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.client.domain.vo.diwatamayari.DiwataMayariSymbolVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasSymbolVo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaSymbolVo;
 import com.wegame.capi.common.enums.SymbolBreakUpEnum;
@@ -65,6 +67,25 @@ public class SymbolBuilder {
                         .breakTimes(Optional.ofNullable(symbolArr[i][j].getBreakUp()).map(SymbolBreakUpEnum::getTimes).orElse(SymbolBreakUpEnum.NO_BREAK_UP.getTimes()))
                         .build();
                 integerArray[i][j] = symbolVo;
+            }
+        }
+        return integerArray;
+    }
+
+
+    public static DiwataMayariSymbolVo[][] build(DiwataMayariSymbolDo[][] symbolArr) {
+        int rows = symbolArr.length;
+        int cols = symbolArr[0].length;
+        DiwataMayariSymbolVo[][] integerArray = new DiwataMayariSymbolVo[rows][cols];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                DiwataMayariSymbolDo diwataMayariSymbol = symbolArr[row][col];
+                integerArray[row][col] = Objects.isNull(diwataMayariSymbol) ? null : DiwataMayariSymbolVo.builder()
+                        .symbolId(diwataMayariSymbol.getId())
+                        .symbolSize(diwataMayariSymbol.getSymbolSize().getCode())
+                        .symbolClearTimes(diwataMayariSymbol.getSymbolClearTimes())
+                        .symbolGoldBorder(diwataMayariSymbol.isSymbolGoldBorder())
+                        .build();
             }
         }
         return integerArray;

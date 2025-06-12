@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
@@ -52,6 +53,19 @@ public class GameConfig {
             throw new RuntimeException("read maria_makiling_config.json file err！！！");
         } else {
             IbongAdarnaConfig config = new ObjectMapper().readValue(inputStream, IbongAdarnaConfig.class);
+            config.validate();
+            return config;
+        }
+    }
+
+    @Bean
+    DiwataMayariConfig diwataMayariConfig() throws IOException {
+        String path = "/diwata_mayari_config.json";
+        InputStream inputStream = getClass().getResourceAsStream(path);
+        if (inputStream == null) {
+            throw new RuntimeException("read diwata_mayari_config.json file err！！！");
+        } else {
+            DiwataMayariConfig config = new ObjectMapper().readValue(inputStream, DiwataMayariConfig.class);
             config.validate();
             return config;
         }

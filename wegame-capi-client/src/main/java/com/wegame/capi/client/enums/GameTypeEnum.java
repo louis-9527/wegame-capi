@@ -29,6 +29,10 @@ public enum GameTypeEnum {
             "IbongAdarna",
             "ibongadarna_bet_record",
             "ibongadarna_game_record", 300L,1.2),
+    DIWATA_MAYARI("zhumeng006",
+            "DiwataMayari",
+            "diwataMayari_bet_record",
+            "diwataMayari_game_record", 300L,1.2),
 
 
     ;

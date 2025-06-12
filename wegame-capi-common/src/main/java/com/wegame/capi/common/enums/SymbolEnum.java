@@ -44,6 +44,9 @@ public enum SymbolEnum {
     WildX5("4004", "WildX5"),
     WildX10("4005", "WildX10"),
 
+    WildSword("4010", "WildSword"),
+    WildStick("4011", "WildStick"),
+
     ;
 
     /**
