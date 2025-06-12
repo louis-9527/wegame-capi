@@ -17,14 +17,12 @@ import com.wegame.capi.dao.repository.domain.operation.OperationEventPo;
 import com.wegame.capi.dao.repository.domain.operation.OperationEventQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -163,11 +161,7 @@ public class OperationEventService extends AbstractService {
         redisTemplate.opsForHash().delete(catch_key, String.valueOf(id));
     }
 
-
     private void saveCatch(String catch_key, Map<String, String> catchMap) {
-//        redisTemplate.opsForHash().putAll(catch_key, catchMap);
-//        redisTemplate.expire(catch_key, 24 * 60 * 60, TimeUnit.SECONDS);
-
         String luaScript =
                 "for i = 1, #ARGV - 1, 2 do " +
                         "redis.call('HSET', KEYS[1], tostring(ARGV[i]), tostring(ARGV[i+1])) " +
