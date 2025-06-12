@@ -73,7 +73,7 @@ api:
     singleDomain: https://sw-http-main-apisix.igo9.me
     invokeSingle: true
     freeSpinDomain: https://sw-http-freespin.igo9.me
-    promotionDomain: http://reward-http.igo8.me
+    promotionDomain: http://reward-http.igo9.me
     operationDomain: http://dos-egame.dos99.me
     cp:
       platformId: 50
