@@ -38,6 +38,7 @@ db.mariamakiling_operation_event.createIndex({updateTime: 1, eventStatus: 1});
 db.mariamakiling_operation_event.createIndex({playerName: 1, effectedTime: 1, expiredTime: 1, eventStatus: 1});
 db.mariamakiling_operation_event.createIndex({eventId: 1}, {unique: true});
 db.mariamakiling_operation_event.createIndex({expiredTime: 1, reportStatus: 1});
+db.mariamakiling_operation_event.createIndex({eventStatus:1, reportStatus:1, _id:1 , updateTime : -1});
 
 // ----------------------------
 //  Collection structure for mariamakiling_operation_event_detail
