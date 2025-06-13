@@ -27,7 +27,7 @@ import java.util.List;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.bakunawa.BakunawaGameHelper.BAKUNAWA_GAME_INFO;
-import static com.wegame.capi.client.enums.OperationEventTypeEnum.IBONG_ADARNA;
+import static com.wegame.capi.client.enums.OperationEventTypeEnum.BAKUNAUWA;
 
 @Slf4j
 @Component("bakunawaGameEventPlay")
@@ -43,7 +43,7 @@ public class BakunawaGameEventPlay extends AbstractGame<BakunawaGameRecordDo> {
     public List<BakunawaGameRecordDo> play(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), IBONG_ADARNA);
+        List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), BAKUNAUWA);
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER, "configRecordList is empty");
         OperationEventConfigRecordDo configRecordDo = configRecordList.get(0);
         AssertUtil.assertNotNull(configRecordDo.getExtInfo(), ErrorCode.ERR_INTER, "extInfo is null");
