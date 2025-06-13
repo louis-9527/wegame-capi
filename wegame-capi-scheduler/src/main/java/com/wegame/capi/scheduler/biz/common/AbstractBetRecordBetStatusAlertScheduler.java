@@ -22,7 +22,7 @@ import java.util.List;
  * 告警定时任务
  */
 @Slf4j
-public abstract class AbstractAlertScheduler
+public abstract class AbstractBetRecordBetStatusAlertScheduler
         extends AbstractScheduler
         implements Runnable {
 
