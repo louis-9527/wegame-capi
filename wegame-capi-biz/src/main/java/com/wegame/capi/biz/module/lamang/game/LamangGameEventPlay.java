@@ -47,7 +47,7 @@ public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
     @Override
     public List<LamangGameRecordDo> play(GamePlayDo gamePlay) {
         List<LamangGameRecordDo> ret = new ArrayList<>();
-        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.MALAKAS_DYNAMIC);
+        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.LAM_ANG);
         // 获取首轮(batchId == 0 and index == 0)
         OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
