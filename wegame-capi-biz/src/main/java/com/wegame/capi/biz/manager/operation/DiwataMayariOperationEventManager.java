@@ -27,13 +27,13 @@ public class DiwataMayariOperationEventManager extends AbstractOperationEventMan
 
     // todo
     @Override
-    @Transactional(transactionManager = DiwataMayariMongoConfig.diwataMayariTransactionManager)
+    @Transactional(transactionManager = DiwataMayariMongoConfig.diwatamayariTransactionManager)
     public void updateEventDetail(OperationEventDetailDo eventDetailDo, OperationEventDo eventDo) {
         super.updateEventDetail(eventDetailDo, eventDo);
     }
 
     @Override
-    @Transactional(transactionManager = DiwataMayariMongoConfig.diwataMayariTransactionManager)
+    @Transactional(transactionManager = DiwataMayariMongoConfig.diwatamayariTransactionManager)
     public Long addEventDetail(OperationEventDetailDo eventDetailDo) {
         return super.addEventDetail(eventDetailDo);
     }

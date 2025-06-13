@@ -21,9 +21,9 @@ import static com.wegame.capi.common.Constants.*;
 @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
 public class DiwataMayariMongoConfig {
 
-    private static final String diwataMayariMongoTemplate = "diwataMayariMongoTemplate";
-    private static final String diwataMayariPrimaryMongoTemplate = "diwataMayariPrimaryMongoTemplate";
-    public static final String diwataMayariTransactionManager = "diwataMayariTransactionManager";
+    private static final String diwatamayariMongoTemplate = "diwatamayariMongoTemplate";
+    private static final String diwatamayariPrimaryMongoTemplate = "diwatamayariPrimaryMongoTemplate";
+    public static final String diwatamayariTransactionManager = "diwatamayariTransactionManager";
 
     @Value("${spring.data.mongodb.dynamic.diwata_mayari_mdb.uri}")
     String mdiwataMayariMdbUri;
@@ -32,24 +32,24 @@ public class DiwataMayariMongoConfig {
     @Value("${spring.data.mongodb.dynamic.diwata_mayari_mdb.db}")
     String diwataMayariMdb;
 
-    @Bean(diwataMayariMongoTemplate)
+    @Bean(diwatamayariMongoTemplate)
     public MongoTemplate diwataMayariMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, diwataMayariMongoTemplate);
+        log.debug(BUILD_BEAN_FORMAT, diwatamayariMongoTemplate);
         return new MongoTemplate(MongoClients.create(mdiwataMayariMdbUri), diwataMayariMdb);
     }
 
-    @Bean(diwataMayariPrimaryMongoTemplate)
+    @Bean(diwatamayariPrimaryMongoTemplate)
     public MongoTemplate diwataMayariPrimaryMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, diwataMayariPrimaryMongoTemplate);
+        log.debug(BUILD_BEAN_FORMAT, diwatamayariPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(diwataMayariMdbPrimaryUri), diwataMayariMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
     }
 
-    @Bean(name = diwataMayariTransactionManager)
-    public MongoTransactionManager diwataMayariTransactionManager(@Autowired MongoTemplate diwataMayariMongoTemplate) {
-        log.debug(BUILD_BEAN_FORMAT, diwataMayariTransactionManager);
-        MongoTransactionManager manager = new MongoTransactionManager(diwataMayariMongoTemplate.getMongoDbFactory());
+    @Bean(name = diwatamayariTransactionManager)
+    public MongoTransactionManager diwataMayariTransactionManager(@Autowired MongoTemplate diwatamayariMongoTemplate) {
+        log.debug(BUILD_BEAN_FORMAT, diwatamayariTransactionManager);
+        MongoTransactionManager manager = new MongoTransactionManager(diwatamayariMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)
                 .build();

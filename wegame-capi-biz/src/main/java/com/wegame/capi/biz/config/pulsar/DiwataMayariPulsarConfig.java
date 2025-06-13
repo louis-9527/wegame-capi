@@ -23,10 +23,10 @@ import static com.wegame.capi.common.Constants.*;
 @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
 public class DiwataMayariPulsarConfig {
 
-    public static final String diwataMayariPulsarClient = "diwataMayariPulsarClient";
-    public static final String diwataMayariProducer = "diwataMayariProducer";
-    public static final String diwataMayariConsumer = "diwataMayariConsumer";
-    public static final String diwataMayariDeadLetterConsumer = "diwataMayariDeadLetterConsumer";
+    public static final String diwatamayariPulsarClient = "diwatamayariPulsarClient";
+    public static final String diwatamayariProducer = "diwatamayariProducer";
+    public static final String diwataMayariConsumer = "diwatamayariConsumer";
+    public static final String diwatamayariDeadLetterConsumer = "diwatamayariDeadLetterConsumer";
 
     @Value("${pulsar.dynamic.diwataMayari.url}")
     String url;
@@ -39,19 +39,19 @@ public class DiwataMayariPulsarConfig {
     @Value("${pulsar.dynamic.diwataMayari.bet_deadLetter_topic}")
     String betDeadLetterTopic;
 
-    @Bean(name = diwataMayariPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = diwatamayariPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient diwataMayariPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, diwataMayariPulsarClient);
+        log.debug(BUILD_BEAN_FORMAT, diwatamayariPulsarClient);
         return PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
                 .build();
     }
 
-    @Bean(name = diwataMayariProducer, destroyMethod = COMMON_CLOSE_METHOD)
-    public Producer<byte[]> diwataMayariProducer(@Autowired PulsarClient diwataMayariPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, diwataMayariProducer);
-        return diwataMayariPulsarClient.newProducer(Schema.BYTES)
+    @Bean(name = diwatamayariProducer, destroyMethod = COMMON_CLOSE_METHOD)
+    public Producer<byte[]> diwataMayariProducer(@Autowired PulsarClient diwatamayariPulsarClient) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, diwatamayariProducer);
+        return diwatamayariPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic))
                 .producerName(tenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
                 // 开启批量发送
@@ -70,11 +70,11 @@ public class DiwataMayariPulsarConfig {
     }
 
     @Bean(name = diwataMayariConsumer, destroyMethod = COMMON_CLOSE_METHOD)
-    public Consumer<byte[]> diwataMayariConsumer(@Autowired PulsarClient diwataMayariPulsarClient) throws PulsarClientException {
+    public Consumer<byte[]> diwataMayariConsumer(@Autowired PulsarClient diwatamayariPulsarClient) throws PulsarClientException {
         log.debug(BUILD_BEAN_FORMAT, diwataMayariConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
-        return diwataMayariPulsarClient.newConsumer()
+        return diwatamayariPulsarClient.newConsumer()
                 .topic(fullTopic)
                 .subscriptionName(tenant)
                 // 关键点：使用 Key_Shared 模式, 集群消费
@@ -97,11 +97,11 @@ public class DiwataMayariPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = diwataMayariDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
-    public Consumer<byte[]> diwataMayariDeadLetterConsumer(@Autowired PulsarClient diwataMayariPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, diwataMayariDeadLetterConsumer);
+    @Bean(name = diwatamayariDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    public Consumer<byte[]> diwataMayariDeadLetterConsumer(@Autowired PulsarClient diwatamayariPulsarClient) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, diwatamayariDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
-        return diwataMayariPulsarClient.newConsumer(Schema.BYTES)
+        return diwatamayariPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
                 .subscriptionName(tenant + "_deadLetter")
                 .subscriptionType(SubscriptionType.Shared)

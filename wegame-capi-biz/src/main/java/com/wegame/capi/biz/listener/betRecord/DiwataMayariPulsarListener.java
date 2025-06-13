@@ -25,11 +25,11 @@ public class DiwataMayariPulsarListener extends AbstractPulsarListener<DiwataMay
     @Autowired
     DiwataMayariBetRecordManager diwataMayariBetRecordManager;
     @Autowired
-    Consumer<byte[]> diwataMayariConsumer;
+    Consumer<byte[]> diwatamayariConsumer;
 
     @Override
     public Consumer<byte[]> getConsumer() {
-        return diwataMayariConsumer;
+        return diwatamayariConsumer;
     }
 
     @Override

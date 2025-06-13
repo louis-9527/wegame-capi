@@ -32,7 +32,7 @@ public class DiwataMayariBetRecordManager extends AbstractBetRecordManager<Diwat
     @Autowired
     GameRecordService<DiwataMayariGameRecordDo> gameRecordService;
 
-    @Transactional(transactionManager = DiwataMayariMongoConfig.diwataMayariTransactionManager)
+    @Transactional(transactionManager = DiwataMayariMongoConfig.diwatamayariTransactionManager)
     public Long add(BetRecordDo<DiwataMayariGameRecordDo> betRecord, GameTypeEnum gameType) {
         Long id = betRecordService.add(betRecord, gameType);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
@@ -47,7 +47,7 @@ public class DiwataMayariBetRecordManager extends AbstractBetRecordManager<Diwat
         return betRecord.getId();
     }
 
-    @Transactional(transactionManager = DiwataMayariMongoConfig.diwataMayariTransactionManager)
+    @Transactional(transactionManager = DiwataMayariMongoConfig.diwatamayariTransactionManager)
     @Override
     public boolean batchAdd(List<BetRecordDo<DiwataMayariGameRecordDo>> betRecordList, GameTypeEnum gameType) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM);
