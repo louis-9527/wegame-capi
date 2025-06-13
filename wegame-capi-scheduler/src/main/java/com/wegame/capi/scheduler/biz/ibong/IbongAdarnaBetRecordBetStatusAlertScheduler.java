@@ -4,13 +4,14 @@ import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
-import com.wegame.capi.scheduler.biz.common.AbstractAlertScheduler;
+import com.wegame.capi.scheduler.biz.common.AbstractBetRecordBetStatusAlertScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.IBONG_ADARNA_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * 投注状态告警定时任务
@@ -19,7 +20,7 @@ import static com.wegame.capi.common.Constants.*;
 @Service
 @ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
 public class IbongAdarnaBetRecordBetStatusAlertScheduler
-        extends AbstractAlertScheduler
+        extends AbstractBetRecordBetStatusAlertScheduler
         implements Runnable {
 
     @Override
