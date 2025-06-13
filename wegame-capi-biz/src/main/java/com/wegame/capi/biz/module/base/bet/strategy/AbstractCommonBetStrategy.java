@@ -96,7 +96,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), OPERATION_EVENT), ErrorCode.ERR_INTER);
         GameOperationEventDo gameOperationEvent = betDo.getGameOperationEvent();
         log.info("betForOperationEvent betDo:{}", betDo.getGameOperationEvent());
-        // 生产投注记录
+        // 产生投注记录
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         // 保存干预事件详情并修改干预事件干预状态
         operationEventManager().updateOperationUseStatus(gameOperationEvent.getOperationEvent().getId(), OperationEventStatusEnum.ING);
