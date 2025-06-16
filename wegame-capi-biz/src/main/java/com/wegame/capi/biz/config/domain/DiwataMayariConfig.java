@@ -18,13 +18,25 @@ import java.util.TreeMap;
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 
+/**
+ * diwata mayari 配置
+ * 1.赔率配置
+ * 2.概率配置
+ * 2.1 正常轮(正常投注，购买投注) 首轮概率
+ * 2.2 正常轮回合概率
+ * 2.3 免费轮首轮概率
+ * 2.4 免费轮回合概率
+ * 3.倍率盘规则配置
+ * 4.免费轮次数获取规则配置.基础10轮(3个scatter)，步长2（每增加一个scatter）
+ * 5.中奖最大倍数配置（10250）
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class DiwataMayariConfig {
 
-    private final static int REEL_NUMBERS = 7;
+    private final static int REEL_NUMBERS = 6;
 
     /**
      * 赔率配置
@@ -35,9 +47,13 @@ public class DiwataMayariConfig {
      */
     private ProbabilisticConfig probabilisticConfig;
     /**
-     * Scatter个数对应的免费轮次数
+     * 倍率盘规则配置
      */
-    private TreeMap<Integer, Integer> scatterFreeWheelTimesConfig;
+    private MultiplePieRuleConfig multiplePieRuleConfig;
+    /**
+     * 免费轮次数规则配置
+     */
+    private FreeWheelTimesRuleConfig freeWheelTimesRuleConfig;
     /**
      * 中奖最大倍数
      */
@@ -60,40 +76,94 @@ public class DiwataMayariConfig {
     @AllArgsConstructor
     public static class ProbabilisticConfig implements Serializable {
         /**
-         * 正常轮概率
+         * 【正常轮首轮】滚轮生成概率配置
+         * TreeMap<元素ID，<列坐标，概率列表>>
          */
-        private PlayProbabilisticConfig commonPlayProbabilisticConfig;
+        private TreeMap<String, List<BigDecimal>> commonPlayFirstSpinProbabilisticConfig;
         /**
-         * 免费轮概率
+         * 【正常轮回合】滚轮生成概率配置
+         * TreeMap<元素ID，<列坐标，概率列表>>
          */
-        private PlayProbabilisticConfig freePlayProbabilisticConfig;
+        private TreeMap<String, List<BigDecimal>> commonPlayRoundProbabilisticConfig;
+        /**
+         * 【免费轮首轮】滚轮生成概率配置
+         * TreeMap<元素ID，<列坐标，概率列表>>
+         */
+        private TreeMap<String, List<BigDecimal>> freePlayFirstSpinProbabilisticConfig;
+        /**
+         * 【免费轮回合】滚轮生成概率配置
+         * TreeMap<元素ID，<列坐标，概率列表>>
+         */
+        private TreeMap<String, List<BigDecimal>> freePlayRoundProbabilisticConfig;
     }
 
     @Data
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PlayProbabilisticConfig implements Serializable {
+    public static class MultiplePieRuleConfig implements Serializable {
         /**
-         * 滚轮生成概率配置
-         * TreeMap<元素ID，<列坐标，概率列表>>
+         * 正常轮最小倍率-1.0
          */
-        private TreeMap<String, List<BigDecimal>> wheelProbabilisticConfig;
+        private BigDecimal commonPlayMinMultiple;
+
         /**
-         * 元素大小概率配置 S M L XL
+         * 免费轮最小倍率-8.0
          */
-        private TreeMap<String, List<BigDecimal>> symbolSizeProbabilisticConfig;
+        private BigDecimal freePlayMinMultiple;
         /**
-         * 每个reel出现金边概率配置: eg：5%
+         * 最大倍率-1024.0
          */
-        private List<BigDecimal> goldBoarderProbabilisticConfig;
+        private BigDecimal maxMultiple;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FreeWheelTimesRuleConfig implements Serializable {
+        /**
+         * 基础次数-3个scatter个数-10
+         */
+        private Integer baseFreeWheelTimes;
+        /**
+         * 步长-在基础次数基础上，每增加一个scatter,次数增加的次数-2
+         */
+        private Integer stepFreeWheelTimes;
     }
 
     public void validate() {
-        oddsConfigValidate();
-        probabilisticConfigValidate();
-        scatterFreeWheelTimesConfigValidate();
-        rewardMaxMultipleValidate();
+        this.oddsConfigValidate();
+        this.probabilisticConfigValidate();
+        this.multiplePieRuleConfigValidate();
+        this.freeWheelTimesRuleConfigValidate();
+        this.rewardMaxMultipleValidate();
+    }
+
+    private void freeWheelTimesRuleConfigValidate() {
+        AssertUtil.assertNotNull(this.freeWheelTimesRuleConfig, ErrorCode.ERR_INTER, "freeWheelTimesRuleConfig is null");
+        AssertUtil.assertNotNull(this.freeWheelTimesRuleConfig.baseFreeWheelTimes,
+                ErrorCode.ERR_INTER, "freeWheelTimesRuleConfig.baseFreeWheelTimes is null");
+        AssertUtil.assertTrue(this.freeWheelTimesRuleConfig.baseFreeWheelTimes > 0,
+                ErrorCode.ERR_INTER, "freeWheelTimesRuleConfig.baseFreeWheelTimes is must be than 0");
+        AssertUtil.assertNotNull(this.freeWheelTimesRuleConfig.stepFreeWheelTimes,
+                ErrorCode.ERR_INTER, "freeWheelTimesRuleConfig.stepFreeWheelTimes is null");
+        AssertUtil.assertTrue(this.freeWheelTimesRuleConfig.stepFreeWheelTimes >= 0,
+                ErrorCode.ERR_INTER, "freeWheelTimesRuleConfig.stepFreeWheelTimes is must be or equals than 0");
+    }
+
+    private void multiplePieRuleConfigValidate() {
+        AssertUtil.assertNotNull(this.multiplePieRuleConfig, ErrorCode.ERR_INTER, "multiplePieRuleConfig is null");
+        AssertUtil.assertNotNull(this.multiplePieRuleConfig.commonPlayMinMultiple, ErrorCode.ERR_INTER, "multiplePieRuleConfig.commonPlayMinMultiple is null");
+        AssertUtil.assertTrue(this.multiplePieRuleConfig.commonPlayMinMultiple.compareTo(BigDecimal.ZERO) > 0, ErrorCode.ERR_INTER,
+                "multiplePieRuleConfig.commonPlayMinMultiple is must be than 0");
+        AssertUtil.assertNotNull(this.multiplePieRuleConfig.freePlayMinMultiple, ErrorCode.ERR_INTER, "multiplePieRuleConfig.freePlayMinMultiple is null");
+        AssertUtil.assertTrue(this.multiplePieRuleConfig.freePlayMinMultiple.compareTo(BigDecimal.ZERO) > 0, ErrorCode.ERR_INTER,
+                "multiplePieRuleConfig.freePlayMinMultiple is must be than 0");
+        AssertUtil.assertNotNull(this.multiplePieRuleConfig.maxMultiple, ErrorCode.ERR_INTER, "multiplePieRuleConfig.maxMultiple is null");
+        AssertUtil.assertTrue(this.multiplePieRuleConfig.maxMultiple.compareTo(BigDecimal.ZERO) > 0, ErrorCode.ERR_INTER,
+                "multiplePieRuleConfig.maxMultiple is must be than 0");
+
     }
 
     private void rewardMaxMultipleValidate() {
@@ -110,29 +180,25 @@ public class DiwataMayariConfig {
             AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER, "Odds Config Err");
         });
     }
+
     private void probabilisticConfigValidate() {
         Assert.notNull(probabilisticConfig, "probabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.commonPlayProbabilisticConfig, "probabilisticConfig.commonPlayProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.freePlayProbabilisticConfig, "probabilisticConfig.freePlayPlayProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.commonPlayFirstSpinProbabilisticConfig, "probabilisticConfig.commonPlayFirstSpinProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.commonPlayRoundProbabilisticConfig, "probabilisticConfig.commonPlayRoundProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.freePlayFirstSpinProbabilisticConfig, "probabilisticConfig.freePlayFirstSpinProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.freePlayRoundProbabilisticConfig, "probabilisticConfig.freePlayRoundProbabilisticConfig is null");
+        wheelProbabilisticConfigValid(probabilisticConfig.commonPlayFirstSpinProbabilisticConfig);
+        wheelProbabilisticConfigValid(probabilisticConfig.commonPlayRoundProbabilisticConfig);
+        wheelProbabilisticConfigValid(probabilisticConfig.freePlayFirstSpinProbabilisticConfig);
+        wheelProbabilisticConfigValid(probabilisticConfig.freePlayRoundProbabilisticConfig);
+    }
 
-        playProbabilisticConfigValid(probabilisticConfig.commonPlayProbabilisticConfig);
-        playProbabilisticConfigValid(probabilisticConfig.freePlayProbabilisticConfig);
-    }
-    private void scatterFreeWheelTimesConfigValidate() {
-        Assert.notNull(scatterFreeWheelTimesConfig, "scatterFreeWheelTimesConfig is null");
-    }
-
-    private void playProbabilisticConfigValid(PlayProbabilisticConfig playProbabilisticConfig) {
-        wheelProbabilisticConfigValid(REEL_NUMBERS, playProbabilisticConfig.getWheelProbabilisticConfig());
-        symbolSizeProbabilisticConfigValid(REEL_NUMBERS, playProbabilisticConfig.getSymbolSizeProbabilisticConfig());
-        goldBoarderProbabilisticConfigValid(playProbabilisticConfig.getGoldBoarderProbabilisticConfig());
-    }
-    private void wheelProbabilisticConfigValid(int column, TreeMap<String, List<BigDecimal>> wheelProbabilisticConfig) {
+    private void wheelProbabilisticConfigValid(TreeMap<String, List<BigDecimal>> wheelProbabilisticConfig) {
         wheelProbabilisticConfig.forEach((key, value) -> {
-            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig: " + key + " ERR");
+            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.wheelProbabilisticConfig key: " + key + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), REEL_NUMBERS), ErrorCode.ERR_INTER, "probabilisticConfig.wheelProbabilisticConfig: " + key + " ERR");
         });
-        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
+        for (int columnIndex = 0; columnIndex < REEL_NUMBERS; columnIndex++) {
             int columnNo = columnIndex;
             TreeMap<String, Integer> map = new TreeMap<>();
             wheelProbabilisticConfig.entrySet().forEach(item -> {
@@ -142,28 +208,8 @@ public class DiwataMayariConfig {
                 }
             });
             Integer sumProbabilistic = map.values().stream().reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columnNo:" + columnNo);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.wheelProbabilisticConfig ERR, columnNo:" + columnNo);
         }
     }
-    private void symbolSizeProbabilisticConfigValid(int column, TreeMap<String, List<BigDecimal>> symbolSizeProbabilisticConfig) {
-        symbolSizeProbabilisticConfig.forEach((key, value) -> {
-            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "probabilisticConfig.commonPlaySymbolSizeProbabilisticConfigValid key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), column), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlaySymbolSizeProbabilisticConfigValid: " + key + " ERR");
-        });
-        for (int columnIndex = 0; columnIndex < column; columnIndex++) {
-            int columnNo = columnIndex;
-            TreeMap<String, Integer> map = new TreeMap<>();
-            symbolSizeProbabilisticConfig.entrySet().forEach(item -> {
-                int val = (item.getValue().get(columnNo).multiply(new BigDecimal(CONST_10000))).intValue();
-                if (val > 0) {
-                    map.put(item.getKey(), val);
-                }
-            });
-            Integer sumProbabilistic = map.values().stream().reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlaySymbolSizeProbabilisticConfigValid ERR, columnNo:" + columnNo);
-        }
-    }
-    private void goldBoarderProbabilisticConfigValid(List<BigDecimal> list) {
-        AssertUtil.assertTrue(Objects.equals(list.size(), 7), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelGoldBoarderProbabilisticConfig size error");
-    }
+
 }
