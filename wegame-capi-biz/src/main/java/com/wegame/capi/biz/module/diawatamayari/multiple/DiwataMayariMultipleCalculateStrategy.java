@@ -56,9 +56,10 @@ public class DiwataMayariMultipleCalculateStrategy extends AbstractMultipleCalcu
         if (!isReward) {
             return currentMultiple;
         } else {
-            // 当前倍率为最大，返回最大.否则返回当前倍率*2
+            // 当前计算后的倍率大于最大倍率，返回最大.否则返回当前倍率*2
             BigDecimal maxMultiple = diwataMayariConfig.getMultiplePieRuleConfig().getMaxMultiple();
-            return currentMultiple.compareTo(maxMultiple) >= 0 ? maxMultiple : currentMultiple.multiply(BigDecimal.valueOf(2));
+            BigDecimal calcMultiple = currentMultiple.multiply(BigDecimal.valueOf(2));
+            return calcMultiple.compareTo(maxMultiple) >= 0 ? maxMultiple : calcMultiple;
         }
 
     }
