@@ -34,6 +34,13 @@ public class LamangSymbolDo extends SymbolDo {
         return StringUtils.equals(getId(), LAMANG_SYMBOL_PLACEHOLDER.getId());
     }
 
+    /**
+     * 复制元素，将newSymbol置为false
+     * 新回合复制元素使用该方法
+     *
+     * @return LamangSymbolDo
+     */
+    @Override
     public LamangSymbolDo copy() {
         return LamangSymbolDo.builder()
                 .id(getId())
@@ -44,6 +51,29 @@ public class LamangSymbolDo extends SymbolDo {
                 .build();
     }
 
+    /**
+     * 复制元素，并且不改变newSymbol状态
+     * eventPlay 从模版中复制元素时使用该方法
+     *
+     * @return LamangSymbolDo
+     */
+    public LamangSymbolDo copyWithOriginalNewSymbol() {
+        return LamangSymbolDo.builder()
+                .id(getId())
+                .name(getName())
+                .symbolType(getSymbolType())
+                .symbolGoldBorder(isSymbolGoldBorder())
+                .newSymbol(this.newSymbol)
+                .build();
+    }
+
+    /**
+     * 从symbol产生一个新元素
+     *
+     * @param symbol           元素
+     * @param symbolGoldBorder 是否有金边
+     * @return LamangSymbolDo
+     */
     public static LamangSymbolDo buildFromSymbol(SymbolDo symbol, boolean symbolGoldBorder) {
         return LamangSymbolDo.builder()
                 .id(symbol.getId())

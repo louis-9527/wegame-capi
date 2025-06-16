@@ -191,4 +191,20 @@ public class LamangSymbolUtil {
                 .stream()
                 .map(RewardLineDetailDo<LamangSymbolDo>::getRewardSymbolList).flatMap(List::stream).collect(Collectors.toList());
     }
+
+    public static LamangSymbolDo[][] copySymbolArrWithPlaceHolder(LamangSymbolDo[][] symbolArr) {
+        int row = symbolArr.length;
+        int col = symbolArr[0].length;
+        LamangSymbolDo[][] newSymbolArr = new LamangSymbolDo[row][col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (Objects.isNull(symbolArr[i][j])) {
+                    newSymbolArr[i][j] = LAMANG_SYMBOL_PLACEHOLDER;
+                } else {
+                    newSymbolArr[i][j] = symbolArr[i][j].copyWithOriginalNewSymbol();
+                }
+            }
+        }
+        return newSymbolArr;
+    }
 }

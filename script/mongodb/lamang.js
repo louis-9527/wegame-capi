@@ -3,26 +3,51 @@
 // 切换到目标数据库（若不存在会自动创建）
 use lamang;
 
+// ----------------------------
+//  Collection structure for lamang_jackpot_reward_pool
+// ----------------------------
+db.getCollection("lamang_jackpot_reward_pool").drop();
+db.createCollection("lamang_jackpot_reward_pool");
 // 批量插入数据
 db.lamang_jackpot_reward_pool.insertMany([
-    { _id: 1,type:1, amount: 200000000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
-    { _id: 2,type:2, amount: 50000000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
-    { _id: 3,type:3, amount: 1000000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
-    { _id: 4,type:4, amount: 100000, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { _id: 1,type:1, amount: 0, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { _id: 2,type:2, amount: 0, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { _id: 3,type:3, amount: 0, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
+    { _id: 4,type:4, amount: 0, creator: "system", createTime: 1747903796,updater: "system", updateTime: 1747903796},
 ]);
 
 // jackpot中奖记录唯一键
-db.lamang_jackpot_user_reward_record.createIndex(
-    { gamRecordId: 1,betRecordId: 1},
+db.lamang_jackpot_reward_pool.createIndex(
+    { type: 1},
     { unique: true}
 );
 
+// ----------------------------
+//  Collection structure for lamang_jackpot_user_reward_record
+// ----------------------------
+db.getCollection("lamang_jackpot_user_reward_record").drop();
+db.createCollection("lamang_jackpot_user_reward_record");
+// jackpot中奖记录唯一键
+db.lamang_jackpot_user_reward_record.createIndex(
+    { gameRecordId: 1,betRecordId: 1},
+    { unique: true}
+);
+
+// ----------------------------
+//  Collection structure for lamang_jackpot_user_reward_record
+// ----------------------------
+db.getCollection("lamang_jackpot_reward_pool_input_record").drop();
+db.createCollection("lamang_jackpot_reward_pool_input_record");
 // 奖池流水ttl，索引:在expireAtTime时间的时候删除
 db.getCollection("lamang_jackpot_reward_pool_input_record").createIndex(
     { "expireAtTime": 1 },
     { expireAfterSeconds: 0 }
 );
 
+
+// ----------------------------
+//  Collection structure for lamang_bet_record
+// ----------------------------
 db.getCollection("lamang_bet_record").drop();
 db.createCollection("lamang_bet_record");
 // 索引lamang_bet_record-c端查询需要
@@ -47,6 +72,8 @@ db.getCollection("lamang_game_record").drop();
 db.createCollection("lamang_game_record");
 // 索引lamang_game_record-c端查询需要-新
 db.lamang_game_record.createIndex({betRecordId: 1, batchId: 1});
+
+
 
 // -- ----------------------------
 //     -- Table structure for xxx_jackpot_pool: xxx_jackpot奖池

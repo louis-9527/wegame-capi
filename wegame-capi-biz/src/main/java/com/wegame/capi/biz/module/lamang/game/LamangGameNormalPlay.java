@@ -39,8 +39,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.lamang.LamangGameHelper.*;
 import static com.wegame.capi.biz.module.lamang.LamangSymbolUtil.*;
-import static com.wegame.capi.common.Constants.CONST_10000;
-import static com.wegame.capi.common.Constants.CONST_1000000;
+import static com.wegame.capi.common.Constants.*;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
@@ -85,7 +84,6 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
-
         //生成免费轮
         if (CollectionUtils.isNotEmpty(freeWheelList)) {
             generateFreeBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
@@ -112,7 +110,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
 
         AssertUtil.assertNotNull(scatter1CountInBatch, ErrorCode.ERR_INTER);
         // 生成整盘随机数(row*column)
-        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, GAME_INFO.getRow() * GAME_INFO.getColumn());
+        List<Integer> randomNumberList = randomService.randomIntList(CONST_1, CONST_1000000, GAME_INFO.getRow() * GAME_INFO.getColumn());
         // 当前scatter数量
         int scatterNumberInWheel = LamangSymbolUtil.countScatterInWheel(symbolArr);
         // 如果必须中免费轮，需要维持scatter数量 == 3, 有超级wild时候不触发
@@ -121,11 +119,11 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             scatterNumberInWheel = REWARD_FREE_WHEEL_SCATTER_NUMBER;
         }
         int randomNumberIndex = 0;
-        for (int column = ONE_COLUM_INDEX; column < LamangGameNormalPlay.GAME_INFO.getColumn(); column++) {
+        for (int column = ONE_COLUM_INDEX; column < LAMANG_GAME_INFO.getColumn(); column++) {
             // 一个reel只能包含一个scatter
             int scatterNumberInColumn = LamangSymbolUtil.countScatterInColumn(symbolArr, column);
             TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, playProbabilisticConfig.getWheelProbabilisticConfig());
-            for (int row = ONE_ROW_INDEX; row < LamangGameNormalPlay.GAME_INFO.getRow(); row++) {
+            for (int row = ONE_ROW_INDEX; row < LAMANG_GAME_INFO.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
                     // 当前元素非空，则不生成
                     randomNumberIndex = randomNumberIndex + 1;
@@ -139,19 +137,19 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                     if (scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL || scatter1CountInBatch.get() >= MAX_SCATTER1_NUMBER_IN_BATCH) {
                         // 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素 || 一轮中产生的scatter+1元素超过3个
                         // 生成元素：非scatter元素
-                        symbolDo = randomNonScatterSymbol(randomNumber, LamangGameNormalPlay.GAME_INFO, columProbabilisticMap);
+                        symbolDo = randomNonScatterSymbol(randomNumber, LAMANG_GAME_INFO, columProbabilisticMap);
                     } else {
                         // 生成元素：随机生成
-                        symbolDo = randomNormalSymbol(randomNumber, LamangGameNormalPlay.GAME_INFO, columProbabilisticMap);
+                        symbolDo = randomNormalSymbol(randomNumber, LAMANG_GAME_INFO, columProbabilisticMap);
                     }
                 } else {
                     if (scatterNumberInColumn >= MAX_SCATTER_NUMBER_IN_REEL || scatterNumberInWheel >= MAX_SCATTER_NUMBER_IN_WHEEL) {
                         // 列scatter达到上限 || 滚轮scatter达到上限，则生产非scatter元素
                         // 生成元素：非scatter元素
-                        symbolDo = randomNonScatterSymbol(randomNumber, LamangGameNormalPlay.GAME_INFO, columProbabilisticMap);
+                        symbolDo = randomNonScatterSymbol(randomNumber, LAMANG_GAME_INFO, columProbabilisticMap);
                     } else {
                         // 生成元素：随机生成
-                        symbolDo = randomNormalSymbol(randomNumber, LamangGameNormalPlay.GAME_INFO, columProbabilisticMap);
+                        symbolDo = randomNormalSymbol(randomNumber, LAMANG_GAME_INFO, columProbabilisticMap);
                     }
                 }
                 AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER);
@@ -225,7 +223,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
                                                        boolean mustRewardFreeWheel,
                                                        boolean freeWheel,
                                                        AtomicInteger scatter1CountInBatch) {
-        LamangSymbolDo[][] symbolArr = new LamangSymbolDo[LamangGameNormalPlay.GAME_INFO.getRow()][LamangGameNormalPlay.GAME_INFO.getColumn()];
+        LamangSymbolDo[][] symbolArr = new LamangSymbolDo[LAMANG_GAME_INFO.getRow()][LAMANG_GAME_INFO.getColumn()];
 
         fillWheel(symbolArr, config, mustRewardFreeWheel, freeWheel, false, scatter1CountInBatch);
 
@@ -250,7 +248,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
         // 复制：元素数组
         LamangSymbolDo[][] symbolArr = copySymbolArr(preWheel.getSymbolArr());
         // 消除：中奖元素
-        clearRewardSymbol(symbolArr, preRewardResult);
+        clearRewardSymbol(symbolArr, preRewardResult, config);
 
         // 如果有超级wild就全部重新生成
         if (hasSuperWild(symbolArr)) {
@@ -464,14 +462,14 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
      * 2.2 不带金边，直接消除<br/>
      * 3、 wild元素 和占位符元素: 直接消除
      */
-    private void clearRewardSymbol(LamangSymbolDo[][] symbolArr, RewardResultDo<LamangSymbolDo> rewardResult) {
+    private void clearRewardSymbol(LamangSymbolDo[][] symbolArr, RewardResultDo<LamangSymbolDo> rewardResult, LamangConfig.PlayProbabilisticConfig config) {
         List<RewardSymbolDo<LamangSymbolDo>> rewardSymbolDoList = getRewardSymbolDoList(rewardResult);
         if (CollectionUtils.isNotEmpty(rewardSymbolDoList)) {
-            rewardSymbolDoList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
+            rewardSymbolDoList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol, config));
         }
     }
 
-    private void clearIndexRewardSymbol(LamangSymbolDo[][] symbolArr, RewardSymbolDo<LamangSymbolDo> rewardSymbol) {
+    private void clearIndexRewardSymbol(LamangSymbolDo[][] symbolArr, RewardSymbolDo<LamangSymbolDo> rewardSymbol, LamangConfig.PlayProbabilisticConfig config) {
         if (rewardSymbol.getSymbol().isScatterSymbol()) {
             // scatter 元素， 不做消除
         } else if (rewardSymbol.getSymbol().isWildSymbol() || rewardSymbol.getSymbol().isPlaceholderSymbol()) {
@@ -481,11 +479,12 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             // 普通元素消除
             IndexDo indexDo = rewardSymbol.getIndex();
             LamangSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
+            //// 可能的改动（当前不会出现）： 前一轮有超级wild 并且有金边，需要用超级wild概率表中的生成wild概率来生成wild
             if (commonSymbol.isSymbolGoldBorder()) {
                 // 带金边普通元素，根据概率表 转换为Wild元素
-                int randomInt = randomService.randomInt(1, Constants.CONST_1000000);
+                int randomInt = randomService.randomInt(CONST_1, Constants.CONST_1000000);
                 SymbolDo wildSymbol = randomNormalSymbol(randomInt, GAME_INFO,
-                        LamangProbabilisticUtil.buildWildProbabilisticMap(lamangConfig.getProbabilisticConfig().getWildTypeProbabilisticConfig()));
+                        LamangProbabilisticUtil.buildWildProbabilisticMap(config.getWildTypeProbabilisticConfig()));
                 LamangSymbolDo current = LamangSymbolDo.buildFromSymbol(wildSymbol, false);
                 symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = current;
             } else {

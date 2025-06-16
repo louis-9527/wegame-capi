@@ -25,6 +25,10 @@ public enum StarCardUseTypeEnum {
             GameTypeEnum.IBONG_ADARNA,
             "ibongadarna_star_card_record"
     ),
+    LAM_ANG(
+            GameTypeEnum.LAM_ANG,
+            "lamang_star_card_record"
+    ),
 
     ;
     /**

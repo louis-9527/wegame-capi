@@ -3,17 +3,11 @@ package com.wegame.capi.biz.module.lamang;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static com.wegame.capi.common.enums.SymbolEnum.*;
-import static com.wegame.capi.common.enums.SymbolSizeEnum.*;
 
 public class LamangGameHelper {
 
@@ -62,38 +56,32 @@ public class LamangGameHelper {
             .name(Scatter.getName())
             .symbolType(SymbolTypeEnum.SCATTER)
             .build();
-
     public static final SymbolDo LAMANG_SCATTER1 = SymbolDo.builder()
             .id(Scatter1.getId())
             .name(Scatter1.getName())
             .symbolType(SymbolTypeEnum.SCATTER)
             .build();
-
     private static final SymbolDo LAMANG_Wild = SymbolDo.builder()
             .id(Wild.getId())
             .name(Wild.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
-
     public static final SymbolDo LAMANG_BIG_WILD = SymbolDo.builder()
             .id(BigWild.getId())
             .name(BigWild.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
-
     public static final SymbolDo LAMANG_SUPER_WILD = SymbolDo.builder()
             .id(SuperWild.getId())
             .name(SuperWild.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
-
     public static final LamangSymbolDo LAMANG_SYMBOL_PLACEHOLDER = LamangSymbolDo.builder()
             .id(Symbol1000.getId())
             .name(Symbol1000.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .symbolGoldBorder(false)
             .build();
-
     public static final GameInfoDo LAMANG_GAME_INFO = GameInfoDo.builder()
             .id(GameTypeEnum.LAM_ANG.getId())
             .gameType(GameTypeEnum.LAM_ANG)
@@ -116,7 +104,4 @@ public class LamangGameHelper {
                     .put(LAMANG_SUPER_WILD.getId(), LAMANG_SUPER_WILD)
                     .build())
             .build();
-
-
-
 }

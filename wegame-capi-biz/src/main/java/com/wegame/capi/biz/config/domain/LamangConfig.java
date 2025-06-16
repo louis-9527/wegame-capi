@@ -83,11 +83,6 @@ public class LamangConfig {
          * 超大wild出现后元素刷新概率
          */
         private PlayProbabilisticConfig supperWildRefreshProbabilisticConfig;
-        /**
-         * wild类型出现概率配置
-         * TreeMap<元素id，概率>
-         */
-        private TreeMap<String, BigDecimal> wildTypeProbabilisticConfig;
     }
 
     @Data
@@ -105,6 +100,11 @@ public class LamangConfig {
          * <列坐标，当前列生成金边概率>
          */
         private List<BigDecimal> wheelGoldProbabilisticConfig;
+        /**
+         * wild类型出现概率配置
+         * TreeMap<元素id，概率>
+         */
+        private TreeMap<String, BigDecimal> wildTypeProbabilisticConfig;
     }
 
 
@@ -264,22 +264,18 @@ public class LamangConfig {
         Assert.notNull(probabilisticConfig.commonPlaySymbolProbabilisticConfig, "probabilisticConfig.commonPlaySymbolProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.freePlaySymbolProbabilisticConfig, "probabilisticConfig.freePlaySymbolProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.supperWildRefreshProbabilisticConfig, "probabilisticConfig.supperWildRefreshProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.wildTypeProbabilisticConfig, "probabilisticConfig.wildTypeProbabilisticConfig is null");
         this.playProbabilisticConfigValid(probabilisticConfig.commonPlaySymbolProbabilisticConfig);
         this.playProbabilisticConfigValid(probabilisticConfig.freePlaySymbolProbabilisticConfig);
         this.playProbabilisticConfigValid(probabilisticConfig.supperWildRefreshProbabilisticConfig);
-        // wild 类型出现概率校验
-        this.wildTypeProbabilisticConfig();
     }
 
-    private void wildTypeProbabilisticConfig() {
-        TreeMap<String, BigDecimal> wildTypeProbabilisticConfig = probabilisticConfig.wildTypeProbabilisticConfig;
-        int sum = 0;
-        for (BigDecimal probability : wildTypeProbabilisticConfig.values()) {
-            int val = (probability.multiply(new BigDecimal(CONST_10000))).intValue();
-            sum += val;
-        }
-        AssertUtil.assertTrue(Objects.equals(sum, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.wildTypeProbabilisticConfig ERR");
+    private void wildTypeProbabilisticConfig(TreeMap<String, BigDecimal> wildTypeProbabilisticConfig) {
+//        int sum = 0;
+//        for (BigDecimal probability : wildTypeProbabilisticConfig.values()) {
+//            int val = (probability.multiply(new BigDecimal(CONST_10000))).intValue();
+//            sum += val;
+//        }
+//        AssertUtil.assertTrue(Objects.equals(sum, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.wildTypeProbabilisticConfig ERR");
     }
 
     private void playProbabilisticConfigValid(PlayProbabilisticConfig playProbabilisticConfig) {
@@ -287,6 +283,8 @@ public class LamangConfig {
         // 概率校验
         wheelProbabilisticConfigValid(REEL_NUMBERS, playProbabilisticConfig.getWheelProbabilisticConfig());
         wheelGoldProbabilisticConfig(playProbabilisticConfig.wheelGoldProbabilisticConfig);
+        // wild 类型出现概率校验
+        this.wildTypeProbabilisticConfig(playProbabilisticConfig.wildTypeProbabilisticConfig);
     }
 
     private void wheelProbabilisticConfigValid(int column, TreeMap<String, List<BigDecimal>> wheelProbabilisticConfig) {

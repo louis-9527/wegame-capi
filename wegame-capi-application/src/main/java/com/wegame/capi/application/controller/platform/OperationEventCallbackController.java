@@ -42,6 +42,7 @@ public class OperationEventCallbackController {
             .put(GameTypeEnum.MALAKAS, "malakasOperationEventManager")
             .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaOperationEventManager")
             .put(GameTypeEnum.BAKUNAWA, "bakunawaOperationEventManager")
+            .put(GameTypeEnum.LAM_ANG, "lamangOperationEventManager")
             .build();
 
     @Autowired
