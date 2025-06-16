@@ -27,6 +27,7 @@ public class LamangSymbolUtil {
      * 是否有超级wild
      */
     public static boolean hasSuperWild(LamangSymbolDo[][] symbolArr) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
                 if (Objects.nonNull(symbolArr[row][col]) && StringUtils.equals(symbolArr[row][col].getId(), LAMANG_SUPER_WILD.getId())) {
@@ -41,6 +42,7 @@ public class LamangSymbolUtil {
      * 处理大wild
      */
     public static void handleBigWild(LamangSymbolDo[][] symbolArr) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         for (int row = 0; row < symbolArr.length; row++) {
             boolean hasWild = false;
             for (int col = 0; col < symbolArr[row].length; col++) {
@@ -67,6 +69,7 @@ public class LamangSymbolUtil {
      * 计算中奖次数 (新增scatter & scatter+1数量) 并更新元素状态
      */
     public static int countNewScatterAndScatter1InWheel(LamangSymbolDo[][] symbolArr) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
@@ -86,6 +89,7 @@ public class LamangSymbolUtil {
      * @return
      */
     public static int countNewScatter1InWheel(LamangSymbolDo[][] symbolArr) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
@@ -99,6 +103,7 @@ public class LamangSymbolUtil {
     }
 
     public static int countScatterInWheel(LamangSymbolDo[][] symbolArr) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         int count = 0;
         for (int row = 0; row < symbolArr.length; row++) {
             for (int col = 0; col < symbolArr[row].length; col++) {
@@ -111,6 +116,7 @@ public class LamangSymbolUtil {
     }
 
     public static int countScatterInColumn(LamangSymbolDo[][] symbolArr, int column) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         int count = 0;
         for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
             if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isScatterSymbol()) {
@@ -121,6 +127,7 @@ public class LamangSymbolUtil {
     }
 
     public static int countGoldenBorderInRow(LamangSymbolDo[][] symbolArr, int row) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         int count = 0;
         for (int column = ONE_COLUM_INDEX; column < symbolArr[0].length; column++) {
             if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isSymbolGoldBorder()) {
@@ -132,6 +139,7 @@ public class LamangSymbolUtil {
 
 
     public static LamangSymbolDo[][] copySymbolArr(LamangSymbolDo[][] symbolArr) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         int row = symbolArr.length;
         int col = symbolArr[0].length;
         LamangSymbolDo[][] newSymbolArr = new LamangSymbolDo[row][col];
@@ -169,6 +177,12 @@ public class LamangSymbolUtil {
     }
 
 
+    /**
+     * 用于单元测试输出
+     *
+     * @param symbolArr
+     * @param scene
+     */
     public static void print(LamangSymbolDo[][] symbolArr, String scene) {
         System.out.println("symbolArr: " + scene);
         for (int row = 0; row < symbolArr.length; row++) {
@@ -193,6 +207,7 @@ public class LamangSymbolUtil {
     }
 
     public static LamangSymbolDo[][] copySymbolArrWithPlaceHolder(LamangSymbolDo[][] symbolArr) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         int row = symbolArr.length;
         int col = symbolArr[0].length;
         LamangSymbolDo[][] newSymbolArr = new LamangSymbolDo[row][col];
