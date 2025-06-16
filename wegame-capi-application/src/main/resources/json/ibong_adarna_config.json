@@ -30,9 +30,9 @@
     "probabilisticConfig": {
         "commonPlayWheelProbabilisticConfig": {
             "1001": [
-                "18.0000",
-                "18.0000",
-                "18.0000"
+                "18.00",
+                "18.00",
+                "18.00"
             ],
             "1002": [
                 "17.00",
@@ -72,62 +72,62 @@
         },
         "symbolBreakUpProbabilisticConfig": {
             "1001": {
-                "NO_BREAK_UP": "83.7310",
-                "TWO_BREAK_UP": "12.7250",
-                "THREE_BREAK_UP": "3.54400"
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
+                "THREE_BREAK_UP": "3.5300"
             },
             "1002": {
-                "NO_BREAK_UP": "83.7310",
-                "TWO_BREAK_UP": "12.7250",
-                "THREE_BREAK_UP": "3.54400"
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
+                "THREE_BREAK_UP": "3.5300"
             },
             "1003": {
-                "NO_BREAK_UP": "83.7310",
-                "TWO_BREAK_UP": "12.7250",
-                "THREE_BREAK_UP": "3.54400"
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
+                "THREE_BREAK_UP": "3.5300"
             },
             "1004": {
-                "NO_BREAK_UP": "83.7310",
-                "TWO_BREAK_UP": "12.7250",
-                "THREE_BREAK_UP": "3.54400"
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
+                "THREE_BREAK_UP": "3.5300"
             },
             "1005": {
-                "NO_BREAK_UP": "83.7310",
-                "TWO_BREAK_UP": "12.7250",
-                "THREE_BREAK_UP": "3.54400"
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
+                "THREE_BREAK_UP": "3.5300"
             },
             "1006": {
-                "NO_BREAK_UP": "83.7310",
-                "TWO_BREAK_UP": "12.7250",
-                "THREE_BREAK_UP": "3.54400"
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
+                "THREE_BREAK_UP": "3.5300"
             },
             "1007": {
-                "NO_BREAK_UP": "83.7310",
-                "TWO_BREAK_UP": "12.7250",
-                "THREE_BREAK_UP": "3.54400"
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
+                "THREE_BREAK_UP": "3.5300"
             },
             "4001": {
-                "NO_BREAK_UP": "83.7310",
-                "TWO_BREAK_UP": "12.7250",
-                "THREE_BREAK_UP": "3.54400"
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
+                "THREE_BREAK_UP": "3.5300"
             }
         },
         "multiPleProbabilisticConfig": {
             "1.0": {
-                "NORMAL": "44.00",
+                "NORMAL": "44.9400",
                 "EX": "0.0"
             },
             "2.0": {
-                "NORMAL": "23.00",
-                "EX": "48.6660"
+                "NORMAL": "22.0600",
+                "EX": "51.0100"
             },
             "3.0": {
                 "NORMAL": "17.00",
-                "EX": "25.00"
+                "EX": "22.1900"
             },
             "5.0": {
                 "NORMAL": "10.0",
-                "EX": "14.3340"
+                "EX": "14.800"
             },
             "10.0": {
                 "NORMAL": "5.00",

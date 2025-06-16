@@ -10,6 +10,6 @@ logging:
 #game switch
 game:
   enable:
-    MariaMakiling: true
-    Malakas: true
+    MariaMakiling: false
+    Malakas: false
     IbongAdarna: true
