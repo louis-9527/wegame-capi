@@ -3,17 +3,11 @@ package com.wegame.capi.biz.module.lamang;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static com.wegame.capi.common.enums.SymbolEnum.*;
-import static com.wegame.capi.common.enums.SymbolSizeEnum.*;
 
 public class LamangGameHelper {
 

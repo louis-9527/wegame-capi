@@ -36,6 +36,7 @@ import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_GAME_INF
 public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
+    private static final int RECORD_FIRST_INDEX = 0;
     private static final GameInfoDo gameInfo = LAMANG_GAME_INFO;
 
     @Autowired
@@ -50,7 +51,7 @@ public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
         List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.LAM_ANG);
         // 获取首轮(batchId == 0 and index == 0)
         OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
-                .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
+                .filter(record -> Objects.equals(RECORD_DEFAULT_PARENT_ID, record.getParentId()) && Objects.equals(RECORD_FIRST_INDEX, record.getIndex()))
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
 
@@ -71,7 +72,7 @@ public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
         LamangGameRecordDo lastGameRecord = firstGameRecord;
 
         for (OperationEventConfigRecordDo recordDo : recordBatchList) {
-            if (recordDo.getParentId() != 0L) {
+            if (Objects.equals(RECORD_DEFAULT_PARENT_ID, recordDo.getParentId())) {
                 // 处理首轮普通轮
                 long gameRecordId = generateGameRecordId();
                 LamangGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, BigDecimal.ZERO);
@@ -144,14 +145,14 @@ public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
             BigDecimal totalMultiple) {
 
         // 确定 `TotalMultiple` 参数
-        WheelDo<LamangSymbolDo> malakasSymbolWheel = this.convertWheel(recordDo.getWheel());
-        LamangSymbolDo[][] symbolArr = malakasSymbolWheel.getSymbolArr();
+        WheelDo<LamangSymbolDo> lamangSymbolWheel = this.convertWheel(recordDo.getWheel());
+        LamangSymbolDo[][] symbolArr = lamangSymbolWheel.getSymbolArr();
         // 处理空值
-        malakasSymbolWheel.setSymbolArr(LamangSymbolUtil.copySymbolArrWithPlaceHolder(symbolArr));
-        RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, malakasSymbolWheel, totalMultiple));
+        lamangSymbolWheel.setSymbolArr(LamangSymbolUtil.copySymbolArrWithPlaceHolder(symbolArr));
+        RewardResultDo<LamangSymbolDo> rewardResult = lamangRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, lamangSymbolWheel, totalMultiple));
         // 构建时还原
-        malakasSymbolWheel.setSymbolArr(symbolArr);
-        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, malakasSymbolWheel, rewardResult);
+        lamangSymbolWheel.setSymbolArr(symbolArr);
+        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, lamangSymbolWheel, rewardResult);
     }
 
     private LamangGameRecordDo buildGameRecord(Long id,
