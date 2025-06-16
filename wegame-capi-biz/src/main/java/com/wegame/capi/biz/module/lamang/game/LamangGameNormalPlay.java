@@ -497,7 +497,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
     /**
      * 移除元素
      */
-    public void removeSymbol(LamangSymbolDo[][] symbolArr, RewardSymbolDo<LamangSymbolDo> rewardSymbol) {
+    private void removeSymbol(LamangSymbolDo[][] symbolArr, RewardSymbolDo<LamangSymbolDo> rewardSymbol) {
         IndexDo indexDo = rewardSymbol.getIndex();
         // 直接移除
         symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = null;
@@ -510,7 +510,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
      * @param symbolArr  符号数组
      * @param gameInfoDo 游戏信息
      */
-    public void rebuildSymbolArr(LamangSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
+    private void rebuildSymbolArr(LamangSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
         // 对每一列进行处理
         for (int column = ONE_COLUM_INDEX; column < gameInfoDo.getColumn(); column++) {
             // 先收集当前列所有非空元素
