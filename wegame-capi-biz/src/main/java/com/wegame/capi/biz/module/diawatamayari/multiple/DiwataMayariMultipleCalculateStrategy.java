@@ -7,7 +7,6 @@ import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.module.base.multiple.AbstractMultipleCalculateStrategy;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
