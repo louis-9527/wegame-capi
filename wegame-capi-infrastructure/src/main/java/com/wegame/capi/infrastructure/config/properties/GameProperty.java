@@ -45,11 +45,7 @@ public class GameProperty {
     }
 
     public String enabledGameNames() {
-        List<GameTypeEnum> gameTypeList = new ArrayList<>();
-        if (enableMariaMaking) {
-            gameTypeList.add(GameTypeEnum.MARIA_MAKILING);
-        }
-        List<String> gameNameList = Optional.ofNullable(gameTypeList)
+        List<String> gameNameList = Optional.ofNullable(enabledGameTypes())
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(GameTypeEnum::getName)
