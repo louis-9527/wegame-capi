@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Configuration
 public class GameProperty {
@@ -19,5 +22,18 @@ public class GameProperty {
             gameTypeList.add(GameTypeEnum.MARIA_MAKILING);
         }
         return gameTypeList;
+    }
+
+    public String enabledGameNames() {
+        List<GameTypeEnum> gameTypeList = new ArrayList<>();
+        if (enableMariaMaking) {
+            gameTypeList.add(GameTypeEnum.MARIA_MAKILING);
+        }
+        List<String> gameNameList = Optional.ofNullable(gameTypeList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(GameTypeEnum::getName)
+                .collect(Collectors.toList());
+        return String.join(",", gameNameList);
     }
 }
