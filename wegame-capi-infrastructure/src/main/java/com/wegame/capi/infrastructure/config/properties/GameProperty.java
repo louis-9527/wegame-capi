@@ -15,9 +15,9 @@ public class GameProperty {
     // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
     @Value("${game.enable.MariaMakiling: false}")
     private boolean enableMariaMaking;
-    @Value("${game.enable.Malakas}")
+    @Value("${game.enable.Malakas: false}")
     private boolean enableMalakas;
-    @Value("${game.enable.IbongAdarna}")
+    @Value("${game.enable.IbongAdarna: false}")
     private boolean enableIbongAdarna;
 
     public List<GameTypeEnum> enabledGameTypes() {
