@@ -1,12 +1,11 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wegame.capi.biz.module.diawatamayari.DiwataMayariGameHelper;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
-
-import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 
 /**
  * DiwataMayari游戏元素
@@ -36,7 +35,7 @@ public class DiwataMayariSymbolDo extends SymbolDo {
 
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
-        return StringUtils.equals(getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId());
+        return StringUtils.equals(getId(), DiwataMayariGameHelper.DIWATA_MAYARI_SYMBOL_PLACEHOLDER.getId());
     }
 
     public DiwataMayariSymbolDo copy() {
