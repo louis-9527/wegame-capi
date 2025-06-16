@@ -35,11 +35,11 @@ public class OperationEventPulsarConfig {
     String dynamicOperationTopicUrl;
     @Value("${dynamic.operation.pulsar_topic}")
     String dynamicOperationTopic;
-    @Value("${dynamic.operation.pulsar_group.maria_makiling}")
+    @Value("${dynamic.operation.pulsar_group.maria_makiling:_MariaMakiling}")
     String dynamicOperationGroupMariaMakiling;
-    @Value("${dynamic.operation.pulsar_group.malakas}")
+    @Value("${dynamic.operation.pulsar_group.malakas:_Malakas}")
     String dynamicOperationGroupMalakas;
-    @Value("${dynamic.operation.pulsar_group.ibong}")
+    @Value("${dynamic.operation.pulsar_group.ibong:_Ibong}")
     String dynamicOperationGroupIbong;
     @Value("${dynamic.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
