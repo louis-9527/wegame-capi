@@ -46,8 +46,7 @@ public abstract class AbstractLamangBetStrategy
     LamangGameContext<LamangGameRecordDo> lamangGameContext;
     @Autowired
     LamangBetRecordManager lamangBetRecordManager;
-
-    //todo
+    
     @Autowired
     @Qualifier("lamangOperationEventManager")
     private LamangOperationEventManager lamangOperationEventManager;
