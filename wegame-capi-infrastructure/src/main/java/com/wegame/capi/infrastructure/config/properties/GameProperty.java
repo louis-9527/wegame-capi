@@ -9,8 +9,8 @@ import java.util.List;
 
 @Configuration
 public class GameProperty {
-
-    @Value("${game.enable.MariaMakiling}")
+    // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
+    @Value("${game.enable.MariaMakiling: false}")
     private boolean enableMariaMaking;
     @Value("${game.enable.Malakas}")
     private boolean enableMalakas;

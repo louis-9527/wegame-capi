@@ -35,6 +35,7 @@ public class OperationEventPulsarConfig {
     String dynamicOperationTopicUrl;
     @Value("${dynamic.operation.pulsar_topic}")
     String dynamicOperationTopic;
+    // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
     @Value("${dynamic.operation.pulsar_group.maria_makiling:_MariaMakiling}")
     String dynamicOperationGroupMariaMakiling;
     @Value("${dynamic.operation.pulsar_group.malakas:_Malakas}")
