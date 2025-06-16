@@ -30,7 +30,7 @@ public class DiwataMayariBetRecordBetStatusScheduler
     /**
      * 每分钟30秒执行
      */
-    @Scheduled(cron = "30 * * * * ?")
+//    @Scheduled(cron = "30 * * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");

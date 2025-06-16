@@ -29,7 +29,7 @@ public class DiwataMayariOperationEventScheduler extends AbstractOperationEventS
     @Qualifier("diwataMayariOperationEventManager")
     DiwataMayariOperationEventManager diwataMayariOperationEventManager;
 
-    @Scheduled(cron = "0 0/30 * * * ?")
+//    @Scheduled(cron = "0 0/30 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
