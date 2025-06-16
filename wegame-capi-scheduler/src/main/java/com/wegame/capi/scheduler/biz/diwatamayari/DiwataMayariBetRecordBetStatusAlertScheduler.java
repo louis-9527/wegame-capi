@@ -10,7 +10,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
  * 投注状态告警定时任务
@@ -22,10 +23,15 @@ public class DiwataMayariBetRecordBetStatusAlertScheduler
         extends AbstractAlertScheduler
         implements Runnable {
 
+    @Override
+    public GameTypeEnum getGameType() {
+        return GameTypeEnum.DIWATA_MAYARI;
+    }
+
     /**
-     * 每天8点30运行
+     * 每天8点运行
      */
-    @Scheduled(cron = "0 30 8 * * ?")
+    @Scheduled(cron = "0 0 10 * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
@@ -38,10 +44,4 @@ public class DiwataMayariBetRecordBetStatusAlertScheduler
             log.error("schedule failed", e);
         }
     }
-
-    @Override
-    public GameTypeEnum getGameType() {
-        return GameTypeEnum.DIWATA_MAYARI;
-    }
-
 }

@@ -7,20 +7,21 @@ import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.scheduler.biz.common.AbstractStarCardScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
- * DiwataMayari星卡定时任务
+ * 星卡定时任务
  */
 @Slf4j
 @Service
 @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
 public class DiwataMayariStarCardScheduler extends AbstractStarCardScheduler {
 
-    // todo 星卡开发放开
-//    @Scheduled(cron = "0 0/11 * * * ?")
+    @Scheduled(cron = "0 0/12 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");

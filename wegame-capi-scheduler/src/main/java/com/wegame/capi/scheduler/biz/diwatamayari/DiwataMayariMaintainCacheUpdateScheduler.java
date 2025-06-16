@@ -10,7 +10,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 @Slf4j
 @Service
@@ -33,6 +34,6 @@ public class DiwataMayariMaintainCacheUpdateScheduler extends AbstractMaintainCa
 
     @Override
     public GameTypeEnum gameType() {
-        return GameTypeEnum.DIWATA_MAYARI;
+        return GameTypeEnum.IBONG_ADARNA;
     }
 }

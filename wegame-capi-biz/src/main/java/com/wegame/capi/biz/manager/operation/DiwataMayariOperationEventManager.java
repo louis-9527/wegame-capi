@@ -18,7 +18,7 @@ public class DiwataMayariOperationEventManager extends AbstractOperationEventMan
 
     @Override
     public OperationEventTypeEnum operationEventType() {
-        return OperationEventTypeEnum.DIWATA_MAYARI_DYNAMIC;
+        return OperationEventTypeEnum.DIWATA_MAYARI;
     }
 
     // 使用 ConcurrentHashMap 进行缓存
