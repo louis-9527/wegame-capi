@@ -25,7 +25,7 @@ public class DiwataMayariMultipleCalculateStrategy extends AbstractMultipleCalcu
     @Override
     public BigDecimal calculateMultiple(RewardHandleDo<DiwataMayariSymbolDo> rewardHandle, List<RewardLineDo<DiwataMayariSymbolDo>> rewardLineList) {
         // 区分正常轮和免费轮
-        if (rewardHandle.getWheel().isFreeFlag() && CollectionUtils.isNotEmpty(rewardLineList)) {
+        if (rewardHandle.getWheel().isFreeFlag()) {
             // 免费轮
             return this.calculateMultiple(rewardHandle.getCurrentMultiple(),
                     diwataMayariConfig.getMultiplePieRuleConfig().getFreePlayMinMultiple(),
