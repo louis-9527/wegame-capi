@@ -46,12 +46,10 @@ public class BakunawaGameEventPlay extends AbstractGame<BakunawaGameRecordDo> {
         List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), BAKUNAUWA);
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER, "configRecordList is empty");
         OperationEventConfigRecordDo configRecordDo = configRecordList.get(0);
-        AssertUtil.assertNotNull(configRecordDo.getExtInfo(), ErrorCode.ERR_INTER, "extInfo is null");
-        AssertUtil.assertTrue(NumberUtil.isNumber(configRecordDo.getExtInfo().toString()), ErrorCode.ERR_INTER, "extInfo is not number");
         WheelDo<SymbolDo> wheel = convertWheel(configRecordDo.getWheel());
-        RewardResultDo<SymbolDo> firstWheelRewardResult = bakunawaRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, new BigDecimal(configRecordDo.getExtInfo().toString())));
-        long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
-        return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, firstWheelRewardResult, overallRewardAmount));
+        RewardResultDo<SymbolDo> rewardResult = bakunawaRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO));
+        long overallRewardAmount = rewardResult.getTotalRewardAmount();
+        return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, rewardResult, overallRewardAmount));
     }
 
     private BakunawaGameRecordDo buildGameRecord(UserInfo userInfo,
