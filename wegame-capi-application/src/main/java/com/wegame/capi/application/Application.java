@@ -7,6 +7,7 @@ import com.wegame.base.enums.EnvEnum;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.base.utils.LarkUtil;
 import com.wegame.capi.biz.listener.AppLaunchPostProcessor;
+import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
@@ -58,6 +59,8 @@ public class Application implements CommandLineRunner {
     List<Executor> executorList;
     @Autowired
     AppLaunchPostProcessor appLaunchPostProcessor;
+    @Autowired
+    GameProperty gameProperty;
 
     public static void main(String[] args) {
         log.info("Begin Start Application 😄😄😄😄😄😄");
@@ -121,7 +124,7 @@ public class Application implements CommandLineRunner {
             }
             LarkUtil.sendTextMsg(publishRobot, ServicePublishMessage.builder()
                     .applicationName(appName)
-                    .env(env)
+                    .env(env + " - " + gameProperty.enabledGameNames())
                     .ip(IpUtil.getLocalIp())
                     .build().buildMessage());
         } catch (Exception e) {
