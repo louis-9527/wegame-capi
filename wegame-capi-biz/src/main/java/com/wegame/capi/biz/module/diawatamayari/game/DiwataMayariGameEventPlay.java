@@ -47,7 +47,7 @@ public class DiwataMayariGameEventPlay extends AbstractGame<DiwataMayariGameReco
     @Override
     public List<DiwataMayariGameRecordDo> play(GamePlayDo gamePlay) {
         List<DiwataMayariGameRecordDo> ret = new ArrayList<>();
-        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.DIWATA_MAYARI_DYNAMIC);
+        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.DIWATA_MAYARI);
         // 获取首轮(batchId == 0 and index == 0)
         OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)

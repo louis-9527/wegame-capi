@@ -35,7 +35,7 @@ public enum OperationEventTypeEnum {
             "ibongadarna_operation_event_config",
             "ibongadarna_operation_event_config_record"
     ),
-    DIWATA_MAYARI_DYNAMIC(GameTypeEnum.DIWATA_MAYARI,
+    DIWATA_MAYARI(GameTypeEnum.DIWATA_MAYARI,
             "diwataMayari_operation_event",
             "diwataMayari_operation_event_detail",
             "diwataMayari_operation_event_config",
