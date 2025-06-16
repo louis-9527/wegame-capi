@@ -72,43 +72,43 @@
         },
         "symbolBreakUpProbabilisticConfig": {
             "1001": {
-                "NO_BREAK_UP": "83.7450",
-                "TWO_BREAK_UP": "12.7250",
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
                 "THREE_BREAK_UP": "3.5300"
             },
             "1002": {
-                "NO_BREAK_UP": "83.7450",
-                "TWO_BREAK_UP": "12.7250",
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
                 "THREE_BREAK_UP": "3.5300"
             },
             "1003": {
-                "NO_BREAK_UP": "83.7450",
-                "TWO_BREAK_UP": "12.7250",
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
                 "THREE_BREAK_UP": "3.5300"
             },
             "1004": {
-                "NO_BREAK_UP": "83.7450",
-                "TWO_BREAK_UP": "12.7250",
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
                 "THREE_BREAK_UP": "3.5300"
             },
             "1005": {
-                "NO_BREAK_UP": "83.7450",
-                "TWO_BREAK_UP": "12.7250",
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
                 "THREE_BREAK_UP": "3.5300"
             },
             "1006": {
-                "NO_BREAK_UP": "83.7450",
-                "TWO_BREAK_UP": "12.7250",
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
                 "THREE_BREAK_UP": "3.5300"
             },
             "1007": {
-                "NO_BREAK_UP": "83.7450",
-                "TWO_BREAK_UP": "12.7250",
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
                 "THREE_BREAK_UP": "3.5300"
             },
             "4001": {
-                "NO_BREAK_UP": "83.7450",
-                "TWO_BREAK_UP": "12.7250",
+                "NO_BREAK_UP": "83.7400",
+                "TWO_BREAK_UP": "12.7300",
                 "THREE_BREAK_UP": "3.5300"
             }
         },
@@ -119,11 +119,11 @@
             },
             "2.0": {
                 "NORMAL": "22.0600",
-                "EX": "51.00"
+                "EX": "51.0100"
             },
             "3.0": {
                 "NORMAL": "17.00",
-                "EX": "22.200"
+                "EX": "22.1900"
             },
             "5.0": {
                 "NORMAL": "10.0",
