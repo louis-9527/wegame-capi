@@ -324,9 +324,11 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             gameRecordResult.add(gameRecord);
             totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
             loopPlayOnPreGameRecord(gamePlay, gameRecordResult, totalRewardAmount, gameRecord, freeWheelList, config, freeWheelFlag, mustRewardFreeWheel, scatter1CountInBatch);
-        } else if (reachMaxMultiple) {
-            //到达上限避免继续执行
-            freeWheelList.clear();
+        } else {
+            if (reachMaxMultiple) {
+                //到达上限避免继续执行
+                freeWheelList.clear();
+            }
         }
     }
 

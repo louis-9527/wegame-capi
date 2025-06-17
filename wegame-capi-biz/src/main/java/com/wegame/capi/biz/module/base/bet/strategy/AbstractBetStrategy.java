@@ -121,7 +121,6 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                         .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)
                         .jackpot(betRecordDo.getJackpot())
                         .status(status.getCode())
-                        .jackpot(betRecordDo.getJackpot())
                         .build());
     }
 
