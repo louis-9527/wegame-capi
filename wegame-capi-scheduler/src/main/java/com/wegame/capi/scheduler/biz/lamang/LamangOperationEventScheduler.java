@@ -29,7 +29,7 @@ public class LamangOperationEventScheduler extends AbstractOperationEventSchedul
     @Qualifier("lamangOperationEventManager")
     LamangOperationEventManager lamangOperationEventManager;
 
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
