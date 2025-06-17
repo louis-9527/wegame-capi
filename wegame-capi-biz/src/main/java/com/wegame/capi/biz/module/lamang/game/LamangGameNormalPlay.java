@@ -259,7 +259,7 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
             fillWheel(symbolArr, superWildConfig, mustRewardFreeWheel, freeWheel, true, scatter1CountInBatch);
         } else {
             //下落
-            rebuildSymbolArr(symbolArr, GAME_INFO);
+            rebuildSymbolArr(symbolArr);
             //填充
             fillWheel(symbolArr, config, mustRewardFreeWheel, freeWheel, false, scatter1CountInBatch);
             // 使用 占位符 覆盖bigWild的2-4列
@@ -507,27 +507,26 @@ public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
      * 重建元素数组：（按列下移处理）
      * 将每一列的非空元素下移到最底部，类似重力效果
      *
-     * @param symbolArr  符号数组
-     * @param gameInfoDo 游戏信息
+     * @param symbolArr 符号数组
      */
-    private void rebuildSymbolArr(LamangSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
+    private void rebuildSymbolArr(LamangSymbolDo[][] symbolArr) {
         // 对每一列进行处理
-        for (int column = ONE_COLUM_INDEX; column < gameInfoDo.getColumn(); column++) {
+        for (int column = ONE_COLUM_INDEX; column < LAMANG_GAME_INFO.getColumn(); column++) {
             // 先收集当前列所有非空元素
             List<LamangSymbolDo> nonNullSymbols = new ArrayList<>();
-            for (int row = ONE_ROW_INDEX; row < gameInfoDo.getRow(); row++) {
+            for (int row = ONE_ROW_INDEX; row < LAMANG_GAME_INFO.getRow(); row++) {
                 if (Objects.nonNull(symbolArr[row][column])) {
                     nonNullSymbols.add(symbolArr[row][column]);
                 }
             }
 
             // 清空当前列
-            for (int row = ONE_ROW_INDEX; row < gameInfoDo.getRow(); row++) {
+            for (int row = ONE_ROW_INDEX; row < LAMANG_GAME_INFO.getRow(); row++) {
                 symbolArr[row][column] = null;
             }
 
             // 从底部开始填充非空元素
-            int currentRow = gameInfoDo.getRow() - 1;
+            int currentRow = LAMANG_GAME_INFO.getRow() - 1;
             for (int i = nonNullSymbols.size() - 1; i >= 0; i--) {
                 symbolArr[currentRow][column] = nonNullSymbols.get(i);
                 currentRow--;
