@@ -22,7 +22,6 @@ import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
 import com.wegame.capi.biz.module.lamang.LamangGameHelper;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -103,8 +102,11 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                     .rewardSymbolList(rewardLine.getRewardSymbolList())
                     .build());
         }
-        long totalAmount = Objects.equals(rewardHandle.getGamePlayType(), GamePlayTypeEnum.EVENT_PLAY) ? 0L : rewardHandle.getCurrentTotalRewardAmount();
-        boolean reachMaxMultiple = reachMaxMultiple(totalAmount + totalRewardAmount, rewardHandle.getBetAmount(), lamangConfig.getRewardMaxMultiple());
+        boolean reachMaxMultiple = reachMaxMultiple(
+                rewardHandle.getGamePlayType(),
+                rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount,
+                rewardHandle.getBetAmount(),
+                lamangConfig.getRewardMaxMultiple());
         // 5.构建中奖结果
         RewardResultDo<LamangSymbolDo> rewardResult = RewardResultDo.<LamangSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
