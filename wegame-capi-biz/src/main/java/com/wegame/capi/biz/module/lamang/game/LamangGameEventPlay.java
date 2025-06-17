@@ -88,6 +88,10 @@ public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
             // 处理免费轮
             processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId);
         }
+        // 设置结束
+        if (CollectionUtils.isNotEmpty(ret)) {
+            ret.get(ret.size() - 1).setLastGameFlag(true);
+        }
         return ret;
     }
 
