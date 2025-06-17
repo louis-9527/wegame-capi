@@ -16,6 +16,7 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractCommonBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
+import com.wegame.capi.biz.module.lamang.GameRecordCalcUtil;
 import com.wegame.capi.biz.module.lamang.bet.LamangBetHelper;
 import com.wegame.capi.biz.module.lamang.game.LamangGameContext;
 import com.wegame.capi.client.context.UserInfo;
@@ -124,12 +125,13 @@ public abstract class AbstractLamangBetStrategy
      */
     private BetResultDo<LamangBetRecordDetailDo> betForFreeWheel(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
+        GameRecordQuery gameRecordQuery = GameRecordQuery.builder()
+                .betRecordId(betDo.getBetRecordId())
+                .playerId(userInfo.getPlayerId())
+                .batchId(betDo.getGameRecordId())
+                .build();
         List<LamangGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
-                GameRecordQuery.builder()
-                        .betRecordId(betDo.getBetRecordId())
-                        .playerId(userInfo.getPlayerId())
-                        .batchId(betDo.getGameRecordId())
-                        .build(), gameContext().gameInfo().getGameType());
+                gameRecordQuery, gameContext().gameInfo().getGameType());
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
         // 按照index升序排列
         gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()
@@ -137,10 +139,7 @@ public abstract class AbstractLamangBetStrategy
                 .sorted(Comparator.comparingInt(LamangGameRecordDo::getIndex))
                 .collect(Collectors.toList());
         //// 合计中奖总金额
-        long overallRewardAmount = gameRecordList.stream()
-                .filter(item -> Objects.nonNull(item.getRewardResult()))
-                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                .sum();
+        long overallRewardAmount = GameRecordCalcUtil.calcTotalRewardAmount(gameRecordList);
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
             LamangGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
             if (Objects.nonNull(lastGameRecord)) {

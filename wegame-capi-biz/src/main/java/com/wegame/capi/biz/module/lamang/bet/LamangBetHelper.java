@@ -16,6 +16,7 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.jackpot.AbsJackpotHandler;
 import com.wegame.capi.biz.module.base.jackpot.JackpotHandlerContext;
+import com.wegame.capi.biz.module.lamang.GameRecordCalcUtil;
 import com.wegame.capi.biz.module.lamang.LamangJackpotHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -67,10 +68,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
             List<LamangGameRecordDo> firstBatchList = getFirstBatchGameRecordList(betRecord.getGameRecordList());
             // 4、组装返回结果
             //// 合计中奖总金额
-            long overallRewardAmount = firstBatchList.stream()
-                    .filter(item -> Objects.nonNull(item.getRewardResult()))
-                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                    .sum();
+            long overallRewardAmount = GameRecordCalcUtil.calcTotalRewardAmount(firstBatchList);
             // 计算中奖
             JackpotWinPrizeDo jackpotWinPrizeDo = handleDrawJackpot(betRecord, result);
             return BetResultDo.<LamangBetRecordDetailDo>builder()
