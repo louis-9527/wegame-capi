@@ -57,25 +57,27 @@ public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
 
         // 处理首轮
         long firstGameRecordId = super.generateGameRecordId();
-        LamangGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, BigDecimal.ZERO);
+        LamangGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, null);
         ret.add(firstGameRecord);
         // 按 batchId 分组 & 记录 ID 映射
         Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId = gameMultipleRecordDos.stream()
                 .collect(Collectors.groupingBy(OperationEventConfigRecordDo::getBatchId));
 
         // 获取首批次并排序
-        List<OperationEventConfigRecordDo> recordBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
+        List<OperationEventConfigRecordDo> firstBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
                 .stream()
                 .sorted(Comparator.comparing(OperationEventConfigRecordDo::getIndex))
                 .collect(Collectors.toList());
         // 处理每个批次
         LamangGameRecordDo lastGameRecord = firstGameRecord;
 
-        for (OperationEventConfigRecordDo recordDo : recordBatchList) {
-            if (Objects.equals(RECORD_DEFAULT_PARENT_ID, recordDo.getParentId())) {
+        for (OperationEventConfigRecordDo recordDo : firstBatchList) {
+            // 非首回合
+            if (!Objects.equals(RECORD_DEFAULT_PARENT_ID, recordDo.getParentId())) {
                 // 处理首轮普通轮
                 long gameRecordId = generateGameRecordId();
-                LamangGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, BigDecimal.ZERO);
+                // 用上一回合的倍率
+                LamangGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, lastGameRecord.getRewardResult().getTotalMultiple());
                 ret.add(gameRecord);
                 lastGameRecord = gameRecord;
             }
@@ -108,14 +110,16 @@ public class LamangGameEventPlay extends AbstractGame<LamangGameRecordDo> {
             // 处理当前层级的每个记录
             LamangGameRecordDo preGameRecord = null;
             for (OperationEventConfigRecordDo record : currentLevelRecords) {
-                BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
                 long gameRecordId = generateGameRecordId();
                 LamangGameRecordDo gameRecord = null;
                 if (record.getIndex() == 0) {
                     gameRecordIds.add(gameRecordId);
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record, totalMultipleAmount);
+                    // 首回合倍率为空
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record, null);
                     ret.add(gameRecord);
                 } else {
+                    // 后续回合倍率传入前一回合的倍率
+                    BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
                     gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record, totalMultipleAmount);
                     ret.add(gameRecord);
                 }
