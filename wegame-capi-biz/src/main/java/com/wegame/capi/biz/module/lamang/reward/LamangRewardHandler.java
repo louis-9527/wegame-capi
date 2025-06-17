@@ -235,11 +235,13 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
             long newScatter1Count = Arrays.stream(rewardHandle.getWheel().getSymbolArr()).flatMap(Arrays::stream)
                     .filter(Objects::nonNull).filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER1.getId()) && symbol.isNewSymbol()).count();
             return (int) newScatter1Count;
-        } else if (CollectionUtil.isEmpty(rewardLineList)) {
-            // 正常轮，没有中奖，计算scatter产生的免费轮
-            long scatterCount = Arrays.stream(rewardHandle.getWheel().getSymbolArr()).flatMap(Arrays::stream)
-                    .filter(Objects::nonNull).filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER.getId())).count();
-            return scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0;
+        } else {
+            if (CollectionUtil.isEmpty(rewardLineList)) {
+                // 正常轮，没有中奖，计算scatter产生的免费轮
+                long scatterCount = Arrays.stream(rewardHandle.getWheel().getSymbolArr()).flatMap(Arrays::stream)
+                        .filter(Objects::nonNull).filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER.getId())).count();
+                return scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0;
+            }
         }
         // 正常轮,有中奖，返回0
         return 0;
