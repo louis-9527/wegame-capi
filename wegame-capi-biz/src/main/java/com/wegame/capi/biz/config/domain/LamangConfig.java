@@ -3,24 +3,20 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
 
 /**
  * lamang 配置类
+ * // todo jackpot jackpotTriggerBetAmountConfig 通过重写set方法的方式达到排序的目的
  */
 @Data
 @SuperBuilder
@@ -129,7 +125,7 @@ public class LamangConfig {
     }
 
 
-    @Data
+    //    @Data
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -137,23 +133,41 @@ public class LamangConfig {
         /**
          * 正常轮提成配置
          */
+        @Getter
+        @Setter
         private CommissionConfig commonCommissionConfig;
         /**
          * 购买轮提成配置
          */
+        @Getter
+        @Setter
         private CommissionConfig buyCommissionConfig;
         /**
          * 奖池中奖触发投注金额配置
          * TreeMap<满足条件最小投注金额(从大到小配置), TreeMap<奖池名称, 中奖概率>>
          * 为什么使用linkedHashMap？需要按照配置顺序进行赋值
          */
+        @Getter
         private LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig;
         /**
          * jackpot保底金额配置
          * TreeMap<奖池名称, 保底金额>
          */
+        @Getter
+        @Setter
         private TreeMap<String, Long> guaranteedAmount;
 
+        public void setJackpotTriggerBetAmountConfig(LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig) {
+            // 对数据进行排序
+            if (jackpotTriggerBetAmountConfig != null) {
+                LinkedHashMap<Long, TreeMap<String, BigDecimal>> sortedMap = new LinkedHashMap<>();
+                jackpotTriggerBetAmountConfig.entrySet()
+                        .stream()
+                        .sorted(Collections.reverseOrder(Map.Entry.comparingByKey()))
+                        .forEachOrdered(e -> sortedMap.put(e.getKey(), e.getValue()));
+                this.jackpotTriggerBetAmountConfig = sortedMap;
+            }
+        }
     }
 
     @Data
@@ -173,7 +187,6 @@ public class LamangConfig {
         private TreeMap<String, BigDecimal> proportionCommissionConfig;
     }
 
-
     public void validate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
@@ -181,7 +194,6 @@ public class LamangConfig {
         rewardMaxMultipleValidate();
         jackPotConfigValidate();
         freeWheelTimesValidate();
-
     }
 
     private void jackPotConfigValidate() {

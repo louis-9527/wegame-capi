@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.lamang;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotDrawAndAwardDo;
@@ -68,30 +67,18 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
             log.warn("JackpotHandler#calculateRewardPoolCommission betAmount is 0,commission return 0");
             return super.buildDefaultCommissionResultMap();
         }
-
         // 只有BetPromotionType == 0 才参与jackpot提成
         if (!Objects.equals(betPromotionTypeEnum.getCode(), BetPromotionTypeEnum.NONE.getCode())) {
             return super.buildDefaultCommissionResultMap();
         }
-
-        LamangConfig.JackPotConfig jackPotConfig = lamangConfig.getJackPotConfig();
-        switch (betTypeEnum) {
-            case NORMAL_BET:
-                // 先匹配按照金额提成
-                Map<JackpotRewardPoolTypeEnum, Long> normalAmountCommissionMap = super.calculateRewardPoolCommissionByAmount(betAmount, jackPotConfig.getCommonCommissionConfig());
-                return CollectionUtil.isNotEmpty(normalAmountCommissionMap) ? normalAmountCommissionMap
-                        // 按照比例提成
-                        : super.calculateRewardPoolCommissionByProportion(betAmount, jackPotConfig.getCommonCommissionConfig());
-            case BUY_BET:
-                // 先匹配按照金额提成
-                Map<JackpotRewardPoolTypeEnum, Long> buyAmountCommissionMap = super.calculateRewardPoolCommissionByAmount(betAmount, jackPotConfig.getBuyCommissionConfig());
-                return CollectionUtil.isNotEmpty(buyAmountCommissionMap) ? buyAmountCommissionMap
-                        // 按照比例提成
-                        : super.calculateRewardPoolCommissionByProportion(betAmount, jackPotConfig.getBuyCommissionConfig());
-            default:
-                throw new BusinessException(ErrorCode.ERR_INTER, "JackpotHandler#calculateRewardPoolCommission, not support betType");
-
-        }
+        // 获取配置
+        LamangConfig.CommissionConfig commissionConfig = this.getCommissionConfig(betTypeEnum);
+        AssertUtil.assertNotNull(commissionConfig, ErrorCode.ERR_INTER, "commissionConfig is null");
+        // 先匹配按照金额提成
+        Map<JackpotRewardPoolTypeEnum, Long> normalAmountCommissionMap = super.calculateRewardPoolCommissionByAmount(betAmount, commissionConfig);
+        return CollectionUtil.isNotEmpty(normalAmountCommissionMap) ? normalAmountCommissionMap
+                // 按照比例提成
+                : super.calculateRewardPoolCommissionByProportion(betAmount, commissionConfig);
     }
 
     /**
@@ -130,7 +117,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     private TreeMap<String, BigDecimal> getJackpotTriggerBetAmountConfig(Long amount) {
         LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig = lamangConfig.getJackPotConfig().getJackpotTriggerBetAmountConfig();
         for (Long poolAmount : jackpotTriggerBetAmountConfig.keySet()) {
-            if (amount >= poolAmount) {
+            if (amount > poolAmount) {
                 return jackpotTriggerBetAmountConfig.get(poolAmount);
             }
         }
@@ -155,5 +142,17 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
         }
 
         return null;
+    }
+
+    private LamangConfig.CommissionConfig getCommissionConfig(BetTypeEnum betType) {
+        LamangConfig.JackPotConfig jackPotConfig = lamangConfig.getJackPotConfig();
+        switch (betType) {
+            case NORMAL_BET:
+                return jackPotConfig.getCommonCommissionConfig();
+            case BUY_BET:
+                return jackPotConfig.getBuyCommissionConfig();
+            default:
+                return null;
+        }
     }
 }
