@@ -82,7 +82,7 @@ public class Application implements CommandLineRunner {
         executorList.forEach(item -> {
             if (item instanceof ExecutorService) {
                 gracefulShutdown((ExecutorService) item);
-            } else if (item instanceof ThreadPoolTaskScheduler){
+            } else if (item instanceof ThreadPoolTaskScheduler) {
                 gracefulShutdown((ThreadPoolTaskScheduler) item);
             } else {
                 log.error("unknown executor: {}", item);
@@ -124,7 +124,8 @@ public class Application implements CommandLineRunner {
             }
             LarkUtil.sendTextMsg(publishRobot, ServicePublishMessage.builder()
                     .applicationName(appName)
-                    .env(env + " - " + gameProperty.enabledGameNames())
+                    .env(env)
+                    .gameNames(gameProperty.enabledGameNames())
                     .ip(IpUtil.getLocalIp())
                     .build().buildMessage());
         } catch (Exception e) {
@@ -140,6 +141,7 @@ public class Application implements CommandLineRunner {
             LarkUtil.sendTextMsg(shutDownRobot, ServiceShutdownMessage.builder()
                     .applicationName(appName)
                     .env(env)
+                    .gameNames(gameProperty.enabledGameNames())
                     .ip(IpUtil.getLocalIp())
                     .build().buildMessage());
         } catch (Throwable te) {
