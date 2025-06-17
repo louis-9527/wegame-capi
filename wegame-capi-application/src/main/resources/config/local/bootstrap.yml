@@ -17,5 +17,5 @@ game:
   enable:
     MariaMakiling: false
     Malakas: false
-    IbongAdarna: true
+    IbongAdarna: false
     DiwataMayari: true

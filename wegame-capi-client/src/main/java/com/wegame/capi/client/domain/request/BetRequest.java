@@ -8,10 +8,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.validator.CommonGameValidator;
-import com.wegame.capi.client.validator.IbongAdarnaValidator;
-import com.wegame.capi.client.validator.MalakasValidator;
-import com.wegame.capi.client.validator.MariaMakilingValidator;
+import com.wegame.capi.client.validator.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -100,6 +97,9 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                 CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
             } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
                 IbongAdarnaValidator.validateParam(betType, betSubType, this);
+                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
+            } else if (Objects.equals(gameType, GameTypeEnum.DIWATA_MAYARI)) {
+                DiwataMayariValidator.validateParam(betType, betSubType, this);
                 CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORT");
