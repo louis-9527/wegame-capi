@@ -12,6 +12,7 @@ import static com.wegame.capi.common.enums.SymbolSizeEnum.S;
 
 public class DiwataMayariGameHelper {
 
+
     public static final SymbolDo DIWATA_MAYARI_Symbol1001 = SymbolDo.builder()
             .id(Symbol1001.getId())
             .name(Symbol1001.getName())
@@ -58,15 +59,21 @@ public class DiwataMayariGameHelper {
             .symbolType(SymbolTypeEnum.SCATTER)
             .build();
 
-    private static final SymbolDo DIWATA_MAYARI_Wild_Sword = SymbolDo.builder()
-            .id(WildSword.getId())
-            .name(WildSword.getName())
+    // 大宝剑
+    public static final SymbolDo DIWATA_MAYARI_WILD_SWORD = SymbolDo.builder()
+            .id(Wild_1.getId())
+            .name(Wild_1.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
-
-    private static final SymbolDo DIWATA_MAYARI_Wild_Stick = SymbolDo.builder()
-            .id(WildStick.getId())
-            .name(WildStick.getName())
+    // 棒子
+    public static final SymbolDo DIWATA_MAYARI_WILD_STICK = SymbolDo.builder()
+            .id(Wild_2.getId())
+            .name(Wild_2.getName())
+            .symbolType(SymbolTypeEnum.WILD)
+            .build();
+    public static final SymbolDo DIWATA_MAYARI_WILD_COVER = SymbolDo.builder()
+            .id(Wild.getId())
+            .name(Wild.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
 
@@ -74,8 +81,6 @@ public class DiwataMayariGameHelper {
             .id(Symbol1000.getId())
             .name(Symbol1000.getName())
             .symbolType(SymbolTypeEnum.COMMON)
-            .symbolSize(S)
-            .symbolGoldBorder(false)
             .build();
 
     public static final GameInfoDo DIWATA_MAYARI_GAME_INFO = GameInfoDo.builder()
@@ -94,8 +99,8 @@ public class DiwataMayariGameHelper {
                     .put(DIWATA_MAYARI_Symbol1007.getId(), DIWATA_MAYARI_Symbol1007)
                     .put(DIWATA_MAYARI_Symbol1008.getId(), DIWATA_MAYARI_Symbol1008)
                     .put(DIWATA_MAYARI_SCATTER.getId(), DIWATA_MAYARI_SCATTER)
-                    .put(DIWATA_MAYARI_Wild_Sword.getId(), DIWATA_MAYARI_Wild_Sword)
-                    .put(DIWATA_MAYARI_Wild_Stick.getId(), DIWATA_MAYARI_Wild_Stick)
+                    .put(DIWATA_MAYARI_WILD_SWORD.getId(), DIWATA_MAYARI_WILD_SWORD)
+                    .put(DIWATA_MAYARI_WILD_STICK.getId(), DIWATA_MAYARI_WILD_STICK)
                     .build())
             .build();
 }

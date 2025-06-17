@@ -82,9 +82,6 @@ public class SymbolBuilder {
                 DiwataMayariSymbolDo diwataMayariSymbol = symbolArr[row][col];
                 integerArray[row][col] = Objects.isNull(diwataMayariSymbol) ? null : DiwataMayariSymbolVo.builder()
                         .symbolId(diwataMayariSymbol.getId())
-                        .symbolSize(diwataMayariSymbol.getSymbolSize().getCode())
-                        .symbolClearTimes(diwataMayariSymbol.getSymbolClearTimes())
-                        .symbolGoldBorder(diwataMayariSymbol.isSymbolGoldBorder())
                         .build();
             }
         }

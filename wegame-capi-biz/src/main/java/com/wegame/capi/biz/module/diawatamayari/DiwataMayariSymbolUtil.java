@@ -1,10 +1,26 @@
 package com.wegame.capi.biz.module.diawatamayari;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
+import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
+import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
+import com.wegame.capi.common.enums.SymbolEnum;
+import com.wegame.capi.common.enums.SymbolSizeEnum;
+import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
 import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
@@ -29,7 +45,9 @@ public class DiwataMayariSymbolUtil {
         }
         return newSymbolArr;
     }
-
+    public static void clearRewardSymbol(DiwataMayariSymbolDo[][] symbolArr, List<RewardSymbolDo<DiwataMayariSymbolDo>> rewardSymbolList ) {
+        rewardSymbolList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
+    }
 
     public static DiwataMayariSymbolDo[][] handleSymbolNullArr(DiwataMayariSymbolDo[][] symbolArr) {
         int row = symbolArr.length;
@@ -53,30 +71,14 @@ public class DiwataMayariSymbolUtil {
      * @param symbolArr
      */
     public static void rebuildSymbolArr(DiwataMayariSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
-        // 处理第一行：按行[1,row-1]处理(非空元素左移，第一列元素&最后一列元素为空)
-        int currentColum = 1;
-        for (int column = 1; column < gameInfoDo.getColumn() - 1; column++) {
-            if (Objects.nonNull(symbolArr[ONE_ROW_INDEX][column])) {
-                if (Objects.equals(currentColum, column)) {
-                    // 不做移动
-                    // do nothing
-                } else {
-                    // 移动
-                    DiwataMayariSymbolDo temp = symbolArr[ONE_ROW_INDEX][column];
-                    symbolArr[ONE_ROW_INDEX][currentColum] = temp;
-                    symbolArr[ONE_ROW_INDEX][column] = null;
-                }
-                currentColum++;
-            }
-        }
         // 处理非第一行：按列处理（从第二行开始，非空元素下移）
         for (int column = ONE_COLUM_INDEX; column < gameInfoDo.getColumn(); column++) {
             int currentRow = gameInfoDo.getRow() - 1;
-            for (int row = gameInfoDo.getRow() - 1; row > ONE_ROW_INDEX; row--) {
+            for (int row = gameInfoDo.getRow() - 1; row >= ONE_ROW_INDEX; row--) {
                 if (Objects.nonNull(symbolArr[row][column])) {
                     if (Objects.equals(currentRow, row)) {
                         // 不做移动
-                        // do nothing
+                       continue;
                     } else {
                         // 移动
                         DiwataMayariSymbolDo temp = symbolArr[row][column];
@@ -88,4 +90,47 @@ public class DiwataMayariSymbolUtil {
             }
         }
     }
+
+    public static int countIndexSymbol(DiwataMayariSymbolDo[][] symbolArr, SymbolEnum symbol) {
+        int count = 0;
+        for (int row = 0; row < symbolArr.length; row++) {
+            for (int col = 0; col < symbolArr[row].length; col++) {
+                if (Objects.nonNull(symbolArr[row][col]) && StringUtils.equals(symbolArr[row][col].getId(), symbol.getId())) {
+                    count = count + 1;
+                }
+            }
+        }
+        return count;
+    }
+    public static void postProcessPlaceholderSymbol(List<DiwataMayariGameRecordDo> gameRecordList) {
+        if (CollectionUtils.isEmpty(gameRecordList)) {
+            return;
+        }
+        long startTime = System.currentTimeMillis();
+        gameRecordList.parallelStream().forEach(gameRecord -> {
+            DiwataMayariSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
+            for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+                for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
+                    if (Objects.nonNull(symbolArr[row][column])) {
+                        if (symbolArr[row][column].isPlaceholderSymbol()) {
+                            symbolArr[row][column] = null;
+                        }
+                    }
+                }
+            }
+        });
+        long endTime = System.currentTimeMillis();
+        log.info("postPlaceholderSymbol cost time: {} ms", (endTime - startTime));
+    }
+
+    private static void clearIndexRewardSymbol(DiwataMayariSymbolDo[][] symbolArr, RewardSymbolDo<DiwataMayariSymbolDo> rewardSymbol) {
+        if (rewardSymbol.getSymbol().isScatterSymbol()) {
+            // scatter 元素， 不做消除
+            return;
+        }
+        // 普通元素+wild 消除
+        IndexDo indexDo = rewardSymbol.getIndex();
+        symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = null;
+    }
+
 }
