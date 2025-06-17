@@ -117,7 +117,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
     private TreeMap<String, BigDecimal> getJackpotTriggerBetAmountConfig(Long amount) {
         LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig = lamangConfig.getJackPotConfig().getJackpotTriggerBetAmountConfig();
         for (Long poolAmount : jackpotTriggerBetAmountConfig.keySet()) {
-            if (amount >= poolAmount) {
+            if (amount > poolAmount) {
                 return jackpotTriggerBetAmountConfig.get(poolAmount);
             }
         }
