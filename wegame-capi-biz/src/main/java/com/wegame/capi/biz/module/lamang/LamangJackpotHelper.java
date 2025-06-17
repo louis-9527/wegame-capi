@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.module.lamang;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
@@ -10,6 +12,8 @@ import java.util.stream.Collectors;
 
 public class LamangJackpotHelper {
     public static JackpotDrawAndAwardDo buildJackpotDrawAndAwardDo(BetRecordDo<LamangGameRecordDo> betRecord, SingleWalletBetResultDo singleWalletBetResultDo) {
+        AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(singleWalletBetResultDo, ErrorCode.ERR_PARAM);
         return JackpotDrawAndAwardDo.builder()
                 .betId(singleWalletBetResultDo.getBetId())
                 .betAmount(betRecord.getBetAmount())
