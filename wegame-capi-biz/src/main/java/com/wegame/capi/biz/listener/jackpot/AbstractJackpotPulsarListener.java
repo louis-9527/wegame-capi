@@ -13,6 +13,7 @@ import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -135,7 +136,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 // 避免一批次消息里面有重复消息
                 addMessageIdList.add(message.getMessageId());
-            } else if (mqMessage.getType().equals(MessageTypeEnum.UPDATE.getCode())) {
+            } else if (mqMessage.getType().equals(MessageTypeEnum.UPDATE.getCode()) && Objects.equals(BetStatusEnum.SUCCESS.getCode(),betRecord.getStatus())) {
                 // 避免一批次消息里面有重复消息
                 if (!updateMessageIdMap.containsKey(betRecord.getId())) {
                     updateMessageIdMap.put(betRecord.getId(), message.getMessageId());
@@ -146,6 +147,12 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
                     } catch (PulsarClientException e) {
                         log.error("Error ack message", e);
                     }
+                }
+            }else {
+                try {
+                    this.getConsumer().acknowledge(message.getMessageId());
+                } catch (PulsarClientException e) {
+                    log.error("Error ack message", e);
                 }
             }
         });
