@@ -24,6 +24,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import com.wegame.capi.common.enums.SymbolEnum;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final GameInfoDo GAME_INFO = DiwataMayariGameHelper.DIWATA_MAYARI_GAME_INFO;
+    private static final int swordSize =3;
 
     @Autowired
     DiwataMayariConfig diwataMayariConfig;
@@ -68,7 +70,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
         }
         // 判奖-根据游戏滚轮和中奖线算法判断
-        AtomicLong totalRewardAmount = new AtomicLong(0L);
+         AtomicLong totalRewardAmount = new AtomicLong(0L);
         // 计算中奖线
         RewardHandleDo<DiwataMayariSymbolDo> buildRewardReq = RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO, totalRewardAmount.get());
         RewardResultDo<DiwataMayariSymbolDo> rewardResult = diwataMayariRewardHandler.handle(buildRewardReq);
@@ -79,8 +81,14 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
         totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
         // 判断首轮是否中奖
         if(this.canContinuePlayOnPreWheel(gamePlay, rewardResult,totalRewardAmount)){
-            //  继续游戏
-            LinkedList<Long> freeWheelList = new LinkedList<>();
+            // 定义一个队列 用于临时存储免费游戏
+            Queue<Long> freeWheelList = new LinkedList<>();
+            if(rewardResult.isHasRewardFreeWheel()){
+                // 中免费轮
+                for (int times = 1; times <= rewardResult.getRewardFreeWheelTimes(); times++) {
+                    freeWheelList.offer(gameRecordId);
+                }
+            }
             // 处理消除轮
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
             //  处理免费游戏
@@ -239,25 +247,31 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
     private void buildRowSymbol(DiwataMayariSymbolDo[][] symbolArr, int column,TreeMap<String, Integer> columProbabilisticMap,List<Integer> randomNumberList) {
         boolean isScatter = false;
         for (int row = ONE_ROW_INDEX; row < GAME_INFO.getRow(); row++) {
+            if(row>ONE_ROW_INDEX) {
+                DiwataMayariSymbolDo diwataMayariSymbolDo1 = symbolArr[row - 1][column];
+                if(diwataMayariSymbolDo1 == null){
+                    DiwataMayariSymbolUtil.print(symbolArr,"symbolArr");
+                }
+            }
             if (Objects.nonNull(symbolArr[row][column])) {
                 continue;
             }
 
-            Integer randomNumber = randomNumberList.get(ONE_ROW_INDEX);
+            Integer randomNumber = randomNumberList.get(row);
             // 随机生成滚轮游戏
             SymbolDo symbolDo = randomNormalSymbol(randomNumber, GAME_INFO, columProbabilisticMap);
             DiwataMayariSymbolDo diwataMayariSymbolDo = DiwataMayariSymbolDo.buildFromSymbol(symbolDo);
-
+            // 元素赋值
+            symbolArr[row][column] = diwataMayariSymbolDo;
             if (diwataMayariSymbolDo.isScatterSymbol()) {
                 //scatter 元素
                 isScatter = true;
-                symbolArr[row][column] = diwataMayariSymbolDo;
-                continue;
             }
             // 棒子元素
             if (diwataMayariSymbolDo.isSword()) {
                 if (!isScatter) {
                     this.convertSword(symbolArr, column, row);
+                    continue;
                 } else {
                     // 重新生成非 棒子元素
                     SymbolDo symbolDoNoSword = this.randomNonWildSymbol(randomNumber, columProbabilisticMap);
@@ -287,7 +301,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
      */
     private void convertStick(DiwataMayariSymbolDo[][] symbolArr, int column){
             for (int row = ONE_ROW_INDEX; row < GAME_INFO.getRow(); row++){
-                if(symbolArr[row][column] !=null && symbolArr[row][column].isPlaceholderSymbol()){
+                if(symbolArr[row][column] ==null || !symbolArr[row][column].isPlaceholderSymbol()){
                     symbolArr[row][column] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_SCATTER);
                 }
             }
@@ -300,38 +314,69 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
      * @param row
      */
     private void convertSword(DiwataMayariSymbolDo[][] symbolArr, int column, int row) {
-        List<int[]> positions = new ArrayList<>();
-        // 收集所有有效位置
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                int newRow = row + i;
-                int newColumn = column + j;
-                if (newRow >= 0 && newRow < GAME_INFO.getRow() && newColumn >= 0 && newColumn < GAME_INFO.getColumn()) {
-                    positions.add(new int[]{newRow, newColumn});
+        List<int[]> randomSurroundingElements = this.getRandomSurroundingElements(column, row);
+        // 将自身坐标变成wild
+        symbolArr[row][column] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_STICK);
+        int count = 0;
+        List<int[]> scatterArray = new ArrayList<>();
+        for (int[] pos : randomSurroundingElements) {
+            if(count>=swordSize){
+                break;
+            }
+            int newRow = pos[0];
+            int newColumn = pos[1];
+            DiwataMayariSymbolDo diwataMayariSymbolDo = symbolArr[newRow][newColumn];
+            // 如果是占位元素，则跳过
+            if(diwataMayariSymbolDo!= null && diwataMayariSymbolDo.isPlaceholderSymbol()){
+                continue;
+            }
+            if (diwataMayariSymbolDo == null || diwataMayariSymbolDo.isCommonSymbol()) {
+                symbolArr[newRow][newColumn] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_STICK);
+                count++;
+                continue;
+            }
+            if (diwataMayariSymbolDo.isStick()) {
+                // 如果已经是宝剑元素
+                symbolArr[newRow][newColumn] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_COVER);
+            }
+            if (diwataMayariSymbolDo.isScatterSymbol()) {
+                // 如果是scatter元素,暂时不替换
+                scatterArray.add(pos);
+            }
+        }
+        // 替换完后 如果数量不满足,则替换scatter元素
+        if (count < swordSize) {
+            for (int[] pos : scatterArray) {
+                int newRow = pos[0];
+                int newColumn = pos[1];
+                symbolArr[newRow][newColumn] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_STICK);
+                count++;
+                if (count >= swordSize) {
+                    break;
                 }
             }
         }
-        
-        // 随机打乱位置列表
+    }
+
+    /**
+     * 获取周边随机元素坐标
+     * @param column
+     * @param row
+     * @return
+     */
+    private List<int[]> getRandomSurroundingElements(int column, int row){
+        // 收集所有有效位置(上下左右、对角线)
+        List<int[]> positions = new ArrayList<>();
+        for (int i = row - 1; i <= row + 1; i++) {
+            for (int j = column - 1; j <= column + 1; j++) {
+                if (i >= 0 && i < GAME_INFO.getRow() && j >= 0 && j < GAME_INFO.getColumn()) {
+                    positions.add(new int[]{i, j});
+                }
+            }
+        }
+        // 打乱顺序位置
         Collections.shuffle(positions,  new Random());
-        // 确保中心位置在选中的位置中
-        int[] centerPos = new int[]{row, column};
-        positions.removeIf(pos -> pos[0] == centerPos[0] && pos[1] == centerPos[1]);
-        positions.add(0, centerPos);
-        
-        // 只取前4个位置进行替换
-        positions.stream()
-                .limit(4)
-                .forEach(pos -> {
-                    int newRow = pos[0];
-                    int newColumn = pos[1];
-                    DiwataMayariSymbolDo symbol = symbolArr[newRow][newColumn];
-                    if (symbol == null || !symbol.isPlaceholderSymbol()) {
-                        symbolArr[newRow][newColumn] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_SWORD);
-                    } else if (symbol.isSword()) {
-                        symbolArr[newRow][newColumn] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_COVER);
-                    }
-                });
+        return positions;
     }
 
     /**
@@ -344,11 +389,12 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
     private void handleFreeWheelGamePlay(GamePlayDo gamePlay,
                                          List<DiwataMayariGameRecordDo> ret,
                                          AtomicLong totalRewardAmount,
-                                         LinkedList<Long> freeWheelList) {
+                                         Queue<Long> freeWheelList) {
         BigDecimal totalMultipleAmount = new BigDecimal("0");
         Map<Long, DiwataMayariGameRecordDo> retMap = ret.stream().collect(Collectors.toMap(DiwataMayariGameRecordDo::getId, item -> item));
-        while (!freeWheelList.isEmpty()) {
-            long  reeWheel = freeWheelList.removeFirst();
+       boolean maxTotalMultiple = false;
+        while (!freeWheelList.isEmpty() && !maxTotalMultiple) {
+            long  reeWheel = freeWheelList.poll();
             // 获取免费轮的父投注记录
             DiwataMayariGameRecordDo parentGameRecord = retMap.get(reeWheel);
             AssertUtil.assertNotNull(parentGameRecord, ErrorCode.ERR_INTER);
@@ -368,14 +414,10 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                 parentGameRecord.setGameRecordIds(new ArrayList<>());
             }
             parentGameRecord.getGameRecordIds().add(gameRecordId);
-            // 判断首轮是否中奖
+            // 判断是否中奖
             if(this.canContinuePlayOnPreWheel(gamePlay, rewardResult,totalRewardAmount)){
-                //  继续游戏
-                LinkedList<Long> freeList = new LinkedList<>();
                 // 处理当前消除
-                loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeList);
-                // 消除后的免费轮
-                handleFreeWheelGamePlay(gamePlay, ret, totalRewardAmount, freeList);
+                 maxTotalMultiple = loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
             }
             if (CollectionUtils.isNotEmpty(ret)) {
                 totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
@@ -385,12 +427,15 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
 
     /**
      * 计算所有消除滚轮结果(一回合,消除后未中奖或达到最大倍数就退出)
+     *
+     * true:达到最大中奖倍数
+     * false:未达到最大中奖倍数
      */
-    private void loopPlayOnPreGameRecord(GamePlayDo gamePlay,
+    private boolean loopPlayOnPreGameRecord(GamePlayDo gamePlay,
                                         List<DiwataMayariGameRecordDo> ret,
                                         AtomicLong totalRewardAmount,
                                          DiwataMayariGameRecordDo preGameRecord,
-                                        LinkedList<Long> freeWheelList) {
+                                         Queue<Long> freeWheelList) {
 
         // 根据上一轮滚轮生成新的滚轮
         // 上一轮中奖元素
@@ -408,15 +453,20 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
         ret.add(gameRecord);
         totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
         // 判断是否中奖或达到最大倍数
+         if(rewardResult.getAccumulateReachMaxMultiple()){
+            return true;
+        }
         if(canContinuePlayOnPreWheel(gamePlay, rewardResult, totalRewardAmount)){
             if(rewardResult.isHasRewardFreeWheel()){
                 // 中免费轮
                 for (int times = 1; times <= rewardResult.getRewardFreeWheelTimes(); times++) {
-                    freeWheelList.addLast(gameRecordId);
+                    freeWheelList.offer(gameRecordId);
                 }
             }
+
             loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         }
+        return false;
     }
 
     /**
@@ -451,10 +501,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
         if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
             return false;
         }
-        if (rewardResult.getAccumulateReachMaxMultiple()) {
-            log.warn("reach max reward multiple bet. totalRewardAmount: {}, payAmount: {}", totalRewardAmount.get(), gamePlay.getPayAmount());
-            return false;
-        }
+
         return CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
     }
     private DiwataMayariGameRecordDo buildGameRecord(Long id,
