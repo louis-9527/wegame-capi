@@ -107,7 +107,7 @@ public class MalakasRewardHandler extends AbstractRewardHandler<MalakasSymbolDo>
         // 5.构建中奖结果
         boolean reachMaxMultiple = reachMaxMultiple(
                 rewardHandle.getGamePlayType(),
-                rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount,
+                Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount : rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount,
                 rewardHandle.getBetAmount(),
                 malakasConfig.getRewardMaxMultiple());
         RewardResultDo<MalakasSymbolDo> rewardResult = RewardResultDo.<MalakasSymbolDo>builder()
