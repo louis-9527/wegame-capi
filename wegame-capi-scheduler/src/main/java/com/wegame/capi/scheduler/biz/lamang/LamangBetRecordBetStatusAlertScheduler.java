@@ -29,7 +29,7 @@ public class LamangBetRecordBetStatusAlertScheduler
     }
 
     /**
-     * 每天8点运行
+     * 每天9点运行
      */
     @Scheduled(cron = "0 0 9 * * ?")
     public void schedule() {

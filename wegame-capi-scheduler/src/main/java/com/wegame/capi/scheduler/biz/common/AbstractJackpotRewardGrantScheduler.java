@@ -30,8 +30,8 @@ public abstract class AbstractJackpotRewardGrantScheduler
         extends AbstractScheduler
         implements Runnable {
 
-    private static final long THREE_MINUTES = 3 * 60 * 1000;
-    private static final long ONE_MINUTES = 1 * 60 * 1000;
+    private static final long FIFTEEN_MINUTES = 15 * 60 * 1000;
+    private static final long ONE_MINUTES = 60 * 1000;
 
     @Autowired
     JackpotUserRewardRecordService jackpotUserRewardRecordService;
@@ -54,6 +54,8 @@ public abstract class AbstractJackpotRewardGrantScheduler
             recordIdList = jackpotUserRewardRecordService.listId(JackpotUserRewardRecordQuery.builder()
                     .rewardGrantStatus(JackpotRewardGrantStatusEnum.NONE.getCode())
                     .gtLastId(gtLastId)
+                    .startCreateTime(System.currentTimeMillis() - FIFTEEN_MINUTES)
+                    .endCreateTime(System.currentTimeMillis() - ONE_MINUTES)
                     .limit(DEFAULT_PAGE_SIZE)
                     .orderByClause("_id")
                     .direction(Sort.Direction.ASC)

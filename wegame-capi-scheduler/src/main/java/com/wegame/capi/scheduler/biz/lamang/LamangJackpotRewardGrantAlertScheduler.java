@@ -1,0 +1,49 @@
+package com.wegame.capi.scheduler.biz.lamang;
+
+import com.wegame.base.exception.LockException;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
+import com.wegame.capi.common.utils.LockNameUtil;
+import com.wegame.capi.scheduler.biz.common.AbstractJackpotRewardGrantAlertScheduler;
+import com.wegame.capi.scheduler.biz.common.AbstractJackpotRewardGrantScheduler;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import static com.wegame.capi.common.Constants.LAMANG_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
+
+
+/**
+ * 中奖记录兜底告警定时任务
+ */
+@Slf4j
+@Service
+@ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
+public class LamangJackpotRewardGrantAlertScheduler
+        extends AbstractJackpotRewardGrantAlertScheduler
+        implements Runnable {
+
+
+    @Override
+    public JackpotTypeEnum getJackpotTypeEnum() {
+        return JackpotTypeEnum.LAM_ANG;
+    }
+
+    /**
+     * 每天6点执行
+     */
+    @Scheduled(cron = "0 0 6 * * ?")
+    public void schedule() {
+        log.info("LamangJackpotRewardGrantAlertScheduler#schedule start");
+        try {
+            scheduleWithLock(LockNameUtil.getJackpotRewardGrantAlertSchedulerLock(this.getJackpotTypeEnum().getGameType()), this);
+        } catch (LockException e) {
+            log.info("get lock fail");
+        } catch (Exception e) {
+            log.error("LamangJackpotRewardGrantAlertScheduler#schedule failed", e);
+        }
+        log.info("LamangJackpotRewardGrantAlertScheduler#schedule end");
+    }
+
+}

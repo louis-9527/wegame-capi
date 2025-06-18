@@ -35,19 +35,19 @@ public class JackpotUserRewardRecordQuery extends JackpotUserRewardRecordPo impl
     /**
      * 开始创建时间
      */
-    private Date startCreateTime;
+    private Long startCreateTime;
     /**
      * 结束创建时间
      */
-    private Date endCreateTime;
+    private Long endCreateTime;
     /**
      * 开始更新时间
      */
-    private Date startUpdateTime;
+    private Long startUpdateTime;
     /**
      * 结束更新时间
      */
-    private Date endUpdateTime;
+    private Long endUpdateTime;
 
     ///////////////  above auto generated ///////////////
     /**

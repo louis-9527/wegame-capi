@@ -13,7 +13,7 @@ import static com.wegame.capi.common.Constants.*;
 
 
 /**
- * 投注记录兜底定时任务
+ * 中奖记录兜底定时任务
  */
 @Slf4j
 @Service
@@ -33,15 +33,15 @@ public class LamangJackpotRewardGrantScheduler
      */
     @Scheduled(cron = "0 */5 * * * *")
     public void schedule() {
-        log.info("LamangJackpotPayoutScheduler#schedule start");
+        log.info("LamangJackpotRewardGrantScheduler#schedule start");
         try {
             scheduleWithLock(LockNameUtil.getJackpotRewardGrantSchedulerLock(this.getJackpotTypeEnum().getGameType()), this);
         } catch (LockException e) {
             log.info("get lock fail");
         } catch (Exception e) {
-            log.error("LamangJackpotPayoutScheduler#schedule failed", e);
+            log.error("LamangJackpotRewardGrantScheduler#schedule failed", e);
         }
-        log.info("LamangJackpotPayoutScheduler#schedule end");
+        log.info("LamangJackpotRewardGrantScheduler#schedule end");
     }
 
 }
