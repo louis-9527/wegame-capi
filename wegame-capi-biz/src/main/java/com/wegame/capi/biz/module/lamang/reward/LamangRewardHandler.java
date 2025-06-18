@@ -102,9 +102,10 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                     .rewardSymbolList(rewardLine.getRewardSymbolList())
                     .build());
         }
+        long totalAmount = Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount : rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount;
         boolean reachMaxMultiple = reachMaxMultiple(
                 rewardHandle.getGamePlayType(),
-                rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount,
+                totalAmount,
                 rewardHandle.getBetAmount(),
                 lamangConfig.getRewardMaxMultiple());
         // 5.构建中奖结果
