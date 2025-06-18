@@ -7,6 +7,7 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.MultiplePieTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -57,4 +58,9 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
      * 当前累计中奖金额
      */
     private Long currentTotalRewardAmount;
+    /**
+     * 倍率盘类型
+     */
+    private MultiplePieTypeEnum multiplePieType;
+
 }
