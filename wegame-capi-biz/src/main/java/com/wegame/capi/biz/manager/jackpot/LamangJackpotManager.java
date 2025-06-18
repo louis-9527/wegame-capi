@@ -23,13 +23,13 @@ import static com.wegame.capi.biz.config.mongo.LamangMongoConfig.lamangTransacti
 public class LamangJackpotManager extends AbstractJackpotManager {
 
     @Override
-    public JackpotTypeEnum jackpotType() {
+    public JackpotTypeEnum jackpotGameType() {
         return JackpotTypeEnum.LAM_ANG;
     }
 
     @Override
     public List<JackpotUserRewardRecordDo> listUserRewardRecord(JackpotUserRewardRecordQuery query) {
-        return jackpotUserRewardRecordService.listWithCache(query, jackpotType());
+        return jackpotUserRewardRecordService.listWithCache(query, jackpotGameType());
     }
 
     @Override
@@ -38,7 +38,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         if (CollectionUtils.isEmpty(recordList)) {
             return;
         }
-        jackpotRewardPoolInputRecordService.batchAdd(recordList, jackpotType());
+        jackpotRewardPoolInputRecordService.batchAdd(recordList, jackpotGameType());
         // 按照奖池金额统计
         long grandAmount = 0;
         long majorAmount = 0;
@@ -51,7 +51,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
             minorAmount += record.getMinorAmount() == null ? 0 : record.getMinorAmount();
             miniAmount += record.getMiniAmount() == null ? 0 : record.getMiniAmount();
         }
-        jackpotRewardPoolService.batchUpdate(buildList(grandAmount, majorAmount, minorAmount, miniAmount), jackpotType());
+        jackpotRewardPoolService.batchUpdate(buildList(grandAmount, majorAmount, minorAmount, miniAmount), jackpotGameType());
     }
 
     @Override
@@ -60,25 +60,25 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         if (Objects.isNull(rewardPoolInputRecord)) {
             return;
         }
-        jackpotRewardPoolInputRecordService.add(rewardPoolInputRecord, jackpotType());
+        jackpotRewardPoolInputRecordService.add(rewardPoolInputRecord, jackpotGameType());
         jackpotRewardPoolService.batchUpdate(buildList(rewardPoolInputRecord.getGrandAmount(),
                         rewardPoolInputRecord.getMajorAmount(),
                         rewardPoolInputRecord.getMinorAmount(),
                         rewardPoolInputRecord.getMiniAmount()),
-                jackpotType());
+                jackpotGameType());
     }
 
     @Override
     @Transactional(transactionManager = lamangTransactionManager)
     public Long winReward(JackpotUserRewardRecordDo jackpotUserRewardRecord) {
         // 新增用户中奖记录
-        Long recordId = jackpotUserRewardRecordService.add(jackpotUserRewardRecord, jackpotType());
+        Long recordId = jackpotUserRewardRecordService.add(jackpotUserRewardRecord, jackpotGameType());
         AssertUtil.assertNotNull(recordId, ErrorCode.ERR_INTER);
         // 扣减对应奖池金额
         boolean update = jackpotRewardPoolService.updateAmountByType(JackpotRewardPoolDo.builder()
                 .type(jackpotUserRewardRecord.getRewardPoolType())
                 .amount(-jackpotUserRewardRecord.getRewardAmount())
-                .build(), jackpotType());
+                .build(), jackpotGameType());
         AssertUtil.assertTrue(update, ErrorCode.ERR_INTER);
         return recordId;
     }

@@ -104,7 +104,7 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
             TreeMap<String, Long> guaranteedAmount = lamangConfig.getJackPotConfig().getGuaranteedAmount();
             // 添加分布式锁 进行奖池扣减
             JackpotRewardPoolTypeEnum jackpotRewardPoolType = jackpotWinPrizeDo.getJackpotRewardPoolType();
-            Long winAmount = this.buildRewardAmount(reqDo, jackpotRewardPoolType, guaranteedAmount.get(jackpotRewardPoolType.name()), jackpotWinPrizeDo.getBetGameId());
+            Long winAmount = this.getRewardAmountAndSingleAward(reqDo, jackpotRewardPoolType, guaranteedAmount.get(jackpotRewardPoolType.name()), jackpotWinPrizeDo.getBetGameRecordId());
             jackpotWinPrizeDo.setAmount(winAmount);
             return jackpotWinPrizeDo;
         } catch (Exception e) {
@@ -128,14 +128,14 @@ public class LamangJackpotHandler extends AbsJackpotHandler {
         JackpotRewardPoolTypeEnum poolTypeEnum = null;
         TreeMap<String, BigDecimal> jackpotTriggerBetAmountConfig = this.getJackpotTriggerBetAmountConfig(amount);
         for (Map.Entry<Long, Integer> entry : gameCountMap.entrySet()) {
-            Long gameId = entry.getKey();   // 获取游戏 ID
+            Long gameRecordId = entry.getKey();   // 获取游戏投注记录ID
             Integer count = entry.getValue(); // 获取对应的游戏计数
             for (int i = 0; i < count; i++) {
                 String rewardPoolType = GameUtil.randomKey(jackpotTriggerBetAmountConfig, CONST_10000000, randomService.randomInt(1, CONST_1000000000));
                 poolTypeEnum = JackpotRewardPoolTypeEnum.valueOfName(rewardPoolType);
                 log.info("jackpot checkReward,index:{},result:{}", i, poolTypeEnum == null ? "null" : poolTypeEnum.name());
                 if (poolTypeEnum != null) {
-                    return JackpotWinPrizeDo.builder().betGameId(gameId)
+                    return JackpotWinPrizeDo.builder().betGameRecordId(gameRecordId)
                             .jackpotRewardPoolType(poolTypeEnum).build();
                 }
             }

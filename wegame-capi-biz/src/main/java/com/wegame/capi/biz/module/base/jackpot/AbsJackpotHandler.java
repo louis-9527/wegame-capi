@@ -56,7 +56,7 @@ public abstract class AbsJackpotHandler {
     public abstract JackpotWinPrizeDo calculateWinPrize(JackpotDrawAndAwardDo reqDo);
 
 
-    protected Long buildRewardAmount(JackpotDrawAndAwardDo drawAndAwardDo, JackpotRewardPoolTypeEnum jackpotRewardPoolType, Long guaranteed, Long betGameId) {
+    protected Long getRewardAmountAndSingleAward(JackpotDrawAndAwardDo drawAndAwardDo, JackpotRewardPoolTypeEnum jackpotRewardPoolType, Long guaranteed, Long betGameId) {
         String lockKey = LockNameUtil.getJackpotRewardLock(getJackpotType().getGameType());
 
         return distributeLock.lockThenCall(lockKey, () -> {

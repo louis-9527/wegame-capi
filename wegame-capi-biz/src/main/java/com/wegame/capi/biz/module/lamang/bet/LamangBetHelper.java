@@ -82,7 +82,7 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
                     .resultDetail(LamangBetRecordDetailDo.builder()
                             .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
                             .gameRecordList(firstBatchList)
-                            .jackpotRewardGameRecordId(Objects.nonNull(jackpotWinPrizeDo) ? jackpotWinPrizeDo.getBetGameId() : null)
+                            .jackpotRewardGameRecordId(Objects.nonNull(jackpotWinPrizeDo) ? jackpotWinPrizeDo.getBetGameRecordId() : null)
                             .build())
                     .build();
         } else if (Objects.equals(result.getBetStatus(), BetStatusEnum.FAIL)) {

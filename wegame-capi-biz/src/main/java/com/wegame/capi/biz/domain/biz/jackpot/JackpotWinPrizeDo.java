@@ -12,9 +12,9 @@ import lombok.Data;
 @Builder
 public class JackpotWinPrizeDo {
     /**
-     * 游戏ID
+     * 游戏投注记录
      */
-    private Long betGameId;
+    private Long betGameRecordId;
 
     /**
      * 中奖金额

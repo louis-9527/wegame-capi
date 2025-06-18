@@ -28,27 +28,27 @@ public abstract class AbstractJackpotManager {
     @Autowired
     JackpotUserRewardRecordService jackpotUserRewardRecordService;
 
-    public abstract JackpotTypeEnum jackpotType();
+    public abstract JackpotTypeEnum jackpotGameType();
 
     /**
      * 获取奖池列表
      */
     public List<JackpotRewardPoolDo> listJackpotRewardPool() {
-        return jackpotRewardPoolService.listAllWithCache(jackpotType());
+        return jackpotRewardPoolService.listAllWithCache(jackpotGameType());
     }
 
     /**
      * 获取用户最高中奖记录
      */
     public JackpotUserRewardRecordDo getHighestUserRewardRecord() {
-        return jackpotUserRewardRecordService.getHighestUserRewardRecordWithCache(jackpotType());
+        return jackpotUserRewardRecordService.getHighestUserRewardRecordWithCache(jackpotGameType());
     }
 
     /**
      * 获取用户中奖记录
      */
     public JackpotUserRewardRecordDo getUserRewardRecord(JackpotUserRewardRecordQuery query) {
-        return jackpotUserRewardRecordService.selectOne(query, jackpotType());
+        return jackpotUserRewardRecordService.selectOne(query, jackpotGameType());
     }
 
     /**
