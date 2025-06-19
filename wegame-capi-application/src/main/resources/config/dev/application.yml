@@ -38,6 +38,7 @@ spring:
       - game-maria_makiling.yml
       - game-malakas.yml
       - game-ibong.yml
+      - game-diwata_mayari.yml
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true

@@ -343,28 +343,29 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
      */
     private boolean convertStick(DiwataMayariSymbolDo[][] symbolArr, int column, int row) {
         List<int[]> randomSurroundingElements = this.getRandomSurroundingElements(symbolArr, column, row);
-        int count = 0;
+        Map<int[],DiwataMayariSymbolDo> replaceMap = new HashMap<>();
         for (int[] pos : randomSurroundingElements) {
-            if(count>= SWORD_STICK){
+            if(replaceMap.size()>= SWORD_STICK){
                 break;
             }
             int newRow = pos[0];
             int newColumn = pos[1];
             DiwataMayariSymbolDo diwataMayariSymbolDo = symbolArr[newRow][newColumn];
             if (diwataMayariSymbolDo == null || diwataMayariSymbolDo.isCommonSymbol()) {
-                symbolArr[newRow][newColumn] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_STICK);
-                count++;
+                replaceMap.put(pos,DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_STICK));
                 continue;
             }
             if (diwataMayariSymbolDo.isStick()) {
                 // 如果已经是宝剑元素
-                symbolArr[newRow][newColumn] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_COVER);
-                count++;
+                replaceMap.put(pos, DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_COVER));
             }
         }
-
-        // 替换完后 如果数量不满足,则替换scatter元素
-        return count >= SWORD_STICK;
+        if(replaceMap.size()<SWORD_STICK){
+            return false;
+        }
+        // 替换元素
+        replaceMap.forEach((key, value) -> symbolArr[key[0]][key[1]] = value);
+        return true;
     }
 
     /**
