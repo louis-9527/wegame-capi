@@ -237,6 +237,12 @@ public class DiwataMayariRewardHandler extends AbstractRewardHandler<DiwataMayar
         // 校验：滚轮行数
         GameInfoDo gameInfo = rewardHandle.getGameInfo();
         AssertUtil.assertTrue(symbolArr.length == gameInfo.getRow(), ErrorCode.ERR_PARAM, "symbol arr err");
+
+        // 特殊校验-第一列不能出现wild
+        for (SymbolDo[] symbolDos : symbolArr) {
+            SymbolDo symbolDo = symbolDos[0];
+            AssertUtil.assertFalse(symbolDo.isWildSymbol(), ErrorCode.ERR_PARAM, "the first colum can not be wild type");
+        }
     }
 
 
