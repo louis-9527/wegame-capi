@@ -72,7 +72,7 @@ public class DiwataMayariRewardHandlerTest extends BaseTest {
         assertEquals(RewardTypeEnum.SINGLE, zeroLineResult_all.getRewardType());
         assertNotNull(zeroLineResult_all.getRewardLineDetailList());
         assertEquals(1, zeroLineResult_all.getRewardLineDetailList().size());
-        assertEquals(14400, (long) zeroLineResult_all.getRewardLineDetailList().get(0).getRewardLineCount());
+        assertEquals(3600, (long) zeroLineResult_all.getRewardLineDetailList().get(0).getRewardLineCount());
     }
 
 
@@ -120,7 +120,7 @@ public class DiwataMayariRewardHandlerTest extends BaseTest {
         assertEquals(RewardTypeEnum.NONE, zeroLineResult_zeroLine_30Scatter.getRewardType());
         assertNull(zeroLineResult_zeroLine_30Scatter.getRewardLineDetailList());
         assertTrue(zeroLineResult_zeroLine_30Scatter.isHasRewardFreeWheel());
-        assertEquals(freeWheelTimesRuleConfig.getBaseFreeWheelTimes() + freeWheelTimesRuleConfig.getStepFreeWheelTimes() * 27L, zeroLineResult_zeroLine_30Scatter.getRewardFreeWheelTimes());
+        assertEquals(freeWheelTimesRuleConfig.getBaseFreeWheelTimes() + freeWheelTimesRuleConfig.getStepFreeWheelTimes() * 21L, zeroLineResult_zeroLine_30Scatter.getRewardFreeWheelTimes());
     }
 
 

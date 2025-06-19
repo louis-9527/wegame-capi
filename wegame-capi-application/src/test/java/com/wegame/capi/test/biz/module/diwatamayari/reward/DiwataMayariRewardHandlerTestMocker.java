@@ -23,22 +23,20 @@ public class DiwataMayariRewardHandlerTestMocker {
     private static final Logger log = LoggerFactory.getLogger(DiwataMayariRewardHandlerTestMocker.class);
 
     public static DiwataMayariSymbolDo[][] buildSymbolArr_zeroLine_test() {
-        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[6][6];
+        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[5][6];
         // 第一列
         symbolArr[0][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][0] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1001);
+        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第二列
         symbolArr[0][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[1][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[2][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[3][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[5][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第三列
         symbolArr[0][2] = buildSymbolDo(SymbolEnum.Symbol1001);
@@ -46,7 +44,6 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][2] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][2] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[4][2] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[5][2] = buildSymbolDo(SymbolEnum.Symbol1001);
 
         // 第四列
         symbolArr[0][3] = buildSymbolDo(SymbolEnum.Symbol1001);
@@ -54,23 +51,20 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][3] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][3] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[4][3] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[5][3] = buildSymbolDo(SymbolEnum.Symbol1001);
 
         // 第五列
         symbolArr[0][4] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][4] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][4] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][4] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[5][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第六列
         symbolArr[0][5] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][5] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][5] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1001);
+        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         return symbolArr;
     }
@@ -81,22 +75,20 @@ public class DiwataMayariRewardHandlerTestMocker {
      * @return
      */
     public static DiwataMayariSymbolDo[][] buildSymbolArr_oneLine_test() {
-        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[6][6];
+        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[5][6];
         // 第一列
         symbolArr[0][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][0] = buildSymbolDo(SymbolEnum.Symbol1002);
         symbolArr[2][0] = buildSymbolDo(SymbolEnum.Symbol1002);
-        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1002);
+        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第二列
         symbolArr[0][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[1][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[2][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[3][1] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[5][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第三列
         symbolArr[0][2] = buildSymbolDo(SymbolEnum.Symbol1004);
@@ -104,7 +96,6 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][2] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][2] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][2] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][2] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第四列
         symbolArr[0][3] = buildSymbolDo(SymbolEnum.Symbol1001);
@@ -112,23 +103,20 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][3] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][3] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第五列
         symbolArr[0][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][4] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第六列
         symbolArr[0][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][5] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1004);
+        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         return symbolArr;
     }
@@ -139,22 +127,20 @@ public class DiwataMayariRewardHandlerTestMocker {
      * @return
      */
     public static DiwataMayariSymbolDo[][] buildSymbolArr_eightLine_test() {
-        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[6][6];
+        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[5][6];
         // 第一列
         symbolArr[0][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][0] = buildSymbolDo(SymbolEnum.Symbol1002);
-        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1002);
+        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第二列
         symbolArr[0][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[1][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[2][1] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][1] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[5][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第三列
         symbolArr[0][2] = buildSymbolDo(SymbolEnum.Symbol1004);
@@ -162,7 +148,6 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][2] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][2] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][2] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][2] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第四列
         symbolArr[0][3] = buildSymbolDo(SymbolEnum.Symbol1004);
@@ -170,44 +155,39 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][3] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][3] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第五列
         symbolArr[0][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][4] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第六列
         symbolArr[0][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][5] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1004);
+        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         return symbolArr;
     }
 
     public static DiwataMayariSymbolDo[][] buildSymbolArr_allLine_test() {
-        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[6][6];
+        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[5][6];
         // 第一列
         symbolArr[0][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][0] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1001);
+        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第二列
         symbolArr[0][1] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][1] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][1] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][1] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[5][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第三列
         symbolArr[0][2] = buildSymbolDo(SymbolEnum.Symbol1001);
@@ -215,7 +195,6 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][2] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][2] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[4][2] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[5][2] = buildSymbolDo(SymbolEnum.Symbol1001);
 
         // 第四列
         symbolArr[0][3] = buildSymbolDo(SymbolEnum.Symbol1001);
@@ -223,23 +202,20 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][3] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][3] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[4][3] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[5][3] = buildSymbolDo(SymbolEnum.Symbol1001);
 
         // 第五列
         symbolArr[0][4] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][4] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][4] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][4] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[5][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第六列
         symbolArr[0][5] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][5] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][5] = buildSymbolDo(SymbolEnum.Symbol1001);
-        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1001);
+        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         return symbolArr;
     }
@@ -250,22 +226,20 @@ public class DiwataMayariRewardHandlerTestMocker {
      * @return
      */
     public static DiwataMayariSymbolDo[][] buildSymbolArr_zeroLine_5Scatter_test() {
-        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[6][6];
+        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[5][6];
         // 第一列
         symbolArr[0][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][0] = buildSymbolDo(SymbolEnum.Symbol1002);
-        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1002);
+        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第二列
         symbolArr[0][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[1][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[2][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[3][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[5][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第三列
         symbolArr[0][2] = buildSymbolDo(SymbolEnum.Symbol1004);
@@ -273,7 +247,6 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][2] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][2] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][2] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[5][2] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第四列
         symbolArr[0][3] = buildSymbolDo(SymbolEnum.Scatter);
@@ -281,23 +254,20 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][3] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[5][3] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第五列
         symbolArr[0][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][4] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第六列
         symbolArr[0][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][5] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1004);
+        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         return symbolArr;
     }
@@ -308,22 +278,20 @@ public class DiwataMayariRewardHandlerTestMocker {
      * @return
      */
     public static DiwataMayariSymbolDo[][] buildSymbolArr_zeroLine_3Scatter_test() {
-        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[6][6];
+        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[5][6];
         // 第一列
         symbolArr[0][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][0] = buildSymbolDo(SymbolEnum.Symbol1002);
-        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1002);
+        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第二列
         symbolArr[0][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[1][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[2][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[3][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[5][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第三列
         symbolArr[0][2] = buildSymbolDo(SymbolEnum.Symbol1004);
@@ -331,7 +299,6 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][2] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][2] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][2] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][2] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第四列
         symbolArr[0][3] = buildSymbolDo(SymbolEnum.Scatter);
@@ -339,23 +306,20 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][3] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][3] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第五列
         symbolArr[0][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][4] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第六列
         symbolArr[0][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][5] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1004);
+        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         return symbolArr;
     }
@@ -366,22 +330,20 @@ public class DiwataMayariRewardHandlerTestMocker {
      * @return
      */
     public static DiwataMayariSymbolDo[][] buildSymbolArr_zeroLine_2Scatter_test() {
-        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[6][6];
+        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[5][6];
         // 第一列
         symbolArr[0][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[2][0] = buildSymbolDo(SymbolEnum.Symbol1002);
-        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1002);
+        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第二列
         symbolArr[0][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[1][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[2][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[3][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[5][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第三列
         symbolArr[0][2] = buildSymbolDo(SymbolEnum.Symbol1004);
@@ -389,7 +351,6 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][2] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[3][2] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][2] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][2] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第四列
         symbolArr[0][3] = buildSymbolDo(SymbolEnum.Scatter);
@@ -397,23 +358,20 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][3] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][3] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第五列
         symbolArr[0][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][4] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第六列
         symbolArr[0][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][5] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1004);
+        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         return symbolArr;
     }
@@ -424,22 +382,20 @@ public class DiwataMayariRewardHandlerTestMocker {
      * @return
      */
     public static DiwataMayariSymbolDo[][] buildSymbolArr_zeroLine_30Scatter_test() {
-        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[6][6];
+        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[5][6];
         // 第一列
         symbolArr[0][0] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[1][0] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[2][0] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Scatter);
+        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第二列
         symbolArr[0][1] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[1][1] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[2][1] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[3][1] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[5][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第三列
         symbolArr[0][2] = buildSymbolDo(SymbolEnum.Scatter);
@@ -447,7 +403,6 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][2] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[3][2] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[4][2] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[5][2] = buildSymbolDo(SymbolEnum.Scatter);
 
         // 第四列
         symbolArr[0][3] = buildSymbolDo(SymbolEnum.Scatter);
@@ -455,23 +410,20 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][3] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[3][3] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[4][3] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[5][3] = buildSymbolDo(SymbolEnum.Scatter);
 
         // 第五列
         symbolArr[0][4] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[1][4] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[2][4] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[3][4] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[5][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第六列
         symbolArr[0][5] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[1][5] = buildSymbolDo(SymbolEnum.Scatter);
         symbolArr[2][5] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Scatter);
+        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         return symbolArr;
     }
@@ -481,22 +433,20 @@ public class DiwataMayariRewardHandlerTestMocker {
      * @return
      */
     public static DiwataMayariSymbolDo[][] buildSymbolArr_oneLine_5Scatter_test() {
-        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[6][6];
+        DiwataMayariSymbolDo[][] symbolArr = new DiwataMayariSymbolDo[5][6];
         // 第一列
         symbolArr[0][0] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][0] = buildSymbolDo(SymbolEnum.Symbol1002);
         symbolArr[2][0] = buildSymbolDo(SymbolEnum.Symbol1002);
-        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1002);
+        symbolArr[3][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][0] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第二列
         symbolArr[0][1] = buildSymbolDo(SymbolEnum.Symbol1001);
         symbolArr[1][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[2][1] = buildSymbolDo(SymbolEnum.Symbol1003);
         symbolArr[3][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1003);
-        symbolArr[5][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][1] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第三列
         symbolArr[0][2] = buildSymbolDo(SymbolEnum.Symbol1004);
@@ -504,7 +454,6 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][2] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][2] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][2] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[5][2] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第四列
         symbolArr[0][3] = buildSymbolDo(SymbolEnum.Scatter);
@@ -512,23 +461,20 @@ public class DiwataMayariRewardHandlerTestMocker {
         symbolArr[2][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][3] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[4][3] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[5][3] = buildSymbolDo(SymbolEnum.Symbol1004);
 
         // 第五列
         symbolArr[0][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][4] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[3][4] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1004);
-        symbolArr[5][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
+        symbolArr[4][4] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         // 第六列
         symbolArr[0][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[1][5] = buildSymbolDo(SymbolEnum.Symbol1004);
         symbolArr[2][5] = buildSymbolDo(SymbolEnum.Scatter);
-        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1004);
+        symbolArr[3][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
         symbolArr[4][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
-        symbolArr[5][5] = buildSymbolDo(SymbolEnum.Symbol1000); // 占位
 
         return symbolArr;
     }
