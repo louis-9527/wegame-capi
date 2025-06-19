@@ -106,7 +106,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
     }
 
     /**
-     * 生成正常滚轮：生成逻辑无任何限制
+     * 生成首轮：生成逻辑无任何限制
      * @param freeWheelFlag 是否免费轮
      * @return 滚轮
      */
@@ -178,6 +178,12 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                 .build();
     }
 
+    /**
+     * 获取-行列概率
+     * @param first
+     * @param freeFlag
+     * @return
+     */
     private TreeMap<String, List<BigDecimal>> getStringListTreeMap(boolean first, boolean freeFlag) {
         TreeMap<String, List<BigDecimal>> commonPlayProbabilisticConfig;
         if(first){
@@ -276,7 +282,12 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
             // 棒子元素
             if (diwataMayariSymbolDo.isStick()) {
                 if (!isScatter) {
-                    this.convertStick(symbolArr, column, row);
+                    boolean converted = this.convertStick(symbolArr, column, row);
+                    if(!converted){
+                        // 重新生成非 棒子元素
+                        SymbolDo symbolDoNoSword = this.randomNonWildSymbol(randomNumber, columProbabilisticMap);
+                        symbolArr[row][column] = DiwataMayariSymbolDo.buildFromSymbol(symbolDoNoSword);
+                    }
                 } else {
                     // 重新生成非 棒子元素
                     SymbolDo symbolDoNoSword = this.randomNonWildSymbol(randomNumber, columProbabilisticMap);
@@ -324,16 +335,15 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
     }
 
     /**
-     *  棒子周围元素生成规则
+     *  棒子周围元素生成
+     *  false:极限情况,只有3个位置,并且其中几个是scatter
      * @param symbolArr
      * @param column
      * @param row
      */
-    private void convertStick(DiwataMayariSymbolDo[][] symbolArr, int column, int row) {
+    private boolean convertStick(DiwataMayariSymbolDo[][] symbolArr, int column, int row) {
         List<int[]> randomSurroundingElements = this.getRandomSurroundingElements(symbolArr, column, row);
-        // 将自身坐标变成wild
         int count = 0;
-        List<int[]> scatterArray = new ArrayList<>();
         for (int[] pos : randomSurroundingElements) {
             if(count>= SWORD_STICK){
                 break;
@@ -350,25 +360,11 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                 // 如果已经是宝剑元素
                 symbolArr[newRow][newColumn] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_COVER);
                 count++;
-                continue;
-            }
-            if (diwataMayariSymbolDo.isScatterSymbol()) {
-                // 如果是scatter元素,暂时不替换
-                scatterArray.add(pos);
             }
         }
+
         // 替换完后 如果数量不满足,则替换scatter元素
-        if (count < SWORD_STICK) {
-            for (int[] pos : scatterArray) {
-                int newRow = pos[0];
-                int newColumn = pos[1];
-                symbolArr[newRow][newColumn] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_STICK);
-                count++;
-                if (count >= SWORD_STICK) {
-                    break;
-                }
-            }
-        }
+        return count >= SWORD_STICK;
     }
 
     /**
@@ -428,7 +424,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
             // 获取免费轮的父投注记录
             DiwataMayariGameRecordDo parentGameRecord = retMap.get(reeWheel);
             AssertUtil.assertNotNull(parentGameRecord, ErrorCode.ERR_INTER);
-            // 生成首轮元素
+            // 生成免费轮首轮元素
             WheelDo<DiwataMayariSymbolDo> firstWheelDo = this.generateNormalWheel(true);
             firstWheelDo.setFreeFlag(true);
             // 判奖-根据游戏滚轮和中奖线算法判断
