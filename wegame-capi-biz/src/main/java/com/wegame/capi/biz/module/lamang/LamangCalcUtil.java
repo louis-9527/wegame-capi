@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public class GameRecordCalcUtil {
+public class LamangCalcUtil {
     public static long calcTotalRewardAmount(List<LamangGameRecordDo> gameRecordList) {
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
         return gameRecordList.stream()

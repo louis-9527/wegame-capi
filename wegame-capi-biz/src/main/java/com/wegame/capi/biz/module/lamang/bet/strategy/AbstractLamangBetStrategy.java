@@ -16,7 +16,7 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractCommonBetStrategy;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
-import com.wegame.capi.biz.module.lamang.GameRecordCalcUtil;
+import com.wegame.capi.biz.module.lamang.LamangCalcUtil;
 import com.wegame.capi.biz.module.lamang.bet.LamangBetHelper;
 import com.wegame.capi.biz.module.lamang.game.LamangGameContext;
 import com.wegame.capi.client.context.UserInfo;
@@ -139,7 +139,7 @@ public abstract class AbstractLamangBetStrategy
                 .sorted(Comparator.comparingInt(LamangGameRecordDo::getIndex))
                 .collect(Collectors.toList());
         //// 合计中奖总金额
-        long overallRewardAmount = GameRecordCalcUtil.calcTotalRewardAmount(gameRecordList);
+        long overallRewardAmount = LamangCalcUtil.calcTotalRewardAmount(gameRecordList);
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
             LamangGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
             if (Objects.nonNull(lastGameRecord)) {
