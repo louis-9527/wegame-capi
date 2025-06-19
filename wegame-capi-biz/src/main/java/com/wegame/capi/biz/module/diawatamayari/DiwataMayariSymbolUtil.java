@@ -65,27 +65,28 @@ public class DiwataMayariSymbolUtil {
         return newSymbolArr;
     }
 
+
+
     /**
-     * 重建元素数组：（非空元素按行（第一行）左移，按列下移处理）
-     *
+     * 重建元素数组：（非空元素按列下移处理）
      * @param symbolArr
      */
-    public static void rebuildSymbolArr(DiwataMayariSymbolDo[][] symbolArr, GameInfoDo gameInfoDo) {
-        // 处理非第一行：按列处理（从第二行开始，非空元素下移）
-        for (int column = ONE_COLUM_INDEX; column < gameInfoDo.getColumn(); column++) {
-            int currentRow = gameInfoDo.getRow() - 1;
-            for (int row = gameInfoDo.getRow() - 1; row >= ONE_ROW_INDEX; row--) {
-                if (Objects.nonNull(symbolArr[row][column])) {
-                    if (Objects.equals(currentRow, row)) {
-                        // 不做移动
-                       continue;
-                    } else {
-                        // 移动
-                        DiwataMayariSymbolDo temp = symbolArr[row][column];
-                        symbolArr[currentRow][column] = temp;
-                        symbolArr[row][column] = null;
+    public static void rebuildSymbolArr(DiwataMayariSymbolDo[][] symbolArr) {
+        int rows = symbolArr.length;
+        int cols = symbolArr[0].length;
+        // 逐列处理
+        for (int col = 0; col < cols; col++) {
+            // 从底部开始向上遍历，找到第一个非null元素的位置
+            int writePos = rows - 1;
+            // 从底部向上移动非null元素
+            for (int row = rows - 1; row >= 0; row--) {
+                if (symbolArr[row][col] != null) {
+                    if (writePos != row) {
+                        // 移动元素到新位置
+                        symbolArr[writePos][col] = symbolArr[row][col];
+                        symbolArr[row][col] = null;
                     }
-                    currentRow--;
+                    writePos--;
                 }
             }
         }
