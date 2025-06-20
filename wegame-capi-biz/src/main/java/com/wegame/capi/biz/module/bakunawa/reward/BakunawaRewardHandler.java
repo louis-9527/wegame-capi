@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.bakunawa.reward;
 
+import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -14,7 +15,6 @@ import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.bakunawa.multiple.BakunawaMultipleCalculateStrategy;
-import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.MultiplePieTypeEnum;
@@ -95,7 +95,7 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
         BigDecimal multiply = basicMultiple.multiply(pieMultiple.getValue());
         return RewardResultDo.<SymbolDo>builder()
                 .rewardType(RewardTypeEnum.SINGLE)
-                .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
+                .rewardSubType(calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
                 .hasRewardFreeWheel(false)
@@ -171,6 +171,33 @@ public class BakunawaRewardHandler extends AbstractRewardHandler<SymbolDo> {
             for (SymbolDo symbolDo : symbolArr[row]) {
                 AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_PARAM, "all symbol can not be null");
             }
+        }
+    }
+
+    /**
+     * 计算中奖子类型
+     * @param betAmount 投注金额
+     * @param totalRewardAmount 中奖总金额
+     * @return 中奖子类型
+     */
+    private RewardSubTypeEnum calculateRewardSubType(Long betAmount, Long totalRewardAmount) {
+        if (Objects.isNull(betAmount)
+                || Objects.isNull(totalRewardAmount)
+                || betAmount <= 0
+                || totalRewardAmount <= 0) {
+            return RewardSubTypeEnum.NONE;
+        }
+        double rewardTimes = NumberUtil.div(totalRewardAmount.longValue(), betAmount.longValue());
+        if (rewardTimes >= 5 && rewardTimes < 10) {
+            return RewardSubTypeEnum.NICE;
+        } else if (rewardTimes >= 10 && rewardTimes < 20) {
+            return RewardSubTypeEnum.MEGA;
+        } else if (rewardTimes >= 20 && rewardTimes < 40) {
+            return RewardSubTypeEnum.SUPER;
+        } else if (rewardTimes >= 40) {
+            return RewardSubTypeEnum.SENSATIONAL;
+        } else {
+            return RewardSubTypeEnum.OTHER;
         }
     }
 }
