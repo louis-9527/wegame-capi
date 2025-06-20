@@ -61,6 +61,8 @@ public class OperationEventService extends AbstractService {
     }
 
     public Boolean update(OperationEventDo eventDo, OperationEventTypeEnum dynamicOperationGame) {
+        // todo 问题排查日志
+        log.info("OperationEventService#update eventDo:{},dynamicOperationGame:{}",JSON.toJSONString(eventDo),dynamicOperationGame);
         Criteria criteria = new Criteria();
         criteria.and("_id").is(eventDo.getId());
         Query query = new Query(criteria);
