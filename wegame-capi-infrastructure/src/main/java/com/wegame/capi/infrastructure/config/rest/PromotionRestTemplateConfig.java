@@ -27,9 +27,9 @@ public class PromotionRestTemplateConfig {
     public static final String PROMOTION_REST_TEMPLATE_BEAN = "promotionRestTemplate";
 
     // promotion resTemplate
-    @Value("${httpclient.promotion.connectMaxTotal:100}")
+    @Value("${httpclient.promotion.connectMaxTotal:5000}")
     int promotionConnectMaxTotal;
-    @Value("${httpclient.promotion.connectDefaultMaxPerRoute:100}")
+    @Value("${httpclient.promotion.connectDefaultMaxPerRoute:1000}")
     int promotionConnectDefaultMaxPerRoute;
     @Value("${httpclient.promotion.connectTimeout:1000}")
     int promotionConnectTimeout;

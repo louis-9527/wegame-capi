@@ -24,9 +24,9 @@ public class WalletRestTemplateConfig {
     public static final String WALLET_CONNECTION_MANAGER_BEAN = "walletConnectionManager";
     public static final String WALLET_REST_TEMPLATE_BEAN = "walletRestTemplate";
     // wallet resTemplate
-    @Value("${httpclient.wallet.connectMaxTotal:100}")
+    @Value("${httpclient.wallet.connectMaxTotal:5000}")
     int walletConnectMaxTotal;
-    @Value("${httpclient.wallet.connectDefaultMaxPerRoute:100}")
+    @Value("${httpclient.wallet.connectDefaultMaxPerRoute:1000}")
     int walletConnectDefaultMaxPerRoute;
     @Value("${httpclient.wallet.connectTimeout:1000}")
     int walletConnectTimeout;

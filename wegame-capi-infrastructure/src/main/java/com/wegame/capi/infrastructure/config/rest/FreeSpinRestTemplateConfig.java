@@ -24,9 +24,9 @@ public class FreeSpinRestTemplateConfig {
     public static final String FREE_SPIN_CONNECTION_MANAGER_BEAN = "freeSpinConnectionManager";
     public static final String FREE_SPIN_REST_TEMPLATE_BEAN = "freeSpinRestTemplate";
     // freeSpin resTemplate
-    @Value("${httpclient.freeSpin.connectMaxTotal:100}")
+    @Value("${httpclient.freeSpin.connectMaxTotal:5000}")
     int freeSpinConnectMaxTotal;
-    @Value("${httpclient.freeSpin.connectDefaultMaxPerRoute:100}")
+    @Value("${httpclient.freeSpin.connectDefaultMaxPerRoute:1000}")
     int freeSpinConnectDefaultMaxPerRoute;
     @Value("${httpclient.freeSpin.connectTimeout:1000}")
     int freeSpinConnectTimeout;
