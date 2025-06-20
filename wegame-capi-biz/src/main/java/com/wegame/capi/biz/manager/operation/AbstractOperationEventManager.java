@@ -338,7 +338,7 @@ public abstract class AbstractOperationEventManager {
                     .eventSubStatus(eventSubStatusEnum)
                     .build();
             operationEventService.update(build, operationEventType());
-            operationEventService.updateOperationUseStatus(recordId, OperationEventStatusEnum.NONE, operationEventType());
+            operationEventService.cleanOperationUseStatus(recordId, operationEventType());
             // 上报
             reportEventById(recordId);
         });
@@ -352,6 +352,7 @@ public abstract class AbstractOperationEventManager {
                 .eventSubStatus(eventSubStatusEnum)
                 .build();
         operationEventService.update(build, operationEventType());
+        operationEventService.cleanOperationUseStatus(recordId, operationEventType());
         // 上报
         reportEventById(recordId);
     }
