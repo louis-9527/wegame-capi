@@ -67,7 +67,7 @@ public class DiwataMayariRewardHandler extends AbstractRewardHandler<DiwataMayar
                     .rewardType(RewardTypeEnum.NONE)
                     .rewardSubType(RewardSubTypeEnum.NONE)
                     .totalRewardAmount(0L)
-                    .totalMultiple(rewardHandle.getCurrentMultiple())
+                    .totalMultiple(totalMultiple)
                     .hasRewardFreeWheel(freeWheelTimes > 0)
                     .rewardLineDetailList(null)
                     .rewardFreeWheelTimes(freeWheelTimes)
