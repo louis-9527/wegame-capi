@@ -48,8 +48,8 @@ public class DiwataMayariMultipleCalculateStrategy extends AbstractMultipleCalcu
      * @return 倍率盘倍率
      */
     private BigDecimal calculateMultiple(BigDecimal currentMultiple, BigDecimal minMultiple, Integer wheelIndex, boolean isReward) {
-        // 当前倍率为空 or 首轮->最小倍率
-        if (Objects.isNull(currentMultiple) || wheelIndex == 0) {
+        // 当前倍率为空 or or 首轮->最小倍率
+        if (Objects.isNull(currentMultiple) || currentMultiple.compareTo(BigDecimal.ZERO) <= 0 || wheelIndex == 0) {
             return minMultiple;
         }
         // 如果没有中奖，返回当前倍率
