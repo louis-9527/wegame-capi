@@ -77,7 +77,7 @@ public class SingleWalletService {
             return SingleWalletBetResultDo.builder()
                     .betId(RandomUtil.randomNumbers(8))
                     .refId(RandomUtil.randomString(10))
-                    .credit(RandomUtil.randomLong())
+                    .credit(RandomUtil.randomLong(Long.MAX_VALUE))
                     .betStatus(BetStatusEnum.SUCCESS)
                     .build();
         }
