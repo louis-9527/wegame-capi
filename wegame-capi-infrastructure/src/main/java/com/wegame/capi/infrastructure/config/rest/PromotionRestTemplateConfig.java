@@ -37,7 +37,7 @@ public class PromotionRestTemplateConfig {
     int promotionReadTimeout;
     @Value("${httpclient.promotion.connectionRequestTimeout:800}")
     int promotionConnectionRequestTimeout;
-    @Value("${httpclient.promotion.timeToLive:59}")
+    @Value("${httpclient.promotion.timeToLive:30000}")
     int promotionTimeToLive;
 
     @Bean(value = PROMOTION_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
@@ -45,7 +45,7 @@ public class PromotionRestTemplateConfig {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(promotionTimeToLive, TimeUnit.SECONDS);
         manager.setMaxTotal(promotionConnectMaxTotal);
         manager.setDefaultMaxPerRoute(promotionConnectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(20000);
+        manager.setValidateAfterInactivity(200000);
         return manager;
     }
 
