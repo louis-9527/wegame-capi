@@ -59,15 +59,15 @@ public class AppLaunchPostProcessor {
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:150}")
+    @Value("${api.game.singleDomainIntConnections:100}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
-    @Value("${api.game.freeSpinDomainIntConnections:120}")
+    @Value("${api.game.freeSpinDomainIntConnections:100}")
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:150}")
+    @Value("${api.game.promotionDomainIntConnections:100}")
     int promotionDomainIntConnections;
     @Autowired
     PoolingHttpClientConnectionManager walletConnectionManager;
@@ -170,7 +170,7 @@ public class AppLaunchPostProcessor {
                     .orElse(Collections.emptyList())
                     .forEach(connection -> {
                         if (Objects.nonNull(connection) && connection.isOpen()) {
-                            manager.releaseConnection(connection, null, 30, TimeUnit.MINUTES);
+                            manager.releaseConnection(connection, null, 120, TimeUnit.MINUTES);
                         } else {
                             try {
                                 connection.close();
