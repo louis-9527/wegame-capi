@@ -59,7 +59,7 @@ public class AppLaunchPostProcessor {
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:120}")
+    @Value("${api.game.singleDomainIntConnections:150}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
@@ -67,7 +67,7 @@ public class AppLaunchPostProcessor {
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:120}")
+    @Value("${api.game.promotionDomainIntConnections:150}")
     int promotionDomainIntConnections;
     @Autowired
     PoolingHttpClientConnectionManager walletConnectionManager;
