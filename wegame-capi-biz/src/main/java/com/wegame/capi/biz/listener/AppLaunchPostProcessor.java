@@ -170,7 +170,7 @@ public class AppLaunchPostProcessor {
                     .orElse(Collections.emptyList())
                     .forEach(connection -> {
                         if (Objects.nonNull(connection) && connection.isOpen()) {
-                            manager.releaseConnection(connection, null, 120, TimeUnit.MINUTES);
+                            manager.releaseConnection(connection, null, 90, TimeUnit.MINUTES);
                         } else {
                             try {
                                 connection.close();
@@ -186,8 +186,11 @@ public class AppLaunchPostProcessor {
 
     private void healthCheck() {
         try {
+            Thread.sleep(1000);
             singleWalletApi.healthCheck();
+            Thread.sleep(1000);
             singleWalletFreeSpinApi.healthCheck();
+            Thread.sleep(1000);
             bagApi.healthCheck();
         } catch (Exception e) {
             log.error("healthCheck error", e);
