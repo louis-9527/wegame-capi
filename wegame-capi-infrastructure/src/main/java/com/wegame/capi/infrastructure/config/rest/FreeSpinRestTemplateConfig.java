@@ -34,15 +34,15 @@ public class FreeSpinRestTemplateConfig {
     int freeSpinReadTimeout;
     @Value("${httpclient.freeSpin.connectionRequestTimeout:800}")
     int freeSpinConnectionRequestTimeout;
-    @Value("${httpclient.freeSpin.timeToLive:90}")
+    @Value("${httpclient.freeSpin.timeToLive:59}")
     int freeSpinTimeToLive;
 
     @Bean(value = FREE_SPIN_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager freeSpinConnectionManager() {
-        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(freeSpinTimeToLive, TimeUnit.MINUTES);
+        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(freeSpinTimeToLive, TimeUnit.SECONDS);
         manager.setMaxTotal(freeSpinConnectMaxTotal);
         manager.setDefaultMaxPerRoute(freeSpinConnectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(200000);
+        manager.setValidateAfterInactivity(30000);
         return manager;
     }
 
@@ -55,7 +55,7 @@ public class FreeSpinRestTemplateConfig {
         HttpClient httpClient = HttpClientBuilder.create()
                 .setConnectionManager(freeSpinConnectionManager)
                 // 连接最大存活时间
-                .setConnectionTimeToLive(freeSpinTimeToLive, TimeUnit.MINUTES)
+                .setConnectionTimeToLive(freeSpinTimeToLive, TimeUnit.SECONDS)
                 .build();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         factory.setConnectTimeout(freeSpinConnectTimeout);

@@ -34,15 +34,15 @@ public class WalletRestTemplateConfig {
     int walletReadTimeout;
     @Value("${httpclient.wallet.connectionRequestTimeout:800}")
     int walletConnectionRequestTimeout;
-    @Value("${httpclient.wallet.timeToLive:90}")
+    @Value("${httpclient.wallet.timeToLive:59}")
     int walletTimeToLive;
 
     @Bean(value = WALLET_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager walletConnectionManager() {
-        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(walletTimeToLive, TimeUnit.MINUTES);
+        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(walletTimeToLive, TimeUnit.SECONDS);
         manager.setMaxTotal(walletConnectMaxTotal);
         manager.setDefaultMaxPerRoute(walletConnectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(200000);
+        manager.setValidateAfterInactivity(30000);
         return manager;
     }
 
@@ -55,7 +55,7 @@ public class WalletRestTemplateConfig {
         HttpClient httpClient = HttpClientBuilder.create()
                 .setConnectionManager(walletConnectionManager)
                 // 连接最大存活时间
-                .setConnectionTimeToLive(walletTimeToLive, TimeUnit.MINUTES)
+                .setConnectionTimeToLive(walletTimeToLive, TimeUnit.SECONDS)
                 .build();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         factory.setConnectTimeout(walletConnectTimeout);
