@@ -418,12 +418,11 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                                          AtomicLong totalRewardAmount,
                                          Queue<Long> freeWheelList) {
         BigDecimal totalMultipleAmount = new BigDecimal("0");
-        Map<Long, DiwataMayariGameRecordDo> retMap = ret.stream().collect(Collectors.toMap(DiwataMayariGameRecordDo::getId, item -> item));
        boolean maxTotalMultiple = false;
         while (!freeWheelList.isEmpty() && !maxTotalMultiple) {
             long  reeWheel = freeWheelList.poll();
             // 获取免费轮的父投注记录
-            DiwataMayariGameRecordDo parentGameRecord = retMap.get(reeWheel);
+            DiwataMayariGameRecordDo parentGameRecord = ret.stream().filter(item -> Objects.equals(reeWheel, item.getId())).findFirst().orElse(null);
             AssertUtil.assertNotNull(parentGameRecord, ErrorCode.ERR_INTER);
             // 生成免费轮首轮元素
             WheelDo<DiwataMayariSymbolDo> firstWheelDo = this.generateNormalWheel(true);
