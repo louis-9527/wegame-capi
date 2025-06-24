@@ -30,7 +30,7 @@ public class FreeSpinRestTemplateConfig {
     int freeSpinConnectDefaultMaxPerRoute;
     @Value("${httpclient.freeSpin.connectTimeout:1000}")
     int freeSpinConnectTimeout;
-    @Value("${httpclient.freeSpin.readTimeout:800}")
+    @Value("${httpclient.freeSpin.readTimeout:1000}")
     int freeSpinReadTimeout;
     @Value("${httpclient.freeSpin.connectionRequestTimeout:800}")
     int freeSpinConnectionRequestTimeout;

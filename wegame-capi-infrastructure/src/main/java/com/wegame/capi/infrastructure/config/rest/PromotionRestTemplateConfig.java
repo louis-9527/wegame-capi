@@ -33,7 +33,7 @@ public class PromotionRestTemplateConfig {
     int promotionConnectDefaultMaxPerRoute;
     @Value("${httpclient.promotion.connectTimeout:1000}")
     int promotionConnectTimeout;
-    @Value("${httpclient.promotion.readTimeout:800}")
+    @Value("${httpclient.promotion.readTimeout:1000}")
     int promotionReadTimeout;
     @Value("${httpclient.promotion.connectionRequestTimeout:800}")
     int promotionConnectionRequestTimeout;
