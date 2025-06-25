@@ -7,6 +7,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
+
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 
 /**
@@ -19,21 +21,17 @@ import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBO
 @ToString(callSuper = true)
 @EqualsAndHashCode(of = {"id"}, callSuper = true)
 public class KapreSymbolDo extends SymbolDo {
-    private static final long serialVersionUID = -226630824353448L;
+    private static final long serialVersionUID = -226654678653448L;
     /**
-     * 元素大小
+     * 元素倍率,默认0，现金symbol可使用
      */
-    private SymbolSizeEnum symbolSize;
+    private BigDecimal symbolMultiple = BigDecimal.ZERO;
 
     /**
-     * 元素金边
+     * 嵌套symbol
+     * wild 参与现金中奖之后，有值
      */
-    private boolean symbolGoldBorder;
-
-    /**
-     * 元素剩余消除次数（只有wild元素会有消除次数）
-     */
-    private Integer symbolClearTimes;
+    private KapreSymbolDo nestSymbol;
 
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
@@ -45,9 +43,6 @@ public class KapreSymbolDo extends SymbolDo {
                 .id(getId())
                 .name(getName())
                 .symbolType(getSymbolType())
-                .symbolSize(getSymbolSize())
-                .symbolGoldBorder(isSymbolGoldBorder())
-                .symbolClearTimes(getSymbolClearTimes())
                 .build();
     }
 
@@ -60,9 +55,6 @@ public class KapreSymbolDo extends SymbolDo {
                 .id(symbol.getId())
                 .name(symbol.getName())
                 .symbolType(symbol.getSymbolType())
-                .symbolSize(symbolSize)
-                .symbolGoldBorder(symbolGoldBorder)
-                .symbolClearTimes(0)
                 .build();
     }
 }
