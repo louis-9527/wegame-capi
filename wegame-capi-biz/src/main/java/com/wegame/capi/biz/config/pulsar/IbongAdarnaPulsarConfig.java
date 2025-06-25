@@ -41,7 +41,7 @@ public class IbongAdarnaPulsarConfig {
 
     @Bean(name = ibongadarnaPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient ibongadarnaPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, ibongadarnaPulsarClient);
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaPulsarClient);
         PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(ibongAdarnaUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -60,7 +60,7 @@ public class IbongAdarnaPulsarConfig {
 
     @Bean(name = ibongadarnaProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> ibongadarnaProducer(@Autowired PulsarClient ibongadarnaPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, ibongadarnaProducer);
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaProducer);
         return ibongadarnaPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetTopic))
                 .producerName(ibongAdarnaTenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -82,7 +82,7 @@ public class IbongAdarnaPulsarConfig {
 
     @Bean(name = ibongadarnaConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> ibongadarnaConsumer(@Autowired PulsarClient ibongadarnaPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, ibongadarnaConsumer);
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetDeadLetterTopic);
         return ibongadarnaPulsarClient.newConsumer()
@@ -112,7 +112,7 @@ public class IbongAdarnaPulsarConfig {
 
     @Bean(name = ibongadarnaDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> ibongadarnaDeadLetterConsumer(@Autowired PulsarClient ibongadarnaPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, ibongadarnaDeadLetterConsumer);
+        log.info(BUILD_BEAN_FORMAT, ibongadarnaDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, ibongAdarnaTenant, ibongAdarnaNamespace, ibongAdarnaBetDeadLetterTopic);
         return ibongadarnaPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
