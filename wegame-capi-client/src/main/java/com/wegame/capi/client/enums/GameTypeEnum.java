@@ -40,6 +40,11 @@ public enum GameTypeEnum {
             "bakunawa_bet_record",
             "bakunawa_game_record", 300L,1.2),
 
+    KAPRE("zhumeng007",
+            "Kapre",
+            "kapre_bet_record",
+            "kapre_game_record", 300L,1.2),
+
 
     ;
 
