@@ -41,7 +41,7 @@ public class MalakasPulsarConfig {
 
     @Bean(name = malakasPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient malakasPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, malakasPulsarClient);
+        log.info(BUILD_BEAN_FORMAT, malakasPulsarClient);
         return PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -50,7 +50,7 @@ public class MalakasPulsarConfig {
 
     @Bean(name = malakasProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> malakasProducer(@Autowired PulsarClient malakasPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, malakasProducer);
+        log.info(BUILD_BEAN_FORMAT, malakasProducer);
         return malakasPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic))
                 .producerName(tenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -71,7 +71,7 @@ public class MalakasPulsarConfig {
 
     @Bean(name = malakasConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> malakasConsumer(@Autowired PulsarClient malakasPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, malakasConsumer);
+        log.info(BUILD_BEAN_FORMAT, malakasConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return malakasPulsarClient.newConsumer()
@@ -99,7 +99,7 @@ public class MalakasPulsarConfig {
 
     @Bean(name = malakasDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> malakasDeadLetterConsumer(@Autowired PulsarClient malakasPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, malakasDeadLetterConsumer);
+        log.info(BUILD_BEAN_FORMAT, malakasDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return malakasPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
