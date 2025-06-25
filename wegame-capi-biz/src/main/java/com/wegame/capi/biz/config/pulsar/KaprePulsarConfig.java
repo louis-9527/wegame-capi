@@ -1,8 +1,6 @@
 package com.wegame.capi.biz.config.pulsar;
 
 import com.wegame.base.utils.IpUtil;
-import com.wegame.capi.biz.module.kapre.KapreGameHelper;
-import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,35 +23,35 @@ import static com.wegame.capi.common.Constants.*;
 @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
 public class KaprePulsarConfig {
 
-    public static final String malakasPulsarClient = "malakasPulsarClient";
-    public static final String malakasProducer = "malakasProducer";
-    public static final String malakasConsumer = "malakasConsumer";
-    public static final String malakasDeadLetterConsumer = "malakasDeadLetterConsumer";
+    public static final String kaprePulsarClient = "kaprePulsarClient";
+    public static final String kapreProducer = "kapreProducer";
+    public static final String kapreConsumer = "kapreConsumer";
+    public static final String kapreDeadLetterConsumer = "kapreDeadLetterConsumer";
 
-    @Value("${pulsar.dynamic.malakas.url}")
+    @Value("${pulsar.dynamic.kapre.url}")
     String url;
-    @Value("${pulsar.dynamic.malakas.tenant}")
+    @Value("${pulsar.dynamic.kapre.tenant}")
     String tenant;
-    @Value("${pulsar.dynamic.malakas.namespace}")
+    @Value("${pulsar.dynamic.kapre.namespace}")
     String namespace;
-    @Value("${pulsar.dynamic.malakas.bet_topic}")
+    @Value("${pulsar.dynamic.kapre.bet_topic}")
     String betTopic;
-    @Value("${pulsar.dynamic.malakas.bet_deadLetter_topic}")
+    @Value("${pulsar.dynamic.kapre.bet_deadLetter_topic}")
     String betDeadLetterTopic;
 
-    @Bean(name = malakasPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
-    public PulsarClient malakasPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, malakasPulsarClient);
+    @Bean(name = kaprePulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
+    public PulsarClient kaprePulsarClient() throws Exception {
+        log.debug(BUILD_BEAN_FORMAT, kaprePulsarClient);
         return PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
                 .build();
     }
 
-    @Bean(name = malakasProducer, destroyMethod = COMMON_CLOSE_METHOD)
-    public Producer<byte[]> malakasProducer(@Autowired PulsarClient malakasPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, malakasProducer);
-        return malakasPulsarClient.newProducer(Schema.BYTES)
+    @Bean(name = kapreProducer, destroyMethod = COMMON_CLOSE_METHOD)
+    public Producer<byte[]> kapreProducer(@Autowired PulsarClient kaprePulsarClient) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, kapreProducer);
+        return kaprePulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic))
                 .producerName(tenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
                 // 开启批量发送
@@ -71,12 +69,12 @@ public class KaprePulsarConfig {
                 .create();
     }
 
-    @Bean(name = malakasConsumer, destroyMethod = COMMON_CLOSE_METHOD)
-    public Consumer<byte[]> malakasConsumer(@Autowired PulsarClient malakasPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, malakasConsumer);
+    @Bean(name = kapreConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    public Consumer<byte[]> kapreConsumer(@Autowired PulsarClient kaprePulsarClient) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, kapreConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
-        return malakasPulsarClient.newConsumer()
+        return kaprePulsarClient.newConsumer()
                 .topic(fullTopic)
                 .subscriptionName(tenant)
                 // 关键点：使用 Key_Shared 模式, 集群消费
@@ -99,11 +97,11 @@ public class KaprePulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = malakasDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
-    public Consumer<byte[]> malakasDeadLetterConsumer(@Autowired PulsarClient malakasPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, malakasDeadLetterConsumer);
+    @Bean(name = kapreDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    public Consumer<byte[]> kapreDeadLetterConsumer(@Autowired PulsarClient kaprePulsarClient) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, kapreDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
-        return malakasPulsarClient.newConsumer(Schema.BYTES)
+        return kaprePulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
                 .subscriptionName(tenant + "_deadLetter")
                 .subscriptionType(SubscriptionType.Shared)
