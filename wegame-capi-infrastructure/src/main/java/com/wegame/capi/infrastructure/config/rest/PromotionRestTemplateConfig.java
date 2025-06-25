@@ -27,13 +27,13 @@ public class PromotionRestTemplateConfig {
     public static final String PROMOTION_REST_TEMPLATE_BEAN = "promotionRestTemplate";
 
     // promotion resTemplate
-    @Value("${httpclient.promotion.connectMaxTotal:5000}")
+    @Value("${httpclient.promotion.connectMaxTotal:1000}")
     int promotionConnectMaxTotal;
-    @Value("${httpclient.promotion.connectDefaultMaxPerRoute:500}")
+    @Value("${httpclient.promotion.connectDefaultMaxPerRoute:1000}")
     int promotionConnectDefaultMaxPerRoute;
     @Value("${httpclient.promotion.connectTimeout:1000}")
     int promotionConnectTimeout;
-    @Value("${httpclient.promotion.readTimeout:800}")
+    @Value("${httpclient.promotion.readTimeout:1000}")
     int promotionReadTimeout;
     @Value("${httpclient.promotion.connectionRequestTimeout:800}")
     int promotionConnectionRequestTimeout;
@@ -45,7 +45,7 @@ public class PromotionRestTemplateConfig {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(promotionTimeToLive, TimeUnit.SECONDS);
         manager.setMaxTotal(promotionConnectMaxTotal);
         manager.setDefaultMaxPerRoute(promotionConnectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(20000);
+        manager.setValidateAfterInactivity(30000);
         return manager;
     }
 

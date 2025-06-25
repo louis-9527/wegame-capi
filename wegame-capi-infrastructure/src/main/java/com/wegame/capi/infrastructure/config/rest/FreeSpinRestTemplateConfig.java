@@ -24,13 +24,13 @@ public class FreeSpinRestTemplateConfig {
     public static final String FREE_SPIN_CONNECTION_MANAGER_BEAN = "freeSpinConnectionManager";
     public static final String FREE_SPIN_REST_TEMPLATE_BEAN = "freeSpinRestTemplate";
     // freeSpin resTemplate
-    @Value("${httpclient.freeSpin.connectMaxTotal:5000}")
+    @Value("${httpclient.freeSpin.connectMaxTotal:1000}")
     int freeSpinConnectMaxTotal;
     @Value("${httpclient.freeSpin.connectDefaultMaxPerRoute:1000}")
     int freeSpinConnectDefaultMaxPerRoute;
     @Value("${httpclient.freeSpin.connectTimeout:1000}")
     int freeSpinConnectTimeout;
-    @Value("${httpclient.freeSpin.readTimeout:800}")
+    @Value("${httpclient.freeSpin.readTimeout:1000}")
     int freeSpinReadTimeout;
     @Value("${httpclient.freeSpin.connectionRequestTimeout:800}")
     int freeSpinConnectionRequestTimeout;
@@ -42,7 +42,7 @@ public class FreeSpinRestTemplateConfig {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(freeSpinTimeToLive, TimeUnit.SECONDS);
         manager.setMaxTotal(freeSpinConnectMaxTotal);
         manager.setDefaultMaxPerRoute(freeSpinConnectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(20000);
+        manager.setValidateAfterInactivity(30000);
         return manager;
     }
 

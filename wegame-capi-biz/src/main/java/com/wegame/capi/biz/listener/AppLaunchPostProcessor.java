@@ -59,15 +59,15 @@ public class AppLaunchPostProcessor {
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:100}")
+    @Value("${api.game.singleDomainIntConnections:50}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
-    @Value("${api.game.freeSpinDomainIntConnections:100}")
+    @Value("${api.game.freeSpinDomainIntConnections:50}")
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:100}")
+    @Value("${api.game.promotionDomainIntConnections:50}")
     int promotionDomainIntConnections;
     @Autowired
     PoolingHttpClientConnectionManager walletConnectionManager;
@@ -170,7 +170,7 @@ public class AppLaunchPostProcessor {
                     .orElse(Collections.emptyList())
                     .forEach(connection -> {
                         if (Objects.nonNull(connection) && connection.isOpen()) {
-                            manager.releaseConnection(connection, null, 30, TimeUnit.MINUTES);
+                            manager.releaseConnection(connection, null, 90, TimeUnit.MINUTES);
                         } else {
                             try {
                                 connection.close();
@@ -186,8 +186,11 @@ public class AppLaunchPostProcessor {
 
     private void healthCheck() {
         try {
+            Thread.sleep(1000);
             singleWalletApi.healthCheck();
+            Thread.sleep(1000);
             singleWalletFreeSpinApi.healthCheck();
+            Thread.sleep(1000);
             bagApi.healthCheck();
         } catch (Exception e) {
             log.error("healthCheck error", e);
