@@ -23,6 +23,8 @@ public class GameProperty {
     private boolean enableBakunawa;
     @Value("${game.enable.Lamang: false}")
     private boolean enableLamang;
+    @Value("${game.enable.Kapre: false}")
+    private boolean enableKapre;
 
     public List<GameTypeEnum> enabledGameTypes() {
         List<GameTypeEnum> gameTypeList = new ArrayList<>();
@@ -40,6 +42,9 @@ public class GameProperty {
         }
         if (enableLamang) {
             gameTypeList.add(GameTypeEnum.LAM_ANG);
+        }
+        if (enableKapre) {
+            gameTypeList.add(GameTypeEnum.KAPRE);
         }
         return gameTypeList;
     }
