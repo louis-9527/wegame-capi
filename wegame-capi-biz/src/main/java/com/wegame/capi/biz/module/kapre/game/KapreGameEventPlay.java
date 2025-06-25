@@ -9,11 +9,9 @@ import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.KapreSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.kapre.reward.KapreRewardHandler;
@@ -31,7 +29,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
-import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolNullArr;
 
 @Slf4j
 @Component("kapreGameEventPlay")
@@ -114,10 +111,10 @@ public class KapreGameEventPlay extends AbstractGame<KapreGameRecordDo> {
                 KapreGameRecordDo gameRecord = null;
                 if (record.getIndex() == 0) {
                     gameRecordIds.add(gameRecordId);
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record,totalMultipleAmount);
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record, totalMultipleAmount);
                     ret.add(gameRecord);
                 } else {
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record,totalMultipleAmount);
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record, totalMultipleAmount);
                     ret.add(gameRecord);
                 }
                 preGameRecord = gameRecord;
@@ -130,7 +127,7 @@ public class KapreGameEventPlay extends AbstractGame<KapreGameRecordDo> {
         for (Map.Entry<OperationEventConfigRecordDo, KapreGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
             OperationEventConfigRecordDo key = entry.getKey();
             KapreGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key,value, groupedByBatchId);
+            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId);
         }
     }
 
@@ -150,7 +147,7 @@ public class KapreGameEventPlay extends AbstractGame<KapreGameRecordDo> {
         KapreSymbolDo[][] symbolArr = kapreSymbolWheel.getSymbolArr();
         // 处理空值
         kapreSymbolWheel.setSymbolArr(symbolArr);
-        RewardResultDo<KapreGameRecordDo> rewardResult = kapreRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, kapreSymbolWheel, totalMultiple));
+        RewardResultDo<KapreSymbolDo> rewardResult = kapreRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, kapreSymbolWheel, totalMultiple));
         // 构建时还原
         kapreSymbolWheel.setSymbolArr(symbolArr);
         return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, kapreSymbolWheel, rewardResult);
@@ -159,11 +156,11 @@ public class KapreGameEventPlay extends AbstractGame<KapreGameRecordDo> {
     }
 
     private KapreGameRecordDo buildGameRecord(Long id,
-                                                Long parentId,
-                                                Long betRecordId,
-                                                Long batchId,
-                                                WheelDo<KapreSymbolDo> wheel,
-                                                RewardResultDo<KapreSymbolDo> rewardResult) {
+                                              Long parentId,
+                                              Long betRecordId,
+                                              Long batchId,
+                                              WheelDo<KapreSymbolDo> wheel,
+                                              RewardResultDo<KapreSymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         return KapreGameRecordDo.builder()
