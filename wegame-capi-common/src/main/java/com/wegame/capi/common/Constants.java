@@ -27,6 +27,8 @@ public class Constants {
     public static final Integer MALAKAS_REWARD_NOTIFY_SIZE = 10;
     public static final Integer IBONG_ADARNA_REWARD_NOTIFY_SIZE = 10;
     public static final Integer BAKUNAWA_ADARNA_REWARD_NOTIFY_SIZE = 10;
+    public static final Integer KAPRE_REWARD_NOTIFY_SIZE = 10;
+
 
     public static final Integer LAMANG_REWARD_NOTIFY_SIZE = 20;
     // maria推送大奖tips内容
@@ -40,6 +42,8 @@ public class Constants {
 
     // lamang推送大奖tips内容
     public static final String LAMANG_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+    // kapre推送大奖tips内容
+    public static final String KAPRE_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
 
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
@@ -69,6 +73,8 @@ public class Constants {
     public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";
     public static final String LAMANG_PROP = "game.enable.Lamang";
     public static final String BAKUNAWA_PROP = "game.enable.Bakunawa";
+    public static final String KAPRE_PROP = "game.enable.Kapre";
+
 
 
     public static final long FIVE_MINUTES_AGO = 5 * 60 * 1000;

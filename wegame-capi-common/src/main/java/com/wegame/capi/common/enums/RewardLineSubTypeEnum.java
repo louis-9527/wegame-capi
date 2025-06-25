@@ -17,6 +17,7 @@ public enum RewardLineSubTypeEnum {
 
     COMMON("COMMON", "普通"),
     SCATTER("SCATTER", "SCATTER"),
+    CASH("CASH", "现金"),
 
     ;
 
@@ -28,6 +29,7 @@ public enum RewardLineSubTypeEnum {
      * 描述信息.
      */
     private final String desc;
+
     /**
      * 私有构造方法.
      *

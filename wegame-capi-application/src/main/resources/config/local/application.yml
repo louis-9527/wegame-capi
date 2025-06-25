@@ -35,6 +35,7 @@ spring:
       - game-ibong.yml
       - game-lamang.yml
       - game-bakunawa.yml
+      - game-kapre.yml
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true

@@ -1,9 +1,7 @@
 package com.wegame.capi.biz.builder;
 
-import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.*;
+import com.wegame.capi.client.domain.vo.kapre.KapreSymbolVo;
 import com.wegame.capi.client.domain.vo.lamang.LamangSymbolVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasSymbolVo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaSymbolVo;
@@ -87,4 +85,11 @@ public class SymbolBuilder {
         }
         return integerArray;
     }
+
+
+    public static KapreSymbolVo[][] build(KapreSymbolDo[][] symbolArr) {
+        // todo @jayni
+        throw new RuntimeException("todo");
+    }
+
 }

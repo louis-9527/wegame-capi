@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.domain.biz.reward.line;
 
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
 import com.wegame.capi.common.enums.RewardLineTypeEnum;
 import lombok.*;
@@ -57,5 +57,9 @@ public class RewardLineDo<T extends SymbolDo> implements Serializable {
 
     public boolean isScatterReward() {
         return Objects.equals(rewardLineSubType, RewardLineSubTypeEnum.SCATTER);
+    }
+
+    public boolean isCashReward() {
+        return Objects.equals(rewardLineSubType, RewardLineSubTypeEnum.CASH);
     }
 }

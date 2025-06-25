@@ -50,6 +50,12 @@ public enum OperationEventTypeEnum {
             "lamang_operation_event_config",
             "lamang_operation_event_config_record"
     ),
+    KAPRE(GameTypeEnum.KAPRE,
+            "kapre_operation_event",
+            "kapre_operation_event_detail",
+            "kapre_operation_event_config",
+            "kapre_operation_event_config_record"
+    ),
 
     ;
 

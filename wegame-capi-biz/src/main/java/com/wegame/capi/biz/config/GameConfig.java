@@ -1,11 +1,7 @@
 package com.wegame.capi.biz.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wegame.capi.biz.config.domain.BakunawaConfig;
-import com.wegame.capi.biz.config.domain.LamangConfig;
-import com.wegame.capi.biz.config.domain.MalakasConfig;
-import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
-import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.wegame.capi.biz.config.domain.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -80,6 +76,19 @@ public class GameConfig {
             throw new RuntimeException("read lamang_config.json file err！！！");
         } else {
             LamangConfig config = new ObjectMapper().readValue(inputStream, LamangConfig.class);
+            config.validate();
+            return config;
+        }
+    }
+
+    @Bean
+    KapreConfig kapreConfig() throws IOException {
+        String path = "/kapre_config.json";
+        InputStream inputStream = getClass().getResourceAsStream(path);
+        if (inputStream == null) {
+            throw new RuntimeException("read kapre_config.json file err！！！");
+        } else {
+            KapreConfig config = new ObjectMapper().readValue(inputStream, KapreConfig.class);
             config.validate();
             return config;
         }
