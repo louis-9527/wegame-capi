@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wegame.capi.biz.module.kapre.KapreGameHelper;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -48,6 +49,10 @@ public class KapreSymbolDo extends SymbolDo {
                 .symbolGoldBorder(isSymbolGoldBorder())
                 .symbolClearTimes(getSymbolClearTimes())
                 .build();
+    }
+
+    public boolean isCashSymbol() {
+        return StringUtils.equals(this.getId(), KapreGameHelper.KAPRE_Symbol1010.getId());
     }
 
     public static KapreSymbolDo buildFromSymbol(SymbolDo symbol, SymbolSizeEnum symbolSize, boolean symbolGoldBorder) {

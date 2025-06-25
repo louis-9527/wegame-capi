@@ -11,6 +11,15 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KapreConfig {
+    /**
+     * 中奖最大倍数
+     */
+    private Integer rewardMaxMultiple;
+
+    /**
+     * 免费次数
+     */
+    private Integer freeWheelTimes;
 
     public void validate() {
 

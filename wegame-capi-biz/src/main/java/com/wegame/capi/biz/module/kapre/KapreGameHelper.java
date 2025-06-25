@@ -55,7 +55,7 @@ public class KapreGameHelper {
             .name(Symbol1009.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .build();
-    private static final SymbolDo KAPRE_Symbol1010 = SymbolDo.builder()
+    public static final SymbolDo KAPRE_Symbol1010 = SymbolDo.builder()
             .id(Symbol1010.getId())
             .name(Symbol1010.getName())
             .symbolType(SymbolTypeEnum.COMMON)
