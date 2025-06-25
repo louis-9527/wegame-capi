@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        malakas_mdb:
+          primary_uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@malakas-prod-pri.hgmd9m.mongodb.net/malakas?retryWrites=true&w=majority&appName=malakas-prod&readPreference=primary
+          uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@malakas-prod-pri.hgmd9m.mongodb.net/malakas?retryWrites=true&w=majority&appName=malakas-prod&readPreference=secondaryPreferred
+          db: malakas
+## pulsar
+pulsar:
+  dynamic:
+    malakas:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_Malakas
+      namespace: ${spring.application.env}
+      bet_topic: Malakas_topic
+      bet_deadLetter_topic: Malakas_deadLetter_topic
