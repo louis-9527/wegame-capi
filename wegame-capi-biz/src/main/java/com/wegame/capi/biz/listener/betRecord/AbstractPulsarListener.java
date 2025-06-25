@@ -45,7 +45,7 @@ public abstract class AbstractPulsarListener<T extends ToVoConverter>
 
     @Override
     public void afterPropertiesSet() {
-        log.debug(BUILD_BEAN_FORMAT, getClass().getSimpleName());
+        log.info(BUILD_BEAN_FORMAT, getClass().getSimpleName());
     }
 
     public abstract Consumer<byte[]> getConsumer();

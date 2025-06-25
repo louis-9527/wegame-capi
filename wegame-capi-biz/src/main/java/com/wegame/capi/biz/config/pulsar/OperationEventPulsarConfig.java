@@ -43,7 +43,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = operationEventPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient operationEventPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
+        log.info(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
         if (StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)) {
             return PulsarClient.builder()
                     .serviceUrl(dynamicOperationTopicUrl)
@@ -69,7 +69,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(MariamakilingOperationEventPulsarListener.class)
     public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                 @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, mariaMakilingOperationEventConsumer);
+        log.info(BUILD_BEAN_FORMAT, mariaMakilingOperationEventConsumer);
         String deadLetterTopic = dynamicOperationTopic;
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
