@@ -37,7 +37,7 @@ public class MariamakilingMongoConfig {
      */
     @Bean(mariamakilingMongoTemplate)
     public MongoTemplate mariamakilingMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, mariamakilingMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, mariamakilingMongoTemplate);
         return new MongoTemplate(MongoClients.create(mariaMakilingMdbUri), mariaMakilingMdb);
     }
 
@@ -46,7 +46,7 @@ public class MariamakilingMongoConfig {
      */
     @Bean(mariamakilingPrimaryMongoTemplate)
     public MongoTemplate mariamakilingPrimaryMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, mariamakilingPrimaryMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, mariamakilingPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(mariaMakilingMdbPrimaryUri), mariaMakilingMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -54,7 +54,7 @@ public class MariamakilingMongoConfig {
 
     @Bean(name = mariamakilingTransactionManager)
     public MongoTransactionManager mariamakilingTransactionManager(@Autowired MongoTemplate mariamakilingMongoTemplate) {
-        log.debug(BUILD_BEAN_FORMAT, mariamakilingTransactionManager);
+        log.info(BUILD_BEAN_FORMAT, mariamakilingTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(mariamakilingMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)
