@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 @Slf4j
 public class CommonBaseApi extends BaseApi {
-    public static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check";
+    public static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check?timestamp=%s";
     // cp
     @Value("${api.game.cp.platformId}")
     public String cpPlatformId;

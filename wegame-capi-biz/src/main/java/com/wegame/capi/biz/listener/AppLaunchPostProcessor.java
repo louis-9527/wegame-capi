@@ -6,6 +6,7 @@ import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.SingleWalletFreeSpinApi;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.domain.user.UserDo;
+import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.biz.service.backend.GameMaintainConfigService;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 import java.util.stream.IntStream;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
@@ -59,15 +61,15 @@ public class AppLaunchPostProcessor {
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:50}")
+    @Value("${api.game.singleDomainIntConnections:80}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
-    @Value("${api.game.freeSpinDomainIntConnections:50}")
+    @Value("${api.game.freeSpinDomainIntConnections:80}")
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:50}")
+    @Value("${api.game.promotionDomainIntConnections:80}")
     int promotionDomainIntConnections;
     @Autowired
     PoolingHttpClientConnectionManager walletConnectionManager;
@@ -81,8 +83,9 @@ public class AppLaunchPostProcessor {
         businessWarmUp();
         // todo 第一次上线后， 后续屏蔽该动作
         buildUserIdCache();
-        initDomainConnections();
-        healthCheck();
+        //        initDomainConnections();
+        //        healthCheck();
+        warmUpConnections();
     }
 
     private void businessWarmUp() {
@@ -194,6 +197,68 @@ public class AppLaunchPostProcessor {
             bagApi.healthCheck();
         } catch (Exception e) {
             log.error("healthCheck error", e);
+        }
+    }
+
+    @Autowired
+    RandomService randomService;
+
+    private void warmUpConnections() {
+        int randomSeconds = randomService.randomInt(1, 60);
+        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+        warmUpSingleDomainConnections();
+        randomSeconds = randomService.randomInt(1, 60);
+        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+        warmFreeSpinDomainConnections();
+        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+        warmPromotionDomainConnections();
+    }
+
+    private void warmUpSingleDomainConnections() {
+        try {
+            IntStream.range(0, singleDomainIntConnections)
+                    .parallel()
+                    .forEach(i -> {
+                        try {
+                            singleWalletApi.healthCheck();
+                        } catch (Exception ignored) {
+                            // 忽略所有异常
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("warmUpConnections error", e);
+        }
+    }
+
+    private void warmFreeSpinDomainConnections() {
+        try {
+            IntStream.range(0, freeSpinDomainIntConnections)
+                    .parallel()
+                    .forEach(i -> {
+                        try {
+                            singleWalletFreeSpinApi.healthCheck();
+                        } catch (Exception ignored) {
+                            // 忽略所有异常
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("warmUpConnections error", e);
+        }
+    }
+
+    private void warmPromotionDomainConnections() {
+        try {
+            IntStream.range(0, promotionDomainIntConnections)
+                    .parallel()
+                    .forEach(i -> {
+                        try {
+                            bagApi.healthCheck();
+                        } catch (Exception ignored) {
+                            // 忽略所有异常
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("warmUpConnections error", e);
         }
     }
 }
