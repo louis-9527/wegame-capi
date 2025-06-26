@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        kapre_mdb:
+          primary_uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@ibong-prod-pri.hgmd9m.mongodb.net/ibong?compressors=zlib&retryWrites=true&w=majority&appName=ibong-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@ibong-prod-pri.hgmd9m.mongodb.net/ibong?compressors=zlib&retryWrites=true&w=majority&appName=ibong-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          db: kapre
+## pulsar
+pulsar:
+  dynamic:
+    kapre:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_Kapre
+      namespace: ${spring.application.env}
+      bet_topic: Kapre_topic
+      bet_deadLetter_topic: Kapre_deadLetter_topic

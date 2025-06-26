@@ -37,6 +37,7 @@ spring:
       - game-common.yml
       - game-maria_makiling.yml
       - game-ibong.yml
+      - game-kapre.yml
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true

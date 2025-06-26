@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        kapre_mdb:
+          primary_uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/kapre?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=primary
+          uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/kapre?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
+          db: kapre
+## pulsar
+pulsar:
+  dynamic:
+    kapre:
+      url: pulsar://pulsar.makillingslot.net:6650
+      tenant: ${spring.application.name}_Kapre
+      namespace: ${spring.application.env}
+      bet_topic: Kapre_topic
+      bet_deadLetter_topic: Kapre_deadLetter_topic
