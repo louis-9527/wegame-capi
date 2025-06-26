@@ -23,6 +23,10 @@ public class KapreConfig {
      */
     private Integer rewardMaxMultiple;
     /**
+     * 获得免费轮次数
+     */
+    private int rewardFreeWheelTimes;
+    /**
      * 赔率配置
      */
     private OddsConfig oddsConfig;
