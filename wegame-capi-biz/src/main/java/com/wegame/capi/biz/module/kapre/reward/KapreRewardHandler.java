@@ -61,8 +61,6 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         validate(rewardHandle);
         // 2、计算中奖线
         List<RewardLineDo<KapreSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
-        // 3、计算倍率
-        // BigDecimal totalMultiple = kapreMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
         int scatterCount = scatterCount(rewardHandle);
         Integer freeWheelTimes = kapreConfig.getFreeWheelTimes();
         boolean rewardFreeWheel = scatterCount >= SCATTER_COUNT_FOR_FREE_SPIN;
@@ -89,8 +87,11 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         for (RewardLineDo<KapreSymbolDo> rewardLine : rewardLineList) {
             // 计算赔率
             BigDecimal odds = kapreOddsCalculateStrategy.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
-            // 计算（中奖线）中奖金额：中奖线中奖金额计算公式 = 投注金额 * 赔率
-            BigDecimal lineRewardAmount = this.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds);
+            // 计算（中奖线）中奖金额：
+            // 普通中奖 ：总金额 = 投注金额 * 赔率 * 中奖线数量
+            // 现金中奖 ：总金额 = 投注金额 * （现金元素倍率之和）
+            BigDecimal currentMultiple = kapreMultipleCalculateStrategy.calculateMultipleOfSingleRewardLine(rewardHandle, rewardLine);
+            BigDecimal lineRewardAmount = this.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, currentMultiple);
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
             // 中奖线明细列表
@@ -98,7 +99,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardAmount(lineRewardAmount.longValue())
                     .odds(odds)
-                    .multiple(DEFAULT_MULTI)
+                    .multiple(currentMultiple)
                     .rewardLineType(rewardLine.getRewardLineType())
                     .rewardLineSubType(rewardLine.getRewardLineSubType())
                     .rewardLineCount(rewardLine.getRewardLineCount())
@@ -221,14 +222,11 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
     }
 
     private RewardLineSubTypeEnum getRewardLineSubType(KapreSymbolDo rewardSymbol) {
-        if (rewardSymbol.isScatterSymbol()) {
-            return RewardLineSubTypeEnum.SCATTER;
-        } else if (rewardSymbol.isCashSymbol()) {
+        if (rewardSymbol.isCashSymbol()) {
             return RewardLineSubTypeEnum.CASH;
         } else {
             return RewardLineSubTypeEnum.COMMON;
         }
-
     }
 
     private boolean isMatchTargetSymbol(SymbolDo symbol, SymbolDo targetSymbol) {
@@ -264,21 +262,19 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
      * @param rewardLine 中奖线
      * @param betAmount  投注金额
      * @param odds       赔率
+     * @param multiple   倍率
      * @return 中奖金额
      */
-    public BigDecimal calculateLineRewardAmount(RewardLineDo<KapreSymbolDo> rewardLine, Long betAmount, BigDecimal odds) {
+    @Override
+    public BigDecimal calculateLineRewardAmount(RewardLineDo rewardLine, Long betAmount, BigDecimal odds, BigDecimal multiple) {
         if (rewardLine.isCommonReward()) {
-            return BigDecimal.valueOf(betAmount)
-                    .multiply(odds)
-                    .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
-        } else if (rewardLine.isScatterReward()) {
-            // scatter 无需进行倍率计算
+            //普通中奖： 投注额 * 赔率 * 中奖线
             return BigDecimal.valueOf(betAmount)
                     .multiply(odds)
                     .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
         } else if (rewardLine.isCashReward()) {
-            //todo 用每个现金元素金额相加
-            return BigDecimal.valueOf(betAmount);
+            //现金中奖 ： 投注额 * 倍率
+            return BigDecimal.valueOf(betAmount).multiply(odds).multiply(multiple);
         } else {
             return BigDecimal.valueOf(betAmount)
                     .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
