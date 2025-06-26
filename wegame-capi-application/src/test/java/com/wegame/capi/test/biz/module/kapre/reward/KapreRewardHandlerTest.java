@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class KapreRewardHandlerTest extends BaseTest {
     @Autowired
@@ -29,6 +28,7 @@ public class KapreRewardHandlerTest extends BaseTest {
         test_reward_cash();
         test_reward_cash_wild();
         test_reward_multi();
+        test_reward_cash_and_freewheel();
     }
 
     /**
@@ -73,12 +73,13 @@ public class KapreRewardHandlerTest extends BaseTest {
         RewardHandleDo<KapreSymbolDo> rewardHandle = KapreRewardHandlerTestMocker.buildTestRewardHandleDo(symbolArr, 0, false, BET_AMOUNT, null);
         RewardResultDo<KapreSymbolDo> handleResult = kapreRewardHandler.handle(rewardHandle);
 
+        long multi = 10L;
         assertNotNull(handleResult);
         // 中奖类型，单奖励
         assertEquals(RewardTypeEnum.SINGLE, handleResult.getRewardType());
 
         // 中奖金额 ：10000
-        assertEquals(BET_AMOUNT * 10, handleResult.getTotalRewardAmount().longValue());
+        assertEquals(BET_AMOUNT * multi, handleResult.getTotalRewardAmount().longValue());
         // 中奖线列表,1
         assertNotNull(handleResult.getRewardLineDetailList());
         assertEquals(1, handleResult.getRewardLineDetailList().size());
@@ -87,11 +88,11 @@ public class KapreRewardHandlerTest extends BaseTest {
         // 中奖类型为现金中奖
         assertEquals(RewardLineSubTypeEnum.CASH, handleResult.getRewardLineDetailList().get(0).getRewardLineSubType());
         // 现金中奖倍率 ： 10
-        assertEquals(BigDecimal.valueOf(10), handleResult.getRewardLineDetailList().get(0).getMultiple());
+        assertEquals(BigDecimal.valueOf(multi), handleResult.getRewardLineDetailList().get(0).getMultiple());
     }
 
     /**
-     * 中一条线 - cash + wild 3连  20倍
+     * 中一条线 - cash + wild 3连  40倍
      */
     @Test
     public void test_reward_cash_wild() {
@@ -99,10 +100,11 @@ public class KapreRewardHandlerTest extends BaseTest {
         RewardHandleDo<KapreSymbolDo> rewardHandle = KapreRewardHandlerTestMocker.buildTestRewardHandleDo(symbolArr, 0, false, BET_AMOUNT, null);
         RewardResultDo<KapreSymbolDo> handleResult = kapreRewardHandler.handle(rewardHandle);
         assertNotNull(handleResult);
+        long multi = 40L;
         // 中奖类型，单奖励
         assertEquals(RewardTypeEnum.SINGLE, handleResult.getRewardType());
         // 中奖金额 ：20000
-        assertEquals(BET_AMOUNT * 20, handleResult.getTotalRewardAmount().longValue());
+        assertEquals(BET_AMOUNT * multi, handleResult.getTotalRewardAmount().longValue());
         // 中奖线列表,1
         assertNotNull(handleResult.getRewardLineDetailList());
         assertEquals(1, handleResult.getRewardLineDetailList().size());
@@ -111,7 +113,7 @@ public class KapreRewardHandlerTest extends BaseTest {
         // 中奖类型为现金中奖
         assertEquals(RewardLineSubTypeEnum.CASH, handleResult.getRewardLineDetailList().get(0).getRewardLineSubType());
         // 现金中奖倍率 ： 20
-        assertEquals(BigDecimal.valueOf(20), handleResult.getRewardLineDetailList().get(0).getMultiple());
+        assertEquals(BigDecimal.valueOf(multi), handleResult.getRewardLineDetailList().get(0).getMultiple());
     }
 
     /**
@@ -128,6 +130,37 @@ public class KapreRewardHandlerTest extends BaseTest {
         // 中奖线列表,1
         assertNotNull(handleResult.getRewardLineDetailList());
         assertEquals(2, handleResult.getRewardLineDetailList().size());
+    }
+
+    /**
+     * 单中奖线 cash 10倍
+     * 3个scatter 中免费轮
+     */
+    @Test
+    public void test_reward_cash_and_freewheel() {
+        KapreSymbolDo[][] symbolArr = KapreRewardHandlerTestMocker.mockSymbolArr_reward_cash_and_freeWheel();
+        RewardHandleDo<KapreSymbolDo> rewardHandle = KapreRewardHandlerTestMocker.buildTestRewardHandleDo(symbolArr, 0, false, BET_AMOUNT, null);
+        RewardResultDo<KapreSymbolDo> handleResult = kapreRewardHandler.handle(rewardHandle);
+        assertNotNull(handleResult);
+        long multi = 10L;
+        assertNotNull(handleResult);
+        // 中奖类型，单奖励
+        assertEquals(RewardTypeEnum.SINGLE, handleResult.getRewardType());
+
+        // 中奖金额 ：10000
+        assertEquals(BET_AMOUNT * multi, handleResult.getTotalRewardAmount().longValue());
+        // 中奖线列表,1
+        assertNotNull(handleResult.getRewardLineDetailList());
+        assertEquals(1, handleResult.getRewardLineDetailList().size());
+        // 中奖详情中奖数量，1
+        assertEquals(1L, (long) handleResult.getRewardLineDetailList().get(0).getRewardLineCount());
+        // 中奖类型为现金中奖
+        assertEquals(RewardLineSubTypeEnum.CASH, handleResult.getRewardLineDetailList().get(0).getRewardLineSubType());
+        // 现金中奖倍率 ： 10
+        assertEquals(BigDecimal.valueOf(multi), handleResult.getRewardLineDetailList().get(0).getMultiple());
+
+        // 命中免费轮
+        assertTrue(handleResult.isHasRewardFreeWheel());
     }
 
 }
