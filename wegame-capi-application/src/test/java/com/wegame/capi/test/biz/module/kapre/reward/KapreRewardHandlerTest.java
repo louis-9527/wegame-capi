@@ -92,7 +92,7 @@ public class KapreRewardHandlerTest extends BaseTest {
     }
 
     /**
-     * 中一条线 - cash + wild 3连  40倍
+     * 中一条线 - cash + wild 3连  50倍
      */
     @Test
     public void test_reward_cash_wild() {
@@ -100,7 +100,7 @@ public class KapreRewardHandlerTest extends BaseTest {
         RewardHandleDo<KapreSymbolDo> rewardHandle = KapreRewardHandlerTestMocker.buildTestRewardHandleDo(symbolArr, 0, false, BET_AMOUNT, null);
         RewardResultDo<KapreSymbolDo> handleResult = kapreRewardHandler.handle(rewardHandle);
         assertNotNull(handleResult);
-        long multi = 40L;
+        long multi = 50L;
         // 中奖类型，单奖励
         assertEquals(RewardTypeEnum.SINGLE, handleResult.getRewardType());
         // 中奖金额 ：20000
@@ -108,11 +108,11 @@ public class KapreRewardHandlerTest extends BaseTest {
         // 中奖线列表,1
         assertNotNull(handleResult.getRewardLineDetailList());
         assertEquals(1, handleResult.getRewardLineDetailList().size());
-        // 中奖详情中奖数量，1
-        assertEquals(1L, (long) handleResult.getRewardLineDetailList().get(0).getRewardLineCount());
+        // 中奖详情中奖数量，2
+        assertEquals(2L, (long) handleResult.getRewardLineDetailList().get(0).getRewardLineCount());
         // 中奖类型为现金中奖
         assertEquals(RewardLineSubTypeEnum.CASH, handleResult.getRewardLineDetailList().get(0).getRewardLineSubType());
-        // 现金中奖倍率 ： 20
+        // 现金中奖倍率 ： 50
         assertEquals(BigDecimal.valueOf(multi), handleResult.getRewardLineDetailList().get(0).getMultiple());
     }
 
@@ -127,9 +127,9 @@ public class KapreRewardHandlerTest extends BaseTest {
         assertNotNull(handleResult);
         // 中奖类型，单奖励
         assertEquals(RewardTypeEnum.MULTIPLE, handleResult.getRewardType());
-        // 中奖线列表,1
+        // 中奖线列表,3
         assertNotNull(handleResult.getRewardLineDetailList());
-        assertEquals(2, handleResult.getRewardLineDetailList().size());
+        assertEquals(3, handleResult.getRewardLineDetailList().size());
     }
 
     /**

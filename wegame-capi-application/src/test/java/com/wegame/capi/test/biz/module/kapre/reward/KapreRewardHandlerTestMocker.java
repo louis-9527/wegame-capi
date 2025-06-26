@@ -161,7 +161,7 @@ public class KapreRewardHandlerTestMocker {
 
         // 第二列
         symbolArr[0][1] = buildCommonSymbol(SymbolEnum.Symbol1001);
-        symbolArr[1][1] = buildCommonSymbol(SymbolEnum.Symbol1005);
+        symbolArr[1][1] = buildWildSymbol(BigDecimal.valueOf(10));
         symbolArr[2][1] = buildWildSymbol(BigDecimal.valueOf(10));
         symbolArr[3][1] = buildCommonSymbol(SymbolEnum.Symbol1007);
 
@@ -188,21 +188,21 @@ public class KapreRewardHandlerTestMocker {
     protected static KapreSymbolDo[][] mockSymbolArr_reward_cash_wild_and_normal() {
         KapreSymbolDo[][] symbolArr = new KapreSymbolDo[4][5];
         // 第一列
-        symbolArr[0][0] = buildCashSymbol(BigDecimal.valueOf(5));
-        symbolArr[1][0] = buildCommonSymbol(SymbolEnum.Symbol1001);
-        symbolArr[2][0] = buildCommonSymbol(SymbolEnum.Symbol1003);
-        symbolArr[3][0] = buildCommonSymbol(SymbolEnum.Symbol1004);
+        symbolArr[0][0] = buildCashSymbol(BigDecimal.valueOf(3));
+        symbolArr[1][0] = buildCommonSymbol(SymbolEnum.Symbol1002);
+        symbolArr[2][0] = buildCommonSymbol(SymbolEnum.Symbol1006);
+        symbolArr[3][0] = buildCashSymbol(BigDecimal.valueOf(2));
 
         // 第二列
-        symbolArr[0][1] = buildCommonSymbol(SymbolEnum.Symbol1001);
+        symbolArr[0][1] = buildCommonSymbol(SymbolEnum.Symbol1002);
         symbolArr[1][1] = buildWildSymbol(BigDecimal.valueOf(10));
         symbolArr[2][1] = buildWildSymbol(BigDecimal.valueOf(10));
         symbolArr[3][1] = buildCommonSymbol(SymbolEnum.Symbol1007);
 
         // 第三列
-        symbolArr[0][2] = buildCommonSymbol(SymbolEnum.Symbol1001);
+        symbolArr[0][2] = buildCommonSymbol(SymbolEnum.Symbol1002);
         symbolArr[1][2] = buildCashSymbol(BigDecimal.valueOf(5));
-        symbolArr[2][2] = buildCommonSymbol(SymbolEnum.Symbol1009);
+        symbolArr[2][2] = buildCommonSymbol(SymbolEnum.Symbol1006);
         symbolArr[3][2] = buildCommonSymbol(SymbolEnum.Symbol1007);
 
         // 第四列
