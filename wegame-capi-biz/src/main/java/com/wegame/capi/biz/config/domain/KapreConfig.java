@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 @Data
@@ -57,11 +58,11 @@ public class KapreConfig {
         /**
          * 免费轮轮带表概率
          */
-        private ProbabilisticItemConfig freeProbabilisticConfig;
+        private Map<String, BigDecimal> freeProbabilisticConfig;
         /**
          * 付费轮轮带表概率
          */
-        private ProbabilisticItemConfig payProbabilisticConfig;
+        private Map<String, BigDecimal> payProbabilisticConfig;
     }
 
     @Data
@@ -71,32 +72,13 @@ public class KapreConfig {
     public static class MultipleProbabilisticConfig implements Serializable {
         private static final long serialVersionUID = -1979032185209671306L;
         /**
-         * 免费轮轮带表概率
+         * 免费轮轮带表倍率概率
          */
         private TreeMap<BigDecimal, BigDecimal> freeProbabilisticConfig;
         /**
-         * 付费轮轮带表概率
+         * 付费轮轮带表倍率概率
          */
         private TreeMap<BigDecimal, BigDecimal> payProbabilisticConfig;
-    }
-
-
-    @Data
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ProbabilisticItemConfig implements Serializable {
-        private static final long serialVersionUID = 1668650891423750345L;
-        private BigDecimal mode1;
-        private BigDecimal mode2;
-        private BigDecimal mode3;
-        private BigDecimal mode4;
-        private BigDecimal mode5;
-        private BigDecimal mode6;
-        private BigDecimal mode7;
-        private BigDecimal mode8;
-        private BigDecimal mode9;
-        private BigDecimal mode10;
     }
 
     @Data
