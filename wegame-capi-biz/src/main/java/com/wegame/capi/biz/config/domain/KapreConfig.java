@@ -82,7 +82,11 @@ public class KapreConfig {
         /**
          * 付费轮轮带表概率
          */
-        private Map<String, BigDecimal> payProbabilisticConfig;
+        private Map<String, BigDecimal> normalBetPayProbabilisticConfig;
+        /**
+         * 付费轮轮带表概率
+         */
+        private Map<String, BigDecimal> buyBetPayProbabilisticConfig;
     }
 
     @Data
