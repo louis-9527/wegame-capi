@@ -27,6 +27,7 @@ public class KapreMultipleCalculateStrategy extends AbstractMultipleCalculateStr
 
     @Override
     public BigDecimal calculateMultipleOfSingleRewardLine(RewardHandleDo<KapreSymbolDo> rewardHandle, RewardLineDo<KapreSymbolDo> rewardLine) {
+        AssertUtil.assertNotNull(rewardLine, ErrorCode.ERR_INTER, "rewardLine is null");
         if (rewardLine.isCashReward()) {
             return getTotalMultipleOfCashReward(rewardLine);
         } else {
@@ -35,8 +36,7 @@ public class KapreMultipleCalculateStrategy extends AbstractMultipleCalculateStr
     }
 
     private BigDecimal getTotalMultipleOfCashReward(RewardLineDo<KapreSymbolDo> rewardLine) {
-        AssertUtil.assertNotNull(rewardLine, ErrorCode.ERR_INTER);
-        AssertUtil.assertNotEmpty(rewardLine.getRewardSymbolList(), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotEmpty(rewardLine.getRewardSymbolList(), ErrorCode.ERR_INTER, "rewardSymbolList is null");
         BigDecimal totalMultiple = BigDecimal.ZERO;
         for (RewardSymbolDo<KapreSymbolDo> rewardSymbolDo : rewardLine.getRewardSymbolList()) {
             KapreSymbolDo symbolDo = rewardSymbolDo.getSymbol();
@@ -47,9 +47,8 @@ public class KapreMultipleCalculateStrategy extends AbstractMultipleCalculateStr
                 totalMultiple = totalMultiple.add(symbolDo.getSymbolMultiple());
             } else if (symbolDo.isWildSymbol()) {
                 KapreSymbolDo nestSymbol = symbolDo.getNestSymbol();
-                if (Objects.nonNull(nestSymbol)) {
-                    totalMultiple = totalMultiple.add(nestSymbol.getSymbolMultiple());
-                }
+                AssertUtil.assertNotNull(nestSymbol, ErrorCode.ERR_INTER, "nestSymbol in wildSymbol can not be null");
+                totalMultiple = totalMultiple.add(nestSymbol.getSymbolMultiple());
             }
         }
         return totalMultiple;
