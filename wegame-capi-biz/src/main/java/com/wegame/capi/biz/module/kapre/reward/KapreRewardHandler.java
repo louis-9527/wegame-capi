@@ -63,6 +63,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         List<RewardLineDo<KapreSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         int scatterCount = scatterCount(rewardHandle);
 //        Integer freeWheelTimes = kapreConfig.getFreeWheelTimes();
+        // todo 使用配置文件中的配置
         Integer freeWheelTimes = 8;
         boolean rewardFreeWheel = scatterCount >= SCATTER_COUNT_FOR_FREE_SPIN;
         if (CollectionUtil.isEmpty(rewardLineList)) {
@@ -273,7 +274,8 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
                     .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
         } else if (rewardLine.isCashReward()) {
             //现金中奖 ： 投注额 * 倍率
-            return BigDecimal.valueOf(betAmount).multiply(odds).multiply(multiple);
+            return BigDecimal.valueOf(betAmount)
+                    .multiply(multiple);
         } else {
             return BigDecimal.valueOf(betAmount)
                     .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
