@@ -98,16 +98,16 @@ public class KapreConfig {
     @AllArgsConstructor
     public static class WheelChartNormal implements Serializable {
         private static final long serialVersionUID = 2230831501499401617L;
-        private List<List<Integer>> mode1;
-        private List<List<Integer>> mode2;
-        private List<List<Integer>> mode3;
-        private List<List<Integer>> mode4;
-        private List<List<Integer>> mode5;
-        private List<List<Integer>> mode6;
-        private List<List<Integer>> mode7;
-        private List<List<Integer>> mode8;
-        private List<List<Integer>> mode9;
-        private List<List<Integer>> mode10;
+        private Map<String, List<List<Integer>>> mode1;
+        private Map<String, List<List<Integer>>> mode2;
+        private Map<String, List<List<Integer>>> mode3;
+        private Map<String, List<List<Integer>>> mode4;
+        private Map<String, List<List<Integer>>> mode5;
+        private Map<String, List<List<Integer>>> mode6;
+        private Map<String, List<List<Integer>>> mode7;
+        private Map<String, List<List<Integer>>> mode8;
+        private Map<String, List<List<Integer>>> mode9;
+        private Map<String, List<List<Integer>>> mode10;
     }
 
     @Data
@@ -116,7 +116,7 @@ public class KapreConfig {
     @AllArgsConstructor
     public static class WheelChartBuy implements Serializable {
         private static final long serialVersionUID = 993591228720351839L;
-        private List<List<Integer>> modeS;
+        private Map<String, List<List<Integer>>> modeS;
     }
 
 }
