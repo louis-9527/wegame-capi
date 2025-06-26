@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.module.kapre.odds;
 
 import com.wegame.capi.biz.config.domain.KapreConfig;
-import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.odds.OddsCalculateDo;
 import com.wegame.capi.biz.module.base.odds.AbstractOddsCalculateStrategy;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +19,6 @@ public class KapreOddsCalculateStrategy extends AbstractOddsCalculateStrategy {
 
     @Override
     public TreeMap<String, TreeMap<String, BigDecimal>> getOddsConfig(OddsCalculateDo oddsCalculateDo) {
-        throw new RuntimeException("todo");
+        return kapreConfig.getOddsConfig().getCommonOddsConfig();
     }
 }
