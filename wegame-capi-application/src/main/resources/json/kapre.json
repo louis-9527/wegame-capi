@@ -1,6 +1,55 @@
 {
   "rewardNotifyMinMultiple": "100",
   "rewardMaxMultiple": "100000",
+  "oddsConfig": {
+    "commonOddsConfig": {
+      "1001": {
+        "THREE": "0.4",
+        "FOUR": "0.6",
+        "FIVE": "0.7"
+      },
+      "1002": {
+        "THREE": "0.4",
+        "FOUR": "0.6",
+        "FIVE": "0.8"
+      },
+      "1003": {
+        "THREE": "0.6",
+        "FOUR": "0.8",
+        "FIVE": "1"
+      },
+      "1004": {
+        "THREE": "0.6",
+        "FOUR": "0.8",
+        "FIVE": "1"
+      },
+      "1005": {
+        "THREE": "0.8",
+        "FOUR": "1",
+        "FIVE": "1.2"
+      },
+      "1006": {
+        "THREE": "1.2",
+        "FOUR": "1.4",
+        "FIVE": "1.6"
+      },
+      "1007": {
+        "THREE": "1.4",
+        "FOUR": "1.6",
+        "FIVE": "1.8"
+      },
+      "1008": {
+        "THREE": "1.6",
+        "FOUR": "1.8",
+        "FIVE": "2"
+      },
+      "1009": {
+        "THREE": "2",
+        "FOUR": "2.2",
+        "FIVE": "2.4"
+      }
+    }
+  },
   "probabilisticConfig": {
     "wheelChartProbabilisticConfig": {
       "freeProbabilisticConfig": {

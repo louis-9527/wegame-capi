@@ -1,8 +1,6 @@
 package com.wegame.capi.biz.config.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -25,6 +23,10 @@ public class KapreConfig {
      */
     private Integer rewardMaxMultiple;
     /**
+     * 赔率配置
+     */
+    private OddsConfig oddsConfig;
+    /**
      * 概率配置
      */
     private ProbabilisticConfig probabilisticConfig;
@@ -32,6 +34,19 @@ public class KapreConfig {
      * 轮带表配置
      */
     private KapreConfig.WheelChart wheelChart;
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class OddsConfig implements Serializable {
+        /**
+         * TreeMap<元素ID，<赔率类型，具体赔率>>
+         */
+        private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
+    }
 
     @Data
     @SuperBuilder
