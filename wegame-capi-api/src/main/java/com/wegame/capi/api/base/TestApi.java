@@ -1,36 +1,34 @@
 package com.wegame.capi.api.base;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
-import java.util.stream.IntStream;
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.warmUpConnectionThreadPoolExecutor;
 
 @Slf4j
 @Service
 public class TestApi extends CommonBaseApi {
 
-    public void initConnections() {
+    public void ping() {
         try {
             String url = "http://server1.makillingslot.net/capi/game/common/ping";
-            IntStream.range(0, 200).forEach(i -> {
-                try {
-//                    domainWarmUpThreadPoolExecutor.submit(() -> {
-                        try {
-                            walletRestTemplate.getForEntity(url, Object.class);
-                            log.info("singleWallet health check response suc");
-                        } catch (Exception e) {
-                            log.warn("singleWallet health check error", e);
-                        }
-//                    });
-                } catch (Exception ignored) {
-                    // 忽略所有异常
-                }
-            });
+            ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
+            log.info("ping response: {}", response);
         } catch (Exception e) {
             // 忽略所有异常
+        }
+    }
+
+    @Async(warmUpConnectionThreadPoolExecutor)
+    public void healthCheck() {
+        try {
+            String url = "http://server1.makillingslot.net/capi/game/common/ping";
+            ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
+            log.info("singleWallet health check: {}", response);
+        } catch (Exception e) {
+            log.warn("singleWallet health check error", e);
         }
     }
 }

@@ -50,10 +50,12 @@
 //    /// /        }
 ////        return CommonResponse.build(true);
 ////    }
-//    @ApiOperation(value = "test/api", httpMethod = "GET")
-//    @GetMapping("/test/api")
-//    public CommonResponse<Boolean> testApi() {
-//        testApi.initConnections();
+//
+//
+//    @ApiOperation(value = "test/api/ping", httpMethod = "GET")
+//    @GetMapping("/test/api/ping")
+//    public CommonResponse<Boolean> testApiPing() {
+//        testApi.ping();
 //        return CommonResponse.build(true);
 //    }
 //
