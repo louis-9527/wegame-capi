@@ -4,6 +4,7 @@ import com.wegame.base.exception.LockException;
 import com.wegame.base.lock.DistributeLock;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.SingleWalletFreeSpinApi;
+import com.wegame.capi.api.base.TestApi;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.biz.service.RandomService;
@@ -77,6 +78,11 @@ public class AppLaunchPostProcessor {
     PoolingHttpClientConnectionManager freeSpinConnectionManager;
     @Autowired
     PoolingHttpClientConnectionManager promotionConnectionManager;
+    @Autowired
+    RandomService randomService;
+    @Autowired
+    TestApi testApi;
+
 
     @Async(defaultThreadPoolExecutor)
     public void postProcess() {
@@ -200,16 +206,15 @@ public class AppLaunchPostProcessor {
         }
     }
 
-    @Autowired
-    RandomService randomService;
-
     private void warmUpConnections() {
+        //        warmTestDomainConnections();
         int randomSeconds = randomService.randomInt(1, 60);
         LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
         warmUpSingleDomainConnections();
         randomSeconds = randomService.randomInt(1, 60);
         LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
         warmFreeSpinDomainConnections();
+        randomSeconds = randomService.randomInt(1, 60);
         LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
         warmPromotionDomainConnections();
     }
@@ -226,7 +231,7 @@ public class AppLaunchPostProcessor {
                         }
                     });
         } catch (Exception e) {
-            log.error("warmUpConnections error", e);
+            log.error("warmUpSingleDomainConnections error", e);
         }
     }
 
@@ -242,7 +247,7 @@ public class AppLaunchPostProcessor {
                         }
                     });
         } catch (Exception e) {
-            log.error("warmUpConnections error", e);
+            log.error("warmFreeSpinDomainConnections error", e);
         }
     }
 
@@ -258,7 +263,23 @@ public class AppLaunchPostProcessor {
                         }
                     });
         } catch (Exception e) {
-            log.error("warmUpConnections error", e);
+            log.error("warmPromotionDomainConnections error", e);
         }
     }
+
+    //    private void warmTestDomainConnections() {
+    //        try {
+    //            IntStream.range(0, 100)
+    //                    .parallel()
+    //                    .forEach(i -> {
+    //                        try {
+    //                            testApi.ping();
+    //                        } catch (Exception ignored) {
+    //                            // 忽略所有异常
+    //                        }
+    //                    });
+    //        } catch (Exception e) {
+    //            log.error("warmTestDomainConnections error", e);
+    //        }
+    //    }
 }

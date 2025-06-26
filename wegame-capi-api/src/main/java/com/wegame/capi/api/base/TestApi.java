@@ -11,11 +11,12 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.warmUpConne
 @Service
 public class TestApi extends CommonBaseApi {
 
+    @Async(warmUpConnectionThreadPoolExecutor)
     public void ping() {
         try {
             String url = "http://server1.makillingslot.net/capi/game/common/ping";
             ResponseEntity<Object> response = walletRestTemplate.getForEntity(url, Object.class);
-            log.info("ping response: {}", response);
+            log.error("ping response: {}", response);
         } catch (Exception e) {
             // 忽略所有异常
         }
