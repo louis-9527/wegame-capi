@@ -6,6 +6,7 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.kapre.KapreGameHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 
@@ -152,9 +153,11 @@ public class KapreRewardHandlerTestMocker {
         return RewardHandleDo.<KapreSymbolDo>builder()
                 .gameType(KapreGameHelper.KAPRE_GAME_INFO.getGameType())
                 .gameInfo(KapreGameHelper.KAPRE_GAME_INFO)
+                .gamePlayType(GamePlayTypeEnum.NORMAL_PLAY)
                 .betType(BetTypeEnum.NORMAL_BET)
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
                 .betAmount(betAmount)
+                .currentTotalRewardAmount(0L)
                 .wheel(WheelDo.<KapreSymbolDo>builder()
                         .index(wheelIndex)
                         .symbolArr(symbolArr)

@@ -8,6 +8,8 @@ import com.wegame.capi.test.BaseTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -47,6 +49,8 @@ public class KapreRewardHandlerTest extends BaseTest {
         assertEquals(1, handleResult.getRewardLineDetailList().size());
         // 中奖详情中奖数量，1
         assertEquals(1L, (long) handleResult.getRewardLineDetailList().get(0).getRewardLineCount());
+        // 现金中奖倍率 ： 10
+        assertEquals(BigDecimal.valueOf(10), handleResult.getRewardLineDetailList().get(0).getMultiple());
     }
 
     /**
@@ -64,6 +68,8 @@ public class KapreRewardHandlerTest extends BaseTest {
         assertEquals(1, handleResult.getRewardLineDetailList().size());
         // 中奖详情中奖数量，1
         assertEquals(1L, (long) handleResult.getRewardLineDetailList().get(0).getRewardLineCount());
+        // 现金中奖倍率 ： 20
+        assertEquals(BigDecimal.valueOf(20), handleResult.getRewardLineDetailList().get(0).getMultiple());
     }
 
 }
