@@ -87,7 +87,7 @@ public class KapreConfig {
     @AllArgsConstructor
     public static class WheelChart implements Serializable {
         private static final long serialVersionUID = -4274036157496212845L;
-        private Map<String, List<List<Integer>>> normal;
-        private Map<String, List<List<Integer>>> buy;
+        private Map<String, List<List<String>>> normal;
+        private Map<String, List<List<String>>> buy;
     }
 }
