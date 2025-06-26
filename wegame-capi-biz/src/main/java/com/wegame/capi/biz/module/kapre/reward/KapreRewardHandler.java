@@ -62,9 +62,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         // 2、计算中奖线
         List<RewardLineDo<KapreSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         int scatterCount = scatterCount(rewardHandle);
-//        Integer freeWheelTimes = kapreConfig.getFreeWheelTimes();
-        // todo 使用配置文件中的配置
-        Integer freeWheelTimes = 8;
+        Integer freeWheelTimes = kapreConfig.getFreeWheelTimes();
         boolean rewardFreeWheel = scatterCount >= SCATTER_COUNT_FOR_FREE_SPIN;
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
