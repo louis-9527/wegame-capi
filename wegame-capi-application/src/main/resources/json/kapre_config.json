@@ -65,7 +65,7 @@
         "mode9": "0.00",
         "mode10": "0.00"
       },
-      "payProbabilisticConfig": {
+      "normalBetPayProbabilisticConfig": {
         "mode1": "0.00",
         "mode2": "0.00",
         "mode3": "0.100",
@@ -76,6 +76,9 @@
         "mode8": "0.100",
         "mode9": "0.150",
         "mode10": "0.200"
+      },
+      "buyBetPayProbabilisticConfig" : {
+        "modeS": "100.000"
       }
     },
     "multipleProbabilisticConfig": {
