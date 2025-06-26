@@ -5,6 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.TreeMap;
 
 @Data
 @SuperBuilder
@@ -12,16 +16,125 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class KapreConfig {
     /**
+     * 中奖通知最小倍数
+     */
+    private Integer rewardNotifyMinMultiple;
+    /**
      * 中奖最大倍数
      */
     private Integer rewardMaxMultiple;
-
     /**
-     * 免费次数
+     * 概率配置
      */
-    private Integer freeWheelTimes;
+    private ProbabilisticConfig probabilisticConfig;
+    /**
+     * 轮带表配置
+     */
+    private KapreConfig.WheelChart wheelChart;
 
-    public void validate() {
-
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProbabilisticConfig implements Serializable {
+        private static final long serialVersionUID = -3127327864121298415L;
+        /**
+         * 轮带表概率配置
+         */
+        private WheelChartProbabilisticConfig wheelChartProbabilisticConfig;
+        /**
+         * 倍率概率配置
+         */
+        private MultipleProbabilisticConfig multipleProbabilisticConfig;
     }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WheelChartProbabilisticConfig implements Serializable {
+        private static final long serialVersionUID = -1979032185209671306L;
+        /**
+         * 免费轮轮带表概率
+         */
+        private ProbabilisticItemConfig freeProbabilisticConfig;
+        /**
+         * 付费轮轮带表概率
+         */
+        private ProbabilisticItemConfig payProbabilisticConfig;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MultipleProbabilisticConfig implements Serializable {
+        private static final long serialVersionUID = -1979032185209671306L;
+        /**
+         * 免费轮轮带表概率
+         */
+        private TreeMap<BigDecimal, BigDecimal> freeProbabilisticConfig;
+        /**
+         * 付费轮轮带表概率
+         */
+        private TreeMap<BigDecimal, BigDecimal> payProbabilisticConfig;
+    }
+
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProbabilisticItemConfig implements Serializable {
+        private static final long serialVersionUID = 1668650891423750345L;
+        private BigDecimal mode1;
+        private BigDecimal mode2;
+        private BigDecimal mode3;
+        private BigDecimal mode4;
+        private BigDecimal mode5;
+        private BigDecimal mode6;
+        private BigDecimal mode7;
+        private BigDecimal mode8;
+        private BigDecimal mode9;
+        private BigDecimal mode10;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WheelChart implements Serializable {
+        private static final long serialVersionUID = -4274036157496212845L;
+        private WheelChartNormal normal;
+        private WheelChartBuy buy;
+    }
+
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WheelChartNormal implements Serializable {
+        private static final long serialVersionUID = 2230831501499401617L;
+        private List<List<Integer>> mode1;
+        private List<List<Integer>> mode2;
+        private List<List<Integer>> mode3;
+        private List<List<Integer>> mode4;
+        private List<List<Integer>> mode5;
+        private List<List<Integer>> mode6;
+        private List<List<Integer>> mode7;
+        private List<List<Integer>> mode8;
+        private List<List<Integer>> mode9;
+        private List<List<Integer>> mode10;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class WheelChartBuy implements Serializable {
+        private static final long serialVersionUID = 993591228720351839L;
+        private List<List<Integer>> modeS;
+    }
+
 }

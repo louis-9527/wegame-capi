@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OperationEventConfigRecordServiceTest extends BaseTest {
+public class OperationEventProbabilisticItemConfigRecordServiceTest extends BaseTest {
 
     @Autowired
     OperationEventConfigRecordService operationEventConfigRecordService;
