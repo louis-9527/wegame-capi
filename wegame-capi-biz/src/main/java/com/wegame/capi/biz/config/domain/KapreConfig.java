@@ -42,6 +42,7 @@ public class KapreConfig {
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
     public static class OddsConfig implements Serializable {
+        private static final long serialVersionUID = 8658064994692389675L;
         /**
          * TreeMap<元素ID，<赔率类型，具体赔率>>
          */
