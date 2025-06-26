@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class OperationEventConfigServiceTest extends BaseTest {
+public class OperationEventProbabilisticItemConfigServiceTest extends BaseTest {
 
     @Autowired
     OperationEventConfigService operationEventConfigService;
