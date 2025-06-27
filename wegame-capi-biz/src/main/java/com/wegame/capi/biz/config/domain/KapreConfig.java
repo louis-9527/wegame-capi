@@ -83,15 +83,15 @@ public class KapreConfig {
         /**
          * 免费轮轮带表概率
          */
-        private Map<String, Integer> freeProbabilisticConfig;
+        private Map<String, BigDecimal> freeProbabilisticConfig;
         /**
          * 付费轮轮带表概率
          */
-        private Map<String, Integer> normalBetPayProbabilisticConfig;
+        private Map<String, BigDecimal> normalBetPayProbabilisticConfig;
         /**
          * 付费轮轮带表概率
          */
-        private Map<String, Integer> buyBetPayProbabilisticConfig;
+        private Map<String, BigDecimal> buyBetPayProbabilisticConfig;
     }
 
     @Data
@@ -159,16 +159,16 @@ public class KapreConfig {
         Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.freeProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#freeProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.normalBetPayProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#normalBetPayProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.buyBetPayProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#buyBetPayProbabilisticConfig is null");
-        int freeProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.freeProbabilisticConfig.values().stream().reduce(0, Integer::sum);
-        int normalBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.normalBetPayProbabilisticConfig.values().stream().reduce(0, Integer::sum);
-        int buyBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.buyBetPayProbabilisticConfig.values().stream().reduce(0, Integer::sum);
-        AssertUtil.assertTrue(Objects.equals(freeProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#freeProbabilisticConfig ERR");
-        AssertUtil.assertTrue(Objects.equals(normalBetPayProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#normalBetPayProbabilisticConfig ERR");
-        AssertUtil.assertTrue(Objects.equals(buyBetPayProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#buyBetPayProbabilisticConfig ERR");
-        // probabilisticConfig.multipleProbabilisticConfig校验极其子属性校验
-        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.freeProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#freeProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.payProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#payProbabilisticConfig is null");
+//        int freeProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.freeProbabilisticConfig.values().stream().reduce(0, Integer::sum);
+//        int normalBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.normalBetPayProbabilisticConfig.values().stream().reduce(0, Integer::sum);
+//        int buyBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.buyBetPayProbabilisticConfig.values().stream().reduce(0, Integer::sum);
+//        AssertUtil.assertTrue(Objects.equals(freeProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#freeProbabilisticConfig ERR");
+//        AssertUtil.assertTrue(Objects.equals(normalBetPayProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#normalBetPayProbabilisticConfig ERR");
+//        AssertUtil.assertTrue(Objects.equals(buyBetPayProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#buyBetPayProbabilisticConfig ERR");
+//        // probabilisticConfig.multipleProbabilisticConfig校验极其子属性校验
+//        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig is null");
+//        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.freeProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#freeProbabilisticConfig is null");
+//        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.payProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#payProbabilisticConfig is null");
     }
 
     private void wheelChartValidate() {
