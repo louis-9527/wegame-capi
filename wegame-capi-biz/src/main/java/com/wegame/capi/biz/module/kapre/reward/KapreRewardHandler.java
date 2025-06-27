@@ -139,7 +139,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         // 1、处理第一列
         for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             KapreSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
-            // 首列 wild & scatter 不参与中奖
+            // 首列 wild & scatter 在首列不参与中奖
             if (targetSymbol.isWildSymbol() || targetSymbol.isScatterSymbol()) {
                 continue;
             }
