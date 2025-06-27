@@ -83,15 +83,15 @@ public class KapreConfig {
         /**
          * 免费轮轮带表概率
          */
-        private Map<String, BigDecimal> freeProbabilisticConfig;
+        private TreeMap<String, BigDecimal> freeProbabilisticConfig;
         /**
          * 付费轮轮带表概率
          */
-        private Map<String, BigDecimal> normalBetPayProbabilisticConfig;
+        private TreeMap<String, BigDecimal> normalBetPayProbabilisticConfig;
         /**
          * 付费轮轮带表概率
          */
-        private Map<String, BigDecimal> buyBetPayProbabilisticConfig;
+        private TreeMap<String, BigDecimal> buyBetPayProbabilisticConfig;
     }
 
     @Data
@@ -116,8 +116,8 @@ public class KapreConfig {
     @AllArgsConstructor
     public static class WheelChart implements Serializable {
         private static final long serialVersionUID = -4274036157496212845L;
-        private Map<String, List<List<String>>> normal;
-        private Map<String, List<List<String>>> buy;
+        private TreeMap<String, List<List<String>>> normal;
+        private TreeMap<String, List<List<String>>> buy;
     }
 
     public void validate() {
