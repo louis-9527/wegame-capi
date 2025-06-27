@@ -3,13 +3,16 @@ package com.wegame.capi.biz.module.kapre.bet.strategy;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
@@ -33,7 +37,23 @@ public class KapreNormalBetStrategy extends AbstractKapreBetStrategy {
 
     @Override
     public void freeWheelAfterHandle(Long betRecordId) {
-       throw new RuntimeException("todo");
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        log.info("freeWheelAfterHandle start... betRecordId: {}", betRecordId);
+        defaultThreadPoolExecutor.execute(() -> {
+            try {
+                BetRecordDo betRecord = kapreBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.KAPRE);
+                AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
+                GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
+                Long freeWheelCount = kapreBetRecordManager.countGameRecord(query, GameTypeEnum.KAPRE);
+                if (Objects.isNull(freeWheelCount)) {
+                    log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
+                    return;
+                }
+                updateRewardNotifyInfo(freeWheelCount, betRecord.getPayOutAmount(), userInfo);
+            } catch (Exception e) {
+                log.error("freeWheelAfterHandle Exception, errMsg: {}", e.getMessage(), e);
+            }
+        });
     }
 
     private void updateRewardNotifyInfo(long freeWheelCount, long totalRewardAmount, UserInfo userInfo) {

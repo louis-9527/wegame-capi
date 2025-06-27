@@ -2,7 +2,6 @@ package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.module.kapre.KapreGameHelper;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -23,9 +22,9 @@ import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBO
 public class KapreSymbolDo extends SymbolDo {
     private static final long serialVersionUID = -226654678653448L;
     /**
-     * 元素倍率,默认0，现金symbol可使用
+     * 元素倍率,现金symbol可使用
      */
-    private BigDecimal symbolMultiple = BigDecimal.ZERO;
+    private BigDecimal symbolMultiple;
 
     /**
      * 嵌套symbol
@@ -47,14 +46,16 @@ public class KapreSymbolDo extends SymbolDo {
     }
 
     public boolean isCashSymbol() {
-        return StringUtils.equals(this.getId(), KapreGameHelper.KAPRE_Symbol1010.getId());
+        return StringUtils.equals(this.getId(), KapreGameHelper.KAPRE_CASH_SYMBOL.getId());
     }
 
-    public static KapreSymbolDo buildFromSymbol(SymbolDo symbol, SymbolSizeEnum symbolSize, boolean symbolGoldBorder) {
+    public static KapreSymbolDo buildFromSymbol(SymbolDo symbol, BigDecimal symbolMultiple, KapreSymbolDo nestSymbol) {
         return KapreSymbolDo.builder()
                 .id(symbol.getId())
                 .name(symbol.getName())
                 .symbolType(symbol.getSymbolType())
+                .symbolMultiple(symbolMultiple)
+                .nestSymbol(nestSymbol)
                 .build();
     }
 }
