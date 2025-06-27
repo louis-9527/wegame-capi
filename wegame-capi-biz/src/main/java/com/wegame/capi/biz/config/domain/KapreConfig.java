@@ -1,12 +1,17 @@
 package com.wegame.capi.biz.config.domain;
 
+import cn.hutool.core.lang.Assert;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 @Data
@@ -78,15 +83,15 @@ public class KapreConfig {
         /**
          * 免费轮轮带表概率
          */
-        private Map<String, BigDecimal> freeProbabilisticConfig;
+        private Map<String, Integer> freeProbabilisticConfig;
         /**
          * 付费轮轮带表概率
          */
-        private Map<String, BigDecimal> normalBetPayProbabilisticConfig;
+        private Map<String, Integer> normalBetPayProbabilisticConfig;
         /**
          * 付费轮轮带表概率
          */
-        private Map<String, BigDecimal> buyBetPayProbabilisticConfig;
+        private Map<String, Integer> buyBetPayProbabilisticConfig;
     }
 
     @Data
@@ -113,5 +118,60 @@ public class KapreConfig {
         private static final long serialVersionUID = -4274036157496212845L;
         private Map<String, List<List<String>>> normal;
         private Map<String, List<List<String>>> buy;
+    }
+
+    public void validate() {
+        rewardNotifyMinMultipleValidate();
+        rewardMaxMultipleValidate();
+        freeWheelTimesValidate();
+        oddsConfigValidate();
+        probabilisticConfigValidate();
+        wheelChartValidate();
+    }
+
+    private void rewardNotifyMinMultipleValidate() {
+        AssertUtil.assertNotNull(rewardNotifyMinMultiple, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple is null");
+        AssertUtil.assertTrue(rewardNotifyMinMultiple > 0, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple must great than 0");
+    }
+    private void rewardMaxMultipleValidate() {
+        AssertUtil.assertNotNull(this.rewardMaxMultiple, ErrorCode.ERR_INTER, "rewardMaxMultiple is null");
+        AssertUtil.assertTrue(this.rewardMaxMultiple > 0, ErrorCode.ERR_INTER, "rewardMaxMultiple is must great than 0");
+    }
+    private void freeWheelTimesValidate() {
+        AssertUtil.assertNotNull(freeWheelTimes, ErrorCode.ERR_INTER, "freeWheelTimes is null");
+        AssertUtil.assertTrue(freeWheelTimes > 0, ErrorCode.ERR_INTER, "freeWheelTimes must great than 0");
+    }
+    private void oddsConfigValidate() {
+        Assert.notNull(oddsConfig, "oddsConfig is null");
+        Assert.notNull(oddsConfig.commonOddsConfig, "oddsConfig.commonOddsConfig is null");
+        // 校验-赔率配置
+        oddsConfig.commonOddsConfig.keySet().forEach(symbolId -> {
+            TreeMap<String, BigDecimal> map = oddsConfig.commonOddsConfig.get(symbolId);
+            AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER, "Odds Config Err");
+        });
+    }
+    private void probabilisticConfigValidate() {
+        // probabilisticConfig校验
+        Assert.notNull(probabilisticConfig, "probabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig is null");
+        // probabilisticConfig.wheelChartProbabilisticConfig校验极其子属性校验
+        Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.freeProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#freeProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.normalBetPayProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#normalBetPayProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.buyBetPayProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#buyBetPayProbabilisticConfig is null");
+        int freeProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.freeProbabilisticConfig.values().stream().reduce(0, Integer::sum);
+        int normalBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.normalBetPayProbabilisticConfig.values().stream().reduce(0, Integer::sum);
+        int buyBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.buyBetPayProbabilisticConfig.values().stream().reduce(0, Integer::sum);
+        AssertUtil.assertTrue(Objects.equals(freeProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#freeProbabilisticConfig ERR");
+        AssertUtil.assertTrue(Objects.equals(normalBetPayProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#normalBetPayProbabilisticConfig ERR");
+        AssertUtil.assertTrue(Objects.equals(buyBetPayProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#buyBetPayProbabilisticConfig ERR");
+        // probabilisticConfig.multipleProbabilisticConfig校验极其子属性校验
+        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.freeProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#freeProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.payProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#payProbabilisticConfig is null");
+    }
+
+    private void wheelChartValidate() {
+
     }
 }
