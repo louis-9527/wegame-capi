@@ -91,7 +91,7 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
                 preDynamicWildIndex = kapreWheelWrapDo.getDynamicWildIndex();
                 // 中奖以及滚轮后处理
                 RewardResultDo<KapreSymbolDo> freeRewardResult = this.rewardAndWheelAfterHandler(gamePlay, kapreWheelWrapDo.getWheelDo(), BigDecimal.ZERO, totalRewardAmount.get());
-                // 组装首轮游戏记录
+                // 组装免费轮游戏记录
                 KapreGameRecordDo freeGameRecord = buildGameRecord(generateGameRecordId(), parentGameRecordId, gamePlay.getBetRecordId(), kapreWheelWrapDo.getWheelDo(), firstRewardResult);
                 // 免费轮处理
                 ret.add(freeGameRecord);
