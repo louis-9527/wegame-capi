@@ -78,6 +78,10 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
         DiwataMayariGameRecordDo gameRecord = buildGameRecord(gameRecordId, RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), gameRecordId, wheel, rewardResult);
         ret.add(gameRecord);
         totalRewardAmount.addAndGet(rewardResult.getTotalRewardAmount());
+        // 判断是否中奖或达到最大倍数
+        if(rewardResult.getAccumulateReachMaxMultiple()){
+            return ret;
+        }
         // 判断首轮是否中奖
         // 定义一个队列 用于临时存储免费游戏
         Queue<Long> freeWheelList = new LinkedList<>();
@@ -440,6 +444,10 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                 parentGameRecord.setGameRecordIds(new ArrayList<>());
             }
             parentGameRecord.getGameRecordIds().add(gameRecordId);
+            // 判断是否中奖或达到最大倍数
+            if(rewardResult.getAccumulateReachMaxMultiple()){
+                return ;
+            }
             // 判断是否中奖
             if(this.canContinuePlayOnPreWheel(gamePlay, rewardResult,totalRewardAmount)){
                 // 处理当前消除
@@ -484,7 +492,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
         }
         if(canContinuePlayOnPreWheel(gamePlay, rewardResult, totalRewardAmount)){
             // 中奖之后继续消除
-            loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
+            return loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
         }else {
             // 未中奖计算是否有免费轮
             if(rewardResult.isHasRewardFreeWheel()){
