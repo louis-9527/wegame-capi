@@ -65,7 +65,7 @@
         "mode9": "15.00",
         "mode10": "20.0"
       },
-      "payProbabilisticConfig": {
+      "normalBetPayProbabilisticConfig": {
         "mode1": "10.0",
         "mode2": "10.0",
         "mode3": "10.0",
