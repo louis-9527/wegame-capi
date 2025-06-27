@@ -1,6 +1,7 @@
 {
 	"rewardNotifyMinMultiple": "100",
 	"rewardMaxMultiple": "100000",
+	"freeWheelTimes": 8,
 	"probabilisticConfig": {
 		"wheelChartProbabilisticConfig": {
 			"freeProbabilisticConfig": {
@@ -26,6 +27,9 @@
 				"mode8": "10.0",
 				"mode9": "0",
 				"mode10": "0"
+			},
+			"buyBetPayProbabilisticConfig": {
+				"modeS": "100.000"
 			}
 		},
 		"multipleProbabilisticConfig": {
