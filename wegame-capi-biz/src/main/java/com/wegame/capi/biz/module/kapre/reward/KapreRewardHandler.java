@@ -80,7 +80,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         }
 
         // 4、中奖线处理
-        // 中奖总金额
+        // 当前回合中奖总金额
         long totalRewardAmount = 0L;
         // 中奖坐标列表
         List<RewardLineDetailDo<KapreSymbolDo>> rewardLineDetailList = Lists.newArrayList();
