@@ -54,7 +54,7 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
         AtomicLong totalRewardAmount = new AtomicLong(0L);
         // 生成首轮wheel
         WheelDo<KapreSymbolDo> firstWheel = this.generateCommonWheel(this.buildWheelChartModel(gamePlay, false),
-                this.buildCashSymbolMultipleProbabilisticConfig(gamePlay), false);
+                this.buildCashSymbolMultipleProbabilisticConfig(false), false);
         // 中奖以及滚轮后处理
         RewardResultDo<KapreSymbolDo> firstRewardResult = this.rewardAndWheelAfterHandler(gamePlay, firstWheel, BigDecimal.ZERO, totalRewardAmount.get());
         // 组装首轮游戏记录
@@ -86,7 +86,7 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
             IndexDo preDynamicWildIndex = null;
             for (int i = 0; i < freeWheelHandleDo.getTaskTimes(); i++) {
                 KapreWheelWrapDo kapreWheelWrapDo = this.generateFreeWheel(this.buildWheelChartModel(gamePlay, true),
-                        this.buildCashSymbolMultipleProbabilisticConfig(gamePlay), preDynamicWildIndex);
+                        this.buildCashSymbolMultipleProbabilisticConfig(true), preDynamicWildIndex);
                 // 本轮的游离wild 坐标
                 preDynamicWildIndex = kapreWheelWrapDo.getDynamicWildIndex();
                 // 中奖以及滚轮后处理
@@ -274,11 +274,10 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
     /**
      * 构建现金symbol 倍率概率配置
      *
-     * @param gamePlay gamplay
      * @return 倍率概率配置
      */
-    private TreeMap<BigDecimal, BigDecimal> buildCashSymbolMultipleProbabilisticConfig(GamePlayDo gamePlay) {
-        if (BetSubTypeEnum.isFreeWheel(gamePlay.getBetSubType().getCode())) {
+    private TreeMap<BigDecimal, BigDecimal> buildCashSymbolMultipleProbabilisticConfig(boolean isFreeSpinFlag) {
+        if (isFreeSpinFlag) {
             // 免费轮
             return kapreConfig.getProbabilisticConfig().getMultipleProbabilisticConfig().getFreeProbabilisticConfig();
         } else {
