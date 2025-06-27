@@ -18,7 +18,6 @@ import com.wegame.capi.biz.module.kapre.KapreGameHelper;
 import com.wegame.capi.biz.module.kapre.reward.KapreRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.RewardTypeEnum;
@@ -52,31 +51,66 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
     public List<KapreGameRecordDo> play(GamePlayDo gamePlay) {
         List<KapreGameRecordDo> ret = new ArrayList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
-        // 生成首轮wheel
-        WheelDo<KapreSymbolDo> firstWheel = this.generateCommonWheel(this.buildWheelChartModel(gamePlay, false),
-                this.buildCashSymbolMultipleProbabilisticConfig(false), false);
-        // 中奖以及滚轮后处理
-        RewardResultDo<KapreSymbolDo> firstRewardResult = this.rewardAndWheelAfterHandler(gamePlay, firstWheel, BigDecimal.ZERO, totalRewardAmount.get());
-        // 组装首轮游戏记录
-        KapreGameRecordDo firstGameRecord = this.buildGameRecord(generateGameRecordId(), RECORD_DEFAULT_PARENT_ID, gamePlay.getBetRecordId(), firstWheel, firstRewardResult);
-        ret.add(firstGameRecord);
-        // 总的中奖金额添加
-        totalRewardAmount.addAndGet(firstRewardResult.getTotalRewardAmount());
+        // 首轮游戏处理
+        OneWheelPlayWrapDo firstWheelPlayWrapDo = this.oneWheelPlay(gamePlay, RECORD_DEFAULT_PARENT_ID, totalRewardAmount, ret, null, BigDecimal.ZERO, false);
         // 免费轮处理-迭代替代递归
-        this.freeWheelHandler(firstGameRecord, firstRewardResult, totalRewardAmount, ret, gamePlay);
+        this.freeWheelHandler(firstWheelPlayWrapDo.getGameRecordDo(), totalRewardAmount, ret, gamePlay);
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
         return ret;
     }
 
-    private void freeWheelHandler(KapreGameRecordDo firstGameRecord, RewardResultDo<KapreSymbolDo> firstRewardResult, AtomicLong totalRewardAmount, List<KapreGameRecordDo> ret, GamePlayDo gamePlay) {
+
+    private OneWheelPlayWrapDo oneWheelPlay(GamePlayDo gamePlay,
+                                            Long parentId,
+                                            AtomicLong totalRewardAmount,
+                                            List<KapreGameRecordDo> ret,
+                                            IndexDo preDynamicWildIndex,
+                                            BigDecimal currentMultiple,
+                                            boolean freeFlag) {
+        // 1.生成滚轮
+        WheelDo<KapreSymbolDo> wheelDo = this.generateCommonWheel(this.buildWheelChartModel(gamePlay, freeFlag),
+                this.buildCashSymbolMultipleProbabilisticConfig(freeFlag), freeFlag);
+        ;
+        IndexDo dynamicWildIndex = null;
+        // 1.1 免费轮注入动游荡wild
+        if (freeFlag) {
+            dynamicWildIndex = this.injectFreeWheelDynamicWildSymbol(wheelDo, preDynamicWildIndex);
+        }
+        // 2.中奖以及滚轮后处理
+        RewardResultDo<KapreSymbolDo> firstRewardResult = this.rewardAndWheelAfterHandler(gamePlay, wheelDo, currentMultiple, totalRewardAmount.get());
+        // 3.组装首轮游戏记录
+        KapreGameRecordDo gameRecordDo = this.buildGameRecord(generateGameRecordId(), parentId, gamePlay.getBetRecordId(), wheelDo, firstRewardResult);
+        ret.add(gameRecordDo);
+        // 4.总的中奖金额添加
+        totalRewardAmount.addAndGet(firstRewardResult.getTotalRewardAmount());
+        return OneWheelPlayWrapDo.builder().gameRecordDo(gameRecordDo).dynamicWildIndex(dynamicWildIndex).build();
+    }
+
+    private IndexDo injectFreeWheelDynamicWildSymbol(WheelDo<KapreSymbolDo> wheelDo, IndexDo preDynamicWildIndex) {
+        // 生成一个游荡wild
+        KapreSymbolDo dynamicWildSymbolDo = this.buildKapreSymbol(KapreGameHelper.KAPRE_Dynamic_Wild, this.buildCashSymbolMultipleProbabilisticConfig(true));
+        // 直到和上一个游离wild不一样为止
+        IndexDo currDynamicWildIndex;
+        do {
+            int randomRowNum = randomService.randomInt(0, GAME_INFO.getRow() - 1);
+            // 不生成在reel 1
+            int randomColumRum = randomService.randomInt(1, GAME_INFO.getColumn() - 1);
+            currDynamicWildIndex = IndexFactory.buildDo(randomRowNum, randomColumRum);
+        } while (Objects.equals(currDynamicWildIndex, preDynamicWildIndex));
+        wheelDo.getSymbolArr()[currDynamicWildIndex.getRowIndex()][currDynamicWildIndex.getColumnIndex()] = dynamicWildSymbolDo;
+        return currDynamicWildIndex;
+    }
+
+
+    private void freeWheelHandler(KapreGameRecordDo firstGameRecord, AtomicLong totalRewardAmount, List<KapreGameRecordDo> ret, GamePlayDo gamePlay) {
         // 如果没有中免费轮，直接返回
-        if (!firstRewardResult.isHasRewardFreeWheel() || firstRewardResult.getRewardFreeWheelTimes() <= 0) {
+        if (!firstGameRecord.getRewardResult().isHasRewardFreeWheel() || firstGameRecord.getRewardResult().getRewardFreeWheelTimes() <= 0) {
             return;
         }
         LinkedList<FreeWheelHandleDo> freeWheelQueue = Lists.newLinkedList();
-        freeWheelQueue.addLast(FreeWheelHandleDo.builder().parentGameRecord(firstGameRecord).taskTimes(firstRewardResult.getRewardFreeWheelTimes()).build());
+        freeWheelQueue.addLast(FreeWheelHandleDo.builder().parentGameRecord(firstGameRecord).taskTimes(firstGameRecord.getRewardResult().getRewardFreeWheelTimes()).build());
         // 初始队列
         while (!freeWheelQueue.isEmpty()) {
             // 取出一个任务
@@ -85,24 +119,15 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
             long parentGameRecordId = parentGameRecord.getId();
             IndexDo preDynamicWildIndex = null;
             for (int i = 0; i < freeWheelHandleDo.getTaskTimes(); i++) {
-                KapreWheelWrapDo kapreWheelWrapDo = this.generateFreeWheel(this.buildWheelChartModel(gamePlay, true),
-                        this.buildCashSymbolMultipleProbabilisticConfig(true), preDynamicWildIndex);
-                // 本轮的游离wild 坐标
-                preDynamicWildIndex = kapreWheelWrapDo.getDynamicWildIndex();
-                // 中奖以及滚轮后处理
-                RewardResultDo<KapreSymbolDo> freeRewardResult = this.rewardAndWheelAfterHandler(gamePlay, kapreWheelWrapDo.getWheelDo(), BigDecimal.ZERO, totalRewardAmount.get());
-                // 组装免费轮游戏记录
-                KapreGameRecordDo freeGameRecord = buildGameRecord(generateGameRecordId(), parentGameRecordId, gamePlay.getBetRecordId(), kapreWheelWrapDo.getWheelDo(), firstRewardResult);
-                // 免费轮处理
-                ret.add(freeGameRecord);
-                // 总的中奖金额添加
-                totalRewardAmount.addAndGet(freeRewardResult.getTotalRewardAmount());
+                OneWheelPlayWrapDo freeWheelPlayWrapDo = this.oneWheelPlay(gamePlay, parentGameRecordId, totalRewardAmount, ret, preDynamicWildIndex, BigDecimal.ZERO, true);
                 // parentGameRecord 添加子gameRecordId
-                parentGameRecord.addGameRecordId(freeGameRecord.getId());
+                parentGameRecord.addGameRecordId(freeWheelPlayWrapDo.getGameRecordDo().getId());
                 // 如果有中免费轮，则加入队列
+                RewardResultDo<KapreSymbolDo> freeRewardResult = freeWheelPlayWrapDo.getRewardResult();
                 if (freeRewardResult.isHasRewardFreeWheel() && freeRewardResult.getRewardFreeWheelTimes() > 0) {
-                    freeWheelQueue.addLast(FreeWheelHandleDo.builder().parentGameRecord(freeGameRecord).taskTimes(freeRewardResult.getRewardFreeWheelTimes()).build());
+                    freeWheelQueue.addLast(FreeWheelHandleDo.builder().parentGameRecord(freeWheelPlayWrapDo.getGameRecordDo()).taskTimes(freeRewardResult.getRewardFreeWheelTimes()).build());
                 }
+                preDynamicWildIndex = freeWheelPlayWrapDo.getDynamicWildIndex();
             }
         }
     }
@@ -185,34 +210,6 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
                 .freeFlag(freeFlag)
                 .symbolArr(symbolArr)
                 .build();
-    }
-
-
-    /**
-     * 免费轮滚轮生成
-     * 需要处理游荡wild
-     *
-     * @param wheelChartModel                       轮代表moudle 二维数组，一维：reel 二维：元素id轮带
-     * @param cashSymbolMultipleProbabilisticConfig 现金symbol 概率配置
-     * @return 滚轮
-     */
-    private KapreWheelWrapDo generateFreeWheel(List<List<String>> wheelChartModel,
-                                               TreeMap<BigDecimal, BigDecimal> cashSymbolMultipleProbabilisticConfig, IndexDo preDynamicWildIndex) {
-        // 生成滚轮
-        WheelDo<KapreSymbolDo> commonWheel = this.generateCommonWheel(wheelChartModel, cashSymbolMultipleProbabilisticConfig, true);
-        // 生成一个游荡wild
-        KapreSymbolDo dynamicWildSymbolDo = this.buildKapreSymbol(KapreGameHelper.KAPRE_Dynamic_Wild, cashSymbolMultipleProbabilisticConfig);
-        // 直到和上一个游离wild不一样为止
-        IndexDo currDynamicWildIndex;
-        do {
-            int randomRowNum = randomService.randomInt(0, GAME_INFO.getRow() - 1);
-            // 不生成在reel 1
-            int randomColumRum = randomService.randomInt(1, GAME_INFO.getColumn() - 1);
-            currDynamicWildIndex = IndexFactory.buildDo(randomRowNum, randomColumRum);
-        } while (Objects.equals(currDynamicWildIndex, preDynamicWildIndex));
-        commonWheel.getSymbolArr()[currDynamicWildIndex.getRowIndex()][currDynamicWildIndex.getColumnIndex()] = dynamicWildSymbolDo;
-
-        return KapreWheelWrapDo.builder().wheelDo(commonWheel).dynamicWildIndex(currDynamicWildIndex).build();
     }
 
     private KapreSymbolDo buildKapreSymbol(SymbolDo symbolDo, TreeMap<BigDecimal, BigDecimal> cacheSymbolMultipleProbabilisticConfig) {
@@ -335,8 +332,13 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
 
     @Data
     @SuperBuilder
-    private static class KapreWheelWrapDo {
-        private WheelDo<KapreSymbolDo> wheelDo;
+    private static class OneWheelPlayWrapDo {
+        private KapreGameRecordDo gameRecordDo;
         private IndexDo dynamicWildIndex;
+
+        public RewardResultDo<KapreSymbolDo> getRewardResult() {
+            return gameRecordDo.getRewardResult();
+        }
+
     }
 }
