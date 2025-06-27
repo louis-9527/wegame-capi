@@ -53,7 +53,7 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
         List<KapreGameRecordDo> ret = new ArrayList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
         // 生成首轮wheel
-        WheelDo<KapreSymbolDo> firstWheel = this.generateCommonWheel(this.buildWheelChartModel(gamePlay),
+        WheelDo<KapreSymbolDo> firstWheel = this.generateCommonWheel(this.buildWheelChartModel(gamePlay, false),
                 this.buildCashSymbolMultipleProbabilisticConfig(gamePlay), false);
         // 中奖以及滚轮后处理
         RewardResultDo<KapreSymbolDo> firstRewardResult = this.rewardAndWheelAfterHandler(gamePlay, firstWheel, BigDecimal.ZERO, totalRewardAmount.get());
@@ -85,7 +85,7 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
             long parentGameRecordId = parentGameRecord.getId();
             IndexDo preDynamicWildIndex = null;
             for (int i = 0; i < freeWheelHandleDo.getTaskTimes(); i++) {
-                KapreWheelWrapDo kapreWheelWrapDo = this.generateFreeWheel(this.buildWheelChartModel(gamePlay),
+                KapreWheelWrapDo kapreWheelWrapDo = this.generateFreeWheel(this.buildWheelChartModel(gamePlay, true),
                         this.buildCashSymbolMultipleProbabilisticConfig(gamePlay), preDynamicWildIndex);
                 // 本轮的游离wild 坐标
                 preDynamicWildIndex = kapreWheelWrapDo.getDynamicWildIndex();
@@ -100,7 +100,7 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
                 // parentGameRecord 添加子gameRecordId
                 parentGameRecord.addGameRecordId(freeGameRecord.getId());
                 // 如果有中免费轮，则加入队列
-                if (firstRewardResult.isHasRewardFreeWheel() && firstRewardResult.getRewardFreeWheelTimes() > 0) {
+                if (freeRewardResult.isHasRewardFreeWheel() && freeRewardResult.getRewardFreeWheelTimes() > 0) {
                     freeWheelQueue.addLast(FreeWheelHandleDo.builder().parentGameRecord(freeGameRecord).taskTimes(freeRewardResult.getRewardFreeWheelTimes()).build());
                 }
             }
@@ -243,11 +243,11 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
      * @param gamePlay gameplay
      * @return 轮代表moudle
      */
-    private List<List<String>> buildWheelChartModel(GamePlayDo gamePlay) {
+    private List<List<String>> buildWheelChartModel(GamePlayDo gamePlay, boolean isFreeSpinFlag) {
         TreeMap<String, BigDecimal> wheelChartProbabilisticConfig;
         TreeMap<String, List<List<String>>> wheelChartModelConfig;
         // 获取轮代表
-        if (BetSubTypeEnum.isFreeWheel(gamePlay.getBetSubType().getCode())) {
+        if (isFreeSpinFlag) {
             // 免费轮
             wheelChartProbabilisticConfig = kapreConfig.getProbabilisticConfig().getWheelChartProbabilisticConfig().getFreeProbabilisticConfig();
             wheelChartModelConfig = kapreConfig.getWheelChart().getNormal();
