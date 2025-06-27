@@ -1,7 +1,10 @@
 package com.wegame.capi.biz.domain.biz;
 
 import com.wegame.capi.biz.converter.ToVoConverter;
+import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
+import com.wegame.capi.client.domain.vo.kapre.KapreBetResultDetailVo;
+import com.wegame.capi.client.domain.vo.kapre.KapreGameRecordVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasBetResultDetailVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasGameRecordVo;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
@@ -20,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = false)
-public class KapreBetRecordDetailDo implements ToVoConverter<MalakasBetResultDetailVo, MalakasGameRecordVo> {
+public class KapreBetRecordDetailDo implements ToVoConverter<KapreBetResultDetailVo, KapreGameRecordVo> {
 
     /**
      * 整轮中奖子类型: NONE:未中奖,other,nice,mega,super,sensational
@@ -29,11 +32,11 @@ public class KapreBetRecordDetailDo implements ToVoConverter<MalakasBetResultDet
     /**
      * 游戏记录列表
      */
-    private List<MalakasGameRecordDo> gameRecordList;
+    private List<KapreGameRecordDo> gameRecordList;
 
     @Override
-    public MalakasBetResultDetailVo toResultVo() {
-        return MalakasBetResultDetailVo.builder()
+    public KapreBetResultDetailVo toResultVo() {
+        return KapreBetResultDetailVo.builder()
                 .allWheelRewardSubType(Objects.nonNull(allWheelRewardSubType) ? allWheelRewardSubType.getCode() : "")
                 .resultList(Optional.ofNullable(gameRecordList)
                         .orElse(Collections.emptyList())
@@ -44,7 +47,7 @@ public class KapreBetRecordDetailDo implements ToVoConverter<MalakasBetResultDet
     }
 
     @Override
-    public MalakasGameRecordVo toRecordVo() {
+    public KapreGameRecordVo toRecordVo() {
         return null;
     }
 

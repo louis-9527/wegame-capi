@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.module.base.game.Game;
+import com.wegame.capi.biz.module.kapre.KapreGameHelper;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,6 +39,6 @@ public class KapreGameContext<R> extends AbstractGameContext<R> {
 
     @Override
     public GameInfoDo gameInfo() {
-        return MALAKAS_GAME_INFO;
+        return KapreGameHelper.KAPRE_GAME_INFO;
     }
 }

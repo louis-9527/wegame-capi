@@ -55,7 +55,7 @@ public class KapreGameHelper {
             .name(Symbol1009.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .build();
-    public static final SymbolDo KAPRE_Symbol1010 = SymbolDo.builder()
+    public static final SymbolDo KAPRE_CASH_SYMBOL = SymbolDo.builder()
             .id(Symbol1010.getId())
             .name(Symbol1010.getName())
             .symbolType(SymbolTypeEnum.COMMON)
@@ -70,7 +70,7 @@ public class KapreGameHelper {
             .name(Wild.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
-    private static final SymbolDo KAPRE_Dynamic_Wild = SymbolDo.builder()
+    public static final SymbolDo KAPRE_Dynamic_Wild = SymbolDo.builder()
             .id(DynamicWild.getId())
             .name(DynamicWild.getName())
             .symbolType(SymbolTypeEnum.WILD)
@@ -91,7 +91,7 @@ public class KapreGameHelper {
                     .put(KAPRE_Symbol1007.getId(), KAPRE_Symbol1007)
                     .put(KAPRE_Symbol1008.getId(), KAPRE_Symbol1008)
                     .put(KAPRE_Symbol1009.getId(), KAPRE_Symbol1009)
-                    .put(KAPRE_Symbol1010.getId(), KAPRE_Symbol1010)
+                    .put(KAPRE_CASH_SYMBOL.getId(), KAPRE_CASH_SYMBOL)
                     .put(KAPRE_SCATTER.getId(), KAPRE_SCATTER)
                     .put(KAPRE_Wild.getId(), KAPRE_Wild)
                     .put(KAPRE_Dynamic_Wild.getId(), KAPRE_Dynamic_Wild)

@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -18,12 +19,10 @@ public class KapreSymbolVo implements Serializable {
     private static final long serialVersionUID = 344353465626303L;
     @ApiModelProperty("元素Id")
     private String symbolId;
-    @ApiModelProperty("元素大小:S小型,M中型,L大型,XL超大型")
-    private String symbolSize;
-    @ApiModelProperty("元素金边(false否,true是)")
-    private boolean symbolGoldBorder;
-    @ApiModelProperty("元素清除次数，仅支持Wild元素")
-    private Integer symbolClearTimes;
+    @ApiModelProperty("元素倍率,现金symbol可使用")
+    private BigDecimal symbolMultiple;
+    @ApiModelProperty("嵌套symbol")
+    private KapreSymbolVo nestSymbol;
 
     @Override
     public String toString() {

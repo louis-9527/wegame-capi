@@ -1,11 +1,13 @@
 package com.wegame.capi.common.utils;
 
+import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -49,5 +51,28 @@ public class GameUtil {
         sourceTreeMap.forEach((key, probabilistic) ->
                 valueIntegerMap.put(key, probabilistic.multiply(new BigDecimal(factorNumber)).intValue()));
         return randomKey(valueIntegerMap, randomNumber);
+    }
+
+
+    /**
+     * 循环获取指定数量的list值
+     *
+     * @param sourceList      源list
+     * @param startIndex      开始获取的index
+     * @param resultListCount 期望获取的个数
+     */
+    public static <T> List<T> circularGetList(List<T> sourceList, int startIndex, int resultListCount) {
+        AssertUtil.assertNotEmpty(sourceList, ErrorCode.ERR_PARAM, "sourceList is empty");
+        AssertUtil.assertTrue(startIndex >= 0, ErrorCode.ERR_PARAM, "startIndex is less than 0");
+        AssertUtil.assertTrue(startIndex < sourceList.size(), ErrorCode.ERR_PARAM, "startIndex is greater than sourceList size");
+        AssertUtil.assertTrue(resultListCount > 0, ErrorCode.ERR_PARAM, "resultListCount is less than 0");
+        int sourceListSize = sourceList.size();
+        List<T> resultList = Lists.newArrayList();
+        for (int i = 0; i < resultListCount; i++) {
+            // 为了循环index
+            int index = (startIndex + i) % sourceListSize;
+            resultList.add(sourceList.get(index));
+        }
+        return resultList;
     }
 }

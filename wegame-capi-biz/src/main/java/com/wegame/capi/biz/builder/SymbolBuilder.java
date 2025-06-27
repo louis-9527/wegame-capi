@@ -88,8 +88,25 @@ public class SymbolBuilder {
 
 
     public static KapreSymbolVo[][] build(KapreSymbolDo[][] symbolArr) {
-        // todo @jayni
-        throw new RuntimeException("todo");
+        int rows = symbolArr.length;
+        int cols = symbolArr[0].length;
+        KapreSymbolVo[][] integerArray = new KapreSymbolVo[rows][cols];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                KapreSymbolDo kapreSymbol = symbolArr[row][col];
+                integerArray[row][col] = Objects.isNull(kapreSymbol) ? null : KapreSymbolVo.builder()
+                        .symbolId(kapreSymbol.getId())
+                        .symbolMultiple(kapreSymbol.getSymbolMultiple())
+                        .nestSymbol(Objects.isNull(kapreSymbol.getNestSymbol()) ? null :
+                                KapreSymbolVo.builder()
+                                .symbolId(kapreSymbol.getNestSymbol().getId())
+                                .symbolMultiple(kapreSymbol.getNestSymbol().getSymbolMultiple())
+                                .nestSymbol(null)
+                                .build())
+                        .build();
+            }
+        }
+        return integerArray;
     }
 
 }

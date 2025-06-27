@@ -89,6 +89,13 @@ public class KapreGameRecordDo implements Serializable, ToVoConverter<KapreBetRe
      */
     private boolean lastGameFlag;
 
+    public void addGameRecordId(Long gameRecordId) {
+        if (Objects.isNull(this.gameRecordIds)) {
+            this.gameRecordIds = new ArrayList<>();
+        }
+        this.gameRecordIds.add(gameRecordId);
+    }
+
     @Transient
     @JsonIgnore
     @Override
