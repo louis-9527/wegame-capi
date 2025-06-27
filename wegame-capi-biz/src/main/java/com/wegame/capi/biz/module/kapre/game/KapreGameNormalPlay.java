@@ -220,12 +220,20 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
         if (symbolDo.isWildSymbol()) {
             // wild,则构建嵌套的现金symbol
             // 随机生成现金元素倍率
-            BigDecimal cashSymbolMultiple = GameUtil.randomKey(cacheSymbolMultipleProbabilisticConfig, Constants.CONST_10000, Constants.CONST_1000000);
+            BigDecimal cashSymbolMultiple = GameUtil.randomKey(cacheSymbolMultipleProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
             // 构建现金元素
             KapreSymbolDo cashSymbol = KapreSymbolDo.buildFromSymbol(KapreGameHelper.KAPRE_CASH_SYMBOL, cashSymbolMultiple, null);
             return KapreSymbolDo.buildFromSymbol(symbolDo, BigDecimal.ZERO, cashSymbol);
         } else {
-            return KapreSymbolDo.buildFromSymbol(symbolDo, BigDecimal.ZERO, null);
+            KapreSymbolDo kapreSymbolDo = KapreSymbolDo.buildFromSymbol(symbolDo, BigDecimal.ZERO, null);
+            if (kapreSymbolDo.isCashSymbol()) {
+                // 是否现金symbol
+                // 随机生成现金元素倍率
+                BigDecimal cashSymbolMultiple = GameUtil.randomKey(cacheSymbolMultipleProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
+                kapreSymbolDo.setSymbolMultiple(cashSymbolMultiple);
+            }
+            return kapreSymbolDo;
+
         }
     }
 
@@ -257,7 +265,7 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
             }
         }
         // 根据概率随机出model名称
-        String modelName = GameUtil.randomKey(wheelChartProbabilisticConfig, Constants.CONST_10000, Constants.CONST_1000000);
+        String modelName = GameUtil.randomKey(wheelChartProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
         List<List<String>> wheelChartModel = wheelChartModelConfig.get(modelName);
         AssertUtil.assertNotNull(wheelChartModel, ErrorCode.ERR_INTER, "wheelChartModel is null");
         return wheelChartModel;
