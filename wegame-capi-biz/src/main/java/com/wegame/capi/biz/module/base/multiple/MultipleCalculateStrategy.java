@@ -32,17 +32,6 @@ public interface MultipleCalculateStrategy<T extends SymbolDo> {
     default Pair<MultiplePieTypeEnum, BigDecimal> calculateMultiplePie(RewardHandleDo<SymbolDo> rewardHandle) {
         return null;
     }
-
-    /**
-     * 计算单条线中奖倍率
-     *
-     * @param rewardHandle
-     * @param rewardLine
-     * @return 倍率
-     */
-    default BigDecimal calculateMultipleOfSingleRewardLine(RewardHandleDo<T> rewardHandle, RewardLineDo<T> rewardLine) {
-        return null;
-    }
 }
 
 

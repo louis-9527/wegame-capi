@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.config.domain.KapreConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
@@ -17,7 +16,6 @@ import com.wegame.capi.biz.domain.biz.symbol.KapreSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
-import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
@@ -47,9 +45,6 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
 
     @Autowired
     OddsCalculateStrategy<KapreSymbolDo> kapreOddsCalculateStrategy;
-
-    @Autowired
-    MultipleCalculateStrategy<KapreSymbolDo> kapreMultipleCalculateStrategy;
 
     @Autowired
     KapreConfig kapreConfig;
@@ -86,12 +81,13 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         List<RewardLineDetailDo<KapreSymbolDo>> rewardLineDetailList = Lists.newArrayList();
         for (RewardLineDo<KapreSymbolDo> rewardLine : rewardLineList) {
             // 计算赔率
-            BigDecimal odds = kapreOddsCalculateStrategy.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
+            BigDecimal odds = null;
+
+            odds = kapreOddsCalculateStrategy.calculateOddsOfRewardLine(rewardHandle, rewardLine);
             // 计算（中奖线）中奖金额：
             // 普通中奖 ：总金额 = 投注金额 * 赔率 * 中奖线数量
-            // 现金中奖 ：总金额 = 投注金额 * （现金元素倍率之和）
-            BigDecimal currentMultiple = kapreMultipleCalculateStrategy.calculateMultipleOfSingleRewardLine(rewardHandle, rewardLine);
-            BigDecimal lineRewardAmount = this.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, currentMultiple);
+            // 现金中奖 ：总金额 = 投注金额 * （现金元素赔率之和）
+            BigDecimal lineRewardAmount = this.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, null);
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
             // 中奖线明细列表
@@ -99,7 +95,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardAmount(lineRewardAmount.longValue())
                     .odds(odds)
-                    .multiple(currentMultiple)
+                    .multiple(null)
                     .rewardLineType(rewardLine.getRewardLineType())
                     .rewardLineSubType(rewardLine.getRewardLineSubType())
                     .rewardLineCount(rewardLine.getRewardLineCount())
@@ -119,7 +115,6 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .totalRewardAmount(totalRewardAmount)
-                .totalMultiple(DEFAULT_MULTI)
                 .rewardLineDetailList(rewardLineDetailList)
                 .hasRewardFreeWheel(rewardFreeWheel)
                 .rewardFreeWheelTimes(rewardFreeWheel ? freeWheelTimes : 0)
@@ -129,6 +124,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
         return rewardResult;
     }
+
 
     private List<RewardLineDo<KapreSymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<KapreSymbolDo> wheel) {
         KapreSymbolDo[][] symbolArr = wheel.getSymbolArr();
@@ -269,12 +265,14 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
                     .multiply(odds)
                     .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
         } else if (rewardLine.isCashReward()) {
-            //现金中奖 ： 投注额 * 倍率
+            //现金中奖 ： 投注额 * 赔率
             return BigDecimal.valueOf(betAmount)
-                    .multiply(multiple);
+                    .multiply(odds);
         } else {
             return BigDecimal.valueOf(betAmount)
                     .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
         }
     }
+
+
 }

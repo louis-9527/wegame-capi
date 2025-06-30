@@ -93,13 +93,13 @@ public class KapreRewardHandlerTest extends BaseTest {
         RewardHandleDo<KapreSymbolDo> rewardHandle = KapreRewardHandlerTestMocker.buildTestRewardHandleDo(symbolArr, 0, false, BET_AMOUNT, null);
         RewardResultDo<KapreSymbolDo> handleResult = kapreRewardHandler.handle(rewardHandle);
 
-        long multi = 10L;
+        long odds = 10L;
         assertNotNull(handleResult);
         // 中奖类型，单奖励
         assertEquals(RewardTypeEnum.SINGLE, handleResult.getRewardType());
 
         // 中奖金额 ：10000
-        assertEquals(BET_AMOUNT * multi, handleResult.getTotalRewardAmount().longValue());
+        assertEquals(BET_AMOUNT * odds, handleResult.getTotalRewardAmount().longValue());
         // 中奖线列表,1
         assertNotNull(handleResult.getRewardLineDetailList());
         assertEquals(1, handleResult.getRewardLineDetailList().size());
@@ -107,8 +107,8 @@ public class KapreRewardHandlerTest extends BaseTest {
         assertEquals(1L, (long) handleResult.getRewardLineDetailList().get(0).getRewardLineCount());
         // 中奖类型为现金中奖
         assertEquals(RewardLineSubTypeEnum.CASH, handleResult.getRewardLineDetailList().get(0).getRewardLineSubType());
-        // 现金中奖倍率 ： 10
-        assertEquals(BigDecimal.valueOf(multi), handleResult.getRewardLineDetailList().get(0).getMultiple());
+        // 现金中奖赔率 ： 10
+        assertEquals(BigDecimal.valueOf(odds), handleResult.getRewardLineDetailList().get(0).getOdds());
     }
 
     /**
@@ -120,13 +120,13 @@ public class KapreRewardHandlerTest extends BaseTest {
         RewardHandleDo<KapreSymbolDo> rewardHandle = KapreRewardHandlerTestMocker.buildTestRewardHandleDo(symbolArr, 0, false, BET_AMOUNT, null);
         RewardResultDo<KapreSymbolDo> handleResult = kapreRewardHandler.handle(rewardHandle);
 
-        long multi = 11L;
+        long odds = 11L;
         assertNotNull(handleResult);
         // 中奖类型，单奖励
         assertEquals(RewardTypeEnum.SINGLE, handleResult.getRewardType());
 
         // 中奖金额 ：10000
-        assertEquals(BET_AMOUNT * multi, handleResult.getTotalRewardAmount().longValue());
+        assertEquals(BET_AMOUNT * odds, handleResult.getTotalRewardAmount().longValue());
         // 中奖线列表,1
         assertNotNull(handleResult.getRewardLineDetailList());
         assertEquals(1, handleResult.getRewardLineDetailList().size());
@@ -134,8 +134,8 @@ public class KapreRewardHandlerTest extends BaseTest {
         assertEquals(1L, (long) handleResult.getRewardLineDetailList().get(0).getRewardLineCount());
         // 中奖类型为现金中奖
         assertEquals(RewardLineSubTypeEnum.CASH, handleResult.getRewardLineDetailList().get(0).getRewardLineSubType());
-        // 现金中奖倍率 ： 10
-        assertEquals(BigDecimal.valueOf(multi), handleResult.getRewardLineDetailList().get(0).getMultiple());
+        // 现金中奖赔率 ： 10
+        assertEquals(BigDecimal.valueOf(odds), handleResult.getRewardLineDetailList().get(0).getOdds());
     }
 
     /**
@@ -147,11 +147,11 @@ public class KapreRewardHandlerTest extends BaseTest {
         RewardHandleDo<KapreSymbolDo> rewardHandle = KapreRewardHandlerTestMocker.buildTestRewardHandleDo(symbolArr, 0, false, BET_AMOUNT, null);
         RewardResultDo<KapreSymbolDo> handleResult = kapreRewardHandler.handle(rewardHandle);
         assertNotNull(handleResult);
-        long multi = 50L;
+        long odds = 50L;
         // 中奖类型，单奖励
         assertEquals(RewardTypeEnum.SINGLE, handleResult.getRewardType());
         // 中奖金额 ：20000
-        assertEquals(BET_AMOUNT * multi, handleResult.getTotalRewardAmount().longValue());
+        assertEquals(BET_AMOUNT * odds, handleResult.getTotalRewardAmount().longValue());
         // 中奖线列表,1
         assertNotNull(handleResult.getRewardLineDetailList());
         assertEquals(1, handleResult.getRewardLineDetailList().size());
@@ -159,8 +159,8 @@ public class KapreRewardHandlerTest extends BaseTest {
         assertEquals(2L, (long) handleResult.getRewardLineDetailList().get(0).getRewardLineCount());
         // 中奖类型为现金中奖
         assertEquals(RewardLineSubTypeEnum.CASH, handleResult.getRewardLineDetailList().get(0).getRewardLineSubType());
-        // 现金中奖倍率 ： 50
-        assertEquals(BigDecimal.valueOf(multi), handleResult.getRewardLineDetailList().get(0).getMultiple());
+        // 现金中奖赔率 ： 50
+        assertEquals(BigDecimal.valueOf(odds), handleResult.getRewardLineDetailList().get(0).getOdds());
     }
 
     /**
@@ -189,13 +189,13 @@ public class KapreRewardHandlerTest extends BaseTest {
         RewardHandleDo<KapreSymbolDo> rewardHandle = KapreRewardHandlerTestMocker.buildTestRewardHandleDo(symbolArr, 0, false, BET_AMOUNT, null);
         RewardResultDo<KapreSymbolDo> handleResult = kapreRewardHandler.handle(rewardHandle);
         assertNotNull(handleResult);
-        long multi = 10L;
+        long odds = 10L;
         assertNotNull(handleResult);
         // 中奖类型，单奖励
         assertEquals(RewardTypeEnum.SINGLE, handleResult.getRewardType());
 
         // 中奖金额 ：10000
-        assertEquals(BET_AMOUNT * multi, handleResult.getTotalRewardAmount().longValue());
+        assertEquals(BET_AMOUNT * odds, handleResult.getTotalRewardAmount().longValue());
         // 中奖线列表,1
         assertNotNull(handleResult.getRewardLineDetailList());
         assertEquals(1, handleResult.getRewardLineDetailList().size());
@@ -203,8 +203,8 @@ public class KapreRewardHandlerTest extends BaseTest {
         assertEquals(1L, (long) handleResult.getRewardLineDetailList().get(0).getRewardLineCount());
         // 中奖类型为现金中奖
         assertEquals(RewardLineSubTypeEnum.CASH, handleResult.getRewardLineDetailList().get(0).getRewardLineSubType());
-        // 现金中奖倍率 ： 10
-        assertEquals(BigDecimal.valueOf(multi), handleResult.getRewardLineDetailList().get(0).getMultiple());
+        // 现金中奖赔率 ： 10
+        assertEquals(BigDecimal.valueOf(odds), handleResult.getRewardLineDetailList().get(0).getOdds());
 
         // 命中免费轮
         assertTrue(handleResult.isHasRewardFreeWheel());
