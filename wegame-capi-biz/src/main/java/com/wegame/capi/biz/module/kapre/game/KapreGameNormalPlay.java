@@ -117,7 +117,7 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
             FreeWheelHandleDo freeWheelHandleDo = freeWheelQueue.pollFirst();
             KapreGameRecordDo parentGameRecord = freeWheelHandleDo.getParentGameRecord();
             // 是否需要继续处理
-            if (!this.canContinuePlayOnPreGameRecord(gamePlay, firstGameRecord.getRewardResult(), totalRewardAmount)) {
+            if (!this.canContinuePlayOnPreGameRecord(gamePlay, parentGameRecord.getRewardResult(), totalRewardAmount)) {
                 return;
             }
             long parentGameRecordId = parentGameRecord.getId();
