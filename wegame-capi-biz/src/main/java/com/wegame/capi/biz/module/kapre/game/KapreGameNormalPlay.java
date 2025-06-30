@@ -105,8 +105,8 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
 
 
     private void freeWheelHandler(KapreGameRecordDo firstGameRecord, AtomicLong totalRewardAmount, List<KapreGameRecordDo> ret, GamePlayDo gamePlay) {
-        // 如果没有中免费轮，直接返回
-        if (!firstGameRecord.getRewardResult().isHasRewardFreeWheel() || firstGameRecord.getRewardResult().getRewardFreeWheelTimes() <= 0) {
+        // 是否需要处理
+        if (!this.canContinuePlayOnPreGameRecord(gamePlay, firstGameRecord.getRewardResult(), totalRewardAmount)) {
             return;
         }
         LinkedList<FreeWheelHandleDo> freeWheelQueue = Lists.newLinkedList();
@@ -116,6 +116,10 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
             // 取出一个任务
             FreeWheelHandleDo freeWheelHandleDo = freeWheelQueue.pollFirst();
             KapreGameRecordDo parentGameRecord = freeWheelHandleDo.getParentGameRecord();
+            // 是否需要继续处理
+            if (!this.canContinuePlayOnPreGameRecord(gamePlay, firstGameRecord.getRewardResult(), totalRewardAmount)) {
+                return;
+            }
             long parentGameRecordId = parentGameRecord.getId();
             IndexDo preDynamicWildIndex = null;
             for (int i = 0; i < freeWheelHandleDo.getTaskTimes(); i++) {
@@ -283,13 +287,12 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
         }
     }
 
-
-    private boolean canContinuePlayOnPreWheel(GamePlayDo gamePlay, RewardResultDo<MalakasSymbolDo> rewardResult, AtomicLong totalRewardAmount) {
+    private boolean canContinuePlayOnPreGameRecord(GamePlayDo gamePlay, RewardResultDo<KapreSymbolDo> rewardResult, AtomicLong totalRewardAmount) {
         if (Objects.isNull(rewardResult)) {
             return false;
         }
-        if (Objects.equals(rewardResult.getRewardType(), RewardTypeEnum.NONE)) {
-            return false;
+        if (rewardResult.isHasRewardFreeWheel() && rewardResult.getRewardFreeWheelTimes() > 0) {
+            return true;
         }
         if (rewardResult.getAccumulateReachMaxMultiple()) {
             log.warn("reach max reward multiple bet. totalRewardAmount: {}, payAmount: {}", totalRewardAmount.get(), gamePlay.getPayAmount());
