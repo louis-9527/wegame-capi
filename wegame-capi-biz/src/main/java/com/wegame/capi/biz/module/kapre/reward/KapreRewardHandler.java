@@ -41,7 +41,6 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 @Component("kapreRewardHandler")
 public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
     private static final Integer SCATTER_COUNT_FOR_FREE_SPIN = 3;
-    private static final BigDecimal DEFAULT_MULTI = BigDecimal.valueOf(1);
 
     @Autowired
     OddsCalculateStrategy<KapreSymbolDo> kapreOddsCalculateStrategy;
