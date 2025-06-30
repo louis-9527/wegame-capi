@@ -44,11 +44,11 @@ public class KapreMultipleCalculateStrategy extends AbstractMultipleCalculateStr
                 continue;
             }
             if (symbolDo.isCashSymbol()) {
-                totalMultiple = totalMultiple.add(symbolDo.getSymbolMultiple());
+                totalMultiple = totalMultiple.add(symbolDo.getSymbolOdd());
             } else if (symbolDo.isWildSymbol()) {
                 KapreSymbolDo nestSymbol = symbolDo.getNestSymbol();
                 AssertUtil.assertNotNull(nestSymbol, ErrorCode.ERR_INTER, "nestSymbol in wildSymbol can not be null");
-                totalMultiple = totalMultiple.add(nestSymbol.getSymbolMultiple());
+                totalMultiple = totalMultiple.add(nestSymbol.getSymbolOdd());
             }
         }
         return totalMultiple;

@@ -238,7 +238,7 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
                 // 是否现金symbol
                 // 随机生成现金元素倍率
                 BigDecimal cashSymbolMultiple = GameUtil.randomKey(cacheSymbolMultipleProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
-                kapreSymbolDo.setSymbolMultiple(cashSymbolMultiple);
+                kapreSymbolDo.setSymbolOdd(cashSymbolMultiple);
             }
             return kapreSymbolDo;
 

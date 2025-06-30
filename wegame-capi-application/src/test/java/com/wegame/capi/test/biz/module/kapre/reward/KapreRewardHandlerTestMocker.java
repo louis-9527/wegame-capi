@@ -296,7 +296,7 @@ public class KapreRewardHandlerTestMocker {
             KapreSymbolDo nested = new KapreSymbolDo();
             nested.setId(SymbolEnum.Symbol1010.getId());
             nested.setName(SymbolEnum.Symbol1010.getName());
-            nested.setSymbolMultiple(multi);
+            nested.setSymbolOdd(multi);
             nested.setSymbolType(SymbolTypeEnum.COMMON);
             symbolDo.setNestSymbol(nested);
         }
@@ -312,7 +312,7 @@ public class KapreRewardHandlerTestMocker {
             KapreSymbolDo nested = new KapreSymbolDo();
             nested.setId(SymbolEnum.Symbol1010.getId());
             nested.setName(SymbolEnum.Symbol1010.getName());
-            nested.setSymbolMultiple(multi);
+            nested.setSymbolOdd(multi);
             nested.setSymbolType(SymbolTypeEnum.COMMON);
             symbolDo.setNestSymbol(nested);
         }
@@ -332,7 +332,7 @@ public class KapreRewardHandlerTestMocker {
         KapreSymbolDo symbolDo = new KapreSymbolDo();
         symbolDo.setId(SymbolEnum.Symbol1010.getId());
         symbolDo.setName(SymbolEnum.Symbol1010.getId());
-        symbolDo.setSymbolMultiple(multi);
+        symbolDo.setSymbolOdd(multi);
         symbolDo.setSymbolType(SymbolTypeEnum.COMMON);
         return symbolDo;
     }

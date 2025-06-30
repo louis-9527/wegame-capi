@@ -19,9 +19,9 @@ import java.math.BigDecimal;
 public class KapreSymbolDo extends SymbolDo {
     private static final long serialVersionUID = -226654678653448L;
     /**
-     * 元素倍率,现金symbol可使用
+     * 元素赔率,现金symbol可使用
      */
-    private BigDecimal symbolMultiple;
+    private BigDecimal symbolOdd;
 
     /**
      * 嵌套symbol
@@ -46,7 +46,7 @@ public class KapreSymbolDo extends SymbolDo {
                 .id(symbol.getId())
                 .name(symbol.getName())
                 .symbolType(symbol.getSymbolType())
-                .symbolMultiple(symbolMultiple)
+                .symbolOdd(symbolMultiple)
                 .nestSymbol(nestSymbol)
                 .build();
     }

@@ -96,11 +96,11 @@ public class SymbolBuilder {
                 KapreSymbolDo kapreSymbol = symbolArr[row][col];
                 integerArray[row][col] = Objects.isNull(kapreSymbol) ? null : KapreSymbolVo.builder()
                         .symbolId(kapreSymbol.getId())
-                        .symbolMultiple(kapreSymbol.getSymbolMultiple())
+                        .symbolMultiple(kapreSymbol.getSymbolOdd())
                         .nestSymbol(Objects.isNull(kapreSymbol.getNestSymbol()) ? null :
                                 KapreSymbolVo.builder()
                                 .symbolId(kapreSymbol.getNestSymbol().getId())
-                                .symbolMultiple(kapreSymbol.getNestSymbol().getSymbolMultiple())
+                                .symbolMultiple(kapreSymbol.getNestSymbol().getSymbolOdd())
                                 .nestSymbol(null)
                                 .build())
                         .build();
