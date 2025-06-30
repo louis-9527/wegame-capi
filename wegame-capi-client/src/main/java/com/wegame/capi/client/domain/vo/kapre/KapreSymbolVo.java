@@ -19,8 +19,8 @@ public class KapreSymbolVo implements Serializable {
     private static final long serialVersionUID = 344353465626303L;
     @ApiModelProperty("元素Id")
     private String symbolId;
-    @ApiModelProperty("元素倍率,现金symbol可使用")
-    private BigDecimal symbolMultiple;
+    @ApiModelProperty("元素赔率,现金symbol可使用")
+    private BigDecimal symbolOdd;
     @ApiModelProperty("嵌套symbol")
     private KapreSymbolVo nestSymbol;
 

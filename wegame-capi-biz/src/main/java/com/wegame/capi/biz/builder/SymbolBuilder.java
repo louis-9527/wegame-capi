@@ -1,10 +1,10 @@
 package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.biz.symbol.*;
+import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaSymbolVo;
 import com.wegame.capi.client.domain.vo.kapre.KapreSymbolVo;
 import com.wegame.capi.client.domain.vo.lamang.LamangSymbolVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasSymbolVo;
-import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaSymbolVo;
 import com.wegame.capi.common.enums.SymbolBreakUpEnum;
 
 import java.util.Objects;
@@ -96,13 +96,13 @@ public class SymbolBuilder {
                 KapreSymbolDo kapreSymbol = symbolArr[row][col];
                 integerArray[row][col] = Objects.isNull(kapreSymbol) ? null : KapreSymbolVo.builder()
                         .symbolId(kapreSymbol.getId())
-                        .symbolMultiple(kapreSymbol.getSymbolOdd())
+                        .symbolOdd(kapreSymbol.getSymbolOdd())
                         .nestSymbol(Objects.isNull(kapreSymbol.getNestSymbol()) ? null :
                                 KapreSymbolVo.builder()
-                                .symbolId(kapreSymbol.getNestSymbol().getId())
-                                .symbolMultiple(kapreSymbol.getNestSymbol().getSymbolOdd())
-                                .nestSymbol(null)
-                                .build())
+                                        .symbolId(kapreSymbol.getNestSymbol().getId())
+                                        .symbolOdd(kapreSymbol.getNestSymbol().getSymbolOdd())
+                                        .nestSymbol(null)
+                                        .build())
                         .build();
             }
         }
