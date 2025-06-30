@@ -155,9 +155,6 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 int currentRow = row;
                 KapreSymbolDo currentSymbol = symbolArr[row][currentColum];
-                if (currentSymbol.isPlaceholderSymbol()) {
-                    continue;
-                }
                 for (KapreSymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
                     if (!isMatchTargetSymbol(currentSymbol, targetSymbol)) {
                         continue;

@@ -1,14 +1,11 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.module.kapre.KapreGameHelper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
-
-import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_SYMBOL_PLACEHOLDER;
 
 /**
  * Kapre游戏元素
@@ -31,11 +28,6 @@ public class KapreSymbolDo extends SymbolDo {
      * wild 参与现金中奖之后，有值
      */
     private KapreSymbolDo nestSymbol;
-
-    @JsonIgnore
-    public boolean isPlaceholderSymbol() {
-        return StringUtils.equals(getId(), MALAKAS_SYMBOL_PLACEHOLDER.getId());
-    }
 
     public KapreSymbolDo copy() {
         return KapreSymbolDo.builder()
