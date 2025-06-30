@@ -20,7 +20,6 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.Constants;
-import com.wegame.capi.common.enums.RewardTypeEnum;
 import com.wegame.capi.common.utils.GameUtil;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
@@ -106,9 +105,16 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
 
     private void freeWheelHandler(KapreGameRecordDo firstGameRecord, AtomicLong totalRewardAmount, List<KapreGameRecordDo> ret, GamePlayDo gamePlay) {
         // 是否需要处理
-        if (!this.canContinuePlayOnPreGameRecord(gamePlay, firstGameRecord.getRewardResult(), totalRewardAmount)) {
+        if (!firstGameRecord.getRewardResult().isHasRewardFreeWheel() || firstGameRecord.getRewardResult().getRewardFreeWheelTimes() <= 0) {
             return;
         }
+
+        // 如果达到最大倍数，则结束
+        if (Objects.equals(firstGameRecord.getRewardResult().getAccumulateReachMaxMultiple(), Boolean.TRUE)) {
+            log.info("freeWheelHandler AccumulateReachMaxMultiple,betRecordId:{}", gamePlay.getBetRecordId());
+            return;
+        }
+
         LinkedList<FreeWheelHandleDo> freeWheelQueue = Lists.newLinkedList();
         freeWheelQueue.addLast(FreeWheelHandleDo.builder().parentGameRecord(firstGameRecord).taskTimes(firstGameRecord.getRewardResult().getRewardFreeWheelTimes()).build());
         // 初始队列
@@ -116,18 +122,19 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
             // 取出一个任务
             FreeWheelHandleDo freeWheelHandleDo = freeWheelQueue.pollFirst();
             KapreGameRecordDo parentGameRecord = freeWheelHandleDo.getParentGameRecord();
-            // 是否需要继续处理
-            if (!this.canContinuePlayOnPreGameRecord(gamePlay, parentGameRecord.getRewardResult(), totalRewardAmount)) {
-                return;
-            }
             long parentGameRecordId = parentGameRecord.getId();
             IndexDo preDynamicWildIndex = null;
             for (int i = 0; i < freeWheelHandleDo.getTaskTimes(); i++) {
                 OneWheelPlayWrapDo freeWheelPlayWrapDo = this.oneWheelPlay(gamePlay, parentGameRecordId, totalRewardAmount, ret, preDynamicWildIndex, BigDecimal.ZERO, true);
                 // parentGameRecord 添加子gameRecordId
                 parentGameRecord.addGameRecordId(freeWheelPlayWrapDo.getGameRecordDo().getId());
-                // 如果有中免费轮，则加入队列
                 RewardResultDo<KapreSymbolDo> freeRewardResult = freeWheelPlayWrapDo.getRewardResult();
+                // 如果达到最大倍数，则结束
+                if (Objects.equals(freeRewardResult.getAccumulateReachMaxMultiple(), Boolean.TRUE)) {
+                    log.info("freeWheelHandler AccumulateReachMaxMultiple,betRecordId:{}", gamePlay.getBetRecordId());
+                    return;
+                }
+                // 如果有中免费轮，则加入队列
                 if (freeRewardResult.isHasRewardFreeWheel() && freeRewardResult.getRewardFreeWheelTimes() > 0) {
                     freeWheelQueue.addLast(FreeWheelHandleDo.builder().parentGameRecord(freeWheelPlayWrapDo.getGameRecordDo()).taskTimes(freeRewardResult.getRewardFreeWheelTimes()).build());
                 }
@@ -285,20 +292,6 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
             // 付费轮
             return kapreConfig.getProbabilisticConfig().getMultipleProbabilisticConfig().getPayProbabilisticConfig();
         }
-    }
-
-    private boolean canContinuePlayOnPreGameRecord(GamePlayDo gamePlay, RewardResultDo<KapreSymbolDo> rewardResult, AtomicLong totalRewardAmount) {
-        if (Objects.isNull(rewardResult)) {
-            return false;
-        }
-        if (rewardResult.isHasRewardFreeWheel() && rewardResult.getRewardFreeWheelTimes() > 0) {
-            return true;
-        }
-        if (rewardResult.getAccumulateReachMaxMultiple()) {
-            log.warn("reach max reward multiple bet. totalRewardAmount: {}, payAmount: {}", totalRewardAmount.get(), gamePlay.getPayAmount());
-            return false;
-        }
-        return CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
     }
 
     private KapreGameRecordDo buildGameRecord(Long id,
