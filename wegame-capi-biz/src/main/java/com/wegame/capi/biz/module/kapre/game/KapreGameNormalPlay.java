@@ -78,12 +78,12 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
             dynamicWildIndex = this.injectFreeWheelDynamicWildSymbol(wheelDo, preDynamicWildIndex);
         }
         // 2.中奖以及滚轮后处理
-        RewardResultDo<KapreSymbolDo> firstRewardResult = this.rewardAndWheelAfterHandler(gamePlay, wheelDo, currentMultiple, totalRewardAmount.get());
-        // 3.组装首轮游戏记录
-        KapreGameRecordDo gameRecordDo = this.buildGameRecord(generateGameRecordId(), parentId, gamePlay.getBetRecordId(), wheelDo, firstRewardResult);
+        RewardResultDo<KapreSymbolDo> rewardResultDo = this.rewardAndWheelAfterHandler(gamePlay, wheelDo, currentMultiple, totalRewardAmount.get());
+        // 3.组装单轮游戏记录
+        KapreGameRecordDo gameRecordDo = this.buildGameRecord(generateGameRecordId(), parentId, gamePlay.getBetRecordId(), wheelDo, rewardResultDo);
         ret.add(gameRecordDo);
         // 4.总的中奖金额添加
-        totalRewardAmount.addAndGet(firstRewardResult.getTotalRewardAmount());
+        totalRewardAmount.addAndGet(rewardResultDo.getTotalRewardAmount());
         return OneWheelPlayWrapDo.builder().gameRecordDo(gameRecordDo).dynamicWildIndex(dynamicWildIndex).build();
     }
 
