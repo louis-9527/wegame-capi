@@ -495,8 +495,8 @@
         "maxMultiple": "1024.0"
     },
     "freeWheelTimesRuleConfig": {
-        "baseFreeWheelTimes": 10,
-        "stepFreeWheelTimes": 2
+        "baseFreeWheelTimes": 8,
+        "stepFreeWheelTimes": 1
     },
     "rewardMaxMultiple": "10250"
 }
