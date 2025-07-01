@@ -8,7 +8,6 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
 
 import static com.wegame.capi.common.enums.SymbolEnum.*;
-import static com.wegame.capi.common.enums.SymbolSizeEnum.S;
 
 public class DiwataMayariGameHelper {
 
@@ -71,14 +70,14 @@ public class DiwataMayariGameHelper {
 
     // 大宝剑
     public static final SymbolDo DIWATA_MAYARI_WILD_SWORD = SymbolDo.builder()
-            .id(Wild_1.getId())
-            .name(Wild_1.getName())
+            .id(Wild_Sword.getId())
+            .name(Wild_Sword.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
     // 棒子
     public static final SymbolDo DIWATA_MAYARI_WILD_STICK = SymbolDo.builder()
-            .id(Wild_2.getId())
-            .name(Wild_2.getName())
+            .id(Wild_Stick.getId())
+            .name(Wild_Stick.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
     public static final SymbolDo DIWATA_MAYARI_WILD_COVER = SymbolDo.builder()

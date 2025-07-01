@@ -32,7 +32,7 @@ public class DiwataMayariSymbolDo extends SymbolDo {
      */
     @JsonIgnore
     public boolean isSword() {
-        return StringUtils.equals(getId(), SymbolEnum.Wild_1.getId());
+        return StringUtils.equals(getId(), SymbolEnum.Wild_Sword.getId());
     }
 
     /**
@@ -40,7 +40,7 @@ public class DiwataMayariSymbolDo extends SymbolDo {
      */
     @JsonIgnore
     public boolean isStick() {
-        return StringUtils.equals(getId(), SymbolEnum.Wild_2.getId());
+        return StringUtils.equals(getId(), SymbolEnum.Wild_Stick.getId());
     }
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
