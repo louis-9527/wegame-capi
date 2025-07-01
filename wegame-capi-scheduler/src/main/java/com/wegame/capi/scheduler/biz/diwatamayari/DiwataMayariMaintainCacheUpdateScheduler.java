@@ -18,7 +18,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
 public class DiwataMayariMaintainCacheUpdateScheduler extends AbstractMaintainCacheUpdateScheduler {
 
-//    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");

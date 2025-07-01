@@ -19,8 +19,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Service
 @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
-public class DiwataMayariBetRecordBetStatusScheduler
-        extends AbstractBetRecordBetStatusScheduler {
+public class DiwataMayariBetRecordBetStatusScheduler extends AbstractBetRecordBetStatusScheduler {
 
     @Override
     public GameTypeEnum getGameType() {
@@ -30,7 +29,7 @@ public class DiwataMayariBetRecordBetStatusScheduler
     /**
      * 每分钟30秒执行
      */
-//    @Scheduled(cron = "30 * * * * ?")
+    @Scheduled(cron = "30 * * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
