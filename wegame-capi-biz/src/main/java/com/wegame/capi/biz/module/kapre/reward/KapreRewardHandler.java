@@ -80,9 +80,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         List<RewardLineDetailDo<KapreSymbolDo>> rewardLineDetailList = Lists.newArrayList();
         for (RewardLineDo<KapreSymbolDo> rewardLine : rewardLineList) {
             // 计算赔率
-            BigDecimal odds = null;
-
-            odds = kapreOddsCalculateStrategy.calculateOddsOfRewardLine(rewardHandle, rewardLine);
+            BigDecimal odds = kapreOddsCalculateStrategy.calculateOddsOfRewardLine(rewardHandle, rewardLine);
             // 计算（中奖线）中奖金额：
             // 普通中奖 ：总金额 = 投注金额 * 赔率 * 中奖线数量
             // 现金中奖 ：总金额 = 投注金额 * （现金元素赔率之和）
@@ -239,7 +237,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         if (Objects.equals(GamePlayTypeEnum.NORMAL_PLAY, rewardHandle.getGamePlayType())) {
             AssertUtil.assertNotNull(rewardHandle.getCurrentTotalRewardAmount(), ErrorCode.ERR_PARAM, "currentTotalRewardAmount is null");
         }
-        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.KAPRE), ErrorCode.ERR_PARAM, "just support game type of malakas");
+        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.KAPRE), ErrorCode.ERR_PARAM, "just support game type of kapre");
         AssertUtil.assertTrue(rewardHandle.getBetAmount() > 0, ErrorCode.ERR_PARAM, "bet amount must greater than 0");
         SymbolDo[][] symbolArr = rewardHandle.getWheel().getSymbolArr();
         // 校验：滚轮行数
