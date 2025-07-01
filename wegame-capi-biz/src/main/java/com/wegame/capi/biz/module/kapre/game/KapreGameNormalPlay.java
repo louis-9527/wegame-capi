@@ -199,12 +199,8 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
         KapreSymbolDo[][] symbolArr = new KapreSymbolDo[GAME_INFO.getRow()][GAME_INFO.getColumn()];
         // 通过当前轮带，按照colum 生成整列元素
         for (int columNum = 0; columNum < GAME_INFO.getColumn(); columNum++) {
-            // 当前列(reel)的轮带
-            List<String> columWheelChart = wheelChartModel.get(columNum);
-            // 生成随机数：从当前随机数开始，顺序循环取row个元素id
-            int reelSymbolStartIndex = randomService.randomInt(0, columWheelChart.size() - 1);
-            // 取出当前列的元素id 进行元素填充
-            List<String> currentColumSymbolIdList = GameUtil.circularGetList(columWheelChart, reelSymbolStartIndex, GAME_INFO.getRow());
+            // 随机循环获取row个元素id
+            List<String> currentColumSymbolIdList = super.randomCircularGenSymbolIdList(wheelChartModel.get(columNum), GAME_INFO.getRow());
             // 填充
             for (int rowNum = 0; rowNum < GAME_INFO.getRow(); rowNum++) {
                 SymbolDo symbolDo = GAME_INFO.getSymbolById(currentColumSymbolIdList.get(rowNum));
