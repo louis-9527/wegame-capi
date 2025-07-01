@@ -3,16 +3,16 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.module.kapre.KapreGameHelper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 
 @Data
 @SuperBuilder
@@ -159,19 +159,47 @@ public class KapreConfig {
         Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.freeProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#freeProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.normalBetPayProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#normalBetPayProbabilisticConfig is null");
         Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.buyBetPayProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#buyBetPayProbabilisticConfig is null");
-//        int freeProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.freeProbabilisticConfig.values().stream().reduce(0, Integer::sum);
-//        int normalBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.normalBetPayProbabilisticConfig.values().stream().reduce(0, Integer::sum);
-//        int buyBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.buyBetPayProbabilisticConfig.values().stream().reduce(0, Integer::sum);
-//        AssertUtil.assertTrue(Objects.equals(freeProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#freeProbabilisticConfig ERR");
-//        AssertUtil.assertTrue(Objects.equals(normalBetPayProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#normalBetPayProbabilisticConfig ERR");
-//        AssertUtil.assertTrue(Objects.equals(buyBetPayProbabilisticConfigSum, 100), ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#buyBetPayProbabilisticConfig ERR");
-//        // probabilisticConfig.multipleProbabilisticConfig校验极其子属性校验
-//        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig is null");
-//        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.freeProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#freeProbabilisticConfig is null");
-//        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.payProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#payProbabilisticConfig is null");
+        BigDecimal freeProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.freeProbabilisticConfig.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal normalBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.normalBetPayProbabilisticConfig.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal buyBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.buyBetPayProbabilisticConfig.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        AssertUtil.assertTrue(freeProbabilisticConfigSum.compareTo(new BigDecimal("100")) == 0, ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#freeProbabilisticConfig ERR");
+        AssertUtil.assertTrue(normalBetPayProbabilisticConfigSum.compareTo(new BigDecimal("100")) == 0, ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#normalBetPayProbabilisticConfig ERR");
+        AssertUtil.assertTrue(buyBetPayProbabilisticConfigSum.compareTo(new BigDecimal("100")) == 0, ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#buyBetPayProbabilisticConfig ERR");
+
+        // probabilisticConfig.multipleProbabilisticConfig校验极其子属性校验
+        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.freeProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#freeProbabilisticConfig is null");
+        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.payProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#payProbabilisticConfig is null");
+        BigDecimal freeProbabilisticConfigSum2 = probabilisticConfig.multipleProbabilisticConfig.freeProbabilisticConfig.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal payProbabilisticConfigSum = probabilisticConfig.multipleProbabilisticConfig.payProbabilisticConfig.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        AssertUtil.assertTrue(freeProbabilisticConfigSum2.compareTo(new BigDecimal("100")) == 0, ErrorCode.ERR_INTER, "probabilisticConfig#multipleProbabilisticConfig#freeProbabilisticConfig ERR");
+        AssertUtil.assertTrue(payProbabilisticConfigSum.compareTo(new BigDecimal("100")) == 0, ErrorCode.ERR_INTER, "probabilisticConfig#multipleProbabilisticConfig#payProbabilisticConfig ERR");
+
     }
 
     private void wheelChartValidate() {
+        // wheelChart校验
+        Assert.notNull(wheelChart, "wheelChart is null");
+        Assert.notNull(wheelChart.normal, "wheelChart#normal is null");
+        Assert.notNull(wheelChart.buy, "wheelChart#buy is null");
+        // wheelChart.normal校验
 
+        GameInfoDo kapreGameInfo = KapreGameHelper.KAPRE_GAME_INFO;
+        Set<String> symbolIdSet = kapreGameInfo.getSymbolMap().keySet();
+        wheelChart.normal.forEach((key, value) -> {
+            value.forEach(list -> {
+                list.forEach(symbolId -> {
+                    AssertUtil.assertTrue(symbolIdSet.contains(symbolId), ErrorCode.ERR_INTER, "wheelChart#normal ERR");
+                });
+            });
+        });
+        // wheelChart.buy校验
+        wheelChart.buy.forEach((key, value) -> {
+            value.forEach(list -> {
+                list.forEach(symbolId -> {
+                    AssertUtil.assertTrue(symbolIdSet.contains(symbolId), ErrorCode.ERR_INTER, "wheelChart#buy ERR");
+                });
+            });
+        });
     }
 }
