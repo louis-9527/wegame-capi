@@ -42,20 +42,20 @@ public class KapreOddsCalculateStrategy extends AbstractOddsCalculateStrategy<Ka
 
     private BigDecimal getOddsOfCashReward(RewardLineDo<KapreSymbolDo> rewardLine) {
         AssertUtil.assertNotEmpty(rewardLine.getRewardSymbolList(), ErrorCode.ERR_INTER, "rewardSymbolList is null");
-        BigDecimal totalMultiple = BigDecimal.ZERO;
+        BigDecimal totolOdds = BigDecimal.ZERO;
         for (RewardSymbolDo<KapreSymbolDo> rewardSymbolDo : rewardLine.getRewardSymbolList()) {
             KapreSymbolDo symbolDo = rewardSymbolDo.getSymbol();
             if (Objects.isNull(symbolDo)) {
                 continue;
             }
             if (symbolDo.isCashSymbol()) {
-                totalMultiple = totalMultiple.add(symbolDo.getSymbolOdd());
+                totolOdds = totolOdds.add(symbolDo.getSymbolOdd());
             } else if (symbolDo.isWildSymbol()) {
                 KapreSymbolDo nestSymbol = symbolDo.getNestSymbol();
                 AssertUtil.assertNotNull(nestSymbol, ErrorCode.ERR_INTER, "nestSymbol in wildSymbol can not be null");
-                totalMultiple = totalMultiple.add(nestSymbol.getSymbolOdd());
+                totolOdds = totolOdds.add(nestSymbol.getSymbolOdd());
             }
         }
-        return totalMultiple;
+        return totolOdds;
     }
 }
