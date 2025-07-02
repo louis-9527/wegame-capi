@@ -22,10 +22,6 @@ import java.util.TreeMap;
 public class KapreConfig implements Serializable {
     private static final long serialVersionUID = 5550628498801680050L;
     /**
-     * 中奖通知最小倍数
-     */
-    private Integer rewardNotifyMinMultiple;
-    /**
      * 中奖最大倍数
      */
     private Integer rewardMaxMultiple;
@@ -123,7 +119,6 @@ public class KapreConfig implements Serializable {
     }
 
     public void validate() {
-        rewardNotifyMinMultipleValidate();
         rewardMaxMultipleValidate();
         freeWheelTimesValidate();
         oddsConfigValidate();
@@ -131,10 +126,6 @@ public class KapreConfig implements Serializable {
         wheelChartValidate();
     }
 
-    private void rewardNotifyMinMultipleValidate() {
-        AssertUtil.assertNotNull(rewardNotifyMinMultiple, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple is null");
-        AssertUtil.assertTrue(rewardNotifyMinMultiple > 0, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple must great than 0");
-    }
     private void rewardMaxMultipleValidate() {
         AssertUtil.assertNotNull(this.rewardMaxMultiple, ErrorCode.ERR_INTER, "rewardMaxMultiple is null");
         AssertUtil.assertTrue(this.rewardMaxMultiple > 0, ErrorCode.ERR_INTER, "rewardMaxMultiple is must great than 0");
