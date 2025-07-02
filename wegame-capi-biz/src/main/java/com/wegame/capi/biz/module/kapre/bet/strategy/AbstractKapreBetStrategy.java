@@ -27,7 +27,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,9 +55,6 @@ public abstract class AbstractKapreBetStrategy
     private KapreOperationEventManager kapreOperationEventManager;
     @Autowired
     private KapreBetHelper kapreBetHelper;
-    // todo 删除
-    @Value("${spring.application.env}")
-    private String env;
 
     @Override
     public AbstractGameContext<KapreGameRecordDo> gameContext() {
@@ -125,22 +121,12 @@ public abstract class AbstractKapreBetStrategy
         long betRecordId = generateBetRecordId();
         List<KapreGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-        List<KapreGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
+        List<KapreGameRecordDo> firstBatchList = kapreBetHelper.getFirstBatchGameRecordList(list);
         // 2、构建投注记录
         BetRecordDo<KapreGameRecordDo> betRecord = kapreBetHelper.buildBetRecord(betRecordId, betDo, list);
-        // todo delete @jayni
-        if (Objects.equals("local", this.env)) {
-            log.info("betForNonFreeWheel local env:{}", betRecord);
-            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, false);
-            AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-            return kapreBetHelper.handleBetResult(betRecord, resultDo);
-        } else {
-            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, kapreBetHelper.hasRewardFreeWheel(firstBatchList));
-            AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-            return kapreBetHelper.handleBetResult(betRecord, resultDo);
-        }
-
-
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, kapreBetHelper.hasRewardFreeWheel(firstBatchList));
+        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+        return kapreBetHelper.handleBetResult(betRecord, resultDo);
     }
 
     /**
@@ -185,14 +171,6 @@ public abstract class AbstractKapreBetStrategy
                         .build())
                 .build();
     }
-
-    private List<KapreGameRecordDo> getFirstBatchGameRecordList(List<KapreGameRecordDo> list) {
-        Long batchId = list.get(0).getBatchId();
-        return list.stream()
-                .filter(item -> Objects.equals(batchId, item.getBatchId()))
-                .collect(Collectors.toList());
-    }
-
 
     public void freeWheelAfterHandle(Long betRecordId) {
         // do nothing
