@@ -53,7 +53,11 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
         // 首轮游戏处理
         OneWheelPlayWrapDo firstWheelPlayWrapDo = this.oneWheelPlay(gamePlay, RECORD_DEFAULT_PARENT_ID, totalRewardAmount, ret, null, BigDecimal.ZERO, false);
         // 免费轮处理-迭代替代递归
-        this.freeWheelHandler(firstWheelPlayWrapDo.getGameRecordDo(), totalRewardAmount, ret, gamePlay);
+        // 是否需要处理
+        if (!firstWheelPlayWrapDo.getGameRecordDo().getRewardResult().isHasRewardFreeWheel()
+                || firstWheelPlayWrapDo.getGameRecordDo().getRewardResult().getRewardFreeWheelTimes() <= 0) {
+            this.freeWheelHandler(firstWheelPlayWrapDo.getGameRecordDo(), totalRewardAmount, ret, gamePlay);
+        }
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
@@ -71,7 +75,6 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
         // 1.生成滚轮
         WheelDo<KapreSymbolDo> wheelDo = this.generateCommonWheel(this.buildWheelChartModel(gamePlay, freeFlag),
                 this.buildCashSymbolMultipleProbabilisticConfig(freeFlag), freeFlag);
-        ;
         IndexDo dynamicWildIndex = null;
         // 1.1 免费轮注入动游荡wild
         if (freeFlag) {
@@ -93,22 +96,16 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
         // 直到和上一个游离wild不一样为止
         IndexDo currDynamicWildIndex;
         do {
-            int randomRowNum = randomService.randomInt(0, GAME_INFO.getRow() - 1);
+            int randomRowNum = randomService.randomInt(Constants.CONST_0, GAME_INFO.getRow() - 1);
             // 不生成在reel 1
-            int randomColumRum = randomService.randomInt(1, GAME_INFO.getColumn() - 1);
+            int randomColumRum = randomService.randomInt(Constants.CONST_1, GAME_INFO.getColumn() - 1);
             currDynamicWildIndex = IndexFactory.buildDo(randomRowNum, randomColumRum);
         } while (Objects.equals(currDynamicWildIndex, preDynamicWildIndex));
         wheelDo.getSymbolArr()[currDynamicWildIndex.getRowIndex()][currDynamicWildIndex.getColumnIndex()] = dynamicWildSymbolDo;
         return currDynamicWildIndex;
     }
 
-
     private void freeWheelHandler(KapreGameRecordDo firstGameRecord, AtomicLong totalRewardAmount, List<KapreGameRecordDo> ret, GamePlayDo gamePlay) {
-        // 是否需要处理
-        if (!firstGameRecord.getRewardResult().isHasRewardFreeWheel() || firstGameRecord.getRewardResult().getRewardFreeWheelTimes() <= 0) {
-            return;
-        }
-
         // 如果达到最大倍数，则结束
         if (Objects.equals(firstGameRecord.getRewardResult().getAccumulateReachMaxMultiple(), Boolean.TRUE)) {
             log.info("freeWheelHandler AccumulateReachMaxMultiple,betRecordId:{}", gamePlay.getBetRecordId());
@@ -124,7 +121,7 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
             KapreGameRecordDo parentGameRecord = freeWheelHandleDo.getParentGameRecord();
             long parentGameRecordId = parentGameRecord.getId();
             IndexDo preDynamicWildIndex = null;
-            for (int i = 0; i < freeWheelHandleDo.getTaskTimes(); i++) {
+            for (int i = Constants.CONST_0; i < freeWheelHandleDo.getTaskTimes(); i++) {
                 OneWheelPlayWrapDo freeWheelPlayWrapDo = this.oneWheelPlay(gamePlay, parentGameRecordId, totalRewardAmount, ret, preDynamicWildIndex, BigDecimal.ZERO, true);
                 // parentGameRecord 添加子gameRecordId
                 parentGameRecord.addGameRecordId(freeWheelPlayWrapDo.getGameRecordDo().getId());

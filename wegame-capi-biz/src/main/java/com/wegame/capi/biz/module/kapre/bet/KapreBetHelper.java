@@ -87,7 +87,7 @@ public class KapreBetHelper implements BetHelper<KapreBetRecordDetailDo, KapreGa
         }
     }
 
-    private List<KapreGameRecordDo> getFirstBatchGameRecordList(List<KapreGameRecordDo> list) {
+    public List<KapreGameRecordDo> getFirstBatchGameRecordList(List<KapreGameRecordDo> list) {
         Long batchId = list.get(0).getBatchId();
         return list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
