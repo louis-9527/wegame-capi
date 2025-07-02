@@ -21,7 +21,6 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
 public class KapreStarCardScheduler extends AbstractStarCardScheduler {
 
-
     @Scheduled(cron = "0 0/12 * * * ?")
     public void schedule() {
         try {

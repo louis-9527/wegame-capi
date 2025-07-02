@@ -19,8 +19,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Service
 @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
-public class KapreBetRecordBetStatusScheduler
-        extends AbstractBetRecordBetStatusScheduler {
+public class KapreBetRecordBetStatusScheduler extends AbstractBetRecordBetStatusScheduler {
 
     @Override
     public GameTypeEnum getGameType() {

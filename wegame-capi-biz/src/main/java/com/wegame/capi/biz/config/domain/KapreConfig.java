@@ -4,7 +4,6 @@ import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.kapre.KapreGameHelper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -12,13 +11,16 @@ import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KapreConfig {
+public class KapreConfig implements Serializable {
+    private static final long serialVersionUID = 5550628498801680050L;
     /**
      * 中奖通知最小倍数
      */
