@@ -26,7 +26,9 @@ public enum AchievementErrorCode {
     EXPERIENCE_NOT_MET("5012", "experience not met", ErrorCode.ACHIEVEMENT_EXPERIENCE_NOT_MET),
     TREASURE_NOT_FOUND("5013", "treasure not found", ErrorCode.ACHIEVEMENT_TREASURE_NOT_FOUND),
     NO_CONFIG_MATCH_WITH_CHANNEL_ID("5014", "no config match with channelId", ErrorCode.ACHIEVEMENT_NO_CONFIG_MATCH_WITH_CHANNEL_ID),
-    INVALID_REWARD_PAYOUT("5015", "invalid reward payout", ErrorCode.ACHIEVEMENT_INVALID_REWARD_PAYOUT);
+    INVALID_REWARD_PAYOUT("5015", "invalid reward payout", ErrorCode.ACHIEVEMENT_INVALID_REWARD_PAYOUT),
+    ACHIEVEMENT_INSUFFICIENT_CREDIT("4014", "insufficient credit", ErrorCode.ACHIEVEMENT_INSUFFICIENT_CREDIT);
+
 
     /** 三方错误码 */
     private final String thirdCode;

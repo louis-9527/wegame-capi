@@ -42,7 +42,7 @@ public class FilterConfig {
     @Bean
     public FilterRegistrationBean mdcFilter() {
         MdcFilter mdcFilter = new MdcFilter();
-        log.debug(BUILD_BEAN_FORMAT, "mdcFilter");
+        log.info(BUILD_BEAN_FORMAT, "mdcFilter");
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(mdcFilter);
         bean.setOrder(-2);
@@ -53,7 +53,7 @@ public class FilterConfig {
     @Bean
     @Profile({"qa", "pre", "prod"})
     public FilterRegistrationBean signatureFilter() {
-        log.debug(BUILD_BEAN_FORMAT, "signatureFilter");
+        log.info(BUILD_BEAN_FORMAT, "signatureFilter");
         SignatureFilter signatureFilter = new SignatureFilter();
         signatureFilter.setAppId(Constants.APP_ID);
         signatureFilter.setAppSecret(Constants.APP_SECRET);
@@ -68,7 +68,7 @@ public class FilterConfig {
     @Bean
     public FilterRegistrationBean contextFilter(@Autowired RedisTemplate<String, Object> redisTemplate,
                                                 @Autowired LoginService loginService) {
-        log.debug(BUILD_BEAN_FORMAT, "contextFilter");
+        log.info(BUILD_BEAN_FORMAT, "contextFilter");
         ContextFilter contextFilter = new ContextFilter();
         contextFilter.setRedisTemplate(redisTemplate);
         contextFilter.setLoginService(loginService);
