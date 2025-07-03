@@ -49,11 +49,15 @@ public class KapreOddsCalculateStrategy extends AbstractOddsCalculateStrategy<Ka
                 continue;
             }
             if (symbolDo.isCashSymbol()) {
-                totalOdds = totalOdds.add(symbolDo.getSymbolOdd());
+                if (!Objects.isNull(symbolDo.getSymbolOdd())) {
+                    totalOdds = totalOdds.add(symbolDo.getSymbolOdd());
+                }
             } else if (symbolDo.isWildSymbol()) {
                 KapreSymbolDo nestSymbol = symbolDo.getNestSymbol();
                 AssertUtil.assertNotNull(nestSymbol, ErrorCode.ERR_INTER, "nestSymbol in wildSymbol can not be null");
-                totalOdds = totalOdds.add(nestSymbol.getSymbolOdd());
+                if (!Objects.isNull(nestSymbol.getSymbolOdd())) {
+                    totalOdds = totalOdds.add(nestSymbol.getSymbolOdd());
+                }
             }
         }
         return totalOdds;
