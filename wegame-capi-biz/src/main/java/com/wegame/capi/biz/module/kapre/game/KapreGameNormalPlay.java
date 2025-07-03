@@ -54,8 +54,8 @@ public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordD
         OneWheelPlayWrapDo firstWheelPlayWrapDo = this.oneWheelPlay(gamePlay, RECORD_DEFAULT_PARENT_ID, totalRewardAmount, ret, null, BigDecimal.ZERO, false);
         // 免费轮处理-迭代替代递归
         // 是否需要处理
-        if (firstWheelPlayWrapDo.getGameRecordDo().getRewardResult().isHasRewardFreeWheel()
-                && firstWheelPlayWrapDo.getGameRecordDo().getRewardResult().getRewardFreeWheelTimes() > 0) {
+        if (firstWheelPlayWrapDo.getRewardResult().isHasRewardFreeWheel()
+                && firstWheelPlayWrapDo.getRewardResult().getRewardFreeWheelTimes() > 0) {
             this.freeWheelHandler(firstWheelPlayWrapDo.getGameRecordDo(), totalRewardAmount, ret, gamePlay);
         }
         if (CollectionUtils.isNotEmpty(ret)) {
