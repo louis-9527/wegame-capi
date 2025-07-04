@@ -22,7 +22,10 @@ public enum BetSubTypeEnum {
             "正常投注",
             BetTypeEnum.NORMAL_BET),
     FREE_SPINS_NORMAL_BET("FREE_SPINS_NORMAL_BET",
-            "免费轮正常投注",
+            "免费轮查询-正常投注", // 用于查询投注记录
+            BetTypeEnum.NORMAL_BET),
+    FREE_WHEEL_NORMAL_BET("FREE_WHEEL_NORMAL_BET",
+            "免费轮正常投注", // 支付金额为0并投注派彩
             BetTypeEnum.NORMAL_BET),
     EX_BET("EX_BET",
             "正常投注EX投注",
@@ -32,7 +35,7 @@ public enum BetSubTypeEnum {
             "购买投注",
             BetTypeEnum.BUY_BET),
     FREE_SPINS_BUY_BET("FREE_SPINS_BUY_BET",
-            "免费轮购买投注",
+            "免费轮查询-购买投注", // 用于查询投注记录
             BetTypeEnum.BUY_BET),
     ;
 
