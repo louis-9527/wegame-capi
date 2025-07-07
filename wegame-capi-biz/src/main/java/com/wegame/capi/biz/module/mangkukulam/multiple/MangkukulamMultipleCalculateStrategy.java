@@ -3,8 +3,8 @@ package com.wegame.capi.biz.module.mangkukulam.multiple;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.symbol.MangkukulamSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
+import com.wegame.capi.biz.domain.biz.symbol.MangkukulamSymbolDo;
 import com.wegame.capi.biz.module.base.multiple.AbstractMultipleCalculateStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -35,12 +35,12 @@ public class MangkukulamMultipleCalculateStrategy extends AbstractMultipleCalcul
                 ));
 
         // 筛选出特殊wild并按坐标去重
-        BigDecimal totalMultiple = indexSymbolMap.entrySet().stream()
-                .filter(entry -> entry.getValue().isSpecialWild())
-                .map(entry -> entry.getValue().getMultiple())
+        BigDecimal totalMultiple = indexSymbolMap.values().stream()
+                .filter(MangkukulamSymbolDo::isSpecialWild)
+                .map(MangkukulamSymbolDo::getMultiple)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        log.info("Found {} special wild symbols in {} total symbols, total multiple: {}", 
+        log.info("Found {} special wild symbols in {} total symbols, total multiple: {}",
                 indexSymbolMap.values().stream().filter(MangkukulamSymbolDo::isSpecialWild).count(),
                 indexSymbolMap.size(), totalMultiple);
 
