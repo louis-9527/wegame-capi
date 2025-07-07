@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
-import com.wegame.capi.biz.config.domain.LamangConfig;
+import com.wegame.capi.biz.config.domain.MangkukulamConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
@@ -21,7 +21,6 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
-import com.wegame.capi.biz.module.lamang.LamangGameHelper;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -42,14 +41,14 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 @Slf4j
 @Component("mangkukulamRewardHandler")
 public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamSymbolDo> {
-    private static final Integer MIN_SCATTER_COUNT_FOR_FREE_SPIN = 3;
 
     @Autowired
     OddsCalculateStrategy<MangkukulamSymbolDo> mangkukulamOddsCalculateStrategy;
     @Autowired
     MultipleCalculateStrategy<MangkukulamSymbolDo> mangkukulamMultipleCalculateStrategy;
-    @Autowired
-    LamangConfig lamangConfig;
+    //todo 删除
+    @Autowired(required = false)
+    MangkukulamConfig mangkukulamConfig;
 
     @Override
     public RewardResultDo<MangkukulamSymbolDo> handle(RewardHandleDo<MangkukulamSymbolDo> rewardHandle) {
@@ -107,7 +106,7 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
                 rewardHandle.getGamePlayType(),
                 totalAmount,
                 rewardHandle.getBetAmount(),
-                lamangConfig.getRewardMaxMultiple());
+                mangkukulamConfig.getMax_payout());
         // 5.构建中奖结果
         RewardResultDo<MangkukulamSymbolDo> rewardResult = RewardResultDo.<MangkukulamSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
@@ -224,7 +223,6 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
     /**
      * 计算免费轮次数
      * 区分正常轮和免费轮
-     * 免费轮,计算scatter+1
      * 正常轮，没有中奖，计算scatter产生的免费轮
      * 正常轮,有中奖，返回0
      *
@@ -232,21 +230,9 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
      * @return 免费轮次数
      */
     private Integer calcRewardFreeWheelTimes(RewardHandleDo<MangkukulamSymbolDo> rewardHandle, List<RewardLineDo<MangkukulamSymbolDo>> rewardLineList) {
-        // 区分正常轮和免费轮
-        if (rewardHandle.getWheel().isFreeFlag()) {
-            // 免费轮,计算scatter+1
-            long newScatter1Count = Arrays.stream(rewardHandle.getWheel().getSymbolArr()).flatMap(Arrays::stream)
-                    .filter(Objects::nonNull).filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER1.getId()) && symbol.isNewSymbol()).count();
-            return (int) newScatter1Count;
-        } else {
-            if (CollectionUtil.isEmpty(rewardLineList)) {
-                // 正常轮，没有中奖，计算scatter产生的免费轮
-                long scatterCount = Arrays.stream(rewardHandle.getWheel().getSymbolArr()).flatMap(Arrays::stream)
-                        .filter(Objects::nonNull).filter(symbol -> Objects.equals(symbol.getId(), LamangGameHelper.LAMANG_SCATTER.getId())).count();
-                return scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? lamangConfig.getFreeWheelTimes() : 0;
-            }
-        }
+        // todo
         // 正常轮,有中奖，返回0
+        boolean freeWheel = rewardHandle.getWheel().isFreeFlag();
         return 0;
     }
 

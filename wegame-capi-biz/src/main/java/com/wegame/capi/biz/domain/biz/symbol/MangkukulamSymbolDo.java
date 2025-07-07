@@ -9,8 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_SYMBOL_PLACEHOLDER;
-
 /**
  * lamang游戏元素
  */
@@ -49,7 +47,11 @@ public class MangkukulamSymbolDo extends SymbolDo {
 
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
-        return StringUtils.equals(getId(), LAMANG_SYMBOL_PLACEHOLDER.getId());
+        return StringUtils.equals(getId(), MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER.getId());
+    }
+
+    public boolean isSpecialWild() {
+        return StringUtils.equals(getId(), MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId());
     }
 
     /**

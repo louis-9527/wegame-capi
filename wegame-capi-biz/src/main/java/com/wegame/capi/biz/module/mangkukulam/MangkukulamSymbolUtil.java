@@ -11,22 +11,6 @@ import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.MANGK
 
 @Slf4j
 public class MangkukulamSymbolUtil {
-    /**
-     * 计算中奖次数 (新增scatter & scatter+1数量) 并更新元素状态
-     */
-    public static int countNewScatterAndScatter1InWheel(MangkukulamSymbolDo[][] symbolArr) {
-        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
-        int count = 0;
-        for (int row = 0; row < symbolArr.length; row++) {
-            for (int col = 0; col < symbolArr[row].length; col++) {
-                MangkukulamSymbolDo current = symbolArr[row][col];
-                if (Objects.nonNull(current) && current.isScatterSymbol() && current.isNewSymbol()) {
-                    count = count + 1;
-                }
-            }
-        }
-        return count;
-    }
 
 
     public static MangkukulamSymbolDo[][] copySymbolArrWithPlaceHolder(MangkukulamSymbolDo[][] symbolArr) {
@@ -39,7 +23,7 @@ public class MangkukulamSymbolUtil {
                 if (Objects.isNull(symbolArr[i][j])) {
                     newSymbolArr[i][j] = MANGKUKULAM_SYMBOL_PLACEHOLDER;
                 } else {
-                    newSymbolArr[i][j] = symbolArr[i][j].copyWithOriginalNewSymbol();
+                    newSymbolArr[i][j] = symbolArr[i][j].copy();
                 }
             }
         }

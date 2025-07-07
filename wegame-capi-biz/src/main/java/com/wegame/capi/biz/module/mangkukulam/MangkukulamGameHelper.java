@@ -51,6 +51,11 @@ public class MangkukulamGameHelper {
             .name(Symbol1008.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .build();
+    private static final SymbolDo MANGKUKULAM_Symbol1009 = SymbolDo.builder()
+            .id(Symbol1009.getId())
+            .name(Symbol1009.getName())
+            .symbolType(SymbolTypeEnum.COMMON)
+            .build();
     public static final SymbolDo MANGKUKULAM_SCATTER = SymbolDo.builder()
             .id(Scatter.getId())
             .name(Scatter.getName())
@@ -74,7 +79,7 @@ public class MangkukulamGameHelper {
             .name(Symbol1000.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
-    
+
     public static final GameInfoDo MANGKUKULAM_GAME_INFO = GameInfoDo.builder()
             .id(GameTypeEnum.MANGKUKULAM.getId())
             .gameType(GameTypeEnum.MANGKUKULAM)
@@ -91,6 +96,7 @@ public class MangkukulamGameHelper {
                     .put(MANGKUKULAM_Symbol1006.getId(), MANGKUKULAM_Symbol1006)
                     .put(MANGKUKULAM_Symbol1007.getId(), MANGKUKULAM_Symbol1007)
                     .put(MANGKUKULAM_Symbol1008.getId(), MANGKUKULAM_Symbol1008)
+                    .put(MANGKUKULAM_Symbol1009.getId(), MANGKUKULAM_Symbol1009)
                     .put(MANGKUKULAM_SCATTER.getId(), MANGKUKULAM_SCATTER)
                     .put(MANGKUKULAM_Wild.getId(), MANGKUKULAM_Wild)
                     .put(MANGKUKULAM_SPECIAL_WILD.getId(), MANGKUKULAM_SPECIAL_WILD)

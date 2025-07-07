@@ -89,7 +89,7 @@ public class GameConfig {
             throw new RuntimeException("read kapre_config.json file err！！！");
         } else {
             KapreConfig config = new ObjectMapper().readValue(inputStream, KapreConfig.class);
-//            config.validate();
+            config.validate();
             return config;
         }
     }

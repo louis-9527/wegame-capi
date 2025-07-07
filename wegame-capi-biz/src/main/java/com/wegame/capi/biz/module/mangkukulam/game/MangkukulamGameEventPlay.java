@@ -171,7 +171,6 @@ public class MangkukulamGameEventPlay extends AbstractGame<MangkukulamGameRecord
                                                     RewardResultDo<MangkukulamSymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        int drawTimes = MangkukulamSymbolUtil.countNewScatterAndScatter1InWheel(wheel.getSymbolArr());
         return MangkukulamGameRecordDo.builder()
                 .id(id)
                 .parentId(parentId)
@@ -185,7 +184,6 @@ public class MangkukulamGameEventPlay extends AbstractGame<MangkukulamGameRecord
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
                 .lastGameFlag(false)
-                .jackpotDrawTimes(drawTimes)
                 .build();
     }
 

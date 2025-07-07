@@ -23,6 +23,4 @@ public class MangkukulamBetResultDetailVo implements Serializable {
     private String allWheelRewardSubType;
     @ApiModelProperty("投注结果列表")
     private List<MangkukulamBetResultVo> resultList;
-    @ApiModelProperty("jackpot中奖的游戏记录id")
-    private String jackpotRewardGameRecordId;
 }

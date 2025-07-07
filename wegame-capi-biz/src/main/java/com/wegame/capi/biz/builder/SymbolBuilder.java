@@ -119,7 +119,9 @@ public class SymbolBuilder {
                 MangkukulamSymbolDo mangkukulamSymbolDo = symbolArr[row][col];
                 integerArray[row][col] = Objects.isNull(mangkukulamSymbolDo) ? null : MangkukulamSymbolVo.builder()
                         .symbolId(mangkukulamSymbolDo.getId())
-                        .symbolGoldBorder(mangkukulamSymbolDo.isSymbolGoldBorder())
+                        .symbolFireBorder(mangkukulamSymbolDo.isSymbolFireBorder())
+                        .remainClearTimes(mangkukulamSymbolDo.getRemainClearTimes())
+                        .multiples(mangkukulamSymbolDo.getMultiples())
                         .build();
             }
         }
