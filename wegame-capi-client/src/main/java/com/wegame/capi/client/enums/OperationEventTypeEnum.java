@@ -56,7 +56,11 @@ public enum OperationEventTypeEnum {
             "kapre_operation_event_config",
             "kapre_operation_event_config_record"
     ),
-
+    MANGKUKULAM(GameTypeEnum.MANGKUKULAM,
+            "mangkukulam_operation_event",
+            "mangkukulam_operation_event_detail",
+            "mangkukulam_operation_event_config",
+            "mangkukulam_operation_event_config_record")
     ;
 
 
