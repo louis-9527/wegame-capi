@@ -1,9 +1,6 @@
 package com.wegame.capi.biz.domain.biz.game;
 
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -54,5 +51,29 @@ public class GamePlayDo implements Serializable {
      */
     private Long operationEventConfigBetRecordId;
     private GameOperationEventDo gameEventDo;
+
+    private VolatilityEnum volatility;
+
+    private ContinuPlayContext continuPlayContext;
+
+    @Data
+    @SuperBuilder
+    private static class ContinuPlayContext {
+
+        /**
+         * 父投注记录id
+         */
+        private Long parentBetRecordId;
+
+        /**
+         * 已派奖金额
+         */
+        private long totalPayoutAmount;
+
+        /**
+         * 免费轮次数
+         */
+        private int freeWheelTimes;
+    }
 }
 
