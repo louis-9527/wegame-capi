@@ -77,7 +77,7 @@ public class MangkukulamGameHelper {
     public static final MangkukulamSymbolDo MANGKUKULAM_SYMBOL_PLACEHOLDER = MangkukulamSymbolDo.builder()
             .id(Symbol1000.getId())
             .name(Symbol1000.getName())
-            .symbolType(SymbolTypeEnum.WILD)
+            .symbolType(SymbolTypeEnum.COMMON)
             .build();
 
     public static final GameInfoDo MANGKUKULAM_GAME_INFO = GameInfoDo.builder()
