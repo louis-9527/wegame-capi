@@ -86,9 +86,9 @@ public class MangkukulamGameRecordDo implements Serializable, ToVoConverter<Mang
     private boolean lastGameFlag;
 
     /**
-     * jackpot抽奖次数
+     * 父投注记录id
      */
-    private Integer jackpotDrawTimes;
+    private Long parentBetRecordId;
 
     @Transient
     @JsonIgnore

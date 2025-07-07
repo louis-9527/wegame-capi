@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.module.mangkukulam.game;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
@@ -28,8 +30,18 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
         List<MangkukulamGameRecordDo> gameRecordResult = new ArrayList<>();
         LinkedList<FreeWheelHandleDo> freeWheelList = new LinkedList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
-        // todo
+        // todo 执行
         return gameRecordResult;
+    }
+
+    private void loadContinuePlayContext(GamePlayDo gamePlay, LinkedList<FreeWheelHandleDo> freeWheelList, AtomicLong totalRewardAmount) {
+        AssertUtil.assertNotNull(gamePlay.getContinuePlayContext(), ErrorCode.ERR_INTER);
+        GamePlayDo.ContinuePlayContext context = gamePlay.getContinuePlayContext();
+        freeWheelList.add(FreeWheelHandleDo.builder()
+                .freeWheelTimes(context.getFreeWheelTimes())
+                .parentGameRecordId(context.getParentGameRecordId())
+                .build());
+        totalRewardAmount.getAndAdd(context.getTotalPayoutAmount());
     }
 
 

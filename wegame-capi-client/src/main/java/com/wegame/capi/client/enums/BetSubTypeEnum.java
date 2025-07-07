@@ -77,4 +77,9 @@ public enum BetSubTypeEnum {
         List<String> freeWheelCodeList = Arrays.asList(FREE_SPINS_NORMAL_BET.getCode(), FREE_SPINS_BUY_BET.getCode());
         return freeWheelCodeList.contains(betSubType);
     }
+
+    public static Boolean isFirstWheel(String betSubType) {
+        List<String> freeWheelCodeList = Arrays.asList(NORMAL_BET.getCode(), BUY_BET.getCode());
+        return freeWheelCodeList.contains(betSubType);
+    }
 }

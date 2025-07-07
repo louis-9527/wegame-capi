@@ -58,7 +58,7 @@ public class GamePlayDo implements Serializable {
 
     @Data
     @SuperBuilder
-    private static class ContinuePlayContext {
+    public static class ContinuePlayContext {
 
         /**
          * 父投注记录id
@@ -74,6 +74,11 @@ public class GamePlayDo implements Serializable {
          * 免费轮次数
          */
         private int freeWheelTimes;
+
+        /**
+         * 父游戏记录id
+         */
+        private int parentGameRecordId;
     }
 }
 
