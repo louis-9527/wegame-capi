@@ -32,17 +32,22 @@ public class WalletRestTemplateConfig {
     int walletConnectTimeout;
     @Value("${httpclient.wallet.readTimeout:1000}")
     int walletReadTimeout;
-    @Value("${httpclient.wallet.connectionRequestTimeout:800}")
+    @Value("${httpclient.wallet.connectionRequestTimeout:200}")
     int walletConnectionRequestTimeout;
-    @Value("${httpclient.wallet.timeToLive:90}")
+    // 连接验证配置（设置为30分钟，与预期有效期匹配）
+    @Value("${httpclient.wallet.validateAfterInactivity:1800000}")
+    int validateAfterInactivity;
+    @Value("${httpclient.wallet.timeToLive:60}")
     int walletTimeToLive;
+    @Value("${httpclient.wallet.maxIdleTime:60}")
+    int maxIdleTime;
 
     @Bean(value = WALLET_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager walletConnectionManager() {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(walletTimeToLive, TimeUnit.MINUTES);
         manager.setMaxTotal(walletConnectMaxTotal);
         manager.setDefaultMaxPerRoute(walletConnectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(30000);
+        manager.setValidateAfterInactivity(validateAfterInactivity);
         return manager;
     }
 
@@ -52,6 +57,9 @@ public class WalletRestTemplateConfig {
                 .setConnectionManager(walletConnectionManager)
                 // 连接最大存活时间
                 .setConnectionTimeToLive(walletTimeToLive, TimeUnit.MINUTES)
+                // 确保空闲连接不会在30分钟内被回收
+                .evictIdleConnections(maxIdleTime, TimeUnit.MINUTES)
+                .evictExpiredConnections()
                 .build();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         factory.setConnectTimeout(walletConnectTimeout);

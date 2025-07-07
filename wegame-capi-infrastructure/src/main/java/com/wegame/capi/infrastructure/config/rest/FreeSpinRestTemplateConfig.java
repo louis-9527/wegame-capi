@@ -32,17 +32,22 @@ public class FreeSpinRestTemplateConfig {
     int freeSpinConnectTimeout;
     @Value("${httpclient.freeSpin.readTimeout:1000}")
     int freeSpinReadTimeout;
-    @Value("${httpclient.freeSpin.connectionRequestTimeout:800}")
+    // 连接验证配置（设置为30分钟，与预期有效期匹配）
+    @Value("${httpclient.wallet.validateAfterInactivity:1800000}")
+    int validateAfterInactivity;
+    @Value("${httpclient.freeSpin.connectionRequestTimeout:200}")
     int freeSpinConnectionRequestTimeout;
-    @Value("${httpclient.freeSpin.timeToLive:90}")
+    @Value("${httpclient.freeSpin.timeToLive:60}")
     int freeSpinTimeToLive;
+    @Value("${httpclient.wallet.maxIdleTime:60}")
+    int maxIdleTime;
 
     @Bean(value = FREE_SPIN_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager freeSpinConnectionManager() {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(freeSpinTimeToLive, TimeUnit.MINUTES);
         manager.setMaxTotal(freeSpinConnectMaxTotal);
         manager.setDefaultMaxPerRoute(freeSpinConnectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(30000);
+        manager.setValidateAfterInactivity(validateAfterInactivity);
         return manager;
     }
 
@@ -52,6 +57,8 @@ public class FreeSpinRestTemplateConfig {
                 .setConnectionManager(freeSpinConnectionManager)
                 // 连接最大存活时间
                 .setConnectionTimeToLive(freeSpinTimeToLive, TimeUnit.MINUTES)
+                .evictIdleConnections(maxIdleTime, TimeUnit.MINUTES)
+                .evictExpiredConnections()
                 .build();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         factory.setConnectTimeout(freeSpinConnectTimeout);

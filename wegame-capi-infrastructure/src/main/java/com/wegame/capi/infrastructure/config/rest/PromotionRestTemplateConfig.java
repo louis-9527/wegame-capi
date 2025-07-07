@@ -35,17 +35,22 @@ public class PromotionRestTemplateConfig {
     int promotionConnectTimeout;
     @Value("${httpclient.promotion.readTimeout:1000}")
     int promotionReadTimeout;
-    @Value("${httpclient.promotion.connectionRequestTimeout:800}")
+    @Value("${httpclient.promotion.connectionRequestTimeout:200}")
     int promotionConnectionRequestTimeout;
-    @Value("${httpclient.promotion.timeToLive:90}")
+    // 连接验证配置（设置为30分钟，与预期有效期匹配）
+    @Value("${httpclient.wallet.validateAfterInactivity:1800000}")
+    int validateAfterInactivity;
+    @Value("${httpclient.promotion.timeToLive:60}")
     int promotionTimeToLive;
+    @Value("${httpclient.wallet.maxIdleTime:60}")
+    int maxIdleTime;
 
     @Bean(value = PROMOTION_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager promotionConnectionManager() {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(promotionTimeToLive, TimeUnit.MINUTES);
         manager.setMaxTotal(promotionConnectMaxTotal);
         manager.setDefaultMaxPerRoute(promotionConnectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(30000);
+        manager.setValidateAfterInactivity(validateAfterInactivity);
         return manager;
     }
 
@@ -55,6 +60,8 @@ public class PromotionRestTemplateConfig {
                 .setConnectionManager(promotionConnectionManager)
                 // 连接最大存活时间
                 .setConnectionTimeToLive(promotionTimeToLive, TimeUnit.MINUTES)
+                .evictIdleConnections(maxIdleTime, TimeUnit.MINUTES)
+                .evictExpiredConnections()
                 .build();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         factory.setConnectTimeout(promotionConnectTimeout);
