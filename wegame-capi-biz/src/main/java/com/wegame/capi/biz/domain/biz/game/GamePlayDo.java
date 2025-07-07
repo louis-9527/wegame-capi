@@ -54,11 +54,11 @@ public class GamePlayDo implements Serializable {
 
     private VolatilityEnum volatility;
 
-    private ContinuPlayContext continuPlayContext;
+    private ContinuePlayContext continuePlayContext;
 
     @Data
     @SuperBuilder
-    private static class ContinuPlayContext {
+    private static class ContinuePlayContext {
 
         /**
          * 父投注记录id
