@@ -15,7 +15,7 @@ import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.base.game.AbstractGame;
+import com.wegame.capi.biz.module.base.game.AbstractWheelChartGame;
 import com.wegame.capi.biz.module.lamang.LamangProbabilisticUtil;
 import com.wegame.capi.biz.module.lamang.LamangSymbolUtil;
 import com.wegame.capi.biz.module.lamang.reward.LamangRewardHandler;
@@ -45,7 +45,7 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
 @Component("lamangGameNormalPlay")
-public class LamangGameNormalPlay extends AbstractGame<LamangGameRecordDo> {
+public class LamangGameNormalPlay extends AbstractWheelChartGame<LamangGameRecordDo> {
 
     private static final int MAX_SCATTER_NUMBER_IN_REEL = 1;
     private static final int MAX_GOLDEN_NUMBER_IN_ROW = 1;
