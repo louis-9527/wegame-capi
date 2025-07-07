@@ -38,11 +38,11 @@ public class PromotionRestTemplateConfig {
     @Value("${httpclient.promotion.connectionRequestTimeout:200}")
     int promotionConnectionRequestTimeout;
     // 连接验证配置（设置为30分钟，与预期有效期匹配）
-    @Value("${httpclient.wallet.validateAfterInactivity:1800000}")
+    @Value("${httpclient.promotion.validateAfterInactivity:1800000}")
     int validateAfterInactivity;
     @Value("${httpclient.promotion.timeToLive:60}")
     int promotionTimeToLive;
-    @Value("${httpclient.wallet.maxIdleTime:60}")
+    @Value("${httpclient.promotion.maxIdleTime:60}")
     int maxIdleTime;
 
     @Bean(value = PROMOTION_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)

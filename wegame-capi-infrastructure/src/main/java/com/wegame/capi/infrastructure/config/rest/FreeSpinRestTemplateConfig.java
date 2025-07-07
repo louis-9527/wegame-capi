@@ -33,13 +33,13 @@ public class FreeSpinRestTemplateConfig {
     @Value("${httpclient.freeSpin.readTimeout:1000}")
     int freeSpinReadTimeout;
     // 连接验证配置（设置为30分钟，与预期有效期匹配）
-    @Value("${httpclient.wallet.validateAfterInactivity:1800000}")
+    @Value("${httpclient.freeSpin.validateAfterInactivity:1800000}")
     int validateAfterInactivity;
     @Value("${httpclient.freeSpin.connectionRequestTimeout:200}")
     int freeSpinConnectionRequestTimeout;
     @Value("${httpclient.freeSpin.timeToLive:60}")
     int freeSpinTimeToLive;
-    @Value("${httpclient.wallet.maxIdleTime:60}")
+    @Value("${httpclient.freeSpin.maxIdleTime:60}")
     int maxIdleTime;
 
     @Bean(value = FREE_SPIN_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
