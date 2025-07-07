@@ -1,9 +1,13 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_SYMBOL_PLACEHOLDER;
 
@@ -20,14 +24,28 @@ public class MangkukulamSymbolDo extends SymbolDo {
     private static final long serialVersionUID = -226862643663710848L;
 
     /**
-     * 元素金边
+     * 元素火框
      */
-    private boolean symbolGoldBorder;
+    private boolean symbolFireBorder;
 
     /**
-     * 是否是新元素
+     * 剩余清除次数, 只有特殊wild才有
      */
-    private boolean newSymbol;
+    private int remainClearTimes;
+
+    /**
+     * 倍率列表， 只有特殊wild才有
+     */
+    private List<BigDecimal> multiples;
+
+    @JsonIgnore
+    public BigDecimal getMultiple() {
+        // todo 根据消除次数获取倍率和
+        BigDecimal total = BigDecimal.ZERO;
+
+        return total;
+    }
+
 
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
@@ -38,7 +56,7 @@ public class MangkukulamSymbolDo extends SymbolDo {
      * 复制元素，将newSymbol置为false
      * 新回合复制元素使用该方法
      *
-     * @return LamangSymbolDo
+     * @return MangkukulamSymbolDo
      */
     @Override
     public MangkukulamSymbolDo copy() {
@@ -46,41 +64,43 @@ public class MangkukulamSymbolDo extends SymbolDo {
                 .id(getId())
                 .name(getName())
                 .symbolType(getSymbolType())
-                .symbolGoldBorder(isSymbolGoldBorder())
-                .newSymbol(false)
-                .build();
-    }
-
-    /**
-     * 复制元素，并且不改变newSymbol状态
-     * eventPlay 从模版中复制元素时使用该方法
-     *
-     * @return LamangSymbolDo
-     */
-    public MangkukulamSymbolDo copyWithOriginalNewSymbol() {
-        return MangkukulamSymbolDo.builder()
-                .id(getId())
-                .name(getName())
-                .symbolType(getSymbolType())
-                .symbolGoldBorder(isSymbolGoldBorder())
-                .newSymbol(this.newSymbol)
+                .symbolFireBorder(isSymbolFireBorder())
+                .remainClearTimes(remainClearTimes)
+                .multiples(multiples)
                 .build();
     }
 
     /**
      * 从symbol产生一个新元素
      *
-     * @param symbol           元素
-     * @param symbolGoldBorder 是否有金边
-     * @return LamangSymbolDo
+     * @param symbol     元素
+     * @param fireBorder 是否有火框
+     * @return MangkukulamSymbolDo
      */
-    public static MangkukulamSymbolDo buildFromSymbol(SymbolDo symbol, boolean symbolGoldBorder) {
+    public static MangkukulamSymbolDo buildFromSymbol(SymbolDo symbol, boolean fireBorder) {
         return MangkukulamSymbolDo.builder()
                 .id(symbol.getId())
                 .name(symbol.getName())
                 .symbolType(symbol.getSymbolType())
-                .symbolGoldBorder(symbolGoldBorder)
-                .newSymbol(true)
+                .symbolFireBorder(fireBorder)
+                .build();
+    }
+
+    /**
+     * 从symbol产生一个新元素
+     *
+     * @param multiples        倍率列表
+     * @param remainClearTimes 剩余消除次数
+     * @return MangkukulamSymbolDo
+     */
+    public static MangkukulamSymbolDo buildSpecialWild(List<BigDecimal> multiples, int remainClearTimes) {
+        return MangkukulamSymbolDo.builder()
+                .id(MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId())
+                .name(MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getName())
+                .symbolType(MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getSymbolType())
+                .symbolFireBorder(false)
+                .multiples(multiples)
+                .remainClearTimes(remainClearTimes)
                 .build();
     }
 }

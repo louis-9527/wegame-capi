@@ -73,8 +73,8 @@ public class MangkukulamGameHelper {
             .id(Symbol1000.getId())
             .name(Symbol1000.getName())
             .symbolType(SymbolTypeEnum.WILD)
-            .symbolGoldBorder(false)
             .build();
+    
     public static final GameInfoDo MANGKUKULAM_GAME_INFO = GameInfoDo.builder()
             .id(GameTypeEnum.MANGKUKULAM.getId())
             .gameType(GameTypeEnum.MANGKUKULAM)

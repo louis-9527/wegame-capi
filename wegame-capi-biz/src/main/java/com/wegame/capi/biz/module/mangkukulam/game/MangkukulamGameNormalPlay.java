@@ -37,5 +37,6 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
     @SuperBuilder
     private static class FreeWheelHandleDo {
         private long parentGameRecordId;
+        private int freeWheelTimes;
     }
 }
