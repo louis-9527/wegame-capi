@@ -1,22 +1,21 @@
 package com.wegame.capi.biz.config.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 import java.util.Map;
 
-import java.io.Serializable;
-
+/**
+ * 游戏配置主类
+ */
 @Data
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MangkukulamConfig implements Serializable {
-    private static final long serialVersionUID = 765957070931379207L;
-
+public class MangkukulamConfig {
     /**
      * 轮面行
      */
@@ -32,64 +31,34 @@ public class MangkukulamConfig implements Serializable {
     /**
      * 免费游戏次数
      */
-    private int fgTimes;
+    private int fg_times;
     /**
      * 主游戏分散符号到免费游戏数量映射
      */
-    private Map<String, Integer> mgToFgSc;
+    private Map<String, Integer> mg_to_fg_sc;
     /**
      * 免费游戏分散符号加局数量映射
      */
-    private Map<String, Integer> fgToFgSc;
+    private Map<String, Integer> fg_to_fg_sc;
     /**
      * 赔率表，格式为Map<符号类型, Map<符号数量, 赔率>>
      */
-    private Map<String, Map<String, Double>> oddsTable;
+    private Map<String, Map<String, Double>> odds_table;
     /**
      * 主游戏配置
      */
-    private MainGame mainGame;
-    /**
-     * 火咒阶段对应组配置
-     */
-    private List<FireNumStageRange> fireNumStagesRanges;
-    /**
-     * 火咒触发数量权重配置
-     */
-    private List<Map<String, Integer>> fireNumWeights;
-    /**
-     * 拓展摆搭倍率权重配置
-     */
-    private Map<String, Integer> wdExpandingTimesWeights;
-    /**
-     * 免费游戏配置
-     */
-    private FreeGame freeGame;
+    private MainGame main_game;
 
     /**
      * 主游戏配置类
      */
     @Data
-    @SuperBuilder
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MainGame {
         /**
-         * 轮带配置列表
-         */
-        private List<Stage> stages;
-    }
-
-    /**
-     * 免费游戏配置类
-     */
-    @Data
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class FreeGame {
-        /**
-         * 轮带配置列表
+         * 轮带配置
          */
         private List<Stage> stages;
     }
@@ -98,37 +67,67 @@ public class MangkukulamConfig implements Serializable {
      * 轮带配置类
      */
     @Data
-    @SuperBuilder
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Stage {
         /**
-         * 该配置权重
+         * 配置权重
          */
         private int weights;
         /**
-         * 轮带表(建议后台检查每rows有没有重复SC与WD_E、WD与WD_E位置)
+         * 轮带表（每行代表一个轮轴的符号配置）
          */
         private List<List<String>> reels;
         /**
-         * 回合对应降落图标表
+         * 符号阶段范围配置
          */
-        private Map<String, List<String>> symbolStagesRanges;
+        private List<SymbolStageRange> symbol_stages_ranges;
         /**
-         * 降落图标权重
+         * 符号权重配置（不同阶段的符号权重映射）
          */
-        private Map<String, Integer> symbolWeights;
+        private List<Map<String, Integer>> symbol_weights;
         /**
-         * 倍率图标倍率权重
+         * 火咒阶段对应组配置
          */
-        private Map<String, Integer> mpTimesWeights;
+        private List<FireNumStageRange> fire_num_stages_ranges;
+        /**
+         * 火咒触发数量权重配置
+         */
+        private List<Map<String, Integer>> fire_num_weights;
+        /**
+         * 拓展摆搭倍率权重配置
+         */
+        private Map<String, Integer> wd_expanding_times_weights;
+    }
+
+    /**
+     * 符号阶段范围配置类
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SymbolStageRange {
+        /**
+         * 起始阶段
+         */
+        private int from;
+        /**
+         * 结束阶段，-1表示无限
+         */
+        private int to;
+        /**
+         * 对应值
+         */
+        private int value;
     }
 
     /**
      * 火咒阶段对应组配置类
      */
     @Data
-    @SuperBuilder
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class FireNumStageRange {
