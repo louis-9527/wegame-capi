@@ -57,6 +57,7 @@ public enum SymbolEnum {
     SuperWild("4007", "SuperWild"),
     // 动态wild
     DynamicWild("4020", "DynamicWild"),
+    SpecialWild("4021", "SpecialWild"),
     ;
 
     /**
@@ -67,6 +68,7 @@ public enum SymbolEnum {
      * 元素名称.
      */
     private final String name;
+
     /**
      * 私有构造方法.
      *

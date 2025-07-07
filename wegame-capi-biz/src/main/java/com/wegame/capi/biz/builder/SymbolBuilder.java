@@ -5,6 +5,7 @@ import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaSymbolVo;
 import com.wegame.capi.client.domain.vo.kapre.KapreSymbolVo;
 import com.wegame.capi.client.domain.vo.lamang.LamangSymbolVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasSymbolVo;
+import com.wegame.capi.client.domain.vo.mangkukulam.MangkukulamSymbolVo;
 import com.wegame.capi.common.enums.SymbolBreakUpEnum;
 
 import java.util.Objects;
@@ -103,6 +104,22 @@ public class SymbolBuilder {
                                         .symbolOdd(kapreSymbol.getNestSymbol().getSymbolOdd())
                                         .nestSymbol(null)
                                         .build())
+                        .build();
+            }
+        }
+        return integerArray;
+    }
+
+    public static MangkukulamSymbolVo[][] build(MangkukulamSymbolDo[][] symbolArr) {
+        int rows = symbolArr.length;
+        int cols = symbolArr[0].length;
+        MangkukulamSymbolVo[][] integerArray = new MangkukulamSymbolVo[rows][cols];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                MangkukulamSymbolDo mangkukulamSymbolDo = symbolArr[row][col];
+                integerArray[row][col] = Objects.isNull(mangkukulamSymbolDo) ? null : MangkukulamSymbolVo.builder()
+                        .symbolId(mangkukulamSymbolDo.getId())
+                        .symbolGoldBorder(mangkukulamSymbolDo.isSymbolGoldBorder())
                         .build();
             }
         }

@@ -75,7 +75,7 @@ public class Constants {
     public static final String LAMANG_PROP = "game.enable.Lamang";
     public static final String BAKUNAWA_PROP = "game.enable.Bakunawa";
     public static final String KAPRE_PROP = "game.enable.Kapre";
-
+    public static final String MANGKUKULAM_PROP = "game.enable.Mangkukulam";
 
 
     public static final long FIVE_MINUTES_AGO = 5 * 60 * 1000;
@@ -94,5 +94,5 @@ public class Constants {
     public static final String BUILD_BEAN_FORMAT = "build bean: {}";
     public static final String COMMON_CLOSE_METHOD = "close";
 
-    public static final String JACKPOT_LAMANG_PULSAR_SUBSCRIPTION= "_jackpot";
+    public static final String JACKPOT_LAMANG_PULSAR_SUBSCRIPTION = "_jackpot";
 }

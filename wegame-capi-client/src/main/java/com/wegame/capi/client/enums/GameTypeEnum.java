@@ -38,12 +38,17 @@ public enum GameTypeEnum {
     BAKUNAWA("zhumeng005",
             "Bakunawa",
             "bakunawa_bet_record",
-            "bakunawa_game_record", 300L,1.2),
+            "bakunawa_game_record", 300L, 1.2),
 
     KAPRE("zhumeng007",
             "Kapre",
             "kapre_bet_record",
-            "kapre_game_record", 300L,1.2),
+            "kapre_game_record", 300L, 1.2),
+
+    MANGKUKULAM("zhumeng008",
+            "Mangkuakulam",
+            "mangkukulam_bet_record",
+            "mangkukulam_game_record", 300L, 1.2),
 
 
     ;
