@@ -52,8 +52,14 @@ public class GamePlayDo implements Serializable {
     private Long operationEventConfigBetRecordId;
     private GameOperationEventDo gameEventDo;
 
+    /**
+     * 波动性选择
+     */
     private VolatilityEnum volatility;
 
+    /**
+     * 继续游戏参数
+     */
     private ContinuePlayContext continuePlayContext;
 
     @Data
