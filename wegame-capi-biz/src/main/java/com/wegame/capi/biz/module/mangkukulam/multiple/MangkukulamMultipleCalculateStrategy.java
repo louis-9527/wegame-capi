@@ -40,10 +40,6 @@ public class MangkukulamMultipleCalculateStrategy extends AbstractMultipleCalcul
                 .map(MangkukulamSymbolDo::getMultiple)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        log.info("Found {} special wild symbols in {} total symbols, total multiple: {}",
-                indexSymbolMap.values().stream().filter(MangkukulamSymbolDo::isSpecialWild).count(),
-                indexSymbolMap.size(), totalMultiple);
-
         return totalMultiple;
     }
 }
