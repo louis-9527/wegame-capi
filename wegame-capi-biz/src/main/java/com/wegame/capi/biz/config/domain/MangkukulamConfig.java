@@ -302,9 +302,11 @@ public class MangkukulamConfig {
 
         // symbolWeights 业务校验
         stage.symbolWeights.forEach(symbolWeight -> {
-            AssertUtil.assertTrue(symbolWeight.size() == this.columns, ErrorCode.ERR_INTER, "stage#symbolWeights#size is must equals " + this.columns);
             symbolWeight.forEach((symbol, weight) -> {
-                AssertUtil.assertTrue(symbolMap.containsKey(symbol), ErrorCode.ERR_INTER, "stage#symbolWeights#symbol is not exists in symbolMap");
+                String[] split = symbol.split(",");
+                for (String s : split) {
+                    AssertUtil.assertTrue(symbolMap.containsKey(s), ErrorCode.ERR_INTER, "stage#symbolWeights#symbol is not exists in symbolMap");
+                }
             });
         });
     }
