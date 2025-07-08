@@ -24,6 +24,7 @@ public class SingleWalletBaseApi extends CommonBaseApi {
     }
 
     @Async(warmUpConnectionThreadPoolExecutor)
+    @Override
     public void healthCheck() {
         try {
             String url = String.format(HEALTH_CHECK_FORMAT, singleDomain, System.currentTimeMillis());

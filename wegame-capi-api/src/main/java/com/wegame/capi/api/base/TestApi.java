@@ -23,6 +23,7 @@ public class TestApi extends CommonBaseApi {
     }
 
     @Async(warmUpConnectionThreadPoolExecutor)
+    @Override
     public void healthCheck() {
         try {
             String url = "http://server1.makillingslot.net/capi/game/common/ping";

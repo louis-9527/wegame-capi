@@ -2,12 +2,7 @@ package com.wegame.capi.biz.listener;
 
 import com.wegame.base.exception.LockException;
 import com.wegame.base.lock.DistributeLock;
-import com.wegame.capi.api.SingleWalletApi;
-import com.wegame.capi.api.SingleWalletFreeSpinApi;
-import com.wegame.capi.api.base.TestApi;
-import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.domain.user.UserDo;
-import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.biz.service.backend.GameMaintainConfigService;
@@ -16,22 +11,15 @@ import com.wegame.capi.dao.mapper.domain.user.UserQuery;
 import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.http.HttpClientConnection;
-import org.apache.http.HttpHost;
-import org.apache.http.conn.ConnectionRequest;
-import org.apache.http.conn.routing.HttpRoute;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
-import java.util.stream.IntStream;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.defaultThreadPoolExecutor;
 
@@ -52,56 +40,21 @@ public class AppLaunchPostProcessor {
     DistributeLock distributeLock;
     @Autowired
     UserService userService;
-    // healthCheck
     @Autowired
-    SingleWalletApi singleWalletApi;
-    @Autowired
-    SingleWalletFreeSpinApi singleWalletFreeSpinApi;
-    @Autowired
-    BagApi bagApi;
-    // init Connections
-    @Value("${api.game.singleDomain}")
-    String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:80}")
-    int singleDomainIntConnections;
-    @Value("${api.game.freeSpinDomain}")
-    String freeSpinDomain;
-    @Value("${api.game.freeSpinDomainIntConnections:80}")
-    int freeSpinDomainIntConnections;
-    @Value("${api.game.promotionDomain}")
-    String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:80}")
-    int promotionDomainIntConnections;
-    @Autowired
-    PoolingHttpClientConnectionManager walletConnectionManager;
-    @Autowired
-    PoolingHttpClientConnectionManager freeSpinConnectionManager;
-    @Autowired
-    PoolingHttpClientConnectionManager promotionConnectionManager;
-    @Autowired
-    RandomService randomService;
-    @Autowired
-    TestApi testApi;
-
+    RestTemplateWarmUpHelper restTemplateWarmUpHelper;
 
     @Async(defaultThreadPoolExecutor)
     public void postProcess() {
         businessWarmUp();
         // todo 第一次上线后， 后续屏蔽该动作
         buildUserIdCache();
-        //        initDomainConnections();
-        //        healthCheck();
         warmUpConnections();
     }
 
     private void businessWarmUp() {
         try {
-            gameProperty.enabledGameTypes().forEach(gameType -> {
-                rewardService.getWithCache(gameType);
-            });
-            gameProperty.enabledGameTypes().forEach(gameType -> {
-                gameMaintainConfigService.selectByGameId(gameType.getId());
-            });
+            gameProperty.enabledGameTypes().forEach(gameType -> rewardService.getWithCache(gameType));
+            gameProperty.enabledGameTypes().forEach(gameType -> gameMaintainConfigService.selectByGameId(gameType.getId()));
         } catch (Exception e) {
             log.error("businessWarmUp error", e);
         }
@@ -129,9 +82,7 @@ public class AppLaunchPostProcessor {
                         }
                         Optional.ofNullable(userList)
                                 .orElse(Collections.emptyList())
-                                .forEach(item -> {
-                                    userService.asyncPutUserIdCache(item.getId(), item.getPlayerId(), item.getPId());
-                                });
+                                .forEach(item -> userService.asyncPutUserIdCache(item.getId(), item.getPlayerId(), item.getPId()));
                     } while (CollectionUtils.isNotEmpty(userList));
                     log.info("buildUserIdCache end");
                 } catch (LockException e) {
@@ -145,141 +96,11 @@ public class AppLaunchPostProcessor {
         }
     }
 
-    private void initDomainConnections() {
-        try {
-            initConnections(walletConnectionManager, singleDomainIntConnections, HttpHost.create(singleDomain));
-            initConnections(freeSpinConnectionManager, freeSpinDomainIntConnections, HttpHost.create(freeSpinDomain));
-            initConnections(promotionConnectionManager, promotionDomainIntConnections, HttpHost.create(promotionDomain));
-            //        String domain = "http://server1.makillingslot.net";
-            //        HttpHost httpHost = HttpHost.create(domain);
-            //        initConnections(walletConnectionManager, 10, httpHost);
-        } catch (Exception e) {
-            log.error("initDomainConnections error", e);
-        }
-    }
-
-    private void initConnections(PoolingHttpClientConnectionManager manager, int numConnections, HttpHost httpHost) {
-        HttpRoute httpRoute = new HttpRoute(httpHost);
-        HttpContext httpContext = new BasicHttpContext();
-        List<HttpClientConnection> connections = new ArrayList<>();
-        IntStream.range(0, numConnections).forEach(i -> {
-            try {
-                ConnectionRequest connectionRequest = manager.requestConnection(httpRoute, null);
-                HttpClientConnection connection = connectionRequest.get(10, TimeUnit.SECONDS);
-                manager.connect(connection, httpRoute, 10000, httpContext);
-                manager.routeComplete(connection, httpRoute, httpContext);
-                connections.add(connection);
-                log.info("connection status: {}", Objects.nonNull(connection) && connection.isOpen());
-            } catch (Exception e) {
-                log.error("initConnections {} error", httpHost, e);
-            }
-        });
-        try {
-            Optional.ofNullable(connections)
-                    .orElse(Collections.emptyList())
-                    .forEach(connection -> {
-                        if (Objects.nonNull(connection) && connection.isOpen()) {
-                            manager.releaseConnection(connection, null, 90, TimeUnit.MINUTES);
-                        } else {
-                            try {
-                                connection.close();
-                            } catch (Exception e) {
-                                log.error("connection close error. {} ", httpHost, e);
-                            }
-                        }
-                    });
-        } catch (Exception e) {
-            log.error("initConnections {} error", httpHost, e);
-        }
-    }
-
-    private void healthCheck() {
-        try {
-            Thread.sleep(1000);
-            singleWalletApi.healthCheck();
-            Thread.sleep(1000);
-            singleWalletFreeSpinApi.healthCheck();
-            Thread.sleep(1000);
-            bagApi.healthCheck();
-        } catch (Exception e) {
-            log.error("healthCheck error", e);
-        }
-    }
-
     private void warmUpConnections() {
-        //        warmTestDomainConnections();
-        int randomSeconds = randomService.randomInt(1, 60);
-        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
-        warmUpSingleDomainConnections();
-        randomSeconds = randomService.randomInt(1, 60);
-        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
-        warmFreeSpinDomainConnections();
-        randomSeconds = randomService.randomInt(1, 60);
-        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
-        warmPromotionDomainConnections();
-    }
-
-    private void warmUpSingleDomainConnections() {
         try {
-            IntStream.range(0, singleDomainIntConnections)
-                    .parallel()
-                    .forEach(i -> {
-                        try {
-                            singleWalletApi.healthCheck();
-                        } catch (Exception ignored) {
-                            // 忽略所有异常
-                        }
-                    });
+            restTemplateWarmUpHelper.warmUpAllConnections();
         } catch (Exception e) {
-            log.error("warmUpSingleDomainConnections error", e);
+            log.error("warmUpConnections error", e);
         }
     }
-
-    private void warmFreeSpinDomainConnections() {
-        try {
-            IntStream.range(0, freeSpinDomainIntConnections)
-                    .parallel()
-                    .forEach(i -> {
-                        try {
-                            singleWalletFreeSpinApi.healthCheck();
-                        } catch (Exception ignored) {
-                            // 忽略所有异常
-                        }
-                    });
-        } catch (Exception e) {
-            log.error("warmFreeSpinDomainConnections error", e);
-        }
-    }
-
-    private void warmPromotionDomainConnections() {
-        try {
-            IntStream.range(0, promotionDomainIntConnections)
-                    .parallel()
-                    .forEach(i -> {
-                        try {
-                            bagApi.healthCheck();
-                        } catch (Exception ignored) {
-                            // 忽略所有异常
-                        }
-                    });
-        } catch (Exception e) {
-            log.error("warmPromotionDomainConnections error", e);
-        }
-    }
-
-    //    private void warmTestDomainConnections() {
-    //        try {
-    //            IntStream.range(0, 100)
-    //                    .parallel()
-    //                    .forEach(i -> {
-    //                        try {
-    //                            testApi.ping();
-    //                        } catch (Exception ignored) {
-    //                            // 忽略所有异常
-    //                        }
-    //                    });
-    //        } catch (Exception e) {
-    //            log.error("warmTestDomainConnections error", e);
-    //        }
-    //    }
 }

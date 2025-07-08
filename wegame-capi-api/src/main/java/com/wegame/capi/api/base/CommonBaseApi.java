@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
  *     operationDomain: http://dos-egame-stresstest-internal.dos88.me/healthCheck
  */
 @Slf4j
-public class CommonBaseApi extends BaseApi {
+public abstract class CommonBaseApi extends BaseApi {
     public static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check?timestamp=%s";
     // cp
     @Value("${api.game.cp.platformId}")
@@ -37,6 +37,8 @@ public class CommonBaseApi extends BaseApi {
     public String igoPrivateKey;
     @Value("${api.game.igo.privateIv}")
     public String igoPrivateIv;
+
+    public abstract void healthCheck();
 
     public Pair<String, String> getPrivateKeyAndIvByChannelId(String channelId) {
         if (StringUtils.equals(channelId, cpChannelId)) {

@@ -24,6 +24,7 @@ public class FreeSpinBaseApi extends CommonBaseApi {
     }
 
     @Async(warmUpConnectionThreadPoolExecutor)
+    @Override
     public void healthCheck() {
         try {
             String url = String.format(HEALTH_CHECK_FORMAT, freeSpinDomain, System.currentTimeMillis());
