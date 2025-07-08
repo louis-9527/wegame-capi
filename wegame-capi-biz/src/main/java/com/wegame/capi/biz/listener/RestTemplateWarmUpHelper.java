@@ -5,6 +5,7 @@ import com.wegame.capi.api.SingleWalletFreeSpinApi;
 import com.wegame.capi.api.base.CommonBaseApi;
 import com.wegame.capi.api.promotion.BagApi;
 import com.wegame.capi.biz.service.RandomService;
+import com.wegame.capi.infrastructure.GlobalInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,13 +76,19 @@ public class RestTemplateWarmUpHelper {
             log.info("promotionConnectionManager status: {}", promotionConnectionManager.getTotalStats());
             int randomSeconds = randomService.randomInt(1, 5);
             LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
-            keepConnectionPool(walletConnectionManager, singleWalletApi, singleDomainIntConnections);
+            if (GlobalInstance.warmConnectionSwitch) {
+                keepConnectionPool(walletConnectionManager, singleWalletApi, singleDomainIntConnections);
+            }
             randomSeconds = randomService.randomInt(1, 5);
             LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
-            keepConnectionPool(freeSpinConnectionManager, singleWalletFreeSpinApi, freeSpinDomainIntConnections);
+            if (GlobalInstance.warmConnectionSwitch) {
+                keepConnectionPool(freeSpinConnectionManager, singleWalletFreeSpinApi, freeSpinDomainIntConnections);
+            }
             randomSeconds = randomService.randomInt(1, 5);
             LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
-            keepConnectionPool(promotionConnectionManager, bagApi, promotionDomainIntConnections);
+            if (GlobalInstance.warmConnectionSwitch) {
+                keepConnectionPool(promotionConnectionManager, bagApi, promotionDomainIntConnections);
+            }
         } catch (Exception e) {
             log.error("keepAllConnectionPool error", e);
         }
@@ -151,10 +158,10 @@ public class RestTemplateWarmUpHelper {
     private void keepConnectionPool(PoolingHttpClientConnectionManager manager, CommonBaseApi api, int minIdle) {
         try {
             int idleCount = manager.getTotalStats().getAvailable();
-            int leasedCount = manager.getTotalStats().getLeased();
-            int needed = minIdle - idleCount - leasedCount;
-            if (needed > 0) {
-                warmUpConnections(api, needed);
+            // int leasedCount = manager.getTotalStats().getLeased();
+            if (idleCount > 0) {
+                log.info("keepConnectionPool manager: {}, idleCount: {}", manager, idleCount);
+                warmUpConnections(api, idleCount);
             }
             // 保活现有空闲连接
             //            if (idleCount > 0) {
