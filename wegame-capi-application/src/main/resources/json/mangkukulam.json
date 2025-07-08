@@ -1,4 +1,5 @@
 {
+  "rewardMaxMultiple": "100000",
   "row": [4,5,5,5,4],
   "columns": 5,
   "max_payout": 1000,

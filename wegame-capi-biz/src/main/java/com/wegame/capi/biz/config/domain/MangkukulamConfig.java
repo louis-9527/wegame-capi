@@ -10,6 +10,8 @@ import java.util.Map;
 
 /**
  * 游戏配置主类
+ * yaml 配置文件形式
+ * <a href="https://casinoplus.sg.larksuite.com/docx/HEnhdEWwioZpMFxRF4MlX7Azgig"/>
  */
 @Data
 @Builder
@@ -144,4 +146,6 @@ public class MangkukulamConfig {
          */
         private int value;
     }
+
+    // todo maidong 增加方法用于根据场景获取对应的配置
 }

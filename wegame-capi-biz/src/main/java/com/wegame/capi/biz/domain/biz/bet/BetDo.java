@@ -5,6 +5,7 @@ import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.VolatilityEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -44,6 +45,10 @@ public class BetDo implements Serializable {
      * 支付金额
      */
     private Long payAmount;
+    /**
+     * parent投注记录id：用于正常投注获得的免费轮投注
+     */
+    private Long parentBetRecordId;
     /**
      * 投注记录id
      */
@@ -87,5 +92,8 @@ public class BetDo implements Serializable {
      * 预定投注Id
      */
     private String campaignId;
+    /////////////// 波动选择 ///////////////
+    private VolatilityEnum volatility;
+
 }
 
