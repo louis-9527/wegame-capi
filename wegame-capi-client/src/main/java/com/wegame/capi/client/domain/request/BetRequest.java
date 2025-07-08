@@ -8,10 +8,12 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.VolatilityEnum;
 import com.wegame.capi.client.validator.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -80,6 +82,12 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
         private boolean useFreeSpin;
         @ApiModelProperty(value = "预定投注Id, 使用预定投注时必填")
         private String campaignId;
+        /**
+         * 波动选择
+         * @see com.wegame.capi.common.enums.VolatilityEnum
+         */
+        @ApiModelProperty(value = "低波动:LOW,高波动:HIGH")
+        private String volatility;
 
         @Override
         public void validateParam(GameTypeEnum gameType, BetTypeEnum betType, BetSubTypeEnum betSubType) {
@@ -109,6 +117,10 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                 KapreValidator.validateParam(betType, betSubType, this);
                 CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
                 CommonGameValidator.validateStarCardBet(betType, betSubType, this);
+            } else if (Objects.equals(gameType, GameTypeEnum.MANGKUKULAM)) {
+                if (StringUtils.isNotBlank(volatility)) {
+                    AssertUtil.assertNotNull(VolatilityEnum.valueOfCode(volatility), ErrorCode.ERR_PARAM);
+                }
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORT");
             }
