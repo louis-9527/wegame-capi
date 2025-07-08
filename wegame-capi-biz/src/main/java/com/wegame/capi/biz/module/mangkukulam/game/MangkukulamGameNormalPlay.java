@@ -28,6 +28,7 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
 
     private static final GameInfoDo GAME_INFO = MANGKUKULAM_GAME_INFO;
 
+
     // todo 删除
     @Autowired(required = false)
     MangkukulamConfig mangkukulamConfig;
@@ -41,10 +42,24 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
         return gameRecordResult;
     }
 
+    /**
+     * 生成首轮
+     *
+     * @param gamePlay
+     */
     private void generateFirstBatch(GamePlayDo gamePlay) {
         // scatter & wild 不会跟特殊wild在同一列
         // 特殊wild只会在2 3 4 列
         // wild & 火框 只会在 2 3 4 5 列
+    }
+
+    /**
+     * 生成免费轮
+     *
+     * @param gamePlay
+     */
+    private void generateFreeBatch(GamePlayDo gamePlay) {
+
     }
 
     private WheelDo<MangkukulamSymbolDo> generateFirstWheel() {
