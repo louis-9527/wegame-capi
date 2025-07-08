@@ -84,10 +84,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
         private boolean useFreeSpin;
         @ApiModelProperty(value = "预定投注Id, 使用预定投注时必填")
         private String campaignId;
-        /**
-         * 波动选择
-         * @see com.wegame.capi.common.enums.VolatilityEnum
-         */
+        // 波动选择
         @ApiModelProperty(value = "低波动:LOW,高波动:HIGH")
         private String volatility;
 
@@ -122,6 +119,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             } else if (Objects.equals(gameType, GameTypeEnum.MANGKUKULAM)) {
                 if (StringUtils.isNotBlank(volatility)) {
                     AssertUtil.assertNotNull(VolatilityEnum.valueOfCode(volatility), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertStrNotEmpty(parentBetRecordId, ErrorCode.ERR_PARAM);
                 }
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORT");

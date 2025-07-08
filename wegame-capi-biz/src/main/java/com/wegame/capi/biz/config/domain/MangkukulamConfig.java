@@ -51,6 +51,10 @@ public class MangkukulamConfig {
      */
     private MainGame main_game;
 
+    public void validate() {
+
+    }
+
     /**
      * 主游戏配置类
      */

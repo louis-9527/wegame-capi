@@ -26,6 +26,8 @@ public class GamePlayBuilder {
                 .operationEventConfigBetRecordId(Objects.nonNull(gameEventDo) ? gameEventDo.getConfigId() : null)
                 .gameEventDo(gameEventDo)
                 .volatility(betDo.getVolatility())
+                // todo 填充context
+                .continuePlayContext(null)
                 .build();
     }
 }

@@ -94,4 +94,17 @@ public class GameConfig {
         }
     }
 
+    @Bean
+    MangkukulamConfig mangkukulamConfig() throws IOException {
+        String path = "/mangkukulam.json";
+        InputStream inputStream = getClass().getResourceAsStream(path);
+        if (inputStream == null) {
+            throw new RuntimeException("read kapre_config.json file err！！！");
+        } else {
+            MangkukulamConfig config = new ObjectMapper().readValue(inputStream, MangkukulamConfig.class);
+            config.validate();
+            return config;
+        }
+    }
+
 }
