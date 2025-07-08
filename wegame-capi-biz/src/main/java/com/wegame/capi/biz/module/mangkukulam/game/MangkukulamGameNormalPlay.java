@@ -83,7 +83,7 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
      * wild & 火框 只会在 2 3 4 5 列
      */
     private void generateFirstBatch(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> result, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList) {
-        WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel();
+        WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel(gamePlay, result, totalRewardAmount, freeWheelList);
         RewardResultDo<MangkukulamSymbolDo> rewardResult = mangkukulamRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
@@ -103,7 +103,7 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
         while (!freeWheelList.isEmpty()) {
             FreeWheelHandleDo freeWheel = freeWheelList.removeFirst();
             MangkukulamGameRecordDo parentGameRecord = result.stream().filter(item -> Objects.equals(freeWheel.getParentGameRecordId(), item.getId())).findFirst().orElse(null);
-            WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel();
+            WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel(gamePlay, result, totalRewardAmount, freeWheelList);
             RewardResultDo<MangkukulamSymbolDo> rewardResult = mangkukulamRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
             long gameRecordId = generateGameRecordId();
             MangkukulamGameRecordDo gameRecord = buildGameRecord(gameRecordId, freeWheel.getParentGameRecordId(), gamePlay.getBetRecordId(), parentBetRecordId, gameRecordId, wheel, rewardResult);
@@ -143,7 +143,7 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
         }
     }
 
-    private WheelDo<MangkukulamSymbolDo> generateFirstWheel() {
+    private WheelDo<MangkukulamSymbolDo> generateFirstWheel(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> result, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList) {
         //todo
 
         // 0. 初始化盘面，填充占位符
@@ -156,11 +156,15 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
 
     private WheelDo<MangkukulamSymbolDo> generateFromPreWheel(MangkukulamGameRecordDo preGameRecord) {
         //todo
-        
+
         //0. 准备阶段 复制盘面
         //1. 消除中奖元素
         //2. 生成
         return null;
+    }
+
+    private void getRandomConfig(GamePlayDo gamePlay, boolean freeWheelFlag) {
+        
     }
 
     private void loadContinuePlayContext(GamePlayDo.ContinuePlayContext context, LinkedList<FreeWheelHandleDo> freeWheelList, AtomicLong totalRewardAmount) {

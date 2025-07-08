@@ -2,6 +2,7 @@ package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
+import com.wegame.capi.common.enums.SymbolSizeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,16 @@ public class MangkukulamSymbolDo extends SymbolDo {
      */
     private List<BigDecimal> multiples;
 
+    /**
+     * 形状
+     */
+    private SymbolSizeEnum size;
+
+    @JsonIgnore
+    public int getLineCount() {
+        return size.getColumnSpan();
+    }
+
     @JsonIgnore
     public BigDecimal getMultiple() {
         if (!isSpecialWild() || multiples == null || multiples.isEmpty()) {
@@ -43,7 +54,12 @@ public class MangkukulamSymbolDo extends SymbolDo {
         }
 
         // todo 计算所有倍率的总和
-        return BigDecimal.ZERO;
+        int length = multiples.size();
+        BigDecimal res = BigDecimal.ZERO;
+        for (int i = 0; i <= length - remainClearTimes; i++) {
+            res = res.add(multiples.get(i));
+        }
+        return res;
     }
 
 
