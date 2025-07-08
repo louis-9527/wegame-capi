@@ -2,5 +2,5 @@ package com.wegame.capi.infrastructure;
 
 public class GlobalInstance {
 
-    public static boolean warmConnectionSwitch = true;
+    public static volatile boolean warmConnectionSwitch = true;
 }
