@@ -232,6 +232,12 @@ public class MangkukulamConfig {
     private void oddsTableValidate() {
         AssertUtil.assertNotNull(this.oddsTable, ErrorCode.ERR_INTER, "oddsTable is null");
         AssertUtil.assertTrue(this.oddsTable.size() > 0, ErrorCode.ERR_INTER, "oddsTable is must great than 0");
+
+        // 业务校验
+        Map<String, SymbolDo> symbolMap = MangkukulamGameHelper.MANGKUKULAM_GAME_INFO.getSymbolMap();
+        oddsTable.forEach((key, value) -> {
+            AssertUtil.assertTrue(symbolMap.containsKey(key), ErrorCode.ERR_INTER, "oddsTable ERR");
+        });
     }
 
     private void betValidate(Bet bet) {
@@ -248,6 +254,7 @@ public class MangkukulamConfig {
     private void mainGameValidate(MainGame mainGame) {
         AssertUtil.assertNotNull(mainGame, ErrorCode.ERR_INTER, "mainGame is null");
         AssertUtil.assertNotNull(mainGame.stages, ErrorCode.ERR_INTER, "mainGame#stages is null");
+        mainGame.stages.forEach(this::stagesValidate);
     }
 
     private void stagesValidate(Stage stage) {
