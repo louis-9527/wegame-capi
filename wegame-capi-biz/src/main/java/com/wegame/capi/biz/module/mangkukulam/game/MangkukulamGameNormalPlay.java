@@ -42,7 +42,9 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
     }
 
     private void generateFirstBatch(GamePlayDo gamePlay) {
-
+        // scatter & wild 不会跟特殊wild在同一列
+        // 特殊wild只会在2 3 4 列
+        // wild & 火框 只会在 2 3 4 5 列
     }
 
     private WheelDo<MangkukulamSymbolDo> generateFirstWheel() {

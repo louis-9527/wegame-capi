@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * lamang游戏元素
+ * Mangkukulam游戏元素
  */
 @Data
 @SuperBuilder
@@ -38,10 +38,12 @@ public class MangkukulamSymbolDo extends SymbolDo {
 
     @JsonIgnore
     public BigDecimal getMultiple() {
-        // todo 根据消除次数获取倍率和
-        BigDecimal total = BigDecimal.ZERO;
+        if (!isSpecialWild() || multiples == null || multiples.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
 
-        return total;
+        // todo 计算所有倍率的总和
+        return BigDecimal.ZERO;
     }
 
 
