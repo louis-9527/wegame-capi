@@ -141,6 +141,13 @@ public class MangkukulamConfig {
                     .orElse(null);
         }
 
+        public SymbolStageRange getCurrentSymbolStageRange(int index) {
+            return symbolStagesRanges.stream()
+                    .filter(item -> item.isCurrentInRange(index))
+                    .findFirst()
+                    .orElse(null);
+        }
+
     }
 
     /**
@@ -164,6 +171,13 @@ public class MangkukulamConfig {
          * 对应值
          */
         private int value;
+
+        public boolean isCurrentInRange(int index) {
+            if (index < 0) {
+                return false;
+            }
+            return index >= from && (index <= to || to == -1);
+        }
     }
 
     /**
@@ -192,10 +206,7 @@ public class MangkukulamConfig {
             if (index < 0) {
                 return false;
             }
-            if (index >= from && (index <= to || to == -1)) {
-                return true;
-            }
-            return false;
+            return index >= from && (index <= to || to == -1);
         }
     }
 

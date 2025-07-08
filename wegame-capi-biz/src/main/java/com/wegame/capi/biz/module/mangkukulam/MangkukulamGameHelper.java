@@ -63,7 +63,7 @@ public class MangkukulamGameHelper {
             .symbolType(SymbolTypeEnum.SCATTER)
             .build();
 
-    private static final SymbolDo MANGKUKULAM_Wild = SymbolDo.builder()
+    public static final SymbolDo MANGKUKULAM_Wild = SymbolDo.builder()
             .id(SymbolWD.getId())
             .name(SymbolWD.getName())
             .symbolType(SymbolTypeEnum.WILD)

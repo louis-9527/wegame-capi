@@ -68,8 +68,13 @@ public class MangkukulamSymbolDo extends SymbolDo {
         return StringUtils.equals(getId(), MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER.getId());
     }
 
+    @JsonIgnore
     public boolean isSpecialWild() {
         return StringUtils.equals(getId(), MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId());
+    }
+
+    public boolean isNormalWild() {
+        return StringUtils.equals(getId(), MangkukulamGameHelper.MANGKUKULAM_Wild.getId());
     }
 
     /**
@@ -101,6 +106,23 @@ public class MangkukulamSymbolDo extends SymbolDo {
                 .name(symbol.getName())
                 .symbolType(symbol.getSymbolType())
                 .size(SymbolSizeEnum.S)
+                .symbolFireBorder(false)
+                .build();
+    }
+
+    /**
+     * 从symbol产生一个新元素
+     *
+     * @param symbol 元素
+     * @return Mangkukulam  SymbolDo
+     */
+    public static MangkukulamSymbolDo buildFromSymbol(SymbolDo symbol, boolean symbolFireBorder) {
+        return MangkukulamSymbolDo.builder()
+                .id(symbol.getId())
+                .name(symbol.getName())
+                .symbolType(symbol.getSymbolType())
+                .size(SymbolSizeEnum.S)
+                .symbolFireBorder(symbolFireBorder)
                 .build();
     }
 

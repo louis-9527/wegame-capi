@@ -160,7 +160,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     }
 
     private WheelDo<MangkukulamSymbolDo> generateFirstWheel(GamePlayDo gamePlay, MangkukulamConfig.Stage stage, boolean freeWheelFlag) {
-        //todo 生成
+        //todo 生成初始轮
         int currentIndex = 0;
         // 0. 初始化盘面，填充占位符
         MangkukulamSymbolDo[][] symbolArr = initWheel();
@@ -186,11 +186,25 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
                 symbolArr[rowNum][columNum] = symbol;
             }
         }
-        // 2. 扩展 & 生成特殊wild倍率
-        handleSpecialWild(symbolArr, stage);
-        // 3. 生成火框
-        handleFireBorder(symbolArr, stage, currentIndex);
+        postProcessSymbolArr(symbolArr, stage, currentIndex, null);
         return WheelDo.<MangkukulamSymbolDo>builder().index(currentIndex).freeFlag(freeWheelFlag).symbolArr(symbolArr).build();
+    }
+
+    private WheelDo<MangkukulamSymbolDo> generateFromPreWheel(MangkukulamGameRecordDo preGameRecord, MangkukulamConfig.Stage stage) {
+        int currentIndex = preGameRecord.getIndex() + 1;
+        boolean freeWheel = preGameRecord.getWheel().isFreeFlag();
+        WheelDo<MangkukulamSymbolDo> preWheel = preGameRecord.getWheel();
+        RewardResultDo<MangkukulamSymbolDo> preRewardResult = preGameRecord.getRewardResult();
+        // 复制：元素数组
+        MangkukulamSymbolDo[][] symbolArr = MangkukulamSymbolUtil.copySymbolArr(preWheel.getSymbolArr());
+        //1. 消除中奖元素
+        List<IndexDo> borderWildIndexes = MangkukulamSymbolUtil.clearRewardSymbol(symbolArr, preRewardResult);
+        //2. 下落
+        MangkukulamSymbolUtil.fallSymbols(symbolArr);
+        //3. 补充元素
+        //4. 后置处理
+        postProcessSymbolArr(symbolArr, stage, currentIndex, borderWildIndexes);
+        return WheelDo.<MangkukulamSymbolDo>builder().index(currentIndex).freeFlag(freeWheel).symbolArr(symbolArr).build();
     }
 
     private void handleSpecialWild(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage) {
@@ -263,13 +277,28 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         return canAddFireBorderIndexes;
     }
 
-    private WheelDo<MangkukulamSymbolDo> generateFromPreWheel(MangkukulamGameRecordDo preGameRecord, MangkukulamConfig.Stage stage) {
-        //todo
+    private void postProcessSymbolArr(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int currentIndex, List<IndexDo> borderWildIndexes) {
+        handleFireBorder(symbolArr, stage, currentIndex);
+        handleSpecialWild(symbolArr, stage);
+        fillMovableWild(symbolArr, borderWildIndexes);
+    }
 
-        //0. 准备阶段 复制盘面
-        //1. 消除中奖元素
-        //2. 生成
-        return null;
+    private void fillMovableWild(MangkukulamSymbolDo[][] symbolArr, List<IndexDo> borderWildIndexes) {
+        //todo 在传入的坐标外 生成普通wild，
+        if (CollectionUtils.isEmpty(borderWildIndexes)) {
+            return;
+        }
+    }
+
+    private void fill(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int index) {
+        for (int i = 0; i < GAME_INFO.getColumn(); i++) {
+            fillColumn(symbolArr, stage, i, index);
+        }
+    }
+
+    private void fillColumn(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int column, int index) {
+        //todo 根据表填充一列
+        //如果该列有scatter 生成非scatter
     }
 
     private MangkukulamConfig.Stage getRandomStage(GamePlayDo gamePlay, boolean freeWheelFlag) {
