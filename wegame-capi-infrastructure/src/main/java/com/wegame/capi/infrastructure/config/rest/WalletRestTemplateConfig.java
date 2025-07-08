@@ -46,7 +46,7 @@ public class WalletRestTemplateConfig {
         manager.setMaxTotal(connectMaxTotal);
         manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
         // 设置验证空闲连接的间隔小于下游超时时间(59s)
-        manager.setValidateAfterInactivity(30 * 1000);
+        manager.setValidateAfterInactivity(300 * 1000);
         return manager;
     }
 

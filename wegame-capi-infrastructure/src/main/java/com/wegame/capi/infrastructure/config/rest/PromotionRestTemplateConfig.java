@@ -46,7 +46,7 @@ public class PromotionRestTemplateConfig {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, TimeUnit.SECONDS);
         manager.setMaxTotal(connectMaxTotal);
         manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(30 * 1000);
+        manager.setValidateAfterInactivity(300 * 1000);
         return manager;
     }
 
