@@ -2,6 +2,8 @@ package com.wegame.capi.biz.config.domain;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -266,12 +268,21 @@ public class MangkukulamConfig {
         AssertUtil.assertTrue(stage.wdExpandingTimesWeights.size() > 0, ErrorCode.ERR_INTER, "stage#wdExpandingTimesWeights is must great than 0");
 
         // reels 业务校验
-        for (List<String> reel : stage.reels) {
+        Map<String, SymbolDo> symbolMap = MangkukulamGameHelper.MANGKUKULAM_GAME_INFO.getSymbolMap();
+        stage.reels.forEach(reel -> {
             AssertUtil.assertTrue(reel.size() == this.columns, ErrorCode.ERR_INTER, "stage#reels#size is must equals " + this.columns);
-            for (String symbol : reel) {
-                AssertUtil.assertTrue(this.oddsTable.containsKey(symbol), ErrorCode.ERR_INTER, "stage#reels#symbol is not exists in oddsTable");
-            }
-        }
+            reel.forEach(symbol -> {
+                AssertUtil.assertTrue(symbolMap.containsKey(symbol), ErrorCode.ERR_INTER, "stage#reels#symbol is not exists in symbolMap");
+            });
+        });
+
+        // symbolWeights 业务校验
+        stage.symbolWeights.forEach(symbolWeight -> {
+            AssertUtil.assertTrue(symbolWeight.size() == this.columns, ErrorCode.ERR_INTER, "stage#symbolWeights#size is must equals " + this.columns);
+            symbolWeight.forEach((symbol, weight) -> {
+                AssertUtil.assertTrue(symbolMap.containsKey(symbol), ErrorCode.ERR_INTER, "stage#symbolWeights#symbol is not exists in symbolMap");
+            });
+        });
     }
 
 }
