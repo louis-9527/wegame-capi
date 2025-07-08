@@ -3,6 +3,7 @@ package com.wegame.capi.infrastructure.config.rest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -44,7 +45,9 @@ public class FreeSpinRestTemplateConfig {
     @Bean(value = FREE_SPIN_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager freeSpinConnectionManager() {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, TimeUnit.SECONDS);
-        manager.setMaxTotal(connectMaxTotal);
+        manager.setDefaultSocketConfig(SocketConfig.custom()
+                .setTcpNoDelay(true)
+                .build());        manager.setMaxTotal(connectMaxTotal);
         manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
         manager.setValidateAfterInactivity(300 * 1000);
         return manager;
@@ -52,14 +55,13 @@ public class FreeSpinRestTemplateConfig {
 
     @Bean(FREE_SPIN_REST_TEMPLATE_BEAN)
     public RestTemplate freeSpinRestTemplate(@Autowired PoolingHttpClientConnectionManager freeSpinConnectionManager) {
-        RequestConfig config = RequestConfig.custom()
-                .setSocketTimeout(readTimeout)
-                .setConnectTimeout(connectTimeout)
-                .setConnectionRequestTimeout(connectionRequestTimeout)
-                .build();
         HttpClient httpClient = HttpClientBuilder.create()
                 .setConnectionManager(freeSpinConnectionManager)
-                .setDefaultRequestConfig(config)
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setSocketTimeout(readTimeout)
+                        .setConnectTimeout(connectTimeout)
+                        .setConnectionRequestTimeout(connectionRequestTimeout)
+                        .build())
                 // 连接最大存活时间
                 .setConnectionTimeToLive(timeToLive, TimeUnit.SECONDS)
                 //                // 设置空闲连接保活时间略小于下游超时时间。 下游超时时间59s

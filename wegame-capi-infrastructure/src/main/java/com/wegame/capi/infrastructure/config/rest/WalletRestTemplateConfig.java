@@ -3,6 +3,7 @@ package com.wegame.capi.infrastructure.config.rest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -43,23 +44,24 @@ public class WalletRestTemplateConfig {
     @Bean(value = WALLET_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager walletConnectionManager() {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, TimeUnit.SECONDS);
+        manager.setDefaultSocketConfig(SocketConfig.custom()
+                .setTcpNoDelay(true)
+                .build());
         manager.setMaxTotal(connectMaxTotal);
         manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
-        // 设置验证空闲连接的间隔小于下游超时时间(59s)
         manager.setValidateAfterInactivity(300 * 1000);
         return manager;
     }
 
     @Bean(WALLET_REST_TEMPLATE_BEAN)
     public RestTemplate walletRestTemplate(@Autowired PoolingHttpClientConnectionManager walletConnectionManager) {
-        RequestConfig config = RequestConfig.custom()
-                .setSocketTimeout(readTimeout)
-                .setConnectTimeout(connectTimeout)
-                .setConnectionRequestTimeout(connectionRequestTimeout)
-                .build();
         HttpClient httpClient = HttpClientBuilder.create()
                 .setConnectionManager(walletConnectionManager)
-                .setDefaultRequestConfig(config)
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setSocketTimeout(readTimeout)
+                        .setConnectTimeout(connectTimeout)
+                        .setConnectionRequestTimeout(connectionRequestTimeout)
+                        .build())
                 // 连接最大存活时间
                 .setConnectionTimeToLive(timeToLive, TimeUnit.SECONDS)
                 //                // 设置空闲连接保活时间略小于下游超时时间。 下游超时时间59s
