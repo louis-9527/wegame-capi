@@ -84,7 +84,7 @@ public class GamePlayDo implements Serializable {
         /**
          * 父游戏记录id
          */
-        private int parentGameRecordId;
+        private Long parentGameRecordId;
     }
 }
 

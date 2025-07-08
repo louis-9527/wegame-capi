@@ -90,6 +90,13 @@ public class MangkukulamGameRecordDo implements Serializable, ToVoConverter<Mang
      */
     private Long parentBetRecordId;
 
+    public void addGameRecordId(Long gameRecordId) {
+        if (Objects.isNull(gameRecordIds)) {
+            gameRecordIds = new ArrayList<>();
+        }
+        gameRecordIds.add(gameRecordId);
+    }
+
     @Transient
     @JsonIgnore
     @Override
