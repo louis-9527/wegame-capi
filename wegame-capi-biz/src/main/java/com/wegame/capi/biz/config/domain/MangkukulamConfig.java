@@ -295,7 +295,6 @@ public class MangkukulamConfig {
         // reels 业务校验
         Map<String, SymbolDo> symbolMap = MangkukulamGameHelper.MANGKUKULAM_GAME_INFO.getSymbolMap();
         stage.reels.forEach(reel -> {
-            AssertUtil.assertTrue(reel.size() == this.columns, ErrorCode.ERR_INTER, "stage#reels#size is must equals " + this.columns);
             reel.forEach(symbol -> {
                 AssertUtil.assertTrue(symbolMap.containsKey(symbol), ErrorCode.ERR_INTER, "stage#reels#symbol is not exists in symbolMap");
             });
