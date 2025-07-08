@@ -70,6 +70,9 @@ public class RestTemplateWarmUpHelper {
 
     public void keepAllConnectionPool() {
         try {
+            log.info("walletConnectionManager status: {}", walletConnectionManager.getTotalStats());
+            log.info("freeSpinConnectionManager status: {}", freeSpinConnectionManager.getTotalStats());
+            log.info("promotionConnectionManager status: {}", promotionConnectionManager.getTotalStats());
             int randomSeconds = randomService.randomInt(1, 5);
             LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
             keepConnectionPool(walletConnectionManager, singleWalletApi, singleDomainIntConnections);
