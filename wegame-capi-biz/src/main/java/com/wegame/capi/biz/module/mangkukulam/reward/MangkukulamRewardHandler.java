@@ -21,6 +21,7 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
+import com.wegame.capi.biz.module.mangkukulam.MangkukulamSymbolUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,8 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
     //todo 删除
     @Autowired(required = false)
     MangkukulamConfig mangkukulamConfig;
+    @Autowired
+    private MangkukulamConfig mangkukulamConfig;
 
     @Override
     public RewardResultDo<MangkukulamSymbolDo> handle(RewardHandleDo<MangkukulamSymbolDo> rewardHandle) {
@@ -232,8 +235,12 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
     private Integer calcRewardFreeWheelTimes(RewardHandleDo<MangkukulamSymbolDo> rewardHandle, List<RewardLineDo<MangkukulamSymbolDo>> rewardLineList) {
         // todo 返回中奖免费轮轮数
         // 正常轮,有中奖，返回0
+        if (CollectionUtils.isNotEmpty(rewardLineList)) {
+            return 0;
+        }
         boolean freeWheel = rewardHandle.getWheel().isFreeFlag();
-        return 0;
+        int scatterCount = MangkukulamSymbolUtil.countScatterInWheel(rewardHandle.getWheel().getSymbolArr());
+        return freeWheel ? mangkukulamConfig.getFg_to_fg_sc().get(String.valueOf(scatterCount)) : mangkukulamConfig.getMg_to_fg_sc().get(String.valueOf(scatterCount));
     }
 
     private void validate(RewardHandleDo<MangkukulamSymbolDo> rewardHandle) {
