@@ -50,8 +50,6 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
     //todo 删除
     @Autowired(required = false)
     MangkukulamConfig mangkukulamConfig;
-    @Autowired
-    private MangkukulamConfig mangkukulamConfig;
 
     @Override
     public RewardResultDo<MangkukulamSymbolDo> handle(RewardHandleDo<MangkukulamSymbolDo> rewardHandle) {
