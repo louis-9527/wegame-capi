@@ -50,6 +50,21 @@ public class MangkukulamSymbolUtil {
         return scatterCount;
     }
 
+    public static int countFireBorderInWheel(MangkukulamSymbolDo[][] symbolArr) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        int row = symbolArr.length;
+        int col = symbolArr[0].length;
+        int scatterCount = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (Objects.nonNull(symbolArr[i][j]) && symbolArr[i][j].isSymbolFireBorder()) {
+                    scatterCount++;
+                }
+            }
+        }
+        return scatterCount;
+    }
+
     public static void postProcessPlaceholderSymbol(List<MangkukulamGameRecordDo> gameRecordList) {
         if (CollectionUtils.isEmpty(gameRecordList)) {
             return;

@@ -92,34 +92,32 @@ public class MangkukulamSymbolDo extends SymbolDo {
     /**
      * 从symbol产生一个新元素
      *
-     * @param symbol     元素
-     * @param fireBorder 是否有火框
-     * @return MangkukulamSymbolDo
+     * @param symbol 元素
+     * @return Mangkukulam  SymbolDo
      */
-    public static MangkukulamSymbolDo buildFromSymbol(SymbolDo symbol, boolean fireBorder) {
+    public static MangkukulamSymbolDo buildFromSymbol(SymbolDo symbol) {
         return MangkukulamSymbolDo.builder()
                 .id(symbol.getId())
                 .name(symbol.getName())
                 .symbolType(symbol.getSymbolType())
-                .symbolFireBorder(fireBorder)
+                .size(SymbolSizeEnum.S)
                 .build();
     }
 
     /**
      * 从symbol产生一个新元素
      *
-     * @param multiples        倍率列表
      * @param remainClearTimes 剩余消除次数
      * @return MangkukulamSymbolDo
      */
-    public static MangkukulamSymbolDo buildSpecialWild(List<BigDecimal> multiples, int remainClearTimes) {
+    public static MangkukulamSymbolDo buildSpecialWild(int remainClearTimes) {
         return MangkukulamSymbolDo.builder()
                 .id(MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId())
                 .name(MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getName())
                 .symbolType(MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getSymbolType())
                 .symbolFireBorder(false)
-                .multiples(multiples)
                 .remainClearTimes(remainClearTimes)
+                .size(SymbolSizeEnum.XXL)
                 .build();
     }
 }

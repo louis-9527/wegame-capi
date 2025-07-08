@@ -146,6 +146,14 @@ public class MangkukulamConfig {
          * 拓展摆搭倍率权重配置
          */
         private Map<String, Integer> wdExpandingTimesWeights;
+
+        public FireNumStageRange getCurrentFireNumberStageRange(int index) {
+            return fireNumStagesRanges.stream()
+                    .filter(item -> item.isCurrentInRange(index))
+                    .findFirst()
+                    .orElse(null);
+        }
+
     }
 
     /**
@@ -192,6 +200,16 @@ public class MangkukulamConfig {
          * 对应值
          */
         private int value;
+
+        public boolean isCurrentInRange(int index) {
+            if (index < 0) {
+                return false;
+            }
+            if (index >= from && (index <= to || to == -1)) {
+                return true;
+            }
+            return false;
+        }
     }
 
     // todo maidong 增加方法用于根据场景获取对应的配置
