@@ -6,8 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * 游戏配置主类
@@ -42,15 +44,15 @@ public class MangkukulamConfig {
     /**
      * 主游戏分散符号到免费游戏数量映射
      */
-    private Map<String, Integer> mgToFgSc;
+    private Map<Integer, Integer> mgToFgSc;
     /**
      * 免费游戏分散符号加局数量映射
      */
-    private Map<String, Integer> fgToFgSc;
+    private Map<Integer, Integer> fgToFgSc;
     /**
      * 赔率表，格式为Map<符号类型, Map<符号数量, 赔率>>
      */
-    private Map<String, Map<String, Double>> oddsTable;
+    private TreeMap<String, TreeMap<String, BigDecimal>> oddsTable;
     /**
      * 正常投注
      */
