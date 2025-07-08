@@ -146,4 +146,6 @@ public class MangkukulamConfig {
          */
         private int value;
     }
+
+    // todo maidong 增加方法用于根据场景获取对应的配置
 }
