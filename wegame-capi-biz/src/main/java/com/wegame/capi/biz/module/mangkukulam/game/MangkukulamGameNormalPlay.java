@@ -10,7 +10,8 @@ import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.MangkukulamSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.base.game.AbstractGame;
+import com.wegame.capi.biz.module.base.game.AbstractWheelChartGame;
+import com.wegame.capi.biz.module.mangkukulam.MangkukulamSymbolUtil;
 import com.wegame.capi.biz.module.mangkukulam.reward.MangkukulamRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -34,7 +35,7 @@ import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.MANGK
 
 @Slf4j
 @Component("mangkukulamGameNormalPlay")
-public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecordDo> {
+public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<MangkukulamGameRecordDo> {
 
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
@@ -73,6 +74,7 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
             generateFreeBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList, context.getParentBetRecordId());
             setLastGameFlag(gameRecordResult);
         }
+        MangkukulamSymbolUtil.postProcessPlaceholderSymbol(gameRecordResult);
         return gameRecordResult;
     }
 
@@ -164,7 +166,7 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
     }
 
     private void getRandomConfig(GamePlayDo gamePlay, boolean freeWheelFlag) {
-        
+
     }
 
     private void loadContinuePlayContext(GamePlayDo.ContinuePlayContext context, LinkedList<FreeWheelHandleDo> freeWheelList, AtomicLong totalRewardAmount) {
