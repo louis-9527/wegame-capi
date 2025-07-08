@@ -28,6 +28,8 @@ public class BetConverter {
                 .betPromotionType(BetPromotionTypeEnum.NONE)
                 .betAmount(Long.valueOf(betRequest.getBetDetail().getBetAmount()))
                 .payAmount(Long.valueOf(betRequest.getBetDetail().getPayAmount()))
+                .parentBetRecordId(StringUtils.isNotEmpty(betRequest.getBetDetail().getParentBetRecordId())
+                        ? Long.valueOf(betRequest.getBetDetail().getBetRecordId()) : null)
                 .betRecordId(StringUtils.isNotEmpty(betRequest.getBetDetail().getBetRecordId())
                         ? Long.valueOf(betRequest.getBetDetail().getBetRecordId())
                         : null)

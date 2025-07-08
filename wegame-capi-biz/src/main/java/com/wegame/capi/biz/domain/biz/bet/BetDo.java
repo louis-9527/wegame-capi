@@ -45,6 +45,10 @@ public class BetDo implements Serializable {
      */
     private Long payAmount;
     /**
+     * parent投注记录id：用于正常投注获得的免费轮投注
+     */
+    private Long parentBetRecordId;
+    /**
      * 投注记录id
      */
     private Long betRecordId;

@@ -24,6 +24,10 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Long id;
     /**
+     * parentID
+     */
+    private Long parentId;
+    /**
      * 平台id
      */
     private String pId;

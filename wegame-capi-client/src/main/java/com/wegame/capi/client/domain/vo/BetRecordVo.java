@@ -28,6 +28,8 @@ public class BetRecordVo implements Validate, Serializable {
     private static final long serialVersionUID = -5835716727611741184L;
     @ApiModelProperty("主键ID/投注记录id")
     private String id;
+    @ApiModelProperty("parentID")
+    private String parentId;
     @ApiModelProperty("用户id")
     private String userId;
     @ApiModelProperty("玩家id")
