@@ -86,6 +86,13 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
         totalRewardAmount.getAndAdd(context.getTotalPayoutAmount());
     }
 
+    private MangkukulamSymbolDo[][] initWheel() {
+        MangkukulamSymbolDo[][] symbolArr = new MangkukulamSymbolDo[MANGKUKULAM_GAME_INFO.getRow()][MANGKUKULAM_GAME_INFO.getColumn()];
+
+
+        return symbolArr;
+    }
+
 
     @Data
     @SuperBuilder
