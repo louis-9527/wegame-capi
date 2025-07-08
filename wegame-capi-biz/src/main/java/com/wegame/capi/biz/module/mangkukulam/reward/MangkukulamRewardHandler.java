@@ -106,7 +106,7 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
                 rewardHandle.getGamePlayType(),
                 totalAmount,
                 rewardHandle.getBetAmount(),
-                mangkukulamConfig.getMax_payout());
+                mangkukulamConfig.getMaxPayout());
         // 5.构建中奖结果
         RewardResultDo<MangkukulamSymbolDo> rewardResult = RewardResultDo.<MangkukulamSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())

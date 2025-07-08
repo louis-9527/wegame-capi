@@ -2,11 +2,11 @@
   "rewardMaxMultiple": "100000",
   "row": [4,5,5,5,4],
   "columns": 5,
-  "max_payout": 1000,
-  "fg_times":10,
-  "mg_to_fg_sc": {"3": 7, "4": 10, "5": 15},
-  "fg_to_fg_sc": {"3": 7, "4": 10, "5": 15},
-  "odds_table": {
+  "maxPayout": 1000,
+  "fgTimes":10,
+  "mgToFgSc": {"3": 7, "4": 10, "5": 15},
+  "fgToFgSc": {"3": 7, "4": 10, "5": 15},
+  "oddsTable": {
     "H4": {"3": 0.1, "4": 0.2, "5": 0.3},
     "H3": {"3": 0.1, "4": 0.2, "5": 0.3},
     "H2": {"3": 0.1, "4": 0.2, "5": 0.3},
@@ -17,8 +17,8 @@
     "L2": {"3": 0.1, "4": 0.2, "5": 0.3},
     "L1": {"3": 0.1, "4": 0.2, "5": 0.3}
   },
-  "normal_bet" : {
-    "main_game": {
+  "normalBet" : {
+    "mainGame": {
       "stages": [
         {
           "weights": 1,
@@ -29,11 +29,11 @@
             ["H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "L4", "L3", "H1", "L1", "H2", "H4", "L2", "H1", "L3", "H2", "L1", "L4", "H1", "L2", "H2", "L3", "L1", "L4", "H1", "L2", "H2", "L4", "L3"],
             ["L2", "H4", "L1", "H3", "L4", "H1", "L3", "H2", "L2", "H4", "L1", "L3", "H3", "L4", "H1", "H2", "L2", "L1", "H4", "L4", "H1", "H2", "L2", "L1", "L4", "H1", "L3", "H2", "L2", "H1", "L1", "H3", "L4", "H2", "L3", "H1", "L1", "H2", "L3"]
           ],
-          "symbol_stages_ranges": [
+          "symbolStagesRanges": [
             {"from": 1, "to": 5, "value": 0},
             {"from": 6, "to": -1,"value": 1}
           ],
-          "symbol_weights": [
+          "symbolWeights": [
             {
               "WD": 2,
               "WD_E": 1,
@@ -99,11 +99,11 @@
               "L1": 150
             }
           ],
-          "fire_num_stages_ranges": [
+          "fireNumStagesRanges": [
             {"from": 1, "to": 4, "value": 0},
             {"from": 5, "to": -1, "value": 1}
           ],
-          "fire_num_weights": [
+          "fireNumWeights": [
             {
               "0" : 5,
               "1" : 3,
@@ -117,7 +117,7 @@
               "3" : 1
             }
           ],
-          "wd_expanding_times_weights": {
+          "wdExpandingTimesWeights": {
             "1 ,2 ,3" : 100,
             "1 ,3 ,5" : 100,
             "1 ,3 ,6" : 100,
@@ -138,11 +138,11 @@
             ["H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "L4", "L3", "H1", "L1", "H2", "H4", "L2", "H1", "L3", "H2", "L1", "L4", "H1", "L2", "H2", "L3", "L1", "L4", "H1", "L2", "H2", "L4", "L3"],
             ["L2", "H4", "L1", "H3", "L4", "H1", "L3", "H2", "L2", "H4", "L1", "L3", "H3", "L4", "H1", "H2", "L2", "L1", "H4", "L4", "H1", "H2", "L2", "L1", "L4", "H1", "L3", "H2", "L2", "H1", "L1", "H3", "L4", "H2", "L3", "H1", "L1", "H2", "L3"]
           ],
-          "symbol_stages_ranges": [
+          "symbolStagesRanges": [
             {"from": 1, "to": 5, "value": 0},
             {"from": 6, "to": -1,"value": 1}
           ],
-          "symbol_weights": [
+          "symbolWeights": [
             {
               "WD": 2,
               "WD_E": 1,
@@ -208,11 +208,11 @@
               "L1": 150
             }
           ],
-          "fire_num_stages_ranges": [
+          "fireNumStagesRanges": [
             {"from": 1, "to": 4, "value": 0},
             {"from": 5, "to": -1, "value": 1}
           ],
-          "fire_num_weights": [
+          "fireNumWeights": [
             {
               "0" : 5,
               "1" : 3,
@@ -226,7 +226,7 @@
               "3" : 1
             }
           ],
-          "wd_expanding_times_weights": {
+          "wdExpandingTimesWeights": {
             "1 ,2 ,3" : 100,
             "1 ,3 ,5" : 100,
             "1 ,3 ,6" : 100,
@@ -247,11 +247,11 @@
             ["H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "L4", "L3", "H1", "L1", "H2", "H4", "L2", "H1", "L3", "H2", "L1", "L4", "H1", "L2", "H2", "L3", "L1", "L4", "H1", "L2", "H2", "L4", "L3"],
             ["L2", "H4", "L1", "H3", "L4", "H1", "L3", "H2", "L2", "H4", "L1", "L3", "H3", "L4", "H1", "H2", "L2", "L1", "H4", "L4", "H1", "H2", "L2", "L1", "L4", "H1", "L3", "H2", "L2", "H1", "L1", "H3", "L4", "H2", "L3", "H1", "L1", "H2", "L3"]
           ],
-          "symbol_stages_ranges": [
+          "symbolStagesRanges": [
             {"from": 1, "to": 5, "value": 0},
             {"from": 6, "to": -1,"value": 1}
           ],
-          "symbol_weights": [
+          "symbolWeights": [
             {
               "WD": 2,
               "WD_E": 1,
@@ -317,11 +317,11 @@
               "L1": 150
             }
           ],
-          "fire_num_stages_ranges": [
+          "fireNumStagesRanges": [
             {"from": 1, "to": 4, "value": 0},
             {"from": 5, "to": -1, "value": 1}
           ],
-          "fire_num_weights": [
+          "fireNumWeights": [
             {
               "0" : 5,
               "1" : 3,
@@ -335,7 +335,7 @@
               "3" : 1
             }
           ],
-          "wd_expanding_times_weights": {
+          "wdExpandingTimesWeights": {
             "1 ,2 ,3" : 100,
             "1 ,3 ,5" : 100,
             "1 ,3 ,6" : 100,
@@ -346,8 +346,8 @@
       ]
     }
   },
-  "buy_bet" : {
-    "main_game": {
+  "buyBet" : {
+    "mainGame": {
       "stages": [
         {
           "weights": 1,
@@ -358,11 +358,11 @@
             ["H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "L4", "L3", "H1", "L1", "H2", "H4", "L2", "H1", "L3", "H2", "L1", "L4", "H1", "L2", "H2", "L3", "L1", "L4", "H1", "L2", "H2", "L4", "L3"],
             ["L2", "H4", "L1", "H3", "L4", "H1", "L3", "H2", "L2", "H4", "L1", "L3", "H3", "L4", "H1", "H2", "L2", "L1", "H4", "L4", "H1", "H2", "L2", "L1", "L4", "H1", "L3", "H2", "L2", "H1", "L1", "H3", "L4", "H2", "L3", "H1", "L1", "H2", "L3"]
           ],
-          "symbol_stages_ranges": [
+          "symbolStagesRanges": [
             {"from": 1, "to": 5, "value": 0},
             {"from": 6, "to": -1,"value": 1}
           ],
-          "symbol_weights": [
+          "symbolWeights": [
             {
               "WD": 2,
               "WD_E": 1,
@@ -428,11 +428,11 @@
               "L1": 150
             }
           ],
-          "fire_num_stages_ranges": [
+          "fireNumStagesRanges": [
             {"from": 1, "to": 4, "value": 0},
             {"from": 5, "to": -1, "value": 1}
           ],
-          "fire_num_weights": [
+          "fireNumWeights": [
             {
               "0" : 5,
               "1" : 3,
@@ -446,7 +446,7 @@
               "3" : 1
             }
           ],
-          "wd_expanding_times_weights": {
+          "wdExpandingTimesWeights": {
             "1 ,2 ,3" : 100,
             "1 ,3 ,5" : 100,
             "1 ,3 ,6" : 100,
@@ -467,11 +467,11 @@
             ["H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "L4", "L3", "H1", "L1", "H2", "H4", "L2", "H1", "L3", "H2", "L1", "L4", "H1", "L2", "H2", "L3", "L1", "L4", "H1", "L2", "H2", "L4", "L3"],
             ["L2", "H4", "L1", "H3", "L4", "H1", "L3", "H2", "L2", "H4", "L1", "L3", "H3", "L4", "H1", "H2", "L2", "L1", "H4", "L4", "H1", "H2", "L2", "L1", "L4", "H1", "L3", "H2", "L2", "H1", "L1", "H3", "L4", "H2", "L3", "H1", "L1", "H2", "L3"]
           ],
-          "symbol_stages_ranges": [
+          "symbolStagesRanges": [
             {"from": 1, "to": 5, "value": 0},
             {"from": 6, "to": -1,"value": 1}
           ],
-          "symbol_weights": [
+          "symbolWeights": [
             {
               "WD": 2,
               "WD_E": 1,
@@ -537,11 +537,11 @@
               "L1": 150
             }
           ],
-          "fire_num_stages_ranges": [
+          "fireNumStagesRanges": [
             {"from": 1, "to": 4, "value": 0},
             {"from": 5, "to": -1, "value": 1}
           ],
-          "fire_num_weights": [
+          "fireNumWeights": [
             {
               "0" : 5,
               "1" : 3,
@@ -555,7 +555,7 @@
               "3" : 1
             }
           ],
-          "wd_expanding_times_weights": {
+          "wdExpandingTimesWeights": {
             "1 ,2 ,3" : 100,
             "1 ,3 ,5" : 100,
             "1 ,3 ,6" : 100,
@@ -576,11 +576,11 @@
             ["H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "H1", "L3", "H4", "L1", "H2", "L4", "H3", "L2", "L4", "L3", "H1", "L1", "H2", "H4", "L2", "H1", "L3", "H2", "L1", "L4", "H1", "L2", "H2", "L3", "L1", "L4", "H1", "L2", "H2", "L4", "L3"],
             ["L2", "H4", "L1", "H3", "L4", "H1", "L3", "H2", "L2", "H4", "L1", "L3", "H3", "L4", "H1", "H2", "L2", "L1", "H4", "L4", "H1", "H2", "L2", "L1", "L4", "H1", "L3", "H2", "L2", "H1", "L1", "H3", "L4", "H2", "L3", "H1", "L1", "H2", "L3"]
           ],
-          "symbol_stages_ranges": [
+          "symbolStagesRanges": [
             {"from": 1, "to": 5, "value": 0},
             {"from": 6, "to": -1,"value": 1}
           ],
-          "symbol_weights": [
+          "symbolWeights": [
             {
               "WD": 2,
               "WD_E": 1,
@@ -646,11 +646,11 @@
               "L1": 150
             }
           ],
-          "fire_num_stages_ranges": [
+          "fireNumStagesRanges": [
             {"from": 1, "to": 4, "value": 0},
             {"from": 5, "to": -1, "value": 1}
           ],
-          "fire_num_weights": [
+          "fireNumWeights": [
             {
               "0" : 5,
               "1" : 3,
@@ -664,7 +664,7 @@
               "3" : 1
             }
           ],
-          "wd_expanding_times_weights": {
+          "wdExpandingTimesWeights": {
             "1 ,2 ,3" : 100,
             "1 ,3 ,5" : 100,
             "1 ,3 ,6" : 100,
