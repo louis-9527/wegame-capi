@@ -195,7 +195,7 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
             }
             int totalLineCount = columMap.values()
                     .stream()
-                    .map(List::size)
+                    .map(item -> item.stream().mapToInt(r -> r.getSymbol().getLineCount()).sum())
                     .reduce(1, (a, b) -> a * b);
             list.add(RewardLineDo.<MangkukulamSymbolDo>builder()
                     .rewardSymbol(entry.getKey())
