@@ -25,7 +25,7 @@ public class GamePlayBuilder {
                 .betRecordId(betRecordId)
                 .operationEventConfigBetRecordId(Objects.nonNull(gameEventDo) ? gameEventDo.getConfigId() : null)
                 .gameEventDo(gameEventDo)
-                .volatility(VolatilityEnum.valueOfCode(betDo.getVolatility()))
+                .volatility(betDo.getVolatility())
                 .build();
     }
 }
