@@ -64,27 +64,24 @@ public class GamePlayDo implements Serializable {
 
     @Data
     @SuperBuilder
-    public static class ContinuePlayContext {
-
+    public static class ContinuePlayContext implements Serializable {
+        private static final long serialVersionUID = -6172959648927527375L;
         /**
          * 父投注记录id
          */
         private Long parentBetRecordId;
-
+        /**
+         * 父游戏记录id
+         */
+        private Long parentGameRecordId;
         /**
          * 已派奖金额
          */
-        private long totalPayoutAmount;
-
+        private Long totalPayoutAmount;
         /**
          * 免费轮次数
          */
         private int freeWheelTimes;
-
-        /**
-         * 父游戏记录id
-         */
-        private int parentGameRecordId;
     }
 }
 
