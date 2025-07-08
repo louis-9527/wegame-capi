@@ -60,9 +60,9 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
         // 3、计算倍率,倍率盘倍率
         BigDecimal totalMultiple = mangkukulamMultipleCalculateStrategy.calculateMultiple(rewardHandle, rewardLineList);
         // 4.计算免费轮
-        int freeWheelTimes = this.calcRewardFreeWheelTimes(rewardHandle, rewardLineList);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
+            int freeWheelTimes = this.calcRewardFreeWheelTimes(rewardHandle, rewardLineList);
             return RewardResultDo.<MangkukulamSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardType(RewardTypeEnum.NONE)
@@ -114,10 +114,10 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
                 .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .totalRewardAmount(totalRewardAmount)
                 .totalMultiple(totalMultiple)
-                .hasRewardFreeWheel(freeWheelTimes > 0)
+                .hasRewardFreeWheel(false)
                 .rewardLineDetailList(rewardLineDetailList)
                 .accumulateReachMaxMultiple(reachMaxMultiple)
-                .rewardFreeWheelTimes(freeWheelTimes)
+                .rewardFreeWheelTimes(0)
                 .build();
         // 6.返回中奖信息
         log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
@@ -230,7 +230,7 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
      * @return 免费轮次数
      */
     private Integer calcRewardFreeWheelTimes(RewardHandleDo<MangkukulamSymbolDo> rewardHandle, List<RewardLineDo<MangkukulamSymbolDo>> rewardLineList) {
-        // todo
+        // todo 返回中奖免费轮轮数
         // 正常轮,有中奖，返回0
         boolean freeWheel = rewardHandle.getWheel().isFreeFlag();
         return 0;
