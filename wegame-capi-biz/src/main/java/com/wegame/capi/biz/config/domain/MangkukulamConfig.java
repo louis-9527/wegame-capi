@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.config.domain;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -63,7 +65,16 @@ public class MangkukulamConfig {
     private Bet buyBet;
 
     public void validate() {
-
+        rewardMaxMultipleValidate();
+        rowValidate();
+        columnsValidate();
+        maxPayoutValidate();
+        fgTimesValidate();
+        mgToFgScValidate();
+        fgToFgScValidate();
+        oddsTableValidate();
+        betValidate(normalBet);
+        betValidate(buyBet);
     }
 
 
@@ -182,4 +193,85 @@ public class MangkukulamConfig {
     }
 
     // todo maidong 增加方法用于根据场景获取对应的配置
+
+
+    private void rewardMaxMultipleValidate() {
+        AssertUtil.assertNotNull(this.rewardMaxMultiple, ErrorCode.ERR_INTER, "rewardMaxMultiple is null");
+        AssertUtil.assertTrue(this.rewardMaxMultiple > 0, ErrorCode.ERR_INTER, "rewardMaxMultiple is must great than 0");
+    }
+
+    private void rowValidate() {
+        AssertUtil.assertNotNull(this.row, ErrorCode.ERR_INTER, "row is null");
+        AssertUtil.assertTrue(this.row.size() > 0, ErrorCode.ERR_INTER, "row is must great than 0");
+    }
+
+    private void columnsValidate() {
+        AssertUtil.assertTrue(this.columns == 5, ErrorCode.ERR_INTER, "columns is must equals 5");
+    }
+
+    private void maxPayoutValidate() {
+        AssertUtil.assertTrue(this.maxPayout > 0, ErrorCode.ERR_INTER, "maxPayout is must great than 0");
+    }
+
+    private void fgTimesValidate() {
+        AssertUtil.assertTrue(this.fgTimes > 0, ErrorCode.ERR_INTER, "fgTimes is must great than 0");
+    }
+
+    private void mgToFgScValidate() {
+        AssertUtil.assertNotNull(this.mgToFgSc, ErrorCode.ERR_INTER, "mgToFgSc is null");
+        AssertUtil.assertTrue(this.mgToFgSc.size() > 0, ErrorCode.ERR_INTER, "mgToFgSc is must great than 0");
+    }
+
+    private void fgToFgScValidate() {
+        AssertUtil.assertNotNull(this.fgToFgSc, ErrorCode.ERR_INTER, "fgToFgSc is null");
+        AssertUtil.assertTrue(this.fgToFgSc.size() > 0, ErrorCode.ERR_INTER, "fgToFgSc is must great than 0");
+    }
+
+    private void oddsTableValidate() {
+        AssertUtil.assertNotNull(this.oddsTable, ErrorCode.ERR_INTER, "oddsTable is null");
+        AssertUtil.assertTrue(this.oddsTable.size() > 0, ErrorCode.ERR_INTER, "oddsTable is must great than 0");
+    }
+
+    private void betValidate(Bet bet) {
+        AssertUtil.assertNotNull(bet, ErrorCode.ERR_INTER, "bet is null");
+        AssertUtil.assertNotNull(bet.mainGame, ErrorCode.ERR_INTER, "bet#mainGame is null");
+        AssertUtil.assertNotNull(bet.high, ErrorCode.ERR_INTER, "bet#high is null");
+        AssertUtil.assertNotNull(bet.low, ErrorCode.ERR_INTER, "bet#low is null");
+
+        mainGameValidate(bet.mainGame);
+        mainGameValidate(bet.high);
+        mainGameValidate(bet.low);
+    }
+
+    private void mainGameValidate(MainGame mainGame) {
+        AssertUtil.assertNotNull(mainGame, ErrorCode.ERR_INTER, "mainGame is null");
+        AssertUtil.assertNotNull(mainGame.stages, ErrorCode.ERR_INTER, "mainGame#stages is null");
+    }
+
+    private void stagesValidate(Stage stage) {
+        // 空校验
+        AssertUtil.assertNotNull(stage, ErrorCode.ERR_INTER, "stage is null");
+        AssertUtil.assertTrue(stage.weights > 0, ErrorCode.ERR_INTER, "stage#weights is must great than 0");
+        AssertUtil.assertNotNull(stage.reels, ErrorCode.ERR_INTER, "stage#reels is null");
+        AssertUtil.assertTrue(stage.reels.size() > 0, ErrorCode.ERR_INTER, "stage#reels is must great than 0");
+        AssertUtil.assertNotNull(stage.symbolStagesRanges, ErrorCode.ERR_INTER, "stage#symbolStagesRanges is null");
+        AssertUtil.assertTrue(stage.symbolStagesRanges.size() > 0, ErrorCode.ERR_INTER, "stage#symbolStagesRanges is must great than 0");
+        AssertUtil.assertNotNull(stage.symbolWeights, ErrorCode.ERR_INTER, "stage#symbolWeights is null");
+        AssertUtil.assertTrue(stage.symbolWeights.size() > 0, ErrorCode.ERR_INTER, "stage#symbolWeights is must great than 0");
+        AssertUtil.assertNotNull(stage.fireNumStagesRanges, ErrorCode.ERR_INTER, "stage#fireNumStagesRanges is null");
+        AssertUtil.assertTrue(stage.fireNumStagesRanges.size() > 0, ErrorCode.ERR_INTER, "stage#fireNumStagesRanges is must great than 0");
+        AssertUtil.assertNotNull(stage.fireNumWeights, ErrorCode.ERR_INTER, "stage#fireNumWeights is null");
+        AssertUtil.assertTrue(stage.fireNumWeights.size() > 0, ErrorCode.ERR_INTER, "stage#fireNumWeights is must great than 0");
+        AssertUtil.assertNotNull(stage.wdExpandingTimesWeights, ErrorCode.ERR_INTER, "stage#wdExpandingTimesWeights is null");
+        AssertUtil.assertTrue(stage.wdExpandingTimesWeights.size() > 0, ErrorCode.ERR_INTER, "stage#wdExpandingTimesWeights is must great than 0");
+
+        // reels 业务校验
+        for (List<String> reel : stage.reels) {
+            AssertUtil.assertTrue(reel.size() == this.columns, ErrorCode.ERR_INTER, "stage#reels#size is must equals " + this.columns);
+            for (String symbol : reel) {
+                AssertUtil.assertTrue(this.oddsTable.containsKey(symbol), ErrorCode.ERR_INTER, "stage#reels#symbol is not exists in oddsTable");
+            }
+        }
+    }
+
 }
