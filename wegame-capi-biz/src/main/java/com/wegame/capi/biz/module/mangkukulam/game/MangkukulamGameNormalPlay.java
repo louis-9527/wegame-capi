@@ -187,13 +187,13 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             }
         }
         // 2. 扩展 & 生成特殊wild倍率
-        handleSpecialWild(symbolArr, stage, currentIndex);
+        handleSpecialWild(symbolArr, stage);
         // 3. 生成火框
         handleFireBorder(symbolArr, stage, currentIndex);
         return WheelDo.<MangkukulamSymbolDo>builder().index(currentIndex).freeFlag(freeWheelFlag).symbolArr(symbolArr).build();
     }
 
-    private void handleSpecialWild(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int currentIndex) {
+    private void handleSpecialWild(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage) {
         //todo 生成倍率 & 该列用占位符占位
         Map<String, Integer> weightMap = stage.getWdExpandingTimesWeights();
         AssertUtil.assertNotNull(weightMap, ErrorCode.ERR_INTER, "wdExpandingTimesWeights is null ");
@@ -237,8 +237,15 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         String newFireBorderCount = randomKeyByWeight(weightMap);
         int currentFireBorderCount = MangkukulamSymbolUtil.countFireBorderInWheel(symbolArr);
         int needAddFireBorderCount = Math.min(Integer.parseInt(newFireBorderCount), MAX_FIRE_BORDER_IN_WHEEL - currentFireBorderCount);
+        if (needAddFireBorderCount <= 0) {
+            return;
+        }
         // todo 填入火框元素
         List<IndexDo> canAddFireBorderIndexes = getFireBorderIndexes(symbolArr);
+        for (int i = 0; i < needAddFireBorderCount; i++) {
+            IndexDo indexDo = canAddFireBorderIndexes.get(i);
+            symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()].setSymbolFireBorder(true);
+        }
     }
 
     private List<IndexDo> getFireBorderIndexes(MangkukulamSymbolDo[][] symbolArr) {
@@ -252,6 +259,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
                 canAddFireBorderIndexes.add(new IndexDo(rowNum, column));
             }
         }
+        Collections.shuffle(canAddFireBorderIndexes, new Random());
         return canAddFireBorderIndexes;
     }
 
