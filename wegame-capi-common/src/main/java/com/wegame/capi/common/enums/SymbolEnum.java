@@ -58,6 +58,24 @@ public enum SymbolEnum {
     // 动态wild
     DynamicWild("4020", "DynamicWild"),
     SpecialWild("4021", "SpecialWild"),
+
+    // mangkukulam symbol
+    SymbolL1("L1", "SymbolL1"),
+    SymbolL2("L2", "SymbolL2"),
+    SymbolL3("L3", "SymbolL3"),
+    SymbolL4("L4", "SymbolL4"),
+    SymbolL5("L5", "SymbolL5"),
+
+    SymbolH1("H1", "SymbolH1"),
+    SymbolH2("H2", "SymbolH2"),
+    SymbolH3("H3", "SymbolH3"),
+    SymbolH4("H4", "SymbolH4"),
+
+    SymbolWD("WD", "SymbolWD"),
+    SymbolWD_E("WD_E", "SymbolWD_E"),
+
+    SymbolSC("SC", "SymbolSC"),
+
     ;
 
     /**
