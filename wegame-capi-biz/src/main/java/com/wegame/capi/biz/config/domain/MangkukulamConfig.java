@@ -302,10 +302,10 @@ public class MangkukulamConfig {
 
         // symbolWeights 业务校验
         stage.symbolWeights.forEach(symbolWeight -> {
-            symbolWeight.forEach((symbol, weight) -> {
-                String[] split = symbol.split(",");
-                for (String s : split) {
-                    AssertUtil.assertTrue(symbolMap.containsKey(s), ErrorCode.ERR_INTER, "stage#symbolWeights#symbol is not exists in symbolMap");
+            symbolWeight.forEach((symbolStr, weight) -> {
+                String[] symbolArr = symbolStr.split(",");
+                for (String symbol : symbolArr) {
+                    AssertUtil.assertTrue(symbolMap.containsKey(symbol), ErrorCode.ERR_INTER, "stage#symbolWeights#symbol is not exists in symbolMap");
                 }
             });
         });
