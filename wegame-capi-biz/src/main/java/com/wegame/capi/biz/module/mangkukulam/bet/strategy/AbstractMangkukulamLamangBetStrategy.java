@@ -9,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MangkukulamBetRecordManager;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
@@ -127,12 +128,12 @@ public abstract class AbstractMangkukulamLamangBetStrategy extends AbstractCommo
     }
 
     private GamePlayDo.ContinuePlayContext buildContinuePlayContext(BetDo betDo) {
-        // 查询上一列所有的gameRecordList
+        // 查询关联的上一次投注所产生的gameRecordList
         List<MangkukulamGameRecordDo> gameRecordList = mangkukulamBetRecordManager.listGameRecord(GameRecordQuery.builder().build(), GameTypeEnum.MANGKUKULAM);
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
 
         // 1.获取累计中奖金额
-
+        Long totalRewardAmount = gameRecordList.stream().map(MangkukulamGameRecordDo::getRewardResult).map(RewardResultDo::getTotalRewardAmount).mapToLong(Long::longValue).sum();
 
         // 2.获取最后一轮中免费轮次数
         MangkukulamGameRecordDo lastGameRecord = gameRecordList.get(gameRecordList.size() - 1);
@@ -140,8 +141,7 @@ public abstract class AbstractMangkukulamLamangBetStrategy extends AbstractCommo
         return GamePlayDo.ContinuePlayContext.builder()
                 .parentBetRecordId(betDo.getParentBetRecordId())
                 .parentGameRecordId(lastGameRecord.getId())
-                // todo maidong
-                .totalPayoutAmount(null)
+                .totalPayoutAmount(totalRewardAmount)
                 .freeWheelTimes(rewardFreeWheelTimes)
                 .build();
     }
