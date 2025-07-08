@@ -22,7 +22,7 @@ public enum SymbolSizeEnum {
     M("M", "中", 2, 1),
     L("L", "大", 3, 1),
     XL("XL", "超大", 4, 1),
-    XXL("XXL", "一行五列", 5, 1),
+    XXL("XXL", "一列五行", 5, 1),
 
     ;
 
