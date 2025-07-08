@@ -39,11 +39,11 @@ public class RestTemplateWarmUpHelper {
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
-    @Value("${api.game.freeSpinDomainIntConnections:50}")
+    @Value("${api.game.freeSpinDomainIntConnections:10}")
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:50}")
+    @Value("${api.game.promotionDomainIntConnections:100}")
     int promotionDomainIntConnections;
     @Autowired
     @Qualifier(WALLET_CONNECTION_MANAGER_BEAN)
@@ -160,7 +160,7 @@ public class RestTemplateWarmUpHelper {
             int idleCount = manager.getTotalStats().getAvailable();
             // int leasedCount = manager.getTotalStats().getLeased();
             if (idleCount > 0) {
-                log.info("keepConnectionPool manager: {}, idleCount: {}", manager, idleCount);
+                log.info("keepConnectionPool idleCount: {}", idleCount);
                 warmUpConnections(api, idleCount);
             }
             // 保活现有空闲连接
