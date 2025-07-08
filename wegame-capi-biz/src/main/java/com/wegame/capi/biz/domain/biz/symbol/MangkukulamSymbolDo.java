@@ -73,7 +73,6 @@ public class MangkukulamSymbolDo extends SymbolDo {
     }
 
     /**
-     * 复制元素，将newSymbol置为false
      * 新回合复制元素使用该方法
      *
      * @return MangkukulamSymbolDo

@@ -29,4 +29,19 @@ public class MangkukulamSymbolUtil {
         }
         return newSymbolArr;
     }
+
+    public static int countScatterInWheel(MangkukulamSymbolDo[][] symbolArr) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        int row = symbolArr.length;
+        int col = symbolArr[0].length;
+        int scatterCount = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (Objects.nonNull(symbolArr[i][j]) && symbolArr[i][j].isScatterSymbol()) {
+                    scatterCount++;
+                }
+            }
+        }
+        return scatterCount;
+    }
 }
