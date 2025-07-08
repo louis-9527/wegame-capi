@@ -33,6 +33,7 @@ public class BetRecordConverter {
         }
         BetRecordDo betRecordDo = new BetRecordDo();
         betRecordDo.setId(po.getId());
+        betRecordDo.setParentId(po.getParentId());
         betRecordDo.setPId(po.getPId());
         betRecordDo.setChannelId(po.getChannelId());
         betRecordDo.setGameId(po.getGameId());
@@ -77,6 +78,7 @@ public class BetRecordConverter {
         }
         BetRecordPo po = new BetRecordPo();
         po.setId(betRecordDo.getId());
+        po.setParentId(betRecordDo.getParentId());
         po.setPId(betRecordDo.getPId());
         po.setChannelId(betRecordDo.getChannelId());
         po.setGameId(betRecordDo.getGameId());
@@ -128,6 +130,7 @@ public class BetRecordConverter {
         }
         BetRecordVo vo = new BetRecordVo();
         vo.setId(Objects.nonNull(betRecordDo.getId()) ? String.valueOf(betRecordDo.getId()) : null);
+        vo.setParentId(Objects.nonNull(betRecordDo.getParentId()) ? String.valueOf(betRecordDo.getParentId()) : null);
         vo.setUserId(Objects.nonNull(betRecordDo.getUserId()) ? String.valueOf(betRecordDo.getUserId()) : null);
         vo.setPlayerId(betRecordDo.getPlayerId());
         vo.setPlayerName(betRecordDo.getPlayerName());

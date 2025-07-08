@@ -47,6 +47,7 @@ public class BetRecordBuilder {
         }
         return BetRecordDo.<T>builder()
                 .id(betRecordId)
+                .parentId(betDo.getParentBetRecordId())
                 .pId(userInfo.getPId())
                 .channelId(userInfo.getChannelId())
                 .playerId(userInfo.getPlayerId())

@@ -27,6 +27,10 @@ public class BetRecordPo implements Serializable {
     @Field("_id")
     private Long id;
     /**
+     * parentID
+     */
+    private Long parentId;
+    /**
      * 平台id
      */
     private String pId;

@@ -66,6 +66,8 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
         private Long betAmount;
         @ApiModelProperty(value = "支付金额/购买金额", required = true)
         private Long payAmount;
+        @ApiModelProperty(value = "parent投注记录ID, 免费轮投注时必填")
+        private String parentBetRecordId;
         @ApiModelProperty(value = "投注记录ID, 获得免费轮的投注记录的投注id，非必填")
         private String betRecordId;
         @ApiModelProperty(value = "免费轮游戏记录ID, 非必填")
