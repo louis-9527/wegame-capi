@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,10 @@ import java.util.Map;
 @AllArgsConstructor
 public class MangkukulamConfig {
     /**
+     * 中奖最大倍数
+     */
+    private Integer rewardMaxMultiple;
+    /**
      * 轮面行
      */
     private List<Integer> row;
@@ -29,30 +34,49 @@ public class MangkukulamConfig {
     /**
      * 最高赔付金额
      */
-    private int max_payout;
+    private int maxPayout;
     /**
      * 免费游戏次数
      */
-    private int fg_times;
+    private int fgTimes;
     /**
      * 主游戏分散符号到免费游戏数量映射
      */
-    private Map<String, Integer> mg_to_fg_sc;
+    private Map<String, Integer> mgToFgSc;
     /**
      * 免费游戏分散符号加局数量映射
      */
-    private Map<String, Integer> fg_to_fg_sc;
+    private Map<String, Integer> fgToFgSc;
     /**
      * 赔率表，格式为Map<符号类型, Map<符号数量, 赔率>>
      */
-    private Map<String, Map<String, Double>> odds_table;
+    private Map<String, Map<String, Double>> oddsTable;
     /**
-     * 主游戏配置
+     * 正常投注
      */
-    private MainGame main_game;
+    private Bet normalBet;
+    /**
+     * 购买投注
+     */
+    private Bet buyBet;
 
     public void validate() {
 
+    }
+
+
+    /**
+     * 主游戏配置类
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Bet implements Serializable {
+        private static final long serialVersionUID = 3905906623124847454L;
+        private MainGame mainGame;
+        private MainGame high;
+        private MainGame low;
     }
 
     /**
@@ -62,7 +86,8 @@ public class MangkukulamConfig {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MainGame {
+    public static class MainGame implements Serializable {
+        private static final long serialVersionUID = -7278913963962257305L;
         /**
          * 轮带配置
          */
@@ -76,7 +101,8 @@ public class MangkukulamConfig {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Stage {
+    public static class Stage implements Serializable {
+        private static final long serialVersionUID = 3085182463426753205L;
         /**
          * 配置权重
          */
@@ -88,23 +114,23 @@ public class MangkukulamConfig {
         /**
          * 符号阶段范围配置
          */
-        private List<SymbolStageRange> symbol_stages_ranges;
+        private List<SymbolStageRange> symbolStagesRanges;
         /**
          * 符号权重配置（不同阶段的符号权重映射）
          */
-        private List<Map<String, Integer>> symbol_weights;
+        private List<Map<String, Integer>> symbolWeights;
         /**
          * 火咒阶段对应组配置
          */
-        private List<FireNumStageRange> fire_num_stages_ranges;
+        private List<FireNumStageRange> fireNumStagesRanges;
         /**
          * 火咒触发数量权重配置
          */
-        private List<Map<String, Integer>> fire_num_weights;
+        private List<Map<String, Integer>> fireNumWeights;
         /**
          * 拓展摆搭倍率权重配置
          */
-        private Map<String, Integer> wd_expanding_times_weights;
+        private Map<String, Integer> wdExpandingTimesWeights;
     }
 
     /**
@@ -114,7 +140,8 @@ public class MangkukulamConfig {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SymbolStageRange {
+    public static class SymbolStageRange implements Serializable {
+        private static final long serialVersionUID = 3378743330763739478L;
         /**
          * 起始阶段
          */
@@ -136,7 +163,8 @@ public class MangkukulamConfig {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class FireNumStageRange {
+    public static class FireNumStageRange implements Serializable {
+        private static final long serialVersionUID = 5386163794364329805L;
         /**
          * 起始阶段
          */

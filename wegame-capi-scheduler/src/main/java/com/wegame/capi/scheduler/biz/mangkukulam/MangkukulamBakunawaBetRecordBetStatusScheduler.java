@@ -30,17 +30,17 @@ public class MangkukulamBakunawaBetRecordBetStatusScheduler extends AbstractBetR
     /**
      * 每分钟0秒执行
      */
-    @Scheduled(cron = "0 * * * * ?")
-    public void schedule() {
-        try {
-            log.info("schedule start");
-            long startTime = DateUtil.getCurrentMilli();
-            scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(getGameType()), this);
-            log.info("schedule end, cost time: {}", DateUtil.getCurrentMilli() - startTime);
-        } catch (LockException e) {
-            log.info("schedule get lock fail");
-        } catch (Exception e) {
-            log.error("schedule failed", e);
-        }
-    }
+//    @Scheduled(cron = "0 * * * * ?")
+//    public void schedule() {
+//        try {
+//            log.info("schedule start");
+//            long startTime = DateUtil.getCurrentMilli();
+//            scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(getGameType()), this);
+//            log.info("schedule end, cost time: {}", DateUtil.getCurrentMilli() - startTime);
+//        } catch (LockException e) {
+//            log.info("schedule get lock fail");
+//        } catch (Exception e) {
+//            log.error("schedule failed", e);
+//        }
+//    }
 }
