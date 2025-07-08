@@ -47,6 +47,7 @@ public class PromotionRestTemplateConfig {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, TimeUnit.SECONDS);
         manager.setDefaultSocketConfig(SocketConfig.custom()
                 .setTcpNoDelay(true)
+                .setSoKeepAlive(true)
                 .build());
         manager.setMaxTotal(connectMaxTotal);
         manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);

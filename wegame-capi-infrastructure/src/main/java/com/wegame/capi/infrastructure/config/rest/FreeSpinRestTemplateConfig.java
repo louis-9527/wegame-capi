@@ -47,7 +47,9 @@ public class FreeSpinRestTemplateConfig {
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, TimeUnit.SECONDS);
         manager.setDefaultSocketConfig(SocketConfig.custom()
                 .setTcpNoDelay(true)
-                .build());        manager.setMaxTotal(connectMaxTotal);
+                .setSoKeepAlive(true)
+                .build());
+        manager.setMaxTotal(connectMaxTotal);
         manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
         manager.setValidateAfterInactivity(300 * 1000);
         return manager;
