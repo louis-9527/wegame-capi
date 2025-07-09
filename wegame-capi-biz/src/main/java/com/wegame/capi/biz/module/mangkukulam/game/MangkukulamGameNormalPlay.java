@@ -168,12 +168,13 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             List<String> currentColumSymbolIdList = super.randomCircularGenSymbolIdList(stage.getReels().get(columNum), GAME_INFO.getRow());
             // 填充
             boolean hasScatterInColum = false;
+            boolean hasSpecialWildInColum = false;
             for (int rowNum = 0; rowNum < GAME_INFO.getRow(); rowNum++) {
                 if (Objects.nonNull(symbolArr[rowNum][columNum])) {
                     continue;
                 }
                 MangkukulamSymbolDo symbol = buildSymbolFromString(currentColumSymbolIdList.get(rowNum));
-                boolean validateSymbolInColumn = validateSymbolInColumn(symbol, columNum, hasScatterInColum);
+                boolean validateSymbolInColumn = validateSymbolInColumn(symbol, columNum, hasScatterInColum, hasSpecialWildInColum);
                 AssertUtil.assertTrue(validateSymbolInColumn, ErrorCode.ERR_PARAM, "invalid symbol in column : " + columNum);
                 if (symbol.isScatterSymbol()) {
                     hasScatterInColum = true;
@@ -186,16 +187,16 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         return WheelDo.<MangkukulamSymbolDo>builder().index(currentIndex).freeFlag(freeWheelFlag).symbolArr(symbolArr).build();
     }
 
-    private boolean validateSymbolInColumn(MangkukulamSymbolDo symbol, int columNum, boolean hasScatterInColum) {
+    private boolean validateSymbolInColumn(MangkukulamSymbolDo symbol, int columNum, boolean hasScatterInColum, boolean hasSpecialWildInColum) {
         if (symbol.isSpecialWild()) {
             // 特殊百搭只能出现在123列 & 并且当前列没有scatter
-            return SPECIAL_WILD_EXISTS_COLUMNS.contains(columNum) && !hasScatterInColum;
+            return SPECIAL_WILD_EXISTS_COLUMNS.contains(columNum) && !hasScatterInColum && !hasSpecialWildInColum;
         } else if (symbol.isNormalWild()) {
             // 普通wild只能出现在1234列
             return WILD_EXISTS_COLUMNS.contains(columNum);
         } else if (symbol.isScatterSymbol()) {
             // scatter一列只能出现一个
-            return !hasScatterInColum;
+            return !hasScatterInColum && !hasSpecialWildInColum;
         } else {
             return true;
         }
@@ -310,6 +311,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         LinkedList<String> fillSymbols = new LinkedList<>();
         randomSymbolList(fillSymbols, stage, currentIndex);
         boolean hasScatterInColumn = MangkukulamSymbolUtil.hasScatterInColumn(symbolArr, column);
+        boolean hasSpecialWildInColumn = MangkukulamSymbolUtil.hasSpecialWildInColumn(symbolArr, column);
         for (int i = GAME_INFO.getRow() - 1; i >= 0; i--) {
             // 从下往上补
             MangkukulamSymbolDo symbol = symbolArr[i][column];
@@ -322,12 +324,14 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
                     randomSymbolList(fillSymbols, stage, currentIndex);
                 }
                 MangkukulamSymbolDo symbolDo = buildSymbolFromString(fillSymbols.removeFirst());
-                if (!validateSymbolInColumn(symbolDo, column, hasScatterInColumn)) {
+                if (!validateSymbolInColumn(symbolDo, column, hasScatterInColumn, hasSpecialWildInColumn)) {
                     continue;
                 }
                 // 如果当前列是scatter
                 if (symbolDo.isScatterSymbol()) {
                     hasScatterInColumn = true;
+                } else if (symbolDo.isSpecialWild()) {
+                    hasSpecialWildInColumn = true;
                 }
                 symbolArr[i][column] = symbolDo;
                 filled = true;

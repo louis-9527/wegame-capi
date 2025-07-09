@@ -234,6 +234,16 @@ public class MangkukulamSymbolUtil {
         return false;
     }
 
+    public static boolean hasSpecialWildInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isSpecialWild()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean hasScatterInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
         AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
