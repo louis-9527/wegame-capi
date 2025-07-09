@@ -137,14 +137,14 @@ public abstract class AbstractMangkukulamLamangBetStrategy extends AbstractCommo
     }
 
     private GamePlayDo.ContinuePlayContext buildContinuePlayContext(BetDo betDo) {
-        // 查询关联的上一次投注所产生的gameRecordList
+        // 查询中免费轮的投注游戏记录
         List<MangkukulamGameRecordDo> gameRecordList = mangkukulamBetRecordManager.listGameRecord(GameRecordQuery.builder().build(), GameTypeEnum.MANGKUKULAM);
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
 
         // 1.获取累计中奖金额
         Long totalRewardAmount = gameRecordList.stream().map(MangkukulamGameRecordDo::getRewardResult).map(RewardResultDo::getTotalRewardAmount).mapToLong(Long::longValue).sum();
 
-        // 2.获取最后一轮中免费轮次数
+        // 2.获取获得的免费轮次数
         MangkukulamGameRecordDo lastGameRecord = gameRecordList.get(gameRecordList.size() - 1);
         int rewardFreeWheelTimes = lastGameRecord.getRewardResult().getRewardFreeWheelTimes();
         return GamePlayDo.ContinuePlayContext.builder()
