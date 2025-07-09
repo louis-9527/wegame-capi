@@ -2,7 +2,6 @@ package com.wegame.capi.biz.module.mangkukulam;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
-import com.wegame.capi.biz.domain.biz.symbol.MangkukulamSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
@@ -75,7 +74,7 @@ public class MangkukulamGameHelper {
             .symbolType(SymbolTypeEnum.WILD)
             .build();
 
-    public static final MangkukulamSymbolDo MANGKUKULAM_SYMBOL_PLACEHOLDER = MangkukulamSymbolDo.builder()
+    public static final SymbolDo MANGKUKULAM_SYMBOL_PLACEHOLDER = SymbolDo.builder()
             .id(Symbol1000.getId())
             .name(Symbol1000.getName())
             .symbolType(SymbolTypeEnum.COMMON)

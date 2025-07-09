@@ -31,7 +31,7 @@ public class MangkukulamSymbolUtil {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (Objects.isNull(symbolArr[i][j])) {
-                    newSymbolArr[i][j] = MANGKUKULAM_SYMBOL_PLACEHOLDER;
+                    newSymbolArr[i][j] = MangkukulamSymbolDo.buildFromSymbol(MANGKUKULAM_SYMBOL_PLACEHOLDER);
                 } else {
                     newSymbolArr[i][j] = symbolArr[i][j].copy();
                 }
@@ -113,15 +113,11 @@ public class MangkukulamSymbolUtil {
         AssertUtil.assertNotEmpty(rewardResult.getRewardLineDetailList(), ErrorCode.ERR_INTER);
         return rewardResult.getRewardLineDetailList()
                 .stream()
-                .map(RewardLineDetailDo<MangkukulamSymbolDo>::getRewardSymbolList).flatMap(List::stream).collect(Collectors.toList());
+                .map(RewardLineDetailDo::getRewardSymbolList).flatMap(List::stream).collect(Collectors.toList());
     }
 
     /**
-     * 移除specialWild元素
-     * 移除该列所有元素
-     *
-     * @param symbolArr
-     * @param rewardSymbol
+     * 移除specialWild元素 : 移除该列所有元素
      */
     public static void removeSpecialWild(MangkukulamSymbolDo[][] symbolArr, RewardSymbolDo<MangkukulamSymbolDo> rewardSymbol) {
         IndexDo indexDo = rewardSymbol.getIndex();
@@ -132,14 +128,10 @@ public class MangkukulamSymbolUtil {
     }
 
     /**
-     * 消除元素。返回带火框wild的位置
-     *
-     * @param symbolArr
-     * @param rewardSymbol
+     * 消除元素
      */
     public static void clearIndexRewardSymbol(MangkukulamSymbolDo[][] symbolArr, RewardSymbolDo<MangkukulamSymbolDo> rewardSymbol) {
         MangkukulamSymbolDo currentSymbol = rewardSymbol.getSymbol();
-        IndexDo fireWild = null;
         if (currentSymbol.isScatterSymbol()) {
             // scatter 元素， 不做消除
         } else if (currentSymbol.isSpecialWild()) {
@@ -287,5 +279,19 @@ public class MangkukulamSymbolUtil {
         }
         Collections.shuffle(canAddFireBorderIndexes, new Random());
         return canAddFireBorderIndexes;
+    }
+
+    public static void convertSpecialWild(MangkukulamSymbolDo[][] symbolArr, List<Integer> superWildColumnList) {
+        if (CollectionUtils.isEmpty(superWildColumnList)) {
+            return;
+        }
+        int row = symbolArr.length;
+        for (Integer column : superWildColumnList) {
+            for (int rowNum = 0; rowNum < row; rowNum++) {
+                if (Objects.nonNull(symbolArr[rowNum][column]) && !symbolArr[rowNum][column].isSpecialWild()) {
+                    symbolArr[rowNum][column] = MangkukulamSymbolDo.buildFromSymbol(MANGKUKULAM_SYMBOL_PLACEHOLDER);
+                }
+            }
+        }
     }
 }

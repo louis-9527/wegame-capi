@@ -238,7 +238,7 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
         }
         boolean freeWheel = rewardHandle.getWheel().isFreeFlag();
         int scatterCount = MangkukulamSymbolUtil.countScatterInWheel(rewardHandle.getWheel().getSymbolArr());
-        return freeWheel ? mangkukulamConfig.getFgToFgSc().get(String.valueOf(scatterCount)) : mangkukulamConfig.getMgToFgSc().get(String.valueOf(scatterCount));
+        return freeWheel ? mangkukulamConfig.getFgToFgSc().get(scatterCount) : mangkukulamConfig.getMgToFgSc().get(scatterCount);
     }
 
     private void validate(RewardHandleDo<MangkukulamSymbolDo> rewardHandle) {
