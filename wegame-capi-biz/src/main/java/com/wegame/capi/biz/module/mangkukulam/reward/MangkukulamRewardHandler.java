@@ -19,9 +19,9 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
-import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamSymbolUtil;
+import com.wegame.capi.biz.module.mangkukulam.odds.MangkukulamOddsCalculateStrategy;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamSymbolDo> {
 
     @Autowired
-    OddsCalculateStrategy<MangkukulamSymbolDo> mangkukulamOddsCalculateStrategy;
+    MangkukulamOddsCalculateStrategy mangkukulamOddsCalculateStrategy;
     @Autowired
     MultipleCalculateStrategy<MangkukulamSymbolDo> mangkukulamMultipleCalculateStrategy;
     @Autowired
