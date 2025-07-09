@@ -52,7 +52,6 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
 
     @Override
     public RewardResultDo<MangkukulamSymbolDo> handle(RewardHandleDo<MangkukulamSymbolDo> rewardHandle) {
-        long current = System.currentTimeMillis();
         // 1.业务校验
         this.validate(rewardHandle);
         // 2.计算中奖线
@@ -120,7 +119,6 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
                 .rewardFreeWheelTimes(0)
                 .build();
         // 6.返回中奖信息
-        log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
         return rewardResult;
     }
 

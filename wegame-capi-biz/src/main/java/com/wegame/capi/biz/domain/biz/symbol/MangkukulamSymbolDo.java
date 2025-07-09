@@ -44,7 +44,7 @@ public class MangkukulamSymbolDo extends SymbolDo {
 
     @JsonIgnore
     public int getLineCount() {
-        return size.getColumnSpan();
+        return size.getRowSpan();
     }
 
     @JsonIgnore

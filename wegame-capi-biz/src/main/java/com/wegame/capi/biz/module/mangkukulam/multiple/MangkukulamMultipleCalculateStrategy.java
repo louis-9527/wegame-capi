@@ -21,7 +21,7 @@ public class MangkukulamMultipleCalculateStrategy extends AbstractMultipleCalcul
     @Override
     public BigDecimal calculateMultiple(RewardHandleDo<MangkukulamSymbolDo> rewardHandle, List<RewardLineDo<MangkukulamSymbolDo>> rewardLineList) {
         if (rewardLineList == null || rewardLineList.isEmpty()) {
-            return BigDecimal.ZERO;
+            return BigDecimal.ONE;
         }
 
         // 将rewardLineList转换成Map<IndexDo, MangkukulamSymbolDo>
