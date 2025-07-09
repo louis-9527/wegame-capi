@@ -261,13 +261,10 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     }
 
     private void handleFireBorder(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int currentIndex) {
-        MangkukulamConfig.FireNumStageRange fireNumStageRange = stage.getCurrentFireNumberStageRange(currentIndex);
-        if (Objects.isNull(fireNumStageRange)) {
-            log.info("fireNumStageRange is null , index : {}", currentIndex);
+        Map<String, Integer> weightMap = stage.getCurrentFireWeights(currentIndex);
+        if (Objects.isNull(weightMap)) {
             return;
         }
-        Map<String, Integer> weightMap = stage.getFireNumWeights().get(fireNumStageRange.getValue());
-        AssertUtil.assertNotNull(weightMap, ErrorCode.ERR_INTER, "fireNumWeights is null of id " + fireNumStageRange.getValue());
         String newFireBorderCount = randomKeyByWeight(weightMap);
         int currentFireBorderCount = MangkukulamSymbolUtil.countFireBorderInWheel(symbolArr);
         int needAddFireBorderCount = Math.min(Integer.parseInt(newFireBorderCount), MAX_FIRE_BORDER_IN_WHEEL - currentFireBorderCount);
@@ -349,13 +346,11 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     }
 
     private void randomSymbolList(List<String> fillSymbols, MangkukulamConfig.Stage stage, int currentIndex) {
-        MangkukulamConfig.SymbolStageRange range = stage.getCurrentSymbolStageRange(currentIndex);
-        AssertUtil.assertNotNull(range, ErrorCode.ERR_INTER, "currentSymbolStageRange is null");
-        Map<String, Integer> weightMap = stage.getSymbolWeights().get(range.getValue());
+        Map<String, Integer> weightMap = stage.getCurrentSymbolsWeights(currentIndex);
         AssertUtil.assertNotNull(weightMap, ErrorCode.ERR_INTER, "fireNumWeights is null");
         String symbolListString = randomKeyByWeight(weightMap);
-        String[] symbols = symbolListString.split(",");
-        fillSymbols.addAll(Arrays.asList(symbols));
+        List<String> symbols = Arrays.stream(symbolListString.split(",")).map(String::trim).collect(Collectors.toList());
+        fillSymbols.addAll(symbols);
     }
 
     private MangkukulamConfig.Stage getRandomStage(GamePlayDo gamePlay, boolean freeWheelFlag) {

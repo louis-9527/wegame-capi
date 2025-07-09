@@ -46,7 +46,7 @@ public enum GameTypeEnum {
             "kapre_game_record", 300L, 1.2),
 
     MANGKUKULAM("zhumeng008",
-            "Mangkuakulam",
+            "Mangkukulam",
             "mangkukulam_bet_record",
             "mangkukulam_game_record", 300L, 1.2),
 

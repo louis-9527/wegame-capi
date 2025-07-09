@@ -15,7 +15,7 @@ import java.util.Objects;
 import static com.wegame.capi.client.domain.request.BetRequest.BetDetail.*;
 
 /**
- * @author maidong
+ * @author bruce
  */
 public class MangkukulamValidator {
 
@@ -45,12 +45,17 @@ public class MangkukulamValidator {
                 AssertUtil.assertTrue(NumberUtil.isLong(betDetail.getBetRecordId()), ErrorCode.ERR_PARAM);
                 AssertUtil.assertNotNull(betDetail.getGameRecordId(), ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(NumberUtil.isLong(betDetail.getGameRecordId()), ErrorCode.ERR_PARAM);
+            } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_WHEEL_NORMAL_BET)) {
+                AssertUtil.assertNotNull(VolatilityEnum.valueOfCode(betDetail.getVolatility()), ErrorCode.ERR_PARAM);
+                AssertUtil.assertStrNotEmpty(betDetail.getParentBetRecordId(), ErrorCode.ERR_PARAM);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                 AssertUtil.assertNotNull(betDetail.getPayAmount(), ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(betDetail.getVolatility(), ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(VolatilityEnum.valueOfCode(betDetail.getVolatility()), ErrorCode.ERR_PARAM);
                 if (betDetail.isUseStarCard()) {
                     AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount()), ErrorCode.ERR_PARAM);
                 } else {
@@ -67,11 +72,18 @@ public class MangkukulamValidator {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         }
+    }
 
-        // 波动性校验
-        if (StringUtils.isNotBlank(betDetail.getVolatility())) {
-            AssertUtil.assertNotNull(VolatilityEnum.valueOfCode(betDetail.getVolatility()), ErrorCode.ERR_PARAM);
-            AssertUtil.assertStrNotEmpty(betDetail.getParentBetRecordId(), ErrorCode.ERR_PARAM);
+    public static void validateStarCardBet(BetTypeEnum betType, BetSubTypeEnum betSubType, BetRequest.BetDetail betDetail) {
+        // 判断是否使用星卡
+        if (betDetail.isUseStarCard()) {
+            AssertUtil.assertTrue(BetTypeEnum.BUY_BET == betType, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(BetSubTypeEnum.BUY_BET == betSubType || BetSubTypeEnum.FREE_SPINS_BUY_BET == betSubType, ErrorCode.ERR_PARAM);
+            if (BetSubTypeEnum.BUY_BET == betSubType) {
+                AssertUtil.assertNotNull(betDetail.getRewardConfigId(), ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(betDetail.getRewardId(), ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(betDetail.getVolatility(), ErrorCode.ERR_PARAM);
+            }
         }
     }
 }
