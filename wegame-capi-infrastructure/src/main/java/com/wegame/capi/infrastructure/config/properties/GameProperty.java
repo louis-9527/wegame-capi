@@ -25,6 +25,8 @@ public class GameProperty {
     private boolean enableLamang;
     @Value("${game.enable.Kapre: false}")
     private boolean enableKapre;
+    @Value("${game.enable.Mangkukulam: false}")
+    private boolean enableMangkukulam;
 
     public List<GameTypeEnum> enabledGameTypes() {
         List<GameTypeEnum> gameTypeList = new ArrayList<>();
@@ -45,6 +47,9 @@ public class GameProperty {
         }
         if (enableKapre) {
             gameTypeList.add(GameTypeEnum.KAPRE);
+        }
+        if (enableMangkukulam) {
+            gameTypeList.add(GameTypeEnum.MANGKUKULAM);
         }
         return gameTypeList;
     }

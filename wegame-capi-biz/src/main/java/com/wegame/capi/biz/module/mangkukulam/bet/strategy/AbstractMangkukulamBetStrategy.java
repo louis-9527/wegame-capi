@@ -42,7 +42,7 @@ import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
  * lamang游戏投注抽象接口
  */
 @Slf4j
-public abstract class AbstractMangkukulamLamangBetStrategy extends AbstractCommonBetStrategy<MangkukulamGameRecordDo,
+public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetStrategy<MangkukulamGameRecordDo,
         MangkukulamBetRecordDetailDo> implements MangkukulamBetStrategy<MangkukulamBetRecordDetailDo> {
 
     @Autowired
@@ -115,7 +115,7 @@ public abstract class AbstractMangkukulamLamangBetStrategy extends AbstractCommo
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
         GamePlayDo gamePlayDo = build(NORMAL_PLAY, betDo, betRecordId, null);
-        if (Objects.nonNull(betDo.getVolatility())) {
+        if (!BetSubTypeEnum.isFirstStep(betDo.getBetSubType().getCode()) && Objects.nonNull(betDo.getVolatility())) {
             // 波动投注（填充继续玩上下文）
             gamePlayDo.setContinuePlayContext(buildContinuePlayContext(betDo));
         }

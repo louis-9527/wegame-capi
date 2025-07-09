@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
 @Component("mangkukulamNormalBetStrategy")
-public class MangkukulamNormalBetStrategy extends AbstractMangkukulamLamangBetStrategy {
+public class MangkukulamNormalBetStrategy extends AbstractMangkukulamBetStrategy {
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;

@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -147,14 +148,32 @@ public class MangkukulamConfig {
          */
         private Map<String, Integer> wdExpandingTimesWeights;
 
-        public FireNumStageRange getCurrentFireNumberStageRange(int index) {
+        public Map<String, Integer> getCurrentFireWeights(int index) {
+            FireNumStageRange range = getCurrentFireNumberStageRange(index);
+            if (Objects.isNull(range)) {
+                return null;
+            } else {
+                return fireNumWeights.get(String.valueOf(range.getValue()));
+            }
+        }
+
+        public Map<String, Integer> getCurrentSymbolsWeights(int index) {
+            SymbolStageRange range = getCurrentSymbolStageRange(index);
+            if (Objects.isNull(range)) {
+                return null;
+            } else {
+                return symbolWeights.get(String.valueOf(range.getValue()));
+            }
+        }
+
+        private FireNumStageRange getCurrentFireNumberStageRange(int index) {
             return fireNumStagesRanges.stream()
                     .filter(item -> item.isCurrentInRange(index))
                     .findFirst()
                     .orElse(null);
         }
 
-        public SymbolStageRange getCurrentSymbolStageRange(int index) {
+        private SymbolStageRange getCurrentSymbolStageRange(int index) {
             return symbolStagesRanges.stream()
                     .filter(item -> item.isCurrentInRange(index))
                     .findFirst()
