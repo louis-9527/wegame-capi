@@ -62,7 +62,7 @@ public class MangkukulamGameTest extends BaseTest {
 
     @Test
     public void testAll() {
-        
+
     }
 
 
@@ -86,6 +86,8 @@ public class MangkukulamGameTest extends BaseTest {
             validateGameRecord(record);
             MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
         });
+        // 15轮
+        Assert.assertTrue(recordList.size() >= 15);
     }
 
     @Test
