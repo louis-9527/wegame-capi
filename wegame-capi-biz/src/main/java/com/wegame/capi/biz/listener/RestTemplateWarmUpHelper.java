@@ -58,34 +58,35 @@ public class RestTemplateWarmUpHelper {
     RandomService randomService;
 
     public void warmUpAllConnections() {
-        int randomSeconds = randomService.randomInt(1, 60);
-        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+        //        int randomSeconds = randomService.randomInt(1, 60);
+        //        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
         warmUpConnections(singleWalletApi, singleDomainIntConnections);
-        randomSeconds = randomService.randomInt(1, 60);
-        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+        //        randomSeconds = randomService.randomInt(1, 60);
+        //        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
         warmUpConnections(singleWalletFreeSpinApi, freeSpinDomainIntConnections);
-        randomSeconds = randomService.randomInt(1, 60);
-        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+        //        randomSeconds = randomService.randomInt(1, 60);
+        //        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
         warmUpConnections(bagApi, promotionDomainIntConnections);
     }
 
     public void keepAllConnectionPool() {
         try {
-            log.info("walletConnectionManager status: {}", walletConnectionManager.getTotalStats());
-            log.info("freeSpinConnectionManager status: {}", freeSpinConnectionManager.getTotalStats());
-            log.info("promotionConnectionManager status: {}", promotionConnectionManager.getTotalStats());
-            int randomSeconds = randomService.randomInt(1, 5);
-            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+            log.info("walletConnectionManager ManagerStatus: {}", walletConnectionManager.getTotalStats());
+            log.info("freeSpinConnectionManager ManagerStatus: {}", freeSpinConnectionManager.getTotalStats());
+            log.info("promotionConnectionManager ManagerStatus: {}", promotionConnectionManager.getTotalStats());
+            //            int randomSeconds = randomService.randomInt(1, 5);
             if (GlobalInstance.warmConnectionSwitch) {
                 keepConnectionPool(walletConnectionManager, singleWalletApi, singleDomainIntConnections);
             }
-            randomSeconds = randomService.randomInt(1, 5);
-            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+            //            randomSeconds = randomService.randomInt(1, 5);
+            //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
             if (GlobalInstance.warmConnectionSwitch) {
                 keepConnectionPool(freeSpinConnectionManager, singleWalletFreeSpinApi, freeSpinDomainIntConnections);
             }
-            randomSeconds = randomService.randomInt(1, 5);
-            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+            //            randomSeconds = randomService.randomInt(1, 5);
+            //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
+            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
             if (GlobalInstance.warmConnectionSwitch) {
                 keepConnectionPool(promotionConnectionManager, bagApi, promotionDomainIntConnections);
             }
@@ -157,12 +158,13 @@ public class RestTemplateWarmUpHelper {
 
     private void keepConnectionPool(PoolingHttpClientConnectionManager manager, CommonBaseApi api, int minIdle) {
         try {
-            int idleCount = manager.getTotalStats().getAvailable();
-            // int leasedCount = manager.getTotalStats().getLeased();
-            if (idleCount > 0) {
-                log.info("keepConnectionPool idleCount: {}", idleCount);
-                warmUpConnections(api, idleCount);
-            }
+            warmUpConnections(api, minIdle);
+            //            int idleCount = manager.getTotalStats().getAvailable();
+            //            // int leasedCount = manager.getTotalStats().getLeased();
+            //            if (idleCount > 0) {
+            //                log.info("keepConnectionPool idleCount: {}", idleCount);
+            //                warmUpConnections(api, idleCount);
+            //            }
             // 保活现有空闲连接
             //            if (idleCount > 0) {
             //                checkIdleConnections();
@@ -171,17 +173,4 @@ public class RestTemplateWarmUpHelper {
             log.error("keepConnectionPool error", e);
         }
     }
-
-    //    private void healthCheck() {
-    //        try {
-    ////            Thread.sleep(1000);
-    //            singleWalletApi.healthCheck();
-    ////            Thread.sleep(1000);
-    ////            singleWalletFreeSpinApi.healthCheck();
-    ////            Thread.sleep(1000);
-    ////            bagApi.healthCheck();
-    //        } catch (Exception e) {
-    //            log.error("healthCheck error", e);
-    //        }
-    //    }
 }

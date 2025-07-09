@@ -48,7 +48,7 @@ public class AppLaunchPostProcessor {
         businessWarmUp();
         // todo 第一次上线后， 后续屏蔽该动作
         buildUserIdCache();
-        warmUpConnections();
+        // warmUpConnections();
     }
 
     private void businessWarmUp() {
