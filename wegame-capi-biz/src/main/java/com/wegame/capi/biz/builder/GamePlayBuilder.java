@@ -6,7 +6,6 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
-import com.wegame.capi.client.enums.VolatilityEnum;
 
 import java.util.Objects;
 
@@ -26,8 +25,6 @@ public class GamePlayBuilder {
                 .operationEventConfigBetRecordId(Objects.nonNull(gameEventDo) ? gameEventDo.getConfigId() : null)
                 .gameEventDo(gameEventDo)
                 .volatility(betDo.getVolatility())
-                // todo 填充context
-                .continuePlayContext(null)
                 .build();
     }
 }
