@@ -115,16 +115,26 @@ public abstract class AbstractMangkukulamLamangBetStrategy extends AbstractCommo
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
         GamePlayDo gamePlayDo = build(NORMAL_PLAY, betDo, betRecordId, null);
-        gamePlayDo.setContinuePlayContext(buildContinuePlayContext(betDo));
+        if (Objects.nonNull(betDo.getVolatility())) {
+            // 波动投注（填充继续玩上下文）
+            gamePlayDo.setContinuePlayContext(buildContinuePlayContext(betDo));
+        }
+
         List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-        List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
-        // 2、构建投注记录
-        BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord,
-                betHelper().hasRewardFreeWheel(firstBatchList));
-        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-        return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
+
+        if (Objects.nonNull(betDo.getVolatility())) {
+            // 波动投注
+            return null;
+        } else {
+            List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
+            // 2、构建投注记录
+            BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
+            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord,
+                    betHelper().hasRewardFreeWheel(firstBatchList));
+            AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+            return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
+        }
     }
 
     private GamePlayDo.ContinuePlayContext buildContinuePlayContext(BetDo betDo) {
