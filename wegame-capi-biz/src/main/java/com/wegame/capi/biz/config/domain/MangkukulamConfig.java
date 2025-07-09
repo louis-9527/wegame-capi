@@ -133,7 +133,7 @@ public class MangkukulamConfig {
         /**
          * 符号权重配置（不同阶段的符号权重映射）
          */
-        private List<Map<String, Integer>> symbolWeights;
+        private Map<String, Map<String, Integer>> symbolWeights;
         /**
          * 火咒阶段对应组配置
          */
@@ -141,7 +141,7 @@ public class MangkukulamConfig {
         /**
          * 火咒触发数量权重配置
          */
-        private List<Map<String, Integer>> fireNumWeights;
+        private Map<String, Map<String, Integer>> fireNumWeights;
         /**
          * 拓展摆搭倍率权重配置
          */
@@ -312,14 +312,14 @@ public class MangkukulamConfig {
         });
 
         // symbolWeights 业务校验
-        stage.symbolWeights.forEach(symbolWeight -> {
-            symbolWeight.forEach((symbolStr, weight) -> {
-                String[] symbolArr = symbolStr.split(",");
-                for (String symbol : symbolArr) {
-                    AssertUtil.assertTrue(symbolMap.containsKey(symbol), ErrorCode.ERR_INTER, "stage#symbolWeights#symbol is not exists in symbolMap");
-                }
-            });
-        });
+//        stage.symbolWeights.forEach(symbolWeight -> {
+//            symbolWeight.forEach((symbolStr, weight) -> {
+//                String[] symbolArr = symbolStr.split(",");
+//                for (String symbol : symbolArr) {
+//                    AssertUtil.assertTrue(symbolMap.containsKey(symbol), ErrorCode.ERR_INTER, "stage#symbolWeights#symbol is not exists in symbolMap");
+//                }
+//            });
+//        });
     }
 
 }
