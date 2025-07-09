@@ -37,8 +37,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.MANGKUKULAM_GAME_INFO;
-import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
+import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.*;
 
 @Slf4j
 @Component("mangkukulamGameNormalPlay")
@@ -52,7 +51,6 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     private static final List<Integer> SPECIAL_WILD_EXISTS_COLUMNS = Arrays.asList(1, 2, 3);
     private static final List<Integer> FIRE_BORDER_EXISTS_COLUMNS = Arrays.asList(1, 2, 3, 4);
     private static final List<Integer> WILD_EXISTS_COLUMNS = Arrays.asList(1, 2, 3, 4);
-    private static final int MAX_SCATTER_IN_COLUMN = 1;
 
     @Autowired
     MangkukulamConfig mangkukulamConfig;
@@ -98,7 +96,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
      */
     private void generateFirstBatch(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> result, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList) {
         MangkukulamConfig.Stage stage = getRandomStage(gamePlay, false);
-        WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel(gamePlay, stage, false);
+        WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel(stage, false);
         RewardResultDo<MangkukulamSymbolDo> rewardResult = mangkukulamRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
@@ -119,7 +117,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             FreeWheelHandleDo freeWheel = freeWheelList.removeFirst();
             MangkukulamGameRecordDo parentGameRecord = result.stream().filter(item -> Objects.equals(freeWheel.getParentGameRecordId(), item.getId())).findFirst().orElse(null);
             MangkukulamConfig.Stage stage = getRandomStage(gamePlay, true);
-            WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel(gamePlay, stage, true);
+            WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel(stage, true);
             RewardResultDo<MangkukulamSymbolDo> rewardResult = mangkukulamRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
             long gameRecordId = generateGameRecordId();
             MangkukulamGameRecordDo gameRecord = buildGameRecord(gameRecordId, freeWheel.getParentGameRecordId(), gamePlay.getBetRecordId(), parentBetRecordId, gameRecordId, wheel, rewardResult);
@@ -159,7 +157,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         }
     }
 
-    private WheelDo<MangkukulamSymbolDo> generateFirstWheel(GamePlayDo gamePlay, MangkukulamConfig.Stage stage, boolean freeWheelFlag) {
+    private WheelDo<MangkukulamSymbolDo> generateFirstWheel(MangkukulamConfig.Stage stage, boolean freeWheelFlag) {
         //todo 生成初始轮
         int currentIndex = 0;
         // 0. 初始化盘面，填充占位符
@@ -169,18 +167,16 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             // 随机循环获取row个元素id
             List<String> currentColumSymbolIdList = super.randomCircularGenSymbolIdList(stage.getReels().get(columNum), GAME_INFO.getRow());
             // 填充
+            boolean hasScatterInColum = false;
             for (int rowNum = 0; rowNum < GAME_INFO.getRow(); rowNum++) {
                 if (Objects.nonNull(symbolArr[rowNum][columNum])) {
-                    break;
+                    continue;
                 }
-                SymbolDo symbolDo = GAME_INFO.getSymbolById(currentColumSymbolIdList.get(rowNum));
-                AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER, "symbolDo is null of id " + currentColumSymbolIdList.get(rowNum));
-                MangkukulamSymbolDo symbol = null;
-                if (Objects.equals(MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId(), symbolDo.getId())) {
-                    AssertUtil.assertTrue(SPECIAL_WILD_EXISTS_COLUMNS.contains(columNum), ErrorCode.ERR_INTER, "special wild can not exist in this column : " + columNum);
-                    symbol = MangkukulamSymbolDo.buildSpecialWild(SPECIAL_WILD_CLEAR_TIMES);
-                } else {
-                    symbol = MangkukulamSymbolDo.buildFromSymbol(symbolDo);
+                MangkukulamSymbolDo symbol = buildSymbolFromString(currentColumSymbolIdList.get(rowNum));
+                boolean validateSymbolInColumn = validateSymbolInColumn(symbol, columNum, hasScatterInColum);
+                AssertUtil.assertTrue(validateSymbolInColumn, ErrorCode.ERR_PARAM, "invalid symbol in column : " + columNum);
+                if (symbol.isScatterSymbol()) {
+                    hasScatterInColum = true;
                 }
                 // 填充
                 symbolArr[rowNum][columNum] = symbol;
@@ -188,6 +184,33 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         }
         postProcessSymbolArr(symbolArr, stage, currentIndex, null);
         return WheelDo.<MangkukulamSymbolDo>builder().index(currentIndex).freeFlag(freeWheelFlag).symbolArr(symbolArr).build();
+    }
+
+    private boolean validateSymbolInColumn(MangkukulamSymbolDo symbol, int columNum, boolean hasScatterInColum) {
+        if (symbol.isSpecialWild()) {
+            // 特殊百搭只能出现在123列 & 并且当前列没有scatter
+            return SPECIAL_WILD_EXISTS_COLUMNS.contains(columNum) && !hasScatterInColum;
+        } else if (symbol.isNormalWild()) {
+            // 普通wild只能出现在1234列
+            return WILD_EXISTS_COLUMNS.contains(columNum);
+        } else if (symbol.isScatterSymbol()) {
+            // scatter一列只能出现一个
+            return !hasScatterInColum;
+        } else {
+            return true;
+        }
+    }
+
+    private MangkukulamSymbolDo buildSymbolFromString(String symbolStr) {
+        SymbolDo symbolDo = GAME_INFO.getSymbolById(symbolStr);
+        AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER, "symbolDo is null of id " + symbolStr);
+        MangkukulamSymbolDo symbol = null;
+        if (Objects.equals(MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId(), symbolDo.getId())) {
+            symbol = MangkukulamSymbolDo.buildSpecialWild(SPECIAL_WILD_CLEAR_TIMES);
+        } else {
+            symbol = MangkukulamSymbolDo.buildFromSymbol(symbolDo);
+        }
+        return symbol;
     }
 
     private WheelDo<MangkukulamSymbolDo> generateFromPreWheel(MangkukulamGameRecordDo preGameRecord, MangkukulamConfig.Stage stage) {
@@ -202,6 +225,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         //2. 下落
         MangkukulamSymbolUtil.fallSymbols(symbolArr);
         //3. 补充元素
+        fill(symbolArr, stage, currentIndex);
         //4. 后置处理
         postProcessSymbolArr(symbolArr, stage, currentIndex, borderWildIndexes);
         return WheelDo.<MangkukulamSymbolDo>builder().index(currentIndex).freeFlag(freeWheel).symbolArr(symbolArr).build();
@@ -255,38 +279,35 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             return;
         }
         // todo 填入火框元素
-        List<IndexDo> canAddFireBorderIndexes = getFireBorderIndexes(symbolArr);
-        for (int i = 0; i < needAddFireBorderCount; i++) {
+        List<IndexDo> canAddFireBorderIndexes = MangkukulamSymbolUtil.getAvailableFireBorderIndexes(symbolArr, FIRE_BORDER_EXISTS_COLUMNS);
+        int canAddFireBorderIndexCount = Math.min(canAddFireBorderIndexes.size(), needAddFireBorderCount);
+        for (int i = 0; i < canAddFireBorderIndexCount; i++) {
             IndexDo indexDo = canAddFireBorderIndexes.get(i);
             symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()].setSymbolFireBorder(true);
         }
     }
 
-    private List<IndexDo> getFireBorderIndexes(MangkukulamSymbolDo[][] symbolArr) {
-        List<IndexDo> canAddFireBorderIndexes = new ArrayList<>();
-        for (Integer column : FIRE_BORDER_EXISTS_COLUMNS) {
-            for (int rowNum = 0; rowNum < GAME_INFO.getRow(); rowNum++) {
-                MangkukulamSymbolDo symbol = symbolArr[rowNum][column];
-                if (symbol.isPlaceholderSymbol() || symbol.isWildSymbol() || symbol.isSymbolFireBorder()) {
-                    break;
-                }
-                canAddFireBorderIndexes.add(new IndexDo(rowNum, column));
-            }
-        }
-        Collections.shuffle(canAddFireBorderIndexes, new Random());
-        return canAddFireBorderIndexes;
-    }
-
     private void postProcessSymbolArr(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int currentIndex, List<IndexDo> borderWildIndexes) {
         handleFireBorder(symbolArr, stage, currentIndex);
         handleSpecialWild(symbolArr, stage);
-        fillMovableWild(symbolArr, borderWildIndexes);
+        replaceMovableWild(symbolArr, borderWildIndexes);
     }
 
-    private void fillMovableWild(MangkukulamSymbolDo[][] symbolArr, List<IndexDo> borderWildIndexes) {
+    private void replaceMovableWild(MangkukulamSymbolDo[][] symbolArr, List<IndexDo> borderWildIndexes) {
         //todo 在传入的坐标外 生成普通wild，
         if (CollectionUtils.isEmpty(borderWildIndexes)) {
             return;
+        }
+        List<IndexDo> availableIndexes = MangkukulamSymbolUtil.listAvailableMoveWildIndexes(symbolArr, WILD_EXISTS_COLUMNS);
+        int needIndexCount = borderWildIndexes.size();
+        // 如果位置足够就移动到非原位置
+        if (availableIndexes.size() - needIndexCount >= needIndexCount) {
+            availableIndexes.removeAll(borderWildIndexes);
+        }
+        int canBeWildIndexCount = Math.min(availableIndexes.size(), borderWildIndexes.size());
+        for (int i = 0; i < canBeWildIndexCount; i++) {
+            IndexDo indexDo = availableIndexes.get(i);
+            symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = MangkukulamSymbolDo.buildFromSymbol(MANGKUKULAM_Wild);
         }
     }
 
@@ -296,9 +317,46 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         }
     }
 
-    private void fillColumn(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int column, int index) {
+    private void fillColumn(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int column, int currentIndex) {
         //todo 根据表填充一列
         //如果该列有scatter 生成非scatter
+        LinkedList<String> fillSymbols = new LinkedList<>();
+        randomSymbolList(fillSymbols, stage, currentIndex);
+        boolean hasScatterInColumn = MangkukulamSymbolUtil.hasScatterInColumn(symbolArr, column);
+        for (int i = GAME_INFO.getRow() - 1; i >= 0; i--) {
+            // 从下往上补
+            MangkukulamSymbolDo symbol = symbolArr[i][column];
+            if (Objects.nonNull(symbol)) {
+                continue;
+            }
+            boolean filled = false;
+            while (!filled) {
+                if (fillSymbols.isEmpty()) {
+                    randomSymbolList(fillSymbols, stage, currentIndex);
+                }
+                MangkukulamSymbolDo symbolDo = buildSymbolFromString(fillSymbols.removeFirst());
+                if (!validateSymbolInColumn(symbolDo, column, hasScatterInColumn)) {
+                    continue;
+                }
+                // 如果当前列是scatter
+                if (symbolDo.isScatterSymbol()) {
+                    hasScatterInColumn = true;
+                }
+                symbolArr[i][column] = symbolDo;
+                filled = true;
+            }
+        }
+        fillSymbols.clear();
+    }
+
+    private void randomSymbolList(List<String> fillSymbols, MangkukulamConfig.Stage stage, int currentIndex) {
+        MangkukulamConfig.SymbolStageRange range = stage.getCurrentSymbolStageRange(currentIndex);
+        AssertUtil.assertNotNull(range, ErrorCode.ERR_INTER, "currentSymbolStageRange is null");
+        Map<String, Integer> weightMap = stage.getSymbolWeights().get(range.getValue());
+        AssertUtil.assertNotNull(weightMap, ErrorCode.ERR_INTER, "fireNumWeights is null");
+        String symbolListString = randomKeyByWeight(weightMap);
+        String[] symbols = symbolListString.split(",");
+        fillSymbols.addAll(Arrays.asList(symbols));
     }
 
     private MangkukulamConfig.Stage getRandomStage(GamePlayDo gamePlay, boolean freeWheelFlag) {
@@ -344,7 +402,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
      * @return 索引值
      */
     private String randomKeyByWeight(Map<String, Integer> map) {
-        Integer totalWeights = getTotalWeights(map);
+        int totalWeights = map.values().stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum();
         int randomNumber = randomService.randomInt(Constants.CONST_1, totalWeights);
         int startVal = 0;
         for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
@@ -355,14 +413,6 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             }
         }
         throw new BusinessException(ErrorCode.ERR_INTER, "random key generation failed");
-    }
-
-    private Integer getTotalWeights(Map<String, Integer> map) {
-        Integer totalWeight = 0;
-        for (Integer weight : map.values()) {
-            totalWeight += weight;
-        }
-        return totalWeight;
     }
 
     private void loadContinuePlayContext(GamePlayDo.ContinuePlayContext context, LinkedList<FreeWheelHandleDo> freeWheelList, AtomicLong totalRewardAmount) {

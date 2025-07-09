@@ -7,14 +7,12 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
+import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.symbol.MangkukulamSymbolDo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.*;
@@ -138,9 +136,8 @@ public class MangkukulamSymbolUtil {
      *
      * @param symbolArr
      * @param rewardSymbol
-     * @return indexDo
      */
-    public static IndexDo clearIndexRewardSymbol(MangkukulamSymbolDo[][] symbolArr, RewardSymbolDo<MangkukulamSymbolDo> rewardSymbol) {
+    public static void clearIndexRewardSymbol(MangkukulamSymbolDo[][] symbolArr, RewardSymbolDo<MangkukulamSymbolDo> rewardSymbol) {
         MangkukulamSymbolDo currentSymbol = rewardSymbol.getSymbol();
         IndexDo fireWild = null;
         if (currentSymbol.isScatterSymbol()) {
@@ -154,17 +151,11 @@ public class MangkukulamSymbolUtil {
                 wildSymbol.setRemainClearTimes(currentSymbol.getRemainClearTimes() - 1);
             } else {
                 // 消除次数小于等于1，则移除该列元素
-                MangkukulamSymbolUtil.removeSpecialWild(symbolArr, rewardSymbol);
+                removeSpecialWild(symbolArr, rewardSymbol);
             }
         } else if (currentSymbol.isWildSymbol()) {
-            // 普通wild 如果有火框 则需要移动到其他位置 记录位置
-            if (currentSymbol.isSymbolFireBorder()) {
-                //todo 往上提一层
-                fireWild = rewardSymbol.getIndex();
-            } else {
-                removeSymbol(symbolArr, rewardSymbol);
-            }
-            // 没有火框就直接消除
+            // 普通wild 直接移除
+            removeSymbol(symbolArr, rewardSymbol);
         } else {
             // 普通元素消除
             IndexDo indexDo = rewardSymbol.getIndex();
@@ -178,7 +169,6 @@ public class MangkukulamSymbolUtil {
                 removeSymbol(symbolArr, rewardSymbol);
             }
         }
-        return fireWild;
     }
 
     /**
@@ -240,5 +230,62 @@ public class MangkukulamSymbolUtil {
                 currentRow--;
             }
         }
+    }
+
+    public static boolean hasNormalWildInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isNormalWild()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasScatterInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isScatterSymbol()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static List<IndexDo> listAvailableMoveWildIndexes(MangkukulamSymbolDo[][] symbolArr, List<Integer> availableColumns) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        int row = symbolArr.length;
+        List<IndexDo> availableIndexes = new ArrayList<>();
+        for (int i = 0; i < row; i++) {
+            for (int j : availableColumns) {
+                MangkukulamSymbolDo symbol = symbolArr[i][j];
+                if (Objects.isNull(symbol)) {
+                    availableIndexes.add(IndexFactory.buildDo(i, j));
+                    continue;
+                }
+                if (symbol.isNormalWild() || symbol.isSpecialWild() || symbol.isSymbolFireBorder() || symbol.isScatterSymbol() || symbol.isPlaceholderSymbol()) {
+                    continue;
+                }
+                availableIndexes.add(IndexFactory.buildDo(i, j));
+            }
+        }
+        Collections.shuffle(availableIndexes, new Random());
+        return availableIndexes;
+    }
+
+    public static List<IndexDo> getAvailableFireBorderIndexes(MangkukulamSymbolDo[][] symbolArr, List<Integer> availableColumns) {
+        List<IndexDo> canAddFireBorderIndexes = new ArrayList<>();
+        int row = symbolArr.length;
+        for (Integer column : availableColumns) {
+            for (int rowNum = 0; rowNum < row; rowNum++) {
+                MangkukulamSymbolDo symbol = symbolArr[rowNum][column];
+                if (symbol.isPlaceholderSymbol() || symbol.isWildSymbol() || symbol.isSymbolFireBorder() || symbol.isScatterSymbol()) {
+                    continue;
+                }
+                canAddFireBorderIndexes.add(new IndexDo(rowNum, column));
+            }
+        }
+        Collections.shuffle(canAddFireBorderIndexes, new Random());
+        return canAddFireBorderIndexes;
     }
 }
