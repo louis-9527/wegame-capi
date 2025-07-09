@@ -411,8 +411,8 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         MangkukulamSymbolDo[][] symbolArr = new MangkukulamSymbolDo[MANGKUKULAM_GAME_INFO.getRow()][MANGKUKULAM_GAME_INFO.getColumn()];
         int lastRow = MANGKUKULAM_GAME_INFO.getRow() - 1;
         int lastColumn = MANGKUKULAM_GAME_INFO.getColumn() - 1;
-        symbolArr[lastRow][0] = MangkukulamSymbolDo.buildFromSymbol(MANGKUKULAM_SYMBOL_PLACEHOLDER);
-        symbolArr[lastRow][lastColumn] = MangkukulamSymbolDo.buildFromSymbol(MANGKUKULAM_SYMBOL_PLACEHOLDER);
+        symbolArr[lastRow][0] = MANGKUKULAM_SYMBOL_PLACEHOLDER;
+        symbolArr[lastRow][lastColumn] = MANGKUKULAM_SYMBOL_PLACEHOLDER;
         return symbolArr;
     }
 

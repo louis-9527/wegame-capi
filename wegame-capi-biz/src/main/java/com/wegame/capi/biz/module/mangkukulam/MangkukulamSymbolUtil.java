@@ -31,7 +31,7 @@ public class MangkukulamSymbolUtil {
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (Objects.isNull(symbolArr[i][j])) {
-                    newSymbolArr[i][j] = MangkukulamSymbolDo.buildFromSymbol(MANGKUKULAM_SYMBOL_PLACEHOLDER);
+                    newSymbolArr[i][j] = MANGKUKULAM_SYMBOL_PLACEHOLDER;
                 } else {
                     newSymbolArr[i][j] = symbolArr[i][j].copy();
                 }
@@ -289,7 +289,7 @@ public class MangkukulamSymbolUtil {
         for (Integer column : superWildColumnList) {
             for (int rowNum = 0; rowNum < row; rowNum++) {
                 if (Objects.nonNull(symbolArr[rowNum][column]) && !symbolArr[rowNum][column].isSpecialWild()) {
-                    symbolArr[rowNum][column] = MangkukulamSymbolDo.buildFromSymbol(MANGKUKULAM_SYMBOL_PLACEHOLDER);
+                    symbolArr[rowNum][column] = MANGKUKULAM_SYMBOL_PLACEHOLDER;
                 }
             }
         }
