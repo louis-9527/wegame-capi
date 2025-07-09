@@ -13,6 +13,7 @@ import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
 import com.wegame.capi.biz.domain.biz.symbol.MangkukulamSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.base.AmountHelper;
 import com.wegame.capi.biz.module.base.game.AbstractWheelChartGame;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamSymbolUtil;
@@ -113,6 +114,10 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
      * 生成免费轮
      */
     private void generateFreeBatch(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> result, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList, Long parentBetRecordId) {
+        if (AmountHelper.reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), mangkukulamConfig.getMaxPayout())) {
+            log.warn("reach max reward multiple bet. totalRewardAmount: {}, betAmount: {}", totalRewardAmount.get(), gamePlay.getBetAmount());
+            return;
+        }
         while (!freeWheelList.isEmpty()) {
             FreeWheelHandleDo freeWheel = freeWheelList.removeFirst();
             MangkukulamGameRecordDo parentGameRecord = result.stream().filter(item -> Objects.equals(freeWheel.getParentGameRecordId(), item.getId())).findFirst().orElse(null);
@@ -252,12 +257,15 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         String multipleString = randomKeyByWeight(weightMap);
         AssertUtil.assertNotNull(multipleString, ErrorCode.ERR_INTER, "multipleString is null ");
         String[] multiples = multipleString.split(",");
-        return Arrays.stream(multiples).map(BigDecimal::new).sorted().collect(Collectors.toList());
+        return Arrays.stream(multiples).map(String::trim).map(BigDecimal::new).sorted().collect(Collectors.toList());
     }
 
     private void handleFireBorder(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int currentIndex) {
         MangkukulamConfig.FireNumStageRange fireNumStageRange = stage.getCurrentFireNumberStageRange(currentIndex);
-        AssertUtil.assertNotNull(fireNumStageRange, ErrorCode.ERR_INTER, "fireNumStageRange is null");
+        if (Objects.isNull(fireNumStageRange)) {
+            log.info("fireNumStageRange is null , index : {}", currentIndex);
+            return;
+        }
         Map<String, Integer> weightMap = stage.getFireNumWeights().get(fireNumStageRange.getValue());
         AssertUtil.assertNotNull(weightMap, ErrorCode.ERR_INTER, "fireNumWeights is null of id " + fireNumStageRange.getValue());
         String newFireBorderCount = randomKeyByWeight(weightMap);
@@ -393,15 +401,21 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
      * @return 索引值
      */
     private String randomKeyByWeight(Map<String, Integer> map) {
-        int totalWeights = map.values().stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum();
-        int randomNumber = randomService.randomInt(Constants.CONST_1, totalWeights);
-        int startVal = 0;
-        for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
-            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-                return entry.getKey();
-            } else {
-                startVal += entry.getValue();
+        int mapSize = map.size();
+        AssertUtil.assertTrue(mapSize > 0, ErrorCode.ERR_INTER, "weight map size is less than 1");
+        if (mapSize > 1) {
+            int totalWeights = map.values().stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum();
+            int randomNumber = randomService.randomInt(Constants.CONST_1, totalWeights);
+            int startVal = 0;
+            for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+                if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+                    return entry.getKey();
+                } else {
+                    startVal += entry.getValue();
+                }
             }
+        } else {
+            return map.keySet().stream().findFirst().get();
         }
         throw new BusinessException(ErrorCode.ERR_INTER, "random key generation failed");
     }
