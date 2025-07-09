@@ -89,6 +89,7 @@ public class MangkukulamSymbolDo extends SymbolDo {
                 .name(getName())
                 .symbolType(getSymbolType())
                 .symbolFireBorder(isSymbolFireBorder())
+                .size(size)
                 .remainClearTimes(remainClearTimes)
                 .multiples(multiples)
                 .build();

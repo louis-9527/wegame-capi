@@ -40,20 +40,6 @@ public class MangkukulamSymbolUtil {
         return newSymbolArr;
     }
 
-    public static int countScatterInWheel(MangkukulamSymbolDo[][] symbolArr) {
-        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
-        int row = symbolArr.length;
-        int col = symbolArr[0].length;
-        int scatterCount = 0;
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < col; j++) {
-                if (Objects.nonNull(symbolArr[i][j]) && symbolArr[i][j].isScatterSymbol()) {
-                    scatterCount++;
-                }
-            }
-        }
-        return scatterCount;
-    }
 
     public static int countFireBorderInWheel(MangkukulamSymbolDo[][] symbolArr) {
         AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
@@ -132,6 +118,9 @@ public class MangkukulamSymbolUtil {
      */
     public static void clearIndexRewardSymbol(MangkukulamSymbolDo[][] symbolArr, RewardSymbolDo<MangkukulamSymbolDo> rewardSymbol) {
         MangkukulamSymbolDo currentSymbol = rewardSymbol.getSymbol();
+        if (Objects.isNull(currentSymbol)) {
+            return;
+        }
         if (currentSymbol.isScatterSymbol()) {
             // scatter 元素， 不做消除
         } else if (currentSymbol.isSpecialWild()) {
@@ -151,9 +140,8 @@ public class MangkukulamSymbolUtil {
         } else {
             // 普通元素消除
             IndexDo indexDo = rewardSymbol.getIndex();
-            MangkukulamSymbolDo commonSymbol = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
             // 带火框的普通元素消除，变成带火框的wild
-            if (commonSymbol.isSymbolFireBorder()) {
+            if (currentSymbol.isSymbolFireBorder()) {
                 MangkukulamSymbolDo current = MangkukulamSymbolDo.buildFromSymbol(MANGKUKULAM_Wild, true);
                 symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = current;
             } else {
@@ -224,16 +212,6 @@ public class MangkukulamSymbolUtil {
         }
     }
 
-    public static boolean hasNormalWildInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
-        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
-        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
-            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isNormalWild()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean hasSpecialWildInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
         AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
@@ -252,6 +230,17 @@ public class MangkukulamSymbolUtil {
             }
         }
         return false;
+    }
+
+    public static int countScatterInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        int count = 0;
+        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isScatterSymbol()) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public static List<IndexDo> listAvailableMoveWildIndexes(MangkukulamSymbolDo[][] symbolArr, List<Integer> availableColumns) {
@@ -303,5 +292,86 @@ public class MangkukulamSymbolUtil {
                 }
             }
         }
+    }
+
+    /**
+     * 用于单元测试输出
+     *
+     * @param symbolArr
+     * @param currentIndex
+     */
+    public static void print(MangkukulamSymbolDo[][] symbolArr, int currentIndex) {
+        System.out.println("symbolArr index :" + currentIndex);
+        for (int row = 0; row < symbolArr.length; row++) {
+            for (int column = 0; column < symbolArr[row].length; column++) {
+                if (Objects.nonNull(symbolArr[row][column])) {
+                    if (symbolArr[row][column].isSymbolFireBorder()) {
+                        if (symbolArr[row][column].isSpecialWild()) {
+                            System.out.print("[" + symbolArr[row][column].getId() + "]\t");
+                        } else {
+                            System.out.print("[" + symbolArr[row][column].getId() + "]\t");
+                        }
+                    } else {
+                        if (symbolArr[row][column].isSpecialWild()) {
+                            System.out.print(symbolArr[row][column].getId() + "\t");
+                        } else {
+                            System.out.print(symbolArr[row][column].getId() + "\t\t");
+                        }
+                    }
+                } else {
+                    System.out.print("X\t\t");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static int countSpecialWildInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        int count = 0;
+        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isSpecialWild()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int countFireBorderInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        int count = 0;
+        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isSymbolFireBorder()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int countNormalWildInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        int count = 0;
+        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isNormalWild()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int countScatterInWheel(MangkukulamSymbolDo[][] symbolArr) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        int row = symbolArr.length;
+        int col = symbolArr[0].length;
+        int scatterCount = 0;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (Objects.nonNull(symbolArr[i][j]) && symbolArr[i][j].isScatterSymbol()) {
+                    scatterCount++;
+                }
+            }
+        }
+        return scatterCount;
     }
 }

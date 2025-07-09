@@ -47,8 +47,7 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
     OddsCalculateStrategy<MangkukulamSymbolDo> mangkukulamOddsCalculateStrategy;
     @Autowired
     MultipleCalculateStrategy<MangkukulamSymbolDo> mangkukulamMultipleCalculateStrategy;
-    //todo 删除
-    @Autowired(required = false)
+    @Autowired
     MangkukulamConfig mangkukulamConfig;
 
     @Override
@@ -134,7 +133,7 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
         // 1、处理第一列
         for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             MangkukulamSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
-            if (targetSymbol.isScatterSymbol()) {
+            if (targetSymbol.isScatterSymbol() || targetSymbol.isPlaceholderSymbol()) {
                 continue;
             }
 
@@ -232,13 +231,14 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
      */
     private Integer calcRewardFreeWheelTimes(RewardHandleDo<MangkukulamSymbolDo> rewardHandle, List<RewardLineDo<MangkukulamSymbolDo>> rewardLineList) {
         // todo 返回中奖免费轮轮数
-        // 正常轮,有中奖，返回0
+        // 有中奖，返回0
         if (CollectionUtils.isNotEmpty(rewardLineList)) {
             return 0;
         }
         boolean freeWheel = rewardHandle.getWheel().isFreeFlag();
         int scatterCount = MangkukulamSymbolUtil.countScatterInWheel(rewardHandle.getWheel().getSymbolArr());
-        return freeWheel ? mangkukulamConfig.getFgToFgSc().get(scatterCount) : mangkukulamConfig.getMgToFgSc().get(scatterCount);
+        Integer freeWheelTimes = freeWheel ? mangkukulamConfig.getFgToFgSc().get(scatterCount) : mangkukulamConfig.getMgToFgSc().get(scatterCount);
+        return Objects.isNull(freeWheelTimes) ? 0 : freeWheelTimes;
     }
 
     private void validate(RewardHandleDo<MangkukulamSymbolDo> rewardHandle) {
@@ -249,7 +249,7 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
         AssertUtil.assertNotNull(rewardHandle.getWheel(), ErrorCode.ERR_PARAM, "wheel is null");
         AssertUtil.assertNotNull(rewardHandle.getWheel().getIndex(), ErrorCode.ERR_PARAM, "wheel index is null");
         AssertUtil.assertNotNull(rewardHandle.getWheel().getSymbolArr(), ErrorCode.ERR_PARAM, "wheel symbolArr is null");
-        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.LAM_ANG), ErrorCode.ERR_PARAM, "just support game type of lamang");
+        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.MANGKUKULAM), ErrorCode.ERR_PARAM, "just support game type of lamang");
         AssertUtil.assertTrue(rewardHandle.getBetAmount() > 0, ErrorCode.ERR_PARAM, "bet amount must greater than 0");
         SymbolDo[][] symbolArr = rewardHandle.getWheel().getSymbolArr();
         // 校验：滚轮行数
