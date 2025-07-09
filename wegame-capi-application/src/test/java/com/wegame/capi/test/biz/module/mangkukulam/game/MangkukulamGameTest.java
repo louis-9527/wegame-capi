@@ -25,9 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
 public class MangkukulamGameTest extends BaseTest {
+
+    @Autowired
+    ThreadPoolExecutor defaultThreadPoolExecutor;
 
     @Autowired
     MangkukulamGameNormalPlay normalPlay;
@@ -36,6 +40,16 @@ public class MangkukulamGameTest extends BaseTest {
     private static final List<Integer> SPECIAL_WILD_EXISTS_COLUMNS = Arrays.asList(1, 2, 3);
     private static final List<Integer> FIRE_BORDER_EXISTS_COLUMNS = Arrays.asList(1, 2, 3, 4);
     private static final List<Integer> WILD_EXISTS_COLUMNS = Arrays.asList(1, 2, 3, 4);
+
+    @Test
+    public void testAll() {
+        int maxTimes = 1000;
+        for (int i = 0; i < maxTimes; i++) {
+            test_normal_bet();
+            test_buy_bet();
+            test_normal_bet_continue_play();
+        }
+    }
 
     @Before
     public void beforeTest() {
@@ -61,12 +75,6 @@ public class MangkukulamGameTest extends BaseTest {
     }
 
     @Test
-    public void testAll() {
-
-    }
-
-
-    @Test
     public void test_normal_bet_continue_play() {
         GamePlayDo.ContinuePlayContext context = GamePlayDo.ContinuePlayContext.builder()
                 .parentBetRecordId(new Random(1000000000).nextLong())
@@ -81,10 +89,16 @@ public class MangkukulamGameTest extends BaseTest {
                 .volatility(VolatilityEnum.HIGH)
                 .continuePlayContext(context)
                 .build();
+        long currentTime = System.currentTimeMillis();
         List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
+        long lastTime = System.currentTimeMillis();
+        long cost = lastTime - currentTime;
+        if (cost > 10) {
+            System.out.println("test_normal_bet_continue_play cost more than 10ms : " + (lastTime - currentTime) + "ms");
+        }
         recordList.forEach(record -> {
             validateGameRecord(record);
-            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+//            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
         });
         // 15轮
         Assert.assertTrue(recordList.size() >= 15);
@@ -98,10 +112,16 @@ public class MangkukulamGameTest extends BaseTest {
                 .betSubType(BetSubTypeEnum.NORMAL_BET)
                 .betAmount(100L)
                 .build();
+        long currentTime = System.currentTimeMillis();
         List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
+        long lastTime = System.currentTimeMillis();
+        long cost = lastTime - currentTime;
+        if (cost > 10) {
+            System.out.println("test_normal_bet cost more than 10ms : " + (lastTime - currentTime) + "ms");
+        }
         recordList.forEach(record -> {
             validateGameRecord(record);
-            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+//            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
         });
     }
 
@@ -115,7 +135,13 @@ public class MangkukulamGameTest extends BaseTest {
                 .betAmount(1000L)
                 .payAmount(35000L)
                 .build();
+        long currentTime = System.currentTimeMillis();
         List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
+        long lastTime = System.currentTimeMillis();
+        long cost = lastTime - currentTime;
+        if (cost > 10) {
+            System.out.println("test_buy_bet cost more than 10ms : " + (lastTime - currentTime) + "ms");
+        }
         // 校验
         //// 1.是否为空
         Assert.assertNotNull(recordList);
@@ -123,7 +149,10 @@ public class MangkukulamGameTest extends BaseTest {
         Assert.assertTrue(recordList.size() > 7);
 
         // 打印
-        recordList.forEach(item -> MangkukulamSymbolUtil.print(item.getWheel().getSymbolArr(), item.getWheel().getIndex()));
+        recordList.forEach(record -> {
+            validateGameRecord(record);
+//            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+        });
     }
 
     private void validateGameRecord(MangkukulamGameRecordDo gameRecordDo) {
