@@ -22,7 +22,7 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.VolatilityEnum;
+import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.Data;
@@ -378,7 +378,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         }
         MangkukulamConfig.MainGame mainGame = null;
         if (freeWheelFlag) {
-            if (Objects.equals(VolatilityEnum.LOW.getCode(), gamePlay.getVolatility().getCode())) {
+            if (Objects.equals(VolatilityTypeEnum.LOW.getCode(), gamePlay.getVolatility().getCode())) {
                 mainGame = bet.getLow();
             } else {
                 mainGame = bet.getHigh();

@@ -7,7 +7,7 @@ import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.VolatilityEnum;
+import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 
@@ -42,7 +42,7 @@ public class BetConverter {
                 .rewardId(betRequest.getBetDetail().getRewardId())
                 .useFreeSpin(betRequest.getBetDetail().isUseFreeSpin())
                 .campaignId(betRequest.getBetDetail().getCampaignId())
-                .volatility(VolatilityEnum.valueOfCode(betRequest.getBetDetail().getVolatility()))
+                .volatility(VolatilityTypeEnum.valueOfCode(betRequest.getBetDetail().getVolatility()))
                 .build();
     }
 }

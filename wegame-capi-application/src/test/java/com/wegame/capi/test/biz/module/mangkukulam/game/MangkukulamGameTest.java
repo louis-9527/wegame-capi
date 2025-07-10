@@ -14,7 +14,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.VolatilityEnum;
+import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -86,7 +86,7 @@ public class MangkukulamGameTest extends BaseTest {
                 .betType(BetTypeEnum.NORMAL_BET)
                 .betSubType(BetSubTypeEnum.FREE_WHEEL_NORMAL_BET)
                 .betAmount(1000L)
-                .volatility(VolatilityEnum.HIGH)
+                .volatility(VolatilityTypeEnum.HIGH)
                 .continuePlayContext(context)
                 .build();
         long currentTime = System.currentTimeMillis();
@@ -131,7 +131,7 @@ public class MangkukulamGameTest extends BaseTest {
                 .gameType(GameTypeEnum.MANGKUKULAM)
                 .betType(BetTypeEnum.BUY_BET)
                 .betSubType(BetSubTypeEnum.BUY_BET)
-                .volatility(VolatilityEnum.HIGH)
+                .volatility(VolatilityTypeEnum.HIGH)
                 .betAmount(1000L)
                 .payAmount(35000L)
                 .build();

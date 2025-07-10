@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 @ToString
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
-public enum VolatilityEnum {
+public enum VolatilityTypeEnum {
 
     LOW("LOW", "低波动"),
     HIGH("HIGH", "高波动");
@@ -28,13 +28,13 @@ public enum VolatilityEnum {
      * @param code code值
      * @param desc 描述信息
      */
-    VolatilityEnum(String code, String desc) {
+    VolatilityTypeEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-    public static VolatilityEnum valueOfCode(String code) {
-        for (VolatilityEnum item : VolatilityEnum.values()) {
+    public static VolatilityTypeEnum valueOfCode(String code) {
+        for (VolatilityTypeEnum item : VolatilityTypeEnum.values()) {
             if (StringUtils.equals(item.getCode(), code)) {
                 return item;
             }

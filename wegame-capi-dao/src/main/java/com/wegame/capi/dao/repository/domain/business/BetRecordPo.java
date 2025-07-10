@@ -128,6 +128,10 @@ public class BetRecordPo implements Serializable {
     private Long updateTime;
 
     ///////////////  above auto generated ///////////////
+    /**
+     * 免费轮状态
+     */
+    private String freeWheelStatus;
 
 
     @Data

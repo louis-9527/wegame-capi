@@ -55,7 +55,7 @@ public class GamePlayDo implements Serializable {
     /**
      * 波动性选择
      */
-    private VolatilityEnum volatility;
+    private VolatilityTypeEnum volatility;
 
     /**
      * 继续游戏参数
