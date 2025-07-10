@@ -122,6 +122,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         while (!freeWheelList.isEmpty()) {
             FreeWheelHandleDo freeWheel = freeWheelList.removeFirst();
             MangkukulamGameRecordDo parentGameRecord = result.stream().filter(item -> Objects.equals(freeWheel.getParentGameRecordId(), item.getId())).findFirst().orElse(null);
+            // 每一轮都新随机一个配置
             MangkukulamConfig.Stage stage = getRandomStage(gamePlay, true);
             WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel(stage, true);
             RewardResultDo<MangkukulamSymbolDo> rewardResult = mangkukulamRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
