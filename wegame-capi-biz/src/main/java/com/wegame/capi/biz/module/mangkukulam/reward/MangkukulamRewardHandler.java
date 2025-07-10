@@ -105,9 +105,9 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
                 rewardHandle.getGamePlayType(),
                 totalAmount,
                 rewardHandle.getBetAmount(),
-                mangkukulamConfig.getMaxPayout());
+                mangkukulamConfig.getRewardMaxMultiple());
         // 5.构建中奖结果
-        RewardResultDo<MangkukulamSymbolDo> rewardResult = RewardResultDo.<MangkukulamSymbolDo>builder()
+        return RewardResultDo.<MangkukulamSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
@@ -118,8 +118,6 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
                 .accumulateReachMaxMultiple(reachMaxMultiple)
                 .rewardFreeWheelTimes(0)
                 .build();
-        // 6.返回中奖信息
-        return rewardResult;
     }
 
     private List<RewardLineDo<MangkukulamSymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<MangkukulamSymbolDo> wheel) {

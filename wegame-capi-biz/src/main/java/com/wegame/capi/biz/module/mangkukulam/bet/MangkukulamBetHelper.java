@@ -13,6 +13,7 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
+import com.wegame.capi.biz.module.mangkukulam.MangkukulamCalcUtil;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
@@ -31,7 +32,7 @@ import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 @Component
 public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetailDo, MangkukulamGameRecordDo> {
 
-    @Autowired(required = false)
+    @Autowired
     MangkukulamConfig mangkukulamConfig;
 
     @Override
@@ -53,20 +54,12 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
     @Override
     public BetResultDo<MangkukulamBetRecordDetailDo> handleBetResult(BetRecordDo<MangkukulamGameRecordDo> betRecord, SingleWalletBetResultDo result) {
         AssertUtil.assertNotNull(result, ErrorCode.ERR_INTER);
-
         if (Objects.equals(result.getBetStatus(), BetStatusEnum.SUCCESS)) {
             List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(betRecord.getGameRecordList());
-
             // 4、组装返回结果
             //// 合计中奖总金额
-            long overallRewardAmount = firstBatchList.stream()
-                    .filter(item -> Objects.nonNull(item.getRewardResult()))
-                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                    .sum();
-            MangkukulamBetRecordDetailDo build = MangkukulamBetRecordDetailDo.builder()
-                    .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
-                    .gameRecordList(firstBatchList)
-                    .build();
+            long overallRewardAmount = MangkukulamCalcUtil.calcTotalRewardAmount(firstBatchList);
+            // 计算中奖
             return BetResultDo.<MangkukulamBetRecordDetailDo>builder()
                     .betRecordId(betRecord.getId())
                     .gameId(betRecord.getGameId())
@@ -75,7 +68,10 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
                     .credit(result.getCredit())
                     .overallRewardAmount(maxAmountControl(overallRewardAmount, betRecord.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple()))
                     .totalPayoutAmount(betRecord.getPayOutAmount())
-                    .resultDetail(build)
+                    .resultDetail(MangkukulamBetRecordDetailDo.builder()
+                            .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
+                            .gameRecordList(firstBatchList)
+                            .build())
                     .build();
         } else if (Objects.equals(result.getBetStatus(), BetStatusEnum.FAIL)) {
             if (result.getErrorCode() != null) {
@@ -91,7 +87,11 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
 
     @Override
     public boolean hasRewardFreeWheel(List<MangkukulamGameRecordDo> gameRecordList) {
-        return false;
+        MangkukulamGameRecordDo gameRecord = gameRecordList.stream()
+                .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeWheel())
+                .findFirst()
+                .orElse(null);
+        return Objects.nonNull(gameRecord);
     }
 
     private List<MangkukulamGameRecordDo> getFirstBatchGameRecordList(List<MangkukulamGameRecordDo> list) {
@@ -100,5 +100,4 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
                 .collect(Collectors.toList());
     }
-
 }

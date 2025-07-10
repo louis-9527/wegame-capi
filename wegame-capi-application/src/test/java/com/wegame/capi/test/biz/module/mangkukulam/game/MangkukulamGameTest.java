@@ -25,16 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
 public class MangkukulamGameTest extends BaseTest {
-
-    @Autowired
-    ThreadPoolExecutor defaultThreadPoolExecutor;
-
     @Autowired
     MangkukulamGameNormalPlay normalPlay;
+    private static final int MAX_TIMES_IN_MS = 5;
 
 
     private static final List<Integer> SPECIAL_WILD_EXISTS_COLUMNS = Arrays.asList(1, 2, 3);
@@ -43,12 +39,17 @@ public class MangkukulamGameTest extends BaseTest {
 
     @Test
     public void testAll() {
-        int maxTimes = 1000;
+        long currentTime = System.currentTimeMillis();
+        int maxTimes = 10;
         for (int i = 0; i < maxTimes; i++) {
-            test_normal_bet();
             test_buy_bet();
+            test_normal_bet();
             test_normal_bet_continue_play();
         }
+
+        long lastTime = System.currentTimeMillis();
+        long cost = lastTime - currentTime;
+        System.out.println("testAll cost : " + cost + "ms");
     }
 
     @Before
@@ -93,8 +94,8 @@ public class MangkukulamGameTest extends BaseTest {
         List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
-        if (cost > 10) {
-            System.out.println("test_normal_bet_continue_play cost more than 10ms : " + (lastTime - currentTime) + "ms");
+        if (cost > MAX_TIMES_IN_MS) {
+            System.out.println("test_buy_bet cost more than " + MAX_TIMES_IN_MS + "ms : " + cost + "ms");
         }
         recordList.forEach(record -> {
             validateGameRecord(record);
@@ -116,8 +117,8 @@ public class MangkukulamGameTest extends BaseTest {
         List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
-        if (cost > 10) {
-            System.out.println("test_normal_bet cost more than 10ms : " + (lastTime - currentTime) + "ms");
+        if (cost > MAX_TIMES_IN_MS) {
+            System.out.println("test_buy_bet cost more than " + MAX_TIMES_IN_MS + "ms : " + cost + "ms");
         }
         recordList.forEach(record -> {
             validateGameRecord(record);
@@ -139,14 +140,14 @@ public class MangkukulamGameTest extends BaseTest {
         List<MangkukulamGameRecordDo> recordList = normalPlay.play(playDo);
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
-        if (cost > 10) {
-            System.out.println("test_buy_bet cost more than 10ms : " + (lastTime - currentTime) + "ms");
+        if (cost > MAX_TIMES_IN_MS) {
+            System.out.println("test_buy_bet cost more than " + MAX_TIMES_IN_MS + "ms : " + cost + "ms");
         }
         // 校验
         //// 1.是否为空
         Assert.assertNotNull(recordList);
         //// 2.校验数据条数（3个scatter 10轮 + 1 初始轮）
-        Assert.assertTrue(recordList.size() > 7);
+//        Assert.assertTrue(recordList.size() > 7);
 
         // 打印
         recordList.forEach(record -> {

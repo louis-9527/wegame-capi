@@ -64,7 +64,6 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         List<MangkukulamGameRecordDo> gameRecordResult = new ArrayList<>();
         LinkedList<FreeWheelHandleDo> freeWheelList = new LinkedList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
-        // todo 执行
         if (BetSubTypeEnum.isFirstStep(gamePlay.getBetSubType().getCode()) && Objects.nonNull(gamePlay.getVolatility())) {
             // 执行完普通轮和免费轮
             generateFirstBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
@@ -74,7 +73,9 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             // 执行首轮
             generateFirstBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
             MangkukulamGameRecordDo lastGame = gameRecordResult.get(gameRecordResult.size() - 1);
-            if (Objects.nonNull(lastGame) && !lastGame.getRewardResult().isHasRewardFreeWheel()) {
+            boolean reachMaxMultiple = AmountHelper.reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple());
+            boolean rewardFreeWheel = (Objects.nonNull(lastGame) && !lastGame.getRewardResult().isHasRewardFreeWheel());
+            if (reachMaxMultiple || !rewardFreeWheel) {
                 setLastGameFlag(gameRecordResult);
             }
         } else if (Objects.equals(BetSubTypeEnum.FREE_WHEEL_NORMAL_BET.getCode(), gamePlay.getBetSubType().getCode()) && Objects.nonNull(gamePlay.getVolatility())) {
@@ -114,7 +115,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
      * 生成免费轮
      */
     private void generateFreeBatch(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> result, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList, Long parentBetRecordId) {
-        if (AmountHelper.reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), mangkukulamConfig.getMaxPayout())) {
+        if (AmountHelper.reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple())) {
             log.warn("reach max reward multiple bet. totalRewardAmount: {}, betAmount: {}", totalRewardAmount.get(), gamePlay.getBetAmount());
             return;
         }
@@ -163,7 +164,6 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     }
 
     private WheelDo<MangkukulamSymbolDo> generateFirstWheel(MangkukulamConfig.Stage stage, boolean freeWheelFlag) {
-        //todo 生成初始轮
         int currentIndex = 0;
         // 0. 初始化盘面，填充占位符
         MangkukulamSymbolDo[][] symbolArr = initWheel();
@@ -183,6 +183,8 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
                 AssertUtil.assertTrue(validateSymbolInColumn, ErrorCode.ERR_PARAM, "invalid symbol in column : " + columNum);
                 if (symbol.isScatterSymbol()) {
                     hasScatterInColum = true;
+                } else if (symbol.isSpecialWild()) {
+                    hasSpecialWildInColum = true;
                 }
                 // 填充
                 symbolArr[rowNum][columNum] = symbol;
@@ -194,7 +196,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
 
     private boolean validateSymbolInColumn(MangkukulamSymbolDo symbol, int columNum, boolean hasScatterInColum, boolean hasSpecialWildInColum) {
         if (symbol.isSpecialWild()) {
-            // 特殊百搭只能出现在123列 & 并且当前列没有scatter
+            // 特殊百搭只能出现在123列 & 并且当前列没有scatter 和 特殊百搭
             return SPECIAL_WILD_EXISTS_COLUMNS.contains(columNum) && !hasScatterInColum && !hasSpecialWildInColum;
         } else if (symbol.isNormalWild()) {
             // 普通wild只能出现在1234列
@@ -238,7 +240,6 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     }
 
     private void handleSpecialWild(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage) {
-        //todo 生成倍率 & 该列用占位符占位
         Map<String, Integer> weightMap = stage.getWdExpandingTimesWeights();
         AssertUtil.assertNotNull(weightMap, ErrorCode.ERR_INTER, "wdExpandingTimesWeights is null ");
         List<Integer> superWildColumnList = new ArrayList<>();
@@ -271,7 +272,6 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         if (needAddFireBorderCount <= 0) {
             return;
         }
-        // todo 填入火框元素
         List<IndexDo> canAddFireBorderIndexes = MangkukulamSymbolUtil.getAvailableFireBorderIndexes(symbolArr, FIRE_BORDER_EXISTS_COLUMNS);
         int canAddFireBorderIndexCount = Math.min(canAddFireBorderIndexes.size(), needAddFireBorderCount);
         for (int i = 0; i < canAddFireBorderIndexCount; i++) {
@@ -281,13 +281,12 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     }
 
     private void postProcessSymbolArr(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int currentIndex, List<IndexDo> borderWildIndexes) {
-        handleFireBorder(symbolArr, stage, currentIndex);
         handleSpecialWild(symbolArr, stage);
+        handleFireBorder(symbolArr, stage, currentIndex);
         replaceMovableWild(symbolArr, borderWildIndexes);
     }
 
     private void replaceMovableWild(MangkukulamSymbolDo[][] symbolArr, List<IndexDo> borderWildIndexes) {
-        //todo 在传入的坐标外 生成普通wild，
         if (CollectionUtils.isEmpty(borderWildIndexes)) {
             return;
         }
@@ -311,7 +310,6 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     }
 
     private void fillColumn(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int column, int currentIndex) {
-        //todo 根据表填充一列
         //如果该列有scatter 生成非scatter
         LinkedList<String> fillSymbols = new LinkedList<>();
         randomSymbolList(fillSymbols, stage, currentIndex);
@@ -464,7 +462,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             return false;
         }
         if (rewardResult.getAccumulateReachMaxMultiple()) {
-            log.warn("reach max reward multiple bet. totalRewardAmount: {}, payAmount: {}", totalRewardAmount.get(), gamePlay.getPayAmount());
+            log.warn("reach max reward multiple bet. totalRewardAmount: {}, betAmount: {}", totalRewardAmount.get(), gamePlay.getBetAmount());
             return false;
         }
         return CollectionUtils.isNotEmpty(rewardResult.getRewardLineDetailList());
