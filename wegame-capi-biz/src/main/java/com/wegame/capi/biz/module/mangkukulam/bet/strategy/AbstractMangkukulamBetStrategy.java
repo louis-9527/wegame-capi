@@ -130,7 +130,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
         } else {
             // 1、查询投注记录
-            BetRecordDo preBetRecord = mangkukulamBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.MANGKUKULAM);
+            BetRecordDo preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
             if (BooleanUtils.isFalse(preBetRecord.getContinueStatus()))  {
                 // 1、查询game record
                 return betForFreeWheel(betDo);
