@@ -99,7 +99,7 @@ public class MangkukulamGameTest extends BaseTest {
         }
         recordList.forEach(record -> {
             validateGameRecord(record);
-//            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
         });
         // 15轮
         Assert.assertTrue(recordList.size() >= 15);
@@ -122,7 +122,7 @@ public class MangkukulamGameTest extends BaseTest {
         }
         recordList.forEach(record -> {
             validateGameRecord(record);
-//            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
         });
     }
 
@@ -152,7 +152,7 @@ public class MangkukulamGameTest extends BaseTest {
         // 打印
         recordList.forEach(record -> {
             validateGameRecord(record);
-//            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
         });
     }
 
