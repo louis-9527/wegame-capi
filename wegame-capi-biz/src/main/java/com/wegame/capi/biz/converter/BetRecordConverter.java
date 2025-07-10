@@ -69,6 +69,7 @@ public class BetRecordConverter {
         betRecordDo.setCreateTime(po.getCreateTime());
         betRecordDo.setUpdater(po.getUpdater());
         betRecordDo.setUpdateTime(po.getUpdateTime());
+        betRecordDo.setContinueStatus(po.getContinueStatus());
         return betRecordDo;
     }
 
@@ -121,6 +122,7 @@ public class BetRecordConverter {
             po.setUpdateTime(DateUtil.getCurrentMilli());
             po.setId(betRecordDo.getId());
         }
+        po.setContinueStatus(betRecordDo.getContinueStatus());
         return po;
     }
 

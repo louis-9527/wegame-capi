@@ -132,7 +132,10 @@ public class BetRecordPo implements Serializable {
      * 免费轮状态
      */
     private String freeWheelStatus;
-
+    /**
+     * 是否可以继续玩
+     */
+    private Boolean continueStatus;
 
     @Data
     @ToString
