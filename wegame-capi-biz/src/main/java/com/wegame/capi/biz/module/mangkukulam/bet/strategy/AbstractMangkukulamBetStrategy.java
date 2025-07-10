@@ -116,7 +116,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
         long betRecordId = generateBetRecordId();
         GamePlayDo gamePlayDo = build(NORMAL_PLAY, betDo, betRecordId, null);
         if (BetSubTypeEnum.isFirstStep(betDo.getBetSubType().getCode())) {
-            // play
+            // 1、play
             List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
             AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
             List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
@@ -129,13 +129,13 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
         } else {
-            // 查询投注记录
+            // 1、查询投注记录
             BetRecordDo preBetRecord = mangkukulamBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.MANGKUKULAM);
             if (BooleanUtils.isFalse(preBetRecord.getContinueStatus()))  {
-                // 查询game record
-                return null;
+                // 1、查询game record
+                return betForFreeWheel(betDo);
             } else {
-                // 继续玩（完成波动选择后续部分）
+                // 1、继续玩（完成波动选择后续部分）
                 gamePlayDo.setContinuePlayContext(buildContinuePlayContext(betDo));
                 List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
                 AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
