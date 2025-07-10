@@ -73,7 +73,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             // 执行首轮
             generateFirstBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
             MangkukulamGameRecordDo lastGame = gameRecordResult.get(gameRecordResult.size() - 1);
-            boolean reachMaxMultiple = AmountHelper.reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), mangkukulamConfig.getMaxPayout());
+            boolean reachMaxMultiple = AmountHelper.reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple());
             boolean rewardFreeWheel = (Objects.nonNull(lastGame) && !lastGame.getRewardResult().isHasRewardFreeWheel());
             if (reachMaxMultiple || !rewardFreeWheel) {
                 setLastGameFlag(gameRecordResult);
@@ -115,7 +115,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
      * 生成免费轮
      */
     private void generateFreeBatch(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> result, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList, Long parentBetRecordId) {
-        if (AmountHelper.reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), mangkukulamConfig.getMaxPayout())) {
+        if (AmountHelper.reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple())) {
             log.warn("reach max reward multiple bet. totalRewardAmount: {}, betAmount: {}", totalRewardAmount.get(), gamePlay.getBetAmount());
             return;
         }
