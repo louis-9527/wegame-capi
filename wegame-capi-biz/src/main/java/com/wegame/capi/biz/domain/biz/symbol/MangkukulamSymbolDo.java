@@ -2,7 +2,6 @@ package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
-import com.wegame.capi.common.enums.SymbolSizeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -37,16 +36,6 @@ public class MangkukulamSymbolDo extends SymbolDo {
      */
     private List<BigDecimal> multiples;
 
-    /**
-     * 形状
-     */
-    private SymbolSizeEnum size;
-
-    @JsonIgnore
-    public int getLineCount() {
-        return size.getRowSpan();
-    }
-
     @JsonIgnore
     public BigDecimal getMultiple() {
         if (!isSpecialWild() || multiples == null || multiples.isEmpty()) {
@@ -65,7 +54,8 @@ public class MangkukulamSymbolDo extends SymbolDo {
 
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
-        return StringUtils.equals(getId(), MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER.getId());
+        return StringUtils.equals(getId(), MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER.getId())
+                || StringUtils.equals(getId(), MangkukulamGameHelper.MANGKUKULAM_WILD_PLACEHOLDER.getId());
     }
 
     @JsonIgnore
@@ -89,7 +79,6 @@ public class MangkukulamSymbolDo extends SymbolDo {
                 .name(getName())
                 .symbolType(getSymbolType())
                 .symbolFireBorder(isSymbolFireBorder())
-                .size(size)
                 .remainClearTimes(remainClearTimes)
                 .multiples(multiples)
                 .build();
@@ -106,7 +95,6 @@ public class MangkukulamSymbolDo extends SymbolDo {
                 .id(symbol.getId())
                 .name(symbol.getName())
                 .symbolType(symbol.getSymbolType())
-                .size(SymbolSizeEnum.S)
                 .symbolFireBorder(false)
                 .build();
     }
@@ -122,7 +110,6 @@ public class MangkukulamSymbolDo extends SymbolDo {
                 .id(symbol.getId())
                 .name(symbol.getName())
                 .symbolType(symbol.getSymbolType())
-                .size(SymbolSizeEnum.S)
                 .symbolFireBorder(symbolFireBorder)
                 .build();
     }
@@ -140,7 +127,22 @@ public class MangkukulamSymbolDo extends SymbolDo {
                 .symbolType(MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getSymbolType())
                 .symbolFireBorder(false)
                 .remainClearTimes(remainClearTimes)
-                .size(SymbolSizeEnum.XXL)
+                .build();
+    }
+
+    /**
+     * 从symbol产生一个新元素
+     *
+     * @param remainClearTimes 剩余消除次数
+     * @return MangkukulamSymbolDo
+     */
+    public static MangkukulamSymbolDo buildPlaceholderWild(int remainClearTimes) {
+        return MangkukulamSymbolDo.builder()
+                .id(MangkukulamGameHelper.MANGKUKULAM_WILD_PLACEHOLDER.getId())
+                .name(MangkukulamGameHelper.MANGKUKULAM_WILD_PLACEHOLDER.getName())
+                .symbolType(MangkukulamGameHelper.MANGKUKULAM_WILD_PLACEHOLDER.getSymbolType())
+                .symbolFireBorder(false)
+                .remainClearTimes(remainClearTimes)
                 .build();
     }
 }

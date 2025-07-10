@@ -139,7 +139,6 @@ public class SymbolBuilder {
                         .symbolFireBorder(mangkukulamSymbolDo.isSymbolFireBorder())
                         .remainClearTimes(mangkukulamSymbolDo.getRemainClearTimes())
                         .multiples(mangkukulamSymbolDo.getMultiples())
-                        .symbolSize(mangkukulamSymbolDo.getSize().getCode())
                         .build();
             }
         }

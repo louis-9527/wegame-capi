@@ -31,7 +31,7 @@ public class MangkukulamGameTest extends BaseTest {
     @Autowired
     MangkukulamGameNormalPlay normalPlay;
 
-    private static final boolean PRINT_SYMBOLS = false;
+    private static final boolean PRINT_SYMBOLS = true;
     private static final int MAX_TIMES_IN_MS = 5;
 
 

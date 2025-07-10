@@ -24,11 +24,11 @@ public class MangkukulamRewardHandlerTestMocker {
         symbolArr[4][0] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
 
         // 第二列
-        symbolArr[0][1] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
-        symbolArr[1][1] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
+        symbolArr[0][1] = MangkukulamSymbolDo.buildPlaceholderWild(times);
+        symbolArr[1][1] = MangkukulamSymbolDo.buildPlaceholderWild(times);
         symbolArr[2][1] = buildSpecialWildSymbol(times);
-        symbolArr[3][1] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
-        symbolArr[4][1] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
+        symbolArr[3][1] = MangkukulamSymbolDo.buildPlaceholderWild(times);
+        symbolArr[4][1] = MangkukulamSymbolDo.buildPlaceholderWild(times);
 
         // 第三列
         symbolArr[0][2] = buildNormalSymbol(SymbolEnum.SymbolH1);
@@ -63,18 +63,18 @@ public class MangkukulamRewardHandlerTestMocker {
         symbolArr[4][0] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
 
         // 第二列
-        symbolArr[0][1] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
-        symbolArr[1][1] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
+        symbolArr[0][1] = MangkukulamSymbolDo.buildPlaceholderWild(times);
+        symbolArr[1][1] = MangkukulamSymbolDo.buildPlaceholderWild(times);
         symbolArr[2][1] = buildSpecialWildSymbol(times);
-        symbolArr[3][1] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
-        symbolArr[4][1] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
+        symbolArr[3][1] = MangkukulamSymbolDo.buildPlaceholderWild(times);
+        symbolArr[4][1] = MangkukulamSymbolDo.buildPlaceholderWild(times);
 
         // 第三列
-        symbolArr[0][2] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
-        symbolArr[1][2] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
+        symbolArr[0][2] = MangkukulamSymbolDo.buildPlaceholderWild(times);
+        symbolArr[1][2] = MangkukulamSymbolDo.buildPlaceholderWild(times);
         symbolArr[2][2] = buildSpecialWildSymbol(times);
-        symbolArr[3][2] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
-        symbolArr[4][2] = MangkukulamGameHelper.MANGKUKULAM_SYMBOL_PLACEHOLDER;
+        symbolArr[3][2] = MangkukulamSymbolDo.buildPlaceholderWild(times);
+        symbolArr[4][2] = MangkukulamSymbolDo.buildPlaceholderWild(times);
 
         // 第四列
         symbolArr[0][3] = buildNormalSymbol(SymbolEnum.SymbolL1);
