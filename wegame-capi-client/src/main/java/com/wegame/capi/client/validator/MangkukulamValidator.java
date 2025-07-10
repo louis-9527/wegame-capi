@@ -7,6 +7,8 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.domain.request.BetRequest;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.VolatilityEnum;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -43,6 +45,9 @@ public class MangkukulamValidator {
                 AssertUtil.assertTrue(NumberUtil.isLong(betDetail.getBetRecordId()), ErrorCode.ERR_PARAM);
                 AssertUtil.assertNotNull(betDetail.getGameRecordId(), ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(NumberUtil.isLong(betDetail.getGameRecordId()), ErrorCode.ERR_PARAM);
+            } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_WHEEL_NORMAL_BET)) {
+                AssertUtil.assertNotNull(VolatilityEnum.valueOfCode(betDetail.getVolatility()), ErrorCode.ERR_PARAM);
+                AssertUtil.assertStrNotEmpty(betDetail.getParentBetRecordId(), ErrorCode.ERR_PARAM);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
@@ -50,6 +55,7 @@ public class MangkukulamValidator {
             if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                 AssertUtil.assertNotNull(betDetail.getPayAmount(), ErrorCode.ERR_PARAM);
                 AssertUtil.assertNotNull(betDetail.getVolatility(), ErrorCode.ERR_PARAM);
+                AssertUtil.assertNotNull(VolatilityEnum.valueOfCode(betDetail.getVolatility()), ErrorCode.ERR_PARAM);
                 if (betDetail.isUseStarCard()) {
                     AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount()), ErrorCode.ERR_PARAM);
                 } else {
