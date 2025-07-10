@@ -125,6 +125,10 @@ public class BetRecordDo<T> implements Serializable {
      * 更新时间
      */
     private Long updateTime;
+    /**
+     * 是否可以继续玩
+     */
+    private Boolean continueStatus;
     ///////////////  above auto generated ///////////////
     /**
      * 游戏记录列表
