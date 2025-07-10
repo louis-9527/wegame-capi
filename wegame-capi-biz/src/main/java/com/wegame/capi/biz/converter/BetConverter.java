@@ -30,7 +30,7 @@ public class BetConverter {
                 .betAmount(Long.valueOf(betRequest.getBetDetail().getBetAmount()))
                 .payAmount(Long.valueOf(betRequest.getBetDetail().getPayAmount()))
                 .parentBetRecordId(StringUtils.isNotEmpty(betRequest.getBetDetail().getParentBetRecordId())
-                        ? Long.valueOf(betRequest.getBetDetail().getBetRecordId()) : null)
+                        ? Long.valueOf(betRequest.getBetDetail().getParentBetRecordId()) : null)
                 .betRecordId(StringUtils.isNotEmpty(betRequest.getBetDetail().getBetRecordId())
                         ? Long.valueOf(betRequest.getBetDetail().getBetRecordId())
                         : null)
