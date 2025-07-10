@@ -20,7 +20,7 @@ public class MangkukulamSymbolVo implements Serializable {
     private static final long serialVersionUID = 3447556878793626303L;
     @ApiModelProperty("元素Id")
     private String symbolId;
-    
+
     @ApiModelProperty("元素火边(false否,true是)")
     private boolean symbolFireBorder;
 
@@ -30,7 +30,7 @@ public class MangkukulamSymbolVo implements Serializable {
     @ApiModelProperty("倍率列表 只有特殊百搭有")
     private List<BigDecimal> multiples;
 
-    @ApiModelProperty("元素大小:S：一行一列 XL：4行一列 XXL：5行一列")
+    @ApiModelProperty("元素大小:S：一行一列 XL：4行一列 XXL：跨5行1列")
     private String symbolSize;
 
     @Override
