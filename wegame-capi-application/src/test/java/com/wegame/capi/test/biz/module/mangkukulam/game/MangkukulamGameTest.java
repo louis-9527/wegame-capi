@@ -30,6 +30,8 @@ import java.util.Random;
 public class MangkukulamGameTest extends BaseTest {
     @Autowired
     MangkukulamGameNormalPlay normalPlay;
+
+    private static final boolean PRINT_SYMBOLS = false;
     private static final int MAX_TIMES_IN_MS = 5;
 
 
@@ -40,13 +42,12 @@ public class MangkukulamGameTest extends BaseTest {
     @Test
     public void testAll() {
         long currentTime = System.currentTimeMillis();
-        int maxTimes = 10;
+        int maxTimes = 100;
         for (int i = 0; i < maxTimes; i++) {
             test_buy_bet();
             test_normal_bet();
             test_normal_bet_continue_play();
         }
-
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
         System.out.println("testAll cost : " + cost + "ms");
@@ -99,7 +100,9 @@ public class MangkukulamGameTest extends BaseTest {
         }
         recordList.forEach(record -> {
             validateGameRecord(record);
-            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+            if (PRINT_SYMBOLS) {
+                MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+            }
         });
         // 15轮
         Assert.assertTrue(recordList.size() >= 15);
@@ -122,7 +125,9 @@ public class MangkukulamGameTest extends BaseTest {
         }
         recordList.forEach(record -> {
             validateGameRecord(record);
-            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+            if (PRINT_SYMBOLS) {
+                MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+            }
         });
     }
 
@@ -152,7 +157,9 @@ public class MangkukulamGameTest extends BaseTest {
         // 打印
         recordList.forEach(record -> {
             validateGameRecord(record);
-            MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+            if (PRINT_SYMBOLS) {
+                MangkukulamSymbolUtil.print(record.getWheel().getSymbolArr(), record.getWheel().getIndex());
+            }
         });
     }
 
@@ -161,6 +168,8 @@ public class MangkukulamGameTest extends BaseTest {
         WheelDo<MangkukulamSymbolDo> wheelDo = gameRecordDo.getWheel();
         Assert.assertNotNull(wheelDo);
         MangkukulamSymbolDo[][] symbolArr = wheelDo.getSymbolArr();
+        Assert.assertNull(symbolArr[4][0]);
+        Assert.assertNull(symbolArr[4][4]);
         for (int i = 0; i < 5; i++) {
             int specialWildCount = MangkukulamSymbolUtil.countSpecialWildInColumn(symbolArr, i);
             int normalWildCount = MangkukulamSymbolUtil.countNormalWildInColumn(symbolArr, i);
