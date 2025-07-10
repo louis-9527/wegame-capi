@@ -50,13 +50,14 @@ public class GamePlayDo implements Serializable {
      * 干预事件配置-投注记录ID
      */
     private Long operationEventConfigBetRecordId;
+    /**
+     * 干预时间
+     */
     private GameOperationEventDo gameEventDo;
-
     /**
      * 波动性选择
      */
     private VolatilityTypeEnum volatility;
-
     /**
      * 继续游戏参数
      */
