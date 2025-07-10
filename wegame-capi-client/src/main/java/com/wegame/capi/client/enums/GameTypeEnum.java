@@ -33,18 +33,18 @@ public enum GameTypeEnum {
             "LamAng",
             "lamang_bet_record",
             "lamang_game_record", 300L, 1.2),
-
-
     BAKUNAWA("zhumeng005",
             "Bakunawa",
             "bakunawa_bet_record",
             "bakunawa_game_record", 300L, 1.2),
-
+    DIWATA_MAYARI("zhumeng006",
+            "DiwataMayari",
+            "diwataMayari_bet_record",
+            "diwataMayari_game_record", 300L, 1.2),
     KAPRE("zhumeng007",
             "Kapre",
             "kapre_bet_record",
-            "kapre_game_record", 300L, 1.2),
-
+            "kapre_game_record", 300L,1.2),
     MANGKUKULAM("zhumeng008",
             "Mangkukulam",
             "mangkukulam_bet_record",

@@ -10,6 +10,7 @@ dynamic:
       ibong: ${api.game.cp.channelId}_Ibong
       lamang: ${api.game.cp.channelId}_Lamang
       bakunawa: ${api.game.cp.channelId}_Bakunawa
+      diwata_mayari: ${api.game.cp.channelId}_DiwataMayari
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud

@@ -23,6 +23,8 @@ public class GameProperty {
     private boolean enableBakunawa;
     @Value("${game.enable.Lamang: false}")
     private boolean enableLamang;
+    @Value("${game.enable.DiwataMayari: false}")
+    private boolean enableDiwataMayari;
     @Value("${game.enable.Kapre: false}")
     private boolean enableKapre;
     @Value("${game.enable.Mangkukulam: false}")
@@ -44,6 +46,9 @@ public class GameProperty {
         }
         if (enableLamang) {
             gameTypeList.add(GameTypeEnum.LAM_ANG);
+        }
+        if (enableDiwataMayari) {
+            gameTypeList.add(GameTypeEnum.DIWATA_MAYARI);
         }
         if (enableKapre) {
             gameTypeList.add(GameTypeEnum.KAPRE);
