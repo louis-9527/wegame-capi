@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_GAME_INFO;
+import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.MANGKUKULAM_GAME_INFO;
 
 /**
  * MangkukulamGameContext GamePlay上下文
@@ -38,6 +38,6 @@ public class MangkukulamGameContext<R> extends AbstractGameContext<R> {
 
     @Override
     public GameInfoDo gameInfo() {
-        return LAMANG_GAME_INFO;
+        return MANGKUKULAM_GAME_INFO;
     }
 }
