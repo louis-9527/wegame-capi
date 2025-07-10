@@ -8,6 +8,6 @@ game:
   enable:
     MariaMakiling: false
     Malakas: false
-    IbongAdarna: true
-    Bakunawa: true
+    IbongAdarna: false
+    Bakunawa: false
     Lamang: true
