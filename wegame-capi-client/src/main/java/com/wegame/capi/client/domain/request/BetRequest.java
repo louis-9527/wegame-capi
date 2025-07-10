@@ -58,7 +58,8 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
         private static final long serialVersionUID = 196176475253019928L;
         public static final long MIN_BET_AMOUNT = 300L;
         public static final long MAX_BET_AMOUNT = 10000000L;
-        public static final long MULTIPLE = 35;
+        public static final long MULTIPLE_35 = 35;
+        public static final long MULTIPLE_75 = 75;
 
         @ApiModelProperty(value = "投注金额", required = true)
         private Long betAmount;
@@ -105,6 +106,9 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                 LamangValidator.validateParam(betType, betSubType, this);
                 CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
                 CommonGameValidator.validateStarCardBet(betType, betSubType, this);
+            } else if (Objects.equals(gameType, GameTypeEnum.DIWATA_MAYARI)) {
+                DiwataMayariValidator.validateParam(betType, betSubType, this);
+                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
             } else if (Objects.equals(gameType, GameTypeEnum.KAPRE)) {
                 KapreValidator.validateParam(betType, betSubType, this);
                 CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);

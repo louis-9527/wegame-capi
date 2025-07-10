@@ -55,6 +55,9 @@ public enum SymbolEnum {
 
     BigWild("4006", "BigWild"),
     SuperWild("4007", "SuperWild"),
+    Wild_Sword("4010", "Wild_Sword"),
+    Wild_Stick("4011", "Wild_stick"),
+
     // 动态wild
     DynamicWild("4020", "DynamicWild"),
     ;

@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.reward;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
@@ -73,7 +74,7 @@ public class RewardResultDo<T extends SymbolDo> implements Serializable {
         System.out.println("中奖类型：" + rewardType.getDesc());
         System.out.println("中奖子类型：" + rewardSubType.getDesc());
         System.out.println("命中免费轮：" + (hasRewardFreeWheel ? "否" : "是"));
-        System.out.println("中奖明细： " + rewardLineDetailList.size() + "条中奖线");
+        System.out.println("中奖明细： " + (CollectionUtil.isNotEmpty(rewardLineDetailList) ? rewardLineDetailList.size() : 0) + "条中奖线");
         Optional.ofNullable(rewardLineDetailList)
                 .orElse(Collections.emptyList())
                 .forEach(item -> {

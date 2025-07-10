@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.biz.symbol.*;
+import com.wegame.capi.client.domain.vo.diwatamayari.DiwataMayariSymbolVo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaSymbolVo;
 import com.wegame.capi.client.domain.vo.kapre.KapreSymbolVo;
 import com.wegame.capi.client.domain.vo.lamang.LamangSymbolVo;
@@ -81,6 +82,22 @@ public class SymbolBuilder {
                         .breakTimes(Optional.ofNullable(symbolArr[i][j].getBreakUp()).map(SymbolBreakUpEnum::getTimes).orElse(SymbolBreakUpEnum.NO_BREAK_UP.getTimes()))
                         .build();
                 integerArray[i][j] = symbolVo;
+            }
+        }
+        return integerArray;
+    }
+
+
+    public static DiwataMayariSymbolVo[][] build(DiwataMayariSymbolDo[][] symbolArr) {
+        int rows = symbolArr.length;
+        int cols = symbolArr[0].length;
+        DiwataMayariSymbolVo[][] integerArray = new DiwataMayariSymbolVo[rows][cols];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                DiwataMayariSymbolDo diwataMayariSymbol = symbolArr[row][col];
+                integerArray[row][col] = Objects.isNull(diwataMayariSymbol) ? null : DiwataMayariSymbolVo.builder()
+                        .symbolId(diwataMayariSymbol.getId())
+                        .build();
             }
         }
         return integerArray;

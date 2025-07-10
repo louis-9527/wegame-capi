@@ -50,6 +50,12 @@ public enum OperationEventTypeEnum {
             "lamang_operation_event_config",
             "lamang_operation_event_config_record"
     ),
+    DIWATA_MAYARI(GameTypeEnum.DIWATA_MAYARI,
+            "diwataMayari_operation_event",
+            "diwataMayari_operation_event_detail",
+            "diwataMayari_operation_event_config",
+            "diwataMayari_operation_event_config_record"
+    ),
     KAPRE(GameTypeEnum.KAPRE,
             "kapre_operation_event",
             "kapre_operation_event_detail",

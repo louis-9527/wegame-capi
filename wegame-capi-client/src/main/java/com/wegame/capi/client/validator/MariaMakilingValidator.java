@@ -51,7 +51,7 @@ public class MariaMakilingValidator {
                 if (betDetail.isUseStarCard()) {
                     AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount()), ErrorCode.ERR_PARAM);
                 } else {
-                    AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount() * MULTIPLE), ErrorCode.ERR_PARAM);
+                    AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount() * MULTIPLE_35), ErrorCode.ERR_PARAM);
                 }
             } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_SPINS_BUY_BET)) {
                 AssertUtil.assertNotNull(betDetail.getPayAmount(), ErrorCode.ERR_PARAM);

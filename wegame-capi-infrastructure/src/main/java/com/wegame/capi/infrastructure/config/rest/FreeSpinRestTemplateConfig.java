@@ -2,6 +2,9 @@ package com.wegame.capi.infrastructure.config.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.SocketConfig;
+import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,44 +26,62 @@ import static com.wegame.capi.common.Constants.COMMON_CLOSE_METHOD;
 public class FreeSpinRestTemplateConfig {
     public static final String FREE_SPIN_CONNECTION_MANAGER_BEAN = "freeSpinConnectionManager";
     public static final String FREE_SPIN_REST_TEMPLATE_BEAN = "freeSpinRestTemplate";
-    // freeSpin resTemplate
-    @Value("${httpclient.freeSpin.connectMaxTotal:1000}")
-    int freeSpinConnectMaxTotal;
-    @Value("${httpclient.freeSpin.connectDefaultMaxPerRoute:1000}")
-    int freeSpinConnectDefaultMaxPerRoute;
+
+    @Value("${httpclient.freeSpin.connectMaxTotal:500}")
+    int connectMaxTotal;
+    @Value("${httpclient.freeSpin.connectDefaultMaxPerRoute:500}")
+    int connectDefaultMaxPerRoute;
     @Value("${httpclient.freeSpin.connectTimeout:1000}")
-    int freeSpinConnectTimeout;
+    int connectTimeout;
     @Value("${httpclient.freeSpin.readTimeout:1000}")
-    int freeSpinReadTimeout;
-    @Value("${httpclient.freeSpin.connectionRequestTimeout:800}")
-    int freeSpinConnectionRequestTimeout;
-    @Value("${httpclient.freeSpin.timeToLive:59}")
-    int freeSpinTimeToLive;
+    int readTimeout;
+    @Value("${httpclient.freeSpin.connectionRequestTimeout:200}")
+    int connectionRequestTimeout;
+    @Value("${httpclient.freeSpin.timeToLive:3000}")
+    int timeToLive;
+    @Value("${httpclient.freeSpin.maxIdleTime:50}")
+    int maxIdleTime;
 
     @Bean(value = FREE_SPIN_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager freeSpinConnectionManager() {
-        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(freeSpinTimeToLive, TimeUnit.SECONDS);
-        manager.setMaxTotal(freeSpinConnectMaxTotal);
-        manager.setDefaultMaxPerRoute(freeSpinConnectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(30000);
+        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, TimeUnit.SECONDS);
+        manager.setDefaultSocketConfig(SocketConfig.custom()
+                .setTcpNoDelay(true)
+                .setSoKeepAlive(true)
+                .build());
+        manager.setMaxTotal(connectMaxTotal);
+        manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
+        manager.setValidateAfterInactivity(3000 * 1000);
         return manager;
     }
 
     @Bean(FREE_SPIN_REST_TEMPLATE_BEAN)
     public RestTemplate freeSpinRestTemplate(@Autowired PoolingHttpClientConnectionManager freeSpinConnectionManager) {
-        //        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(freeSpinTimeToLive, TimeUnit.MINUTES);
-        //        manager.setMaxTotal(freeSpinConnectMaxTotal);
-        //        manager.setDefaultMaxPerRoute(freeSpinConnectDefaultMaxPerRoute);
-        //        manager.setValidateAfterInactivity(20000);
         HttpClient httpClient = HttpClientBuilder.create()
                 .setConnectionManager(freeSpinConnectionManager)
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setSocketTimeout(readTimeout)
+                        .setConnectTimeout(connectTimeout)
+                        .setConnectionRequestTimeout(connectionRequestTimeout)
+                        .build())
                 // 连接最大存活时间
-                .setConnectionTimeToLive(freeSpinTimeToLive, TimeUnit.SECONDS)
+                .setConnectionTimeToLive(timeToLive, TimeUnit.SECONDS)
+                //                // 设置空闲连接保活时间略小于下游超时时间。 下游超时时间59s
+                //                .evictIdleConnections(maxIdleTime, TimeUnit.SECONDS)
+                //                .evictExpiredConnections()
+                .setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE)
+                // 启用系统TCP Keep-Alive
+                .useSystemProperties()
+                // 添加保活策略
+                .setKeepAliveStrategy((response, context) -> {
+                    // 保持连接存活小于下游59秒超时
+                    return timeToLive * 1000;
+                })
                 .build();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
-        factory.setConnectTimeout(freeSpinConnectTimeout);
-        factory.setReadTimeout(freeSpinReadTimeout);
-        factory.setConnectionRequestTimeout(freeSpinConnectionRequestTimeout);
+        factory.setConnectTimeout(connectTimeout);
+        factory.setReadTimeout(readTimeout);
+        factory.setConnectionRequestTimeout(connectionRequestTimeout);
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(factory);
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();

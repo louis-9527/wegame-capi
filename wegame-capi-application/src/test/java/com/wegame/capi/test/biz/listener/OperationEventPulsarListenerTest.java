@@ -1,6 +1,7 @@
 package com.wegame.capi.test.biz.listener;
 
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
+import com.wegame.capi.biz.listener.operation.DiwataMayariOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.OperationEventKindEnum;
@@ -14,12 +15,12 @@ import java.math.BigDecimal;
 public class OperationEventPulsarListenerTest extends BaseTest {
 
     @Autowired
-    MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
+    DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener;
 
     @Test
     public void test_handleMessage() {
-        for (int i = 0; i < 2; i++) {
-            boolean ret = mariamakilingOperationEventPulsarListener.handleMessage(buildMessageDo());
+        for (int i = 0; i < 1; i++) {
+            boolean ret = diwataMayariOperationEventPulsarListener.handleMessage(buildMessageDo());
             Assert.assertTrue(ret);
         }
     }
@@ -30,13 +31,13 @@ public class OperationEventPulsarListenerTest extends BaseTest {
                 .bonus(new BigDecimal(100))
                 .eventId("2-0692-4dc5-9f08-4a383b5d311a")
                 .eventKind(OperationEventKindEnum.NORMAL_URGENT.getCode())
-                .gameId(GameTypeEnum.MARIA_MAKILING.getId())
+                .gameId(GameTypeEnum.DIWATA_MAYARI.getId())
                 .operatorGameId("d596da1e-81a7-4010-9d22-749b9c30c69c")
                 .channelId("1050")
                 .strategyId("3")
                 .orderNo("Sss123")
-                .effectedTime("2025-02-27T07:31:13.357Z")
-                .settlementTime("2025-02-27T07:31:10.000Z")
+                .effectedTime("2025-07-07T07:31:13.357Z")
+                .settlementTime("2025-07-27T07:31:10.000Z")
                 .timesOrSessionDuration(new BigDecimal(10))
                 .build();
     }

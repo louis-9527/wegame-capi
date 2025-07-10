@@ -37,6 +37,7 @@ public class BetRecordController {
             .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaBetRecordManager")
             .put(GameTypeEnum.BAKUNAWA, "bakunawaBetRecordManager")
             .put(GameTypeEnum.LAM_ANG, "lamangBetRecordManager")
+            .put(GameTypeEnum.DIWATA_MAYARI, "diwataMayariBetRecordManager")
             .build();
 
     @Autowired
