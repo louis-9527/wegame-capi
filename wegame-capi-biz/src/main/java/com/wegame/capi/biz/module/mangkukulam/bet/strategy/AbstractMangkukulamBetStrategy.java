@@ -129,9 +129,9 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
         } else {
-            // 查询b
+            // 查询投注记录
             BetRecordDo preBetRecord = mangkukulamBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.LAM_ANG);
-            if (!preBetRecord.getContinueStatus())  {
+            if (BooleanUtils.isFalse(preBetRecord.getContinueStatus()))  {
                 // 查询game record
                 return null;
             } else {
