@@ -115,23 +115,21 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
         GamePlayDo gamePlayDo = build(NORMAL_PLAY, betDo, betRecordId, null);
-        List<MangkukulamGameRecordDo> list;
         if (BetSubTypeEnum.isFirstStep(betDo.getBetSubType().getCode())) {
-            // 直接play
-            list = gameContext().play(gamePlayDo);
+            // play
+            List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
             AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
             List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
             // 2、构建投注记录
             BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
-            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, betHelper().hasRewardFreeWheel(firstBatchList));
-            AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-
-
             MangkukulamGameRecordDo lastGameRecord = firstBatchList.get(firstBatchList.size() - 1);
             betRecord.setContinueStatus(lastGameRecord.getFreeWheelFlag());
+            // 3、投注并派彩
+            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, betHelper().hasRewardFreeWheel(firstBatchList));
+            AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
         } else {
-            // 查询bet record
+            // 查询b
             BetRecordDo preBetRecord = mangkukulamBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.LAM_ANG);
             if (!preBetRecord.getContinueStatus())  {
                 // 查询game record
@@ -139,15 +137,16 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             } else {
                 // 继续玩（完成波动选择后续部分）
                 gamePlayDo.setContinuePlayContext(buildContinuePlayContext(betDo));
-                list = gameContext().play(gamePlayDo);
+                List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
                 AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
                 List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
-                // save
+                // 2、构建投注记录
                 BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
+                betRecord.setContinueStatus(Boolean.FALSE);
+                // 3、投注并派彩
                 SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, betHelper().hasRewardFreeWheel(firstBatchList));
                 AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-                // update
-                betRecord.setContinueStatus(Boolean.FALSE);
+                // 4、异步更新投注记录
                 mangkukulamBetRecordManager.asyncUpdateBetRecord(betRecord, GameTypeEnum.MANGKUKULAM);
                 return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
             }
@@ -174,14 +173,14 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
                     .freeWheelTimes(rewardFreeWheelTimes)
                     .build();
         } else {
-            return GamePlayDo.ContinuePlayContext.builder()
-                    .parentBetRecordId(betDo.getParentBetRecordId())
-                    .parentGameRecordId(lastGameRecord.getId())
-                    .totalPayoutAmount(totalRewardAmount)
-                    .freeWheelTimes(rewardFreeWheelTimes)
-                    .build();
+//            return GamePlayDo.ContinuePlayContext.builder()
+//                    .parentBetRecordId(betDo.getParentBetRecordId())
+//                    .parentGameRecordId(lastGameRecord.getId())
+//                    .totalPayoutAmount(totalRewardAmount)
+//                    .freeWheelTimes(rewardFreeWheelTimes)
+//                    .build();
+            return null;
         }
-
     }
 
 
