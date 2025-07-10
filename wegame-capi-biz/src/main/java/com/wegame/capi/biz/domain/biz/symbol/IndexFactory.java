@@ -15,6 +15,15 @@ public class IndexFactory {
 
     private static final String INDEX_MAP_KEY = "%d-%d";
 
+    static {
+        for (int rowIndex = 0; rowIndex < 9; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < 9; columnIndex++) {
+                IndexDo indexDo = buildDo(rowIndex, columnIndex);
+                buildVo(indexDo);
+            }
+        }
+    }
+
     public static IndexDo buildDo(int rowIndex, int columnIndex) {
         AssertUtil.assertTrue(rowIndex >= 0, ErrorCode.ERR_PARAM, "rowIndex must be greater than or equal 0");
         AssertUtil.assertTrue(columnIndex >= 0, ErrorCode.ERR_PARAM, "columnIndex must be greater than or equal 0");

@@ -36,6 +36,10 @@ public class HistoryMessageConverter {
         messageVo.setRewardDescription(messageDo.getRewardDescription());
         messageVo.setType(messageDo.getType());
         messageVo.setCreateTime(messageDo.getCreateTime());
+        messageVo.setRewardDetails(HistoryMessageVo.RewardDetailsVo.builder()
+                .count(messageDo.getRewardDetails().getCount())
+                .startLevel(messageDo.getRewardDetails().getStartLevel())
+                .build());
         return messageVo;
     }
 
@@ -54,6 +58,10 @@ public class HistoryMessageConverter {
         messageDo.setRewardDescription(messageRes.getRewardDescription());
         messageDo.setType(messageRes.getType());
         messageDo.setCreateTime(messageRes.getCreateTime().getTime());
+        messageDo.setRewardDetails(HistoryMessageDo.RewardDetailsDo.builder()
+                .count(messageRes.getRewardDetails().getCount())
+                .startLevel(messageRes.getRewardDetails().getStartLevel())
+                .build());
         return messageDo;
     }
 

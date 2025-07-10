@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.promotion;
 
+import io.swagger.annotations.ApiModel;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class HistoryMessageDo implements Serializable {
+    private static final long serialVersionUID = -7520762475340389572L;
     /**
      * 玩家名称
      */
@@ -53,4 +55,27 @@ public class HistoryMessageDo implements Serializable {
      * 创建时间
      */
     private Long createTime;
+    /**
+     * 奖励领取详情
+     */
+    private RewardDetailsDo rewardDetails;
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    @ApiModel(description = "领取详情")
+    public static class RewardDetailsDo implements Serializable {
+        private static final long serialVersionUID = -2515942190714418574L;
+        /**
+         * 领取数量
+         */
+        private Integer count;
+        /**
+         * 星级
+         */
+        private Integer startLevel;
+    }
 }
