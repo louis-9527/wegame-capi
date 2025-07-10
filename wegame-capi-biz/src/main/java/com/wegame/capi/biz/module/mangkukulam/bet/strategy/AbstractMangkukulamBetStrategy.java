@@ -123,7 +123,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             // 2、构建投注记录
             BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
             MangkukulamGameRecordDo lastGameRecord = firstBatchList.get(firstBatchList.size() - 1);
-            betRecord.setContinueStatus(!lastGameRecord.isLastGameFlag());
+            betRecord.setContinueStatus(lastGameRecord.isLastGameFlag());
             // 3、投注并派彩
             SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, betHelper().hasRewardFreeWheel(firstBatchList));
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
@@ -131,7 +131,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
         } else {
             // 1、查询投注记录
             BetRecordDo preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
-            if (BooleanUtils.isFalse(preBetRecord.getContinueStatus())) {
+            if (BooleanUtils.isFalse(preBetRecord.getContinueStatus()))  {
                 // 1、查询game record
                 return betForFreeWheel(betDo);
             } else {

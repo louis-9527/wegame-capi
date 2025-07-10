@@ -5,6 +5,7 @@ import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
 import com.wegame.capi.client.domain.vo.mangkukulam.MangkukulamBetResultDetailVo;
 import com.wegame.capi.client.domain.vo.mangkukulam.MangkukulamGameRecordVo;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -30,6 +31,10 @@ public class MangkukulamBetRecordDetailDo implements ToVoConverter<MangkukulamBe
      * 游戏记录列表
      */
     private List<MangkukulamGameRecordDo> gameRecordList;
+    /**
+     * 波动投注游戏记录Id列表
+     */
+    private List<String> volatilityGameRecordIds;
 
     @Override
     public MangkukulamBetResultDetailVo toResultVo() {
@@ -40,6 +45,7 @@ public class MangkukulamBetRecordDetailDo implements ToVoConverter<MangkukulamBe
                         .stream()
                         .map(ToVoConverter::toResultVo)
                         .collect(Collectors.toList()))
+                .volatilityGameRecordIds(Optional.ofNullable(volatilityGameRecordIds).orElse(Collections.emptyList()))
                 .build();
     }
 
