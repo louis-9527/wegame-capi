@@ -16,8 +16,17 @@ public class LockNameUtil {
     private static final String STAR_CARD_REPORT_SCHEDULER_LOCK = "lock:star_card_report_scheduler_lock:%s";
 
     private static final String MAINTAIN_CONFIG_UPDATE_LOCK = "lock:maintain_config_update_scheduler_lock:%s";
+    /**
+     * 奖池派奖定时任务锁
+     */
+    private static final String JACKPOT_REWARD_GRANT_STATUS_SCHEDULER_LOCK = "lock:jackpot_reward_grant_status_scheduler_lock:%s";
+    private static final String JACKPOT_REWARD_GRANT_STATUS_ALERT_SCHEDULER_LOCK = "lock:jackpot_reward_grant_status_alert_scheduler_lock:%s";
+
 
     private static final String BUILD_USER_ID_CACHE_LOCK = "lock:build_user_id_cache_lock";
+
+
+    private static final String JACKPOT_REWARD_LOCK  = "lock:jackpot_reward_lock:%s";
 
 
     private LockNameUtil() {
@@ -43,9 +52,9 @@ public class LockNameUtil {
         return String.format(OPERATION_EVENT_SCHEDULER_LOCK, gameType.getName());
     }
 
-    public static String getOperationEventReportLockName(GameTypeEnum gameType,Long betRecordId) {
+    public static String getOperationEventReportLockName(GameTypeEnum gameType, Long betRecordId) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
-        return String.format(OPERATION_EVENT_REPORT_LOCK, gameType.getName(),betRecordId);
+        return String.format(OPERATION_EVENT_REPORT_LOCK, gameType.getName(), betRecordId);
     }
 
 
@@ -61,5 +70,20 @@ public class LockNameUtil {
 
     public static String getBuildUserIdCacheLockName() {
         return BUILD_USER_ID_CACHE_LOCK;
+    }
+
+    public static String getJackpotRewardGrantSchedulerLock(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(JACKPOT_REWARD_GRANT_STATUS_SCHEDULER_LOCK, gameType.getName());
+    }
+
+    public static String getJackpotRewardGrantAlertSchedulerLock(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(JACKPOT_REWARD_GRANT_STATUS_ALERT_SCHEDULER_LOCK, gameType.getName());
+    }
+
+    public static String getJackpotRewardLock(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(JACKPOT_REWARD_LOCK, gameType.getName());
     }
 }

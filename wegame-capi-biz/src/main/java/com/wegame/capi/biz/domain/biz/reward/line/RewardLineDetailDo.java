@@ -3,6 +3,7 @@ package com.wegame.capi.biz.domain.biz.reward.line;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
+import com.wegame.capi.common.enums.MultiplePieTypeEnum;
 import com.wegame.capi.common.enums.RewardLineSubTypeEnum;
 import com.wegame.capi.common.enums.RewardLineTypeEnum;
 import lombok.*;
@@ -42,6 +43,14 @@ public class RewardLineDetailDo<T extends SymbolDo> implements Serializable {
      * 倍率
      */
     private BigDecimal multiple;
+    /**
+     * 倍率盘类型
+     */
+    private MultiplePieTypeEnum multiplePieType;
+    /**
+     * 倍率盘倍率
+     */
+    private BigDecimal multiplePie;
     /**
      * 中奖线类型
      */

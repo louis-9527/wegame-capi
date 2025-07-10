@@ -8,12 +8,10 @@ import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.base.bet.AbstractBetContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-
 
 /**
  * 投注服务
@@ -28,6 +26,8 @@ public class BetService {
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingBetContext")
             .put(GameTypeEnum.MALAKAS, "malakasBetContext")
             .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaBetContext")
+            .put(GameTypeEnum.LAM_ANG, "lamangBetContext")
+            .put(GameTypeEnum.BAKUNAWA, "bakunawaBetContext")
             .put(GameTypeEnum.DIWATA_MAYARI, "diwataMayariBetContext")
             .build();
 

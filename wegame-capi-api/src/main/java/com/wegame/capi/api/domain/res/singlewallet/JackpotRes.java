@@ -35,13 +35,4 @@ public class JackpotRes implements Serializable {
      */
     private String refId;
 
-    /**
-     * credit 转换成分
-     *
-     * @return 分
-     */
-    public Long getCreditToCent() {
-        BigDecimal credit = Optional.ofNullable(this.credit).orElse(BigDecimal.ZERO);
-        return credit.multiply(new BigDecimal("100")).longValue();
-    }
 }

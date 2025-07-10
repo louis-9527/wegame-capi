@@ -26,6 +26,8 @@ public class Constants {
     public static final Integer MARIA_MARKILING_REWARD_NOTIFY_SIZE = 10;
     public static final Integer MALAKAS_REWARD_NOTIFY_SIZE = 10;
     public static final Integer IBONG_ADARNA_REWARD_NOTIFY_SIZE = 10;
+    public static final Integer BAKUNAWA_ADARNA_REWARD_NOTIFY_SIZE = 10;
+    public static final Integer LAMANG_REWARD_NOTIFY_SIZE = 20;
     public static final Integer DIWATA_MAYARI_REWARD_NOTIFY_SIZE = 10;
 
     // maria推送大奖tips内容
@@ -34,6 +36,10 @@ public class Constants {
     public static final String MALAKAS_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
     // ibong推送大奖tips内容 XXXX won 20x rewards ，₱ 99999
     public static final String IBONG_ADARNA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
+    // bakunawa推送大奖tips内容 XXXX won 100x rewards ，₱ 99999
+    public static final String BAKUNAWA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
+    // lamang推送大奖tips内容
+    public static final String LAMANG_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
     // diwatamayari推送大奖tips内容
     public static final String DIWATA_MAYARI_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
 
@@ -42,9 +48,12 @@ public class Constants {
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
 
+    public static final int CONST_1 = 1;
     public static final int CONST_100 = 100;
     public static final int CONST_10000 = 10000;
     public static final int CONST_1000000 = 1000000;
+    public static final int CONST_10000000 = 1000_000_0;
+    public static final int CONST_1000000000 = 1000_000_000;
 
     public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event_2:%s_%s";
     public static final String OPERATION_EVENT_ING_KEY = "wegame:cuser:operation_event_ing:%s_%s";
@@ -61,6 +70,8 @@ public class Constants {
     public static final String MARIA_MAKILING_PROP = "game.enable.MariaMakiling";
     public static final String MALAKAS_PROP = "game.enable.Malakas";
     public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";
+    public static final String LAMANG_PROP = "game.enable.Lamang";
+    public static final String BAKUNAWA_PROP = "game.enable.Bakunawa";
     public static final String DIWATA_MAYARI_PROP = "game.enable.DiwataMayari";
 
 
@@ -70,12 +81,15 @@ public class Constants {
 
     public static final Double MIN_BET_AMOUNT_M = 1.1;
 
-
-
     public static final String MONGOTEMPLATE = "MongoTemplate";
     public static final String PRIMARY_MONGOTEMPLATE = "PrimaryMongoTemplate";
 
+    /**
+     * 奖池流水过期时间（秒）
+     */
+    public static final long JACKPOT_REWARD_POOL_EXPIRED_SECONDS = 24 * 60 * 60;
     public static final String BUILD_BEAN_FORMAT = "build bean: {}";
     public static final String COMMON_CLOSE_METHOD = "close";
 
+    public static final String JACKPOT_LAMANG_PULSAR_SUBSCRIPTION= "_jackpot";
 }

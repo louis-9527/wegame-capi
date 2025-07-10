@@ -35,6 +35,21 @@ public enum OperationEventTypeEnum {
             "ibongadarna_operation_event_config",
             "ibongadarna_operation_event_config_record"
     ),
+    BAKUNAUWA(
+            GameTypeEnum.BAKUNAWA,
+            "bakunawa_operation_event",
+            "bakunawa_operation_event_detail",
+            "bakunawa_operation_event_config",
+            "bakunawa_operation_event_config_record"
+    ),
+
+    LAM_ANG(
+            GameTypeEnum.LAM_ANG,
+            "lamang_operation_event",
+            "lamang_operation_event_detail",
+            "lamang_operation_event_config",
+            "lamang_operation_event_config_record"
+    ),
     DIWATA_MAYARI(GameTypeEnum.DIWATA_MAYARI,
             "diwataMayari_operation_event",
             "diwataMayari_operation_event_detail",

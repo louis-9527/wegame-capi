@@ -15,7 +15,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("Malakas投注结果明细")
+@ApiModel("Lamang投注结果明细")
 @EqualsAndHashCode(callSuper = false)
 public class MalakasBetResultDetailVo implements Serializable {
     private static final long serialVersionUID = -4792907227811616042L;

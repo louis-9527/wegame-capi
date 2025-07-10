@@ -20,15 +20,23 @@ public enum GameTypeEnum {
     MARIA_MAKILING("zhumeng001",
             "MariaMakiling",
             "mariamakiling_bet_record",
-            "mariamakiling_game_record", 300L,1.1),
+            "mariamakiling_game_record", 300L, 1.1),
     MALAKAS("zhumeng002",
             "Malakas",
             "malakas_bet_record",
-            "malakas_game_record", 300L,1.1),
+            "malakas_game_record", 300L, 1.1),
     IBONG_ADARNA("zhumeng003",
             "IbongAdarna",
             "ibongadarna_bet_record",
-            "ibongadarna_game_record", 300L,1.2),
+            "ibongadarna_game_record", 300L, 1.2),
+    LAM_ANG("zhumeng004",
+            "LamAng",
+            "lamang_bet_record",
+            "lamang_game_record", 300L, 1.2),
+    BAKUNAWA("zhumeng005",
+            "Bakunawa",
+            "bakunawa_bet_record",
+            "bakunawa_game_record", 300L,1.2),
     DIWATA_MAYARI("zhumeng006",
             "DiwataMayari",
             "diwataMayari_bet_record",
@@ -36,7 +44,6 @@ public enum GameTypeEnum {
 
 
     ;
-
 
     /**
      * 枚举码.

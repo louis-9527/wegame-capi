@@ -37,6 +37,7 @@ public enum SymbolEnum {
     Symbol2005("2005", "Symbol2005"),
 
     Scatter("3001", "Scatter"),
+    Scatter1("3002", "Scatter+1"),
 
     Wild("4001", "Wild"),
     WildX2("4002", "WildX2"),
@@ -44,6 +45,16 @@ public enum SymbolEnum {
     WildX5("4004", "WildX5"),
     WildX10("4005", "WildX10"),
 
+    Symbol0("0", "Symbol0"),
+    Symbol1("1", "Symbol1"),
+    Symbol2("2", "Symbol2"),
+    Symbol3("3", "Symbol3"),
+    Symbol5("5", "Symbol5"),
+    Symbol10("10", "Symbol10"),
+    SymbolNull("null", "SymbolNull"),
+
+    BigWild("4006", "BigWild"),
+    SuperWild("4007", "SuperWild"),
     Wild_Sword("4010", "Wild_Sword"),
     Wild_Stick("4011", "Wild_stick"),
 

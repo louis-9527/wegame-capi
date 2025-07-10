@@ -4,7 +4,7 @@ logging:
     #    org.apache.pulsar: DEBUG
     #    org.springframework.web: trace
     #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-    com.wegame: DEBUG
+    com.wegame: INFO
     com.wegame.base.config: ERROR
     org.apache.pulsar: ERROR
     #    org.apache.ibatis: trace
@@ -18,4 +18,6 @@ game:
     MariaMakiling: false
     Malakas: false
     IbongAdarna: false
+    Lamang: false
+    Bakunawa: false
     DiwataMayari: true

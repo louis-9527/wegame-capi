@@ -99,6 +99,13 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
             } else if (Objects.equals(gameType, GameTypeEnum.IBONG_ADARNA)) {
                 IbongAdarnaValidator.validateParam(betType, betSubType, this);
                 CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
+            } else if (Objects.equals(gameType, GameTypeEnum.BAKUNAWA)) {
+                BakunawaValidator.validateParam(betType, betSubType, this);
+                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
+            } else if (Objects.equals(gameType, GameTypeEnum.LAM_ANG)) {
+                LamangValidator.validateParam(betType, betSubType, this);
+                CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);
+                CommonGameValidator.validateStarCardBet(betType, betSubType, this);
             } else if (Objects.equals(gameType, GameTypeEnum.DIWATA_MAYARI)) {
                 DiwataMayariValidator.validateParam(betType, betSubType, this);
                 CommonGameValidator.validateFreeSpinBet(betType, betSubType, this);

@@ -1,9 +1,10 @@
 package com.wegame.capi.infrastructure.config.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpHost;
 import org.apache.http.client.HttpClient;
-import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.SocketConfig;
+import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,44 +27,61 @@ public class PromotionRestTemplateConfig {
     public static final String PROMOTION_CONNECTION_MANAGER_BEAN = "promotionConnectionManager";
     public static final String PROMOTION_REST_TEMPLATE_BEAN = "promotionRestTemplate";
 
-    // promotion resTemplate
-    @Value("${httpclient.promotion.connectMaxTotal:5000}")
-    int promotionConnectMaxTotal;
+    @Value("${httpclient.promotion.connectMaxTotal:500}")
+    int connectMaxTotal;
     @Value("${httpclient.promotion.connectDefaultMaxPerRoute:500}")
-    int promotionConnectDefaultMaxPerRoute;
+    int connectDefaultMaxPerRoute;
     @Value("${httpclient.promotion.connectTimeout:1000}")
-    int promotionConnectTimeout;
-    @Value("${httpclient.promotion.readTimeout:800}")
-    int promotionReadTimeout;
-    @Value("${httpclient.promotion.connectionRequestTimeout:800}")
-    int promotionConnectionRequestTimeout;
-    @Value("${httpclient.promotion.timeToLive:59}")
-    int promotionTimeToLive;
+    int connectTimeout;
+    @Value("${httpclient.promotion.readTimeout:1500}")
+    int readTimeout;
+    @Value("${httpclient.promotion.connectionRequestTimeout:200}")
+    int connectionRequestTimeout;
+    @Value("${httpclient.promotion.timeToLive:3000}")
+    int timeToLive;
+    @Value("${httpclient.promotion.maxIdleTime:50}")
+    int maxIdleTime;
 
     @Bean(value = PROMOTION_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
     PoolingHttpClientConnectionManager promotionConnectionManager() {
-        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(promotionTimeToLive, TimeUnit.SECONDS);
-        manager.setMaxTotal(promotionConnectMaxTotal);
-        manager.setDefaultMaxPerRoute(promotionConnectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(20000);
+        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, TimeUnit.SECONDS);
+        manager.setDefaultSocketConfig(SocketConfig.custom()
+                .setTcpNoDelay(true)
+                .setSoKeepAlive(true)
+                .build());
+        manager.setMaxTotal(connectMaxTotal);
+        manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
+        manager.setValidateAfterInactivity(3000 * 1000);
         return manager;
     }
 
     @Bean(PROMOTION_REST_TEMPLATE_BEAN)
     public RestTemplate promotionRestTemplate(@Autowired PoolingHttpClientConnectionManager promotionConnectionManager) {
-        //        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(promotionTimeToLive, TimeUnit.MINUTES);
-        //        manager.setMaxTotal(promotionConnectMaxTotal);
-        //        manager.setDefaultMaxPerRoute(promotionConnectDefaultMaxPerRoute);
-        //        manager.setValidateAfterInactivity(20000);
         HttpClient httpClient = HttpClientBuilder.create()
                 .setConnectionManager(promotionConnectionManager)
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setSocketTimeout(readTimeout)
+                        .setConnectTimeout(connectTimeout)
+                        .setConnectionRequestTimeout(connectionRequestTimeout)
+                        .build())
                 // 连接最大存活时间
-                .setConnectionTimeToLive(promotionTimeToLive, TimeUnit.SECONDS)
+                .setConnectionTimeToLive(timeToLive, TimeUnit.SECONDS)
+                //                // 设置空闲连接保活时间略小于下游超时时间。 下游超时时间59s
+                //                .evictIdleConnections(maxIdleTime, TimeUnit.SECONDS)
+                //                .evictExpiredConnections()
+                .setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE)
+                // 启用系统TCP Keep-Alive
+                .useSystemProperties()
+                // 添加保活策略
+                .setKeepAliveStrategy((response, context) -> {
+                    // 保持连接存活小于下游59秒超时
+                    return timeToLive * 1000;
+                })
                 .build();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
-        factory.setConnectTimeout(promotionConnectTimeout);
-        factory.setReadTimeout(promotionReadTimeout);
-        factory.setConnectionRequestTimeout(promotionConnectionRequestTimeout);
+        factory.setConnectTimeout(connectTimeout);
+        factory.setReadTimeout(readTimeout);
+        factory.setConnectionRequestTimeout(connectionRequestTimeout);
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setRequestFactory(factory);
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();

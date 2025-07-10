@@ -33,6 +33,8 @@ spring:
       - game-maria_makiling.yml
       - game-malakas.yml
       - game-ibong.yml
+      - game-lamang.yml
+      - game-bakunawa.yml
       - game-diwata_mayari.yml
   main:
     allow-circular-references: true
@@ -74,7 +76,7 @@ lark:
 api:
   game:
     singleDomain: http://sw-http-main-apisix.igo8.me
-    invokeSingle: false
+    invokeSingle: true
     freeSpinDomain: https://sw-http-freespin.igo8.me
     promotionDomain: http://reward-http.igo8.me
     operationDomain: https://dos-egame.dos88.me

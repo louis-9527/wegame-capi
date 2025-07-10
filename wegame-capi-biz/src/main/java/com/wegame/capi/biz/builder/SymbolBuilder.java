@@ -1,9 +1,11 @@
 package com.wegame.capi.biz.builder;
 
+import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.client.domain.vo.lamang.LamangSymbolVo;
 import com.wegame.capi.client.domain.vo.diwatamayari.DiwataMayariSymbolVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasSymbolVo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaSymbolVo;
@@ -44,6 +46,22 @@ public class SymbolBuilder {
                         .symbolSize(malakasSymbol.getSymbolSize().getCode())
                         .symbolClearTimes(malakasSymbol.getSymbolClearTimes())
                         .symbolGoldBorder(malakasSymbol.isSymbolGoldBorder())
+                        .build();
+            }
+        }
+        return integerArray;
+    }
+
+    public static LamangSymbolVo[][] build(LamangSymbolDo[][] symbolArr) {
+        int rows = symbolArr.length;
+        int cols = symbolArr[0].length;
+        LamangSymbolVo[][] integerArray = new LamangSymbolVo[rows][cols];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                LamangSymbolDo lamangSymbol = symbolArr[row][col];
+                integerArray[row][col] = Objects.isNull(lamangSymbol) ? null : LamangSymbolVo.builder()
+                        .symbolId(lamangSymbol.getId())
+                        .symbolGoldBorder(lamangSymbol.isSymbolGoldBorder())
                         .build();
             }
         }
