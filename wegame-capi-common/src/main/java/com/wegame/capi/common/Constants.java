@@ -31,6 +31,8 @@ public class Constants {
 
 
     public static final Integer LAMANG_REWARD_NOTIFY_SIZE = 20;
+    public static final Integer DIWATA_MAYARI_REWARD_NOTIFY_SIZE = 10;
+
     // maria推送大奖tips内容
     public static final String MARIA_MARKILING_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
     // malakas推送大奖tips内容
@@ -39,9 +41,10 @@ public class Constants {
     public static final String IBONG_ADARNA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
     // bakunawa推送大奖tips内容 XXXX won 100x rewards ，₱ 99999
     public static final String BAKUNAWA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
-
     // lamang推送大奖tips内容
     public static final String LAMANG_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+    // diwatamayari推送大奖tips内容
+    public static final String DIWATA_MAYARI_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
     // kapre推送大奖tips内容
     public static final String KAPRE_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
 
@@ -74,6 +77,7 @@ public class Constants {
     public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";
     public static final String LAMANG_PROP = "game.enable.Lamang";
     public static final String BAKUNAWA_PROP = "game.enable.Bakunawa";
+    public static final String DIWATA_MAYARI_PROP = "game.enable.DiwataMayari";
     public static final String KAPRE_PROP = "game.enable.Kapre";
     public static final String MANGKUKULAM_PROP = "game.enable.Mangkukulam";
 

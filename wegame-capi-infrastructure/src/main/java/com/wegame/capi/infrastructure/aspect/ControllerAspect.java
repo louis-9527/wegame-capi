@@ -2,7 +2,9 @@ package com.wegame.capi.infrastructure.aspect;
 
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.infrastructure.GlobalInstance;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -50,6 +52,9 @@ public class ControllerAspect {
                 req = Arrays.stream(args)
                         .filter(arg -> (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)))
                         .collect(Collectors.toList());
+            }
+            if (!StringUtils.equals(signature.getName(), "ping")) {
+                GlobalInstance.warmConnectionSwitch = false;
             }
             UserInfo userInfo = UserInfoContext.getUserInfo();
             long costTime = System.currentTimeMillis() - startTime;

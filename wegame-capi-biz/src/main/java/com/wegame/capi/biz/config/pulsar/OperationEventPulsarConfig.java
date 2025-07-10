@@ -30,7 +30,9 @@ public class OperationEventPulsarConfig {
     private static final String ibongOperationEventConsumer = "ibongOperationEventConsumer";
     private static final String bakunawaOperationEventConsumer = "bakunawaOperationEventConsumer";
     private static final String lamangOperationEventConsumer = "lamangOperationEventConsumer";
+    private static final String diwataMayariOperationEventConsumer = "diwataMayariOperationEventConsumer";
 
+    // todo fix
     @Value("${dynamic.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
     @Value("${dynamic.operation.pulsar_topic}")
@@ -46,6 +48,8 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupBakunawa;
     @Value("${dynamic.operation.pulsar_group.lamang:_Lamang}")
     String dynamicOperationGroupLamang;
+    @Value("${dynamic.operation.pulsar_group.diwata_mayari:_DiwataMayari}")
+    String dynamicOperationGroupDiwataMayari;
     @Value("${dynamic.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.operation.pulsar.auth.credentials_file_path}")
@@ -55,7 +59,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = operationEventPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient operationEventPulsarClient() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
+        log.debug(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
         if (StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)) {
             return PulsarClient.builder()
                     .serviceUrl(dynamicOperationTopicUrl)
@@ -81,7 +85,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(MariamakilingOperationEventPulsarListener.class)
     public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                 @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
-        log.info(BUILD_BEAN_FORMAT, mariaMakilingOperationEventConsumer);
+        log.debug(BUILD_BEAN_FORMAT, mariaMakilingOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMariaMakiling)
@@ -146,4 +150,17 @@ public class OperationEventPulsarConfig {
                 .subscribe();
     }
 
+    @Bean(name = diwataMayariOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
+    public Consumer<byte[]> diwataMayariOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                               @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, diwataMayariOperationEventConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupDiwataMayari)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(diwataMayariOperationEventPulsarListener)
+                .subscribe();
+    }
 }
