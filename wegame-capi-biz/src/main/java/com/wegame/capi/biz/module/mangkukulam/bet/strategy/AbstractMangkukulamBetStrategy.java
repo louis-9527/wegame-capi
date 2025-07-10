@@ -177,16 +177,13 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
         return null;
     }
 
-
     /**
      * 免费轮投注
      */
     private BetResultDo<MangkukulamBetRecordDetailDo> betForFreeWheel(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        GameRecordQuery gameRecordQuery =
-                GameRecordQuery.builder().betRecordId(betDo.getBetRecordId()).playerId(userInfo.getPlayerId()).batchId(betDo.getGameRecordId()).build();
-        List<MangkukulamGameRecordDo> gameRecordList = betRecordManager().listGameRecord(gameRecordQuery,
-                gameContext().gameInfo().getGameType());
+        GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(betDo.getBetRecordId()).playerId(userInfo.getPlayerId()).batchId(betDo.getGameRecordId()).build();
+        List<MangkukulamGameRecordDo> gameRecordList = betRecordManager().listGameRecord(gameRecordQuery, gameContext().gameInfo().getGameType());
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
         // 按照index升序排列
         gameRecordList = Optional.ofNullable(gameRecordList)
