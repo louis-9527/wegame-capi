@@ -34,7 +34,7 @@ public class MangkukulamBetRecordDetailDo implements ToVoConverter<MangkukulamBe
     /**
      * 波动投注游戏记录Id列表
      */
-    private List<String> volatilityGameRecordIds;
+    private List<Long> volatilityGameRecordIds;
 
     @Override
     public MangkukulamBetResultDetailVo toResultVo() {

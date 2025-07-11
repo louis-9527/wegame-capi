@@ -85,6 +85,30 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
         }
     }
 
+    public BetResultDo<MangkukulamBetRecordDetailDo> handleBetResult(BetRecordDo<MangkukulamGameRecordDo> betRecord,
+                                                                      List<MangkukulamGameRecordDo> list,
+                                                                      Long credit) {
+        List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
+        MangkukulamGameRecordDo lastGameRecord = firstBatchList.get(firstBatchList.size() - 1);
+        // 4、组装返回结果
+        long overallRewardAmount = MangkukulamCalcUtil.calcTotalRewardAmount(firstBatchList);
+        return BetResultDo.<MangkukulamBetRecordDetailDo>builder()
+                .betRecordId(betRecord.getId())
+                .gameId(betRecord.getGameId())
+                .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
+                .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
+                .credit(credit)
+                .overallRewardAmount(maxAmountControl(overallRewardAmount, betRecord.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple()))
+                .totalPayoutAmount(betRecord.getPayOutAmount())
+                .resultDetail(MangkukulamBetRecordDetailDo.builder()
+                        .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
+                        .gameRecordList(null)
+                        .volatilityGameRecordIds(lastGameRecord.isLastGameFlag() ? null : lastGameRecord.getGameRecordIds())
+                        .build())
+                .build();
+    }
+
+
     @Override
     public boolean hasRewardFreeWheel(List<MangkukulamGameRecordDo> gameRecordList) {
         MangkukulamGameRecordDo gameRecord = gameRecordList.stream()
@@ -94,7 +118,7 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
         return Objects.nonNull(gameRecord);
     }
 
-    private List<MangkukulamGameRecordDo> getFirstBatchGameRecordList(List<MangkukulamGameRecordDo> list) {
+    public List<MangkukulamGameRecordDo> getFirstBatchGameRecordList(List<MangkukulamGameRecordDo> list) {
         Long batchId = list.get(0).getBatchId();
         return list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))

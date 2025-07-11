@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.module.mangkukulam.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MangkukulamBetRecordDetailDo;
@@ -119,7 +120,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             // 1、play
             List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
             AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-            List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
+            List<MangkukulamGameRecordDo> firstBatchList = mangkukulamBetHelper.getFirstBatchGameRecordList(list);
             // 2、构建投注记录
             BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
             MangkukulamGameRecordDo lastGameRecord = firstBatchList.get(firstBatchList.size() - 1);
@@ -128,18 +129,22 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, betHelper().hasRewardFreeWheel(firstBatchList));
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
-        } else {
+        } else if (BetSubTypeEnum.isSecondStep(betDo.getBetSubType().getCode())) {
             // 1、查询投注记录
-            BetRecordDo preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
+            AssertUtil.assertNotNull(betDo.getParentBetRecordId(), ErrorCode.ERR_PARAM);
+            BetRecordDo<MangkukulamGameRecordDo> preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
+            AssertUtil.assertNotNull(preBetRecord, ErrorCode.ERR_PARAM);
             if (BooleanUtils.isFalse(preBetRecord.getContinueStatus()))  {
-                // 1、查询game record
-                return betForFreeWheel(betDo);
+                // 查询投投注记录
+                GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(preBetRecord.getId()).build();
+                List<MangkukulamGameRecordDo> list = mangkukulamBetRecordManager.listGameRecord(gameRecordQuery, GameTypeEnum.MANGKUKULAM);
+                return mangkukulamBetHelper.handleBetResult(preBetRecord, list, null);
             } else {
                 // 1、继续玩（完成波动选择后续部分）
-                gamePlayDo.setContinuePlayContext(buildContinuePlayContext(betDo));
+                gamePlayDo.setContinuePlayContext(buildContinuePlayContext(preBetRecord, betDo));
                 List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
                 AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-                List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
+                List<MangkukulamGameRecordDo> firstBatchList = mangkukulamBetHelper.getFirstBatchGameRecordList(list);
                 // 2、构建投注记录
                 BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
                 betRecord.setContinueStatus(Boolean.FALSE);
@@ -148,33 +153,36 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
                 AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
                 // 4、异步更新投注记录
                 mangkukulamBetRecordManager.asyncUpdateBetRecord(betRecord, GameTypeEnum.MANGKUKULAM);
-                return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
+                // 5、构建返回结果
+                return mangkukulamBetHelper.handleBetResult(betRecord, list, resultDo.getCredit());
             }
+        } else {
+            throw new BusinessException(ErrorCode.ERR_PARAM);
         }
     }
 
-    private GamePlayDo.ContinuePlayContext buildContinuePlayContext(BetDo betDo) {
-        if (Objects.nonNull(betDo.getParentBetRecordId())) {
-            // 查询中免费轮的投注游戏记录
-            GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(betDo.getParentBetRecordId()).build();
-            List<MangkukulamGameRecordDo> gameRecordList = mangkukulamBetRecordManager.listGameRecord(gameRecordQuery, GameTypeEnum.MANGKUKULAM);
-            AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
+    private GamePlayDo.ContinuePlayContext buildContinuePlayContext(BetRecordDo<MangkukulamGameRecordDo> preBetRecord, BetDo betDo) {
+        // 1、使用正常投注中的投注金额
+        betDo.setBetAmount(preBetRecord.getBetAmount());
+        // 2、组装继续玩儿上下文
+        // 2.1、查询中免费轮的投注游戏记录
+        GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(betDo.getParentBetRecordId()).build();
+        List<MangkukulamGameRecordDo> gameRecordList = mangkukulamBetRecordManager.listGameRecord(gameRecordQuery, GameTypeEnum.MANGKUKULAM);
+        AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
 
-            // 1.获取累计中奖金额
-            Long totalRewardAmount = gameRecordList.stream().map(MangkukulamGameRecordDo::getRewardResult).map(RewardResultDo::getTotalRewardAmount).mapToLong(Long::longValue).sum();
+        // 2.2、获取累计中奖金额
+        Long totalRewardAmount = gameRecordList.stream().map(MangkukulamGameRecordDo::getRewardResult).map(RewardResultDo::getTotalRewardAmount).mapToLong(Long::longValue).sum();
 
-            // 2.获取获得的免费轮次数
-            MangkukulamGameRecordDo lastGameRecord = gameRecordList.get(gameRecordList.size() - 1);
-            int rewardFreeWheelTimes = lastGameRecord.getRewardResult().getRewardFreeWheelTimes();
+        // 2.3、获取获得的免费轮次数
+        MangkukulamGameRecordDo lastGameRecord = gameRecordList.get(gameRecordList.size() - 1);
+        int rewardFreeWheelTimes = lastGameRecord.getRewardResult().getRewardFreeWheelTimes();
 
-            return GamePlayDo.ContinuePlayContext.builder()
-                    .parentBetRecordId(betDo.getParentBetRecordId())
-                    .parentGameRecordId(lastGameRecord.getId())
-                    .totalPayoutAmount(totalRewardAmount)
-                    .freeWheelTimes(rewardFreeWheelTimes)
-                    .build();
-        }
-        return null;
+        return GamePlayDo.ContinuePlayContext.builder()
+                .parentBetRecordId(betDo.getParentBetRecordId())
+                .parentGameRecordId(lastGameRecord.getId())
+                .totalPayoutAmount(totalRewardAmount)
+                .freeWheelTimes(rewardFreeWheelTimes)
+                .build();
     }
 
     /**
@@ -217,10 +225,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
                 .build();
     }
 
-    private List<MangkukulamGameRecordDo> getFirstBatchGameRecordList(List<MangkukulamGameRecordDo> list) {
-        Long batchId = list.get(0).getBatchId();
-        return list.stream().filter(item -> Objects.equals(batchId, item.getBatchId())).collect(Collectors.toList());
-    }
+
 
     public void freeWheelAfterHandle(Long betRecordId) {
         // do nothing
