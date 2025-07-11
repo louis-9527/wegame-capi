@@ -250,11 +250,7 @@ public class MangkukulamSymbolUtil {
         for (int i = 0; i < row; i++) {
             for (int j : availableColumns) {
                 MangkukulamSymbolDo symbol = symbolArr[i][j];
-                if (Objects.isNull(symbol)) {
-                    availableIndexes.add(IndexFactory.buildDo(i, j));
-                    continue;
-                }
-                if (symbol.isNormalWild() || symbol.isSpecialWild() || symbol.isSymbolFireBorder() || symbol.isScatterSymbol() || symbol.isPlaceholderSymbol()) {
+                if (Objects.isNull(symbol) || symbol.isWildSymbol() || symbol.isSymbolFireBorder() || symbol.isScatterSymbol() || symbol.isPlaceholderSymbol()) {
                     continue;
                 }
                 availableIndexes.add(IndexFactory.buildDo(i, j));
@@ -270,10 +266,10 @@ public class MangkukulamSymbolUtil {
         for (Integer column : availableColumns) {
             for (int rowNum = 0; rowNum < row; rowNum++) {
                 MangkukulamSymbolDo symbol = symbolArr[rowNum][column];
-                if (symbol.isPlaceholderSymbol() || symbol.isWildSymbol() || symbol.isSymbolFireBorder() || symbol.isScatterSymbol()) {
+                if (Objects.isNull(symbol) || symbol.isWildSymbol() || symbol.isSymbolFireBorder() || symbol.isScatterSymbol() || symbol.isPlaceholderSymbol()) {
                     continue;
                 }
-                canAddFireBorderIndexes.add(new IndexDo(rowNum, column));
+                canAddFireBorderIndexes.add(IndexFactory.buildDo(rowNum, column));
             }
         }
         Collections.shuffle(canAddFireBorderIndexes, new Random());
