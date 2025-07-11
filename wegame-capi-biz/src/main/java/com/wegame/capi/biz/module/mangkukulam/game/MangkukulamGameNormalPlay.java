@@ -92,13 +92,11 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
 
     /**
      * 生成首轮
-     * scatter & wild 不会跟特殊wild在同一列
-     * 特殊wild只会在2 3 4 列
-     * wild & 火框 只会在 2 3 4 5 列
      */
     private void generateFirstBatch(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> result, AtomicLong totalRewardAmount, LinkedList<FreeWheelHandleDo> freeWheelList) {
-        MangkukulamConfig.Stage stage = getRandomStage(gamePlay, false);
+        MangkukulamConfig.Stage stage = randomStage(gamePlay, false);
         WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel(stage, false);
+        // 中间处理
         RewardResultDo<MangkukulamSymbolDo> rewardResult = mangkukulamRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         // 组装-游戏记录
@@ -123,7 +121,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             FreeWheelHandleDo freeWheel = freeWheelList.removeFirst();
             MangkukulamGameRecordDo parentGameRecord = result.stream().filter(item -> Objects.equals(freeWheel.getParentGameRecordId(), item.getId())).findFirst().orElse(null);
             // 每一轮都新随机一个配置
-            MangkukulamConfig.Stage stage = getRandomStage(gamePlay, true);
+            MangkukulamConfig.Stage stage = randomStage(gamePlay, true);
             WheelDo<MangkukulamSymbolDo> wheel = generateFirstWheel(stage, true);
             RewardResultDo<MangkukulamSymbolDo> rewardResult = mangkukulamRewardHandler.handle(RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, null, totalRewardAmount.get()));
             long gameRecordId = generateGameRecordId();
@@ -179,7 +177,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
                 if (Objects.nonNull(symbolArr[rowNum][columNum])) {
                     continue;
                 }
-                MangkukulamSymbolDo symbol = buildSymbolFromString(currentColumSymbolIdList.get(rowNum));
+                MangkukulamSymbolDo symbol = buildSymbolFromSymbolId(currentColumSymbolIdList.get(rowNum));
                 boolean validateSymbolInColumn = validateSymbolInColumn(symbol, columNum, hasScatterInColum, hasSpecialWildInColum);
                 AssertUtil.assertTrue(validateSymbolInColumn, ErrorCode.ERR_PARAM, "invalid symbol in column : " + columNum);
                 if (symbol.isScatterSymbol()) {
@@ -195,6 +193,11 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         return WheelDo.<MangkukulamSymbolDo>builder().index(currentIndex).freeFlag(freeWheelFlag).symbolArr(symbolArr).build();
     }
 
+    /**
+     * scatter & wild 不会跟特殊wild在同一列
+     * 特殊wild只会在2 3 4 列
+     * wild & 火框 只会在 2 3 4 5 列
+     */
     private boolean validateSymbolInColumn(MangkukulamSymbolDo symbol, int columNum, boolean hasScatterInColum, boolean hasSpecialWildInColum) {
         if (symbol.isSpecialWild()) {
             // 特殊百搭只能出现在123列 & 并且当前列没有scatter 和 特殊百搭
@@ -210,7 +213,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         }
     }
 
-    private MangkukulamSymbolDo buildSymbolFromString(String symbolStr) {
+    private MangkukulamSymbolDo buildSymbolFromSymbolId(String symbolStr) {
         SymbolDo symbolDo = GAME_INFO.getSymbolById(symbolStr);
         AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER, "symbolDo is null of id " + symbolStr);
         MangkukulamSymbolDo symbol = null;
@@ -229,12 +232,12 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         RewardResultDo<MangkukulamSymbolDo> preRewardResult = preGameRecord.getRewardResult();
         // 复制：元素数组
         MangkukulamSymbolDo[][] symbolArr = MangkukulamSymbolUtil.copySymbolArr(preWheel.getSymbolArr());
-        //1. 消除中奖元素
+        //1. 消除中奖元素 获得需要移动的wild坐标
         List<IndexDo> borderWildIndexes = MangkukulamSymbolUtil.clearRewardSymbol(symbolArr, preRewardResult);
         //2. 下落
         MangkukulamSymbolUtil.fallSymbols(symbolArr);
         //3. 补充元素
-        fill(symbolArr, stage, currentIndex);
+        fillWheel(symbolArr, stage, currentIndex);
         //4. 后置处理
         postProcessSymbolArr(symbolArr, stage, currentIndex, borderWildIndexes);
         return WheelDo.<MangkukulamSymbolDo>builder().index(currentIndex).freeFlag(freeWheel).symbolArr(symbolArr).build();
@@ -283,8 +286,8 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
 
     private void postProcessSymbolArr(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int currentIndex, List<IndexDo> borderWildIndexes) {
         handleSpecialWild(symbolArr, stage);
-        handleFireBorder(symbolArr, stage, currentIndex);
         replaceMovableWild(symbolArr, borderWildIndexes);
+        handleFireBorder(symbolArr, stage, currentIndex);
     }
 
     private void replaceMovableWild(MangkukulamSymbolDo[][] symbolArr, List<IndexDo> borderWildIndexes) {
@@ -304,16 +307,17 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         }
     }
 
-    private void fill(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int index) {
+    private void fillWheel(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int index) {
         for (int i = 0; i < GAME_INFO.getColumn(); i++) {
             fillColumn(symbolArr, stage, i, index);
         }
     }
 
+    /**
+     * 填充一列： 只填充空的位置
+     */
     private void fillColumn(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int column, int currentIndex) {
-        //如果该列有scatter 生成非scatter
-        LinkedList<String> fillSymbols = new LinkedList<>();
-        randomSymbolList(fillSymbols, stage, currentIndex);
+        LinkedList<String> fillSymbolIdList = new LinkedList<>();
         boolean hasScatterInColumn = MangkukulamSymbolUtil.hasScatterInColumn(symbolArr, column);
         boolean hasSpecialWildInColumn = MangkukulamSymbolUtil.hasSpecialWildInColumn(symbolArr, column);
         for (int i = GAME_INFO.getRow() - 1; i >= 0; i--) {
@@ -322,12 +326,13 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             if (Objects.nonNull(symbol)) {
                 continue;
             }
-            boolean filled = false;
-            while (!filled) {
-                if (fillSymbols.isEmpty()) {
-                    randomSymbolList(fillSymbols, stage, currentIndex);
+            boolean currentSymbolFilled = false;
+            while (!currentSymbolFilled) {
+                if (fillSymbolIdList.isEmpty()) {
+                    randomSymbolList(fillSymbolIdList, stage, currentIndex);
                 }
-                MangkukulamSymbolDo symbolDo = buildSymbolFromString(fillSymbols.removeFirst());
+                MangkukulamSymbolDo symbolDo = buildSymbolFromSymbolId(fillSymbolIdList.removeFirst());
+                // 不符合的列元素，重新生成
                 if (!validateSymbolInColumn(symbolDo, column, hasScatterInColumn, hasSpecialWildInColumn)) {
                     continue;
                 }
@@ -338,10 +343,10 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
                     hasSpecialWildInColumn = true;
                 }
                 symbolArr[i][column] = symbolDo;
-                filled = true;
+                currentSymbolFilled = true;
             }
         }
-        fillSymbols.clear();
+        fillSymbolIdList.clear();
     }
 
     private void randomSymbolList(List<String> fillSymbols, MangkukulamConfig.Stage stage, int currentIndex) {
@@ -352,7 +357,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         fillSymbols.addAll(symbols);
     }
 
-    private MangkukulamConfig.Stage getRandomStage(GamePlayDo gamePlay, boolean freeWheelFlag) {
+    private MangkukulamConfig.Stage randomStage(GamePlayDo gamePlay, boolean freeWheelFlag) {
         MangkukulamConfig.MainGame mainGame = getMainGame(gamePlay, freeWheelFlag);
 
         List<MangkukulamConfig.Stage> stages = mainGame.getStages();
