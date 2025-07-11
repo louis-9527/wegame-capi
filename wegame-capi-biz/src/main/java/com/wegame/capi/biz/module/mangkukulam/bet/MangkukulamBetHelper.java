@@ -85,9 +85,16 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
         }
     }
 
-    public BetResultDo<MangkukulamBetRecordDetailDo> handleBetResult(BetRecordDo<MangkukulamGameRecordDo> betRecord,
-                                                                      List<MangkukulamGameRecordDo> list,
-                                                                      Long credit) {
+    /**
+     * 处理波动选择结果
+     * @param betRecord
+     * @param list
+     * @param credit
+     * @return
+     */
+    public BetResultDo<MangkukulamBetRecordDetailDo> handleVolatilityBetResult(BetRecordDo<MangkukulamGameRecordDo> betRecord,
+                                                                               List<MangkukulamGameRecordDo> list,
+                                                                               Long credit) {
         List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         MangkukulamGameRecordDo lastGameRecord = firstBatchList.get(firstBatchList.size() - 1);
         // 4、组装返回结果

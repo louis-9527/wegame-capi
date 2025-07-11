@@ -135,10 +135,11 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             BetRecordDo<MangkukulamGameRecordDo> preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
             AssertUtil.assertNotNull(preBetRecord, ErrorCode.ERR_PARAM);
             if (BooleanUtils.isFalse(preBetRecord.getContinueStatus()))  {
-                // 查询投投注记录
+                // 1、查询投注记录对应的游戏记录
                 GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(preBetRecord.getId()).build();
                 List<MangkukulamGameRecordDo> list = mangkukulamBetRecordManager.listGameRecord(gameRecordQuery, GameTypeEnum.MANGKUKULAM);
-                return mangkukulamBetHelper.handleBetResult(preBetRecord, list, null);
+                // 2、构建返回结果
+                return mangkukulamBetHelper.handleVolatilityBetResult(preBetRecord, list, null);
             } else {
                 // 1、继续玩（完成波动选择后续部分）
                 gamePlayDo.setContinuePlayContext(buildContinuePlayContext(preBetRecord, betDo));
@@ -154,7 +155,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
                 // 4、异步更新投注记录
                 mangkukulamBetRecordManager.asyncUpdateBetRecord(betRecord, GameTypeEnum.MANGKUKULAM);
                 // 5、构建返回结果
-                return mangkukulamBetHelper.handleBetResult(betRecord, list, resultDo.getCredit());
+                return mangkukulamBetHelper.handleVolatilityBetResult(betRecord, list, resultDo.getCredit());
             }
         } else {
             throw new BusinessException(ErrorCode.ERR_PARAM);
