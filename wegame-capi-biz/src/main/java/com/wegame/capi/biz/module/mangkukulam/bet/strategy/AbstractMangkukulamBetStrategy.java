@@ -137,13 +137,13 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             // 1、查询投注记录
             BetRecordDo preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
             if (BooleanUtils.isFalse(preBetRecord.getContinueStatus()))  {
-                
+
 
                 // 1、查询game record
                 return betForFreeWheel(betDo);
             } else {
                 // 1、继续玩（完成波动选择后续部分）
-                gamePlayDo.setContinuePlayContext(buildContinuePlayContext(betDo));
+                gamePlayDo.setContinuePlayContext(buildContinuePlayContext(preBetRecord, betDo));
                 List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
                 AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
                 List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
@@ -176,7 +176,12 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
         }
     }
 
-    private GamePlayDo.ContinuePlayContext buildContinuePlayContext(BetDo betDo) {
+    private GamePlayDo.ContinuePlayContext buildContinuePlayContext(BetRecordDo preBetRecord, BetDo betDo) {
+        // 1、使用中免费轮的投注数据
+        betDo.setBetType(BetTypeEnum.valueOfCode(preBetRecord.getBetType()));
+        betDo.setBetSubType(BetSubTypeEnum.valueOfCode(preBetRecord.getBetSubType()));
+        betDo.setBetAmount(preBetRecord.getBetAmount());
+        // 2、组装继续玩儿上下文
         if (Objects.nonNull(betDo.getParentBetRecordId())) {
             // 查询中免费轮的投注游戏记录
             GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(betDo.getParentBetRecordId()).build();
