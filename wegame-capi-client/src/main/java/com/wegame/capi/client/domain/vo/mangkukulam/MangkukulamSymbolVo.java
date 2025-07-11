@@ -30,9 +30,6 @@ public class MangkukulamSymbolVo implements Serializable {
     @ApiModelProperty("倍率列表 只有特殊百搭有")
     private List<BigDecimal> multiples;
 
-    @ApiModelProperty("元素大小:S：一行一列 XL：4行一列 XXL：跨5行1列")
-    private String symbolSize;
-
     @Override
     public String toString() {
         return "";

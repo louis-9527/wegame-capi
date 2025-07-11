@@ -74,11 +74,11 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             generateFirstBatch(gamePlay, gameRecordResult, totalRewardAmount, freeWheelList);
             MangkukulamGameRecordDo lastGame = gameRecordResult.get(gameRecordResult.size() - 1);
             boolean reachMaxMultiple = AmountHelper.reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple());
-            boolean rewardFreeWheel = (Objects.nonNull(lastGame) && !lastGame.getRewardResult().isHasRewardFreeWheel());
+            boolean rewardFreeWheel = (Objects.nonNull(lastGame) && lastGame.getRewardResult().isHasRewardFreeWheel());
             if (reachMaxMultiple || !rewardFreeWheel) {
                 setLastGameFlag(gameRecordResult);
             }
-        } else if (Objects.equals(BetSubTypeEnum.FREE_WHEEL_NORMAL_BET.getCode(), gamePlay.getBetSubType().getCode()) && Objects.nonNull(gamePlay.getVolatility())) {
+        } else if (BetSubTypeEnum.isSecondStep(gamePlay.getBetSubType().getCode()) && Objects.nonNull(gamePlay.getVolatility())) {
             // 执行免费轮
             GamePlayDo.ContinuePlayContext context = gamePlay.getContinuePlayContext();
             AssertUtil.assertNotNull(gamePlay.getContinuePlayContext(), ErrorCode.ERR_INTER);

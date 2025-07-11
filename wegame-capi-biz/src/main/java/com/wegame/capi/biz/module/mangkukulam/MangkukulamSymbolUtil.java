@@ -288,7 +288,7 @@ public class MangkukulamSymbolUtil {
         for (Integer column : superWildColumnList) {
             for (int rowNum = 0; rowNum < row; rowNum++) {
                 if (Objects.nonNull(symbolArr[rowNum][column]) && !symbolArr[rowNum][column].isSpecialWild()) {
-                    symbolArr[rowNum][column] = MANGKUKULAM_SYMBOL_PLACEHOLDER;
+                    symbolArr[rowNum][column] = MangkukulamSymbolDo.buildPlaceholderWild(3);
                 }
             }
         }
