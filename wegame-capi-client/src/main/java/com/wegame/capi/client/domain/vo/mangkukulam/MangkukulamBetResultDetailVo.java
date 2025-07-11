@@ -24,5 +24,5 @@ public class MangkukulamBetResultDetailVo implements Serializable {
     @ApiModelProperty("投注结果列表")
     private List<MangkukulamBetResultVo> resultList;
     @ApiModelProperty("波动投注游戏记录Id列表")
-    private List<String> volatilityGameRecordIds;
+    private List<Long> volatilityGameRecordIds;
 }

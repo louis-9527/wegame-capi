@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.mangkukulam.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.MangkukulamConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MangkukulamBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -24,6 +25,7 @@ import com.wegame.capi.biz.module.mangkukulam.game.MangkukulamGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
+import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
@@ -56,6 +59,8 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
 
     @Autowired
     private MangkukulamBetHelper mangkukulamBetHelper;
+    @Autowired
+    MangkukulamConfig mangkukulamConfig;
 
     @Override
     public AbstractGameContext<MangkukulamGameRecordDo> gameContext() {
@@ -132,6 +137,8 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             // 1、查询投注记录
             BetRecordDo preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
             if (BooleanUtils.isFalse(preBetRecord.getContinueStatus()))  {
+                
+
                 // 1、查询game record
                 return betForFreeWheel(betDo);
             } else {
@@ -148,7 +155,23 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
                 AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
                 // 4、异步更新投注记录
                 mangkukulamBetRecordManager.asyncUpdateBetRecord(betRecord, GameTypeEnum.MANGKUKULAM);
-                return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
+                // 5、构建返回结果
+                MangkukulamGameRecordDo lastGameRecord = firstBatchList.get(firstBatchList.size() - 1);
+                long overallRewardAmount = MangkukulamCalcUtil.calcTotalRewardAmount(firstBatchList);
+                return BetResultDo.<MangkukulamBetRecordDetailDo>builder()
+                        .betRecordId(betRecord.getId())
+                        .gameId(betRecord.getGameId())
+                        .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
+                        .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
+                        .credit(resultDo.getCredit())
+                        .overallRewardAmount(maxAmountControl(overallRewardAmount, betRecord.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple()))
+                        .totalPayoutAmount(betRecord.getPayOutAmount())
+                        .resultDetail(MangkukulamBetRecordDetailDo.builder()
+                                .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
+                                .gameRecordList(null)
+                                .volatilityGameRecordIds(lastGameRecord.isLastGameFlag() ? null : lastGameRecord.getGameRecordIds())
+                                .build())
+                        .build();
             }
         }
     }
