@@ -121,8 +121,8 @@ public class MangkukulamSymbolUtil {
         if (Objects.isNull(currentSymbol)) {
             return;
         }
-        if (currentSymbol.isScatterSymbol()) {
-            // scatter 元素， 不做消除
+        if (currentSymbol.isScatterSymbol() || currentSymbol.isPlaceholderSymbol()) {
+            // scatter 或者 占位元素 元素， 不做消除
         } else if (currentSymbol.isSpecialWild()) {
             // 特殊百搭 消除次数> 1 减少消除次数。 <=1 移除该列所有元素
             if (currentSymbol.getRemainClearTimes() > 1) {
@@ -250,11 +250,7 @@ public class MangkukulamSymbolUtil {
         for (int i = 0; i < row; i++) {
             for (int j : availableColumns) {
                 MangkukulamSymbolDo symbol = symbolArr[i][j];
-                if (Objects.isNull(symbol)) {
-                    availableIndexes.add(IndexFactory.buildDo(i, j));
-                    continue;
-                }
-                if (symbol.isNormalWild() || symbol.isSpecialWild() || symbol.isSymbolFireBorder() || symbol.isScatterSymbol() || symbol.isPlaceholderSymbol()) {
+                if (Objects.isNull(symbol) || symbol.isWildSymbol() || symbol.isSymbolFireBorder() || symbol.isScatterSymbol() || symbol.isPlaceholderSymbol()) {
                     continue;
                 }
                 availableIndexes.add(IndexFactory.buildDo(i, j));
@@ -270,10 +266,10 @@ public class MangkukulamSymbolUtil {
         for (Integer column : availableColumns) {
             for (int rowNum = 0; rowNum < row; rowNum++) {
                 MangkukulamSymbolDo symbol = symbolArr[rowNum][column];
-                if (symbol.isPlaceholderSymbol() || symbol.isWildSymbol() || symbol.isSymbolFireBorder() || symbol.isScatterSymbol()) {
+                if (Objects.isNull(symbol) || symbol.isWildSymbol() || symbol.isSymbolFireBorder() || symbol.isScatterSymbol() || symbol.isPlaceholderSymbol()) {
                     continue;
                 }
-                canAddFireBorderIndexes.add(new IndexDo(rowNum, column));
+                canAddFireBorderIndexes.add(IndexFactory.buildDo(rowNum, column));
             }
         }
         Collections.shuffle(canAddFireBorderIndexes, new Random());
@@ -287,8 +283,9 @@ public class MangkukulamSymbolUtil {
         int row = symbolArr.length;
         for (Integer column : superWildColumnList) {
             for (int rowNum = 0; rowNum < row; rowNum++) {
-                if (Objects.nonNull(symbolArr[rowNum][column]) && !symbolArr[rowNum][column].isSpecialWild()) {
-                    symbolArr[rowNum][column] = MangkukulamSymbolDo.buildPlaceholderWild(3);
+                MangkukulamSymbolDo current = symbolArr[rowNum][column];
+                if (Objects.nonNull(current) && (!current.isSpecialWild() && !current.isPlaceholderSymbol())) {
+                    symbolArr[rowNum][column] = MangkukulamSymbolDo.buildPlaceholderWild();
                 }
             }
         }
@@ -304,18 +301,19 @@ public class MangkukulamSymbolUtil {
         System.out.println("symbolArr index :" + currentIndex);
         for (int row = 0; row < symbolArr.length; row++) {
             for (int column = 0; column < symbolArr[row].length; column++) {
-                if (Objects.nonNull(symbolArr[row][column])) {
-                    if (symbolArr[row][column].isSymbolFireBorder()) {
-                        if (symbolArr[row][column].isSpecialWild()) {
-                            System.out.print("[" + symbolArr[row][column].getId() + "]\t");
+                MangkukulamSymbolDo current = symbolArr[row][column];
+                if (Objects.nonNull(current)) {
+                    if (current.isSymbolFireBorder()) {
+                        if (current.isSpecialWild()) {
+                            System.out.print("[" + current.getId() + ":" + current.getRemainClearTimes() + "]\t");
                         } else {
-                            System.out.print("[" + symbolArr[row][column].getId() + "]\t");
+                            System.out.print("[" + current.getId() + "]\t");
                         }
                     } else {
-                        if (symbolArr[row][column].isSpecialWild()) {
-                            System.out.print(symbolArr[row][column].getId() + "\t");
+                        if (current.isSpecialWild()) {
+                            System.out.print(current.getId() + ":" + current.getRemainClearTimes() + "\t");
                         } else {
-                            System.out.print(symbolArr[row][column].getId() + "\t\t");
+                            System.out.print(current.getId() + "\t\t");
                         }
                     }
                 } else {
