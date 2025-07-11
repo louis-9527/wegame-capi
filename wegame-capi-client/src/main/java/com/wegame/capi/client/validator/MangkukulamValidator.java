@@ -67,6 +67,9 @@ public class MangkukulamValidator {
                 AssertUtil.assertTrue(NumberUtil.isLong(betDetail.getBetRecordId()), ErrorCode.ERR_PARAM);
                 AssertUtil.assertNotNull(betDetail.getGameRecordId(), ErrorCode.ERR_PARAM);
                 AssertUtil.assertTrue(NumberUtil.isLong(betDetail.getGameRecordId()), ErrorCode.ERR_PARAM);
+            } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_WHEEL_BUY_BET)) {
+                AssertUtil.assertNotNull(VolatilityTypeEnum.valueOfCode(betDetail.getVolatility()), ErrorCode.ERR_PARAM);
+                AssertUtil.assertStrNotEmpty(betDetail.getParentBetRecordId(), ErrorCode.ERR_PARAM);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }

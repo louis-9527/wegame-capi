@@ -85,6 +85,29 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
         }
     }
 
+    public BetResultDo<MangkukulamBetRecordDetailDo> handleBetResult2(BetRecordDo<MangkukulamGameRecordDo> betRecord, Long credit) {
+        List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(betRecord.getGameRecordList());
+        // 4、组装返回结果
+        //// 合计中奖总金额
+        long overallRewardAmount = MangkukulamCalcUtil.calcTotalRewardAmount(firstBatchList);
+
+        return BetResultDo.<MangkukulamBetRecordDetailDo>builder()
+                .betRecordId(betRecord.getId())
+                .gameId(betRecord.getGameId())
+                .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
+                .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
+                .credit(credit)
+                .overallRewardAmount(maxAmountControl(overallRewardAmount, betRecord.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple()))
+                .totalPayoutAmount(betRecord.getPayOutAmount())
+                .resultDetail(MangkukulamBetRecordDetailDo.builder()
+                        .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
+                        .gameRecordList(null)
+                        .volatilityGameRecordIds(lastGameRecord.isLastGameFlag() ? null : lastGameRecord.getGameRecordIds())
+                        .build())
+                .build();
+    }
+
+
     @Override
     public boolean hasRewardFreeWheel(List<MangkukulamGameRecordDo> gameRecordList) {
         MangkukulamGameRecordDo gameRecord = gameRecordList.stream()
