@@ -5,6 +5,7 @@ import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -38,7 +39,7 @@ public class MangkukulamSymbolDo extends SymbolDo {
 
     @JsonIgnore
     public BigDecimal getMultiple() {
-        if (!isSpecialWild() || multiples == null || multiples.isEmpty()) {
+        if (!isSpecialWild() || CollectionUtils.isEmpty(multiples)) {
             return BigDecimal.ZERO;
         }
 
@@ -133,16 +134,14 @@ public class MangkukulamSymbolDo extends SymbolDo {
     /**
      * 从symbol产生一个新元素
      *
-     * @param remainClearTimes 剩余消除次数
      * @return MangkukulamSymbolDo
      */
-    public static MangkukulamSymbolDo buildPlaceholderWild(int remainClearTimes) {
+    public static MangkukulamSymbolDo buildPlaceholderWild() {
         return MangkukulamSymbolDo.builder()
                 .id(MangkukulamGameHelper.MANGKUKULAM_WILD_PLACEHOLDER.getId())
                 .name(MangkukulamGameHelper.MANGKUKULAM_WILD_PLACEHOLDER.getName())
                 .symbolType(MangkukulamGameHelper.MANGKUKULAM_WILD_PLACEHOLDER.getSymbolType())
                 .symbolFireBorder(false)
-                .remainClearTimes(remainClearTimes)
                 .build();
     }
 }

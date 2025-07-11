@@ -31,7 +31,7 @@ public class MangkukulamGameTest extends BaseTest {
     @Autowired
     MangkukulamGameNormalPlay normalPlay;
 
-    private static final boolean PRINT_SYMBOLS = true;
+    private static final boolean PRINT_SYMBOLS = false;
     private static final int MAX_TIMES_IN_MS = 5;
 
 
@@ -42,7 +42,7 @@ public class MangkukulamGameTest extends BaseTest {
     @Test
     public void testAll() {
         long currentTime = System.currentTimeMillis();
-        int maxTimes = 100;
+        int maxTimes = 1000;
         for (int i = 0; i < maxTimes; i++) {
             test_buy_bet();
             test_normal_bet();
