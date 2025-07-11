@@ -85,12 +85,13 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
         }
     }
 
-    public BetResultDo<MangkukulamBetRecordDetailDo> handleBetResult2(BetRecordDo<MangkukulamGameRecordDo> betRecord, Long credit) {
-        List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(betRecord.getGameRecordList());
+    public BetResultDo<MangkukulamBetRecordDetailDo> handleBetResult(BetRecordDo<MangkukulamGameRecordDo> betRecord,
+                                                                      List<MangkukulamGameRecordDo> list,
+                                                                      Long credit) {
+        List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
+        MangkukulamGameRecordDo lastGameRecord = firstBatchList.get(firstBatchList.size() - 1);
         // 4、组装返回结果
-        //// 合计中奖总金额
         long overallRewardAmount = MangkukulamCalcUtil.calcTotalRewardAmount(firstBatchList);
-
         return BetResultDo.<MangkukulamBetRecordDetailDo>builder()
                 .betRecordId(betRecord.getId())
                 .gameId(betRecord.getGameId())
@@ -117,7 +118,7 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
         return Objects.nonNull(gameRecord);
     }
 
-    private List<MangkukulamGameRecordDo> getFirstBatchGameRecordList(List<MangkukulamGameRecordDo> list) {
+    public List<MangkukulamGameRecordDo> getFirstBatchGameRecordList(List<MangkukulamGameRecordDo> list) {
         Long batchId = list.get(0).getBatchId();
         return list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
