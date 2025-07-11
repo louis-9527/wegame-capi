@@ -84,12 +84,6 @@
         }
     },
     "probabilisticConfig": {
-        "freeWheelTimesProbabilisticConfig": {
-            "10": "50",
-            "11": "35",
-            "12": "10",
-            "13": "5"
-        },
         "commonPlayWheelProbabilisticConfig": {
             "1001": [
                 "16.00",
@@ -317,6 +311,12 @@
                 "0.100",
                 "0.0"
             ]
+        },
+        "freeWheelTimesProbabilisticConfig": {
+            "10": "50",
+            "11": "35",
+            "12": "10",
+            "13": "5"
         }
     },
     "rewardMaxMultiple": "2500"

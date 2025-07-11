@@ -95,4 +95,17 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         SymbolEnum symbol = randomOneSymbol(columnProbabilisticMap, randomNumber);
         return gameInfo.getSymbolById(symbol.getId());
     }
+
+    public String getConfigName(TreeMap<String, Integer> weightConfigMap, int randomNumber) {
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(weightConfigMap), ErrorCode.ERR_INTER);
+        int startVal = 0;
+        for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(weightConfigMap.entrySet())) {
+            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+                return entry.getKey();
+            } else {
+                startVal += entry.getValue();
+            }
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER);
+    }
 }
