@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 星卡定时任务
@@ -36,6 +37,9 @@ public abstract class AbstractContinuePlayScheduler
 
     @Autowired
     public BetRecordService betRecordService;
+
+    @Autowired
+    ThreadPoolExecutor autoContinuePlayGameThreadPoolExecutor;
 
     public abstract GameTypeEnum gameType();
 
@@ -68,7 +72,8 @@ public abstract class AbstractContinuePlayScheduler
                 }
                 Optional.ofNullable(detailList)
                         .orElse(Collections.emptyList())
-                        .forEach(this::autoContinuePlay);
+                        .forEach(betRecord ->
+                                autoContinuePlayGameThreadPoolExecutor.submit(() -> autoContinuePlay(betRecord)));
             } while (CollectionUtils.isNotEmpty(detailList));
             log.info("AbstractContinuePlayScheduler run end. cost time: {}", DateUtil.getCurrentMilli() - startTime);
         } catch (Exception e) {
