@@ -34,11 +34,11 @@ public enum BetSubTypeEnum {
     BUY_BET("BUY_BET",
             "购买投注",
             BetTypeEnum.BUY_BET),
-    FREE_WHEEL_BUY_BET("FREE_WHEEL_BUY_BET",
-            "免费轮购买投注", // 支付金额为0并投注派彩
-            BetTypeEnum.BUY_BET),
     FREE_SPINS_BUY_BET("FREE_SPINS_BUY_BET",
             "免费轮查询-购买投注", // 用于查询投注记录
+            BetTypeEnum.BUY_BET),
+    FREE_WHEEL_BUY_BET("FREE_WHEEL_BUY_BET",
+            "免费轮购买投注", // 支付金额为0并投注派彩
             BetTypeEnum.BUY_BET),
     ;
 
