@@ -250,8 +250,11 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         for (int columNum = 0; columNum < GAME_INFO.getColumn(); columNum++) {
             for (int rowNum = 0; rowNum < GAME_INFO.getRow(); rowNum++) {
                 if (Objects.nonNull(symbolArr[rowNum][columNum]) && symbolArr[rowNum][columNum].isSpecialWild()) {
-                    symbolArr[rowNum][columNum].setMultiples(generateMultiples(weightMap));
-                    superWildColumnList.add(columNum);
+                    // 如果没有初始化才随机倍数
+                    if (CollectionUtils.isEmpty(symbolArr[rowNum][columNum].getMultiples())) {
+                        symbolArr[rowNum][columNum].setMultiples(generateMultiples(weightMap));
+                        superWildColumnList.add(columNum);
+                    }
                 }
             }
         }
