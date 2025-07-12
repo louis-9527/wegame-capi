@@ -85,16 +85,32 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
         }
     }
 
-    /**
-     * 处理波动选择结果
-     * @param betRecord
-     * @param list
-     * @param credit
-     * @return
-     */
-    public BetResultDo<MangkukulamBetRecordDetailDo> handleVolatilityBetResult(BetRecordDo<MangkukulamGameRecordDo> betRecord,
-                                                                               List<MangkukulamGameRecordDo> list,
-                                                                               Long credit) {
+    public BetResultDo<MangkukulamBetRecordDetailDo> handleBetResult(BetRecordDo<MangkukulamGameRecordDo> betRecord,
+                                                                     List<MangkukulamGameRecordDo> list,
+                                                                     Long credit,
+                                                                     Long lastGameRecordId) {
+        List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
+        // 4、组装返回结果
+        long overallRewardAmount = MangkukulamCalcUtil.calcTotalRewardAmount(firstBatchList);
+        return BetResultDo.<MangkukulamBetRecordDetailDo>builder()
+                .betRecordId(betRecord.getId())
+                .gameId(betRecord.getGameId())
+                .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
+                .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
+                .credit(credit)
+                .overallRewardAmount(maxAmountControl(overallRewardAmount, betRecord.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple()))
+                .totalPayoutAmount(betRecord.getPayOutAmount())
+                .resultDetail(MangkukulamBetRecordDetailDo.builder()
+                        .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
+                        .gameRecordList(null)
+                        .volatilityGameRecordIds(getVolatilityGameRecordIds(list, lastGameRecordId))
+                        .build())
+                .build();
+    }
+
+    public BetResultDo<MangkukulamBetRecordDetailDo> handleBetResult(BetRecordDo<MangkukulamGameRecordDo> betRecord,
+                                                                     List<MangkukulamGameRecordDo> list,
+                                                                     Long credit) {
         List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         MangkukulamGameRecordDo lastGameRecord = firstBatchList.get(firstBatchList.size() - 1);
         // 4、组装返回结果
@@ -110,7 +126,7 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
                 .resultDetail(MangkukulamBetRecordDetailDo.builder()
                         .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
                         .gameRecordList(null)
-                        .volatilityGameRecordIds(lastGameRecord.isLastGameFlag() ? null : lastGameRecord.getGameRecordIds())
+                        .volatilityGameRecordIds(lastGameRecord.getGameRecordIds())
                         .build())
                 .build();
     }
@@ -129,6 +145,14 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
         Long batchId = list.get(0).getBatchId();
         return list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Long> getVolatilityGameRecordIds(List<MangkukulamGameRecordDo> list, Long lastGameRecordId) {
+        return list.stream()
+                .filter(item -> Objects.equals(item.getParentId(), lastGameRecordId))
+                .filter(item -> Objects.equals(item.getIndex(), 0))
+                .map(MangkukulamGameRecordDo::getId)
                 .collect(Collectors.toList());
     }
 }

@@ -55,6 +55,9 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordQuery.getGameId())) {
             criteria.and("gameId").is(recordQuery.getGameId());
         }
+        if (Objects.nonNull(recordQuery.getContinueStatus())) {
+            criteria.and("continueStatus").is(recordQuery.getContinueStatus());
+        }
         if (Objects.nonNull(recordQuery.getStartCreateTime()) && Objects.nonNull(recordQuery.getEndCreateTime())) {
             criteria.andOperator(
                     Criteria.where("createTime").gt(recordQuery.getStartCreateTime()),
@@ -110,6 +113,9 @@ public class BetRecordQueryBuilder {
         }
         if (Objects.nonNull(recordDo.getStatus())) {
             update.set("status", recordDo.getStatus());
+        }
+        if (Objects.nonNull(recordDo.getContinueStatus())) {
+            update.set("continueStatus", recordDo.getContinueStatus());
         }
         if (Objects.nonNull(recordDo.getUpdater())) {
             update.set("updater", recordDo.getUpdater());

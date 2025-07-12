@@ -53,8 +53,6 @@ public class MangkukulamValidator {
         } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
             if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                 AssertUtil.assertNotNull(betDetail.getPayAmount(), ErrorCode.ERR_PARAM);
-                AssertUtil.assertNotNull(betDetail.getVolatility(), ErrorCode.ERR_PARAM);
-                AssertUtil.assertNotNull(VolatilityTypeEnum.valueOfCode(betDetail.getVolatility()), ErrorCode.ERR_PARAM);
                 if (betDetail.isUseStarCard()) {
                     AssertUtil.assertTrue(Objects.equals(betDetail.getPayAmount(), betDetail.getBetAmount()), ErrorCode.ERR_PARAM);
                 } else {
