@@ -5,10 +5,13 @@ import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @ToString
 @Getter
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum VolatilityTypeEnum {
+
 
     LOW("LOW", "低波动"),
     HIGH("HIGH", "高波动");
@@ -22,6 +25,8 @@ public enum VolatilityTypeEnum {
      * 描述信息.
      */
     private final String desc;
+
+
     /**
      * 私有构造方法.
      *
@@ -41,6 +46,13 @@ public enum VolatilityTypeEnum {
         }
         return null;
     }
+
+    public static VolatilityTypeEnum random() {
+        VolatilityTypeEnum[] values = values(); // 获取所有枚举值
+        int index = ThreadLocalRandom.current().nextInt(values.length);
+        return values[index];
+    }
+
 
     public String getCode() {
         return code;

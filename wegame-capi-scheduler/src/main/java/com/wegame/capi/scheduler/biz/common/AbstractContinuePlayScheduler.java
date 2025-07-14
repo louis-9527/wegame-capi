@@ -107,7 +107,7 @@ public abstract class AbstractContinuePlayScheduler
                 .gameId(betRecordDo.getGameId())
                 .gameType(gameType())
                 .parentBetRecordId(betRecordDo.getId())
-                .volatility(VolatilityTypeEnum.HIGH)
+                .volatility(VolatilityTypeEnum.random())
                 .build();
     }
 
