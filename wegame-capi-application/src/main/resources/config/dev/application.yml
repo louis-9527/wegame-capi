@@ -42,6 +42,7 @@ spring:
       - game-bakunawa.yml
       - game-diwata_mayari.yml
       - game-kapre.yml
+      - game-mangkukulam.yml
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true

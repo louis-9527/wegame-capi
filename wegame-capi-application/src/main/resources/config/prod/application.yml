@@ -39,6 +39,7 @@ spring:
       - game-malakas.yml
       - game-ibong.yml
       - game-kapre.yml
+      - game-mangkukulam.yml
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
