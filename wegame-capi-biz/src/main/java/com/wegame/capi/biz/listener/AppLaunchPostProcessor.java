@@ -88,7 +88,8 @@ public class AppLaunchPostProcessor {
     private void businessWarmUp() {
         try {
             gameProperty.enabledGameTypes().forEach(gameType -> {
-                rewardService.getWithCache(gameType);
+                // todo
+//                rewardService.getWithCache(gameType);
             });
             gameProperty.enabledGameTypes().forEach(gameType -> {
                 gameMaintainConfigService.selectByGameId(gameType.getId());
