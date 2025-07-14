@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        mangkukulam_mdb:
+          primary_uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@makiling-prod-pri.hgmd9m.mongodb.net/mangkukulam?maxPoolSize=100&minPoolSize=10&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&readPreference=primary
+          uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@makiling-prod-pri.hgmd9m.mongodb.net/mangkukulam?maxPoolSize=100&minPoolSize=10&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
+          db: mangkukulam
+## pulsar
+pulsar:
+  dynamic:
+    mangkukulam:
+      url: pulsar://pulsar.makillingslot.net:6650
+      tenant: ${spring.application.name}_Mangkukulam
+      namespace: ${spring.application.env}
+      bet_topic: Mangkukulam_topic
+      bet_deadLetter_topic: Mangkukulam_deadLetter_topic

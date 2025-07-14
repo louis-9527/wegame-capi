@@ -8,7 +8,9 @@ game:
   enable:
     MariaMakiling: false
     Malakas: false
-    IbongAdarna: true
-    Bakunawa: true
-    Lamang: true
-    Kapre: true
+    IbongAdarna: false
+    Lamang: false
+    Bakunawa: false
+    DiwataMayari: false
+    Kapre: false
+    Mangkukulam: true
