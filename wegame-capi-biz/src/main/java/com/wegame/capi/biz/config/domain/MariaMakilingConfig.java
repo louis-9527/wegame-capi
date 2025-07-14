@@ -129,9 +129,9 @@ public class MariaMakilingConfig implements Serializable {
             TreeMap<String, List<BigDecimal>> config = probabilisticConfig.wheelProbabilisticConfig.get(configName);
             Assert.notNull(config, "common wheel probabilisticConfig is not exist: " + configName);
         });
-        weightConfig.freeWheelWeightConfig.values().forEach(configName -> {
+        weightConfig.freeWheelWeightConfig.keySet().forEach(configName -> {
             TreeMap<String, List<BigDecimal>> config = probabilisticConfig.wheelProbabilisticConfig.get(configName);
-            Assert.notNull(config, ", free wheel probabilisticConfig is not exist: " + configName);
+            Assert.notNull(config, "free wheel probabilisticConfig is not exist: " + configName);
         });
     }
 
