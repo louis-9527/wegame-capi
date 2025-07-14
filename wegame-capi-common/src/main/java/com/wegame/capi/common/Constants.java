@@ -13,7 +13,7 @@ public class Constants {
 
 
     // 推送中大奖redis key
-    public static final String WEGAME_REWARD_NOTIFY_KEY_FORMAT = "wegame:reward.notify:%s";
+    public static final String WEGAME_REWARD_NOTIFY_KEY_FORMAT = "wegame:reward.notify:%s_%s_%s";
     // 推送大奖lua脚本
     public static final String WEGAME_REWARD_NOTIFY_LUA_SCRIPT = "local key = KEYS[1]\n" +
             "local value = ARGV[1]\n" +
