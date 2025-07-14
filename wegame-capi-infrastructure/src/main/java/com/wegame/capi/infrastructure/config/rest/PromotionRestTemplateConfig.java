@@ -31,11 +31,11 @@ public class PromotionRestTemplateConfig {
     int connectMaxTotal;
     @Value("${httpclient.promotion.connectDefaultMaxPerRoute:500}")
     int connectDefaultMaxPerRoute;
-    @Value("${httpclient.promotion.connectTimeout:1000}")
+    @Value("${httpclient.promotion.connectTimeout:200}")
     int connectTimeout;
     @Value("${httpclient.promotion.readTimeout:1000}")
     int readTimeout;
-    @Value("${httpclient.promotion.connectionRequestTimeout:200}")
+    @Value("${httpclient.promotion.connectionRequestTimeout:50}")
     int connectionRequestTimeout;
     @Value("${httpclient.promotion.timeToLive:3000}")
     int timeToLive;
