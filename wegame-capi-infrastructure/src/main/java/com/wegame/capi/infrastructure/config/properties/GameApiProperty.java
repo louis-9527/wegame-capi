@@ -1,9 +1,12 @@
 package com.wegame.capi.infrastructure.config.properties;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -28,12 +31,21 @@ public class GameApiProperty implements InitializingBean, Serializable {
     private List<PrivateInfo> cp;
     private List<PrivateInfo> igo;
 
+    //
     private List<PrivateInfo> privateInfoList;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         privateInfoList = new LinkedList<>();
         privateInfoList.addAll(cp);
         privateInfoList.addAll(igo);
+    }
+
+    public PrivateInfo getPrivateInfo(String platformId, String channelId) {
+        return privateInfoList.stream()
+                .filter(privateInfo -> StringUtils.equals(privateInfo.getPlatformId(), platformId) && StringUtils.equals(privateInfo.getChannelId(), channelId))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_PARAM));
     }
 
     @Data
@@ -44,37 +56,5 @@ public class GameApiProperty implements InitializingBean, Serializable {
         private String channelId;
         private String privateKey;
         private String privateIv;
-
-        //        public String getPlatformId() {
-        //            return platformId;
-        //        }
-        //
-        //        public void setPlatformId(String platformId) {
-        //            this.platformId = platformId;
-        //        }
-        //
-        //        public String getChannelId() {
-        //            return channelId;
-        //        }
-        //
-        //        public void setChannelId(String channelId) {
-        //            this.channelId = channelId;
-        //        }
-        //
-        //        public String getPrivateKey() {
-        //            return privateKey;
-        //        }
-        //
-        //        public void setPrivateKey(String privateKey) {
-        //            this.privateKey = privateKey;
-        //        }
-        //
-        //        public String getPrivateIv() {
-        //            return privateIv;
-        //        }
-        //
-        //        public void setPrivateIv(String privateIv) {
-        //            this.privateIv = privateIv;
-        //        }
     }
 }
