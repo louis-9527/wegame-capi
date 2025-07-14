@@ -41,10 +41,10 @@ public class MangkukulamNormalBetStrategy extends AbstractMangkukulamBetStrategy
         log.info("freeWheelAfterHandle start... betRecordId: {}", betRecordId);
         defaultThreadPoolExecutor.execute(() -> {
             try {
-                BetRecordDo betRecord = mangkukulamBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.LAM_ANG);
+                BetRecordDo betRecord = mangkukulamBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.MANGKUKULAM);
                 AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
                 GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
-                Long freeWheelCount = mangkukulamBetRecordManager.countGameRecord(query, GameTypeEnum.LAM_ANG);
+                Long freeWheelCount = mangkukulamBetRecordManager.countGameRecord(query, GameTypeEnum.MANGKUKULAM);
                 if (Objects.isNull(freeWheelCount)) {
                     log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
                     return;
@@ -61,13 +61,13 @@ public class MangkukulamNormalBetStrategy extends AbstractMangkukulamBetStrategy
             log.info("freeWheelAfterHandle updateRewardNotifyInfo freeWheelCount: {}, totalRewardAmount: {}, userInfo: {}", freeWheelCount, totalRewardAmount, userInfo);
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
-                    .gameId(GameTypeEnum.LAM_ANG.getId())
-                    .gameName(GameTypeEnum.LAM_ANG.getName())
+                    .gameId(GameTypeEnum.MANGKUKULAM.getId())
+                    .gameName(GameTypeEnum.MANGKUKULAM.getName())
                     .userId(Long.valueOf(userInfo.getId()))
                     .userName(userInfo.getUserName())
                     .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
                     .rewardTime(DateUtil.getCurrentMilli())
-                    .rewardContent(String.format(Constants.LAMANG_REWARD_NOTIFY_CONTENT_FORMAT,
+                    .rewardContent(String.format(Constants.MANGKUKULAM_REWARD_NOTIFY_CONTENT_FORMAT,
                             DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
                             userInfo.getUserName(),
                             AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(totalRewardAmount)),
@@ -76,9 +76,9 @@ public class MangkukulamNormalBetStrategy extends AbstractMangkukulamBetStrategy
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.LAM_ANG.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
-            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.LAMANG_REWARD_NOTIFY_SIZE);
-            rewardService.evict(GameTypeEnum.LAM_ANG);
-            rewardService.getWithCache(GameTypeEnum.LAM_ANG);
+            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.MANGKUKULAM_REWARD_NOTIFY_SIZE);
+            rewardService.evict(GameTypeEnum.MANGKUKULAM);
+            rewardService.getWithCache(GameTypeEnum.MANGKUKULAM);
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }

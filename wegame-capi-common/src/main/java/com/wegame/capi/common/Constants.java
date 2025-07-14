@@ -31,6 +31,7 @@ public class Constants {
 
 
     public static final Integer LAMANG_REWARD_NOTIFY_SIZE = 20;
+    public static final Integer MANGKUKULAM_REWARD_NOTIFY_SIZE = 20;
     public static final Integer DIWATA_MAYARI_REWARD_NOTIFY_SIZE = 10;
 
     // maria推送大奖tips内容
@@ -47,6 +48,10 @@ public class Constants {
     public static final String DIWATA_MAYARI_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
     // kapre推送大奖tips内容
     public static final String KAPRE_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+
+
+    // mangkukulam推送大奖tips内容
+    public static final String MANGKUKULAM_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
 
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
