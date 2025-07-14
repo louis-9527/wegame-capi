@@ -2,8 +2,11 @@ package com.wegame.capi.biz.config.domain;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -66,6 +69,26 @@ public class MangkukulamConfig {
      * 购买投注
      */
     private Bet buyBet;
+
+    public MangkukulamConfig.MainGame getSupportMainGame(GamePlayDo gamePlay, boolean freeWheelFlag) {
+        MangkukulamConfig.Bet bet = null;
+        if (Objects.equals(BetTypeEnum.NORMAL_BET.getCode(), gamePlay.getBetType().getCode())) {
+            bet = getNormalBet();
+        } else {
+            bet = getBuyBet();
+        }
+        MangkukulamConfig.MainGame mainGame = null;
+        if (freeWheelFlag) {
+            if (Objects.equals(VolatilityTypeEnum.LOW.getCode(), gamePlay.getVolatility().getCode())) {
+                mainGame = bet.getLow();
+            } else {
+                mainGame = bet.getHigh();
+            }
+        } else {
+            mainGame = bet.getMainGame();
+        }
+        return mainGame;
+    }
 
     public void validate() {
         rewardMaxMultipleValidate();

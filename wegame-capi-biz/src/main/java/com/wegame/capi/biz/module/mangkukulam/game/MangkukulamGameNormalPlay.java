@@ -21,8 +21,6 @@ import com.wegame.capi.biz.module.mangkukulam.reward.MangkukulamRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.Data;
@@ -361,7 +359,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     }
 
     private MangkukulamConfig.Stage randomStage(GamePlayDo gamePlay, boolean freeWheelFlag) {
-        MangkukulamConfig.MainGame mainGame = getMainGame(gamePlay, freeWheelFlag);
+        MangkukulamConfig.MainGame mainGame = mangkukulamConfig.getSupportMainGame(gamePlay, freeWheelFlag);
 
         List<MangkukulamConfig.Stage> stages = mainGame.getStages();
 
@@ -374,26 +372,6 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
                 ));
         String key = randomKeyByWeight(stageWeight);
         return stages.get(Integer.parseInt(key));
-    }
-
-    private MangkukulamConfig.MainGame getMainGame(GamePlayDo gamePlay, boolean freeWheelFlag) {
-        MangkukulamConfig.Bet bet = null;
-        if (Objects.equals(BetTypeEnum.NORMAL_BET.getCode(), gamePlay.getBetType().getCode())) {
-            bet = mangkukulamConfig.getNormalBet();
-        } else {
-            bet = mangkukulamConfig.getBuyBet();
-        }
-        MangkukulamConfig.MainGame mainGame = null;
-        if (freeWheelFlag) {
-            if (Objects.equals(VolatilityTypeEnum.LOW.getCode(), gamePlay.getVolatility().getCode())) {
-                mainGame = bet.getLow();
-            } else {
-                mainGame = bet.getHigh();
-            }
-        } else {
-            mainGame = bet.getMainGame();
-        }
-        return mainGame;
     }
 
     /**
