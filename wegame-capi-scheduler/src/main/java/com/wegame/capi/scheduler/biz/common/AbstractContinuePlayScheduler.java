@@ -51,14 +51,14 @@ public abstract class AbstractContinuePlayScheduler
         try {
             log.info("AbstractContinuePlayScheduler run start. gameId: {}", gameType().getId());
             long startTime = DateUtil.getCurrentMilli();
-            long THREE_MINUTES_AGO = System.currentTimeMillis() - (3 * 60 * 1000);
-            long THIRTY_MINUTES_AGO = System.currentTimeMillis() - (60 * 60 * 1000);
+            long endCreateTime = System.currentTimeMillis() - (6 * 60 * 1000);
+            long startCreateTime = System.currentTimeMillis() - (60 * 60 * 1000);
             Long lastId = null;
             List<BetRecordDo> detailList;
 
             BetRecordQuery query = BetRecordQuery.builder()
-                    .endCreateTime(THREE_MINUTES_AGO)
-                    .startCreateTime(THIRTY_MINUTES_AGO)
+                    .endCreateTime(endCreateTime)
+                    .startCreateTime(startCreateTime)
                     .continueStatus(true)
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
