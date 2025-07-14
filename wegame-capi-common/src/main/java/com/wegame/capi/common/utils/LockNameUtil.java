@@ -16,6 +16,9 @@ public class LockNameUtil {
     private static final String STAR_CARD_REPORT_SCHEDULER_LOCK = "lock:star_card_report_scheduler_lock:%s";
 
     private static final String MAINTAIN_CONFIG_UPDATE_LOCK = "lock:maintain_config_update_scheduler_lock:%s";
+
+
+    private static final String CONTINUE_PLAY_LOCK = "lock:continue_play_scheduler_lock:%s";
     /**
      * 奖池派奖定时任务锁
      */
@@ -26,7 +29,7 @@ public class LockNameUtil {
     private static final String BUILD_USER_ID_CACHE_LOCK = "lock:build_user_id_cache_lock";
 
 
-    private static final String JACKPOT_REWARD_LOCK  = "lock:jackpot_reward_lock:%s";
+    private static final String JACKPOT_REWARD_LOCK = "lock:jackpot_reward_lock:%s";
 
 
     private LockNameUtil() {
@@ -66,6 +69,11 @@ public class LockNameUtil {
     public static String getMaintainConfigUpdateLock(GameTypeEnum gameType) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         return String.format(MAINTAIN_CONFIG_UPDATE_LOCK, gameType.getName());
+    }
+
+    public static String getContinuePlayLock(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(CONTINUE_PLAY_LOCK, gameType.getName());
     }
 
     public static String getBuildUserIdCacheLockName() {

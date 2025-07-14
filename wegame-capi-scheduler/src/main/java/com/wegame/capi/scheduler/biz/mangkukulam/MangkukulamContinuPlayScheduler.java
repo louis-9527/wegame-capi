@@ -35,7 +35,7 @@ public class MangkukulamContinuPlayScheduler extends AbstractContinuePlaySchedul
         try {
             log.info("schedule start");
             long startTime = DateUtil.getCurrentMilli();
-            scheduleWithLock(LockNameUtil.getMaintainConfigUpdateLock(gameType()), this);
+            scheduleWithLock(LockNameUtil.getContinuePlayLock(gameType()), this);
             log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
         } catch (LockException e) {
             log.info("get lock fail");
