@@ -45,14 +45,17 @@ public abstract class AbstractContinuePlayScheduler
 
     public abstract BetStrategy betStrategy();
 
+    private static final long START_TIME_DURATION_IN_MS = 60 * 60 * 1000;
+    private static final long END_TIME_DURATION_IN_MS = 6 * 60 * 1000;
+
     @Override
     public void run() {
         // 查询30-3分钟前的 可以继续玩的数据
         try {
             log.info("AbstractContinuePlayScheduler run start. gameId: {}", gameType().getId());
             long startTime = DateUtil.getCurrentMilli();
-            long endCreateTime = System.currentTimeMillis() - (6 * 60 * 1000);
-            long startCreateTime = System.currentTimeMillis() - (60 * 60 * 1000);
+            long endCreateTime = System.currentTimeMillis() - START_TIME_DURATION_IN_MS;
+            long startCreateTime = System.currentTimeMillis() - END_TIME_DURATION_IN_MS;
             Long lastId = null;
             List<BetRecordDo> detailList;
 
