@@ -56,12 +56,20 @@ public class FailedBetPostProcessService {
     public void processFailedBetAfterLogin(GameTypeEnum gameType) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        processFailedBet(gameType, Long.valueOf(userInfo.getId()));
+        process(gameType, Long.valueOf(userInfo.getId()));
     }
 
     @Async(betRecordStatusThreadPoolExecutor)
     public void processFailedBet(GameTypeEnum gameType) {
-        processFailedBet(gameType, null);
+        process(gameType, null);
+    }
+
+    private void process(GameTypeEnum gameType, Long userId) {
+        if (!isSupportedType(gameType)) {
+            return;
+        }
+        processFailedBet(gameType, userId);
+        //todo 处理投注中
     }
 
 
@@ -72,9 +80,6 @@ public class FailedBetPostProcessService {
      * @param userId
      */
     private void processFailedBet(GameTypeEnum gameType, Long userId) {
-        if (!isSupportedType(gameType)) {
-            return;
-        }
         Long gtLastId = null;
         List<Long> recordIdList;
         do {
