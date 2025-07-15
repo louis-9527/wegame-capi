@@ -177,7 +177,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
                 }
                 MangkukulamSymbolDo symbol = buildSymbolFromSymbolId(currentColumSymbolIdList.get(rowNum));
                 boolean validateSymbolInColumn = validateSymbolInColumn(symbol, columNum, hasScatterInColum, hasSpecialWildInColum);
-                AssertUtil.assertTrue(validateSymbolInColumn, ErrorCode.ERR_PARAM, "invalid symbol in column : " + columNum);
+                AssertUtil.assertTrue(validateSymbolInColumn, ErrorCode.ERR_PARAM, "invalid reel symbol in column : " + columNum);
                 if (symbol.isScatterSymbol()) {
                     hasScatterInColum = true;
                 } else if (symbol.isSpecialWild()) {
