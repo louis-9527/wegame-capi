@@ -3,6 +3,7 @@ package com.wegame.capi.biz.service;
 import cn.hutool.crypto.SecureUtil;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
@@ -78,11 +79,10 @@ public class LoginService {
     }
 
     private void validPidAndChannelId(UserLoginDo userLoginDo) {
-        GameApiProperty.PrivateInfo info = gameApiProperty.getCp().stream()
+        gameApiProperty.getCp().stream()
                 .filter(privateInfo ->
                         StringUtils.equals(privateInfo.getPlatformId(), userLoginDo.getPId()) && StringUtils.equals(privateInfo.getChannelId(), userLoginDo.getChannelId()))
                 .findFirst()
-                .orElse(null);
-        AssertUtil.assertNotNull(info, ErrorCode.ERR_PARAM);
+                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_PARAM));
     }
 }
