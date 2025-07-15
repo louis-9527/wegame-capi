@@ -1,5 +1,6 @@
 package com.wegame.capi.api.domain.res.promotion;
 
+import io.swagger.annotations.ApiModel;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class GetHistoryMessageRes implements Serializable {
-
+    private static final long serialVersionUID = -125659990255750255L;
     /**
      * refId
      */
@@ -93,5 +94,28 @@ public class GetHistoryMessageRes implements Serializable {
          * 创建时间
          */
         private Date createTime;
+        /**
+         * 领取详情
+         */
+        private RewardDetailsRes rewardDetails;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    @ApiModel(description = "领取详情")
+    public static class RewardDetailsRes implements Serializable {
+        private static final long serialVersionUID = -2515942190714418574L;
+        /**
+         * 领取数量
+         */
+        private Integer count;
+        /**
+         * 星级
+         */
+        private Integer startLevel;
     }
 }

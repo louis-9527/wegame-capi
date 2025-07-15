@@ -32,9 +32,25 @@ public class HistoryMessageVo implements Serializable {
     private String rewardName;
     @ApiModelProperty(value = "奖励描述", required = true)
     private String rewardDescription;
-    @ApiModelProperty(value = "类型:1: COMPLETE_ACHIEVEMENT 2: COMPLETE_TREASURE 3: COMPLETE_DAILY_MISSION " +
-            "4: REDEEM_ACHIEVEMENT 5: REDEEM_TREASURE 6: REDEEM_REWARD: ", required = true)
+    @ApiModelProperty(value = "类型:1: COMPLETE_ACHIEVEMENT 2: COMPLETE_TREASURE 3: COMPLETE_DAILY_MISSION 4: REDEEM_ACHIEVEMENT 5: REDEEM_TREASURE 6: REDEEM_REWARD: ", required = true)
     private Integer type;
     @ApiModelProperty(value = "创建时间", required = true)
     private Long createTime;
+    @ApiModelProperty(value = "奖励领取详情", required = true)
+    private RewardDetailsVo rewardDetails;
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    @ApiModel(description = "领取详情")
+    public static class RewardDetailsVo implements Serializable {
+        private static final long serialVersionUID = 592517854600589981L;
+        @ApiModelProperty(value = "领取数量", required = true)
+        private Integer count;
+        @ApiModelProperty(value = "星级", required = true)
+        private Integer startLevel;
+    }
 }
