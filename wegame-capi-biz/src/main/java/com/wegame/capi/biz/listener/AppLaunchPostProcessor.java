@@ -79,9 +79,9 @@ public class AppLaunchPostProcessor {
     @Async(defaultThreadPoolExecutor)
     public void postProcess() {
         businessWarmUp();
-        // todo 第一次上线后， 后续屏蔽该动作
-        buildUserIdCache();
-        initDomainConnections();
+        //        // todo 第一次上线后， 后续屏蔽该动作
+        //        buildUserIdCache();
+        //        initDomainConnections();
         healthCheck();
     }
 
