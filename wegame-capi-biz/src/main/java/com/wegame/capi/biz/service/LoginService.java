@@ -3,7 +3,6 @@ package com.wegame.capi.biz.service;
 import cn.hutool.crypto.SecureUtil;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
@@ -38,7 +37,8 @@ public class LoginService {
     GameApiProperty gameApiProperty;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
-        validPidAndChannelId(userLoginDo);
+        GameApiProperty.PrivateInfo info = gameApiProperty.getPrivateInfo(userLoginDo.getPId(), userLoginDo.getChannelId());
+        AssertUtil.assertNotNull(info, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(singleWalletService.authLoginToken(userLoginDo), ErrorCode.ERR_MIDDLE_PLATFORM);
         String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);
@@ -76,13 +76,5 @@ public class LoginService {
 
     @CacheEvict(value = CacheConstants.USER_INFO, key = "#token")
     public void removeUserInfo(String token) {
-    }
-
-    private void validPidAndChannelId(UserLoginDo userLoginDo) {
-        gameApiProperty.getCp().stream()
-                .filter(privateInfo ->
-                        StringUtils.equals(privateInfo.getPlatformId(), userLoginDo.getPId()) && StringUtils.equals(privateInfo.getChannelId(), userLoginDo.getChannelId()))
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_PARAM));
     }
 }
