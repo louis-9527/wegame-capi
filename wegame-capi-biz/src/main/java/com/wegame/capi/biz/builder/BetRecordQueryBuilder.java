@@ -43,6 +43,9 @@ public class BetRecordQueryBuilder {
         if (Objects.nonNull(recordQuery.getPlayerId())) {
             criteria.and("playerId").is(recordQuery.getPlayerId());
         }
+        if (Objects.nonNull(recordQuery.getUserId())) {
+            criteria.and("userId").is(recordQuery.getUserId());
+        }
         if (Objects.nonNull(recordQuery.getPId())) {
             criteria.and("pId").is(recordQuery.getPId());
         }

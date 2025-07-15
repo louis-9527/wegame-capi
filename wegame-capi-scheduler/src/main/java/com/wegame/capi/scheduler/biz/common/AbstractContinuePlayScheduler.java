@@ -45,8 +45,8 @@ public abstract class AbstractContinuePlayScheduler
 
     public abstract BetStrategy betStrategy();
 
-    private static final long START_TIME_DURATION_IN_MS = 60 * 60 * 1000;
-    private static final long END_TIME_DURATION_IN_MS = 6 * 60 * 1000;
+    private static final long START_TIME_DURATION_IN_MS = 30 * 60 * 1000;
+    private static final long END_TIME_DURATION_IN_MS = 10 * 60 * 1000;
 
     @Override
     public void run() {
@@ -54,8 +54,8 @@ public abstract class AbstractContinuePlayScheduler
         try {
             log.info("AbstractContinuePlayScheduler run start. gameId: {}", gameType().getId());
             long startTime = DateUtil.getCurrentMilli();
-            long endCreateTime = System.currentTimeMillis() - START_TIME_DURATION_IN_MS;
-            long startCreateTime = System.currentTimeMillis() - END_TIME_DURATION_IN_MS;
+            long endCreateTime = System.currentTimeMillis() - END_TIME_DURATION_IN_MS;
+            long startCreateTime = System.currentTimeMillis() - START_TIME_DURATION_IN_MS;
             Long lastId = null;
             List<BetRecordDo> detailList;
 

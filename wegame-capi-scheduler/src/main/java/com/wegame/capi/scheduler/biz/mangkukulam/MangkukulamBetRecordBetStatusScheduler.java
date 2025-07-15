@@ -20,7 +20,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Service
 @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
-public class MangkukulamBakunawaBetRecordBetStatusScheduler extends AbstractBetRecordBetStatusScheduler {
+public class MangkukulamBetRecordBetStatusScheduler extends AbstractBetRecordBetStatusScheduler {
 
     @Override
     public GameTypeEnum getGameType() {
@@ -28,19 +28,19 @@ public class MangkukulamBakunawaBetRecordBetStatusScheduler extends AbstractBetR
     }
 
     /**
-     * 每分钟0秒执行
+     * 每分钟15秒执行
      */
-//    @Scheduled(cron = "0 * * * * ?")
-//    public void schedule() {
-//        try {
-//            log.info("schedule start");
-//            long startTime = DateUtil.getCurrentMilli();
-//            scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(getGameType()), this);
-//            log.info("schedule end, cost time: {}", DateUtil.getCurrentMilli() - startTime);
-//        } catch (LockException e) {
-//            log.info("schedule get lock fail");
-//        } catch (Exception e) {
-//            log.error("schedule failed", e);
-//        }
-//    }
+    @Scheduled(cron = "15 * * * * ?")
+    public void schedule() {
+        try {
+            log.info("schedule start");
+            long startTime = DateUtil.getCurrentMilli();
+            scheduleWithLock(LockNameUtil.getBetRecordStatusSchedulerLockName(getGameType()), this);
+            log.info("schedule end, cost time:{}", DateUtil.getCurrentMilli() - startTime);
+        } catch (LockException e) {
+            log.info("schedule get lock fail");
+        } catch (Exception e) {
+            log.error("schedule failed", e);
+        }
+    }
 }

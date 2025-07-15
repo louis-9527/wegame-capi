@@ -8,6 +8,7 @@ import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
 import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,8 @@ public class LoginService {
     RedisTemplate redisTemplate;
     @Autowired
     SingleWalletService singleWalletService;
+    @Autowired
+    UnsuccessfulBetPostProcessService unsuccessfulBetPostProcessService;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
         AssertUtil.assertTrue(singleWalletService.authLoginToken(userLoginDo), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -49,6 +52,7 @@ public class LoginService {
                 .playerId(userLoginDo.getPlayerId())
                 .loginTime(new Date())
                 .build());
+        unsuccessfulBetPostProcessService.processUnsuccessfulBetAfterLogin(GameTypeEnum.valueOfId(userInfo.getGameId()));
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
         return userInfo;
