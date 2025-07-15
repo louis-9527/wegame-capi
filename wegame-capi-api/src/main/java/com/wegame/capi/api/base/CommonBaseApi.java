@@ -44,21 +44,9 @@ public class CommonBaseApi extends BaseApi {
     @Autowired
     GameApiProperty gameApiProperty;
 
-    public Pair<String, String> getPrivateKeyAndIvByChannelId(String channelId) {
-        if (StringUtils.equals(channelId, cpChannelId)) {
-            return Pair.of(cpPrivateKey, cpPrivateIv);
-        }
-        if (StringUtils.equals(channelId, igoChannelId)) {
-            return Pair.of(igoPrivateKey, igoPrivateIv);
-        }
-        throw new BusinessException(ErrorCode.ERR_PARAM);
-    }
-
     public void assembleSingleSignature(BaseReq req) {
-        String channelId = getChannelId(req.getPId());
-        Pair<String, String> privateKeyAndIv = getPrivateKeyAndIv(req.getPId());
-        String hash = hash(channelId, req.getPlayerName(), req.getCreateTime(), req.getRefId(), privateKeyAndIv.getLeft(), privateKeyAndIv.getRight());
-        req.setChannelId(channelId);
+        GameApiProperty.PrivateInfo privateInfo = gameApiProperty.getPrivateInfo(req.getPId(), req.getChannelId());
+        String hash = hash(req.getChannelId(), req.getPlayerName(), req.getCreateTime(), req.getRefId(), privateInfo.getPrivateKey(), privateInfo.getPrivateIv());
         req.setHash(hash);
     }
 
@@ -67,25 +55,5 @@ public class CommonBaseApi extends BaseApi {
         String hash = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
         AssertUtil.assertNotNull(hash, ErrorCode.ERR_PARAM);
         return hash;
-    }
-
-    private String getChannelId(String platformId) {
-        if (StringUtils.equals(platformId, cpPlatformId)) {
-            return cpChannelId;
-        }
-        if (StringUtils.equals(platformId, igoPlatformId)) {
-            return igoChannelId;
-        }
-        throw new BusinessException(ErrorCode.ERR_PARAM);
-    }
-
-    private Pair<String, String> getPrivateKeyAndIv(String platformId) {
-        if (StringUtils.equals(platformId, cpPlatformId)) {
-            return Pair.of(cpPrivateKey, cpPrivateIv);
-        }
-        if (StringUtils.equals(platformId, igoPlatformId)) {
-            return Pair.of(igoPrivateKey, igoPrivateIv);
-        }
-        throw new BusinessException(ErrorCode.ERR_PARAM);
     }
 }
