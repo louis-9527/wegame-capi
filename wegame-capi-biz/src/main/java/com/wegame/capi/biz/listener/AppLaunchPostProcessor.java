@@ -11,6 +11,7 @@ import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.biz.service.backend.GameMaintainConfigService;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.user.UserQuery;
+import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -56,17 +57,13 @@ public class AppLaunchPostProcessor {
     SingleWalletFreeSpinApi singleWalletFreeSpinApi;
     @Autowired
     BagApi bagApi;
+    @Autowired
+    GameApiProperty gameApiProperty;
     // init Connections
-    @Value("${api.game.singleDomain}")
-    String singleDomain;
     @Value("${api.game.singleDomainIntConnections:100}")
     int singleDomainIntConnections;
-    @Value("${api.game.freeSpinDomain}")
-    String freeSpinDomain;
     @Value("${api.game.freeSpinDomainIntConnections:100}")
     int freeSpinDomainIntConnections;
-    @Value("${api.game.promotionDomain}")
-    String promotionDomain;
     @Value("${api.game.promotionDomainIntConnections:100}")
     int promotionDomainIntConnections;
     @Autowired
@@ -139,9 +136,9 @@ public class AppLaunchPostProcessor {
 
     private void initDomainConnections() {
         try {
-            initConnections(walletConnectionManager, singleDomainIntConnections, HttpHost.create(singleDomain));
-            initConnections(freeSpinConnectionManager, freeSpinDomainIntConnections, HttpHost.create(freeSpinDomain));
-            initConnections(promotionConnectionManager, promotionDomainIntConnections, HttpHost.create(promotionDomain));
+            initConnections(walletConnectionManager, singleDomainIntConnections, HttpHost.create(gameApiProperty.getSingleDomain()));
+            initConnections(freeSpinConnectionManager, freeSpinDomainIntConnections, HttpHost.create(gameApiProperty.getFreeSpinDomain()));
+            initConnections(promotionConnectionManager, promotionDomainIntConnections, HttpHost.create(gameApiProperty.getPromotionDomain()));
             //        String domain = "http://server1.makillingslot.net";
             //        HttpHost httpHost = HttpHost.create(domain);
             //        initConnections(walletConnectionManager, 10, httpHost);
