@@ -35,7 +35,7 @@ public class RestTemplateWarmUpHelper {
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:20}")
+    @Value("${api.game.singleDomainIntConnections:50}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
@@ -43,7 +43,7 @@ public class RestTemplateWarmUpHelper {
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:30}")
+    @Value("${api.game.promotionDomainIntConnections:150}")
     int promotionDomainIntConnections;
     @Autowired
     @Qualifier(WALLET_CONNECTION_MANAGER_BEAN)
