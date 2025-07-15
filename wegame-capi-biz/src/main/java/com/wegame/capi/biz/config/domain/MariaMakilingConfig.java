@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import static com.wegame.capi.common.Constants.CONST_10000;
-import static com.wegame.capi.common.Constants.CONST_1000000;
+import static com.wegame.capi.common.Constants.*;
 
 @Data
 @ToString
@@ -21,7 +20,6 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @EqualsAndHashCode(callSuper = false)
 public class MariaMakilingConfig implements Serializable {
 
-    private static final int INT_100 = 100;
     /**
      * 中奖最大倍数
      */
@@ -119,11 +117,11 @@ public class MariaMakilingConfig implements Serializable {
         int commonWheelWeightSum = weightConfig.commonWheelWeightConfig.values()
                 .stream()
                 .reduce(0, Integer::sum);
-        Assert.isTrue(commonWheelWeightSum == INT_100, "weightConfig.commonWheelWeightConfig Err");
+        Assert.isTrue(commonWheelWeightSum == CONST_100000, "weightConfig.commonWheelWeightConfig Err");
         int freeWheelWeightSum = weightConfig.freeWheelWeightConfig.values()
                 .stream()
                 .reduce(0, Integer::sum);
-        Assert.isTrue(freeWheelWeightSum == INT_100, "weightConfig.freeWheelWeightConfig Err");
+        Assert.isTrue(freeWheelWeightSum == CONST_100000, "weightConfig.freeWheelWeightConfig Err");
         // 校验对应配置存在
         weightConfig.commonWheelWeightConfig.keySet().forEach(configName -> {
             TreeMap<String, List<BigDecimal>> config = probabilisticConfig.wheelProbabilisticConfig.get(configName);
@@ -144,7 +142,7 @@ public class MariaMakilingConfig implements Serializable {
         int sum = probabilisticConfig.freeWheelTimesProbabilisticConfig.values()
                 .stream()
                 .reduce(0, Integer::sum);
-        Assert.isTrue(Objects.equals(sum, INT_100), "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
+        Assert.isTrue(Objects.equals(sum, 100), "probabilisticConfig.freeWheelTimesProbabilisticConfig ERR");
         probabilisticConfig.wheelProbabilisticConfig.forEach((configName, config) -> {
             validSingleConfig(configName, config);
         });

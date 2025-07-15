@@ -86,12 +86,12 @@
     },
     "weightConfig": {
         "commonWheelWeightConfig": {
-            "config1": 51,
-            "config2": 49
+            "config1": 100000,
+            "config2": 0
         },
         "freeWheelWeightConfig": {
-            "config1": 51,
-            "config2": 49
+            "config1": 100000,
+            "config2": 0
         }
     },
     "probabilisticConfig": {
