@@ -1,15 +1,11 @@
 package com.wegame.capi.api.base;
 
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.SingleWalletSignatureUtil;
 import com.wegame.capi.api.domain.req.BaseReq;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -23,23 +19,12 @@ import org.springframework.beans.factory.annotation.Value;
 public class CommonBaseApi extends BaseApi {
     public static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check";
     // cp todo delete @maidong
-    @Value("${api.game.cp.platformId:}")
-    public String cpPlatformId;
     @Value("${api.game.cp.channelId:}")
     public String cpChannelId;
     @Value("${api.game.cp.privateKey:}")
     public String cpPrivateKey;
     @Value("${api.game.cp.privateIv:}")
     public String cpPrivateIv;
-    // igo todo delete @maidong
-    @Value("${api.game.igo.platformId:}")
-    public String igoPlatformId;
-    @Value("${api.game.igo.channelId:}")
-    public String igoChannelId;
-    @Value("${api.game.igo.privateKey:}")
-    public String igoPrivateKey;
-    @Value("${api.game.igo.privateIv:}")
-    public String igoPrivateIv;
 
     @Autowired
     GameApiProperty gameApiProperty;
