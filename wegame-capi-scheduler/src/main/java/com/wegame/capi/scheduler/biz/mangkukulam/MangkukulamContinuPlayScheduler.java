@@ -30,7 +30,7 @@ public class MangkukulamContinuPlayScheduler extends AbstractContinuePlaySchedul
     @Autowired
     MangkukulamNormalBetStrategy mangkukulamNormalBetStrategy;
 
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");
