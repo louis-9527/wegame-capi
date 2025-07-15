@@ -1,6 +1,6 @@
 package com.wegame.capi.scheduler.biz.common;
 
-import com.wegame.capi.biz.service.UnsuccessfulBetPostProcessService;
+import com.wegame.capi.biz.service.FailedBetPostProcessService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 失败 -> 投注成功/投注中/失败
  */
 @Slf4j
-public abstract class AbstractBetRecordUnsuccessfulBetScheduler
+public abstract class AbstractBetRecordFailedBetScheduler
         extends AbstractScheduler
         implements Runnable {
 
     @Autowired
-    UnsuccessfulBetPostProcessService unsuccessfulBetPostProcessService;
+    FailedBetPostProcessService failedBetPostProcessService;
 
     public abstract GameTypeEnum getGameType();
 
@@ -26,7 +26,7 @@ public abstract class AbstractBetRecordUnsuccessfulBetScheduler
     @Override
     public void run() {
         log.info("{} schedule run start...", taskName());
-        unsuccessfulBetPostProcessService.processUnsuccessfulBet(getGameType());
+        failedBetPostProcessService.processFailedBet(getGameType());
         log.info("{} schedule run end...", taskName());
     }
 }

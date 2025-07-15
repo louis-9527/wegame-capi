@@ -4,7 +4,7 @@ import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
-import com.wegame.capi.scheduler.biz.common.AbstractBetRecordUnsuccessfulBetScheduler;
+import com.wegame.capi.scheduler.biz.common.AbstractBetRecordFailedBetScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,7 +20,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Service
 @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
-public class MangkukulamBetRecordUnsuccessfulScheduler extends AbstractBetRecordUnsuccessfulBetScheduler {
+public class MangkukulamBetRecordFailedBetScheduler extends AbstractBetRecordFailedBetScheduler {
 
     @Override
     public GameTypeEnum getGameType() {

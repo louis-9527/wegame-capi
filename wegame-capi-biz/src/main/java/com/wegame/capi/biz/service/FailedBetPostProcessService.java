@@ -35,16 +35,10 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.betRecordSt
  */
 @Slf4j
 @Service
-public class UnsuccessfulBetPostProcessService {
+public class FailedBetPostProcessService {
 
-
-    //投注中 5 - 20分钟内
-    private static final long BETTING_START_TIME_DURATION_IN_MS = 20 * 60 * 1000;
-    private static final long BETTING_END_TIME_DURATION_IN_MS = 5 * 60 * 1000;
-
-    // 失败  1 - 15分钟内
+    // 失败  - 15分钟内
     private static final long FAILED_START_TIME_DURATION_IN_MS = 15 * 60 * 1000;
-    private static final long FAILED_END_TIME_DURATION_IN_MS = 60 * 1000;
     private static final int DEFAULT_PAGE_SIZE = 100;
 
     @Autowired
@@ -59,15 +53,15 @@ public class UnsuccessfulBetPostProcessService {
     private ThreadPoolExecutor betRecordStatusExecutor;
 
     @Async(betRecordStatusThreadPoolExecutor)
-    public void processUnsuccessfulBetAfterLogin(GameTypeEnum gameType) {
+    public void processFailedBetAfterLogin(GameTypeEnum gameType) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        processUnsuccessfulBet(gameType, Long.valueOf(userInfo.getId()));
+        processFailedBet(gameType, Long.valueOf(userInfo.getId()));
     }
 
     @Async(betRecordStatusThreadPoolExecutor)
-    public void processUnsuccessfulBet(GameTypeEnum gameType) {
-        processUnsuccessfulBet(gameType, null);
+    public void processFailedBet(GameTypeEnum gameType) {
+        processFailedBet(gameType, null);
     }
 
 
@@ -78,51 +72,23 @@ public class UnsuccessfulBetPostProcessService {
      * @param userId
      */
     private void processFailedBet(GameTypeEnum gameType, Long userId) {
-        Long gtLastId = null;
-        List<Long> recordIdList;
-        do {
-            recordIdList = betRecordService.listId(buildQuery(gtLastId, userId, BetStatusEnum.FAIL), gameType);
-            if (CollectionUtil.isNotEmpty(recordIdList)) {
-                gtLastId = recordIdList.get(recordIdList.size() - 1);
-            }
-            for (Long betRecordId : CollectionUtils.emptyIfNull(recordIdList)) {
-                BetRecordDo betRecordDo = betRecordService.get(betRecordId, gameType);
-                if (Objects.nonNull(betRecordDo) && Objects.nonNull(betRecordDo.getParentId())) {
-                    betRecordStatusExecutor.submit(() -> retryBet(betRecordDo, gameType));
-                }
-            }
-        } while (CollectionUtils.isNotEmpty(recordIdList));
-    }
-
-    /**
-     * 处理投注中的
-     *
-     * @param gameType
-     * @param userId
-     */
-    private void processInBettingBet(GameTypeEnum gameType, Long userId) {
-        Long gtLastId = null;
-        List<Long> recordIdList;
-        do {
-            recordIdList = betRecordService.listId(buildQuery(gtLastId, userId, BetStatusEnum.ING), gameType);
-            if (CollectionUtil.isNotEmpty(recordIdList)) {
-                gtLastId = recordIdList.get(recordIdList.size() - 1);
-            }
-            for (Long betRecordId : CollectionUtils.emptyIfNull(recordIdList)) {
-                BetRecordDo betRecordDo = betRecordService.get(betRecordId, gameType);
-                if (Objects.nonNull(betRecordDo) && Objects.nonNull(betRecordDo.getParentId())) {
-                    betRecordStatusExecutor.submit(() -> retryBet(betRecordDo, gameType));
-                }
-            }
-        } while (CollectionUtils.isNotEmpty(recordIdList));
-    }
-
-    private void processUnsuccessfulBet(GameTypeEnum gameType, Long userId) {
         if (!isSupportedType(gameType)) {
             return;
         }
-        processInBettingBet(gameType, userId);
-        processFailedBet(gameType, userId);
+        Long gtLastId = null;
+        List<Long> recordIdList;
+        do {
+            recordIdList = betRecordService.listId(buildQuery(gtLastId, userId), gameType);
+            if (CollectionUtil.isNotEmpty(recordIdList)) {
+                gtLastId = recordIdList.get(recordIdList.size() - 1);
+            }
+            for (Long betRecordId : CollectionUtils.emptyIfNull(recordIdList)) {
+                BetRecordDo betRecordDo = betRecordService.get(betRecordId, gameType);
+                if (Objects.nonNull(betRecordDo) && Objects.nonNull(betRecordDo.getParentId())) {
+                    betRecordStatusExecutor.submit(() -> retryBet(betRecordDo, gameType));
+                }
+            }
+        } while (CollectionUtils.isNotEmpty(recordIdList));
     }
 
     /**
@@ -131,14 +97,10 @@ public class UnsuccessfulBetPostProcessService {
     private void retryBet(BetRecordDo betRecordDo, GameTypeEnum gameType) {
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
-        log.info("convertBetStatus betRecordDo: {}", betRecordDo);
-        if (!Objects.equals(BetStatusEnum.FAIL.getCode(), betRecordDo.getStatus())) {
-            // 只处理投注失败的记录
-            log.error("betRecordDo status is not failed, betRecordId: {}", betRecordDo.getId());
-            return;
-        }
-        if (System.currentTimeMillis() - betRecordDo.getCreateTime() >= FAILED_END_TIME_DURATION_IN_MS) {
-            log.error("betRecordDo createTime is expired, betRecordId: {}", betRecordDo.getId());
+        log.info("retryBet betRecordDo: {}", betRecordDo);
+        if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), betRecordDo.getStatus())) {
+            // 不处理成功的记录
+            log.error("betRecordDo status is success, betRecordId: {}", betRecordDo.getId());
             return;
         }
         SingleWalletBetResultDo resultDo = singleWalletService.betWithPayout(betRecordDo);
@@ -173,24 +135,12 @@ public class UnsuccessfulBetPostProcessService {
     /**
      * 带用户id的时候查询createTime 小于 endTime的
      */
-    private BetRecordQuery buildQuery(Long gtLastId, Long userId, BetStatusEnum betStatus) {
+    private BetRecordQuery buildQuery(Long gtLastId, Long userId) {
         long current = System.currentTimeMillis();
-        boolean failed = BetStatusEnum.FAIL.getCode().equals(betStatus.getCode());
-        long start = failed ? current - FAILED_START_TIME_DURATION_IN_MS : current - BETTING_START_TIME_DURATION_IN_MS;
-        long end = failed ? current - FAILED_END_TIME_DURATION_IN_MS : current - BETTING_END_TIME_DURATION_IN_MS;
-        if (Objects.isNull(userId)) {
+        long start = current - FAILED_START_TIME_DURATION_IN_MS;
+        if (Objects.nonNull(userId)) {
             return BetRecordQuery.builder()
-                    .status(betStatus.getCode())
-                    .startCreateTime(start)
-                    .endCreateTime(end)
-                    .gtLastId(gtLastId)
-                    .limit(DEFAULT_PAGE_SIZE)
-                    .orderByClause("_id")
-                    .direction(Sort.Direction.ASC)
-                    .build();
-        } else {
-            return BetRecordQuery.builder()
-                    .status(betStatus.getCode())
+                    .status(BetStatusEnum.FAIL.getCode())
                     .endCreateTime(start)
                     .gtLastId(gtLastId)
                     .userId(userId)
@@ -198,6 +148,17 @@ public class UnsuccessfulBetPostProcessService {
                     .orderByClause("_id")
                     .direction(Sort.Direction.ASC)
                     .build();
+        } else {
+            return BetRecordQuery.builder()
+                    .status(BetStatusEnum.FAIL.getCode())
+                    .startCreateTime(start)
+                    .endCreateTime(current)
+                    .gtLastId(gtLastId)
+                    .limit(DEFAULT_PAGE_SIZE)
+                    .orderByClause("_id")
+                    .direction(Sort.Direction.ASC)
+                    .build();
         }
     }
+
 }

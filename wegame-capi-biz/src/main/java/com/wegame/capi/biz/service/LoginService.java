@@ -34,7 +34,7 @@ public class LoginService {
     @Autowired
     SingleWalletService singleWalletService;
     @Autowired
-    UnsuccessfulBetPostProcessService unsuccessfulBetPostProcessService;
+    FailedBetPostProcessService failedBetPostProcessService;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
         AssertUtil.assertTrue(singleWalletService.authLoginToken(userLoginDo), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -52,7 +52,7 @@ public class LoginService {
                 .playerId(userLoginDo.getPlayerId())
                 .loginTime(new Date())
                 .build());
-        unsuccessfulBetPostProcessService.processUnsuccessfulBetAfterLogin(GameTypeEnum.valueOfId(userInfo.getGameId()));
+        failedBetPostProcessService.processFailedBetAfterLogin(GameTypeEnum.valueOfId(userInfo.getGameId()));
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
         return userInfo;
