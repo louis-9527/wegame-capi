@@ -66,8 +66,8 @@ public class WalletRestTemplateConfig {
                 // 连接最大存活时间
                 .setConnectionTimeToLive(timeToLive, TimeUnit.SECONDS)
                 //                // 设置空闲连接保活时间略小于下游超时时间。 下游超时时间59s
-                //                .evictIdleConnections(maxIdleTime, TimeUnit.SECONDS)
-                //                .evictExpiredConnections()
+                .evictIdleConnections(maxIdleTime, TimeUnit.SECONDS)
+                .evictExpiredConnections()
                 .setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE)
                 // 启用系统TCP Keep-Alive
                 .useSystemProperties()
