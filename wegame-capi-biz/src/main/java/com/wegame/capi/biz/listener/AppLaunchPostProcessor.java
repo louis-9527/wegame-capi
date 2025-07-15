@@ -80,8 +80,8 @@ public class AppLaunchPostProcessor {
     public void postProcess() {
         businessWarmUp();
         // todo 第一次上线后， 后续屏蔽该动作
-        buildUserIdCache();
-        initDomainConnections();
+        //        buildUserIdCache();
+        //        initDomainConnections();
         healthCheck();
     }
 
