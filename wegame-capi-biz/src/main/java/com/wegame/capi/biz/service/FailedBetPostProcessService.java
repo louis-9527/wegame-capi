@@ -103,11 +103,12 @@ public class FailedBetPostProcessService {
         AssertUtil.assertNotNull(betRecordDo, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
         log.info("retryBet betRecordDo: {}", betRecordDo);
-        if (Objects.equals(BetStatusEnum.SUCCESS.getCode(), betRecordDo.getStatus())) {
-            // 不处理成功的记录
+        if (!Objects.equals(BetStatusEnum.FAIL.getCode(), betRecordDo.getStatus())) {
+            // 只处理失败的记录
             log.error("betRecordDo status is success, betRecordId: {}", betRecordDo.getId());
             return;
         }
+        rebuildBetRecord(betRecordDo);
         SingleWalletBetResultDo resultDo = singleWalletService.betWithPayout(betRecordDo);
         handle(betRecordDo, gameType, resultDo);
     }
@@ -119,6 +120,17 @@ public class FailedBetPostProcessService {
                 100);
         if (Objects.isNull(messageId)) {
             log.error("handle betStatus betRecordId: {}, betStatus: {}, send message fail", betRecordDo.getId(), resultDo.getBetStatus());
+        }
+    }
+
+    /**
+     * 将createTime改为当前事件，防止调用convertStatus被过滤掉
+     *
+     * @param betRecordDo
+     */
+    private void rebuildBetRecord(BetRecordDo betRecordDo) {
+        if (Objects.nonNull(betRecordDo)) {
+            betRecordDo.setCreateTime(System.currentTimeMillis());
         }
     }
 
