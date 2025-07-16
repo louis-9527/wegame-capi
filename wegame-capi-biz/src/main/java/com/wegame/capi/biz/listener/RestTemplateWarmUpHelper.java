@@ -35,15 +35,15 @@ public class RestTemplateWarmUpHelper {
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:100}")
+    @Value("${api.game.singleDomainIntConnections:50}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
-    @Value("${api.game.freeSpinDomainIntConnections:10}")
+    @Value("${api.game.freeSpinDomainIntConnections:2}")
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:150}")
+    @Value("${api.game.promotionDomainIntConnections:100}")
     int promotionDomainIntConnections;
     @Autowired
     @Qualifier(WALLET_CONNECTION_MANAGER_BEAN)

@@ -32,11 +32,11 @@ public class WalletRestTemplateConfig {
     int connectDefaultMaxPerRoute;
     @Value("${httpclient.wallet.connectTimeout:200}")
     int connectTimeout;
-    @Value("${httpclient.wallet.readTimeout:1200}")
+    @Value("${httpclient.wallet.readTimeout:1000}")
     int readTimeout;
     @Value("${httpclient.wallet.connectionRequestTimeout:50}")
     int connectionRequestTimeout;
-    @Value("${httpclient.wallet.timeToLive:3000}")
+    @Value("${httpclient.wallet.timeToLive:55}")
     int timeToLive;
     @Value("${httpclient.wallet.maxIdleTime:50}")
     int maxIdleTime;
@@ -50,7 +50,7 @@ public class WalletRestTemplateConfig {
                 .build());
         manager.setMaxTotal(connectMaxTotal);
         manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(3 * 1000);
+        manager.setValidateAfterInactivity(30 * 1000);
         return manager;
     }
 

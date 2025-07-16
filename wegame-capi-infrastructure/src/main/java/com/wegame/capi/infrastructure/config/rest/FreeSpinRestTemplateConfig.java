@@ -33,11 +33,11 @@ public class FreeSpinRestTemplateConfig {
     int connectDefaultMaxPerRoute;
     @Value("${httpclient.freeSpin.connectTimeout:200}")
     int connectTimeout;
-    @Value("${httpclient.freeSpin.readTimeout:1200}")
+    @Value("${httpclient.freeSpin.readTimeout:1000}")
     int readTimeout;
     @Value("${httpclient.freeSpin.connectionRequestTimeout:50}")
     int connectionRequestTimeout;
-    @Value("${httpclient.freeSpin.timeToLive:3000}")
+    @Value("${httpclient.freeSpin.timeToLive:55}")
     int timeToLive;
     @Value("${httpclient.freeSpin.maxIdleTime:50}")
     int maxIdleTime;
@@ -51,7 +51,7 @@ public class FreeSpinRestTemplateConfig {
                 .build());
         manager.setMaxTotal(connectMaxTotal);
         manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(3000 * 1000);
+        manager.setValidateAfterInactivity(30 * 1000);
         return manager;
     }
 
