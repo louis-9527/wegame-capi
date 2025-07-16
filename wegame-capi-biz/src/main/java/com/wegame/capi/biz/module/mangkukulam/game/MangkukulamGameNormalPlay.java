@@ -34,7 +34,6 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.*;
 
@@ -362,16 +361,8 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         MangkukulamConfig.MainGame mainGame = mangkukulamConfig.getSupportMainGame(gamePlay, freeWheelFlag);
 
         List<MangkukulamConfig.Stage> stages = mainGame.getStages();
-
-        // 索引作为键，元素作为值
-        Map<String, Integer> stageWeight = IntStream.range(0, stages.size())
-                .boxed()  // 将 IntStream 转为 Stream<Integer>
-                .collect(Collectors.toMap(
-                        String::valueOf,
-                        i -> stages.get(i).getWeights()
-                ));
-        String key = randomKeyByWeight(stageWeight);
-        return stages.get(Integer.parseInt(key));
+        Integer key = randomKeyByWeight(mainGame.getWeightMap());
+        return stages.get(key);
     }
 
     /**
@@ -380,14 +371,14 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
      * @param map 索引值 权重
      * @return 索引值
      */
-    private String randomKeyByWeight(Map<String, Integer> map) {
+    private <T> T randomKeyByWeight(Map<T, Integer> map) {
         int mapSize = map.size();
         AssertUtil.assertTrue(mapSize > 0, ErrorCode.ERR_INTER, "weight map size is less than 1");
         if (mapSize > 1) {
             int totalWeights = map.values().stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum();
             int randomNumber = randomService.randomInt(Constants.CONST_1, totalWeights);
             int startVal = 0;
-            for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+            for (Map.Entry<T, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
                 if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
                     return entry.getKey();
                 } else {

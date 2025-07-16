@@ -7,10 +7,7 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -18,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 游戏配置主类
@@ -121,7 +120,7 @@ public class MangkukulamConfig {
     /**
      * 主游戏配置类
      */
-    @Data
+    @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -131,6 +130,18 @@ public class MangkukulamConfig {
          * 轮带配置
          */
         private List<Stage> stages;
+
+        private Map<Integer, Integer> weightMap;
+
+        public void setStages(List<Stage> stages) {
+            this.stages = stages;
+            weightMap = IntStream.range(0, stages.size())
+                    .boxed()  // 将 IntStream 转为 Stream<Integer>
+                    .collect(Collectors.toMap(
+                            i -> i,
+                            i -> stages.get(i).getWeights()
+                    ));
+        }
     }
 
     /**
