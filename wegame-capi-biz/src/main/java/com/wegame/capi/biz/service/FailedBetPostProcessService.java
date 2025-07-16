@@ -138,7 +138,7 @@ public class FailedBetPostProcessService {
     }
 
     /**
-     * 带用户id的时候查询createTime 小于 endTime的
+     * 构建失败投注的查询
      */
     private BetRecordQuery buildQuery(Long gtLastId, Long userId) {
         long current = System.currentTimeMillis();
@@ -146,7 +146,7 @@ public class FailedBetPostProcessService {
         if (Objects.nonNull(userId)) {
             return BetRecordQuery.builder()
                     .status(BetStatusEnum.FAIL.getCode())
-                    .endCreateTime(start)
+                    .endCreateTime(current)
                     .gtLastId(gtLastId)
                     .userId(userId)
                     .limit(DEFAULT_PAGE_SIZE)
