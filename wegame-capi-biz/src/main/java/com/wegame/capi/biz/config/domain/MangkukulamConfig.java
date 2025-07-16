@@ -8,6 +8,7 @@ import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import lombok.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -120,7 +121,7 @@ public class MangkukulamConfig {
     /**
      * 主游戏配置类
      */
-    @Getter
+//    @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -129,8 +130,10 @@ public class MangkukulamConfig {
         /**
          * 轮带配置
          */
+        @Getter
         private List<Stage> stages;
 
+        @Getter
         private Map<Integer, Integer> weightMap;
 
         public void setStages(List<Stage> stages) {
@@ -147,7 +150,7 @@ public class MangkukulamConfig {
     /**
      * 轮带配置类
      */
-    @Data
+//    @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -156,47 +159,89 @@ public class MangkukulamConfig {
         /**
          * 配置权重
          */
+        @Getter
+        @Setter
         private int weights;
+
         /**
          * 轮带表（每行代表一个轮轴的符号配置）
          */
+        @Getter
+        @Setter
         private List<List<String>> reels;
+
         /**
          * 符号阶段范围配置
          */
+        @Getter
+        @Setter
         private List<SymbolStageRange> symbolStagesRanges;
+
         /**
          * 符号权重配置（不同阶段的符号权重映射）
          */
+        @Getter
         private Map<String, Map<String, Integer>> symbolWeights;
+        private Map<String, Integer> symbolWeightTotalMap;
+
         /**
          * 火咒阶段对应组配置
          */
+        @Getter
+        @Setter
         private List<FireNumStageRange> fireNumStagesRanges;
+
         /**
          * 火咒触发数量权重配置
          */
+        @Getter
         private Map<String, Map<String, Integer>> fireNumWeights;
+        private Map<String, Integer> fireNumWeightTotalMap;
+
         /**
          * 拓展摆搭倍率权重配置
          */
+        @Getter
+        @Setter
         private Map<String, Integer> wdExpandingTimesWeights;
 
-        public Map<String, Integer> getCurrentFireWeights(int index) {
+        public void setSymbolWeights(Map<String, Map<String, Integer>> symbolWeights) {
+            this.symbolWeights = symbolWeights;
+            symbolWeightTotalMap = new TreeMap<>();
+            if (Objects.nonNull(symbolWeights)) {
+                symbolWeights.forEach((k, v) -> {
+                    symbolWeightTotalMap.put(k, v.values().stream().mapToInt(Integer::intValue).sum());
+                });
+            }
+        }
+
+        public void setFireNumWeights(Map<String, Map<String, Integer>> fireNumWeights) {
+            this.fireNumWeights = fireNumWeights;
+            fireNumWeightTotalMap = new TreeMap<>();
+            if (Objects.nonNull(fireNumWeights)) {
+                fireNumWeights.forEach((k, v) -> {
+                    fireNumWeightTotalMap.put(k, v.values().stream().mapToInt(Integer::intValue).sum());
+                });
+            }
+        }
+
+        public Pair<Integer, Map<String, Integer>> getCurrentFireWeights(int index) {
             FireNumStageRange range = getCurrentFireNumberStageRange(index);
             if (Objects.isNull(range)) {
                 return null;
             } else {
-                return fireNumWeights.get(String.valueOf(range.getValue()));
+                String key = String.valueOf(range.getValue());
+                return Pair.of(fireNumWeightTotalMap.get(key), fireNumWeights.get(key));
             }
         }
 
-        public Map<String, Integer> getCurrentSymbolsWeights(int index) {
+        public Pair<Integer, Map<String, Integer>> getCurrentSymbolsWeights(int index) {
             SymbolStageRange range = getCurrentSymbolStageRange(index);
             if (Objects.isNull(range)) {
                 return null;
             } else {
-                return symbolWeights.get(String.valueOf(range.getValue()));
+                String key = String.valueOf(range.getValue());
+                return Pair.of(symbolWeightTotalMap.get(key), symbolWeights.get(key));
             }
         }
 

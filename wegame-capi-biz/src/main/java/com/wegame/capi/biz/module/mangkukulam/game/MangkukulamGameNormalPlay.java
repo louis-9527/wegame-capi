@@ -27,6 +27,7 @@ import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -266,11 +267,11 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     }
 
     private void handleFireBorder(MangkukulamSymbolDo[][] symbolArr, MangkukulamConfig.Stage stage, int currentIndex) {
-        Map<String, Integer> weightMap = stage.getCurrentFireWeights(currentIndex);
-        if (Objects.isNull(weightMap)) {
+        Pair<Integer, Map<String, Integer>> pair = stage.getCurrentFireWeights(currentIndex);
+        if (Objects.isNull(pair)) {
             return;
         }
-        String newFireBorderCount = randomKeyByWeight(weightMap);
+        String newFireBorderCount = randomKeyByWeight(pair.getValue(), pair.getKey());
         int currentFireBorderCount = MangkukulamSymbolUtil.countFireBorderInWheel(symbolArr);
         int needAddFireBorderCount = Math.min(Integer.parseInt(newFireBorderCount), MAX_FIRE_BORDER_IN_WHEEL - currentFireBorderCount);
         if (needAddFireBorderCount <= 0) {
@@ -350,9 +351,9 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     }
 
     private void randomSymbolList(List<String> fillSymbols, MangkukulamConfig.Stage stage, int currentIndex) {
-        Map<String, Integer> weightMap = stage.getCurrentSymbolsWeights(currentIndex);
-        AssertUtil.assertNotNull(weightMap, ErrorCode.ERR_INTER, "fireNumWeights is null");
-        String symbolListString = randomKeyByWeight(weightMap);
+        Pair<Integer, Map<String, Integer>> pair = stage.getCurrentSymbolsWeights(currentIndex);
+        AssertUtil.assertNotNull(pair, ErrorCode.ERR_INTER, "current fireNumWeights is null, index : " + currentIndex);
+        String symbolListString = randomKeyByWeight(pair.getValue(), pair.getKey());
         List<String> symbols = Arrays.stream(symbolListString.split(",")).map(String::trim).collect(Collectors.toList());
         fillSymbols.addAll(symbols);
     }
@@ -371,12 +372,11 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
      * @param map 索引值 权重
      * @return 索引值
      */
-    private <T> T randomKeyByWeight(Map<T, Integer> map) {
+    private <T> T randomKeyByWeight(Map<T, Integer> map, Integer totalWeight) {
         int mapSize = map.size();
         AssertUtil.assertTrue(mapSize > 0, ErrorCode.ERR_INTER, "weight map size is less than 1");
         if (mapSize > 1) {
-            int totalWeights = map.values().stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum();
-            int randomNumber = randomService.randomInt(Constants.CONST_1, totalWeights);
+            int randomNumber = randomService.randomInt(Constants.CONST_1, totalWeight);
             int startVal = 0;
             for (Map.Entry<T, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
                 if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
@@ -389,6 +389,11 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             return map.keySet().stream().findFirst().get();
         }
         throw new BusinessException(ErrorCode.ERR_INTER, "random key generation failed");
+    }
+
+    private <T> T randomKeyByWeight(Map<T, Integer> map) {
+        int totalWeights = map.values().stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum();
+        return randomKeyByWeight(map, totalWeights);
     }
 
     private void loadContinuePlayContext(GamePlayDo.ContinuePlayContext context, LinkedList<FreeWheelHandleDo> freeWheelList, AtomicLong totalRewardAmount) {
