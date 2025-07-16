@@ -32,7 +32,7 @@ public class MangkukulamGameTest extends BaseTest {
     MangkukulamGameNormalPlay normalPlay;
 
     private static final boolean PRINT_SYMBOLS = false;
-    private static final int MAX_TIMES_IN_MS = 5;
+    private static final int MAX_TIMES_IN_MS = 10;
 
 
     private static final List<Integer> SPECIAL_WILD_EXISTS_COLUMNS = Arrays.asList(1, 2, 3);
@@ -96,7 +96,7 @@ public class MangkukulamGameTest extends BaseTest {
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
         if (cost > MAX_TIMES_IN_MS) {
-            System.out.println("test_buy_bet cost more than " + MAX_TIMES_IN_MS + "ms : " + cost + "ms");
+            System.out.println("test_normal_bet_continue_play cost more than " + MAX_TIMES_IN_MS + "ms : " + cost + "ms, result size is " + recordList.size());
         }
         recordList.forEach(record -> {
             validateGameRecord(record);
@@ -121,7 +121,7 @@ public class MangkukulamGameTest extends BaseTest {
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
         if (cost > MAX_TIMES_IN_MS) {
-            System.out.println("test_buy_bet cost more than " + MAX_TIMES_IN_MS + "ms : " + cost + "ms");
+            System.out.println("test_normal_bet cost more than " + MAX_TIMES_IN_MS + "ms : " + cost + "ms, result size is " + recordList.size());
         }
         recordList.forEach(record -> {
             validateGameRecord(record);
@@ -146,7 +146,7 @@ public class MangkukulamGameTest extends BaseTest {
         long lastTime = System.currentTimeMillis();
         long cost = lastTime - currentTime;
         if (cost > MAX_TIMES_IN_MS) {
-            System.out.println("test_buy_bet cost more than " + MAX_TIMES_IN_MS + "ms : " + cost + "ms");
+            System.out.println("test_buy_bet cost more than " + MAX_TIMES_IN_MS + "ms : " + cost + "ms, result size is " + recordList.size());
         }
         // 校验
         //// 1.是否为空
@@ -192,5 +192,6 @@ public class MangkukulamGameTest extends BaseTest {
                 Assert.assertEquals(0, normalWildCount);
             }
         }
+        Assert.assertTrue(MangkukulamSymbolUtil.countFireBorderInWheel(symbolArr) <= 3);
     }
 }

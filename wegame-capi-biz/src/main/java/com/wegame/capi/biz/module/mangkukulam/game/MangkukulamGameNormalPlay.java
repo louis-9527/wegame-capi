@@ -171,17 +171,20 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             // 填充
             boolean hasScatterInColum = false;
             boolean hasSpecialWildInColum = false;
+            boolean hasFireBorder = false;
             for (int rowNum = 0; rowNum < GAME_INFO.getRow(); rowNum++) {
                 if (Objects.nonNull(symbolArr[rowNum][columNum])) {
                     continue;
                 }
                 MangkukulamSymbolDo symbol = buildSymbolFromSymbolId(currentColumSymbolIdList.get(rowNum));
-                boolean validateSymbolInColumn = validateSymbolInColumn(symbol, columNum, hasScatterInColum, hasSpecialWildInColum);
-                AssertUtil.assertTrue(validateSymbolInColumn, ErrorCode.ERR_PARAM, "invalid reel symbol in column : " + columNum);
+                boolean validateSymbolInColumn = validateSymbolInColumn(symbol, columNum, hasScatterInColum, hasSpecialWildInColum, hasFireBorder);
+                AssertUtil.assertTrue(validateSymbolInColumn, ErrorCode.ERR_PARAM, "invalid reel symbol in column : " + columNum + ", symbol : " + symbol.getId());
                 if (symbol.isScatterSymbol()) {
                     hasScatterInColum = true;
                 } else if (symbol.isSpecialWild()) {
                     hasSpecialWildInColum = true;
+                } else if (symbol.isSymbolFireBorder()) {
+                    hasFireBorder = true;
                 }
                 // 填充
                 symbolArr[rowNum][columNum] = symbol;
@@ -196,15 +199,17 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
      * 特殊wild只会在2 3 4 列
      * wild & 火框 只会在 2 3 4 5 列
      */
-    private boolean validateSymbolInColumn(MangkukulamSymbolDo symbol, int columNum, boolean hasScatterInColum, boolean hasSpecialWildInColum) {
+    private boolean validateSymbolInColumn(MangkukulamSymbolDo symbol, int columNum, boolean hasScatterInColum,
+                                           boolean hasSpecialWildInColum, boolean hasFireBorder) {
         if (symbol.isSpecialWild()) {
-            // 特殊百搭只能出现在123列 & 并且当前列没有scatter 和 特殊百搭
-            return SPECIAL_WILD_EXISTS_COLUMNS.contains(columNum) && !hasScatterInColum && !hasSpecialWildInColum;
+            // 特殊百搭只能出现在123列 & 并且当前列没有scatter & 特殊百搭 & 火框
+            return SPECIAL_WILD_EXISTS_COLUMNS.contains(columNum) && !hasScatterInColum
+                    && !hasSpecialWildInColum && !hasFireBorder;
         } else if (symbol.isNormalWild()) {
             // 普通wild只能出现在1234列
             return WILD_EXISTS_COLUMNS.contains(columNum);
         } else if (symbol.isScatterSymbol()) {
-            // scatter一列只能出现一个
+            // scatter一列只能出现一个 并且当前列不能出现特殊百搭
             return !hasScatterInColum && !hasSpecialWildInColum;
         } else {
             return true;
@@ -321,6 +326,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
         LinkedList<String> fillSymbolIdList = new LinkedList<>();
         boolean hasScatterInColumn = MangkukulamSymbolUtil.hasScatterInColumn(symbolArr, column);
         boolean hasSpecialWildInColumn = MangkukulamSymbolUtil.hasSpecialWildInColumn(symbolArr, column);
+        boolean hasFireBorderInColumn = MangkukulamSymbolUtil.hasFireBorderInColumn(symbolArr, column);
         for (int i = GAME_INFO.getRow() - 1; i >= 0; i--) {
             // 从下往上补
             MangkukulamSymbolDo symbol = symbolArr[i][column];
@@ -334,7 +340,7 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
                 }
                 MangkukulamSymbolDo symbolDo = buildSymbolFromSymbolId(fillSymbolIdList.removeFirst());
                 // 不符合的列元素，重新生成
-                if (!validateSymbolInColumn(symbolDo, column, hasScatterInColumn, hasSpecialWildInColumn)) {
+                if (!validateSymbolInColumn(symbolDo, column, hasScatterInColumn, hasSpecialWildInColumn, hasFireBorderInColumn)) {
                     continue;
                 }
                 // 如果当前列是scatter
@@ -342,6 +348,8 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
                     hasScatterInColumn = true;
                 } else if (symbolDo.isSpecialWild()) {
                     hasSpecialWildInColumn = true;
+                } else if (symbolDo.isSymbolFireBorder()) {
+                    hasFireBorderInColumn = true;
                 }
                 symbolArr[i][column] = symbolDo;
                 currentSymbolFilled = true;

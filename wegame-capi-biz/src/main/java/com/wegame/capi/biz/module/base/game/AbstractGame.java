@@ -10,14 +10,17 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.SymbolEnum;
-import lombok.extern.slf4j.Slf4j;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * 抽象游戏
@@ -34,7 +37,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
 
     public long generateGameRecordId() {
         long gameRecordId = snowflakeIdGenerator.nextId();
-         log.info("generateGameRecord id:{}", gameRecordId);
+        log.info("generateGameRecord id:{}", gameRecordId);
         return gameRecordId;
     }
 

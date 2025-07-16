@@ -60,7 +60,6 @@ public class MangkukulamSymbolUtil {
         if (CollectionUtils.isEmpty(gameRecordList)) {
             return;
         }
-        long startTime = System.currentTimeMillis();
         gameRecordList.parallelStream().forEach(gameRecord -> {
             MangkukulamSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
@@ -73,8 +72,6 @@ public class MangkukulamSymbolUtil {
                 }
             }
         });
-        long endTime = System.currentTimeMillis();
-        log.info("postPlaceholderSymbol cost time: {} ms", (endTime - startTime));
     }
 
     public static MangkukulamSymbolDo[][] copySymbolArr(MangkukulamSymbolDo[][] symbolArr) {
@@ -173,12 +170,13 @@ public class MangkukulamSymbolUtil {
                         (a, b) -> a));
         List<RewardSymbolDo<MangkukulamSymbolDo>> distinctList = new ArrayList<>(map.values());
         if (CollectionUtils.isNotEmpty(distinctList)) {
-            distinctList.parallelStream().forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
+            distinctList.forEach(rewardSymbol -> clearIndexRewardSymbol(symbolArr, rewardSymbol));
+            return distinctList.stream()
+                    .filter(r -> (r.getSymbol().isNormalWild() && r.getSymbol().isSymbolFireBorder()))
+                    .map(RewardSymbolDo::getIndex)
+                    .collect(Collectors.toList());
         }
-        return distinctList.stream()
-                .filter(r -> (r.getSymbol().isNormalWild() && r.getSymbol().isSymbolFireBorder()))
-                .map(RewardSymbolDo::getIndex)
-                .collect(Collectors.toList());
+        return null;
     }
 
     /**
@@ -216,6 +214,16 @@ public class MangkukulamSymbolUtil {
         AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
         for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
             if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isSpecialWild()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasFireBorderInColumn(MangkukulamSymbolDo[][] symbolArr, int column) {
+        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+        for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
+            if (Objects.nonNull(symbolArr[row][column]) && symbolArr[row][column].isSymbolFireBorder()) {
                 return true;
             }
         }
