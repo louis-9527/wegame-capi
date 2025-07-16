@@ -29,6 +29,10 @@ public enum StarCardUseTypeEnum {
             GameTypeEnum.LAM_ANG,
             "lamang_star_card_record"
     ),
+    KAPRE(
+            GameTypeEnum.KAPRE,
+            "kapre_star_card_record"
+    ),
 
     ;
     /**
