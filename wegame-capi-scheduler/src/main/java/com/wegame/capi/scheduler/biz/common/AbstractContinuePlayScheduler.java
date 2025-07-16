@@ -13,6 +13,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +64,7 @@ public abstract class AbstractContinuePlayScheduler
                     .endCreateTime(endCreateTime)
                     .startCreateTime(startCreateTime)
                     .continueStatus(true)
+                    .status(BetStatusEnum.SUCCESS.getCode())
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")
                     .limit(DEFAULT_PAGE_SIZE)
