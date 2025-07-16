@@ -26,6 +26,7 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -133,6 +134,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             AssertUtil.assertNotNull(betDo.getParentBetRecordId(), ErrorCode.ERR_PARAM);
             BetRecordDo<MangkukulamGameRecordDo> preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
             AssertUtil.assertNotNull(preBetRecord, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(Objects.equals(preBetRecord.getStatus(), BetStatusEnum.SUCCESS.getCode()), ErrorCode.ERR_PARAM);
             if (BooleanUtils.isFalse(preBetRecord.getContinueStatus())) {
                 // 查询投投注记录
                 GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(preBetRecord.getId()).build();
