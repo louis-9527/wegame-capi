@@ -35,7 +35,7 @@ public class FreeSpinRestTemplateConfig {
     int connectTimeout;
     @Value("${httpclient.freeSpin.readTimeout:1000}")
     int readTimeout;
-    @Value("${httpclient.freeSpin.connectionRequestTimeout:50}")
+    @Value("${httpclient.freeSpin.connectionRequestTimeout:100}")
     int connectionRequestTimeout;
     @Value("${httpclient.freeSpin.timeToLive:55}")
     int timeToLive;

@@ -34,7 +34,7 @@ public class WalletRestTemplateConfig {
     int connectTimeout;
     @Value("${httpclient.wallet.readTimeout:1000}")
     int readTimeout;
-    @Value("${httpclient.wallet.connectionRequestTimeout:50}")
+    @Value("${httpclient.wallet.connectionRequestTimeout:100}")
     int connectionRequestTimeout;
     @Value("${httpclient.wallet.timeToLive:55}")
     int timeToLive;

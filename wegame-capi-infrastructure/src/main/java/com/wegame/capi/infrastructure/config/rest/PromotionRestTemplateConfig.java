@@ -35,7 +35,7 @@ public class PromotionRestTemplateConfig {
     int connectTimeout;
     @Value("${httpclient.promotion.readTimeout:1000}")
     int readTimeout;
-    @Value("${httpclient.promotion.connectionRequestTimeout:50}")
+    @Value("${httpclient.promotion.connectionRequestTimeout:100}")
     int connectionRequestTimeout;
     @Value("${httpclient.promotion.timeToLive:55}")
     int timeToLive;
