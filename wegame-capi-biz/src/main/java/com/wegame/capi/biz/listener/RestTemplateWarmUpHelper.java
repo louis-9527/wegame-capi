@@ -35,7 +35,7 @@ public class RestTemplateWarmUpHelper {
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:50}")
+    @Value("${api.game.singleDomainIntConnections:100}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;

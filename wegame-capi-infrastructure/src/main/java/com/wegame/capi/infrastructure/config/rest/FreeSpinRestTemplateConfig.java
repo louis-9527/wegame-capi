@@ -31,7 +31,7 @@ public class FreeSpinRestTemplateConfig {
     int connectMaxTotal;
     @Value("${httpclient.freeSpin.connectDefaultMaxPerRoute:500}")
     int connectDefaultMaxPerRoute;
-    @Value("${httpclient.freeSpin.connectTimeout:200}")
+    @Value("${httpclient.freeSpin.connectTimeout:150}")
     int connectTimeout;
     @Value("${httpclient.freeSpin.readTimeout:1000}")
     int readTimeout;
@@ -39,7 +39,7 @@ public class FreeSpinRestTemplateConfig {
     int connectionRequestTimeout;
     @Value("${httpclient.freeSpin.timeToLive:3000}")
     int timeToLive;
-    @Value("${httpclient.freeSpin.maxIdleTime:50}")
+    @Value("${httpclient.freeSpin.maxIdleTime:100}")
     int maxIdleTime;
 
     @Bean(value = FREE_SPIN_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
