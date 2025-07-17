@@ -18,7 +18,7 @@ import static com.wegame.capi.common.Constants.MANGKUKULAM_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 /**
- * Mangkukulam维护配置定时任务
+ * Mangkukulam继续玩儿定时任务
  */
 @Slf4j
 @Service
