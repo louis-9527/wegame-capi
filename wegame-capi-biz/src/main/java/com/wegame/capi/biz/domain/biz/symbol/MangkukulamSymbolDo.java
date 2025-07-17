@@ -43,7 +43,6 @@ public class MangkukulamSymbolDo extends SymbolDo {
             return BigDecimal.ZERO;
         }
 
-        // todo 计算所有倍率的总和
         int length = multiples.size();
         BigDecimal res = BigDecimal.ZERO;
         for (int i = 0; i <= length - remainClearTimes; i++) {

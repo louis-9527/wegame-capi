@@ -121,7 +121,7 @@ public class MangkukulamConfig {
     /**
      * 主游戏配置类
      */
-//    @Getter
+    @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
@@ -130,10 +130,8 @@ public class MangkukulamConfig {
         /**
          * 轮带配置
          */
-        @Getter
         private List<Stage> stages;
 
-        @Getter
         private Map<Integer, Integer> weightMap;
 
         public void setStages(List<Stage> stages) {

@@ -35,11 +35,10 @@ public class MangkukulamMultipleCalculateStrategy extends AbstractMultipleCalcul
                 ));
 
         // 筛选出特殊wild并按坐标去重
-        BigDecimal totalMultiple = indexSymbolMap.values().stream()
+        return indexSymbolMap.values().stream()
                 .filter(MangkukulamSymbolDo::isSpecialWild)
                 .map(MangkukulamSymbolDo::getMultiple)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return totalMultiple;
     }
 }

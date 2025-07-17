@@ -464,13 +464,12 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
      * 增加免费轮次数
      */
     private void addFreeWheelTimes(LinkedList<FreeWheelHandleDo> freeWheelList, int addTimes, Long parentGameRecordId) {
-        if (addTimes < 1) {
-            return;
-        }
-        for (int times = 1; times <= addTimes; times++) {
-            freeWheelList.addLast(FreeWheelHandleDo.builder()
-                    .parentGameRecordId(parentGameRecordId)
-                    .build());
+        if (addTimes > 0) {
+            for (int times = 1; times <= addTimes; times++) {
+                freeWheelList.addLast(FreeWheelHandleDo.builder()
+                        .parentGameRecordId(parentGameRecordId)
+                        .build());
+            }
         }
     }
 
