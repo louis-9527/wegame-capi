@@ -37,9 +37,9 @@ public class PromotionRestTemplateConfig {
     int readTimeout;
     @Value("${httpclient.promotion.connectionRequestTimeout:100}")
     int connectionRequestTimeout;
-    @Value("${httpclient.promotion.timeToLive:5500}")
+    @Value("${httpclient.promotion.timeToLive:55}")
     int timeToLive;
-    @Value("${httpclient.promotion.maxIdleTime:5300}")
+    @Value("${httpclient.promotion.maxIdleTime:53}")
     int maxIdleTime;
 
     @Bean(value = PROMOTION_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
