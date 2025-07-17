@@ -38,7 +38,7 @@ public class WalletRestTemplateConfig {
     int connectionRequestTimeout;
     @Value("${httpclient.wallet.timeToLive:5500}")
     int timeToLive;
-    @Value("${httpclient.wallet.maxIdleTime:5000}")
+    @Value("${httpclient.wallet.maxIdleTime:5300}")
     int maxIdleTime;
 
     @Bean(value = WALLET_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
