@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.*;
@@ -264,7 +265,7 @@ public class MangkukulamSymbolUtil {
                 availableIndexes.add(IndexFactory.buildDo(i, j));
             }
         }
-        Collections.shuffle(availableIndexes, new Random());
+        Collections.shuffle(availableIndexes, ThreadLocalRandom.current());
         return availableIndexes;
     }
 
@@ -280,7 +281,7 @@ public class MangkukulamSymbolUtil {
                 canAddFireBorderIndexes.add(IndexFactory.buildDo(rowNum, column));
             }
         }
-        Collections.shuffle(canAddFireBorderIndexes, new Random());
+        Collections.shuffle(canAddFireBorderIndexes, ThreadLocalRandom.current());
         return canAddFireBorderIndexes;
     }
 
