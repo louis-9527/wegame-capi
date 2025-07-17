@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.IntStream;
@@ -35,7 +36,7 @@ public class RestTemplateWarmUpHelper {
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:70}")
+    @Value("${api.game.singleDomainIntConnections:50}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
@@ -43,7 +44,7 @@ public class RestTemplateWarmUpHelper {
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:120}")
+    @Value("${api.game.promotionDomainIntConnections:100}")
     int promotionDomainIntConnections;
     @Autowired
     @Qualifier(WALLET_CONNECTION_MANAGER_BEAN)
@@ -56,6 +57,9 @@ public class RestTemplateWarmUpHelper {
     PoolingHttpClientConnectionManager promotionConnectionManager;
     @Autowired
     RandomService randomService;
+    @Autowired
+    @Qualifier("warmUpConnectionThreadPoolExecutor")
+    ThreadPoolExecutor warmUpConnectionThreadPoolExecutor;
 
     public void warmUpAllConnections() {
         //        int randomSeconds = randomService.randomInt(1, 60);
@@ -77,18 +81,24 @@ public class RestTemplateWarmUpHelper {
             //            int randomSeconds = randomService.randomInt(1, 5);
             if (GlobalInstance.warmConnectionSwitch) {
                 keepConnectionPool(walletConnectionManager, singleWalletApi, singleDomainIntConnections);
+            } else {
+                warmUpConnectionThreadPoolExecutor.shutdownNow();
             }
             //            randomSeconds = randomService.randomInt(1, 5);
             //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
-            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
-            if (GlobalInstance.warmConnectionSwitch) {
-                keepConnectionPool(freeSpinConnectionManager, singleWalletFreeSpinApi, freeSpinDomainIntConnections);
-            }
+            //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
+            //            if (GlobalInstance.warmConnectionSwitch) {
+            //                keepConnectionPool(freeSpinConnectionManager, singleWalletFreeSpinApi, freeSpinDomainIntConnections);
+            //            } else {
+            //                warmUpConnectionThreadPoolExecutor.shutdownNow();
+            //            }
             //            randomSeconds = randomService.randomInt(1, 5);
             //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
             LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
             if (GlobalInstance.warmConnectionSwitch) {
                 keepConnectionPool(promotionConnectionManager, bagApi, promotionDomainIntConnections);
+            } else {
+                warmUpConnectionThreadPoolExecutor.shutdownNow();
             }
         } catch (Exception e) {
             log.error("keepAllConnectionPool error", e);
