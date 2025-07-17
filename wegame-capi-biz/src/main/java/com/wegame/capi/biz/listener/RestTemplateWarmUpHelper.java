@@ -60,6 +60,7 @@ public class RestTemplateWarmUpHelper {
     @Autowired
     @Qualifier("warmUpConnectionThreadPoolExecutor")
     ThreadPoolExecutor warmUpConnectionThreadPoolExecutor;
+    private volatile boolean executorShutdown = false;
 
     public void warmUpAllConnections() {
         //        int randomSeconds = randomService.randomInt(1, 60);
@@ -78,11 +79,15 @@ public class RestTemplateWarmUpHelper {
             log.info("walletConnectionManager ManagerStatus: {}", walletConnectionManager.getTotalStats());
             log.info("freeSpinConnectionManager ManagerStatus: {}", freeSpinConnectionManager.getTotalStats());
             log.info("promotionConnectionManager ManagerStatus: {}", promotionConnectionManager.getTotalStats());
+            if (executorShutdown) {
+                return;
+            }
             //            int randomSeconds = randomService.randomInt(1, 5);
-            if (GlobalInstance.warmConnectionSwitch) {
+            if (GlobalInstance.warmConnectionSwitch && !executorShutdown) {
                 keepConnectionPool(walletConnectionManager, singleWalletApi, singleDomainIntConnections);
             } else {
                 warmUpConnectionThreadPoolExecutor.shutdownNow();
+                executorShutdown = true;
             }
             //            randomSeconds = randomService.randomInt(1, 5);
             //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
@@ -95,10 +100,11 @@ public class RestTemplateWarmUpHelper {
             //            randomSeconds = randomService.randomInt(1, 5);
             //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
             LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
-            if (GlobalInstance.warmConnectionSwitch) {
+            if (GlobalInstance.warmConnectionSwitch && !executorShutdown) {
                 keepConnectionPool(promotionConnectionManager, bagApi, promotionDomainIntConnections);
             } else {
                 warmUpConnectionThreadPoolExecutor.shutdownNow();
+                executorShutdown = true;
             }
         } catch (Exception e) {
             log.error("keepAllConnectionPool error", e);
