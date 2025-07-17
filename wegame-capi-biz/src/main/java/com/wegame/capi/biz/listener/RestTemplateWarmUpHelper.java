@@ -99,7 +99,7 @@ public class RestTemplateWarmUpHelper {
             //            }
             //            randomSeconds = randomService.randomInt(1, 5);
             //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
-            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
+            //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
             if (GlobalInstance.warmConnectionSwitch && !executorShutdown) {
                 keepConnectionPool(promotionConnectionManager, bagApi, promotionDomainIntConnections);
             } else {
