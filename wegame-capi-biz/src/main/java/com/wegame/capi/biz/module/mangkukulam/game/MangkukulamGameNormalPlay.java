@@ -206,8 +206,8 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
             return SPECIAL_WILD_EXISTS_COLUMNS.contains(columNum) && !hasScatterInColum
                     && !hasSpecialWildInColum && !hasFireBorder;
         } else if (symbol.isNormalWild()) {
-            // 普通wild只能出现在1234列
-            return WILD_EXISTS_COLUMNS.contains(columNum);
+            // 普通wild只能出现在1234列 & 当前列没有特殊百搭
+            return WILD_EXISTS_COLUMNS.contains(columNum) & !hasSpecialWildInColum;
         } else if (symbol.isScatterSymbol()) {
             // scatter一列只能出现一个 并且当前列不能出现特殊百搭
             return !hasScatterInColum && !hasSpecialWildInColum;
