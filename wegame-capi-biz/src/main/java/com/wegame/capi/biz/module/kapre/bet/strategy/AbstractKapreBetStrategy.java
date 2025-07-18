@@ -105,7 +105,7 @@ public abstract class AbstractKapreBetStrategy
 //            return betForFreeWheel(betDo);
 //        }
 
-        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+        if (!BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
             return betForNonFreeWheel(betDo);
         } else {
             // 免费轮投注, 走查询
