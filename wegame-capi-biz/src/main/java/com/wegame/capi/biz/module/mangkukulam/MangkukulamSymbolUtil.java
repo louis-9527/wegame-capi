@@ -143,7 +143,6 @@ public class MangkukulamSymbolUtil {
                 MangkukulamSymbolDo current = MangkukulamSymbolDo.buildFromSymbol(MANGKUKULAM_Wild, true);
                 symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = current;
             } else {
-                // 不带金边普通元素，直接移除
                 removeSymbol(symbolArr, rewardSymbol);
             }
         }

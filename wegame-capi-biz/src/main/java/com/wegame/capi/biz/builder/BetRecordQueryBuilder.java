@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -42,6 +43,9 @@ public class BetRecordQueryBuilder {
         }
         if (Objects.nonNull(recordQuery.getPlayerId())) {
             criteria.and("playerId").is(recordQuery.getPlayerId());
+        }
+        if (CollectionUtils.isNotEmpty(recordQuery.getBetSubTypes())) {
+            criteria.and("betSubType").in(recordQuery.getBetSubTypes());
         }
         if (Objects.nonNull(recordQuery.getUserId())) {
             criteria.and("userId").is(recordQuery.getUserId());

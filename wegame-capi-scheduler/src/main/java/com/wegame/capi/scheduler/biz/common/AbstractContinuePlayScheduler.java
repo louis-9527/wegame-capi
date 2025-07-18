@@ -46,12 +46,12 @@ public abstract class AbstractContinuePlayScheduler
 
     public abstract BetStrategy betStrategy();
 
-    private static final long START_TIME_DURATION_IN_MS = 30 * 60 * 1000;
-    private static final long END_TIME_DURATION_IN_MS = 10 * 60 * 1000;
+    private static final long START_TIME_DURATION_IN_MS = 10 * 60 * 1000;
+    private static final long END_TIME_DURATION_IN_MS = 5 * 60 * 1000;
 
     @Override
     public void run() {
-        // 查询30-3分钟前的 可以继续玩的数据
+        // 查询10-5分钟前的 可以继续玩的数据
         try {
             log.info("AbstractContinuePlayScheduler run start. gameId: {}", gameType().getId());
             long startTime = DateUtil.getCurrentMilli();
@@ -77,6 +77,8 @@ public abstract class AbstractContinuePlayScheduler
                 }
                 Optional.ofNullable(detailList)
                         .orElse(Collections.emptyList())
+                        .stream()
+                        .filter(item -> BetSubTypeEnum.isFirstStep(item.getBetSubType()))
                         .forEach(betRecord ->
                                 autoContinuePlayGameThreadPoolExecutor.submit(() -> autoContinuePlay(betRecord)));
             } while (CollectionUtils.isNotEmpty(detailList));
@@ -91,7 +93,6 @@ public abstract class AbstractContinuePlayScheduler
             UserInfoContext.setUserInfo(buildUserInfo(betRecordDo));
             betStrategy().bet(buildBetDo(betRecordDo));
         } catch (Exception e) {
-            //todo
             log.error("AbstractContinuePlayScheduler autoContinuePlay exception", e);
         } finally {
             UserInfoContext.clear();
