@@ -21,7 +21,7 @@ public class RestTemplateMinConnectionPoolKeepScheduler {
     RestTemplateWarmUpHelper restTemplateWarmUpHelper;
 
     //    @Scheduled(fixedRate = 30_000) // 每30秒执行
-    @Scheduled(cron = "0/30 * * * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     public void keepMinConnections() {
         try {
             String traceId = UUID.randomUUID().toString(true);

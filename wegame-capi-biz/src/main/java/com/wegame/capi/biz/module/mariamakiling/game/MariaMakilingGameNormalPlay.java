@@ -13,6 +13,7 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
+import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
-import static com.wegame.capi.common.Constants.CONST_1000000;
+import static com.wegame.capi.common.Constants.*;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
@@ -46,6 +47,8 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
     RewardHandler<SymbolDo> mariaMakilingRewardHandler;
+    @Autowired
+    RandomService randomService;
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
@@ -248,19 +251,10 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
     }
 
     public TreeMap<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay, boolean isFreeWheelFlag) {
-        if (isFreeWheelFlag) {
-            return mariaMakilingConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
-        } else {
-            switch (gamePlay.getBetSubType()) {
-                case NORMAL_BET:
-                case BUY_BET:
-                    return mariaMakilingConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
-                case FREE_SPINS_NORMAL_BET:
-                case FREE_SPINS_BUY_BET:
-                    return mariaMakilingConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
-                default:
-                    throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
-            }
-        }
+        int randomNumber = randomService.randomInt(CONST_1, CONST_100000);
+        TreeMap<String, Integer> weightConfigMap = mariaMakilingConfig.getWeightConfig(isFreeWheelFlag);
+        String configName = getConfigName(weightConfigMap, randomNumber);
+        log.info("configName:{}", configName);
+        return mariaMakilingConfig.getProbabilisticConfig().getWheelProbabilisticConfig().get(configName);
     }
 }

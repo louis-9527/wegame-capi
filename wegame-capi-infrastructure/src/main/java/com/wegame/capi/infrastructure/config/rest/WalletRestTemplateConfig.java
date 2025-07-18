@@ -30,15 +30,15 @@ public class WalletRestTemplateConfig {
     int connectMaxTotal;
     @Value("${httpclient.wallet.connectDefaultMaxPerRoute:500}")
     int connectDefaultMaxPerRoute;
-    @Value("${httpclient.wallet.connectTimeout:1000}")
+    @Value("${httpclient.wallet.connectTimeout:200}")
     int connectTimeout;
-    @Value("${httpclient.wallet.readTimeout:1500}")
+    @Value("${httpclient.wallet.readTimeout:1000}")
     int readTimeout;
-    @Value("${httpclient.wallet.connectionRequestTimeout:200}")
+    @Value("${httpclient.wallet.connectionRequestTimeout:100}")
     int connectionRequestTimeout;
-    @Value("${httpclient.wallet.timeToLive:3000}")
+    @Value("${httpclient.wallet.timeToLive:55}")
     int timeToLive;
-    @Value("${httpclient.wallet.maxIdleTime:50}")
+    @Value("${httpclient.wallet.maxIdleTime:53}")
     int maxIdleTime;
 
     @Bean(value = WALLET_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
@@ -50,7 +50,7 @@ public class WalletRestTemplateConfig {
                 .build());
         manager.setMaxTotal(connectMaxTotal);
         manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(3 * 1000);
+        manager.setValidateAfterInactivity(30 * 1000);
         return manager;
     }
 
@@ -66,8 +66,8 @@ public class WalletRestTemplateConfig {
                 // 连接最大存活时间
                 .setConnectionTimeToLive(timeToLive, TimeUnit.SECONDS)
                 //                // 设置空闲连接保活时间略小于下游超时时间。 下游超时时间59s
-                //                .evictIdleConnections(maxIdleTime, TimeUnit.SECONDS)
-                //                .evictExpiredConnections()
+                .evictIdleConnections(maxIdleTime, TimeUnit.SECONDS)
+                .evictExpiredConnections()
                 .setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE)
                 // 启用系统TCP Keep-Alive
                 .useSystemProperties()

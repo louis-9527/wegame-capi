@@ -11,7 +11,6 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import org.slf4j.MDC;
@@ -41,7 +40,7 @@ public class BetWithPayoutReqBuilder {
                         .roundNo(betRecordDo.getBetSerialNo())
                         .wagersDate(uctSecond)
                         .settlementDate(uctSecond)
-                        .isFreeRound(BetSubTypeEnum.isFreeWheel(betRecordDo.getBetSubType()))
+                        .isFreeRound(false)
                         .jackpotDetails(new BetWithPayoutReq.BetDetails.JackpotDetails())
                         .build())
                 .build();
@@ -119,6 +118,7 @@ public class BetWithPayoutReqBuilder {
                 .totalJackpotAmount(totalJackpotAmount)
                 .build();
     }
+
 
     public static BetStarSpinReq buildStarSpinReq(BetRecordDo betRecordDo) {
         long uctSecond = DateUtil.toUCTSecond(betRecordDo.getCreateTime());
