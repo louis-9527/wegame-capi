@@ -13,7 +13,7 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.*;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.base.game.AbstractWheelChartGame;
+import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.kapre.KapreGameHelper;
 import com.wegame.capi.biz.module.kapre.reward.KapreRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component("kapreGameNormalPlay")
-public class KapreGameNormalPlay extends AbstractWheelChartGame<KapreGameRecordDo> {
+public class KapreGameNormalPlay extends AbstractGame<KapreGameRecordDo> {
 
     private static final Integer WHEEL_DEFAULT_INDEX = 0;
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;

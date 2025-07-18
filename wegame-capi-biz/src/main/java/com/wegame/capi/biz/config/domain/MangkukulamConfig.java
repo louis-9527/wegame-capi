@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * 游戏配置主类
@@ -66,7 +65,7 @@ public class MangkukulamConfig {
         if (freeWheelFlag) {
             if (Objects.equals(VolatilityTypeEnum.LOW.getCode(), gamePlay.getVolatility().getCode())) {
                 mainGame = bet.getLow();
-            } else {
+            } else if (Objects.equals(VolatilityTypeEnum.HIGH.getCode(), gamePlay.getVolatility().getCode())) {
                 mainGame = bet.getHigh();
             }
         } else {
@@ -113,15 +112,14 @@ public class MangkukulamConfig {
          */
         private Map<String, Stage> stages;
 
-        private Map<Integer, Integer> weightMap;
+        private Map<String, Integer> weightMap;
 
         public void setStages(Map<String, Stage> stages) {
             this.stages = stages;
-            weightMap = IntStream.range(0, stages.size())
-                    .boxed()  // 将 IntStream 转为 Stream<Integer>
+            weightMap = stages.entrySet().stream()
                     .collect(Collectors.toMap(
-                            i -> i,
-                            i -> stages.get(i).getWeights()
+                            Map.Entry::getKey,
+                            entry -> entry.getValue().getWeights()
                     ));
         }
     }

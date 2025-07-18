@@ -14,7 +14,7 @@ import com.wegame.capi.biz.domain.biz.symbol.MangkukulamSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.AmountHelper;
-import com.wegame.capi.biz.module.base.game.AbstractWheelChartGame;
+import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamSymbolUtil;
 import com.wegame.capi.biz.module.mangkukulam.reward.MangkukulamRewardHandler;
@@ -40,7 +40,7 @@ import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.*;
 
 @Slf4j
 @Component("mangkukulamGameNormalPlay")
-public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<MangkukulamGameRecordDo> {
+public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecordDo> {
 
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
@@ -369,8 +369,8 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     private MangkukulamConfig.Stage randomStage(GamePlayDo gamePlay, boolean freeWheelFlag) {
         MangkukulamConfig.MainGame mainGame = mangkukulamConfig.getSupportMainGame(gamePlay, freeWheelFlag);
 
-        List<MangkukulamConfig.Stage> stages = mainGame.getStages();
-        Integer key = randomKeyByWeight(mainGame.getWeightMap());
+        Map<String, MangkukulamConfig.Stage> stages = mainGame.getStages();
+        String key = randomKeyByWeight(mainGame.getWeightMap());
         return stages.get(key);
     }
 

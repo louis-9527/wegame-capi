@@ -105,11 +105,11 @@ public abstract class AbstractKapreBetStrategy
 //            return betForFreeWheel(betDo);
 //        }
 
-        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+        if (!BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
             return betForNonFreeWheel(betDo);
         } else {
             // 免费轮投注, 走查询
-            return betForFreeWheel(betDo);
+            return betForFreeWheelQuery(betDo);
         }
     }
 
@@ -132,7 +132,7 @@ public abstract class AbstractKapreBetStrategy
     /**
      * 免费轮投注
      */
-    private BetResultDo<KapreBetRecordDetailDo> betForFreeWheel(BetDo betDo) {
+    private BetResultDo<KapreBetRecordDetailDo> betForFreeWheelQuery(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         List<KapreGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
                 GameRecordQuery.builder()
