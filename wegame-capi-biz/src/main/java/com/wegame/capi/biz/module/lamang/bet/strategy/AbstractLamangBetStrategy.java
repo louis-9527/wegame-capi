@@ -99,7 +99,7 @@ public abstract class AbstractLamangBetStrategy
             }
         } else {
             // 免费轮投注, 走查询
-            return betForFreeWheel(betDo);
+            return betForFreeWheelQuery(betDo);
         }
 
     }
@@ -123,7 +123,7 @@ public abstract class AbstractLamangBetStrategy
     /**
      * 免费轮投注
      */
-    private BetResultDo<LamangBetRecordDetailDo> betForFreeWheel(BetDo betDo) {
+    private BetResultDo<LamangBetRecordDetailDo> betForFreeWheelQuery(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         GameRecordQuery gameRecordQuery = GameRecordQuery.builder()
                 .betRecordId(betDo.getBetRecordId())
