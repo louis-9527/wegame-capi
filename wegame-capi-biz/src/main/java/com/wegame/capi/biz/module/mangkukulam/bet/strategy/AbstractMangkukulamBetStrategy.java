@@ -31,6 +31,7 @@ import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -133,31 +134,24 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             BetRecordDo<MangkukulamGameRecordDo> preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
             AssertUtil.assertNotNull(preBetRecord, ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(Objects.equals(preBetRecord.getStatus(), BetStatusEnum.SUCCESS.getCode()), ErrorCode.ERR_PARAM);
-            // todo 断言continue状态必须为空在进行后续业务处理，true
-            // todo 增加玩家的校验
-            if (BooleanUtils.isFalse(preBetRecord.getContinueStatus())) {
-                // 查询投投注记录
-                GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(preBetRecord.getId()).build();
-                List<MangkukulamGameRecordDo> list = mangkukulamBetRecordManager.listGameRecord(gameRecordQuery, GameTypeEnum.MANGKUKULAM);
-                return mangkukulamBetHelper.handleBetResult(preBetRecord, list, null);
-            } else {
-                // 1、继续玩（完成波动选择后续部分）
-                gamePlayDo.setContinuePlayContext(buildContinuePlayContext(preBetRecord, betDo));
-                List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
-                AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-                // 2、构建投注记录
-                BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
-                betRecord.setContinueStatus(Boolean.FALSE);
-                // 3、投注并派彩
-                SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, true);
-                AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-                // 4、异步更新投注原始记录 todo，id和parentId加唯一索引
-                preBetRecord.setContinueStatus(Boolean.FALSE);
-                mangkukulamBetRecordManager.asyncUpdateBetRecord(preBetRecord, GameTypeEnum.MANGKUKULAM);
-                // 5、构建返回结果
-                Long lastGameRecordId = gamePlayDo.getContinuePlayContext().getParentGameRecordId();
-                return mangkukulamBetHelper.handleBetResult(betRecord, list, resultDo.getCredit(), lastGameRecordId);
-            }
+            AssertUtil.assertTrue(preBetRecord.getContinueStatus(), ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(StringUtils.equals(preBetRecord.getPlayerId(), UserInfoContext.getUserInfo().getPlayerId()), ErrorCode.ERR_PARAM);
+            // 1、继续玩（完成波动选择后续部分）
+            gamePlayDo.setContinuePlayContext(buildContinuePlayContext(preBetRecord, betDo));
+            List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
+            AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
+            // 2、构建投注记录
+            BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
+            betRecord.setContinueStatus(Boolean.FALSE);
+            // 3、投注并派彩
+            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, true);
+            AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
+            // 4、异步更新投注原始记录 todo，id和parentId加唯一索引
+            preBetRecord.setContinueStatus(Boolean.FALSE);
+            mangkukulamBetRecordManager.asyncUpdateBetRecord(preBetRecord, GameTypeEnum.MANGKUKULAM);
+            // 5、构建返回结果
+            Long lastGameRecordId = gamePlayDo.getContinuePlayContext().getParentGameRecordId();
+            return mangkukulamBetHelper.handleBetResult(betRecord, list, resultDo.getCredit(), lastGameRecordId);
         } else {
             throw new BusinessException(ErrorCode.ERR_PARAM);
         }
