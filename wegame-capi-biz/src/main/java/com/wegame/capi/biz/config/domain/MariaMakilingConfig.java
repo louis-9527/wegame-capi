@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
+import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -124,12 +125,18 @@ public class MariaMakilingConfig implements Serializable {
         Assert.isTrue(freeWheelWeightSum == CONST_100000, "weightConfig.freeWheelWeightConfig Err");
         // 校验对应配置存在
         weightConfig.commonWheelWeightConfig.keySet().forEach(configName -> {
-            TreeMap<String, List<BigDecimal>> config = probabilisticConfig.wheelProbabilisticConfig.get(configName);
-            Assert.notNull(config, "common wheel probabilisticConfig is not exist: " + configName);
+            TreeMap<String, List<BigDecimal>> configMap = probabilisticConfig.wheelProbabilisticConfig.get(configName);
+            Assert.notNull(configMap, "common wheel probabilisticConfig is not exist: " + configName);
+            configMap.keySet().forEach(symbolId -> {
+                Assert.notNull(SymbolEnum.valueOfId(symbolId), "symbolId is not exist: " + configName);
+            });
         });
         weightConfig.freeWheelWeightConfig.keySet().forEach(configName -> {
-            TreeMap<String, List<BigDecimal>> config = probabilisticConfig.wheelProbabilisticConfig.get(configName);
-            Assert.notNull(config, "free wheel probabilisticConfig is not exist: " + configName);
+            TreeMap<String, List<BigDecimal>> configMap = probabilisticConfig.wheelProbabilisticConfig.get(configName);
+            Assert.notNull(configMap, "free wheel probabilisticConfig is not exist: " + configName);
+            configMap.keySet().forEach(symbolId -> {
+                Assert.notNull(SymbolEnum.valueOfId(symbolId), "symbolId is not exist: " + configName);
+            });
         });
     }
 
