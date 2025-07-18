@@ -16,6 +16,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -33,7 +34,7 @@ public class TreasureApi extends PromotionBaseApi {
     private static final String GET_TREASURE = "%s/getTreasure";
     private static final String REDEEM_TREASURE = "%s/redeemTreasure";
 
-    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
     public GetTreasureRes getTreasure(GetTreasureReq req) {
         try {
             assembleSingleSignature(req);

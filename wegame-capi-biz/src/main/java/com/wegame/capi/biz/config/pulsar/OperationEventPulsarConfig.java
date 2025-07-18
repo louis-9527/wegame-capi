@@ -155,7 +155,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = diwataMayariOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
-    @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
+    @ConditionalOnBean(DiwataMayariOperationEventPulsarListener.class)
     public Consumer<byte[]> diwataMayariOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
         log.debug(BUILD_BEAN_FORMAT, diwataMayariOperationEventConsumer);

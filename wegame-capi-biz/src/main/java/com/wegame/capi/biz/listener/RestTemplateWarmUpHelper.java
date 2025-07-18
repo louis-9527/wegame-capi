@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.stream.IntStream;
@@ -35,15 +36,15 @@ public class RestTemplateWarmUpHelper {
     // init Connections
     @Value("${api.game.singleDomain}")
     String singleDomain;
-    @Value("${api.game.singleDomainIntConnections:50}")
+    @Value("${api.game.singleDomainIntConnections:100}")
     int singleDomainIntConnections;
     @Value("${api.game.freeSpinDomain}")
     String freeSpinDomain;
-    @Value("${api.game.freeSpinDomainIntConnections:10}")
+    @Value("${api.game.freeSpinDomainIntConnections:2}")
     int freeSpinDomainIntConnections;
     @Value("${api.game.promotionDomain}")
     String promotionDomain;
-    @Value("${api.game.promotionDomainIntConnections:100}")
+    @Value("${api.game.promotionDomainIntConnections:120}")
     int promotionDomainIntConnections;
     @Autowired
     @Qualifier(WALLET_CONNECTION_MANAGER_BEAN)
@@ -56,6 +57,10 @@ public class RestTemplateWarmUpHelper {
     PoolingHttpClientConnectionManager promotionConnectionManager;
     @Autowired
     RandomService randomService;
+    @Autowired
+    @Qualifier("warmUpConnectionThreadPoolExecutor")
+    ThreadPoolExecutor warmUpConnectionThreadPoolExecutor;
+    private volatile boolean executorShutdown = false;
 
     public void warmUpAllConnections() {
         //        int randomSeconds = randomService.randomInt(1, 60);
@@ -74,21 +79,32 @@ public class RestTemplateWarmUpHelper {
             log.info("walletConnectionManager ManagerStatus: {}", walletConnectionManager.getTotalStats());
             log.info("freeSpinConnectionManager ManagerStatus: {}", freeSpinConnectionManager.getTotalStats());
             log.info("promotionConnectionManager ManagerStatus: {}", promotionConnectionManager.getTotalStats());
+            if (executorShutdown) {
+                return;
+            }
             //            int randomSeconds = randomService.randomInt(1, 5);
-            if (GlobalInstance.warmConnectionSwitch) {
+            if (GlobalInstance.warmConnectionSwitch && !executorShutdown) {
                 keepConnectionPool(walletConnectionManager, singleWalletApi, singleDomainIntConnections);
+            } else {
+                warmUpConnectionThreadPoolExecutor.shutdownNow();
+                executorShutdown = true;
             }
             //            randomSeconds = randomService.randomInt(1, 5);
             //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
-            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
-            if (GlobalInstance.warmConnectionSwitch) {
-                keepConnectionPool(freeSpinConnectionManager, singleWalletFreeSpinApi, freeSpinDomainIntConnections);
-            }
+            //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
+            //            if (GlobalInstance.warmConnectionSwitch) {
+            //                keepConnectionPool(freeSpinConnectionManager, singleWalletFreeSpinApi, freeSpinDomainIntConnections);
+            //            } else {
+            //                warmUpConnectionThreadPoolExecutor.shutdownNow();
+            //            }
             //            randomSeconds = randomService.randomInt(1, 5);
             //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(randomSeconds));
-            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
-            if (GlobalInstance.warmConnectionSwitch) {
+            //            LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(3));
+            if (GlobalInstance.warmConnectionSwitch && !executorShutdown) {
                 keepConnectionPool(promotionConnectionManager, bagApi, promotionDomainIntConnections);
+            } else {
+                warmUpConnectionThreadPoolExecutor.shutdownNow();
+                executorShutdown = true;
             }
         } catch (Exception e) {
             log.error("keepAllConnectionPool error", e);

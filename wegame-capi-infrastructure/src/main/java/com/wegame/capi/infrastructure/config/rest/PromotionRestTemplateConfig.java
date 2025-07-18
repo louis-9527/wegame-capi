@@ -31,15 +31,15 @@ public class PromotionRestTemplateConfig {
     int connectMaxTotal;
     @Value("${httpclient.promotion.connectDefaultMaxPerRoute:500}")
     int connectDefaultMaxPerRoute;
-    @Value("${httpclient.promotion.connectTimeout:1000}")
+    @Value("${httpclient.promotion.connectTimeout:200}")
     int connectTimeout;
     @Value("${httpclient.promotion.readTimeout:1500}")
     int readTimeout;
-    @Value("${httpclient.promotion.connectionRequestTimeout:200}")
+    @Value("${httpclient.promotion.connectionRequestTimeout:100}")
     int connectionRequestTimeout;
-    @Value("${httpclient.promotion.timeToLive:3000}")
+    @Value("${httpclient.promotion.timeToLive:55}")
     int timeToLive;
-    @Value("${httpclient.promotion.maxIdleTime:50}")
+    @Value("${httpclient.promotion.maxIdleTime:53}")
     int maxIdleTime;
 
     @Bean(value = PROMOTION_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)
@@ -51,7 +51,7 @@ public class PromotionRestTemplateConfig {
                 .build());
         manager.setMaxTotal(connectMaxTotal);
         manager.setDefaultMaxPerRoute(connectDefaultMaxPerRoute);
-        manager.setValidateAfterInactivity(3000 * 1000);
+        manager.setValidateAfterInactivity(30 * 1000);
         return manager;
     }
 
@@ -67,8 +67,8 @@ public class PromotionRestTemplateConfig {
                 // 连接最大存活时间
                 .setConnectionTimeToLive(timeToLive, TimeUnit.SECONDS)
                 //                // 设置空闲连接保活时间略小于下游超时时间。 下游超时时间59s
-                //                .evictIdleConnections(maxIdleTime, TimeUnit.SECONDS)
-                //                .evictExpiredConnections()
+                .evictIdleConnections(maxIdleTime, TimeUnit.SECONDS)
+                .evictExpiredConnections()
                 .setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE)
                 // 启用系统TCP Keep-Alive
                 .useSystemProperties()

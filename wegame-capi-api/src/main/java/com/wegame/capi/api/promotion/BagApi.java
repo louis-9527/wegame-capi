@@ -14,6 +14,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -35,7 +36,7 @@ public class BagApi extends PromotionBaseApi {
     private static final String REDEEM_REWARD_URL_FORMAT = "%s/redeemReward";
     private static final String GET_HISTORY_MESSAGE_URL_FORMAT = "%s/getHistoryMessage";
 
-    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
     public GetBagCurrentRewardRes getBagCurrentReward(GetBagCurrentRewardReq req) {
         try {
             assembleSingleSignature(req);
@@ -61,7 +62,7 @@ public class BagApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
     public GetBagOtherRewardRes getBagOtherReward(GetBagOtherRewardReq req) {
         try {
             assembleSingleSignature(req);
@@ -109,7 +110,7 @@ public class BagApi extends PromotionBaseApi {
      * @param req 请求参数
      * @return
      */
-    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
     public CommonRes<RedeemRewardRes> redeemReward(RedeemRewardReq req) {
         try {
             assembleSingleSignature(req);
@@ -129,7 +130,7 @@ public class BagApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
     public GetRewardDetailRes getRewardDetail(GetRewardDetailReq req) {
         try {
             assembleSingleSignature(req);
@@ -155,7 +156,7 @@ public class BagApi extends PromotionBaseApi {
         }
     }
 
-    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
     public GetHistoryMessageRes getHistoryMessage(GetHistoryMessageReq req) {
         try {
             assembleSingleSignature(req);
