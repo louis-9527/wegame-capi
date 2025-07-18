@@ -155,6 +155,7 @@ public class FailedBetPostProcessService {
     private BetRecordQuery buildQuery(Long gtLastId, Long userId) {
         long current = System.currentTimeMillis();
         long start = current - FAILED_START_TIME_DURATION_IN_MS;
+        // todo 校验parentId
         if (Objects.nonNull(userId)) {
             return BetRecordQuery.builder()
                     .status(BetStatusEnum.FAIL.getCode())

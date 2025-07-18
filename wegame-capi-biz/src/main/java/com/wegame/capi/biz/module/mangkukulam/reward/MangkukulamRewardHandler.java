@@ -226,7 +226,6 @@ public class MangkukulamRewardHandler extends AbstractRewardHandler<MangkukulamS
      * @return 免费轮次数
      */
     private Integer calcRewardFreeWheelTimes(RewardHandleDo<MangkukulamSymbolDo> rewardHandle, List<RewardLineDo<MangkukulamSymbolDo>> rewardLineList) {
-        // todo 返回中奖免费轮轮数
         // 有中奖，返回0
         if (CollectionUtils.isNotEmpty(rewardLineList)) {
             return 0;
