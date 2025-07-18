@@ -9,6 +9,7 @@ import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,17 @@ public class GameRecordService<T> extends AbstractService {
             return getMongoTemplate(gameType).count(GameRecordQueryBuilder.buildMongodbQuery(query), gameType.getGameRecordCollectionName());
         } else {
             return getPrimaryMongoTemplate(gameType).count(GameRecordQueryBuilder.buildMongodbQuery(query), gameType.getGameRecordCollectionName());
+        }
+    }
+
+    public T findOne(GameRecordQuery query, GameTypeEnum gameType, Class<T> clazz) {
+        AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
+        Query mongodbQuery = GameRecordQueryBuilder.buildMongodbQuery(query);
+        mongodbQuery.with(query.getSort()).limit(1);
+        if (!query.isFromPrimary()) {
+            return getMongoTemplate(gameType).findOne(mongodbQuery, clazz);
+        } else {
+            return getPrimaryMongoTemplate(gameType).findOne(mongodbQuery, clazz);
         }
     }
 }
