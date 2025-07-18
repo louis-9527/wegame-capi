@@ -16,7 +16,10 @@ import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * 抽象游戏
@@ -35,18 +38,6 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         long gameRecordId = snowflakeIdGenerator.nextId();
         // log.info("generateGameRecord id:{}", gameRecordId);
         return gameRecordId;
-    }
-
-    public List<Long> generateGameRecordIdList(int count) {
-        List gameRecordIdList = new ArrayList<>();
-        int temp = 0;
-        while (temp < count) {
-            long gameRecordId = snowflakeIdGenerator.nextId();
-            log.info("generateGameRecord id, free wheel:{}", gameRecordId);
-            gameRecordIdList.add(gameRecordId);
-            temp++;
-        }
-        return gameRecordIdList;
     }
 
     public TreeMap<String, Integer> buildColumProbabilisticMap(int cellNo, TreeMap<String, List<BigDecimal>> probabilisticConfigMap) {
