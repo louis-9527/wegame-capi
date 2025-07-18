@@ -333,7 +333,7 @@ public class MangkukulamConfig {
         oddsTable.forEach((key, value) -> {
             AssertUtil.assertTrue(symbolMap.containsKey(key), ErrorCode.ERR_INTER, "oddsTable ERR");
             value.forEach((k, v) -> {
-                AssertUtil.assertTrue(keysList.contains(k), ErrorCode.ERR_INTER, "oddsTable ERR");
+                AssertUtil.assertTrue(keysList.contains(Integer.valueOf(k)), ErrorCode.ERR_INTER, "oddsTable ERR");
             });
         });
     }
