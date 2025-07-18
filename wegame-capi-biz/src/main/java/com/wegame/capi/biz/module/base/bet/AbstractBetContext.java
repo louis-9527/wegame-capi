@@ -49,7 +49,7 @@ public abstract class AbstractBetContext {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
 
-        if (BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+        if (BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
             return betStrategy.bet(betDo);
         } else {
             return distributeLock.tryLockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
