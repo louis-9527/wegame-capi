@@ -48,6 +48,7 @@ public class Constants {
     public static final int CONST_1 = 1;
     public static final int CONST_100 = 100;
     public static final int CONST_10000 = 10000;
+    public static final int CONST_100000 = 100000;
     public static final int CONST_1000000 = 1000000;
     public static final int CONST_10000000 = 1000_000_0;
     public static final int CONST_1000000000 = 1000_000_000;
