@@ -383,7 +383,8 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
     private <T> T randomKeyByWeight(Map<T, Integer> map, Integer totalWeight) {
         int mapSize = map.size();
         AssertUtil.assertTrue(mapSize > 0, ErrorCode.ERR_INTER, "weight map size is less than 1");
-        if (mapSize > 1) {
+        AssertUtil.assertTrue(totalWeight > 0, ErrorCode.ERR_INTER, "total weight is less than 1");
+        if (mapSize > 1 && totalWeight > 1) {
             int randomNumber = randomService.randomInt(Constants.CONST_1, totalWeight);
             int startVal = 0;
             for (Map.Entry<T, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
@@ -394,7 +395,11 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
                 }
             }
         } else {
-            return map.keySet().stream().findFirst().get();
+            return map.entrySet().stream()
+                    .filter(e -> e.getValue() > 0)
+                    .findFirst()
+                    .map(Map.Entry::getKey)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER, "random key generation failed"));
         }
         throw new BusinessException(ErrorCode.ERR_INTER, "random key generation failed");
     }
