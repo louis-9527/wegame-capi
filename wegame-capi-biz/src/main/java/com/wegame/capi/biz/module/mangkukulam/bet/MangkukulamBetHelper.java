@@ -43,13 +43,16 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        return BetRecordBuilder.build(betRecordId,
+        BetRecordDo<MangkukulamGameRecordDo> betRecordDo = BetRecordBuilder.build(betRecordId,
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple()),
                 null,
                 gameRecordList
         );
+        MangkukulamGameRecordDo lastGameRecord = gameRecordList.get(gameRecordList.size() - 1);
+        betRecordDo.setContinueStatus(!lastGameRecord.isLastGameFlag());
+        return betRecordDo;
     }
 
     @Override

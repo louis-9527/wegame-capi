@@ -123,9 +123,6 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
             // 2、构建投注记录
             BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
-            //todo @maidong 放入mangkukulamBetHelper.buildBetRecord内部
-            MangkukulamGameRecordDo lastGameRecord = list.get(list.size() - 1);
-            betRecord.setContinueStatus(!lastGameRecord.isLastGameFlag());
             // 3、投注并派彩
             SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, betHelper().hasRewardFreeWheel(list));
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
