@@ -11,6 +11,7 @@ import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.SymbolEnum;
 import com.wegame.capi.common.enums.SymbolSizeEnum;
+import com.wegame.capi.common.utils.GameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -37,7 +38,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
 
     public long generateGameRecordId() {
         long gameRecordId = snowflakeIdGenerator.nextId();
-        log.info("generateGameRecord id:{}", gameRecordId);
+        // log.info("generateGameRecord id:{}", gameRecordId);
         return gameRecordId;
     }
 
@@ -87,6 +88,19 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         return gameInfo.getSymbolById(symbol.getId());
     }
 
+    public String getConfigName(TreeMap<String, Integer> weightConfigMap, int randomNumber) {
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(weightConfigMap), ErrorCode.ERR_INTER);
+        int startVal = 0;
+        for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(weightConfigMap.entrySet())) {
+            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+                return entry.getKey();
+            } else {
+                startVal += entry.getValue();
+            }
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER);
+    }
+
     public SymbolSizeEnum randomSymbolSize(Map<String, Integer> map, int randomNumber) {
         int startVal = 0;
         for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
@@ -97,5 +111,21 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
             }
         }
         throw new BusinessException(ErrorCode.ERR_INTER);
+    }
+
+    /**
+     * 随机生成symbolId列表
+     *
+     * @param sourceReelWheelChart 源滚轮轮代表
+     * @param resultListCount      期望生成数量
+     * @return list
+     */
+    protected List<String> randomCircularGenSymbolIdList(List<String> sourceReelWheelChart, int resultListCount) {
+        AssertUtil.assertNotEmpty(sourceReelWheelChart, ErrorCode.ERR_INTER, "sourceReelWheelChart is empty");
+        AssertUtil.assertTrue(resultListCount > 0, ErrorCode.ERR_INTER, "resultListCount is empty");
+        // 生成随机数：从当前随机数开始，顺序循环取row个元素id
+        int reelSymbolStartIndex = randomService.randomInt(0, sourceReelWheelChart.size() - 1);
+        // 取出当前列的元素id 进行元素填充
+        return GameUtil.circularGetList(sourceReelWheelChart, reelSymbolStartIndex, resultListCount);
     }
 }

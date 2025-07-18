@@ -157,8 +157,8 @@ public class ThreadPoolConfig {
 
     @Bean(warmUpConnectionThreadPoolExecutor)
     public ThreadPoolExecutor warmUpConnectionThreadPoolExecutor() {
-        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(100,
-                100,
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(120,
+                120,
                 300L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(300),
