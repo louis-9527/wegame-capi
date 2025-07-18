@@ -95,14 +95,14 @@ public abstract class AbstractMariaMakilingBetStrategy
             }
         } else {
             // 免费轮投注, 走查询
-            return betForFreeWheel(betDo);
+            return betForFreeWheelQuery(betDo);
         }
     }
 
     /**
      * 免费轮投注
      */
-    private BetResultDo<MariaMakilingGameRecordDo> betForFreeWheel(BetDo betDo) {
+    private BetResultDo<MariaMakilingGameRecordDo> betForFreeWheelQuery(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         List<MariaMakilingGameRecordDo> gameRecordList = mariaMakilingBetRecordManager.listGameRecordWithCache(GameRecordQuery.builder()
