@@ -1,7 +1,8 @@
 package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
-import com.wegame.capi.common.enums.SymbolEnum;
+import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -104,9 +105,11 @@ public class MariaMakilingConfig implements Serializable {
     private void oddsConfigValidate() {
         Assert.notNull(oddsConfig, "oddsConfig is null");
         Assert.notNull(oddsConfig.commonOddsConfig, "oddsConfig.commonOddsConfig is null");
+        GameInfoDo gameInfoDo = MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
         // 校验-赔率配置
         oddsConfig.commonOddsConfig.keySet().forEach(symbolId -> {
             Assert.notEmpty(oddsConfig.commonOddsConfig.get(symbolId), "Odds Config Err");
+            Assert.notNull(gameInfoDo.getSymbolById(symbolId), "symbolId is not exist: " + symbolId);
         });
     }
 
@@ -123,19 +126,20 @@ public class MariaMakilingConfig implements Serializable {
                 .stream()
                 .reduce(0, Integer::sum);
         Assert.isTrue(freeWheelWeightSum == CONST_100000, "weightConfig.freeWheelWeightConfig Err");
+        GameInfoDo gameInfoDo = MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
         // 校验对应配置存在
         weightConfig.commonWheelWeightConfig.keySet().forEach(configName -> {
             TreeMap<String, List<BigDecimal>> configMap = probabilisticConfig.wheelProbabilisticConfig.get(configName);
             Assert.notNull(configMap, "common wheel probabilisticConfig is not exist: " + configName);
             configMap.keySet().forEach(symbolId -> {
-                Assert.notNull(SymbolEnum.valueOfId(symbolId), "symbolId is not exist: " + configName);
+                Assert.notNull(gameInfoDo.getSymbolById(symbolId), "symbolId is not exist: " + configName);
             });
         });
         weightConfig.freeWheelWeightConfig.keySet().forEach(configName -> {
             TreeMap<String, List<BigDecimal>> configMap = probabilisticConfig.wheelProbabilisticConfig.get(configName);
             Assert.notNull(configMap, "free wheel probabilisticConfig is not exist: " + configName);
             configMap.keySet().forEach(symbolId -> {
-                Assert.notNull(SymbolEnum.valueOfId(symbolId), "symbolId is not exist: " + configName);
+                Assert.notNull(gameInfoDo.getSymbolById(symbolId), "symbolId is not exist: " + configName);
             });
         });
     }
