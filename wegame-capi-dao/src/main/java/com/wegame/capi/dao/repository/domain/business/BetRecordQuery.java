@@ -5,6 +5,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.Sort;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 游戏记录查询模型
@@ -62,5 +63,10 @@ public class BetRecordQuery extends BetRecordPo implements Serializable {
      * 大于最后一条的Id
      */
     private Long gtLastId;
+
+    /**
+     * 投注子类型
+     */
+    private List<String> betSubTypes;
 }
 

@@ -77,6 +77,8 @@ public abstract class AbstractContinuePlayScheduler
                 }
                 Optional.ofNullable(detailList)
                         .orElse(Collections.emptyList())
+                        .stream()
+                        .filter(item -> BetSubTypeEnum.isFirstStep(item.getBetSubType()))
                         .forEach(betRecord ->
                                 autoContinuePlayGameThreadPoolExecutor.submit(() -> autoContinuePlay(betRecord)));
             } while (CollectionUtils.isNotEmpty(detailList));
@@ -91,7 +93,6 @@ public abstract class AbstractContinuePlayScheduler
             UserInfoContext.setUserInfo(buildUserInfo(betRecordDo));
             betStrategy().bet(buildBetDo(betRecordDo));
         } catch (Exception e) {
-            //todo
             log.error("AbstractContinuePlayScheduler autoContinuePlay exception", e);
         } finally {
             UserInfoContext.clear();

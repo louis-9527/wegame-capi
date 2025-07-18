@@ -17,6 +17,7 @@ import com.wegame.capi.biz.module.mangkukulam.MangkukulamCalcUtil;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -89,19 +90,17 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
                                                                      List<MangkukulamGameRecordDo> list,
                                                                      Long credit,
                                                                      Long lastGameRecordId) {
-        List<MangkukulamGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 4、组装返回结果
-        long overallRewardAmount = MangkukulamCalcUtil.calcTotalRewardAmount(firstBatchList);
         return BetResultDo.<MangkukulamBetRecordDetailDo>builder()
                 .betRecordId(betRecord.getId())
                 .gameId(betRecord.getGameId())
                 .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
                 .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
                 .credit(credit)
-                .overallRewardAmount(maxAmountControl(overallRewardAmount, betRecord.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple()))
+                .overallRewardAmount(0L)
                 .totalPayoutAmount(betRecord.getPayOutAmount())
                 .resultDetail(MangkukulamBetRecordDetailDo.builder()
-                        .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
+                        .allWheelRewardSubType(RewardSubTypeEnum.NONE)
                         .gameRecordList(null)
                         .volatilityGameRecordIds(getVolatilityGameRecordIds(list, lastGameRecordId))
                         .build())

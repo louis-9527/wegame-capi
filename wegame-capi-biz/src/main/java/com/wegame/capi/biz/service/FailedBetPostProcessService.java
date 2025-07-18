@@ -9,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -40,6 +42,8 @@ public class FailedBetPostProcessService {
     // 失败  - 15分钟内
     private static final long FAILED_START_TIME_DURATION_IN_MS = 15 * 60 * 1000;
     private static final int DEFAULT_PAGE_SIZE = 100;
+    private static final List<String> SUPPORTED_SUB_TYPES = Arrays.asList(BetSubTypeEnum.FREE_WHEEL_BUY_BET.getCode(),
+            BetSubTypeEnum.FREE_WHEEL_NORMAL_BET.getCode());
 
     @Autowired
     SingleWalletService singleWalletService;
@@ -69,7 +73,6 @@ public class FailedBetPostProcessService {
             return;
         }
         processFailedBet(gameType, userId);
-        //todo 处理投注中
     }
 
 
@@ -89,7 +92,7 @@ public class FailedBetPostProcessService {
             }
             for (Long betRecordId : CollectionUtils.emptyIfNull(recordIdList)) {
                 BetRecordDo betRecordDo = betRecordService.get(betRecordId, gameType);
-                if (Objects.nonNull(betRecordDo) && Objects.nonNull(betRecordDo.getParentId())) {
+                if (Objects.nonNull(betRecordDo) && BetSubTypeEnum.isSecondStep(betRecordDo.getBetSubType())) {
                     betRecordStatusExecutor.submit(() -> retryBet(betRecordDo, gameType));
                 }
             }
@@ -162,6 +165,7 @@ public class FailedBetPostProcessService {
                     .endCreateTime(current)
                     .gtLastId(gtLastId)
                     .userId(userId)
+                    .betSubTypes(SUPPORTED_SUB_TYPES)
                     .limit(DEFAULT_PAGE_SIZE)
                     .orderByClause("_id")
                     .direction(Sort.Direction.ASC)
@@ -172,6 +176,7 @@ public class FailedBetPostProcessService {
                     .startCreateTime(start)
                     .endCreateTime(current)
                     .gtLastId(gtLastId)
+                    .betSubTypes(SUPPORTED_SUB_TYPES)
                     .limit(DEFAULT_PAGE_SIZE)
                     .orderByClause("_id")
                     .direction(Sort.Direction.ASC)
