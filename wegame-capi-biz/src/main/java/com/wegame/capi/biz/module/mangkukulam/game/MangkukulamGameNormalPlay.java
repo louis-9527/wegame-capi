@@ -369,8 +369,8 @@ public class MangkukulamGameNormalPlay extends AbstractWheelChartGame<Mangkukula
     private MangkukulamConfig.Stage randomStage(GamePlayDo gamePlay, boolean freeWheelFlag) {
         MangkukulamConfig.MainGame mainGame = mangkukulamConfig.getSupportMainGame(gamePlay, freeWheelFlag);
 
-        List<MangkukulamConfig.Stage> stages = mainGame.getStages();
-        Integer key = randomKeyByWeight(mainGame.getWeightMap());
+        Map<String, MangkukulamConfig.Stage> stages = mainGame.getStages();
+        String key = randomKeyByWeight(mainGame.getWeightMap());
         return stages.get(key);
     }
 
