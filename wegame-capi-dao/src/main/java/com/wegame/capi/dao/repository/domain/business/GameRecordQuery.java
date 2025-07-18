@@ -111,5 +111,9 @@ public class GameRecordQuery implements Serializable {
      * 查询是否强制走主分片. 默认false
      */
     private boolean fromPrimary = false;
+    /**
+     * 排序
+     */
+    private Sort sort;
 }
 

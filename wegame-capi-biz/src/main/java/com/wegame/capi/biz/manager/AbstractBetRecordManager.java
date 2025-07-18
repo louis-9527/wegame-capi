@@ -42,4 +42,6 @@ public abstract class AbstractBetRecordManager<T extends ToVoConverter> {
 
     public abstract void putGameRecordCache(List<T> gameRecordList, GameTypeEnum gameType, String cacheKey);
 
+    public abstract T findOneGameRecord(GameRecordQuery query, GameTypeEnum gameType);
+
 }

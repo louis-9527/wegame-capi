@@ -105,4 +105,9 @@ public class MangkukulamBetRecordManager extends AbstractBetRecordManager<Mangku
         // 异步设置游戏记录缓存
         gameRecordService.asyncPutCache(gameRecordList, gameType, cacheKey);
     }
+
+    @Override
+    public MangkukulamGameRecordDo findOneGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
+        return gameRecordService.findOne(query, gameType, MangkukulamGameRecordDo.class);
+    }
 }
