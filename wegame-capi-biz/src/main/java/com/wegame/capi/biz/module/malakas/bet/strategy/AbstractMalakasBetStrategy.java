@@ -77,7 +77,7 @@ public abstract   class AbstractMalakasBetStrategy
 
     @Override
     public BetResultDo<MalakasBetRecordDetailDo> bet(BetDo betDo) {
-        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+        if (!BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
             // 非免费轮投注流程
             //// 1、是否使用星卡
             if (isCanStarCardBet(betDo)) {
