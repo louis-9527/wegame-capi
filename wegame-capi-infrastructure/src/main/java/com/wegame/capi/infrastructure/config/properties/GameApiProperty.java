@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Configuration;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Data
@@ -47,6 +49,19 @@ public class GameApiProperty implements InitializingBean, Serializable {
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.ERR_PARAM));
     }
+    public PrivateInfo getPrivateInfo(String channelId) {
+        return privateInfoList.stream()
+                .filter(privateInfo ->  StringUtils.equals(privateInfo.getChannelId(), channelId))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_PARAM));
+    }
+
+    public Set<String> getChannelIdAll(){
+        return privateInfoList.stream()
+                .map(PrivateInfo::getChannelId)
+                .collect(Collectors.toSet());
+
+    }
 
     @Data
     @NoArgsConstructor
@@ -57,4 +72,5 @@ public class GameApiProperty implements InitializingBean, Serializable {
         private String privateKey;
         private String privateIv;
     }
+
 }

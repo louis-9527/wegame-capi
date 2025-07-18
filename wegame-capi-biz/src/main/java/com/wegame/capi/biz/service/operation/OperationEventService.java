@@ -46,7 +46,7 @@ public class OperationEventService extends AbstractService {
             OperationEventPo po = OperationEventConvert.doToPo(eventDo, OptEnum.ADD);
             AssertUtil.assertNotNull(po, ErrorCode.ERR_INTER);
             OperationEventPo insertPo = getMongoTemplate(gameEnum.getGameType()).insert(po, gameEnum.getEventCollectionName());
-            String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, eventDo.getGameId(), eventDo.getPlayerName());
+            String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, eventDo.getGameId(), eventDo.getChannelId(), eventDo.getPlayerName());
             Boolean empty = redisTemplate.opsForHash().hasKey(catch_key, OPERATION_EVENT_EMPTY_KEY);
             if (empty) {
                 redisTemplate.delete(catch_key);
@@ -76,8 +76,8 @@ public class OperationEventService extends AbstractService {
         return OperationEventConvert.poToDoList(poList);
     }
 
-    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, OperationEventTypeEnum dynamicOperationGame) {
-        String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, dynamicOperationGame.getGameType().getId(), playName);
+    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, String channelId, OperationEventTypeEnum dynamicOperationGame) {
+        String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, dynamicOperationGame.getGameType().getId(), channelId, playName);
         Map<Object, Object> entries = redisTemplate.opsForHash().entries(catch_key);
         if (!entries.isEmpty()) {
             if (entries.containsKey(OPERATION_EVENT_EMPTY_KEY)) {
@@ -92,7 +92,7 @@ public class OperationEventService extends AbstractService {
                     .collect(Collectors.toList());
         }
 
-        List<OperationEventPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(OperationEventQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId()), OperationEventPo.class, dynamicOperationGame.getEventCollectionName());
+        List<OperationEventPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(OperationEventQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId(), channelId), OperationEventPo.class, dynamicOperationGame.getEventCollectionName());
         if (CollectionUtils.isEmpty(operationPoList)) {
             Map<String, String> catchMap = new HashMap<>();
             catchMap.put(OPERATION_EVENT_EMPTY_KEY, OPERATION_EVENT_EMPTY_KEY);
@@ -143,7 +143,7 @@ public class OperationEventService extends AbstractService {
         return null;
     }
 
-    public void updateOperationUseStatus(Long id,OperationEventStatusEnum eventStatusEnum, OperationEventTypeEnum gameEnum) {
+    public void updateOperationUseStatus(Long id, OperationEventStatusEnum eventStatusEnum, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         String catch_key = String.format(Constants.OPERATION_EVENT_ING_KEY, gameEnum.getGameType().getId(), id);
         redisTemplate.opsForValue().set(catch_key, String.valueOf(eventStatusEnum.getCode()), Constants.OPERATION_EVENT_ING_EXPIRED, TimeUnit.SECONDS);
@@ -155,9 +155,9 @@ public class OperationEventService extends AbstractService {
         redisTemplate.delete(catch_key);
     }
 
-    public void cleanOperationByCatch(Long id, String playerName, OperationEventTypeEnum gameEnum) {
+    public void cleanOperationByCatch(Long id, String channelId,String playerName, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, gameEnum.getGameType().getId(), playerName);
+        String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, gameEnum.getGameType().getId(),channelId, playerName);
         redisTemplate.opsForHash().delete(catch_key, String.valueOf(id));
     }
 

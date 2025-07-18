@@ -54,9 +54,11 @@ public class OperationEventCallbackController {
         encryptRequest.validate();
         String encryptedKey = request.getHeader("keyString");
         String encryptedIv = request.getHeader("iv");
+        String channelId = request.getHeader("channelId");
+        String platformId = request.getHeader("platformId");
         AssertUtil.assertStrNotEmpty(encryptedKey, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(encryptedIv, ErrorCode.ERR_PARAM);
-        // 使用私钥解密encryptedKey 和 encryptedIv
+        // 使用私钥解密 encryptedKey 和 encryptedIv
         String keyString = dynamicOperationEncryptionHelper.decrypt(encryptedKey);
         String ivString = dynamicOperationEncryptionHelper.decrypt(encryptedIv);
         // String key 和iv 解密message
