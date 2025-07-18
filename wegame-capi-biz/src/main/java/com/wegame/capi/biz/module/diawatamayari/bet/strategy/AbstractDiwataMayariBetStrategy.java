@@ -99,7 +99,7 @@ public abstract class AbstractDiwataMayariBetStrategy
             }
         } else {
             // 免费轮投注, 走查询
-            return betForFreeWheel(betDo);
+            return betForFreeWheelQuery(betDo);
         }
     }
 
@@ -123,7 +123,7 @@ public abstract class AbstractDiwataMayariBetStrategy
     /**
      * 免费轮投注
      */
-    private BetResultDo<DiwataMayariBetRecordDetailDo> betForFreeWheel(BetDo betDo) {
+    private BetResultDo<DiwataMayariBetRecordDetailDo> betForFreeWheelQuery(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         List<DiwataMayariGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
                 GameRecordQuery.builder()
