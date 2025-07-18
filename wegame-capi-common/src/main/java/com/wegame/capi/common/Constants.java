@@ -37,8 +37,10 @@ public class Constants {
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
 
+    public static final int CONST_1 = 1;
     public static final int CONST_100 = 100;
     public static final int CONST_10000 = 10000;
+    public static final int CONST_100000 = 100000;
     public static final int CONST_1000000 = 1000000;
 
     public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event_2:%s_%s";
