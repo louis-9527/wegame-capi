@@ -76,10 +76,16 @@ public enum BetSubTypeEnum {
         return null;
     }
 
-    public static Boolean isFreeWheel(String betSubType) {
+    /**
+     * 免费轮查询
+     * @param betSubType
+     * @return
+     */
+    public static Boolean isFreeWheelQuery(String betSubType) {
         List<String> freeWheelCodeList = Arrays.asList(FREE_SPINS_NORMAL_BET.getCode(), FREE_SPINS_BUY_BET.getCode());
         return freeWheelCodeList.contains(betSubType);
     }
+
 
     public static Boolean isFirstStep(String betSubType) {
         List<String> freeWheelCodeList = Arrays.asList(NORMAL_BET.getCode(), BUY_BET.getCode());

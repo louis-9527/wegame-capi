@@ -101,11 +101,11 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
 //                    return betForNonFreeWheel(betDo);
 //                }
 //            }
-        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+        if (!BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
             return betForNonFreeWheel(betDo);
         } else {
             // 免费轮投注, 走查询
-            return betForFreeWheel(betDo);
+            return betForFreeWheelQuery(betDo);
         }
 
     }
@@ -194,7 +194,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
     /**
      * 免费轮投注
      */
-    private BetResultDo<MangkukulamBetRecordDetailDo> betForFreeWheel(BetDo betDo) {
+    private BetResultDo<MangkukulamBetRecordDetailDo> betForFreeWheelQuery(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(betDo.getBetRecordId()).playerId(userInfo.getPlayerId()).batchId(betDo.getGameRecordId()).build();
         List<MangkukulamGameRecordDo> gameRecordList = betRecordManager().listGameRecord(gameRecordQuery, gameContext().gameInfo().getGameType());
