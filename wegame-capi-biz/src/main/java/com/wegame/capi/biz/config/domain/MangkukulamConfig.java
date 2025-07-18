@@ -65,7 +65,7 @@ public class MangkukulamConfig {
         if (freeWheelFlag) {
             if (Objects.equals(VolatilityTypeEnum.LOW.getCode(), gamePlay.getVolatility().getCode())) {
                 mainGame = bet.getLow();
-            } else {
+            } else if (Objects.equals(VolatilityTypeEnum.HIGH.getCode(), gamePlay.getVolatility().getCode())) {
                 mainGame = bet.getHigh();
             }
         } else {
