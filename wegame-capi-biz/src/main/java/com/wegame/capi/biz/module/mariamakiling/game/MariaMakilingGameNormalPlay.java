@@ -254,6 +254,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         int randomNumber = randomService.randomInt(CONST_1, CONST_100000);
         TreeMap<String, Integer> weightConfigMap = mariaMakilingConfig.getWeightConfig(isFreeWheelFlag);
         String configName = getConfigName(weightConfigMap, randomNumber);
+        log.info("configName:{}", configName);
         return mariaMakilingConfig.getProbabilisticConfig().getWheelProbabilisticConfig().get(configName);
     }
 }
