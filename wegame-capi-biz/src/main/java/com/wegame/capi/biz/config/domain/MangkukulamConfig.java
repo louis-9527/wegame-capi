@@ -355,7 +355,7 @@ public class MangkukulamConfig {
     private void stagesValidate(Stage stage) {
         // 空校验
         AssertUtil.assertNotNull(stage, ErrorCode.ERR_INTER, "stage is null");
-        AssertUtil.assertTrue(stage.weights >= 0, ErrorCode.ERR_INTER, "stage#weights is must great than 0");
+        AssertUtil.assertTrue(stage.weights > 0, ErrorCode.ERR_INTER, "stage#weights is must great than 0");
         AssertUtil.assertNotNull(stage.reels, ErrorCode.ERR_INTER, "stage#reels is null");
         AssertUtil.assertTrue(stage.reels.size() == 5, ErrorCode.ERR_INTER, "stage#reels is must 5");
         AssertUtil.assertNotNull(stage.symbolStagesRanges, ErrorCode.ERR_INTER, "stage#symbolStagesRanges is null");
