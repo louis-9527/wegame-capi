@@ -382,11 +382,11 @@ public class MangkukulamConfig {
         List<String> specialTwoList = Lists.newArrayList(MangkukulamGameHelper.MANGKUKULAM_SCATTER.getId(), MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId());
         for (int i = 0; i < stage.reels.size(); i++) {
             if (i == 0 || i == 4) {
-                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialOneList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 3", i));
-                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialTwoList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, SC WD_E distance is < 3", i));
+                AssertUtil.assertTrue(checkSpecialSymbolDistance(stage.reels.get(i), specialOneList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 3", i));
+                AssertUtil.assertTrue(checkSpecialSymbolDistance(stage.reels.get(i), specialTwoList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, SC WD_E distance is < 3", i));
             } else {
-                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialOneList, 4), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 4", i));
-                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialTwoList, 4), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, SC WD_E  distance is < 4", i));
+                AssertUtil.assertTrue(checkSpecialSymbolDistance(stage.reels.get(i), specialOneList, 4), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 4", i));
+                AssertUtil.assertTrue(checkSpecialSymbolDistance(stage.reels.get(i), specialTwoList, 4), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, SC WD_E  distance is < 4", i));
             }
         }
 
@@ -411,7 +411,7 @@ public class MangkukulamConfig {
         });
     }
 
-    private boolean checkSpecialElementsDistance(List<String> elements, List<String> specialList, int minDistance) {
+    private boolean checkSpecialSymbolDistance(List<String> elements, List<String> specialList, int minDistance) {
         if (elements == null || elements.isEmpty() || specialList == null || specialList.isEmpty() || minDistance < 0) {
             return true;
         }
