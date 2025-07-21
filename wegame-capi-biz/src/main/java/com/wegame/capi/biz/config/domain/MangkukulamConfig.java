@@ -355,7 +355,7 @@ public class MangkukulamConfig {
     private void stagesValidate(Stage stage) {
         // 空校验
         AssertUtil.assertNotNull(stage, ErrorCode.ERR_INTER, "stage is null");
-        AssertUtil.assertTrue(stage.weights > 0, ErrorCode.ERR_INTER, "stage#weights is must great than 0");
+        AssertUtil.assertTrue(stage.weights >= 0, ErrorCode.ERR_INTER, "stage#weights is must great than 0");
         AssertUtil.assertNotNull(stage.reels, ErrorCode.ERR_INTER, "stage#reels is null");
         AssertUtil.assertTrue(stage.reels.size() == 5, ErrorCode.ERR_INTER, "stage#reels is must 5");
         AssertUtil.assertNotNull(stage.symbolStagesRanges, ErrorCode.ERR_INTER, "stage#symbolStagesRanges is null");
@@ -383,10 +383,10 @@ public class MangkukulamConfig {
         for (int i = 1; i <= stage.reels.size(); i++) {
             if (i == 1 || i == 5) {
                 AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialOneList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 3", i));
-                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialTwoList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD_E SC distance is < 3", i));
+                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialTwoList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, SC WD_E distance is < 3", i));
             } else {
                 AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialOneList, 4), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 4", i));
-                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialTwoList, 4), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 4", i));
+                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialTwoList, 4), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, SC WD_E  distance is < 4", i));
             }
         }
 
