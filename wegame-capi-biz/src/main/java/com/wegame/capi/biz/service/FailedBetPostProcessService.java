@@ -39,8 +39,10 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.betRecordSt
 @Service
 public class FailedBetPostProcessService {
 
-    // 失败  - 15分钟内
-    private static final long FAILED_START_TIME_DURATION_IN_MS = 15 * 60 * 1000;
+    // 定时任务扫描 失败  - 15分钟内
+    private static final long SCAN_TIME_DURATION_FOR_SCHEDULER_IN_MS = 15 * 60 * 1000;
+    // 用户登陆时候查询时间范围 - 30天内
+    private static final long SCAN_TIME_DURATION_FOR_LOGIN_IN_MS = 30 * 24 * 60 * 60 * 1000L;
     private static final int DEFAULT_PAGE_SIZE = 100;
     private static final List<String> SUPPORTED_SUB_TYPES = Arrays.asList(BetSubTypeEnum.FREE_WHEEL_BUY_BET.getCode(),
             BetSubTypeEnum.FREE_WHEEL_NORMAL_BET.getCode());
@@ -157,11 +159,11 @@ public class FailedBetPostProcessService {
      */
     private BetRecordQuery buildQuery(Long gtLastId, Long userId) {
         long current = System.currentTimeMillis();
-        long start = current - FAILED_START_TIME_DURATION_IN_MS;
         // todo 校验parentId
         if (Objects.nonNull(userId)) {
             return BetRecordQuery.builder()
                     .status(BetStatusEnum.FAIL.getCode())
+                    .startCreateTime(current - SCAN_TIME_DURATION_FOR_LOGIN_IN_MS)
                     .endCreateTime(current)
                     .gtLastId(gtLastId)
                     .userId(userId)
@@ -173,7 +175,7 @@ public class FailedBetPostProcessService {
         } else {
             return BetRecordQuery.builder()
                     .status(BetStatusEnum.FAIL.getCode())
-                    .startCreateTime(start)
+                    .startCreateTime(current - SCAN_TIME_DURATION_FOR_SCHEDULER_IN_MS)
                     .endCreateTime(current)
                     .gtLastId(gtLastId)
                     .betSubTypes(SUPPORTED_SUB_TYPES)
