@@ -13,10 +13,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -360,7 +357,7 @@ public class MangkukulamConfig {
         AssertUtil.assertNotNull(stage, ErrorCode.ERR_INTER, "stage is null");
         AssertUtil.assertTrue(stage.weights >= 0, ErrorCode.ERR_INTER, "stage#weights is must great than 0");
         AssertUtil.assertNotNull(stage.reels, ErrorCode.ERR_INTER, "stage#reels is null");
-        AssertUtil.assertTrue(stage.reels.size() > 0, ErrorCode.ERR_INTER, "stage#reels is must great than 0");
+        AssertUtil.assertTrue(stage.reels.size() == 5, ErrorCode.ERR_INTER, "stage#reels is must 5");
         AssertUtil.assertNotNull(stage.symbolStagesRanges, ErrorCode.ERR_INTER, "stage#symbolStagesRanges is null");
         AssertUtil.assertTrue(stage.symbolStagesRanges.size() > 0, ErrorCode.ERR_INTER, "stage#symbolStagesRanges is must great than 0");
         AssertUtil.assertNotNull(stage.symbolWeights, ErrorCode.ERR_INTER, "stage#symbolWeights is null");
@@ -379,7 +376,19 @@ public class MangkukulamConfig {
                 AssertUtil.assertTrue(symbolMap.containsKey(symbol), ErrorCode.ERR_INTER, "stage#reels#symbol is not exists in symbolMap");
             });
         });
-        // todo 麦冬 scatter和valid的连续校验
+
+        // 特殊元素位置间隔校验
+        List<String> specialOneList = Lists.newArrayList(MangkukulamGameHelper.MANGKUKULAM_Wild.getId(), MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId());
+        List<String> specialTwoList = Lists.newArrayList(MangkukulamGameHelper.MANGKUKULAM_SCATTER.getId(), MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId());
+        for (int i = 1; i <= stage.reels.size(); i++) {
+            if (i == 1 || i == 5) {
+                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialOneList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 3", i));
+                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialTwoList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD_E SC distance is < 3", i));
+            } else {
+                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialOneList, 4), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 4", i));
+                AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialTwoList, 4), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 4", i));
+            }
+        }
 
         // symbolStagesRanges 业务校验
         stage.symbolStagesRanges.forEach(symbolStagesRange -> {
@@ -400,7 +409,45 @@ public class MangkukulamConfig {
                 AssertUtil.assertTrue(weight >= 0, ErrorCode.ERR_INTER, "stage#symbolWeights#weight is must great than 0");
             });
         });
-
     }
 
+    private boolean checkSpecialElementsDistance(List<String> elements, List<String> specialList, int minDistance) {
+        if (elements == null || elements.isEmpty() || specialList == null || specialList.isEmpty() || minDistance < 0) {
+            return true;
+        }
+
+        Set<String> specialSet = new HashSet<>(specialList);
+        List<Integer> specialIndices = new ArrayList<>();
+
+        // 收集所有特殊元素的索引
+        for (int i = 0; i < elements.size(); i++) {
+            if (specialSet.contains(elements.get(i))) {
+                specialIndices.add(i);
+            }
+        }
+
+        int n = specialIndices.size();
+        if (n < 2) {
+            return true; // 少于两个特殊元素，自然满足条件
+        }
+
+        // 检查所有相邻特殊元素对的间隔（包括首尾）
+        for (int i = 0; i < n; i++) {
+            int currentIndex = specialIndices.get(i);
+            int nextIndex = specialIndices.get((i + 1) % n); // 下一个索引，取模处理形成环形
+
+            int distance;
+            if (nextIndex >= currentIndex) {
+                distance = nextIndex - currentIndex;
+            } else {
+                distance = nextIndex + elements.size() - currentIndex;
+            }
+
+            if (distance <= minDistance) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
