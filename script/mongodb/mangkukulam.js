@@ -11,7 +11,7 @@ db.createCollection("mangkukulam_bet_record");
 // 索引mangkukulam_bet_record-c端查询需要
 db.mangkukulam_bet_record.createIndex({playerId: 1, channelId: 1, status: 1, createTime: -1});
 db.mangkukulam_bet_record.createIndex({createTime: -1, status: 1, betSubType: 1, userId : 1,  _id: 1});
-db.mangkukulam_bet_record.createIndex({createTime: -1, status: 1, continueStatus: 1, _id: 1});
+db.mangkukulam_bet_record.createIndex({createTime: -1, status: 1, freeWheelHandleStatus: 1, _id: 1});
 // 索引mangkukulam_bet_record-b端查询需要-使用覆盖索引
 db.mangkukulam_bet_record.createIndex({
     createTime: -1,
