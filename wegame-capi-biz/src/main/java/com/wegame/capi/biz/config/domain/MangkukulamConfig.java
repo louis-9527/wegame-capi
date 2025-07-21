@@ -380,8 +380,8 @@ public class MangkukulamConfig {
         // 特殊元素位置间隔校验
         List<String> specialOneList = Lists.newArrayList(MangkukulamGameHelper.MANGKUKULAM_Wild.getId(), MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId());
         List<String> specialTwoList = Lists.newArrayList(MangkukulamGameHelper.MANGKUKULAM_SCATTER.getId(), MangkukulamGameHelper.MANGKUKULAM_SPECIAL_WILD.getId());
-        for (int i = 1; i <= stage.reels.size(); i++) {
-            if (i == 1 || i == 5) {
+        for (int i = 0; i < stage.reels.size(); i++) {
+            if (i == 0 || i == 4) {
                 AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialOneList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, WD WD_E distance is < 3", i));
                 AssertUtil.assertTrue(checkSpecialElementsDistance(stage.reels.get(i), specialTwoList, 3), ErrorCode.ERR_INTER, String.format("stage#reels# reel_num=%s, SC WD_E distance is < 3", i));
             } else {
