@@ -8,10 +8,7 @@ import com.wegame.capi.biz.module.base.bet.strategy.BetStrategy;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.client.enums.*;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
@@ -63,7 +60,7 @@ public abstract class AbstractContinuePlayScheduler
             BetRecordQuery query = BetRecordQuery.builder()
                     .endCreateTime(endCreateTime)
                     .startCreateTime(startCreateTime)
-                    .continueStatus(true)
+                    .freeWheelHandleStatus(FreeWheelHandleStatusEnum.PENDING.getCode())
                     .status(BetStatusEnum.SUCCESS.getCode())
                     .direction(Sort.Direction.ASC)
                     .orderByClause("_id")

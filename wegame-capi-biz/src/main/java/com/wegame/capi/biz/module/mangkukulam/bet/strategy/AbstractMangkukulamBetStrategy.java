@@ -24,6 +24,7 @@ import com.wegame.capi.biz.module.mangkukulam.game.MangkukulamGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.FreeWheelHandleStatusEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
@@ -134,20 +135,20 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             BetRecordDo<MangkukulamGameRecordDo> preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
             AssertUtil.assertNotNull(preBetRecord, ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(Objects.equals(preBetRecord.getStatus(), BetStatusEnum.SUCCESS.getCode()), ErrorCode.ERR_PARAM);
-            AssertUtil.assertTrue(preBetRecord.getContinueStatus(), ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(Objects.equals(preBetRecord.getFreeWheelHandleStatus(), FreeWheelHandleStatusEnum.PENDING.getCode()), ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(StringUtils.equals(preBetRecord.getPlayerId(), UserInfoContext.getUserInfo().getPlayerId()), ErrorCode.ERR_PARAM);
             // 1、继续玩（完成波动选择后续部分）
             gamePlayDo.setContinuePlayContext(buildContinuePlayContext(preBetRecord, betDo));
-            List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
+            List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);// freeWheelHandleStatus 无需处理 待处理 已处理
             AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
             // 2、构建投注记录
             BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
-            betRecord.setContinueStatus(Boolean.FALSE);
+            betRecord.setFreeWheelHandleStatus(FreeWheelHandleStatusEnum.NOT_REQUIRED.getCode());
             // 3、投注并派彩
             SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, true);
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             // 4、异步更新投注原始记录 todo，id和parentId加唯一索引
-            preBetRecord.setContinueStatus(Boolean.FALSE);
+            preBetRecord.setFreeWheelHandleStatus(FreeWheelHandleStatusEnum.PROCESSED.getCode());
             mangkukulamBetRecordManager.asyncUpdateBetRecord(preBetRecord, GameTypeEnum.MANGKUKULAM);
             // 5、构建返回结果
             Long lastGameRecordId = gamePlayDo.getContinuePlayContext().getParentGameRecordId();

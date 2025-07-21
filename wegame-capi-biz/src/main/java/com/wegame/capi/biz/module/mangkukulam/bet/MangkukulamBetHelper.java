@@ -16,6 +16,7 @@ import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamCalcUtil;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.FreeWheelHandleStatusEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +52,7 @@ public class MangkukulamBetHelper implements BetHelper<MangkukulamBetRecordDetai
                 gameRecordList
         );
         MangkukulamGameRecordDo lastGameRecord = gameRecordList.get(gameRecordList.size() - 1);
-        betRecordDo.setContinueStatus(!lastGameRecord.isLastGameFlag());
+        betRecordDo.setFreeWheelHandleStatus(!lastGameRecord.isLastGameFlag() ? FreeWheelHandleStatusEnum.PENDING.getCode() : FreeWheelHandleStatusEnum.NOT_REQUIRED.getCode());
         return betRecordDo;
     }
 
