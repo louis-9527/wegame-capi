@@ -69,7 +69,7 @@ public class BetRecordConverter {
         betRecordDo.setCreateTime(po.getCreateTime());
         betRecordDo.setUpdater(po.getUpdater());
         betRecordDo.setUpdateTime(po.getUpdateTime());
-        betRecordDo.setContinueStatus(po.getContinueStatus());
+        betRecordDo.setFreeWheelHandleStatus(po.getFreeWheelHandleStatus());
         return betRecordDo;
     }
 
@@ -122,7 +122,7 @@ public class BetRecordConverter {
             po.setUpdateTime(DateUtil.getCurrentMilli());
             po.setId(betRecordDo.getId());
         }
-        po.setContinueStatus(betRecordDo.getContinueStatus());
+        po.setFreeWheelHandleStatus(betRecordDo.getFreeWheelHandleStatus());
         return po;
     }
 

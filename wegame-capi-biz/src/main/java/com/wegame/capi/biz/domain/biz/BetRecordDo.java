@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz;
 
+import com.wegame.capi.client.enums.FreeWheelHandleStatusEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -126,9 +127,11 @@ public class BetRecordDo<T> implements Serializable {
      */
     private Long updateTime;
     /**
-     * 是否可以继续玩
+     * 免费轮处理状态
+     *
+     * @see FreeWheelHandleStatusEnum
      */
-    private Boolean continueStatus;
+    private String freeWheelHandleStatus;
     ///////////////  above auto generated ///////////////
     /**
      * 游戏记录列表
