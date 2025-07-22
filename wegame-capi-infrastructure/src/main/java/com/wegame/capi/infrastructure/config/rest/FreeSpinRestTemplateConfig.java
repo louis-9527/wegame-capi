@@ -37,9 +37,9 @@ public class FreeSpinRestTemplateConfig {
     int readTimeout;
     @Value("${httpclient.freeSpin.connectionRequestTimeout:100}")
     int connectionRequestTimeout;
-    @Value("${httpclient.freeSpin.timeToLive:55}")
+    @Value("${httpclient.freeSpin.timeToLive:58}")
     int timeToLive;
-    @Value("${httpclient.freeSpin.maxIdleTime:50}")
+    @Value("${httpclient.freeSpin.maxIdleTime:55}")
     int maxIdleTime;
 
     @Bean(value = FREE_SPIN_CONNECTION_MANAGER_BEAN, destroyMethod = COMMON_CLOSE_METHOD)

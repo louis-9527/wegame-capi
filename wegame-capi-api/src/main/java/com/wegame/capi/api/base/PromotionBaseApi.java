@@ -18,7 +18,7 @@ public class PromotionBaseApi extends CommonBaseApi {
     public MultiValueMap<String, String> buildHeaders(String uid) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Connection", "Keep-Alive");
-        headers.add("Keep-Alive", "timeout=59");
+        headers.add("Keep-Alive", "timeout=58");
         headers.add("uid", uid);
         return headers;
     }
