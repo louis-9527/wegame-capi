@@ -78,7 +78,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
             // 首轮未达到最大倍数 && 首轮命中免费轮
             freeWheelGameRecordList = new ArrayList<>();
             freeWheelGameRecordIds = new ArrayList<>();
-            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true), firstWheelRewardResult.getRewardFreeWheelTimes());
+            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, gamePlay, firstWheelRewardResult.getRewardFreeWheelTimes());
             // 累计中奖金额
             long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
             for (int index = 0; index < wheelList.size(); index++) {
@@ -212,17 +212,19 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
      * @param gameInfo 游戏信息
      * @return 滚轮列表
      */
-    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig, int wheelNumber) {
+    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, GamePlayDo gamePlay, int wheelNumber) {
         List<WheelDo<SymbolDo>> wheels = new ArrayList<>();
         // 保存全局wild
         SymbolDo[][] wildSymbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         if (wheelNumber == 0) {
             return wheels;
         }
-        // 生成整盘随机数(row*column)
-        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, wheelNumber * gameInfo.getRow() * gameInfo.getColumn());
-        int randomNumberIndex = 0;
+
         for (Integer number = 1; number <= wheelNumber; number++) {
+            // 生成整盘随机数(row*column)
+            List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000,  gameInfo.getRow() * gameInfo.getColumn());
+            int randomNumberIndex = 0;
+            TreeMap<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(gamePlay, true);
             SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
             for (int column = 0; column < gameInfo.getColumn(); column++) {
                 // 当前列元素概率
