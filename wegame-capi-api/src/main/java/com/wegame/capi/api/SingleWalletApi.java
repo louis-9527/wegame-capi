@@ -252,7 +252,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
      * @param req
      * @return
      */
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
     public CommonRes<JackpotRes> jackpot(JackpotReq req) {
         try {
             // 参数签名
