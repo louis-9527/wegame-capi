@@ -146,6 +146,12 @@ public class SingleWalletService {
                     .errorCode(ErrorCode.INSUFFICIENT_CREDIT)
                     .errorMsg(commonRes.getErrorMessage())
                     .build();
+        } else if(Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INVALID_BET.getCode())){
+            return SingleWalletBetResultDo.builder()
+                    .betStatus(BetStatusEnum.FAIL)
+                    .errorCode(ErrorCode.INVALID_BET)
+                    .errorMsg(commonRes.getErrorMessage())
+                    .build();
         } else {
             if (Objects.equals(BetPromotionTypeEnum.FREE_SPIN.getCode(), betRecordDo.getBetPromotionType())) {
                 FreeSpinErrorCode freeSpinErrorCode = FreeSpinErrorCode.valueOfThirdCode(commonRes.getStatus());
