@@ -1,5 +1,8 @@
 package com.wegame.capi.biz.module.mangkukulam.bet.strategy;
 
+import com.wegame.base.Constants;
+import com.wegame.base.context.Operator;
+import com.wegame.base.context.OperatorContext;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
@@ -134,6 +137,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             AssertUtil.assertNotNull(betDo.getParentBetRecordId(), ErrorCode.ERR_PARAM);
             BetRecordDo<MangkukulamGameRecordDo> preBetRecord = mangkukulamBetRecordManager.getBetRecord(betDo.getParentBetRecordId(), GameTypeEnum.MANGKUKULAM);
             AssertUtil.assertNotNull(preBetRecord, ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(validateBetRecordTimeRange(preBetRecord), ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(Objects.equals(preBetRecord.getStatus(), BetStatusEnum.SUCCESS.getCode()), ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(Objects.equals(preBetRecord.getFreeWheelHandleStatus(), FreeWheelHandleStatusEnum.PENDING.getCode()), ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(StringUtils.equals(preBetRecord.getPlayerId(), UserInfoContext.getUserInfo().getPlayerId()), ErrorCode.ERR_PARAM);
@@ -156,6 +160,18 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
         } else {
             throw new BusinessException(ErrorCode.ERR_PARAM);
         }
+    }
+
+    private boolean validateBetRecordTimeRange(BetRecordDo<MangkukulamGameRecordDo> betRecord) {
+        Operator operator = OperatorContext.getOperator();
+        // system操作不考虑时间， 用户自己操作要求在4分钟内
+        if (Objects.equals(operator.getAdminId(), Constants.SYSTEM_OPERATOR.getAdminId())) {
+            return true;
+        } else {
+            long startTime = System.currentTimeMillis() - (4 * 60 * 1000);
+            return betRecord.getCreateTime() > startTime;
+        }
+
     }
 
     private GamePlayDo.ContinuePlayContext buildContinuePlayContext(BetRecordDo<MangkukulamGameRecordDo> preBetRecord, BetDo betDo) {
