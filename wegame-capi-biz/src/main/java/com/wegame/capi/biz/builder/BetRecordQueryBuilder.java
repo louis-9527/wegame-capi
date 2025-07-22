@@ -63,7 +63,7 @@ public class BetRecordQueryBuilder {
             criteria.and("gameId").is(recordQuery.getGameId());
         }
         if (Objects.nonNull(recordQuery.getFreeWheelHandleStatus())) {
-            criteria.and("continueStatus").is(recordQuery.getFreeWheelHandleStatus());
+            criteria.and("freeWheelHandleStatus").is(recordQuery.getFreeWheelHandleStatus());
         }
         if (Objects.nonNull(recordQuery.getStartCreateTime()) && Objects.nonNull(recordQuery.getEndCreateTime())) {
             criteria.andOperator(
@@ -122,7 +122,7 @@ public class BetRecordQueryBuilder {
             update.set("status", recordDo.getStatus());
         }
         if (Objects.nonNull(recordDo.getFreeWheelHandleStatus())) {
-            update.set("continueStatus", recordDo.getFreeWheelHandleStatus());
+            update.set("freeWheelHandleStatus", recordDo.getFreeWheelHandleStatus());
         }
         if (Objects.nonNull(recordDo.getUpdater())) {
             update.set("updater", recordDo.getUpdater());
