@@ -83,7 +83,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
             long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
             for (int index = 0; index < wheelList.size(); index++) {
                 WheelDo<SymbolDo> wheelDo = wheelList.get(index);
-                RewardResultDo rewardResultDo = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheelDo, BigDecimal.ZERO));
+                RewardResultDo<SymbolDo> rewardResultDo = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheelDo, BigDecimal.ZERO));
                 // 累加合计中奖总金额
                 overallRewardAmount = overallRewardAmount + rewardResultDo.getTotalRewardAmount();
                 boolean freeWheelReachMaxRewardMultiple = reachMaxMultiple(overallRewardAmount, gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple());
@@ -219,7 +219,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         if (wheelNumber == 0) {
             return wheels;
         }
-        for (Integer number = 1; number <= wheelNumber; number++) {
+        for (int number = 1; number <= wheelNumber; number++) {
             // 生成整盘随机数(row*column)
             List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000,  gameInfo.getRow() * gameInfo.getColumn());
             int randomNumberIndex = 0;
