@@ -103,7 +103,6 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-	    <version>8.0.33</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -201,10 +200,6 @@
     </pluginRepositories>
 
     <repositories>
-	<repository>
-		<id>mysql</id>
-		<url>http://45.115.236.152:8081/repository/mysql/</url>
-	</repository>
         <repository>
             <id>ali-nexus</id>
             <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
