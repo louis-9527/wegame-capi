@@ -91,21 +91,9 @@
 			"config3": 20000,
 			"config4": 22400,
 			"config5": 9375,
-			"config6": 9300,
-			"config7": 0,
-			"config8": 0,
-			"config9": 0,
-			"config10": 0,
-			"config11": 0,
-			"config12": 0
+			"config6": 9300
 		},
 		"freeWheelWeightConfig": {
-			"config1": 0,
-			"config2": 0,
-			"config3": 0,
-			"config4": 0,
-			"config5": 0,
-			"config6": 0,
 			"config7": 20000,
 			"config8": 20000,
 			"config9": 16380,
