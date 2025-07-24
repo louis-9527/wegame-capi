@@ -69,7 +69,7 @@ public class MangkukulamSymbolUtil {
         if (CollectionUtils.isEmpty(gameRecordList)) {
             return;
         }
-        gameRecordList.parallelStream().forEach(gameRecord -> {
+        gameRecordList.forEach(gameRecord -> {
             MangkukulamSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
                 for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
