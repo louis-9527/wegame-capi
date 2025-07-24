@@ -50,10 +50,11 @@ public class OperationEventPo implements Serializable {
     private Long finishBonus;
     /**
      * 干预事件类型
-     * 代码：1, 表示正常游戏紧急干预.
-     * 代码:  2, 表示正常游戏普通干预，可以由游戏方根据情况调整干预手段.
-     * 代码:  3,  表示免费游戏紧急干预
-     * 代码:  4, 表示免费游戏普通干预
+     * 代码: 1, 表示正常游戏紧急干预.
+     * 代码: 2, 表示正常游戏普通干预，可以由游戏方根据情况调整干预手段.
+     * 代码: 3, 表示免费游戏紧急干预
+     * 代码: 4, 表示免费游戏普通干预
+     * @see com.wegame.capi.common.enums.OperationEventKindEnum
      */
     private Integer eventKind;
     /**
@@ -74,16 +75,17 @@ public class OperationEventPo implements Serializable {
     private Long expiredTime;
     /**
      * 干预状态
-     * com.wegame.capi.common.enums.DynamicOperationEventStatusEnum
+     * @see com.wegame.capi.common.enums.OperationEventStatusEnum
      */
     private Integer eventStatus;
     /**
      * 干预状态
-     * com.wegame.capi.common.enums.DynamicOperationEventSubStatusEnum
+     * @see com.wegame.capi.common.enums.OperationEventSubStatusEnum
      */
     private Integer eventSubStatus;
     /**
      * 上报状态
+     * @see com.wegame.capi.common.enums.OperationEventReportStatusEnum
      */
     private Integer reportStatus;
     /**

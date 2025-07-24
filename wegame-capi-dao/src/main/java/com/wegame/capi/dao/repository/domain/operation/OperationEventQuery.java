@@ -100,6 +100,12 @@ public class OperationEventQuery implements Serializable {
     /**
      * 最小完成金额
      */
+
     private Double finishMinAmount;
+
+    /**
+     * 是否完成
+     */
+    private Boolean finish;
 
 }

@@ -15,7 +15,7 @@ import com.wegame.capi.api.domain.res.promotion.FreeSpinDetailRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinHistoryOfPlayerRes;
 import com.wegame.capi.api.domain.res.promotion.FreeSpinOfPlayerRes;
 import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
-import com.wegame.capi.common.constants.FreeSpinErrorCode;
+import com.wegame.capi.common.enums.FreeSpinErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -61,7 +61,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
         int duplicateIdCount = 0;
         while (canContinueExecute) {
             try {
-                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
+                ResponseEntity<CommonRes<SingleWalletBetWithPayoutRes>> responseEntity = freeSpinRestTemplate.exchange(requestEntity,
                         new ParameterizedTypeReference<CommonRes<SingleWalletBetWithPayoutRes>>()
                         {});
                 if (Objects.isNull(responseEntity) || Objects.isNull(responseEntity.getBody())) {
@@ -113,7 +113,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<FreeSpinOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_OF_PLAYER, freeSpinDomain)));
-            ResponseEntity<CommonRes<FreeSpinOfPlayerRes>> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinOfPlayerRes>>() {
+            ResponseEntity<CommonRes<FreeSpinOfPlayerRes>> responseEntity = freeSpinRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinOfPlayerRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -139,7 +139,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<FreeSpinHistoryOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_HISTORY_OF_PLAYER, freeSpinDomain)));
-            ResponseEntity<CommonRes<FreeSpinHistoryOfPlayerRes>> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinHistoryOfPlayerRes>>() {
+            ResponseEntity<CommonRes<FreeSpinHistoryOfPlayerRes>> responseEntity = freeSpinRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinHistoryOfPlayerRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
@@ -165,7 +165,7 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<FreeSpinDetailReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_DETAIL, freeSpinDomain)));
-            ResponseEntity<CommonRes<FreeSpinDetailRes>> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinDetailRes>>() {
+            ResponseEntity<CommonRes<FreeSpinDetailRes>> responseEntity = freeSpinRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<FreeSpinDetailRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);

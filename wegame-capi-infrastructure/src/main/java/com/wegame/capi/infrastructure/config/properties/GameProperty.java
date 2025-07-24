@@ -5,12 +5,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Configuration
 public class GameProperty {
-
-    @Value("${game.enable.MariaMakiling}")
+    // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
+    @Value("${game.enable.MariaMakiling: false}")
     private boolean enableMariaMaking;
 
     public List<GameTypeEnum> enabledGameTypes() {
@@ -19,5 +22,14 @@ public class GameProperty {
             gameTypeList.add(GameTypeEnum.MARIA_MAKILING);
         }
         return gameTypeList;
+    }
+
+    public String enabledGameNames() {
+        List<String> gameNameList = Optional.ofNullable(enabledGameTypes())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(GameTypeEnum::getName)
+                .collect(Collectors.toList());
+        return String.join(",", gameNameList);
     }
 }

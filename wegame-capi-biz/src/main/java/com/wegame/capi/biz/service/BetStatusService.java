@@ -17,6 +17,7 @@ import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.shade.com.google.common.util.concurrent.RateLimiter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +40,7 @@ import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.betRecordSt
 public class BetStatusService {
 
     private static final long THREE_MINUTES = 3 * 60 * 1000;
+    private static final long MS_800 = 800;
     private static final String MESSAGE_FORMAT = "%s, 记录id：%s，投注失败";
     @Value("${spring.application.name}")
     private String appName;
@@ -48,8 +50,6 @@ public class BetStatusService {
     private String warningRobot;
     @Autowired
     SingleWalletApi singleWalletApi;
-    @Autowired
-    BetRecordService betRecordService;
     @Autowired
     PulsarProducer pulsarProducer;
 
@@ -72,7 +72,7 @@ public class BetStatusService {
         }
         // 控制20s不超过1个请求
         RateLimiter rateLimiter = RateLimiter.create(1.0 / 20.0);
-        do  {
+        do {
             try {
                 rateLimiter.acquire();
                 log.info("convertBetStatus info, betRecordId: {}", betRecordDo.getId());
@@ -96,7 +96,7 @@ public class BetStatusService {
             } catch (Exception e) {
                 log.error("convertBetStatus error, betRecordId: {}, errMsg: {}", betRecordDo.getId(), e.getMessage(), e);
             }
-        } while (System.currentTimeMillis() - betRecordDo.getCreateTime() <= THREE_MINUTES - 800);
+        } while (System.currentTimeMillis() - betRecordDo.getCreateTime() <= THREE_MINUTES - MS_800);
     }
 
     @Async(betRecordStatusThreadPoolExecutor)
@@ -106,16 +106,11 @@ public class BetStatusService {
 
     private void handle(BetRecordDo betRecordDo, GameTypeEnum gameType, BetStatusEnum betStatus, BetStatusRes betStatusRes) {
         log.info("handle betStatus betRecordId: {}, betStatus: {}, betStatusRes: {}", betRecordDo.getId(), betStatus, betStatusRes);
-        // 状态更新
-        boolean ret = betRecordService.update(BetRecordDo.builder()
-                .id(betRecordDo.getId())
-                .betId(StringUtils.isNotEmpty(betStatusRes.getBetId()) ? betStatusRes.getBetId() : null)
-                .status(betStatus.getCode())
-                .build(), gameType);
-        if (!ret) {
-            pulsarProducer.syncSendMessage(gameType,
-                    buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betStatusRes.getBetId()),
-                    100);
+        MessageId messageId = pulsarProducer.syncSendMessage(gameType,
+                buildUpdateMessage(betRecordDo, betStatus, betStatusRes.getBetId()),
+                100);
+        if (Objects.isNull(messageId)) {
+            log.error("handle betStatus betRecordId: {}, betStatus: {}, send message fail", betRecordDo.getId(), betStatus);
         }
         // 业务告警
         if (Objects.equals(BetStatusEnum.FAIL, betStatus)) {
@@ -140,6 +135,7 @@ public class BetStatusService {
                         .id(betRecordDo.getId())
                         .betId(betId)
                         .status(betStatus.getCode())
+                        .jackpot(betRecordDo.getJackpot())
                         .build());
     }
 }

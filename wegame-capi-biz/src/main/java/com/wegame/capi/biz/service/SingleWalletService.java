@@ -18,7 +18,7 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.constants.FreeSpinErrorCode;
+import com.wegame.capi.common.enums.FreeSpinErrorCode;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
@@ -144,6 +144,12 @@ public class SingleWalletService {
             return SingleWalletBetResultDo.builder()
                     .betStatus(BetStatusEnum.FAIL)
                     .errorCode(ErrorCode.INSUFFICIENT_CREDIT)
+                    .errorMsg(commonRes.getErrorMessage())
+                    .build();
+        } else if(Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INVALID_BET.getCode())){
+            return SingleWalletBetResultDo.builder()
+                    .betStatus(BetStatusEnum.FAIL)
+                    .errorCode(ErrorCode.INVALID_BET)
                     .errorMsg(commonRes.getErrorMessage())
                     .build();
         } else {

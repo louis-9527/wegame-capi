@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import static com.wegame.base.config.HttpClientConfig.COMMON_REST_TEMPLATE_BEAN;
-import static com.wegame.capi.infrastructure.config.RestTemplateConfig.PROMOTION_REST_TEMPLATE_BEAN;
-import static com.wegame.capi.infrastructure.config.RestTemplateConfig.WALLET_REST_TEMPLATE_BEAN;
+import static com.wegame.capi.infrastructure.config.rest.FreeSpinRestTemplateConfig.FREE_SPIN_REST_TEMPLATE_BEAN;
+import static com.wegame.capi.infrastructure.config.rest.PromotionRestTemplateConfig.PROMOTION_REST_TEMPLATE_BEAN;
+import static com.wegame.capi.infrastructure.config.rest.WalletRestTemplateConfig.WALLET_REST_TEMPLATE_BEAN;
 
 /**
  * base客户端
@@ -24,6 +25,9 @@ public class BaseApi {
     @Autowired
     @Qualifier(WALLET_REST_TEMPLATE_BEAN)
     public RestTemplate walletRestTemplate;
+    @Autowired
+    @Qualifier(FREE_SPIN_REST_TEMPLATE_BEAN)
+    public RestTemplate freeSpinRestTemplate;
     @Autowired
     @Qualifier(PROMOTION_REST_TEMPLATE_BEAN)
     public RestTemplate promotionRestTemplate;

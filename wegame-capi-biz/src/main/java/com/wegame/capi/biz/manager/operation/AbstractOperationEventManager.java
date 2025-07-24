@@ -75,7 +75,7 @@ public abstract class AbstractOperationEventManager {
     public abstract OperationEventTypeEnum operationEventType();
 
     /**
-     * 获取当前玩家在生效中的干预时间,并按时间取第一条
+     * 获取当前玩家在生效中的干预事件,并按时间取第一条
      */
     public OperationEventDo getEffectedEvent(String playName) {
         OperationEventTypeEnum dynamicOperationGame = operationEventType();
@@ -268,11 +268,11 @@ public abstract class AbstractOperationEventManager {
         }
 
         // 如果投注金额小于系统最小的投注金额,需要判断是否可以赠送出去
-      //  if (betAmount <= operationEventType().getGameType().getMinBetAmount()) {
-
             if (eventAmount < Constants.MIN_BET_AMOUNT_M * betAmount) {
                 // 上报
                 log.info("event getInterventionAmount finish amount error eventId:{}", eventDo.getEventId());
+                // 修改事件状态是进行中
+                this.updateOperationUseStatus(eventDo.getId(), OperationEventStatusEnum.ING);
                 if (finishBonus > 0L) {
                     asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_FIND_DETAIL);
                 } else {
@@ -280,7 +280,6 @@ public abstract class AbstractOperationEventManager {
                 }
                 return null;
             }
-      //  }
         return eventAmount;
     }
 
@@ -339,6 +338,7 @@ public abstract class AbstractOperationEventManager {
                     .eventSubStatus(eventSubStatusEnum)
                     .build();
             operationEventService.update(build, operationEventType());
+            operationEventService.cleanOperationUseStatus(recordId, operationEventType());
             // 上报
             reportEventById(recordId);
         });
@@ -352,6 +352,7 @@ public abstract class AbstractOperationEventManager {
                 .eventSubStatus(eventSubStatusEnum)
                 .build();
         operationEventService.update(build, operationEventType());
+        operationEventService.cleanOperationUseStatus(recordId, operationEventType());
         // 上报
         reportEventById(recordId);
     }

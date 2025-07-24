@@ -47,6 +47,8 @@ public class UserQuery extends UserPo implements Serializable {
      */
     private Date endUpdateTime;
 
+    private Long greaterThanId;
+
     ///////////////  above auto generated ///////////////
 
 }

@@ -16,7 +16,10 @@ import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * 抽象游戏
@@ -37,18 +40,6 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         return gameRecordId;
     }
 
-    public List<Long> generateGameRecordIdList(int count) {
-        List gameRecordIdList = new ArrayList<>();
-        int temp = 0;
-        while (temp < count) {
-            long gameRecordId = snowflakeIdGenerator.nextId();
-            log.info("generateGameRecord id, free wheel:{}", gameRecordId);
-            gameRecordIdList.add(gameRecordId);
-            temp++;
-        }
-        return gameRecordIdList;
-    }
-
     public TreeMap<String, Integer> buildColumProbabilisticMap(int cellNo, TreeMap<String, List<BigDecimal>> probabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
         TreeMap<String, Integer> map = new TreeMap<>();
@@ -66,6 +57,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
     }
 
     public SymbolEnum randomOneSymbol(TreeMap<String, Integer> map, int randomNumber) {
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER);
         int startVal = 0;
         for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
@@ -93,5 +85,18 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
     public SymbolDo randomNormalSymbol(Integer randomNumber, GameInfoDo gameInfo, TreeMap<String, Integer> columnProbabilisticMap) {
         SymbolEnum symbol = randomOneSymbol(columnProbabilisticMap, randomNumber);
         return gameInfo.getSymbolById(symbol.getId());
+    }
+
+    public String getConfigName(TreeMap<String, Integer> weightConfigMap, int randomNumber) {
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(weightConfigMap), ErrorCode.ERR_INTER);
+        int startVal = 0;
+        for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(weightConfigMap.entrySet())) {
+            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+                return entry.getKey();
+            } else {
+                startVal += entry.getValue();
+            }
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER);
     }
 }

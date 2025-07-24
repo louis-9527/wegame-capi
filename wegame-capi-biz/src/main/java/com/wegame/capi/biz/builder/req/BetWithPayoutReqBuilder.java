@@ -10,7 +10,6 @@ import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import org.slf4j.MDC;
 
@@ -35,11 +34,12 @@ public class BetWithPayoutReqBuilder {
                         .roundNo(betRecordDo.getBetSerialNo())
                         .wagersDate(uctSecond)
                         .settlementDate(uctSecond)
-                        .isFreeRound(BetSubTypeEnum.isFreeWheel(betRecordDo.getBetSubType()))
+                        .isFreeRound(false)
                         .jackpotDetails(new BetWithPayoutReq.BetDetails.JackpotDetails())
                         .build())
                 .build();
     }
+
     public static BetStarSpinReq buildStarSpinReq(BetRecordDo betRecordDo) {
         long uctSecond = DateUtil.toUCTSecond(betRecordDo.getCreateTime());
         return BetStarSpinReq.builder()
@@ -60,6 +60,7 @@ public class BetWithPayoutReqBuilder {
                         .build())
                 .build();
     }
+
     public static FreeSpinReq buildFreeSpinReq(BetRecordDo betRecordDo) {
         long uctSecond = DateUtil.toUCTSecond(betRecordDo.getCreateTime());
         UserInfo userInfo = UserInfoContext.getUserInfo();
@@ -79,6 +80,7 @@ public class BetWithPayoutReqBuilder {
                         .build())
                 .freeSpinType(1)
                 .campaignId(betRecordDo.getExtendInfo().getCampaignId())
+                .betValue(AmountUtil.toBigDecimal(betRecordDo.getBetAmount()))
                 .build();
     }
 }

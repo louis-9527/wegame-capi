@@ -1,0 +1,30 @@
+## spring:redis
+spring:
+  redis:
+    connectTimeout: 500
+    timeout: 500
+    cluster:
+      nodes:
+        - uat-makiling-redis-sg.uj7p2w.clustercfg.apse1.cache.amazonaws.com:6379
+      max-redirects: 5
+    redisson:
+      minIdlePoolSize: 250
+      maxPoolSize: 1000
+    lettuce:
+      cluster:
+        refresh:
+          adaptive: true
+          period: 1m
+          dynamicRefreshSources: true
+      pool:
+        enabled: true
+        #连接池中的最大空闲连接
+        max-idle: 10
+        #连接池最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: 500
+        #连接池最大连接数（使用负值表示没有限制）
+        max-active: 8
+        #连接池中的最小空闲连接
+        min-idle: 0
+    password:
+    client-type: lettuce

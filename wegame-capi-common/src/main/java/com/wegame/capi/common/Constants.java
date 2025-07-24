@@ -31,7 +31,9 @@ public class Constants {
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
 
+    public static final int CONST_1 = 1;
     public static final int CONST_10000 = 10000;
+    public static final int CONST_100000 = 100000;
     public static final int CONST_1000000 = 1000000;
 
     public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event_2:%s_%s";
@@ -60,5 +62,7 @@ public class Constants {
     public static final String MONGOTEMPLATE = "MongoTemplate";
     public static final String PRIMARY_MONGOTEMPLATE = "PrimaryMongoTemplate";
 
+    public static final String BUILD_BEAN_FORMAT = "build bean: {}";
+    public static final String COMMON_CLOSE_METHOD = "close";
 
 }

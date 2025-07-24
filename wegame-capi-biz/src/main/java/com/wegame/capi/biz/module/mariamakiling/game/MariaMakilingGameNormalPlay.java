@@ -13,6 +13,7 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
+import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
-import static com.wegame.capi.common.Constants.CONST_1000000;
+import static com.wegame.capi.common.Constants.*;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
@@ -45,7 +46,9 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
-    RewardHandler mariaMakilingRewardHandler;
+    RewardHandler<SymbolDo> mariaMakilingRewardHandler;
+    @Autowired
+    RandomService randomService;
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
@@ -60,10 +63,10 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         // 根据投注类型：生成游戏滚轮
         switch (gamePlay.getBetType()) {
             case NORMAL_BET:
-                firstWheel = generateNormalWheel(gameInfo, getProbabilisticConfig(gamePlay, false));
+                firstWheel = generateNormalWheel(gameInfo, getProbabilisticConfig(false));
                 break;
             case BUY_BET:
-                firstWheel = generateRewardFreeWheel(gameInfo, getProbabilisticConfig(gamePlay, false));
+                firstWheel = generateRewardFreeWheel(gameInfo, getProbabilisticConfig(false));
                 break;
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
@@ -75,12 +78,12 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
             // 首轮未达到最大倍数 && 首轮命中免费轮
             freeWheelGameRecordList = new ArrayList<>();
             freeWheelGameRecordIds = new ArrayList<>();
-            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, getProbabilisticConfig(gamePlay, true), firstWheelRewardResult.getRewardFreeWheelTimes());
+            List<WheelDo<SymbolDo>> wheelList = generateMultiWheel(gameInfo, firstWheelRewardResult.getRewardFreeWheelTimes());
             // 累计中奖金额
             long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
             for (int index = 0; index < wheelList.size(); index++) {
                 WheelDo<SymbolDo> wheelDo = wheelList.get(index);
-                RewardResultDo rewardResultDo = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheelDo, BigDecimal.ZERO));
+                RewardResultDo<SymbolDo> rewardResultDo = mariaMakilingRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, wheelDo, BigDecimal.ZERO));
                 // 累加合计中奖总金额
                 overallRewardAmount = overallRewardAmount + rewardResultDo.getTotalRewardAmount();
                 boolean freeWheelReachMaxRewardMultiple = reachMaxMultiple(overallRewardAmount, gamePlay.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple());
@@ -209,17 +212,18 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
      * @param gameInfo 游戏信息
      * @return 滚轮列表
      */
-    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig, int wheelNumber) {
+    private List<WheelDo<SymbolDo>> generateMultiWheel(GameInfoDo gameInfo, int wheelNumber) {
         List<WheelDo<SymbolDo>> wheels = new ArrayList<>();
         // 保存全局wild
         SymbolDo[][] wildSymbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         if (wheelNumber == 0) {
             return wheels;
         }
-        // 生成整盘随机数(row*column)
-        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, wheelNumber * gameInfo.getRow() * gameInfo.getColumn());
-        int randomNumberIndex = 0;
-        for (Integer number = 1; number <= wheelNumber; number++) {
+        for (int number = 1; number <= wheelNumber; number++) {
+            // 生成整盘随机数(row*column)
+            List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000,  gameInfo.getRow() * gameInfo.getColumn());
+            int randomNumberIndex = 0;
+            TreeMap<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(true);
             SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
             for (int column = 0; column < gameInfo.getColumn(); column++) {
                 // 当前列元素概率
@@ -247,20 +251,11 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         return wheels;
     }
 
-    public TreeMap<String, List<BigDecimal>> getProbabilisticConfig(GamePlayDo gamePlay, boolean isFreeWheelFlag) {
-        if (isFreeWheelFlag) {
-            return mariaMakilingConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
-        } else {
-            switch (gamePlay.getBetSubType()) {
-                case NORMAL_BET:
-                case BUY_BET:
-                    return mariaMakilingConfig.getProbabilisticConfig().getCommonPlayWheelProbabilisticConfig();
-                case FREE_SPINS_NORMAL_BET:
-                case FREE_SPINS_BUY_BET:
-                    return mariaMakilingConfig.getProbabilisticConfig().getFreePlayWheelProbabilisticConfig();
-                default:
-                    throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORTED");
-            }
-        }
+    public TreeMap<String, List<BigDecimal>> getProbabilisticConfig(boolean isFreeWheelFlag) {
+        int randomNumber = randomService.randomInt(CONST_1, CONST_100000);
+        TreeMap<String, Integer> weightConfigMap = mariaMakilingConfig.getWeightConfig(isFreeWheelFlag);
+        String configName = getConfigName(weightConfigMap, randomNumber);
+        log.info("configName:{}", configName);
+        return mariaMakilingConfig.getProbabilisticConfig().getWheelProbabilisticConfig().get(configName);
     }
 }

@@ -43,6 +43,7 @@ public class MariaMakilingBetHelper implements BetHelper<MariaMakilingGameRecord
                 betDo,
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                null,
                 gameRecordList);
     }
 
@@ -51,7 +52,6 @@ public class MariaMakilingBetHelper implements BetHelper<MariaMakilingGameRecord
         AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         MariaMakilingGameRecordDo gameRecord = betRecord.getGameRecordList().get(0);
-        AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             return BetResultDo.<MariaMakilingGameRecordDo>builder()
                     .betStatus(BetStatusEnum.SUCCESS)

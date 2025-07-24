@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.config;
 
+import com.wegame.capi.biz.interceptor.GameEnableInterceptor;
 import com.wegame.capi.biz.interceptor.GameMaintainInterceptor;
 import com.wegame.capi.biz.interceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,22 @@ import java.util.List;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    private static final String[] EXCLUDE_PATTERNS = new String[]{
+            "/META-INF/resources/",
+            "/resources/",
+            "/static/**",
+            "/public/**",
+            "/webjars/**",
+            "/v2/**",
+            "/doc.html",
+            "/swagger-resources",
+            "/operationEvent/getStatusOfEvents",
+            "/common/ping"
+    };
     @Autowired
     GameMaintainInterceptor gameMaintainInterceptor;
+    @Autowired
+    GameEnableInterceptor gameEnableInterceptor;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -42,33 +57,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor())
                 .order(1)
-                .excludePathPatterns(
-                        "/META-INF/resources/",
-                        "/resources/",
-                        "/static/**",
-                        "/public/**",
-                        "/webjars/**",
-                        "/v2/**",
-                        "/doc.html",
-                        "/swagger-resources",
-                        "/operationEvent/getStatusOfEvents",
-                        "/common/ping"
-                ).addPathPatterns("/**");
+                .excludePathPatterns(EXCLUDE_PATTERNS)
+                .addPathPatterns("/**");
+
+        registry.addInterceptor(gameEnableInterceptor)
+                .order(2)
+                .excludePathPatterns(EXCLUDE_PATTERNS)
+                .addPathPatterns("/**");
 
         registry.addInterceptor(gameMaintainInterceptor)
-                .order(2)
-                .addPathPatterns("/**")
-                .excludePathPatterns(
-                        "/META-INF/resources/",
-                        "/resources/",
-                        "/static/**",
-                        "/public/**",
-                        "/webjars/**",
-                        "/v2/**",
-                        "/doc.html",
-                        "/swagger-resources",
-                        "/operationEvent/getStatusOfEvents",
-                        "/common/ping"
-                );
+                .order(3)
+                .excludePathPatterns(EXCLUDE_PATTERNS)
+                .addPathPatterns("/**");
     }
 }

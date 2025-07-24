@@ -71,14 +71,19 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
         if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            // 异步更新：更新为->投注成功
-            betRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult),
-                    gameContext().gameInfo().getGameType());
+            pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(),
+                    buildUpdateMessage(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult));
+            //            // 异步更新：更新为->投注成功
+            //            betRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.SUCCESS, betSingleWalletResult),
+            //                    gameContext().gameInfo().getGameType());
         } else if (Objects.equals(betSingleWalletResult.getBetStatus(), BetStatusEnum.FAIL)) {
             log.warn("syncSaveBetRecordAndBetWithPayout bet fail, betRecordDo: {}, betSingleWalletResult: {}", betRecordDo, betSingleWalletResult);
-            // 异步更新：更新为->投注失败
-            betRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult),
-                    gameContext().gameInfo().getGameType());
+            // 异步发送更新消息: 更新为投注失败
+            pulsarProducer.asyncSendMessage(gameContext().gameInfo().getGameType(),
+                    buildUpdateMessage(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult));
+            //            // 异步更新：更新为->投注失败
+            //            betRecordManager().asyncUpdateBetRecord(buildUpdateRecord(betRecordDo, BetStatusEnum.FAIL, betSingleWalletResult),
+            //                    gameContext().gameInfo().getGameType());
         }
         return betSingleWalletResult;
     }
@@ -114,15 +119,16 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 BetRecordDo.<R>builder()
                         .id(betRecordDo.getId())
                         .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)
+                        .jackpot(betRecordDo.getJackpot())
                         .status(status.getCode())
                         .build());
     }
 
-    private BetRecordDo<R> buildUpdateRecord(BetRecordDo<R> betRecordDo, BetStatusEnum status, SingleWalletBetResultDo betSingleWalletResult) {
-        return BetRecordDo.<R>builder()
-                .id(betRecordDo.getId())
-                .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)
-                .status(status.getCode())
-                .build();
-    }
+    //    private BetRecordDo<R> buildUpdateRecord(BetRecordDo<R> betRecordDo, BetStatusEnum status, SingleWalletBetResultDo betSingleWalletResult) {
+    //        return BetRecordDo.<R>builder()
+    //                .id(betRecordDo.getId())
+    //                .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)
+    //                .status(status.getCode())
+    //                .build();
+    //    }
 }

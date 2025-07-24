@@ -6,6 +6,8 @@ import com.wegame.base.domain.ServiceShutdownMessage;
 import com.wegame.base.enums.EnvEnum;
 import com.wegame.base.utils.IpUtil;
 import com.wegame.base.utils.LarkUtil;
+import com.wegame.capi.biz.listener.AppLaunchPostProcessor;
+import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
@@ -55,6 +57,10 @@ public class Application implements CommandLineRunner {
     private String shutDownRobot;
     @Autowired
     List<Executor> executorList;
+    @Autowired
+    AppLaunchPostProcessor appLaunchPostProcessor;
+    @Autowired
+    GameProperty gameProperty;
 
     public static void main(String[] args) {
         log.info("Begin Start Application 😄😄😄😄😄😄");
@@ -67,6 +73,7 @@ public class Application implements CommandLineRunner {
     public void run(String... args) {
         log.info("start Application after env: {}", env);
         sendPublishMessage();
+        appLaunchPostProcessor.postProcess();
     }
 
     @PreDestroy
@@ -75,7 +82,7 @@ public class Application implements CommandLineRunner {
         executorList.forEach(item -> {
             if (item instanceof ExecutorService) {
                 gracefulShutdown((ExecutorService) item);
-            } else if (item instanceof ThreadPoolTaskScheduler){
+            } else if (item instanceof ThreadPoolTaskScheduler) {
                 gracefulShutdown((ThreadPoolTaskScheduler) item);
             } else {
                 log.error("unknown executor: {}", item);
@@ -118,6 +125,7 @@ public class Application implements CommandLineRunner {
             LarkUtil.sendTextMsg(publishRobot, ServicePublishMessage.builder()
                     .applicationName(appName)
                     .env(env)
+                    .gameNames(gameProperty.enabledGameNames())
                     .ip(IpUtil.getLocalIp())
                     .build().buildMessage());
         } catch (Exception e) {
@@ -133,6 +141,7 @@ public class Application implements CommandLineRunner {
             LarkUtil.sendTextMsg(shutDownRobot, ServiceShutdownMessage.builder()
                     .applicationName(appName)
                     .env(env)
+                    .gameNames(gameProperty.enabledGameNames())
                     .ip(IpUtil.getLocalIp())
                     .build().buildMessage());
         } catch (Throwable te) {

@@ -47,9 +47,9 @@ public abstract class AbstractBetContext {
         BetStrategy betStrategy = betStrategyMap().get(betStrategyName);
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_PARAM, "Not Login");
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
 
-        if (BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+        if (BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
             return betStrategy.bet(betDo);
         } else {
             return distributeLock.tryLockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
