@@ -49,6 +49,10 @@ public enum GameTypeEnum {
             "Mangkukulam",
             "mangkukulam_bet_record",
             "mangkukulam_game_record", 300L, 1.2),
+    SIRENA("zhumeng009",
+            "Sirena",
+            "sirena_bet_record",
+            "sirena_game_record", 300L, 1.2),
 
 
     ;

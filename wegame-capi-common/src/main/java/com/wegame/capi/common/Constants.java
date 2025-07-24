@@ -86,6 +86,8 @@ public class Constants {
     public static final String DIWATA_MAYARI_PROP = "game.enable.DiwataMayari";
     public static final String KAPRE_PROP = "game.enable.Kapre";
     public static final String MANGKUKULAM_PROP = "game.enable.Mangkukulam";
+    public static final String SIRENA_PROP = "game.enable.Sirena";
+
 
 
     public static final long FIVE_MINUTES_AGO = 5 * 60 * 1000;

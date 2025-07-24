@@ -30,6 +30,9 @@ public class GameProperty {
     @Value("${game.enable.Mangkukulam: false}")
     private boolean enableMangkukulam;
 
+    @Value("${game.enable.Sirena: false}")
+    private boolean enableSirena;
+
     public List<GameTypeEnum> enabledGameTypes() {
         List<GameTypeEnum> gameTypeList = new ArrayList<>();
         if (enableMariaMaking) {
@@ -55,6 +58,9 @@ public class GameProperty {
         }
         if (enableMangkukulam) {
             gameTypeList.add(GameTypeEnum.MANGKUKULAM);
+        }
+        if (enableSirena) {
+            gameTypeList.add(GameTypeEnum.SIRENA);
         }
         return gameTypeList;
     }

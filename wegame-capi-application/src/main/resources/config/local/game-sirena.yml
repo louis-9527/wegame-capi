@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        sirena_mdb:
+          db: sirena
+          uri: mongodb://localhost:27017/sirena?maxPoolSize=100&minPoolSize=10&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
+          primary_uri: mongodb://localhost:27017/sirena?maxPoolSize=100&minPoolSize=10&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&readPreference=primary
+## pulsar
+pulsar:
+  dynamic:
+    sirena:
+      url: pulsar://pulsar.makillingslot.net:6650
+      tenant: ${spring.application.name}_Sirena
+      namespace: ${spring.application.env}
+      bet_topic: Sirena_topic
+      bet_deadLetter_topic: Sirena_deadLetter_topic

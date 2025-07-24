@@ -66,7 +66,12 @@ public enum OperationEventTypeEnum {
             "mangkukulam_operation_event",
             "mangkukulam_operation_event_detail",
             "mangkukulam_operation_event_config",
-            "mangkukulam_operation_event_config_record")
+            "mangkukulam_operation_event_config_record"),
+    SIRENA(GameTypeEnum.SIRENA,
+            "sirena_operation_event",
+                    "sirena_operation_event_detail",
+                    "sirena_operation_event_config",
+                    "sirena_operation_event_config_record")
     ;
 
 

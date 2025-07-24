@@ -7,6 +7,7 @@ import com.wegame.capi.client.domain.vo.kapre.KapreSymbolVo;
 import com.wegame.capi.client.domain.vo.lamang.LamangSymbolVo;
 import com.wegame.capi.client.domain.vo.malakas.MalakasSymbolVo;
 import com.wegame.capi.client.domain.vo.mangkukulam.MangkukulamSymbolVo;
+import com.wegame.capi.client.domain.vo.sirena.SirenaSymbolVo;
 import com.wegame.capi.common.enums.SymbolBreakUpEnum;
 
 import java.util.Objects;
@@ -104,6 +105,28 @@ public class SymbolBuilder {
         return integerArray;
     }
 
+
+    public static SirenaSymbolVo[][] build(SirenaSymbolDo[][] symbolArr) {
+        int rows = symbolArr.length;
+        int cols = symbolArr[0].length;
+        SirenaSymbolVo[][] integerArray = new SirenaSymbolVo[rows][cols];
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                SirenaSymbolDo sirenaSymbol = symbolArr[row][col];
+                integerArray[row][col] = Objects.isNull(sirenaSymbol) ? null : SirenaSymbolVo.builder()
+                        .symbolId(sirenaSymbol.getId())
+                        .symbolOdd(sirenaSymbol.getSymbolOdd())
+                        .nestSymbol(Objects.isNull(sirenaSymbol.getNestSymbol()) ? null :
+                                SirenaSymbolVo.builder()
+                                        .symbolId(sirenaSymbol.getNestSymbol().getId())
+                                        .symbolOdd(sirenaSymbol.getNestSymbol().getSymbolOdd())
+                                        .nestSymbol(null)
+                                        .build())
+                        .build();
+            }
+        }
+        return integerArray;
+    }
 
     public static KapreSymbolVo[][] build(KapreSymbolDo[][] symbolArr) {
         int rows = symbolArr.length;

@@ -5,6 +5,8 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
+import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
+import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
 
 import java.util.List;
 
