@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
@@ -22,6 +23,7 @@ import static com.wegame.capi.common.Constants.*;
 @EqualsAndHashCode(callSuper = false)
 public class MariaMakilingConfig implements Serializable {
 
+    private static final long serialVersionUID = -7867808743045979621L;
     /**
      * 中奖最大倍数
      */
@@ -38,6 +40,10 @@ public class MariaMakilingConfig implements Serializable {
      * 概率配置
      */
     private ProbabilisticConfig probabilisticConfig;
+    /**
+     * 模板配置
+     */
+    private Map<String, TemplateMultipleRange> templateRangeConfigMap;
 
     @Data
     @ToString
@@ -46,6 +52,7 @@ public class MariaMakilingConfig implements Serializable {
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
     public static class OddsConfig implements Serializable {
+        private static final long serialVersionUID = 3937946953651929522L;
         /**
          * TreeMap<元素ID，<赔率类型，具体赔率>>
          */
@@ -59,6 +66,7 @@ public class MariaMakilingConfig implements Serializable {
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
     public static class WeightConfig implements Serializable {
+        private static final long serialVersionUID = 8473517761146027610L;
         /**
          * 正常轮权重配置
          * TreeMap<配置名称，权重>
@@ -78,6 +86,7 @@ public class MariaMakilingConfig implements Serializable {
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
     public static class ProbabilisticConfig implements Serializable {
+        private static final long serialVersionUID = -5132363037160707448L;
         /**
          * 免费轮获得次数概率配置
          * TreeMap<次数，权重>
@@ -90,11 +99,30 @@ public class MariaMakilingConfig implements Serializable {
         private TreeMap<String, TreeMap<String, List<BigDecimal>>> wheelProbabilisticConfig;
     }
 
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateMultipleRange implements Serializable {
+        private static final long serialVersionUID = -734841249803450751L;
+        /**
+         * 倍数区间开始
+         */
+        private String multipleRangeStart;
+        /**
+         * 倍数区间结束
+         */
+        private String multipleRangeEnd;
+    }
+
     public void validate() {
         rewardMaxMultipleValidate();
         oddsConfigValidate();
         weightConfigValidate();
         probabilisticConfigValidate();
+        templateRangeConfigMapValidate();
     }
 
     private void rewardMaxMultipleValidate() {
@@ -157,6 +185,10 @@ public class MariaMakilingConfig implements Serializable {
         probabilisticConfig.wheelProbabilisticConfig.forEach((configName, config) -> {
             validSingleConfig(configName, config);
         });
+    }
+
+    private void templateRangeConfigMapValidate() {
+        //todo mai dong 增加校验
     }
 
     public void validSingleConfig(String configName, TreeMap<String, List<BigDecimal>> config) {
