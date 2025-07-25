@@ -1,19 +1,24 @@
 package com.wegame.capi.biz.config.domain;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
+import com.wegame.capi.common.enums.SymbolEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import net.bytebuddy.asm.Advice;
 import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.CONST_100;
 
@@ -143,7 +148,8 @@ public class SirenaConfig implements Serializable {
     }
 
     private void rewardNotifyMinMultipleValidate() {
-
+        AssertUtil.assertNotNull(this.rewardNotifyMinMultiple, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple is null");
+        AssertUtil.assertTrue(this.rewardNotifyMinMultiple > 0, ErrorCode.ERR_INTER, "rewardNotifyMinMultiple is must great than 0");
     }
 
     private void rewardMaxMultipleValidate() {
@@ -157,6 +163,8 @@ public class SirenaConfig implements Serializable {
         AssertUtil.assertNotNull(this.freeWheelTimesConfig.freeWheelStepForScatter1, ErrorCode.ERR_INTER, "freeWheelTimesConfig.freeWheelStepForScatter1 is null");
         AssertUtil.assertNotNull(this.freeWheelTimesConfig.maxFreeWheelTimes, ErrorCode.ERR_INTER, "freeWheelTimesConfig.maxFreeWheelTimes is null");
         AssertUtil.assertTrue(this.freeWheelTimesConfig.baseFreeWheelTimes > 0, ErrorCode.ERR_INTER, "freeWheelTimesConfig.baseFreeWheelTimes must great than 0");
+        AssertUtil.assertTrue(this.freeWheelTimesConfig.freeWheelStepForScatter1 > 0, ErrorCode.ERR_INTER, "freeWheelTimesConfig.freeWheelStepForScatter1 must great than 0");
+        AssertUtil.assertTrue(this.freeWheelTimesConfig.maxFreeWheelTimes > 0, ErrorCode.ERR_INTER, "freeWheelTimesConfig.maxFreeWheelTimes must great than 0");
     }
 
     private void oddsConfigValidate() {
@@ -195,7 +203,7 @@ public class SirenaConfig implements Serializable {
 
     //
     private void wheelChartValidate() {
-        // wheelChart校验
+        // 统一校验wheelChart校验
         Assert.notNull(this.wheelChartConfig, "wheelChartConfig is null");
         GameInfoDo sirenaGameInfo = SirenaGameHelper.SIRENA_GAME_INFO;
         Set<String> symbolIdSet = sirenaGameInfo.getSymbolMap().keySet();
@@ -207,5 +215,110 @@ public class SirenaConfig implements Serializable {
             });
         });
 
+        // todo 这里的校验后续放开 @jayni
+//        // 轮带表权重(正常游戏-normal bet 付费轮)
+//        this.normalBetWheelChartConfigValidate();
+//        // 轮带表权重(正常游戏-buy bet 付费轮.modeS)
+//        this.buyBetWheelChartConfigValidate();
+//        // 轮带表权重(免费游戏-free bet 免费轮)
+//        this.freeWheelWheelChartConfigValidate();
+//        // 轮带表权重(特殊游戏-上一次投注中珍珠之后的正常游戏-normal bet 付费轮)
+//        this.specialWheelChartConfigValidate();
     }
+
+    private void specialWheelChartConfigValidate() {
+        // 统计轮代表权重不为0的所有mode
+        TreeMap<String, BigDecimal> currentWheelChatWeightConfig = this.probabilisticConfig.specialWheelChatWeightConfig;
+        List<String> availableModeNameList = currentWheelChatWeightConfig.keySet().stream().filter(mode -> {
+            BigDecimal weight = currentWheelChatWeightConfig.get(mode);
+            return Objects.nonNull(weight) && weight.compareTo(BigDecimal.ZERO) != 0;
+        }).collect(Collectors.toList());
+
+        if (CollectionUtil.isEmpty(availableModeNameList)) {
+            return;
+        }
+        TreeMap<String, List<List<String>>> availableWheelChartConfig = new TreeMap<>();
+        availableModeNameList.forEach(modeName -> availableWheelChartConfig.put(modeName, wheelChartConfig.get(modeName)));
+        availableWheelChartConfig.forEach((mode, wheelChartList) -> {
+            // 特殊轮首轮的所有轮代表不能有scatter1
+            wheelChartList.forEach(wheelChart -> {
+                wheelChart.forEach(symbolId -> {
+                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()), ErrorCode.ERR_INTER, "specialWheelChart can not exist scatter+1 in mode " + mode);
+                });
+            });
+        });
+
+    }
+
+    private void freeWheelWheelChartConfigValidate() {
+        // 统计轮代表权重不为0的所有mode
+        TreeMap<String, BigDecimal> currentWheelChatWeightConfig = this.probabilisticConfig.freeWheelWheelChatWeightConfig;
+        List<String> availableModeNameList = currentWheelChatWeightConfig.keySet().stream().filter(mode -> {
+            BigDecimal weight = currentWheelChatWeightConfig.get(mode);
+            return Objects.nonNull(weight) && weight.compareTo(BigDecimal.ZERO) != 0;
+        }).collect(Collectors.toList());
+
+        if (CollectionUtil.isEmpty(availableModeNameList)) {
+            return;
+        }
+        TreeMap<String, List<List<String>>> availableWheelChartConfig = new TreeMap<>();
+        availableModeNameList.forEach(modeName -> availableWheelChartConfig.put(modeName, wheelChartConfig.get(modeName)));
+        availableWheelChartConfig.forEach((mode, wheelChartList) -> {
+            // 免费轮的所有轮代表不能有scatter
+            wheelChartList.forEach(wheelChart -> {
+                wheelChart.forEach(symbolId -> {
+                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter.getId()), ErrorCode.ERR_INTER, "freeWheelWheelChart can not exist scatter in mode " + mode);
+                });
+            });
+        });
+
+    }
+
+    private void buyBetWheelChartConfigValidate() {
+        // 统计轮代表权重不为0的所有mode
+        TreeMap<String, BigDecimal> currentWheelChatWeightConfig = this.probabilisticConfig.buyBetWheelChatWeightConfig;
+        List<String> availableModeNameList = currentWheelChatWeightConfig.keySet().stream().filter(mode -> {
+            BigDecimal weight = currentWheelChatWeightConfig.get(mode);
+            return Objects.nonNull(weight) && weight.compareTo(BigDecimal.ZERO) != 0;
+        }).collect(Collectors.toList());
+
+        if (CollectionUtil.isEmpty(availableModeNameList)) {
+            return;
+        }
+        TreeMap<String, List<List<String>>> availableWheelChartConfig = new TreeMap<>();
+        availableModeNameList.forEach(modeName -> availableWheelChartConfig.put(modeName, wheelChartConfig.get(modeName)));
+        availableWheelChartConfig.forEach((mode, wheelChartList) -> {
+            // 购买轮首轮的所有轮代表不能有scatter1
+            wheelChartList.forEach(wheelChart -> {
+                wheelChart.forEach(symbolId -> {
+                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()), ErrorCode.ERR_INTER, "buyBetWheelChart can not exist scatter+1 in mode " + mode);
+                });
+            });
+        });
+    }
+
+    private void normalBetWheelChartConfigValidate() {
+        // 根据正常投注轮代表权重不为0的所有mode
+        TreeMap<String, BigDecimal> currentWheelChatWeightConfig = this.probabilisticConfig.normalBetWheelChatWeightConfig;
+        List<String> availableModeNameList = currentWheelChatWeightConfig.keySet().stream().filter(mode -> {
+            BigDecimal weight = currentWheelChatWeightConfig.get(mode);
+            return Objects.nonNull(weight) && weight.compareTo(BigDecimal.ZERO) != 0;
+        }).collect(Collectors.toList());
+
+        if (CollectionUtil.isEmpty(availableModeNameList)) {
+            return;
+        }
+        TreeMap<String, List<List<String>>> availableWheelChartConfig = new TreeMap<>();
+        availableModeNameList.forEach(modeName -> availableWheelChartConfig.put(modeName, wheelChartConfig.get(modeName)));
+        availableWheelChartConfig.forEach((mode, wheelChartList) -> {
+            // 正常轮的所有轮代表不能有scatter1
+            wheelChartList.forEach(wheelChart -> {
+                wheelChart.forEach(symbolId -> {
+                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()), ErrorCode.ERR_INTER, "normalBetWheelChart can not exist scatter+1 in mode " + mode);
+                });
+            });
+        });
+    }
+
+
 }
