@@ -248,31 +248,32 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
      * @return 轮代表moudle
      */
     private List<List<String>> buildWheelChartModel(GamePlayDo gamePlay, boolean isFreeSpinFlag) {
-        TreeMap<String, BigDecimal> wheelChartProbabilisticConfig;
-        TreeMap<String, List<List<String>>> wheelChartModelConfig;
-        // 获取轮代表
-        if (isFreeSpinFlag) {
-            // 免费轮
-            wheelChartProbabilisticConfig = sirenaConfig.getProbabilisticConfig().getWheelChartProbabilisticConfig().getFreeProbabilisticConfig();
-            wheelChartModelConfig = sirenaConfig.getWheelChart().getNormal();
-        } else {
-            // 付费轮-正常投注
-            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                wheelChartProbabilisticConfig = sirenaConfig.getProbabilisticConfig().getWheelChartProbabilisticConfig().getNormalBetPayProbabilisticConfig();
-                wheelChartModelConfig = sirenaConfig.getWheelChart().getNormal();
-            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                // 付费轮-购买投注
-                wheelChartProbabilisticConfig = sirenaConfig.getProbabilisticConfig().getWheelChartProbabilisticConfig().getBuyBetPayProbabilisticConfig();
-                wheelChartModelConfig = sirenaConfig.getWheelChart().getBuy();
-            } else {
-                throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT BET TYPE");
-            }
-        }
-        // 根据概率随机出model名称
-        String modelName = GameUtil.randomKey(wheelChartProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
-        List<List<String>> wheelChartModel = wheelChartModelConfig.get(modelName);
-        AssertUtil.assertNotNull(wheelChartModel, ErrorCode.ERR_INTER, "wheelChartModel is null");
-        return wheelChartModel;
+//        TreeMap<String, BigDecimal> wheelChartProbabilisticConfig;
+//        TreeMap<String, List<List<String>>> wheelChartModelConfig;
+//        // 获取轮代表
+//        if (isFreeSpinFlag) {
+//            // 免费轮
+//            wheelChartProbabilisticConfig = sirenaConfig.getProbabilisticConfig().getWheelChartProbabilisticConfig().getFreeProbabilisticConfig();
+//            wheelChartModelConfig = sirenaConfig.getWheelChart().getNormal();
+//        } else {
+//            // 付费轮-正常投注
+//            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
+//                wheelChartProbabilisticConfig = sirenaConfig.getProbabilisticConfig().getWheelChartProbabilisticConfig().getNormalBetPayProbabilisticConfig();
+//                wheelChartModelConfig = sirenaConfig.getWheelChart().getNormal();
+//            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
+//                // 付费轮-购买投注
+//                wheelChartProbabilisticConfig = sirenaConfig.getProbabilisticConfig().getWheelChartProbabilisticConfig().getBuyBetPayProbabilisticConfig();
+//                wheelChartModelConfig = sirenaConfig.getWheelChart().getBuy();
+//            } else {
+//                throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT BET TYPE");
+//            }
+//        }
+//        // 根据概率随机出model名称
+//        String modelName = GameUtil.randomKey(wheelChartProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
+//        List<List<String>> wheelChartModel = wheelChartModelConfig.get(modelName);
+//        AssertUtil.assertNotNull(wheelChartModel, ErrorCode.ERR_INTER, "wheelChartModel is null");
+//        return wheelChartModel;
+        throw new RuntimeException("todo");
     }
 
     /**
@@ -281,13 +282,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
      * @return 倍率概率配置
      */
     private TreeMap<BigDecimal, BigDecimal> buildCashSymbolMultipleProbabilisticConfig(boolean isFreeSpinFlag) {
-        if (isFreeSpinFlag) {
-            // 免费轮
-            return sirenaConfig.getProbabilisticConfig().getMultipleProbabilisticConfig().getFreeProbabilisticConfig();
-        } else {
-            // 付费轮
-            return sirenaConfig.getProbabilisticConfig().getMultipleProbabilisticConfig().getPayProbabilisticConfig();
-        }
+        throw new RuntimeException("todo");
     }
 
     private SirenaGameRecordDo buildGameRecord(Long id,

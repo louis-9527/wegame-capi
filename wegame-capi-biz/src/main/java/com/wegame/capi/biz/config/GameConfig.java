@@ -122,10 +122,10 @@ public class GameConfig {
 
     @Bean
     SirenaConfig sirenaConfig() throws IOException {
-        String path = "/kapre_config.json";
+        String path = "/sirena_config.json";
         InputStream inputStream = getClass().getResourceAsStream(path);
         if (inputStream == null) {
-            throw new RuntimeException("read kapre_config.json file err！！！");
+            throw new RuntimeException("read sirena_config.json file err！！！");
         } else {
             SirenaConfig config = new ObjectMapper().readValue(inputStream, SirenaConfig.class);
             config.validate();

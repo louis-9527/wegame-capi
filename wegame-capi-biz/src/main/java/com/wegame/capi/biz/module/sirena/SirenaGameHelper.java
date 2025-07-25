@@ -65,6 +65,11 @@ public class SirenaGameHelper {
             .name(Scatter.getName())
             .symbolType(SymbolTypeEnum.SCATTER)
             .build();
+    public static final SymbolDo SIRENA_SCATTER1 = SymbolDo.builder()
+            .id(Scatter1.getId())
+            .name(Scatter1.getName())
+            .symbolType(SymbolTypeEnum.SCATTER)
+            .build();
     private static final SymbolDo SIRENA_Wild = SymbolDo.builder()
             .id(Wild.getId())
             .name(Wild.getName())
@@ -93,6 +98,7 @@ public class SirenaGameHelper {
                     .put(SIRENA_Symbol1009.getId(), SIRENA_Symbol1009)
                     .put(SIRENA_CASH_SYMBOL.getId(), SIRENA_CASH_SYMBOL)
                     .put(SIRENA_SCATTER.getId(), SIRENA_SCATTER)
+                    .put(SIRENA_SCATTER1.getId(), SIRENA_SCATTER1)
                     .put(SIRENA_Wild.getId(), SIRENA_Wild)
                     .put(SIRENA_Dynamic_Wild.getId(), SIRENA_Dynamic_Wild)
                     .build())
