@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
@@ -43,12 +44,16 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     RewardHandler<SymbolDo> mariaMakilingRewardHandler;
     @Autowired
     OperationEventConfigRecordService operationEventConfigRecordService;
+    @Autowired
+    MariaMakilingConfig mariaMakilingConfig;
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         // todo mai dong 替换查询逻辑
+        // 随机获取对应倍率区间，根据倍率区间查询已经生成的数据的multiple倍率数据集
+        Map<String, MariaMakilingConfig.TemplateMultipleRange> templateRangeConfigMap = mariaMakilingConfig.getTemplateRangeConfigMap();
         List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), MARIA_MAKILING);
         // 获取首轮(parent ==0 and index =0)
         OperationEventConfigRecordDo firstConfigRecord = configRecordList.stream()
