@@ -7,24 +7,16 @@ import com.wegame.capi.api.domain.req.BaseReq;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
- * promotionDomain: https://reward-http-internal-stress.igo8.me/v1/health-check
- *     singleDomain: https://sw-http-main-apisix-internal-stress.igo8.me/v1/health-check
- *     freeSpinDomain: https://sw-http-freespin-stress.igo8.me/v1/health-check
- *     operationDomain: http://dos-egame-stresstest-internal.dos88.me/healthCheck
+ * promotionDomain: <a href="https://reward-http-internal-stress.igo8.me/v1/health-check">...</a>
+ * singleDomain: <a href="https://sw-http-main-apisix-internal-stress.igo8.me/v1/health-check">...</a>
+ * freeSpinDomain: <a href="https://sw-http-freespin-stress.igo8.me/v1/health-check">...</a>
+ * operationDomain: <a href="http://dos-egame-stresstest-internal.dos88.me/healthCheck">...</a>
  */
 @Slf4j
 public class CommonBaseApi extends BaseApi {
     public static final String HEALTH_CHECK_FORMAT = "%s/v1/health-check";
-    // cp todo delete @maidong
-    @Value("${api.game.cp.channelId:}")
-    public String cpChannelId;
-    @Value("${api.game.cp.privateKey:}")
-    public String cpPrivateKey;
-    @Value("${api.game.cp.privateIv:}")
-    public String cpPrivateIv;
 
     @Autowired
     GameApiProperty gameApiProperty;
