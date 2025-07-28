@@ -84,7 +84,7 @@ public class SirenaGameHelper {
             .id(GameTypeEnum.SIRENA.getId())
             .gameType(GameTypeEnum.SIRENA)
             .name(GameTypeEnum.SIRENA.getName())
-            .row(4)
+            .row(5)
             .column(5)
             .symbolMap(new ImmutableMap.Builder<String, SymbolDo>()
                     .put(SIRENA_Symbol1001.getId(), SIRENA_Symbol1001)
