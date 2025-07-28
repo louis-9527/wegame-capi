@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.mariamakiling.game;
 
+import cn.hutool.core.util.NumberUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
@@ -18,6 +19,7 @@ import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +29,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.client.enums.OperationEventTypeEnum.MARIA_MAKILING;
+import static com.wegame.capi.common.Constants.CONST_1;
+import static com.wegame.capi.common.Constants.CONST_100000;
 
 @Slf4j
 @Component("mariaMakilingGameTemplatePlay")
@@ -51,9 +56,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        // todo mai dong 替换查询逻辑
-        // 随机获取对应倍率区间，根据倍率区间查询已经生成的数据的multiple倍率数据集
-        Map<String, MariaMakilingConfig.TemplateMultipleRange> templateRangeConfigMap = mariaMakilingConfig.getTemplateRangeConfigMap();
+        MariaMakilingConfig.TemplateMultipleRange templateConfig = getTemplateConfig();
         List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), MARIA_MAKILING);
         // 获取首轮(parent ==0 and index =0)
         OperationEventConfigRecordDo firstConfigRecord = configRecordList.stream()
@@ -138,5 +141,20 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     private WheelDo<SymbolDo> convertWheel(Object obj) {
         return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<SymbolDo>>() {
         });
+    }
+
+    public MariaMakilingConfig.TemplateMultipleRange getTemplateConfig() {
+        int randomNumber = randomService.randomInt(CONST_1, CONST_100000);
+        Map<String, MariaMakilingConfig.TemplateMultipleRange> templateRangeConfigMap = mariaMakilingConfig.getTemplateRangeConfigMap();
+        int startVal = 0;
+        for (Map.Entry<String, MariaMakilingConfig.TemplateMultipleRange> entry : CollectionUtils.emptyIfNull(templateRangeConfigMap.entrySet())) {
+            int i = NumberUtil.mul(new BigDecimal(entry.getKey()), new BigDecimal(CONST_100000)).intValue();
+            if (randomNumber > startVal && randomNumber <= startVal + i) {
+                return entry.getValue();
+            } else {
+                startVal += i;
+            }
+        }
+        return null;
     }
 }
