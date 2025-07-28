@@ -34,6 +34,12 @@ public enum StarCardUseTypeEnum {
             "diwata_mayari_star_card_record"
     ),
 
+
+    MANGKUKULAM(
+            GameTypeEnum.MANGKUKULAM,
+            "mangkukulam_star_card_record"
+    ),
+
     ;
     /**
      * 游戏类型
