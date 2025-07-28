@@ -5,20 +5,19 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.KapreConfig;
+import com.wegame.capi.biz.config.domain.SirenaConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
-import com.wegame.capi.biz.domain.biz.symbol.KapreSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.*;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
+import com.wegame.capi.biz.module.lamang.LamangGameHelper;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
@@ -41,23 +40,22 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 @Slf4j
 @Component("sirenaRewardHandler")
 public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
-    private static final Integer SCATTER_COUNT_FOR_FREE_SPIN = 3;
+    private static final Integer MIN_SCATTER_COUNT_FOR_FREE_SPIN = 3;
 
     @Autowired
     OddsCalculateStrategy<SirenaSymbolDo> sirenaOddsCalculateStrategy;
 
     @Autowired
-    KapreConfig kapreConfig;
+    SirenaConfig sirenaConfig;
 
     @Override
     public RewardResultDo<SirenaSymbolDo> handle(RewardHandleDo<SirenaSymbolDo> rewardHandle) {
         // 1、业务校验
-        validate(rewardHandle);
+        this.validate(rewardHandle);
         // 2、计算中奖线
-        List<RewardLineDo<SirenaSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
-        int scatterCount = scatterCount(rewardHandle);
-        Integer freeWheelTimes = kapreConfig.getFreeWheelTimes();
-        boolean rewardFreeWheel = scatterCount >= SCATTER_COUNT_FOR_FREE_SPIN;
+        List<RewardLineDo<SirenaSymbolDo>> rewardLineList = this.calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
+        // 3. 计算免费轮次数
+        Integer freeWheelTimes = this.calcRewardFreeWheelTimes(rewardHandle, rewardLineList);
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
             return RewardResultDo.<SirenaSymbolDo>builder()
@@ -67,8 +65,8 @@ public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
                     .totalRewardAmount(0L)
                     .totalMultiple(rewardHandle.getCurrentMultiple())
                     .rewardLineDetailList(null)
-                    .hasRewardFreeWheel(rewardFreeWheel)
-                    .rewardFreeWheelTimes(rewardFreeWheel ? freeWheelTimes : 0)
+                    .hasRewardFreeWheel(freeWheelTimes > 0)
+                    .rewardFreeWheelTimes(freeWheelTimes)
                     .accumulateReachMaxMultiple(Boolean.FALSE)
                     .build();
         }
@@ -79,12 +77,10 @@ public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
         // 中奖坐标列表
         List<RewardLineDetailDo<SirenaSymbolDo>> rewardLineDetailList = Lists.newArrayList();
         for (RewardLineDo<SirenaSymbolDo> rewardLine : rewardLineList) {
-            // 计算赔率
+            // 计算赔率:珍珠倍率的计算也参与到odds计算中
             BigDecimal odds = sirenaOddsCalculateStrategy.calculateOddsOfRewardLine(rewardHandle, rewardLine);
-            // 计算（中奖线）中奖金额：
-            // 普通中奖 ：总金额 = 投注金额 * 赔率 * 中奖线数量
-            // 现金中奖 ：总金额 = 投注金额 * （现金元素赔率之和）
-            BigDecimal lineRewardAmount = this.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, null);
+            // 计算（中奖线）中奖金额：投注金额 * 赔率 * 中奖线数量
+            BigDecimal lineRewardAmount = super.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, null);
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
             // 中奖线明细列表
@@ -106,19 +102,18 @@ public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
                 rewardHandle.getGamePlayType(),
                 Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount : rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount,
                 rewardHandle.getBetAmount(),
-                kapreConfig.getRewardMaxMultiple());
-        RewardResultDo<SirenaSymbolDo> rewardResult = RewardResultDo.<SirenaSymbolDo>builder()
+                sirenaConfig.getRewardMaxMultiple());
+        // 6.返回中奖信息
+        return RewardResultDo.<SirenaSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .totalRewardAmount(totalRewardAmount)
                 .rewardLineDetailList(rewardLineDetailList)
-                .hasRewardFreeWheel(rewardFreeWheel)
-                .rewardFreeWheelTimes(rewardFreeWheel ? freeWheelTimes : 0)
+                .hasRewardFreeWheel(freeWheelTimes > 0)
+                .rewardFreeWheelTimes(freeWheelTimes)
                 .accumulateReachMaxMultiple(reachMaxMultiple)
                 .build();
-        // 6.返回中奖信息
-        return rewardResult;
     }
 
 
@@ -131,8 +126,8 @@ public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
         // 1、处理第一列
         for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
             SirenaSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
-            // 首列 wild & scatter 在首列不参与中奖
-            if (targetSymbol.isWildSymbol() || targetSymbol.isScatterSymbol()) {
+            // scatter 在首列不参与中奖
+            if (targetSymbol.isScatterSymbol()) {
                 continue;
             }
 
@@ -198,7 +193,7 @@ public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
             list.add(RewardLineDo.<SirenaSymbolDo>builder()
                     .rewardSymbol(entry.getKey())
                     .rewardLineType(RewardLineTypeEnum.valueOfNo(columMap.size()))
-                    .rewardLineSubType(getRewardLineSubType(entry.getKey()))
+                    .rewardLineSubType(entry.getKey().isScatterSymbol() ? RewardLineSubTypeEnum.SCATTER : RewardLineSubTypeEnum.COMMON)
                     .rewardLineCount(totalLineCount)
                     .rewardSymbolList(columMap.values()
                             .stream()
@@ -211,13 +206,31 @@ public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
         return list;
     }
 
-    private RewardLineSubTypeEnum getRewardLineSubType(SirenaSymbolDo rewardSymbol) {
-        if (rewardSymbol.isCashSymbol()) {
-            return RewardLineSubTypeEnum.CASH;
+
+    /**
+     * 计算免费轮次数
+     * 区分正常轮和免费轮
+     * 免费轮,计算scatter+1
+     * 正常轮，计算scatter产生的免费轮
+     *
+     * @param rewardHandle rewardHandle
+     * @return 免费轮次数
+     */
+    private Integer calcRewardFreeWheelTimes(RewardHandleDo<SirenaSymbolDo> rewardHandle, List<RewardLineDo<SirenaSymbolDo>> rewardLineList) {
+        // 区分正常轮和免费轮
+        if (rewardHandle.getWheel().isFreeFlag()) {
+            // 免费轮,计算scatter+1
+            long newScatter1Count = Arrays.stream(rewardHandle.getWheel().getSymbolArr()).flatMap(Arrays::stream)
+                    .filter(Objects::nonNull).filter(SirenaSymbolDo::isScatter1IdSymbol).count();
+            return (int) newScatter1Count * sirenaConfig.getFreeWheelTimesConfig().getFreeWheelStepForScatter1();
         } else {
-            return RewardLineSubTypeEnum.COMMON;
+            // 正常轮，计算scatter产生的免费轮
+            long scatterCount = Arrays.stream(rewardHandle.getWheel().getSymbolArr()).flatMap(Arrays::stream)
+                    .filter(Objects::nonNull).filter(SirenaSymbolDo::isScatterIdSymbol).count();
+            return scatterCount >= MIN_SCATTER_COUNT_FOR_FREE_SPIN ? sirenaConfig.getFreeWheelTimesConfig().getBaseFreeWheelTimes() : 0;
         }
     }
+
 
     private boolean isMatchTargetSymbol(SymbolDo symbol, SymbolDo targetSymbol) {
         return StringUtils.equals(symbol.getId(), targetSymbol.getId())
@@ -236,39 +249,11 @@ public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
         if (Objects.equals(GamePlayTypeEnum.NORMAL_PLAY, rewardHandle.getGamePlayType())) {
             AssertUtil.assertNotNull(rewardHandle.getCurrentTotalRewardAmount(), ErrorCode.ERR_PARAM, "currentTotalRewardAmount is null");
         }
-        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.KAPRE), ErrorCode.ERR_PARAM, "just support game type of kapre");
+        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.SIRENA), ErrorCode.ERR_PARAM, "just support game type of sirena");
         AssertUtil.assertTrue(rewardHandle.getBetAmount() > 0, ErrorCode.ERR_PARAM, "bet amount must greater than 0");
         SymbolDo[][] symbolArr = rewardHandle.getWheel().getSymbolArr();
         // 校验：滚轮行数
         GameInfoDo gameInfo = rewardHandle.getGameInfo();
         AssertUtil.assertTrue(symbolArr.length == gameInfo.getRow(), ErrorCode.ERR_PARAM, "symbol arr err");
     }
-
-    /**
-     * 计算中奖线中奖金额
-     *
-     * @param rewardLine 中奖线
-     * @param betAmount  投注金额
-     * @param odds       赔率
-     * @param multiple   倍率
-     * @return 中奖金额
-     */
-    @Override
-    public BigDecimal calculateLineRewardAmount(RewardLineDo rewardLine, Long betAmount, BigDecimal odds, BigDecimal multiple) {
-        if (rewardLine.isCommonReward()) {
-            //普通中奖： 投注额 * 赔率 * 中奖线
-            return BigDecimal.valueOf(betAmount)
-                    .multiply(odds)
-                    .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
-        } else if (rewardLine.isCashReward()) {
-            //现金中奖 ： 投注额 * 赔率
-            return BigDecimal.valueOf(betAmount)
-                    .multiply(odds);
-        } else {
-            return BigDecimal.valueOf(betAmount)
-                    .multiply(new BigDecimal("" + rewardLine.getRewardLineCount()));
-        }
-    }
-
-
 }

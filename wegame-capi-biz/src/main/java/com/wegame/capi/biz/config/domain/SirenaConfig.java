@@ -242,8 +242,13 @@ public class SirenaConfig implements Serializable {
         availableWheelChartConfig.forEach((mode, wheelChartList) -> {
             // 特殊轮首轮的所有轮代表不能有scatter1
             wheelChartList.forEach(wheelChart -> {
+                // wild 不能连续出现
+                String preSymbolId = null;
                 wheelChart.forEach(symbolId -> {
-                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()), ErrorCode.ERR_INTER, "specialWheelChart can not exist scatter+1 in mode " + mode);
+                    AssertUtil.assertTrue(!Objects.equals(SymbolEnum.Wild.getId(), symbolId) && !Objects.equals(preSymbolId, symbolId),
+                            ErrorCode.ERR_INTER, "specialWheelChart can not has continuous wild in mode "+mode);
+                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()),
+                            ErrorCode.ERR_INTER, "specialWheelChart can not exist scatter+1 in mode " + mode);
                 });
             });
         });
@@ -290,7 +295,11 @@ public class SirenaConfig implements Serializable {
         availableWheelChartConfig.forEach((mode, wheelChartList) -> {
             // 购买轮首轮的所有轮代表不能有scatter1
             wheelChartList.forEach(wheelChart -> {
+                // wild 不能连续出现
+                String preSymbolId = null;
                 wheelChart.forEach(symbolId -> {
+                    AssertUtil.assertTrue(!Objects.equals(SymbolEnum.Wild.getId(), symbolId) && !Objects.equals(preSymbolId, symbolId),
+                            ErrorCode.ERR_INTER, "specialWheelChart can not has continuous wild in mode "+mode);
                     AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()), ErrorCode.ERR_INTER, "buyBetWheelChart can not exist scatter+1 in mode " + mode);
                 });
             });
@@ -313,7 +322,11 @@ public class SirenaConfig implements Serializable {
         availableWheelChartConfig.forEach((mode, wheelChartList) -> {
             // 正常轮的所有轮代表不能有scatter1
             wheelChartList.forEach(wheelChart -> {
+                // wild 不能连续出现
+                String preSymbolId = null;
                 wheelChart.forEach(symbolId -> {
+                    AssertUtil.assertTrue(!Objects.equals(SymbolEnum.Wild.getId(), symbolId) && !Objects.equals(preSymbolId, symbolId),
+                            ErrorCode.ERR_INTER, "specialWheelChart can not has continuous wild in mode "+mode);
                     AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()), ErrorCode.ERR_INTER, "normalBetWheelChart can not exist scatter+1 in mode " + mode);
                 });
             });

@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.manager.operation;
 
-import com.wegame.capi.biz.config.mongo.KapreMongoConfig;
 import com.wegame.capi.biz.config.mongo.SirenaMongoConfig;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDetailDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventDo;

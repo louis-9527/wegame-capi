@@ -33,7 +33,7 @@ public class SirenaPulsarListener extends AbstractPulsarListener<SirenaGameRecor
 
     @Override
     public GameTypeEnum getGameType() {
-        return GameTypeEnum.KAPRE;
+        return GameTypeEnum.SIRENA;
     }
 
     @Override

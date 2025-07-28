@@ -1,11 +1,16 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wegame.capi.biz.module.kapre.KapreGameHelper;
+import com.wegame.capi.biz.module.lamang.LamangGameHelper;
+import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
+import com.wegame.capi.common.enums.SymbolTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * Kapre游戏元素
@@ -39,6 +44,26 @@ public class SirenaSymbolDo extends SymbolDo {
 
     public boolean isCashSymbol() {
         return StringUtils.equals(this.getId(), KapreGameHelper.KAPRE_CASH_SYMBOL.getId());
+    }
+
+    /**
+     * 是否scatter symbol
+     *
+     * @return true/false
+     */
+    @JsonIgnore
+    public boolean isScatterIdSymbol() {
+        return StringUtils.equals(this.getId(), SirenaGameHelper.SIRENA_SCATTER.getId());
+    }
+
+    /**
+     * 是否scatter1 symbol
+     *
+     * @return true/false
+     */
+    @JsonIgnore
+    public boolean isScatter1IdSymbol() {
+        return StringUtils.equals(this.getId(), SirenaGameHelper.SIRENA_SCATTER1.getId());
     }
 
     public static SirenaSymbolDo buildFromSymbol(SymbolDo symbol, BigDecimal symbolMultiple, SirenaSymbolDo nestSymbol) {

@@ -1,15 +1,13 @@
 package com.wegame.capi.biz.module.sirena.odds;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
-import com.wegame.capi.biz.config.domain.KapreConfig;
 import com.wegame.capi.biz.config.domain.SirenaConfig;
 import com.wegame.capi.biz.domain.biz.odds.OddsCalculateDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
-import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.symbol.KapreSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
 import com.wegame.capi.biz.module.base.odds.AbstractOddsCalculateStrategy;
 import lombok.extern.slf4j.Slf4j;
@@ -35,33 +33,21 @@ public class SireanaOddsCalculateStrategy extends AbstractOddsCalculateStrategy<
     @Override
     public BigDecimal calculateOddsOfRewardLine(RewardHandleDo<SirenaSymbolDo> rewardHandle, RewardLineDo<SirenaSymbolDo> rewardLine) {
         AssertUtil.assertNotNull(rewardLine, ErrorCode.ERR_INTER, "rewardLine is null");
-        if (rewardLine.isCashReward()) {
-            return getOddsOfCashReward(rewardLine);
-        } else {
-            return calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
-        }
+        // 配置赔率*（所有wild上面的赔率之和）
+        // 配置赔率
+        BigDecimal configOdd = super.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
+        // wild倍率之和
+        BigDecimal dynamicOdds = this.calculateDynamicOdds(rewardLine);
+        return BigDecimal.ZERO.compareTo(dynamicOdds) <= 0 ? configOdd : dynamicOdds.multiply(configOdd);
     }
 
-    private BigDecimal getOddsOfCashReward(RewardLineDo<SirenaSymbolDo> rewardLine) {
-        AssertUtil.assertNotEmpty(rewardLine.getRewardSymbolList(), ErrorCode.ERR_INTER, "rewardSymbolList is null");
-        BigDecimal totalOdds = BigDecimal.ZERO;
-        for (RewardSymbolDo<SirenaSymbolDo> rewardSymbolDo : rewardLine.getRewardSymbolList()) {
-            SirenaSymbolDo symbolDo = rewardSymbolDo.getSymbol();
-            if (Objects.isNull(symbolDo)) {
-                continue;
-            }
-            if (symbolDo.isCashSymbol()) {
-                if (!Objects.isNull(symbolDo.getSymbolOdd())) {
-                    totalOdds = totalOdds.add(symbolDo.getSymbolOdd());
-                }
-            } else if (symbolDo.isWildSymbol()) {
-                SirenaSymbolDo nestSymbol = symbolDo.getNestSymbol();
-                AssertUtil.assertNotNull(nestSymbol, ErrorCode.ERR_INTER, "nestSymbol in wildSymbol can not be null");
-                if (!Objects.isNull(nestSymbol.getSymbolOdd())) {
-                    totalOdds = totalOdds.add(nestSymbol.getSymbolOdd());
-                }
-            }
+    private BigDecimal calculateDynamicOdds(RewardLineDo<SirenaSymbolDo> rewardLine) {
+        if (CollectionUtil.isEmpty(rewardLine.getRewardSymbolList())) {
+            return BigDecimal.ZERO;
         }
-        return totalOdds;
+
+        return rewardLine.getRewardSymbolList().stream().filter(r -> Objects.nonNull(r.getSymbol().getSymbolOdd()))
+                .map(r -> r.getSymbol().getSymbolOdd()).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
 }
