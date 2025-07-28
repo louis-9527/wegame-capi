@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_GAME_INFO;
+import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.MANGKUKULAM_GAME_INFO;
 
 @Slf4j
 @Component("mangkukulamGameEventPlay")
@@ -37,7 +37,7 @@ public class MangkukulamGameEventPlay extends AbstractGame<MangkukulamGameRecord
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final int RECORD_FIRST_INDEX = 0;
-    private static final GameInfoDo gameInfo = LAMANG_GAME_INFO;
+    private static final GameInfoDo gameInfo = MANGKUKULAM_GAME_INFO;
 
     @Autowired
     MangkukulamRewardHandler mangkukulamRewardHandler;
@@ -48,7 +48,7 @@ public class MangkukulamGameEventPlay extends AbstractGame<MangkukulamGameRecord
     @Override
     public List<MangkukulamGameRecordDo> play(GamePlayDo gamePlay) {
         List<MangkukulamGameRecordDo> ret = new ArrayList<>();
-        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.LAM_ANG);
+        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.MANGKUKULAM);
         // 获取首轮(batchId == 0 and index == 0)
         OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
                 .filter(record -> Objects.equals(RECORD_DEFAULT_PARENT_ID, record.getParentId()) && Objects.equals(RECORD_FIRST_INDEX, record.getIndex()))

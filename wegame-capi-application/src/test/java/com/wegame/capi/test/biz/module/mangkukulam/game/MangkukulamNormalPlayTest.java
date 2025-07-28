@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Random;
 
 @Slf4j
-public class MangkukulamGameTest extends BaseTest {
+public class MangkukulamNormalPlayTest extends BaseTest {
     @Autowired
     MangkukulamGameNormalPlay normalPlay;
 
