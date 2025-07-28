@@ -17,9 +17,9 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
+import com.wegame.capi.biz.service.operation.OperationEventConfigService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
@@ -50,6 +50,8 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     @Autowired
     OperationEventConfigRecordService operationEventConfigRecordService;
     @Autowired
+    OperationEventConfigService operationEventConfigService;
+    @Autowired
     MariaMakilingConfig mariaMakilingConfig;
 
     @Override
@@ -57,7 +59,13 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         MariaMakilingConfig.TemplateMultipleRange templateConfig = getTemplateConfig();
-        List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(gamePlay.getOperationEventConfigBetRecordId(), MARIA_MAKILING);
+        AssertUtil.assertNotNull(templateConfig, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(templateConfig.getMultipleRangeStart(), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(templateConfig.getMultipleRangeEnd(), ErrorCode.ERR_INTER);
+        List<Long> betRecordIdList = operationEventConfigService.listIdByMultipleRange(templateConfig.getMultipleRangeStart(), templateConfig.getMultipleRangeEnd(), MARIA_MAKILING);
+        AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
+        Long betRecordId = getRandomElement(betRecordIdList);
+        List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(betRecordId, MARIA_MAKILING);
         // 获取首轮(parent ==0 and index =0)
         OperationEventConfigRecordDo firstConfigRecord = configRecordList.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
@@ -143,7 +151,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         });
     }
 
-    public MariaMakilingConfig.TemplateMultipleRange getTemplateConfig() {
+    private MariaMakilingConfig.TemplateMultipleRange getTemplateConfig() {
         int randomNumber = randomService.randomInt(CONST_1, CONST_100000);
         Map<String, MariaMakilingConfig.TemplateMultipleRange> templateRangeConfigMap = mariaMakilingConfig.getTemplateRangeConfigMap();
         int startVal = 0;
@@ -156,5 +164,14 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
             }
         }
         return null;
+    }
+
+    private static Long getRandomElement(List<Long> list) {
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt(list.size());
+        return list.get(randomIndex);
     }
 }
