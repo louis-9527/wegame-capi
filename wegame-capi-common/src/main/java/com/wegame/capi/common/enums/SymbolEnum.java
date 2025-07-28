@@ -57,7 +57,10 @@ public enum SymbolEnum {
     SuperWild("4007", "SuperWild"),
     Wild_Sword("4010", "Wild_Sword"),
     Wild_Stick("4011", "Wild_stick"),
-
+    // 珍珠Wild
+    PearlWild("4091","pearl_Wild"),
+    // 大珍珠Wild
+    BigPearlWild("4092","Big_pearl_Wild"),
     // 动态wild
     DynamicWild("4020", "DynamicWild"),
     SpecialWild("4021", "SpecialWild"),

@@ -55,11 +55,7 @@ public class SirenaGameHelper {
             .name(Symbol1009.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .build();
-    public static final SymbolDo SIRENA_CASH_SYMBOL = SymbolDo.builder()
-            .id(Symbol1010.getId())
-            .name(Symbol1010.getName())
-            .symbolType(SymbolTypeEnum.COMMON)
-            .build();
+
     public static final SymbolDo SIRENA_SCATTER = SymbolDo.builder()
             .id(Scatter.getId())
             .name(Scatter.getName())
@@ -75,11 +71,17 @@ public class SirenaGameHelper {
             .name(Wild.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
-    public static final SymbolDo SIRENA_Dynamic_Wild = SymbolDo.builder()
-            .id(DynamicWild.getId())
-            .name(DynamicWild.getName())
+    public static final SymbolDo SIRENA_Pearl_Wild = SymbolDo.builder()
+            .id(PearlWild.getId())
+            .name(PearlWild.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
+    public static final SymbolDo SIRENA_Big_Pearl_Wild = SymbolDo.builder()
+            .id(BigPearlWild.getId())
+            .name(BigPearlWild.getName())
+            .symbolType(SymbolTypeEnum.WILD)
+            .build();
+
     public static final GameInfoDo SIRENA_GAME_INFO = GameInfoDo.builder()
             .id(GameTypeEnum.SIRENA.getId())
             .gameType(GameTypeEnum.SIRENA)
@@ -96,11 +98,11 @@ public class SirenaGameHelper {
                     .put(SIRENA_Symbol1007.getId(), SIRENA_Symbol1007)
                     .put(SIRENA_Symbol1008.getId(), SIRENA_Symbol1008)
                     .put(SIRENA_Symbol1009.getId(), SIRENA_Symbol1009)
-                    .put(SIRENA_CASH_SYMBOL.getId(), SIRENA_CASH_SYMBOL)
                     .put(SIRENA_SCATTER.getId(), SIRENA_SCATTER)
                     .put(SIRENA_SCATTER1.getId(), SIRENA_SCATTER1)
                     .put(SIRENA_Wild.getId(), SIRENA_Wild)
-                    .put(SIRENA_Dynamic_Wild.getId(), SIRENA_Dynamic_Wild)
+                    .put(SIRENA_Pearl_Wild.getId(), SIRENA_Pearl_Wild)
+                    .put(SIRENA_Big_Pearl_Wild.getId(), SIRENA_Big_Pearl_Wild)
                     .build())
             .build();
 }
