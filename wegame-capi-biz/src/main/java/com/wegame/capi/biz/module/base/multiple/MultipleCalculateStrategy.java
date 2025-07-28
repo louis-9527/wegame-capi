@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.module.base.multiple;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
@@ -32,6 +34,18 @@ public interface MultipleCalculateStrategy<T extends SymbolDo> {
     default Pair<MultiplePieTypeEnum, BigDecimal> calculateMultiplePie(RewardHandleDo<SymbolDo> rewardHandle) {
         return null;
     }
+
+    /**
+     * 计算倍率
+     * 计算(中奖线维度)倍率
+     *
+     * @param rewardHandle
+     * @return 倍率
+     */
+    default BigDecimal calculateMultipleOfRewardLine(RewardHandleDo<T> rewardHandle, RewardLineDo<T> rewardLine) {
+        throw new BusinessException(ErrorCode.ERR_INTER, "can not do default function");
+    }
+
 }
 
 

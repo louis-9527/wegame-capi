@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.config.domain.KapreConfig;
 import com.wegame.capi.biz.config.domain.SirenaConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
@@ -18,6 +19,7 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
 import com.wegame.capi.biz.module.lamang.LamangGameHelper;
+import com.wegame.capi.biz.module.sirena.multiple.SirenaMultipleCalculateStrategy;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
@@ -44,6 +46,8 @@ public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
 
     @Autowired
     OddsCalculateStrategy<SirenaSymbolDo> sirenaOddsCalculateStrategy;
+    @Autowired
+    SirenaMultipleCalculateStrategy sirenaMultipleCalculateStrategy;
 
     @Autowired
     SirenaConfig sirenaConfig;
@@ -77,10 +81,13 @@ public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
         // 中奖坐标列表
         List<RewardLineDetailDo<SirenaSymbolDo>> rewardLineDetailList = Lists.newArrayList();
         for (RewardLineDo<SirenaSymbolDo> rewardLine : rewardLineList) {
-            // 计算赔率:珍珠倍率的计算也参与到odds计算中
-            BigDecimal odds = sirenaOddsCalculateStrategy.calculateOddsOfRewardLine(rewardHandle, rewardLine);
+            // 获取赔率
+            BigDecimal odds = sirenaOddsCalculateStrategy.calculateOdds(OddsCalculateBuilder.build(rewardHandle, rewardLine.getRewardSymbol(), rewardLine.getRewardLineType()));
+            // 计算中奖线维度的倍率
+            BigDecimal rewardLineMultiple = sirenaMultipleCalculateStrategy.calculateMultipleOfRewardLine(rewardHandle, rewardLine);
             // 计算（中奖线）中奖金额：投注金额 * 赔率 * 中奖线数量
-            BigDecimal lineRewardAmount = super.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, null);
+            rewardLineMultiple = rewardLineMultiple.compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ONE : rewardLineMultiple;
+            BigDecimal lineRewardAmount = super.calculateLineRewardAmount(rewardLine, rewardHandle.getBetAmount(), odds, rewardLineMultiple);
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
             // 中奖线明细列表

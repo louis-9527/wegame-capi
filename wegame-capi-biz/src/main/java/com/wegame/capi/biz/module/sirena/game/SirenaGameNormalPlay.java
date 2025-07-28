@@ -94,18 +94,19 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
     }
 
     private IndexDo injectFreeWheelDynamicWildSymbol(WheelDo<SirenaSymbolDo> wheelDo, IndexDo preDynamicWildIndex) {
-        // 生成一个游荡wild
-        SirenaSymbolDo dynamicWildSymbolDo = this.buildKapreSymbol(SirenaGameHelper.SIRENA_CASH_SYMBOL, this.buildCashSymbolMultipleProbabilisticConfig(true));
-        // 直到和上一个游离wild不一样为止
-        IndexDo currDynamicWildIndex;
-        do {
-            int randomRowNum = randomService.randomInt(Constants.CONST_0, GAME_INFO.getRow() - 1);
-            // 不生成在reel 1
-            int randomColumRum = randomService.randomInt(Constants.CONST_1, GAME_INFO.getColumn() - 1);
-            currDynamicWildIndex = IndexFactory.buildDo(randomRowNum, randomColumRum);
-        } while (Objects.equals(currDynamicWildIndex, preDynamicWildIndex));
-        wheelDo.getSymbolArr()[currDynamicWildIndex.getRowIndex()][currDynamicWildIndex.getColumnIndex()] = dynamicWildSymbolDo;
-        return currDynamicWildIndex;
+//        // 生成一个游荡wild
+//        SirenaSymbolDo dynamicWildSymbolDo = this.buildKapreSymbol(SirenaGameHelper.SIRENA_CASH_SYMBOL, this.buildCashSymbolMultipleProbabilisticConfig(true));
+//        // 直到和上一个游离wild不一样为止
+//        IndexDo currDynamicWildIndex;
+//        do {
+//            int randomRowNum = randomService.randomInt(Constants.CONST_0, GAME_INFO.getRow() - 1);
+//            // 不生成在reel 1
+//            int randomColumRum = randomService.randomInt(Constants.CONST_1, GAME_INFO.getColumn() - 1);
+//            currDynamicWildIndex = IndexFactory.buildDo(randomRowNum, randomColumRum);
+//        } while (Objects.equals(currDynamicWildIndex, preDynamicWildIndex));
+//        wheelDo.getSymbolArr()[currDynamicWildIndex.getRowIndex()][currDynamicWildIndex.getColumnIndex()] = dynamicWildSymbolDo;
+//        return currDynamicWildIndex;
+        return null;
     }
 
     private void freeWheelHandler(SirenaGameRecordDo firstGameRecord, AtomicLong totalRewardAmount, List<SirenaGameRecordDo> ret, GamePlayDo gamePlay) {
@@ -220,25 +221,26 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
     }
 
     private SirenaSymbolDo buildKapreSymbol(SymbolDo symbolDo, TreeMap<BigDecimal, BigDecimal> cacheSymbolMultipleProbabilisticConfig) {
-        // 区分是否wild
-        if (symbolDo.isWildSymbol()) {
-            // wild,则构建嵌套的现金symbol
-            // 随机生成现金元素倍率
-            BigDecimal cashSymbolMultiple = GameUtil.randomKey(cacheSymbolMultipleProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
-            // 构建现金元素
-            SirenaSymbolDo cashSymbol = SirenaSymbolDo.buildFromSymbol(SirenaGameHelper.SIRENA_CASH_SYMBOL, cashSymbolMultiple, null);
-            return SirenaSymbolDo.buildFromSymbol(symbolDo, BigDecimal.ZERO, cashSymbol);
-        } else {
-            SirenaSymbolDo kapreSymbolDo = SirenaSymbolDo.buildFromSymbol(symbolDo, BigDecimal.ZERO, null);
-            if (kapreSymbolDo.isCashSymbol()) {
-                // 是否现金symbol
-                // 随机生成现金元素倍率
-                BigDecimal cashSymbolMultiple = GameUtil.randomKey(cacheSymbolMultipleProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
-                kapreSymbolDo.setSymbolOdd(cashSymbolMultiple);
-            }
-            return kapreSymbolDo;
-
-        }
+//        // 区分是否wild
+//        if (symbolDo.isWildSymbol()) {
+//            // wild,则构建嵌套的现金symbol
+//            // 随机生成现金元素倍率
+//            BigDecimal cashSymbolMultiple = GameUtil.randomKey(cacheSymbolMultipleProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
+//            // 构建现金元素
+//            SirenaSymbolDo cashSymbol = SirenaSymbolDo.buildFromSymbol(SirenaGameHelper.SIRENA_CASH_SYMBOL, cashSymbolMultiple, null);
+//            return SirenaSymbolDo.buildFromSymbol(symbolDo, BigDecimal.ZERO, cashSymbol);
+//        } else {
+//            SirenaSymbolDo kapreSymbolDo = SirenaSymbolDo.buildFromSymbol(symbolDo, BigDecimal.ZERO, null);
+//            if (kapreSymbolDo.isCashSymbol()) {
+//                // 是否现金symbol
+//                // 随机生成现金元素倍率
+//                BigDecimal cashSymbolMultiple = GameUtil.randomKey(cacheSymbolMultipleProbabilisticConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
+//                kapreSymbolDo.setSymbolOdd(cashSymbolMultiple);
+//            }
+//            return kapreSymbolDo;
+//
+//        }
+        return null;
     }
 
     /**
