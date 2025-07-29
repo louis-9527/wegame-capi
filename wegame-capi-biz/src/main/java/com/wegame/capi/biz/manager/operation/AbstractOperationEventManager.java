@@ -77,9 +77,9 @@ public abstract class AbstractOperationEventManager {
     /**
      * 获取当前玩家在生效中的干预事件,并按时间取第一条
      */
-    public OperationEventDo getEffectedEvent(String playName) {
+    public OperationEventDo getEffectedEvent(String playName,String channelId) {
         OperationEventTypeEnum dynamicOperationGame = operationEventType();
-        List<DynamicOperationEffectEventCatchDo> entries = operationEventService.getEffectList(playName, operationEventType());
+        List<DynamicOperationEffectEventCatchDo> entries = operationEventService.getEffectList(playName,channelId, operationEventType());
         for (DynamicOperationEffectEventCatchDo entry : entries) {
             long recordId = entry.getId();
             long effectedTime = entry.getEffectedTime();
@@ -93,7 +93,7 @@ public abstract class AbstractOperationEventManager {
             // 判断是否过期
             if (currentMilli > expiredTime) {
                 // 过期 删除缓存并触发异步上报
-                operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
+                operationEventService.cleanOperationByCatch(recordId, channelId,playName, operationEventType());
                 asyncUpdateFinishEvent(recordId, playName, OperationEventSubStatusEnum.FINISH_EXPIRED);
                 continue;
             }
@@ -108,7 +108,7 @@ public abstract class AbstractOperationEventManager {
             OperationEventDo eventDo = operationEventService.getById(recordId, dynamicOperationGame);
             if (eventDo == null) {
                 log.warn("dynamicOperationEventService.getById is null:{}", recordId);
-                operationEventService.cleanOperationByCatch(recordId, playName, dynamicOperationGame);
+                operationEventService.cleanOperationByCatch(recordId,channelId, playName, dynamicOperationGame);
                 continue;
             }
             if (OperationEventStatusEnum.ING == eventDo.getEventStatus()) {
@@ -116,19 +116,19 @@ public abstract class AbstractOperationEventManager {
             }
             if (OperationEventStatusEnum.FINISH == eventDo.getEventStatus()) {
                 //已完成 删除缓存并触发异步上报
-                operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
+                operationEventService.cleanOperationByCatch(recordId,channelId, playName, operationEventType());
                 asyncReportEventById(recordId);
                 continue;
             }
             if (OperationEventReportStatusEnum.reportSuccess(eventDo.getReportStatus())) {
                 //已完成 删除缓存并触发异步上报
-                operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
+                operationEventService.cleanOperationByCatch(recordId,channelId, playName, operationEventType());
                 continue;
             }
             // 判断金额
             if (eventDo.getFinishBonus() != null && (eventDo.getFinishBonus() >= eventDo.getMinBonus())) {
                 // 干预完成,删除缓存并触发异步上报
-                operationEventService.cleanOperationByCatch(recordId, playName, operationEventType());
+                operationEventService.cleanOperationByCatch(recordId,channelId, playName, operationEventType());
                 asyncUpdateFinishEvent(recordId, playName, OperationEventSubStatusEnum.FINISH_NORMAL);
                 continue;
             }
@@ -230,10 +230,10 @@ public abstract class AbstractOperationEventManager {
     /**
      * 获取干预事件结果
      */
-    public GameOperationEventDo getEventBetResult(Long payOutAmount) {
+    public GameOperationEventDo getEventBetResult(Long payOutAmount,String channelId) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 判断是否存在干预事件
-        OperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName());
+        OperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName(),channelId);
         if (eventDo == null) {
             return GameOperationEventDo.builder().eventResult(false).build();
         }
@@ -450,7 +450,7 @@ public abstract class AbstractOperationEventManager {
                 .eventStatus(eventDo.getEventSubStatus().getCode())
                 .build();
         // 上报
-        UpdateEventsStatusRes updateEventsStatusRes = operationEventApi.updateEventsStatus(updateEventsStatusReq);
+        UpdateEventsStatusRes updateEventsStatusRes = operationEventApi.updateEventsStatus(eventDo.getChannelId(),updateEventsStatusReq);
         if (updateEventsStatusRes.isSuccess()) {
             // 更新事件状态为已上报
             OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)

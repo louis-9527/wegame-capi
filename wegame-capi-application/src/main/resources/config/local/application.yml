@@ -76,12 +76,16 @@ api:
     promotionDomain: http://reward-http.igo8.me
     operationDomain: https://dos-egame.dos88.me
     cp:
-      platformId: 50
-      channelId: 1050
-      privateKey: 739cf125387017046c02d5610a122859844502203284d3509ff897dc54f7bc09
-      privateIv: 32f8e4c142810c8d9a75bce4666198ea
+      - platformId: 50
+        channelId: 1050
+        privateKey: 739cf125387017046c02d5610a122859844502203284d3509ff897dc54f7bc09
+        privateIv: 32f8e4c142810c8d9a75bce4666198ea
+      - platformId: 50
+        channelId: 1087
+        privateKey: dfa0f2088e0aed71a2d98303433bb81f530b44df4f876847d90af19f04dff8ec
+        privateIv: 3393de5f81b786a5d112a687fb488157
     igo:
-      platformId: 55
-      channelId: 1051
-      privateKey: 42a495b8c0e9416bd91ff6a7b65043c970acd88f3665e20cb6a12ddeb8e7e47d
-      privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
+      - platformId: 55
+        channelId: 1051
+        privateKey: 42a495b8c0e9416bd91ff6a7b65043c970acd88f3665e20cb6a12ddeb8e7e47d
+        privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc

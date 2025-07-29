@@ -56,7 +56,7 @@ public class OperationEventCallbackController {
         String encryptedIv = request.getHeader("iv");
         AssertUtil.assertStrNotEmpty(encryptedKey, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(encryptedIv, ErrorCode.ERR_PARAM);
-        // 使用私钥解密encryptedKey 和 encryptedIv
+        // 使用私钥解密 encryptedKey 和 encryptedIv
         String keyString = dynamicOperationEncryptionHelper.decrypt(encryptedKey);
         String ivString = dynamicOperationEncryptionHelper.decrypt(encryptedIv);
         // String key 和iv 解密message
