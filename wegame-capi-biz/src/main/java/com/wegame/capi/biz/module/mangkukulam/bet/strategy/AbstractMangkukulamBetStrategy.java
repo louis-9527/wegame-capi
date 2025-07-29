@@ -29,6 +29,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.FreeWheelHandleStatusEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -86,33 +87,35 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
 
     @Override
     public BetResultDo<MangkukulamBetRecordDetailDo> bet(BetDo betDo) {
-//        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
-//            // 非免费轮投注流程
-//            //// 1、是否使用星卡
-//            if (isCanStarCardBet(betDo)) {
-//                // 1.1 是，则星卡投注流程
-//                return betForStartCard(betDo);
-//            } else if (isCanFreeSpinBet(betDo)) {
-//                // 1.1 是，则预定投注流程
-//                return betForFreeSpin(betDo);
-//            } else {
-//                // 1.2 否，则走其他投注流程
-//                // 1.2.1、判断能否走干预事件投注
-//                if (isCanOperationEventBet(betDo)) {
-//                    // 1.2.11 命中干预事件：走干预事件投注
-//                    return betForOperationEvent(betDo);
-//                } else {
-//                    // 1.2.12 未命中干预事件：走正常投注。
-//                    return betForNonFreeWheel(betDo);
-//                }
-//            }
         if (!BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
-            return betForNonFreeWheel(betDo);
+            // 非免费轮投注流程
+            //// 1、是否使用星卡
+            if (isCanStarCardBet(betDo)) {
+                // 1.1 是，则星卡投注流程
+                randVolatilityType(betDo);
+                return betForStartCard(betDo);
+            } else if (isCanFreeSpinBet(betDo)) {
+                // 1.1 是，则预定投注流程
+                randVolatilityType(betDo);
+                return betForFreeSpin(betDo);
+            } else {
+                // 1.2 否，则走其他投注流程
+                // 1.2.1、判断能否走干预事件投注
+                if (isCanOperationEventBet(betDo)) {
+                    // 1.2.11 命中干预事件：走干预事件投注
+                    return betForOperationEvent(betDo);
+                } else {
+                    // 1.2.12 未命中干预事件：走正常投注。
+                    return betForNonFreeWheel(betDo);
+                }
+            }
         } else {
-            // 免费轮投注, 走查询
             return betForFreeWheelQuery(betDo);
         }
+    }
 
+    private void randVolatilityType(BetDo betDo) {
+        betDo.setVolatility(VolatilityTypeEnum.random());
     }
 
     /**
