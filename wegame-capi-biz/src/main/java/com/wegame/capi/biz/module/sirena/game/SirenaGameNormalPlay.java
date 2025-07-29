@@ -314,7 +314,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
      */
     private List<IndexDo> generateRandomPositionsExcluding(Map<IndexDo, SirenaSymbolDo> excludeIndexMap, int count) {
         List<IndexDo> availablePositions = new ArrayList<>();
-        
+
         // 将排除的坐标转换为Set<String>，使用坐标字符串作为key
         Set<String> excludeCoordinates = new HashSet<>();
         if (excludeIndexMap != null) {
@@ -322,7 +322,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                 excludeCoordinates.add(indexDo.getRowIndex() + "," + indexDo.getColumnIndex());
             }
         }
-        
+
         // 生成所有可用位置（排除指定坐标和第一列）
         for (int row = 0; row < GAME_INFO.getRow(); row++) {
             for (int col = 0; col < GAME_INFO.getColumn(); col++) {
@@ -330,7 +330,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                 if (col == 0) {
                     continue;
                 }
-                
+
                 // 检查当前坐标是否在排除列表中
                 String coordinateKey = row + "," + col;
                 if (!excludeCoordinates.contains(coordinateKey)) {
@@ -342,16 +342,16 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                 }
             }
         }
-        
+
         // 如果可用位置数量少于请求数量，返回所有可用位置
         if (availablePositions.size() <= count) {
             return availablePositions;
         }
-        
+
         // 随机选择指定数量的位置
         List<IndexDo> selectedPositions = new ArrayList<>();
         Set<Integer> selectedIndices = new HashSet<>();
-        
+
         while (selectedPositions.size() < count) {
             int randomIndex = randomService.randomInt(0, availablePositions.size() - 1);
             if (!selectedIndices.contains(randomIndex)) {
@@ -359,7 +359,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                 selectedPositions.add(availablePositions.get(randomIndex));
             }
         }
-        
+
         return selectedPositions;
     }
 
@@ -376,7 +376,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
         if (startRow + 1 >= symbolArr.length || startCol - 1 < 0) {
             return false;
         }
-        
+
         // 检查2*2格子的4个位置是否都是珍珠
         return isPearlSymbol(symbolArr[startRow][startCol]) &&
                isPearlSymbol(symbolArr[startRow][startCol - 1]) &&
