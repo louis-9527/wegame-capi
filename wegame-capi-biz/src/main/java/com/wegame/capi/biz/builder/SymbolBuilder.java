@@ -100,6 +100,7 @@ public class SymbolBuilder {
                 DiwataMayariSymbolDo diwataMayariSymbol = symbolArr[row][col];
                 integerArray[row][col] = Objects.isNull(diwataMayariSymbol) ? null : DiwataMayariSymbolVo.builder()
                         .symbolId(diwataMayariSymbol.getId())
+                        .main(diwataMayariSymbol.isMain())
                         .build();
             }
         }

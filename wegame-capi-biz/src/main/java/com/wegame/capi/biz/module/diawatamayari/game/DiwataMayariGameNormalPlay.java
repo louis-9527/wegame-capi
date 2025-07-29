@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -305,12 +306,14 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                     SymbolDo symbolDoNoSword = this.randomNonWildSymbol(randomNumber, columProbabilisticMap);
                     symbolArr[row][column] = DiwataMayariSymbolDo.buildFromSymbol(symbolDoNoSword);
                 }
+                symbolArr[row][column].setMain(true);
                 continue;
             }
             // 大宝剑元素
             if (diwataMayariSymbolDo.isSword()) {
                 if (!isScatter) {
                     this.convertSword(symbolArr, column);
+                    symbolArr[row][column].setMain(true);
                     break;
                 } else {
                     // 重新生成非 大宝剑元素
@@ -376,7 +379,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
             int newColumn = pos[1];
             DiwataMayariSymbolDo diwataMayariSymbolDo = symbolArr[newRow][newColumn];
             if (diwataMayariSymbolDo == null || diwataMayariSymbolDo.isCommonSymbol()) {
-                replaceMap.put(pos, DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_STICK));
+                replaceMap.put(pos, DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_STICK)));
                 continue;
             }
             if (diwataMayariSymbolDo.isStick()) {
@@ -404,7 +407,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
         // 收集所有有效位置(上下左右、对角线)，排除中心位置和第一列
         List<int[]> positions = new ArrayList<>();
 
-        // 遍历3x3区域，排除中心位置
+        // 遍历3x3区域
         for (int i = row - 1; i <= row + 1; i++) {
             for (int j = column - 1; j <= column + 1; j++) {
                 // 排除中心位置
