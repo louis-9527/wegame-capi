@@ -17,7 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class BetRecordTemplatePo implements Serializable {
-    private static final long serialVersionUID = 3508760048909770673L;
+    private static final long serialVersionUID = -3850126616011540931L;
     /**
      * 主键ID（bet_record_id）
      */

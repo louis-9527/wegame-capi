@@ -3,12 +3,13 @@ package com.wegame.capi.dao.repository.domain.template;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
 /**
- * 干预事件配置（模版）
+ * 模板事件配置（模版）
  */
 @Data
 @ToString
@@ -16,36 +17,22 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetRecordTemplateQuery implements Serializable {
-    private static final long serialVersionUID = -1598498668016762207L;
+public class BetRecordTemplateQuery extends BetRecordTemplatePo {
+    private static final long serialVersionUID = -5951798927605339549L;
     /**
-     * 主键ID（bet_record_id）
+     * limit
      */
-    @Id
-    @Field("_id")
-    private Long id;
+    private Integer limit;
     /**
-     * 游戏ID
+     * offset
      */
-    private String gameId;
+    private Integer offset;
     /**
-     * 投注类型
+     * 排序语句
      */
-    private String betType;
+    private String orderByClause;
     /**
-     * 投注子类型
+     * 排序方向
      */
-    private String betSubType;
-    /**
-     * 倍数
-     */
-    private Double multiple;
-    /**
-     * 模版类型 common
-     */
-    private String templateType;
-    /**
-     * hash
-     */
-    private String hash;
+    private Sort.Direction direction;
 }
