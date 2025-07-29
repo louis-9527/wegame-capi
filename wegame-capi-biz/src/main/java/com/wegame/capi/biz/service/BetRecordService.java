@@ -11,11 +11,14 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -158,5 +161,21 @@ public class BetRecordService extends AbstractService {
         return getMongoTemplate(gameType).count(BetRecordQueryBuilder.buildMongodbQuery(query),
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
+    }
+
+    public BetRecordDo getOneLastByTime(String playerId,GameTypeEnum gameType) {
+        Query query = new Query();
+        long oneMonthAgoMillis = Instant.now().minus(30, ChronoUnit.DAYS).toEpochMilli();
+        Criteria criteria = new Criteria();
+        criteria.and("playerId").is(playerId);
+        criteria.and("createTime").gte(oneMonthAgoMillis);
+        query.addCriteria(criteria);  // gte = 大于等于
+        query.with(Sort.by(Sort.Direction.DESC, "createTime"));
+        query.limit(1);
+        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(
+                query,
+                BetRecordPo.class,
+                gameType.getBetRecordCollectionName());
+        return poToDo(betRecordPo);
     }
 }

@@ -38,7 +38,7 @@ public class SirenaConfig implements Serializable {
     private ProbabilisticConfig probabilisticConfig;
     /**
      * 轮带表配置
-     * TreeMap<轮带名称(mode*), List<reel(colum)List<(元素id)>>>
+     * TreeMap<带名称(mode*),轮 List<reel(colum)List<(元素id)>>>
      */
     private TreeMap<String, List<List<String>>> wheelChartConfig;
     /**
@@ -113,7 +113,7 @@ public class SirenaConfig implements Serializable {
          * 免费轮小珍珠出现数量概率
          * TreeMap<珍珠数量, 出现概率:之和=100>
          */
-        private TreeMap<BigDecimal, BigDecimal> freeWheelSmallPearlCountWeightConfig;
+        private TreeMap<Integer, BigDecimal> freeWheelSmallPearlCountWeightConfig;
         /**
          * 轮带表权重(正常游戏-normal bet 付费轮)
          * TreeMap<轮带名称(mode*), 出现概率:之和=100>

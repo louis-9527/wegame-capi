@@ -2,6 +2,8 @@ package com.wegame.capi.biz.module.sirena;
 
 import com.google.common.collect.ImmutableMap;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.SymbolTypeEnum;
@@ -50,7 +52,7 @@ public class SirenaGameHelper {
             .name(Symbol1008.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .build();
-    private static final SymbolDo SIRENA_Symbol1009 = SymbolDo.builder()
+    public static final SymbolDo SIRENA_Symbol1009 = SymbolDo.builder()
             .id(Symbol1009.getId())
             .name(Symbol1009.getName())
             .symbolType(SymbolTypeEnum.COMMON)
@@ -66,7 +68,7 @@ public class SirenaGameHelper {
             .name(Scatter1.getName())
             .symbolType(SymbolTypeEnum.SCATTER)
             .build();
-    private static final SymbolDo SIRENA_Wild = SymbolDo.builder()
+    public static final SymbolDo SIRENA_Wild = SymbolDo.builder()
             .id(Wild.getId())
             .name(Wild.getName())
             .symbolType(SymbolTypeEnum.WILD)
@@ -79,6 +81,12 @@ public class SirenaGameHelper {
     public static final SymbolDo SIRENA_Big_Pearl_Wild = SymbolDo.builder()
             .id(BigPearlWild.getId())
             .name(BigPearlWild.getName())
+            .symbolType(SymbolTypeEnum.WILD)
+            .build();
+
+    public static final SirenaSymbolDo SIRENA_SYMBOL_PLACEHOLDER = SirenaSymbolDo.builder()
+            .id(Symbol1000.getId())
+            .name(Symbol1000.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
 

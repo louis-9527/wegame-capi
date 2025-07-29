@@ -7,6 +7,7 @@ import com.wegame.capi.biz.config.mongo.KapreMongoConfig;
 import com.wegame.capi.biz.config.mongo.SirenaMongoConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
+import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
 import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.vo.kapre.KapreGameRecordVo;
@@ -94,6 +95,14 @@ public class SirenaBetRecordManager extends AbstractBetRecordManager<SirenaGameR
     @Override
     public Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
         return gameRecordService.count(query, gameType);
+    }
+    @Override
+    public SirenaGameRecordDo findOneGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
+        return gameRecordService.findOne(query, gameType, SirenaGameRecordDo.class);
+    }
+
+    public BetRecordDo findOneBetRecordByTimeLast(String playerId,GameTypeEnum gameType){
+        return betRecordService.getOneLastByTime(playerId,gameType);
     }
 
     @Override
