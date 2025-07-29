@@ -32,6 +32,8 @@ public class OperationEventPulsarConfig {
     private static final String lamangOperationEventConsumer = "lamangOperationEventConsumer";
     private static final String diwataMayariOperationEventConsumer = "diwataMayariOperationEventConsumer";
 
+    private static final String mangkukulamOperationEventConsumer = "mangkukulamOperationEventConsumer";
+
     // todo fix
     @Value("${dynamic.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
@@ -50,6 +52,11 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupLamang;
     @Value("${dynamic.operation.pulsar_group.diwata_mayari:_DiwataMayari}")
     String dynamicOperationGroupDiwataMayari;
+
+
+    @Value("${dynamic.operation.pulsar_group.mangkukulam:_Mangkukulam}")
+    String dynamicOperationGroupMangkukulam;
+
     @Value("${dynamic.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.operation.pulsar.auth.credentials_file_path}")
@@ -150,7 +157,7 @@ public class OperationEventPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = diwataMayariOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = "diwataMayariOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(DiwataMayariOperationEventPulsarListener.class)
     public Consumer<byte[]> diwataMayariOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
@@ -159,6 +166,20 @@ public class OperationEventPulsarConfig {
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupDiwataMayari)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(diwataMayariOperationEventPulsarListener)
+                .subscribe();
+    }
+
+    @Bean(name = mangkukulamOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
+    public Consumer<byte[]> mangkukulamOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                              @Autowired MangkukulamOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, mangkukulamOperationEventConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupMangkukulam)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(diwataMayariOperationEventPulsarListener)
                 .subscribe();
