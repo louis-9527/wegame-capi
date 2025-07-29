@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.service.operation;
 
 import com.google.common.collect.Lists;
-import com.wegame.base.CacheConstants;
 import com.wegame.capi.biz.builder.operation.OperationEventConfigQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigDo;
 import com.wegame.capi.biz.service.AbstractService;
@@ -11,7 +10,6 @@ import com.wegame.capi.dao.repository.domain.operation.OperationEventConfigQuery
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.bson.Document;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Query;
@@ -74,13 +72,5 @@ public class OperationEventConfigService extends AbstractService {
                 // **保证升序排序**
                 .sorted()
                 .collect(Collectors.toList());
-    }
-
-    @Cacheable(value = CacheConstants.OPERATION_EVENT_CONFIG, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
-    public List<Long> listIdByMultipleRange(String multipleRangeStart, String multipleRangeEnd, OperationEventTypeEnum typeEnum) {
-        return getMongoTemplate(typeEnum.getGameType())
-                .find(OperationEventConfigQueryBuilder.buildQuery(multipleRangeStart, multipleRangeEnd),
-                        Long.class,
-                        typeEnum.getEventConfigRecordCollectionName());
     }
 }

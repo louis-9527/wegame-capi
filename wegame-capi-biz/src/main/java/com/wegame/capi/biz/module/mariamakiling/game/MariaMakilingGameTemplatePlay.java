@@ -10,14 +10,14 @@ import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
-import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
+import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
-import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
-import com.wegame.capi.biz.service.operation.OperationEventConfigService;
+import com.wegame.capi.biz.service.template.BetRecordTemplateService;
+import com.wegame.capi.biz.service.template.GameRecordTemplateService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
-import static com.wegame.capi.client.enums.OperationEventTypeEnum.MARIA_MAKILING;
+import static com.wegame.capi.client.enums.TemplateTypeEnum.MARIA_MAKILING;
 import static com.wegame.capi.common.Constants.CONST_1;
 import static com.wegame.capi.common.Constants.CONST_100000;
 
@@ -48,9 +48,9 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     @Autowired
     RewardHandler<SymbolDo> mariaMakilingRewardHandler;
     @Autowired
-    OperationEventConfigRecordService operationEventConfigRecordService;
+    GameRecordTemplateService gameRecordTemplateService;
     @Autowired
-    OperationEventConfigService operationEventConfigService;
+    BetRecordTemplateService betRecordTemplateService;
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
 
@@ -62,12 +62,12 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         AssertUtil.assertNotNull(templateConfig, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateConfig.getMultipleRangeStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateConfig.getMultipleRangeEnd(), ErrorCode.ERR_INTER);
-        List<Long> betRecordIdList = operationEventConfigService.listIdByMultipleRange(templateConfig.getMultipleRangeStart(), templateConfig.getMultipleRangeEnd(), MARIA_MAKILING);
+        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(templateConfig.getMultipleRangeStart(), templateConfig.getMultipleRangeEnd(), MARIA_MAKILING);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
-        List<OperationEventConfigRecordDo> configRecordList = operationEventConfigRecordService.listByBetRecordId(betRecordId, MARIA_MAKILING);
+        List<GameRecordTemplateDo> configRecordList = gameRecordTemplateService.listByBetRecordId(betRecordId, MARIA_MAKILING);
         // 获取首轮(parent ==0 and index =0)
-        OperationEventConfigRecordDo firstConfigRecord = configRecordList.stream()
+        GameRecordTemplateDo firstConfigRecord = configRecordList.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
@@ -80,10 +80,10 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         List<Long> freeWheelGameRecordIds = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(firstConfigRecord.getGameRecordIds())) {
             List<Long> gameRecordIds = firstConfigRecord.getGameRecordIds();
-            Map<Long, OperationEventConfigRecordDo> configRecordMap = configRecordList.stream()
-                    .collect(Collectors.toMap(OperationEventConfigRecordDo::getId, p -> p));
+            Map<Long, GameRecordTemplateDo> configRecordMap = configRecordList.stream()
+                    .collect(Collectors.toMap(GameRecordTemplateDo::getId, p -> p));
             for (Long recordId : gameRecordIds) {
-                OperationEventConfigRecordDo configRecord = configRecordMap.get(recordId);
+                GameRecordTemplateDo configRecord = configRecordMap.get(recordId);
                 WheelDo<SymbolDo> wheelRecord = convertWheel(configRecord.getWheel());
                 RewardResultDo<SymbolDo> rewardResultDo = mariaMakilingRewardHandler.handle(build(GAME_INFO, gamePlay, wheelRecord, BigDecimal.ZERO));
                 overallRewardAmount = overallRewardAmount + rewardResultDo.getTotalRewardAmount();
