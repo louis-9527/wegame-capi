@@ -92,11 +92,11 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             //// 1、是否使用星卡
             if (isCanStarCardBet(betDo)) {
                 // 1.1 是，则星卡投注流程
-                randVolatilityType(betDo);
+                fillRandomVolatility(betDo);
                 return betForStartCard(betDo);
             } else if (isCanFreeSpinBet(betDo)) {
                 // 1.1 是，则预定投注流程
-                randVolatilityType(betDo);
+                fillRandomVolatility(betDo);
                 return betForFreeSpin(betDo);
             } else {
                 // 1.2 否，则走其他投注流程
@@ -114,7 +114,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
         }
     }
 
-    private void randVolatilityType(BetDo betDo) {
+    private void fillRandomVolatility(BetDo betDo) {
         betDo.setVolatility(VolatilityTypeEnum.random());
     }
 
