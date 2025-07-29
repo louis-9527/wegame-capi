@@ -115,7 +115,10 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
     }
 
     private void fillRandomVolatility(BetDo betDo) {
-        betDo.setVolatility(VolatilityTypeEnum.random());
+        AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
+        if (Objects.nonNull(betDo.getVolatility())) {
+            betDo.setVolatility(VolatilityTypeEnum.random());
+        }
     }
 
     /**
