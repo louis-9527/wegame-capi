@@ -60,7 +60,7 @@ public class MangkukulamNormalPlayTest extends BaseTest {
                 .id("1001")
                 .pId("50")
                 .channelId("1050")
-                .gameId(GameTypeEnum.LAM_ANG.getId())
+                .gameId(GameTypeEnum.MANGKUKULAM.getId())
                 .playerId(TEST_PLAYER_ID)
                 .playerName(TEST_PLAYER_NAME)
                 .userName(TEST_USER_NAME)
