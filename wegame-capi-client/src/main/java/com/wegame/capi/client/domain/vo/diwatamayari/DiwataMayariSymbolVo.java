@@ -19,7 +19,7 @@ public class DiwataMayariSymbolVo implements Serializable {
     @ApiModelProperty("元素Id")
     private String symbolId;
     @ApiModelProperty("主元素")
-    private boolean main;
+    private Boolean main;
 
     @Override
     public String toString() {
