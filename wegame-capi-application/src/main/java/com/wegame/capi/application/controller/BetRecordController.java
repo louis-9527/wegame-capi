@@ -11,11 +11,11 @@ import com.wegame.capi.biz.converter.BetRecordConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.service.BetRecordService;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +38,7 @@ public class BetRecordController {
             .put(GameTypeEnum.BAKUNAWA, "bakunawaBetRecordManager")
             .put(GameTypeEnum.LAM_ANG, "lamangBetRecordManager")
             .put(GameTypeEnum.DIWATA_MAYARI, "diwataMayariBetRecordManager")
+            .put(GameTypeEnum.MANGKUKULAM, "mangkukulamBetRecordManager")
             .build();
 
     @Autowired
