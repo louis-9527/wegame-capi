@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.io.Serializable;
 
 /**
- * 干预事件配置（模版）
+ * 模板配置
  */
 @Data
 @ToString

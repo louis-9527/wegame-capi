@@ -1,16 +1,45 @@
 package com.wegame.capi.biz.service.template;
 
 import com.wegame.base.CacheConstants;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.enums.OptEnum;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.template.BetRecordTemplateQueryBuilder;
+import com.wegame.capi.biz.domain.biz.operation.BetRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
+import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
+import com.wegame.capi.dao.repository.domain.template.BetRecordTemplatePo;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.wegame.capi.biz.converter.BetRecordTemplateConverter.*;
+
 @Service
 public class BetRecordTemplateService extends AbstractService {
+
+    public Long add(BetRecordTemplateDo betRecordTemplateDo, GameTypeEnum gameType) {
+        BetRecordTemplatePo po = getMongoTemplate(gameType).insert(doToPo(betRecordTemplateDo, OptEnum.ADD),
+                gameType.getBetRecordCollectionName());
+        return po.getId();
+    }
+
+    public boolean batchAdd(List<BetRecordTemplateDo> betRecordList, GameTypeEnum gameType) {
+        AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM, "betRecordTemplateList is empty");
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        List<BetRecordTemplatePo> poList = doToPoList(betRecordList, OptEnum.ADD);
+        BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
+                BetRecordPo.class,
+                gameType.getBetRecordCollectionName());
+        poList.forEach(bulkOps::insert);
+        bulkOps.execute();
+        return true;
+    }
 
     @Cacheable(value = CacheConstants.OPERATION_EVENT_CONFIG, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(String multipleRangeStart, String multipleRangeEnd, TemplateTypeEnum typeEnum) {
