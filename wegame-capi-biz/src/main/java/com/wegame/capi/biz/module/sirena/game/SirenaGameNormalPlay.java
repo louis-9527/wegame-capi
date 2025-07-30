@@ -12,6 +12,7 @@ import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
+import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.*;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.manager.SirenaBetRecordManager;
@@ -205,17 +206,22 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
     private void wheelAfterHandler(GamePlayDo gamePlay, RewardResultDo<SirenaSymbolDo> handleResultDo, WheelDo<SirenaSymbolDo> wheel) {
         if (BetSubTypeEnum.NORMAL_BET == gamePlay.getBetSubType()) {
             // 统计出所有symbol中奖线内的贝壳wild坐标
-            List<IndexDo> conchSymbolWildIndexList = Optional.ofNullable(handleResultDo.getRewardLineDetailList()).orElse(Collections.emptyList()).stream()
-                    // 所有贝壳元素
-                    .filter(line -> line.getRewardSymbol().isConchSymbol())
-                    // 现金symbol中奖线元素详情
-                    .flatMap(line -> line.getRewardSymbolList().stream())
-                    // 现金symbol 中奖线元素详情 中的wild元素
-                    .filter(rewardSymbol -> rewardSymbol.getSymbol().isWildSymbol()).map(RewardSymbolDo::getIndex)
-                    .collect(Collectors.toList());
-
+            Set<IndexDo> conchSymbolWildIndexSet = new HashSet<>();
+            List<RewardLineDetailDo<SirenaSymbolDo>> rewardLineDetailList = handleResultDo.getRewardLineDetailList();
+            if (CollectionUtils.isEmpty(rewardLineDetailList)) {
+                return;
+            }
+            rewardLineDetailList.forEach(rewardLineDetail -> {
+                List<RewardSymbolDo<SirenaSymbolDo>> rewardSymbolList = rewardLineDetail.getRewardSymbolList();
+                if (CollectionUtils.isNotEmpty(rewardSymbolList)) {
+                    rewardSymbolList.stream()
+                        .filter(rewardSymbol -> rewardSymbol.getSymbol().isConchSymbol())
+                        .map(RewardSymbolDo::getIndex)
+                        .forEach(conchSymbolWildIndexSet::add);
+                }
+            });
+            List<IndexDo> conchSymbolWildIndexList = new ArrayList<>(conchSymbolWildIndexSet);
             SirenaSymbolDo[][] symbolArr = wheel.getSymbolArr();
-
             for (IndexDo indexDo : conchSymbolWildIndexList) {
                 SirenaSymbolDo sirenaSymbolDo = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
                 // 生成珍珠Wild

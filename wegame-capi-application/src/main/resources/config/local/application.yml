@@ -79,7 +79,7 @@ lark:
 api:
   game:
     singleDomain: http://sw-http-main-apisix.igo8.me
-    invokeSingle: true
+    invokeSingle: false
     freeSpinDomain: https://sw-http-freespin.igo8.me
     promotionDomain: http://reward-http.igo8.me
     operationDomain: https://dos-egame.dos88.me
