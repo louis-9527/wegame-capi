@@ -200,38 +200,56 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
     /**
      * 中奖后如果中奖线有贝壳元素,贝壳变为小珍珠
      *
-     * @param handleResultDo handleResultDo
-     * @param wheel          wheel
+     * @param gamePlay 游戏玩法
+     * @param handleResultDo 中奖结果
+     * @param wheel 滚轮
      */
     private void wheelAfterHandler(GamePlayDo gamePlay, RewardResultDo<SirenaSymbolDo> handleResultDo, WheelDo<SirenaSymbolDo> wheel) {
-        if (BetSubTypeEnum.NORMAL_BET == gamePlay.getBetSubType()) {
-            // 统计出所有symbol中奖线内的贝壳wild坐标
-            Set<IndexDo> conchSymbolWildIndexSet = new HashSet<>();
-            List<RewardLineDetailDo<SirenaSymbolDo>> rewardLineDetailList = handleResultDo.getRewardLineDetailList();
-            if (CollectionUtils.isEmpty(rewardLineDetailList)) {
-                return;
-            }
-            rewardLineDetailList.forEach(rewardLineDetail -> {
-                List<RewardSymbolDo<SirenaSymbolDo>> rewardSymbolList = rewardLineDetail.getRewardSymbolList();
-                if (CollectionUtils.isNotEmpty(rewardSymbolList)) {
-                    rewardSymbolList.stream()
-                        .filter(rewardSymbol -> rewardSymbol.getSymbol().isConchSymbol())
-                        .map(RewardSymbolDo::getIndex)
-                        .forEach(conchSymbolWildIndexSet::add);
+        // 只有正常投注才处理贝壳变珍珠
+        if (BetSubTypeEnum.NORMAL_BET != gamePlay.getBetSubType()) {
+            return;
+        }
+        
+        // 获取中奖线详情列表
+        List<RewardLineDetailDo<SirenaSymbolDo>> rewardLineDetailList = handleResultDo.getRewardLineDetailList();
+        if (CollectionUtils.isEmpty(rewardLineDetailList)) {
+            return;
+        }
+        
+        // 收集所有中奖线中的贝壳wild坐标（去重）
+        Set<String> conchSymbolWildCoordinateSet = new HashSet<>();
+        for (RewardLineDetailDo<SirenaSymbolDo> rewardLineDetail : rewardLineDetailList) {
+            List<RewardSymbolDo<SirenaSymbolDo>> rewardSymbolList = rewardLineDetail.getRewardSymbolList();
+            if (CollectionUtils.isNotEmpty(rewardSymbolList)) {
+                for (RewardSymbolDo<SirenaSymbolDo> rewardSymbol : rewardSymbolList) {
+                    if (rewardSymbol.getSymbol().isConchSymbol()) {
+                        IndexDo indexDo = rewardSymbol.getIndex();
+                        String coordinateKey = indexDo.getRowIndex() + "," + indexDo.getColumnIndex();
+                        conchSymbolWildCoordinateSet.add(coordinateKey);
+                    }
                 }
-            });
-            List<IndexDo> conchSymbolWildIndexList = new ArrayList<>(conchSymbolWildIndexSet);
-            SirenaSymbolDo[][] symbolArr = wheel.getSymbolArr();
-            for (IndexDo indexDo : conchSymbolWildIndexList) {
-                SirenaSymbolDo sirenaSymbolDo = symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()];
-                // 生成珍珠Wild
-                SymbolDo pearlWild = SirenaGameHelper.SIRENA_Pearl_Wild;
-                // 计算小珍珠的倍率
-                TreeMap<BigDecimal, BigDecimal> smallPearlMultipleWeightConfig = sirenaConfig.getProbabilisticConfig().getSmallPearlMultipleWeightConfig();
-                BigDecimal bigDecimal = GameUtil.randomKey(smallPearlMultipleWeightConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
-                SirenaSymbolDo pearlWildDo = SirenaSymbolDo.buildPearlWildSymbol(pearlWild, bigDecimal);
-                sirenaSymbolDo.setNestSymbol(pearlWildDo);
             }
+        }
+        
+        // 如果没有贝壳wild，直接返回
+        if (conchSymbolWildCoordinateSet.isEmpty()) {
+            return;
+        }
+        
+        // 处理贝壳变珍珠
+        SirenaSymbolDo[][] symbolArr = wheel.getSymbolArr();
+        SymbolDo pearlWild = SirenaGameHelper.SIRENA_Pearl_Wild;
+        TreeMap<BigDecimal, BigDecimal> smallPearlMultipleWeightConfig = sirenaConfig.getProbabilisticConfig().getSmallPearlMultipleWeightConfig();
+        
+        for (String coordinateKey : conchSymbolWildCoordinateSet) {
+            String[] coordinates = coordinateKey.split(",");
+            int rowIndex = Integer.parseInt(coordinates[0]);
+            int columnIndex = Integer.parseInt(coordinates[1]);
+            SirenaSymbolDo sirenaSymbolDo = symbolArr[rowIndex][columnIndex];
+            // 计算小珍珠的倍率
+            BigDecimal pearlMultiple = GameUtil.randomKey(smallPearlMultipleWeightConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
+            SirenaSymbolDo pearlWildDo = SirenaSymbolDo.buildPearlWildSymbol(pearlWild, pearlMultiple);
+            sirenaSymbolDo.setNestSymbol(pearlWildDo);
         }
     }
 
