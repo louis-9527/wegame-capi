@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Data
 @SuperBuilder
+@NoArgsConstructor
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(of = {"id"}, callSuper = true)
