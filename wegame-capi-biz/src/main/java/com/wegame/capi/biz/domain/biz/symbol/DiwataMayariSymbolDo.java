@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 @ToString(callSuper = true)
 @EqualsAndHashCode(of = {"id"}, callSuper = true)
 public class DiwataMayariSymbolDo extends SymbolDo {
-    private boolean main;
+    private Boolean main;
     private static final long serialVersionUID = -226678093710839L;
 
     public static DiwataMayariSymbolDo buildFromSymbol(SymbolDo symbol) {
