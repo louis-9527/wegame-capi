@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class WheelChartConvertorTest {
 
     private String SOURCE;
@@ -18,7 +20,7 @@ public class WheelChartConvertorTest {
      * key:产品元素id:L
      * value:程序id:1001
      */
-    private Map<String, String> SOURCEID_APPLICATIONID_MAP = sourceIdAppIdMap();
+    private final Map<String, String> SOURCEID_APPLICATIONID_MAP = sourceIdAppIdMap();
 
     @Before
     public void before() {
@@ -66,13 +68,16 @@ public class WheelChartConvertorTest {
             List<String> reelChartList = Lists.newArrayList();
             for (int row = 0; row < sourceToArray.length; row++) {
                 try {
-                    String appSymbolId = SOURCEID_APPLICATIONID_MAP.get(sourceToArray[row][colum]);
-                    if (StrUtil.isNotEmpty(appSymbolId)){
+                    String appSymbolId = SOURCEID_APPLICATIONID_MAP.get(sourceToArray[row][colum].toUpperCase());
+                    if (StrUtil.isEmpty(appSymbolId)) {
+                        throw new IllegalArgumentException("not support symbol of " + sourceToArray[row][colum]);
+                    }
+                    if (StrUtil.isNotEmpty(appSymbolId)) {
                         reelChartList.add(appSymbolId);
                     }
-                }catch (ArrayIndexOutOfBoundsException e){
+                } catch (ArrayIndexOutOfBoundsException e) {
                     // 防止数组越界
-                     }
+                }
 
             }
             wheelChartList.add(reelChartList);
@@ -85,9 +90,9 @@ public class WheelChartConvertorTest {
         System.out.println("//////////////// 轮带转换结果 ////////////////");
         System.out.println("[");
         for (int i = 0; i < wheelChartList.size(); i++) {
-            if (i <wheelChartList.size()-1){
-                System.out.println(JSON.toJSONString(wheelChartList.get(i), SerializerFeature.WriteNullStringAsEmpty)+",");
-            }else {
+            if (i < wheelChartList.size() - 1) {
+                System.out.println(JSON.toJSONString(wheelChartList.get(i), SerializerFeature.WriteNullStringAsEmpty) + ",");
+            } else {
                 System.out.println(JSON.toJSONString(wheelChartList.get(i)));
             }
         }
@@ -134,7 +139,7 @@ public class WheelChartConvertorTest {
         // scatter
         resultMap.put("S", "3001");
         // scatter1
-        resultMap.put("S1", "3002");
+//        resultMap.put("S1", "3002");
         return resultMap;
     }
 
