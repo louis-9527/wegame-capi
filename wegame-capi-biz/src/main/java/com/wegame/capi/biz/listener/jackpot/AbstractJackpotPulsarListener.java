@@ -185,7 +185,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             try {
                 this.jackpotManager().batchAddRewardPoolInputRecord(recordList);
             } catch (Exception e) {
-                log.error("Error batch add user reward record", e);
+                log.error("batchAddRewardPoolInputRecord error", e);
                 List<Long> failList = this.addRewardPoolInputRecord(recordList);
                 if (CollectionUtils.isNotEmpty(failList)) {
                     failList.forEach(updateMessageIdMap::remove);
@@ -199,15 +199,16 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
      * 循环单个添加,返回失败的ID
      */
     private List<Long> addRewardPoolInputRecord(List<JackpotRewardPoolInputRecordDo> recordList) {
+        log.info("loop single addRewardPoolInputRecord");
         List<Long> failList = new ArrayList<>();
         recordList.forEach(record -> {
             try {
                 this.jackpotManager().addRewardPoolInputRecord(record);
             } catch (DuplicateKeyException e) {
-                log.warn("Error add user reward record addRewardPoolInputRecord, record: {}, error: {}", record, e.getErrorMessage());
+                log.warn("addRewardPoolInputRecord DuplicateKeyException", e);
             } catch (Exception e) {
                 failList.add(record.getId());
-                log.error("Error add user reward record addRewardPoolInputRecord", e);
+                log.error("addRewardPoolInputRecord Exception", e);
             }
         });
         return failList;
@@ -217,7 +218,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
         // 批量ack
         try {
             this.getConsumer().acknowledge(messageIds);
-        } catch (PulsarClientException e) {
+        } catch (Exception e) {
             log.error("Error batch ack message", e);
         }
     }
