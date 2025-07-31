@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager;
 
+import com.google.common.collect.Lists;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
@@ -9,10 +10,16 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
+import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
+import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
+import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
+import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
 import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.domain.vo.kapre.KapreGameRecordVo;
 import com.wegame.capi.client.domain.vo.sirena.SirenaGameRecordVo;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -96,18 +103,58 @@ public class SirenaBetRecordManager extends AbstractBetRecordManager<SirenaGameR
     public Long countGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
         return gameRecordService.count(query, gameType);
     }
+
     @Override
     public SirenaGameRecordDo findOneGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
         return gameRecordService.findOne(query, gameType, SirenaGameRecordDo.class);
     }
 
-    public BetRecordDo findOneBetRecordByTimeLast(String playerId,GameTypeEnum gameType){
-        return betRecordService.getOneLastByTime(playerId,gameType);
+    public BetRecordDo findLastOneGameRecord(BetRecordQuery query, GameTypeEnum gameType) {
+        BetRecordDo oneLastByTime = betRecordService.getOneLastByTime(query, gameType);
+        if (oneLastByTime == null) {
+            return null;
+        }
+        if (!BetSubTypeEnum.NORMAL_BET.getCode().equals(oneLastByTime.getBetSubType())) {
+            return null;
+        }
+        // 查询对应的游戏记录
+        Sort sort = Sort.by(Sort.Direction.DESC, "index");
+        GameRecordQuery recordQuery = GameRecordQuery.builder().betRecordId(oneLastByTime.getId()).sort(sort).build();
+        SirenaGameRecordDo gameRecordDo = gameRecordService.findOne(recordQuery, gameType, SirenaGameRecordDo.class);
+        if (gameRecordDo == null) {
+            return null;
+        }
+        // 判断是否中奖,并且符合条件
+        if (CollectionUtils.isEmpty(gameRecordDo.getRewardResult().getRewardLineDetailList())) {
+            return null;
+        }
+        // 判断是否有珍珠
+        boolean pearlWild = checkPearlWild(gameRecordDo.getRewardResult().getRewardLineDetailList());
+        if (pearlWild) {
+            oneLastByTime.setGameRecordList(Lists.newArrayList(gameRecordDo));
+        }
+        return oneLastByTime;
     }
 
     @Override
     public void putGameRecordCache(List<SirenaGameRecordDo> gameRecordList, GameTypeEnum gameType, String cacheKey) {
         // 异步设置游戏记录缓存
         gameRecordService.asyncPutCache(gameRecordList, gameType, cacheKey);
+    }
+
+    private boolean checkPearlWild(List<RewardLineDetailDo<SirenaSymbolDo>> rewardLineDetailList) {
+        for (RewardLineDetailDo<SirenaSymbolDo> rewardLineDetail : rewardLineDetailList) {
+            List<RewardSymbolDo<SirenaSymbolDo>> rewardSymbolList = rewardLineDetail.getRewardSymbolList();
+            for (RewardSymbolDo<SirenaSymbolDo> rewardSymbol : rewardSymbolList) {
+                if (SirenaGameHelper.SIRENA_Wild.getId().equals(rewardSymbol.getSymbol().getId()) && rewardSymbol.getSymbol().getNestSymbol() != null) {
+                    SirenaSymbolDo nestSymbol = rewardSymbol.getSymbol().getNestSymbol();
+                    if (SirenaGameHelper.SIRENA_Pearl_Wild.getId().equals(nestSymbol.getId())) {
+                        return true;
+                    }
+                }
+
+            }
+        }
+        return false;
     }
 }

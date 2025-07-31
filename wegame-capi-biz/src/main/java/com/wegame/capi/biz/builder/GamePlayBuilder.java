@@ -14,7 +14,7 @@ public class GamePlayBuilder {
     public static GamePlayDo build(GamePlayTypeEnum gamePlayType, BetDo betDo, long betRecordId, GameOperationEventDo gameEventDo) {
         AssertUtil.assertNotNull(gamePlayType, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_PARAM);
-        return GamePlayDo.builder()
+        GamePlayDo build = GamePlayDo.builder()
                 .gamePlayType(gamePlayType)
                 .gameType(betDo.getGameType())
                 .betType(betDo.getBetType())
@@ -26,5 +26,11 @@ public class GamePlayBuilder {
                 .gameEventDo(gameEventDo)
                 .volatility(betDo.getVolatility())
                 .build();
+        if(betDo.getParentBetRecordId() !=null){
+            build.setContinuePlayContext(GamePlayDo.ContinuePlayContext.builder()
+                    .parentBetRecordId(betDo.getParentBetRecordId())
+                    .build());
+        }
+        return build;
     }
 }

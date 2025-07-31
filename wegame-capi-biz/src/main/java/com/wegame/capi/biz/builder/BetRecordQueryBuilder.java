@@ -74,6 +74,9 @@ public class BetRecordQueryBuilder {
         if (Objects.isNull(recordQuery.getStartCreateTime()) && Objects.nonNull(recordQuery.getEndCreateTime())) {
             criteria.and("createTime").lte(recordQuery.getEndCreateTime());
         }
+        if (Objects.nonNull(recordQuery.getStartCreateTime()) && Objects.isNull(recordQuery.getEndCreateTime())) {
+            criteria.and("createTime").gte(recordQuery.getStartCreateTime());
+        }
         return criteria;
     }
 

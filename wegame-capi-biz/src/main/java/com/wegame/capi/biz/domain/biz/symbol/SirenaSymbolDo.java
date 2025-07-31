@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.domain.biz.symbol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wegame.capi.biz.module.diawatamayari.DiwataMayariGameHelper;
 import com.wegame.capi.biz.module.kapre.KapreGameHelper;
 import com.wegame.capi.biz.module.lamang.LamangGameHelper;
 import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
@@ -34,7 +35,7 @@ public class SirenaSymbolDo extends SymbolDo {
      * wild 参与中奖之后，有值
      */
     private SirenaSymbolDo nestSymbol;
-
+    @JsonIgnore
     public SirenaSymbolDo copy() {
         return SirenaSymbolDo.builder()
                 .id(getId())
@@ -47,6 +48,7 @@ public class SirenaSymbolDo extends SymbolDo {
      * 是否贝壳元素
      * @return
      */
+    @JsonIgnore
     public boolean isConchSymbol() {
         return StringUtils.equals(this.getId(), SirenaGameHelper.SIRENA_Wild.getId());
     }
@@ -59,6 +61,10 @@ public class SirenaSymbolDo extends SymbolDo {
     @JsonIgnore
     public boolean isScatterIdSymbol() {
         return StringUtils.equals(this.getId(), SirenaGameHelper.SIRENA_SCATTER.getId());
+    }
+    @JsonIgnore
+    public boolean isPlaceholderSymbol() {
+        return StringUtils.equals(getId(), SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER.getId());
     }
 
     /**

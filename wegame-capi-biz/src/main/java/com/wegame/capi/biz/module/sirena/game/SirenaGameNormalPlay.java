@@ -18,6 +18,7 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.manager.SirenaBetRecordManager;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
+import com.wegame.capi.biz.module.sirena.SirenaSymbolUtil;
 import com.wegame.capi.biz.module.sirena.reward.SirenaRewardHandler;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -25,7 +26,9 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.utils.GameUtil;
+import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
@@ -36,6 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -72,6 +77,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
+        SirenaSymbolUtil.postProcessPlaceholderSymbol(ret);
         return ret;
     }
 
@@ -91,7 +97,16 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                 && gamePlay.getContinuePlayContext() != null && gamePlay.getContinuePlayContext().getParentBetRecordId() != null) {
             // 验证
             Long parentBetRecordId = gamePlay.getContinuePlayContext().getParentBetRecordId();
-            BetRecordDo oneBetRecordByTimeLast = sirenaBetRecordManager.findOneBetRecordByTimeLast(UserInfoContext.getUserInfo().getPlayerId(), GameTypeEnum.SIRENA);
+            long oneMonthAgoMillis = Instant.now().minus(30, ChronoUnit.DAYS).toEpochMilli();
+
+            BetRecordQuery betRecordQuery = BetRecordQuery.builder()
+                    .playerId(UserInfoContext.getUserInfo().getPlayerId())
+                    .status(BetStatusEnum.SUCCESS.getCode())
+                    .betSubType(BetSubTypeEnum.NORMAL_BET.getCode())
+                    .startCreateTime(oneMonthAgoMillis)
+                    .orderByClause("createTime")
+                    .limit(1).build();
+            BetRecordDo oneBetRecordByTimeLast = sirenaBetRecordManager.findLastOneGameRecord(betRecordQuery, GameTypeEnum.SIRENA);
             if (oneBetRecordByTimeLast == null
                     || parentBetRecordId.longValue() != oneBetRecordByTimeLast.getId().longValue()
                     || !BetSubTypeEnum.NORMAL_BET.getCode().equals(oneBetRecordByTimeLast.getBetSubType())
@@ -99,16 +114,16 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                 throw new BusinessException(ErrorCode.ERR_INTER);
             }
             // 获取游戏记录
-            GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(parentBetRecordId).build();
-            SirenaGameRecordDo oneGameRecord = sirenaBetRecordManager.findOneGameRecord(gameRecordQuery, GameTypeEnum.SIRENA);
-            if (oneGameRecord == null) {
+            List gameRecordList = oneBetRecordByTimeLast.getGameRecordList();
+            if (CollectionUtils.isEmpty(gameRecordList)) {
                 throw new BusinessException(ErrorCode.ERR_INTER);
             }
+            SirenaGameRecordDo oneGameRecord = (SirenaGameRecordDo) gameRecordList.get(0);
             // 获取珍珠的坐标
             pearlWildIndexMap = this.getPearlWildIndexList(oneGameRecord.getWheel());
         }
         // 生成滚轮
-        WheelDo<SirenaSymbolDo> wheelDo = this.generateCommonWheel(this.buildWheelChartModel(gamePlay, freeFlag), beforePearlWildIndex, freeFlag,true);
+        WheelDo<SirenaSymbolDo> wheelDo = this.generateCommonWheel(this.buildWheelChartModel(gamePlay, freeFlag), beforePearlWildIndex, freeFlag,isScatter);
 
         if (gamePlay.getBetSubType() == BetSubTypeEnum.NORMAL_BET && !freeFlag
                 && gamePlay.getContinuePlayContext() != null && gamePlay.getContinuePlayContext().getParentBetRecordId() != null) {
@@ -152,8 +167,8 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                     scatter= false;
                 }
                 OneWheelPlayWrapDo freeWheelPlayWrapDo = this.oneWheelPlay(gamePlay, parentGameRecordId, totalRewardAmount, ret, BigDecimal.ZERO, beforePearlWildIndex, true,scatter);
-
-                beforePearlWildIndex =  this.getPearlWildIndexList(freeWheelPlayWrapDo.getGameRecordDo().getWheel());
+                // 上一轮珍珠坐标
+                beforePearlWildIndex =  this.getPearlWildIndex(freeWheelPlayWrapDo.getGameRecordDo().getWheel());
                 // parentGameRecord 添加子gameRecordId
                 parentGameRecord.addGameRecordId(freeWheelPlayWrapDo.getGameRecordDo().getId());
                 RewardResultDo<SirenaSymbolDo> freeRewardResult = freeWheelPlayWrapDo.getRewardResult();
@@ -178,25 +193,6 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
         this.wheelAfterHandler(gamePlay, rewardResult, wheel);
         return rewardResult;
     }
-
-    private Map<IndexDo, SirenaSymbolDo> getPearlWildIndex(WheelDo<SirenaSymbolDo> wheel) {
-        SirenaSymbolDo[][] symbolArr = wheel.getSymbolArr();
-        Map<IndexDo, SirenaSymbolDo> indexMap = new HashMap<>();
-        for (int columNum = 0; columNum < GAME_INFO.getColumn(); columNum++) {
-            // 填充
-            for (int rowNum = 0; rowNum < GAME_INFO.getRow(); rowNum++) {
-                // 填充
-                SirenaSymbolDo sirenaSymbolDo = symbolArr[rowNum][columNum];
-                if (sirenaSymbolDo.isWildSymbol()) {
-                    IndexDo index = IndexDo.builder().rowIndex(rowNum).columnIndex(columNum).build();
-                    indexMap.put(index, sirenaSymbolDo.copy());
-                }
-
-            }
-        }
-        return indexMap;
-    }
-
     /**
      * 中奖后如果中奖线有贝壳元素,贝壳变为小珍珠
      *
@@ -303,18 +299,35 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
             SymbolDo sirenaBigPearlWild = SirenaGameHelper.SIRENA_Big_Pearl_Wild;
             SirenaSymbolDo sirenaSymbolPlaceholder = SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER;
 
-            // 从右上角开始遍历，检查2*2格子
+            // 从左上角开始遍历，检查2*2格子
             for (int row = 0; row < GAME_INFO.getRow() - 1; row++) {
-                for (int col = GAME_INFO.getColumn() - 1; col > 0; col--) {
+                for (int col = 0; col < GAME_INFO.getColumn() - 1; col++) {
                     // 检查当前2*2格子是否都是珍珠
                     if (isPearl2x2Grid(symbolArr, row, col)) {
-                        // 将[0][0]位置替换为大珍珠
-                        symbolArr[0][0] = SirenaSymbolDo.buildPearlWildSymbol(sirenaBigPearlWild, BigDecimal.ZERO);
+                        // 计算2*2格子中所有位置的symbolOdd总和
+                        BigDecimal totalSymbolOdd = BigDecimal.ZERO;
+                        
+                        // 累加2*2格子中4个位置的symbolOdd
+                        if (symbolArr[row][col] != null && symbolArr[row][col].getSymbolOdd() != null) {
+                            totalSymbolOdd = totalSymbolOdd.add(symbolArr[row][col].getSymbolOdd());
+                        }
+                        if (symbolArr[row][col + 1] != null && symbolArr[row][col + 1].getSymbolOdd() != null) {
+                            totalSymbolOdd = totalSymbolOdd.add(symbolArr[row][col + 1].getSymbolOdd());
+                        }
+                        if (symbolArr[row + 1][col] != null && symbolArr[row + 1][col].getSymbolOdd() != null) {
+                            totalSymbolOdd = totalSymbolOdd.add(symbolArr[row + 1][col].getSymbolOdd());
+                        }
+                        if (symbolArr[row + 1][col + 1] != null && symbolArr[row + 1][col + 1].getSymbolOdd() != null) {
+                            totalSymbolOdd = totalSymbolOdd.add(symbolArr[row + 1][col + 1].getSymbolOdd());
+                        }
+                        
+                        // 将左上角位置替换为大珍珠，并设置总和的symbolOdd
+                        symbolArr[row][col] = SirenaSymbolDo.buildPearlWildSymbol(sirenaBigPearlWild, totalSymbolOdd);
+                        
                         // 将其他3个位置替换为占位符
-                        symbolArr[row][col] = sirenaSymbolPlaceholder;
-                        symbolArr[row][col - 1] = sirenaSymbolPlaceholder;
+                        symbolArr[row][col + 1] = sirenaSymbolPlaceholder;
                         symbolArr[row + 1][col] = sirenaSymbolPlaceholder;
-                        symbolArr[row + 1][col - 1] = sirenaSymbolPlaceholder;
+                        symbolArr[row + 1][col + 1] = sirenaSymbolPlaceholder;
                         // 继续遍历，替换所有2*2格子
                     }
                 }
@@ -387,7 +400,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
         return selectedPositions;
     }
 
-    /**
+        /**
      * 检查指定位置的2*2格子是否都是珍珠
      *
      * @param symbolArr 符号数组
@@ -397,15 +410,15 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
      */
     private boolean isPearl2x2Grid(SirenaSymbolDo[][] symbolArr, int startRow, int startCol) {
         // 检查边界
-        if (startRow + 1 >= symbolArr.length || startCol - 1 < 0) {
+        if (startRow + 1 >= symbolArr.length || startCol + 1 >= symbolArr[0].length) {
             return false;
         }
-
+        
         // 检查2*2格子的4个位置是否都是珍珠
         return isPearlSymbol(symbolArr[startRow][startCol]) &&
-               isPearlSymbol(symbolArr[startRow][startCol - 1]) &&
+               isPearlSymbol(symbolArr[startRow][startCol + 1]) &&
                isPearlSymbol(symbolArr[startRow + 1][startCol]) &&
-               isPearlSymbol(symbolArr[startRow + 1][startCol - 1]);
+               isPearlSymbol(symbolArr[startRow + 1][startCol + 1]);
     }
 
     /**
@@ -421,7 +434,23 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
     private SirenaSymbolDo buildSirenaSymbol(SymbolDo symbolDo) {
         return SirenaSymbolDo.buildFromSymbol(symbolDo, BigDecimal.ZERO, null);
     }
+    private Map<IndexDo, SirenaSymbolDo> getPearlWildIndex(WheelDo<SirenaSymbolDo> wheel) {
+        SirenaSymbolDo[][] symbolArr = wheel.getSymbolArr();
+        Map<IndexDo, SirenaSymbolDo> indexMap = new HashMap<>();
+        for (int columNum = 0; columNum < GAME_INFO.getColumn(); columNum++) {
+            // 填充
+            for (int rowNum = 0; rowNum < GAME_INFO.getRow(); rowNum++) {
+                // 填充
+                SirenaSymbolDo sirenaSymbolDo = symbolArr[rowNum][columNum];
+                if (sirenaSymbolDo.isWildSymbol()) {
+                    IndexDo index = IndexDo.builder().rowIndex(rowNum).columnIndex(columNum).build();
+                    indexMap.put(index, sirenaSymbolDo.copy());
+                }
 
+            }
+        }
+        return indexMap;
+    }
     private Map<IndexDo, SirenaSymbolDo> getPearlWildIndexList(WheelDo<SirenaSymbolDo> wheel) {
         if (wheel == null) {
             return null;
@@ -438,7 +467,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                             .rowIndex(rowNum)
                             .columnIndex(columNum)
                             .build();
-                    sirenaSymbolDoMap.put(indexDo, symbol);
+                    sirenaSymbolDoMap.put(indexDo, symbol.copy());
                 }
             }
         }

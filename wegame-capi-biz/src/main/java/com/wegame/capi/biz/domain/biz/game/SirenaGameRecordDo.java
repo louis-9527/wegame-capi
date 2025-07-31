@@ -98,6 +98,7 @@ public class SirenaGameRecordDo implements Serializable, ToVoConverter<SirenaBet
     @JsonIgnore
     @Override
     public SirenaBetResultVo toResultVo() {
+
         if (Objects.isNull(rewardResult)) {
             return SirenaBetResultVo.builder()
                     .wheel(SymbolBuilder.build(wheel.getSymbolArr()))

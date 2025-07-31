@@ -8,6 +8,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordQueryBuilder;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
@@ -163,17 +164,12 @@ public class BetRecordService extends AbstractService {
                 gameType.getBetRecordCollectionName());
     }
 
-    public BetRecordDo getOneLastByTime(String playerId,GameTypeEnum gameType) {
-        Query query = new Query();
-        long oneMonthAgoMillis = Instant.now().minus(30, ChronoUnit.DAYS).toEpochMilli();
-        Criteria criteria = new Criteria();
-        criteria.and("playerId").is(playerId);
-        criteria.and("createTime").gte(oneMonthAgoMillis);
-        query.addCriteria(criteria);  // gte = 大于等于
-        query.with(Sort.by(Sort.Direction.DESC, "createTime"));
-        query.limit(1);
+    public BetRecordDo getOneLastByTime(BetRecordQuery query,GameTypeEnum gameType) {
+
+        Query recordQuery = BetRecordQueryBuilder.buildMongodbQuery(query);
+
         BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(
-                query,
+                recordQuery,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         return poToDo(betRecordPo);

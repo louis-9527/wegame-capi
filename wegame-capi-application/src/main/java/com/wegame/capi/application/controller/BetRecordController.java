@@ -13,16 +13,24 @@ import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.client.domain.request.query.PageQueryBetRecordRequest;
 import com.wegame.capi.client.domain.vo.BetRecordVo;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
+import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 @Slf4j
@@ -38,6 +46,7 @@ public class BetRecordController {
             .put(GameTypeEnum.BAKUNAWA, "bakunawaBetRecordManager")
             .put(GameTypeEnum.LAM_ANG, "lamangBetRecordManager")
             .put(GameTypeEnum.DIWATA_MAYARI, "diwataMayariBetRecordManager")
+            .put(GameTypeEnum.SIRENA, "sirenaBetRecordManager")
             .build();
 
     @Autowired
@@ -75,6 +84,30 @@ public class BetRecordController {
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(betRecordDo);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
         betRecordVo.setGameRecordList(betRecordManager(gameType).listGameRecordVo(Long.parseLong(id), gameType));
+        return CommonResponse.build(betRecordVo);
+    }
+
+    @LoginRequired
+    @ApiOperation(value = "查询最后一条详情", httpMethod = "GET")
+    @GetMapping("/getLastGameRecord")
+    public CommonResponse<BetRecordVo> lastGameRecord() {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        long oneMonthAgoMillis = Instant.now().minus(30, ChronoUnit.DAYS).toEpochMilli();
+        BetRecordQuery betRecordQuery = BetRecordQuery.builder()
+                .playerId(userInfo.getPlayerId())
+                .status(BetStatusEnum.SUCCESS.getCode())
+                .betSubType(BetSubTypeEnum.NORMAL_BET.getCode())
+                .startCreateTime(oneMonthAgoMillis)
+                .orderByClause("createTime")
+                .limit(1).build();
+        BetRecordDo lastOneGameRecord = betRecordManager(gameType).findLastOneGameRecord(betRecordQuery, gameType);
+
+        BetRecordVo betRecordVo = BetRecordConverter.doToVo(lastOneGameRecord);
+        AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
+        betRecordVo.setGameRecordList(lastOneGameRecord.getGameRecordList());
         return CommonResponse.build(betRecordVo);
     }
 
