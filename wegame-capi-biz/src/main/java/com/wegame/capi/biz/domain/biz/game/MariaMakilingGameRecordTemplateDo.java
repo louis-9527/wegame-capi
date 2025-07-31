@@ -27,8 +27,6 @@ public class MariaMakilingGameRecordTemplateDo implements Serializable {
     /**
      * id
      */
-    @Id
-    @Field("_id")
     private Long id;
     /**
      * parentId: 无，则为0
