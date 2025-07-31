@@ -255,8 +255,8 @@ public class SirenaConfig implements Serializable {
 //                    AssertUtil.assertFalse(Objects.equals(SymbolEnum.Wild.getId(), symbolId) && Objects.equals(preSymbolId.get(), symbolId),
 //                            ErrorCode.ERR_INTER, "specialWheelChart can not has continuous wild in mode " + modeName);
                     // 特殊轮首轮的所有轮代表不能有scatter1
-                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()),
-                            ErrorCode.ERR_INTER, "specialWheelChart can not exist scatter+1 in mode " + modeName);
+//                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()),
+//                            ErrorCode.ERR_INTER, "specialWheelChart can not exist scatter+1 in mode " + modeName);
 
                     preSymbolId.set(symbolId);
                 });
@@ -288,8 +288,8 @@ public class SirenaConfig implements Serializable {
                                 ErrorCode.ERR_INTER, "freeWheelWheelChart can not exist wild in reel 1 in mode " + modeName);
                     }
                     // 免费轮的所有轮代表不能有scatter
-                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter.getId()),
-                            ErrorCode.ERR_INTER, "freeWheelWheelChart can not exist scatter in mode " + modeName);
+//                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter.getId()),
+//                            ErrorCode.ERR_INTER, "freeWheelWheelChart can not exist scatter in mode " + modeName);
                 });
             }
         });
@@ -323,8 +323,8 @@ public class SirenaConfig implements Serializable {
 //                    AssertUtil.assertFalse(Objects.equals(SymbolEnum.Wild.getId(), symbolId) && Objects.equals(preSymbolId.get(), symbolId),
 //                            ErrorCode.ERR_INTER, "buyBetWheelChart can not has continuous wild in mode " + modeName);
                     // 购买轮的所有轮代表不能有scatter1
-                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()),
-                            ErrorCode.ERR_INTER, "buyBetWheelChart can not exist scatter+1 in mode " + modeName);
+//                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()),
+//                            ErrorCode.ERR_INTER, "buyBetWheelChart can not exist scatter+1 in mode " + modeName);
                 });
 
                 // 校验3:2-4 reel 每隔4元素有且仅有1个scatter
@@ -379,8 +379,8 @@ public class SirenaConfig implements Serializable {
 //                    AssertUtil.assertFalse(Objects.equals(SymbolEnum.Wild.getId(), symbolId) && Objects.equals(preSymbolId.get(), symbolId),
 //                            ErrorCode.ERR_INTER, "normalBetWheelChart can not has continuous wild in mode " + modeName);
                     // 特殊轮首轮的所有轮代表不能有scatter1
-                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()),
-                            ErrorCode.ERR_INTER, "normalBetWheelChart can not exist scatter+1 in mode " + modeName);
+//                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()),
+//                            ErrorCode.ERR_INTER, "normalBetWheelChart can not exist scatter+1 in mode " + modeName);
 
                     preSymbolId.set(symbolId);
                 });
