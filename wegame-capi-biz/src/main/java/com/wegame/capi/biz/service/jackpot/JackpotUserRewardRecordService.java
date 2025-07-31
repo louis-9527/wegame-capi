@@ -48,7 +48,8 @@ public class JackpotUserRewardRecordService extends AbstractService {
     public JackpotUserRewardRecordDo selectOne(JackpotUserRewardRecordQuery query, JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
-        JackpotUserRewardRecordPo po = getMongoTemplate(jackpotType.getGameType()).findOne(
+        // 强制走主库
+        JackpotUserRewardRecordPo po = getPrimaryMongoTemplate(jackpotType.getGameType()).findOne(
                 buildMongodbQuery(query),
                 JackpotUserRewardRecordPo.class,
                 jackpotType.getJackpotUserRewardRewardCollectionName());
