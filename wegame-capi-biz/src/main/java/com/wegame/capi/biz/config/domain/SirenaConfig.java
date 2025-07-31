@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.CONST_100;
@@ -271,7 +270,6 @@ public class SirenaConfig implements Serializable {
 
     private void normalBetWheelChartConfigValidate() {
         // 根据正常投注轮代表权重不为0的所有mode
-        TreeMap<String, BigDecimal> currentWheelChatWeightConfig = this.probabilisticConfig.normalBetWheelChatWeightConfig;
         this.wheelChartCommonValidate(this.probabilisticConfig.normalBetWheelChatWeightConfig, "normalBetWheelChart");
     }
 
