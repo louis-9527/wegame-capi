@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.diawatamayari.game;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
@@ -305,8 +306,9 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                     // 重新生成非 棒子元素
                     SymbolDo symbolDoNoSword = this.randomNonWildSymbol(randomNumber, columProbabilisticMap);
                     symbolArr[row][column] = DiwataMayariSymbolDo.buildFromSymbol(symbolDoNoSword);
+                }else {
+                    symbolArr[row][column].setMain(true);
                 }
-                symbolArr[row][column].setMain(true);
                 continue;
             }
             // 大宝剑元素
