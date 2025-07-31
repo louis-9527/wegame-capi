@@ -204,10 +204,10 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             try {
                 this.jackpotManager().addRewardPoolInputRecord(record);
             } catch (DuplicateKeyException e) {
-                log.warn("Error add user reward record, record: {}, error: {}", record, e.getErrorMessage());
+                log.warn("Error add user reward record addRewardPoolInputRecord, record: {}, error: {}", record, e.getErrorMessage());
             } catch (Exception e) {
                 failList.add(record.getId());
-                log.error("Error add user reward record", e);
+                log.error("Error add user reward record addRewardPoolInputRecord", e);
             }
         });
         return failList;

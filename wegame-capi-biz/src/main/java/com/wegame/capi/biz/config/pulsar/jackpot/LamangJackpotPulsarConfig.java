@@ -63,7 +63,7 @@ public class LamangJackpotPulsarConfig {
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
                         // 批量最多100条
-                        .maxNumMessages(500)
+                        .maxNumMessages(200)
                         .timeout(100, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
