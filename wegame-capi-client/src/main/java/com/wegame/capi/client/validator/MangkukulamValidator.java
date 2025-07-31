@@ -82,7 +82,6 @@ public class MangkukulamValidator {
             if (BetSubTypeEnum.BUY_BET == betSubType) {
                 AssertUtil.assertNotNull(betDetail.getRewardConfigId(), ErrorCode.ERR_PARAM);
                 AssertUtil.assertNotNull(betDetail.getRewardId(), ErrorCode.ERR_PARAM);
-                AssertUtil.assertNotNull(betDetail.getVolatility(), ErrorCode.ERR_PARAM);
             }
         }
     }
