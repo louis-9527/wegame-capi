@@ -104,6 +104,10 @@ db.lamang_jackpot_user_reward_record.createIndex(
     { gameRecordId: 1,betRecordId: 1},
     { unique: true}
 );
+// 中奖金额降序索引
+db.lamang_jackpot_user_reward_record.createIndex(
+    {rewardAmount: -1}
+);
 
 // ----------------------------
 //  Collection structure for lamang_jackpot_user_reward_record
