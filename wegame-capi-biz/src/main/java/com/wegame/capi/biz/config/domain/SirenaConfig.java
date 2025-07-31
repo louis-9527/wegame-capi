@@ -215,94 +215,30 @@ public class SirenaConfig implements Serializable {
             });
         });
 
-        // todo 这里的校验后续放开 @jayni
 //        // 轮带表权重(正常游戏-normal bet 付费轮)
-//        this.normalBetWheelChartConfigValidate();
+        this.normalBetWheelChartConfigValidate();
 //        // 轮带表权重(正常游戏-buy bet 付费轮.modeS)
         this.buyBetWheelChartConfigValidate();
 //        // 轮带表权重(免费游戏-free bet 免费轮)
-//        this.freeWheelWheelChartConfigValidate();
+        this.freeWheelWheelChartConfigValidate();
 //        // 轮带表权重(特殊游戏-上一次投注中珍珠之后的正常游戏-normal bet 付费轮)
-//        this.specialWheelChartConfigValidate();
+        this.specialWheelChartConfigValidate();
     }
 
     private void specialWheelChartConfigValidate() {
-        // 统计轮代表权重大于0的所有mode
-        TreeMap<String, BigDecimal> currentWheelChatWeightConfig = this.probabilisticConfig.specialWheelChatWeightConfig;
-        List<String> availableModeNameList = currentWheelChatWeightConfig.keySet().stream().filter(mode -> {
-            BigDecimal weight = currentWheelChatWeightConfig.get(mode);
-            return Objects.nonNull(weight) && weight.compareTo(BigDecimal.ZERO) > 0;
-        }).collect(Collectors.toList());
-
-        if (CollectionUtil.isEmpty(availableModeNameList)) {
-            return;
-        }
-        availableModeNameList.forEach(modeName -> {
-            List<List<String>> modeWheelChartList = wheelChartConfig.get(modeName);
-            AssertUtil.assertNotEmpty(modeWheelChartList, ErrorCode.ERR_INTER, "modeWheelChartList is empty of " + modeName);
-            for (int reel = 0; reel < modeWheelChartList.size(); reel++) {
-                List<String> reelWheelChart = modeWheelChartList.get(reel);
-                AtomicReference<String> preSymbolId = new AtomicReference<>();
-                int finalReel = reel;
-                reelWheelChart.forEach(symbolId -> {
-                    // 第一个reel不能出现wild
-                    if (finalReel == 0) {
-                        AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Wild.getId()),
-                                ErrorCode.ERR_INTER, "specialWheelChart can not exist wild in reel 1 in mode " + modeName);
-
-                    }
-                    // wild 不能连续出现 todo 产品确认 不校验
-//                    AssertUtil.assertFalse(Objects.equals(SymbolEnum.Wild.getId(), symbolId) && Objects.equals(preSymbolId.get(), symbolId),
-//                            ErrorCode.ERR_INTER, "specialWheelChart can not has continuous wild in mode " + modeName);
-                    // 特殊轮首轮的所有轮代表不能有scatter1
-//                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()),
-//                            ErrorCode.ERR_INTER, "specialWheelChart can not exist scatter+1 in mode " + modeName);
-
-                    preSymbolId.set(symbolId);
-                });
-            }
-        });
+        this.wheelChartCommonValidate(this.probabilisticConfig.specialWheelChatWeightConfig, "modeWheelChartList");
     }
 
     private void freeWheelWheelChartConfigValidate() {
-        // 统计轮代表权重不为0的所有mode
-        TreeMap<String, BigDecimal> currentWheelChatWeightConfig = this.probabilisticConfig.freeWheelWheelChatWeightConfig;
-        List<String> availableModeNameList = currentWheelChatWeightConfig.keySet().stream().filter(mode -> {
-            BigDecimal weight = currentWheelChatWeightConfig.get(mode);
-            return Objects.nonNull(weight) && weight.compareTo(BigDecimal.ZERO) != 0;
-        }).collect(Collectors.toList());
-
-        if (CollectionUtil.isEmpty(availableModeNameList)) {
-            return;
-        }
-        availableModeNameList.forEach(modeName -> {
-            List<List<String>> modeWheelChartList = wheelChartConfig.get(modeName);
-            AssertUtil.assertNotEmpty(modeWheelChartList, ErrorCode.ERR_INTER, "freeWheelWheelChart modeWheelChartList is empty of " + modeName);
-            for (int reel = 0; reel < modeWheelChartList.size(); reel++) {
-                List<String> reelWheelChart = modeWheelChartList.get(reel);
-                int finalReel = reel;
-                reelWheelChart.forEach(symbolId -> {
-                    // 第一个reel不能出现wild
-                    if (finalReel == 0) {
-                        AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Wild.getId()),
-                                ErrorCode.ERR_INTER, "freeWheelWheelChart can not exist wild in reel 1 in mode " + modeName);
-                    }
-                    // 免费轮的所有轮代表不能有scatter
-//                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter.getId()),
-//                            ErrorCode.ERR_INTER, "freeWheelWheelChart can not exist scatter in mode " + modeName);
-                });
-            }
-        });
+        this.wheelChartCommonValidate(this.probabilisticConfig.freeWheelWheelChatWeightConfig, "freeWheelWheelChart");
     }
 
     private void buyBetWheelChartConfigValidate() {
-        // 统计轮代表权重不为0的所有mode
-        TreeMap<String, BigDecimal> currentWheelChatWeightConfig = this.probabilisticConfig.buyBetWheelChatWeightConfig;
-        List<String> availableModeNameList = currentWheelChatWeightConfig.keySet().stream().filter(mode -> {
-            BigDecimal weight = currentWheelChatWeightConfig.get(mode);
-            return Objects.nonNull(weight) && weight.compareTo(BigDecimal.ZERO) != 0;
-        }).collect(Collectors.toList());
+        // 通用校验
+        this.wheelChartCommonValidate(this.probabilisticConfig.buyBetWheelChatWeightConfig, "buyBetWheelChart");
 
+        // 特殊校验
+        List<String> availableModeNameList = this.buildAvailableModeNameList(this.probabilisticConfig.buyBetWheelChatWeightConfig);
         if (CollectionUtil.isEmpty(availableModeNameList)) {
             return;
         }
@@ -311,28 +247,12 @@ public class SirenaConfig implements Serializable {
             AssertUtil.assertNotEmpty(modeWheelChartList, ErrorCode.ERR_INTER, "buyBetWheelChart modeWheelChartList is empty of " + modeName);
             for (int reel = 0; reel < modeWheelChartList.size(); reel++) {
                 List<String> reelWheelChart = modeWheelChartList.get(reel);
-                int finalReel = reel;
-                reelWheelChart.forEach(symbolId -> {
-                    // 校验1:第一个reel不能出现wild
-                    if (finalReel == 0) {
-                        AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Wild.getId()),
-                                ErrorCode.ERR_INTER, "buyBetWheelChart can not exist wild in reel 1 in mode " + modeName);
-
-                    }
-                    // 校验2:wild 不能连续出现
-//                    AssertUtil.assertFalse(Objects.equals(SymbolEnum.Wild.getId(), symbolId) && Objects.equals(preSymbolId.get(), symbolId),
-//                            ErrorCode.ERR_INTER, "buyBetWheelChart can not has continuous wild in mode " + modeName);
-                    // 购买轮的所有轮代表不能有scatter1
-//                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()),
-//                            ErrorCode.ERR_INTER, "buyBetWheelChart can not exist scatter+1 in mode " + modeName);
-                });
-
-                // 校验3:2-4 reel 每隔4元素有且仅有1个scatter
-                if (finalReel >= 1 && finalReel <= 3) {
+                // 校验2:2-4 reel 每隔4元素有且仅有1个scatter
+                if (reel >= 1 && reel <= 3) {
                     // 先需要被5整除
                     int reelWheelChartSize = reelWheelChart.size();
                     AssertUtil.assertFalse(reelWheelChart.isEmpty() || reelWheelChartSize % 5 != 0, ErrorCode.ERR_INTER
-                            , "reelWheelChartSize must more than 0 and Must be divided by 5 of mode " + modeName + " of reel " + finalReel + 1);
+                            , "reelWheelChartSize must more than 0 and Must be divided by 5 of mode " + modeName + " of reel " + (reel + 1));
                     for (int i = 0; i < reelWheelChartSize; i++) {
                         // 滑动窗口
                         int scatterCount = 0;
@@ -342,10 +262,9 @@ public class SirenaConfig implements Serializable {
                             if (Objects.equals(currentSymbolId, SymbolEnum.Scatter.getId())) scatterCount++;
                         }
                         AssertUtil.assertTrue(scatterCount == 1, ErrorCode.ERR_INTER
-                                , "reelWheelChart must has 1 scatter in per 5 symbol  in mode " + modeName + " of reel " + finalReel + 1);
+                                , "reelWheelChart must has 1 scatter in per 5 symbol  in mode " + modeName + " of reel " + (reel + 1));
                     }
                 }
-
             }
         });
     }
@@ -353,39 +272,30 @@ public class SirenaConfig implements Serializable {
     private void normalBetWheelChartConfigValidate() {
         // 根据正常投注轮代表权重不为0的所有mode
         TreeMap<String, BigDecimal> currentWheelChatWeightConfig = this.probabilisticConfig.normalBetWheelChatWeightConfig;
-        List<String> availableModeNameList = currentWheelChatWeightConfig.keySet().stream().filter(mode -> {
-            BigDecimal weight = currentWheelChatWeightConfig.get(mode);
-            return Objects.nonNull(weight) && weight.compareTo(BigDecimal.ZERO) != 0;
-        }).collect(Collectors.toList());
+        this.wheelChartCommonValidate(this.probabilisticConfig.normalBetWheelChatWeightConfig, "normalBetWheelChart");
+    }
 
+    private void wheelChartCommonValidate(TreeMap<String, BigDecimal> currentWheelChatWeightConfig, String configName) {
+        List<String> availableModeNameList = this.buildAvailableModeNameList(currentWheelChatWeightConfig);
         if (CollectionUtil.isEmpty(availableModeNameList)) {
             return;
         }
         availableModeNameList.forEach(modeName -> {
             List<List<String>> modeWheelChartList = wheelChartConfig.get(modeName);
-            AssertUtil.assertNotEmpty(modeWheelChartList, ErrorCode.ERR_INTER, "normalBetWheelChart modeWheelChartList is empty of " + modeName);
-            for (int reel = 0; reel < modeWheelChartList.size(); reel++) {
-                List<String> reelWheelChart = modeWheelChartList.get(reel);
-                AtomicReference<String> preSymbolId = new AtomicReference<>();
-                int finalReel = reel;
-                reelWheelChart.forEach(symbolId -> {
-                    // 第一个reel不能出现wild
-                    if (finalReel == 0) {
-                        AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Wild.getId()),
-                                ErrorCode.ERR_INTER, "normalBetWheelChart can not exist wild in reel 1 in mode " + modeName);
-
-                    }
-                    // wild 不能连续出现
-//                    AssertUtil.assertFalse(Objects.equals(SymbolEnum.Wild.getId(), symbolId) && Objects.equals(preSymbolId.get(), symbolId),
-//                            ErrorCode.ERR_INTER, "normalBetWheelChart can not has continuous wild in mode " + modeName);
-                    // 特殊轮首轮的所有轮代表不能有scatter1
-//                    AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Scatter1.getId()),
-//                            ErrorCode.ERR_INTER, "normalBetWheelChart can not exist scatter+1 in mode " + modeName);
-
-                    preSymbolId.set(symbolId);
-                });
-            }
+            AssertUtil.assertNotEmpty(modeWheelChartList, ErrorCode.ERR_INTER, configName + " modeWheelChartList is empty of " + modeName);
+            modeWheelChartList.get(0).forEach(symbolId -> {
+                // 第一个reel不能出现wild
+                AssertUtil.assertTrue(!Objects.equals(symbolId, SymbolEnum.Wild.getId()),
+                        ErrorCode.ERR_INTER, configName + " can not exist wild in reel 1 in mode " + modeName);
+            });
         });
+    }
+
+    private List<String> buildAvailableModeNameList(TreeMap<String, BigDecimal> currentWheelChatWeightConfig) {
+        return currentWheelChatWeightConfig.keySet().stream().filter(mode -> {
+            BigDecimal weight = currentWheelChatWeightConfig.get(mode);
+            return Objects.nonNull(weight) && weight.compareTo(BigDecimal.ZERO) != 0;
+        }).collect(Collectors.toList());
     }
 
 
