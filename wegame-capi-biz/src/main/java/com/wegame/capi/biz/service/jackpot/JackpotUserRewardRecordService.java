@@ -13,6 +13,7 @@ import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordPo;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -48,8 +49,10 @@ public class JackpotUserRewardRecordService extends AbstractService {
     public JackpotUserRewardRecordDo selectOne(JackpotUserRewardRecordQuery query, JackpotTypeEnum jackpotType) {
         AssertUtil.assertNotNull(query, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(jackpotType, ErrorCode.ERR_PARAM);
-        // 强制走主库
-        JackpotUserRewardRecordPo po = getPrimaryMongoTemplate(jackpotType.getGameType()).findOne(
+        MongoTemplate mongoTemplate = query.isFromPrimary()
+                ? getPrimaryMongoTemplate(jackpotType.getGameType())
+                : getMongoTemplate(jackpotType.getGameType());
+        JackpotUserRewardRecordPo po = mongoTemplate.findOne(
                 buildMongodbQuery(query),
                 JackpotUserRewardRecordPo.class,
                 jackpotType.getJackpotUserRewardRewardCollectionName());

@@ -69,6 +69,11 @@ public class JackpotUserRewardRecordQuery extends JackpotUserRewardRecordPo impl
      */
     private Long gtLastId;
 
+    /**
+     * 查询是否强制走主分片. 默认false
+     */
+    private boolean fromPrimary = false;
+
     public String getCacheKey() {
         return "types:" +
                 rewardPoolTypeList.stream().map(String::valueOf).collect(Collectors.joining("-")) +
