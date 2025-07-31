@@ -20,11 +20,11 @@ import static com.wegame.capi.biz.converter.operation.GameRecordTemplateConvert.
 @Service
 public class GameRecordTemplateService<T> extends AbstractService {
 
-    public boolean batchAdd(List<T> gameRecordList, GameTypeEnum gameType, Class<T> tClass) {
+    public boolean batchAdd(List<T> gameRecordList, TemplateTypeEnum templateTypeEnum, Class<T> tClass) {
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
-        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(tClass, ErrorCode.ERR_INTER);
-        BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass);
+        BulkOperations bulkOps = getMongoTemplate(templateTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass);
         bulkOps.insert(gameRecordList);
         bulkOps.execute();
         return true;

@@ -10,6 +10,7 @@ import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
+import com.wegame.capi.dao.repository.domain.operation.OperationEventDetailPo;
 import com.wegame.capi.dao.repository.domain.template.BetRecordTemplatePo;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -22,20 +23,20 @@ import static com.wegame.capi.biz.converter.BetRecordTemplateConverter.*;
 @Service
 public class BetRecordTemplateService extends AbstractService {
 
-    public Long add(BetRecordTemplateDo betRecordTemplateDo, GameTypeEnum gameType) {
-        BetRecordTemplatePo po = getMongoTemplate(gameType).insert(doToPo(betRecordTemplateDo, OptEnum.ADD),
-                gameType.getBetRecordCollectionName());
+    public Long add(BetRecordTemplateDo betRecordTemplateDo, TemplateTypeEnum templateTypeEnum) {
+        BetRecordTemplatePo po = getMongoTemplate(templateTypeEnum.getGameType()).insert(doToPo(betRecordTemplateDo, OptEnum.ADD),
+                templateTypeEnum.getBetRecordTemplateCollectionName());
         return po.getId();
     }
 
-    public boolean batchAdd(List<BetRecordTemplateDo> betRecordList, GameTypeEnum gameType) {
+    public boolean batchAdd(List<BetRecordTemplateDo> betRecordList, TemplateTypeEnum templateTypeEnum) {
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_INTER);
         AssertUtil.assertNotEmpty(betRecordList, ErrorCode.ERR_PARAM, "betRecordTemplateList is empty");
-        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_PARAM, "gameType is null");
         List<BetRecordTemplatePo> poList = doToPoList(betRecordList, OptEnum.ADD);
-        BulkOperations bulkOps = getMongoTemplate(gameType).bulkOps(BulkOperations.BulkMode.UNORDERED,
+        BulkOperations bulkOps = getMongoTemplate(templateTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED,
                 BetRecordPo.class,
-                gameType.getBetRecordCollectionName());
+                templateTypeEnum.getBetRecordTemplateCollectionName());
         poList.forEach(bulkOps::insert);
         bulkOps.execute();
         return true;

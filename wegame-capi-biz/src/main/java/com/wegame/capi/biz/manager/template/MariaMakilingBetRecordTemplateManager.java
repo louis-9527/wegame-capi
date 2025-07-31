@@ -7,6 +7,7 @@ import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.operation.BetRecordTemplateDo;
 import com.wegame.capi.biz.service.template.GameRecordTemplateService;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -22,15 +23,15 @@ public class MariaMakilingBetRecordTemplateManager extends AbstractBetRecordTemp
     GameRecordTemplateService<MariaMakilingGameRecordTemplateDo> gameRecordTemplateService;
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager, rollbackFor = Exception.class)
-    public Long add(BetRecordTemplateDo<MariaMakilingGameRecordTemplateDo> betRecordTemplate, GameTypeEnum gameType) {
+    public Long add(BetRecordTemplateDo<MariaMakilingGameRecordTemplateDo> betRecordTemplate, TemplateTypeEnum templateTypeEnum) {
         try {
             AssertUtil.assertNotEmpty(betRecordTemplate.getGameRecordList(), ErrorCode.ERR_PARAM);
-            betRecordTemplateService.add(betRecordTemplate, gameType);
+            betRecordTemplateService.add(betRecordTemplate, templateTypeEnum);
         } catch (DuplicateKeyException e) {
             log.warn("add Duplicate key, betRecordId: {}", betRecordTemplate.getId());
             throw e;
         }
-        boolean ret = gameRecordTemplateService.batchAdd(betRecordTemplate.getGameRecordList(), gameType, MariaMakilingGameRecordTemplateDo.class);
+        boolean ret = gameRecordTemplateService.batchAdd(betRecordTemplate.getGameRecordList(), templateTypeEnum, MariaMakilingGameRecordTemplateDo.class);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         return betRecordTemplate.getId();
     }
