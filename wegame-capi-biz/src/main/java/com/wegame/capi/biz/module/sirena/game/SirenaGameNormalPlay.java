@@ -287,8 +287,14 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                 AssertUtil.assertNotNull(symbolDo, ErrorCode.ERR_INTER, "symbolDo is null of id " + currentColumSymbolIdList.get(rowNum));
                 // 构建SirenaSymbolDo
                 SirenaSymbolDo sirenaSymbolDo = this.buildSirenaSymbol(symbolDo);
-                if(!isScatter && sirenaSymbolDo.isScatterSymbol()){
-                    sirenaSymbolDo = this.buildSirenaSymbol( SirenaGameHelper.SIRENA_Symbol1009);
+                if(sirenaSymbolDo.isScatterSymbol()){
+                    if(!isScatter){
+                        sirenaSymbolDo = this.buildSirenaSymbol(SirenaGameHelper.SIRENA_Symbol1009);
+                    }else {
+                        if (freeFlag){
+                            sirenaSymbolDo = this.buildSirenaSymbol(SirenaGameHelper.SIRENA_SCATTER1);
+                        }
+                    }
                 }
                 // 填充
                 symbolArr[rowNum][columNum] = sirenaSymbolDo;
