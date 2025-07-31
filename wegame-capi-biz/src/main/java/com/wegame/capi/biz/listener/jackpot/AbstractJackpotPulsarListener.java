@@ -136,7 +136,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 // 避免一批次消息里面有重复消息
                 addMessageIdList.add(message.getMessageId());
-            } else if (mqMessage.getType().equals(MessageTypeEnum.UPDATE.getCode()) && Objects.equals(BetStatusEnum.SUCCESS.getCode(),betRecord.getStatus())) {
+            } else if (mqMessage.getType().equals(MessageTypeEnum.UPDATE.getCode()) && Objects.equals(BetStatusEnum.SUCCESS.getCode(), betRecord.getStatus())) {
                 // 避免一批次消息里面有重复消息
                 if (!updateMessageIdMap.containsKey(betRecord.getId())) {
                     updateMessageIdMap.put(betRecord.getId(), message.getMessageId());
@@ -148,7 +148,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
                         log.error("Error ack message", e);
                     }
                 }
-            }else {
+            } else {
                 try {
                     this.getConsumer().acknowledge(message.getMessageId());
                 } catch (PulsarClientException e) {

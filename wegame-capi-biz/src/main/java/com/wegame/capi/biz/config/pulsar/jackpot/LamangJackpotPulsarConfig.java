@@ -57,7 +57,7 @@ public class LamangJackpotPulsarConfig {
         return lamangJackpotPulsarClient.newConsumer()
                 .topic(fullTopic)
                 .subscriptionName(lamangTenant + Constants.JACKPOT_LAMANG_PULSAR_SUBSCRIPTION)
-                .subscriptionType(SubscriptionType.Shared)
+                .subscriptionType(SubscriptionType.Key_Shared)
                 // 增加内部缓存，提高吞吐量
                 .receiverQueueSize(2000)
                 .ackTimeout(60, TimeUnit.SECONDS)
