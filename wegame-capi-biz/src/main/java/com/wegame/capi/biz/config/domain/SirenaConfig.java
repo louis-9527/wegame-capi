@@ -215,13 +215,13 @@ public class SirenaConfig implements Serializable {
             });
         });
 
-//        // 轮带表权重(正常游戏-normal bet 付费轮)
+        // 轮带表权重(正常游戏-normal bet 付费轮)
         this.normalBetWheelChartConfigValidate();
-//        // 轮带表权重(正常游戏-buy bet 付费轮.modeS)
+        // 轮带表权重(正常游戏-buy bet 付费轮.modeS)
         this.buyBetWheelChartConfigValidate();
-//        // 轮带表权重(免费游戏-free bet 免费轮)
+        // 轮带表权重(免费游戏-free bet 免费轮)
         this.freeWheelWheelChartConfigValidate();
-//        // 轮带表权重(特殊游戏-上一次投注中珍珠之后的正常游戏-normal bet 付费轮)
+        // 轮带表权重(特殊游戏-上一次投注中珍珠之后的正常游戏-normal bet 付费轮)
         this.specialWheelChartConfigValidate();
     }
 
