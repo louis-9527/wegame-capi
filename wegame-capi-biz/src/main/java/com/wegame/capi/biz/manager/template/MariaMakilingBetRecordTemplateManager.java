@@ -3,10 +3,9 @@ package com.wegame.capi.biz.manager.template;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.operation.BetRecordTemplateDo;
+import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.service.template.GameRecordTemplateService;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,12 @@ import static com.wegame.capi.biz.config.mongo.MariamakilingMongoConfig.mariamak
 
 @Slf4j
 @Component("mariaMakilingBetRecordTemplateManager")
-public class MariaMakilingBetRecordTemplateManager extends AbstractBetRecordTemplateManager<MariaMakilingGameRecordTemplateDo> {
+public class MariaMakilingBetRecordTemplateManager extends AbstractBetRecordTemplateManager<GameRecordTemplateDo> {
     @Autowired
-    GameRecordTemplateService<MariaMakilingGameRecordTemplateDo> gameRecordTemplateService;
+    GameRecordTemplateService<GameRecordTemplateDo> gameRecordTemplateService;
     @Override
     @Transactional(transactionManager = mariamakilingTransactionManager, rollbackFor = Exception.class)
-    public Long add(BetRecordTemplateDo<MariaMakilingGameRecordTemplateDo> betRecordTemplate, TemplateTypeEnum templateTypeEnum) {
+    public Long add(BetRecordTemplateDo<GameRecordTemplateDo> betRecordTemplate, TemplateTypeEnum templateTypeEnum) {
         try {
             AssertUtil.assertNotEmpty(betRecordTemplate.getGameRecordList(), ErrorCode.ERR_PARAM);
             betRecordTemplateService.add(betRecordTemplate, templateTypeEnum);
@@ -31,7 +30,7 @@ public class MariaMakilingBetRecordTemplateManager extends AbstractBetRecordTemp
             log.warn("add Duplicate key, betRecordId: {}", betRecordTemplate.getId());
             throw e;
         }
-        boolean ret = gameRecordTemplateService.batchAdd(betRecordTemplate.getGameRecordList(), templateTypeEnum, MariaMakilingGameRecordTemplateDo.class);
+        boolean ret = gameRecordTemplateService.batchAdd(betRecordTemplate.getGameRecordList(), templateTypeEnum, GameRecordTemplateDo.class);
         AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         return betRecordTemplate.getId();
     }
