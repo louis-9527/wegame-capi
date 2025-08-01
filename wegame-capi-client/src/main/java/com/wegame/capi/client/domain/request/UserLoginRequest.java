@@ -43,7 +43,7 @@ public class UserLoginRequest extends BaseRequest implements Validate, Serializa
     @ApiModelProperty(value = "中台token", required = true)
     private String token;
     @ApiModelProperty(value = "AB测试(afe: A, aff: B)", required = true)
-    private String ut = "afe";
+    private String ut = "aff";
 
     @Override
     public void validateParam() {
