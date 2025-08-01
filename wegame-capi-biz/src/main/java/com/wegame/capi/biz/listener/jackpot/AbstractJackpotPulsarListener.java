@@ -212,7 +212,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             });
             // 批量处理
             try {
-                distributeLimiter.run(() -> this.jackpotManager().batchAddRewardPoolInputRecord(recordList), 1, 10, TimeUnit.SECONDS);
+                distributeLimiter.run(() -> this.jackpotManager().batchAddRewardPoolInputRecord(recordList));
             } catch (Exception e) {
                 log.error("batchAddRewardPoolInputRecord error", e);
                 List<Long> failList = this.addRewardPoolInputRecord(recordList);
