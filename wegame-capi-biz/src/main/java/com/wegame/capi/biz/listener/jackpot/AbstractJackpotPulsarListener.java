@@ -78,7 +78,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
     public abstract int getMaximumPoolSize();
 
     public int getLimitRatePerSeconds() {
-        return 500;
+        return 300;
     }
 
     @PostConstruct
