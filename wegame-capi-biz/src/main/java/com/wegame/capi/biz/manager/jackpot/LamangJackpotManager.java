@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager.jackpot;
 
+import com.mongodb.MongoCommandException;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
@@ -9,6 +10,9 @@ import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.mongodb.UncategorizedMongoDbException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +37,10 @@ public class LamangJackpotManager extends AbstractJackpotManager {
     }
 
     @Override
+    // todo 增加限流 + 重试机制
+//    @Retryable(value = {UncategorizedMongoDbException.class, MongoCommandException.class},
+//            maxAttempts = 3, // 失败后，默认重试两次
+//            backoff = @Backoff(delay = 500, multiplier = 2))
     @Transactional(transactionManager = lamangTransactionManager, rollbackFor = Exception.class)
     public void batchAddRewardPoolInputRecord(List<JackpotRewardPoolInputRecordDo> recordList) {
         if (CollectionUtils.isEmpty(recordList)) {
@@ -54,19 +62,19 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         jackpotRewardPoolService.batchUpdate(buildList(grandAmount, majorAmount, minorAmount, miniAmount), jackpotGameType());
     }
 
-    @Override
-    @Transactional(transactionManager = lamangTransactionManager, rollbackFor = Exception.class)
-    public void addRewardPoolInputRecord(JackpotRewardPoolInputRecordDo rewardPoolInputRecord) {
-        if (Objects.isNull(rewardPoolInputRecord)) {
-            return;
-        }
-        jackpotRewardPoolInputRecordService.add(rewardPoolInputRecord, jackpotGameType());
-        jackpotRewardPoolService.batchUpdate(buildList(rewardPoolInputRecord.getGrandAmount(),
-                        rewardPoolInputRecord.getMajorAmount(),
-                        rewardPoolInputRecord.getMinorAmount(),
-                        rewardPoolInputRecord.getMiniAmount()),
-                jackpotGameType());
-    }
+    //    @Override
+    //    @Transactional(transactionManager = lamangTransactionManager, rollbackFor = Exception.class)
+    //    public void addRewardPoolInputRecord(JackpotRewardPoolInputRecordDo rewardPoolInputRecord) {
+    //        if (Objects.isNull(rewardPoolInputRecord)) {
+    //            return;
+    //        }
+    //        jackpotRewardPoolInputRecordService.add(rewardPoolInputRecord, jackpotGameType());
+    //        jackpotRewardPoolService.batchUpdate(buildList(rewardPoolInputRecord.getGrandAmount(),
+    //                        rewardPoolInputRecord.getMajorAmount(),
+    //                        rewardPoolInputRecord.getMinorAmount(),
+    //                        rewardPoolInputRecord.getMiniAmount()),
+    //                jackpotGameType());
+    //    }
 
     @Override
     @Transactional(transactionManager = lamangTransactionManager)

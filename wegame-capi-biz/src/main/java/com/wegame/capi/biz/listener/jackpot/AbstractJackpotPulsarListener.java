@@ -203,7 +203,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
         List<Long> failList = new ArrayList<>();
         recordList.forEach(record -> {
             try {
-                this.jackpotManager().addRewardPoolInputRecord(record);
+                this.jackpotManager().batchAddRewardPoolInputRecord(Arrays.asList(record));
             } catch (DuplicateKeyException e) {
                 log.warn("addRewardPoolInputRecord DuplicateKeyException", e);
             } catch (Exception e) {
