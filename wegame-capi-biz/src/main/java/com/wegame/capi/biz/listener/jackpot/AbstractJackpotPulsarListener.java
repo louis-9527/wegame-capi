@@ -1,10 +1,13 @@
 package com.wegame.capi.biz.listener.jackpot;
 
 import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.mongodb.DuplicateKeyException;
+import com.wegame.base.exception.RateLimitException;
 import com.wegame.base.executor.WsThreadPoolExecutor;
+import com.wegame.base.limiter.DistributeLimiter;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
@@ -21,8 +24,13 @@ import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.MessageId;
 import org.apache.pulsar.client.api.Messages;
 import org.apache.pulsar.client.api.PulsarClientException;
+import org.redisson.api.RRateLimiter;
+import org.redisson.api.RateIntervalUnit;
+import org.redisson.api.RateType;
+import org.redisson.api.RedissonClient;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import javax.annotation.PostConstruct;
@@ -42,8 +50,15 @@ import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
  */
 @Slf4j
 public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> implements Runnable, InitializingBean {
+    private static final String PRE_KEY = "rate_limiter";
+    private static final String limitMethodName = "batchAddRewardPoolInputRecord";
+
     private volatile boolean start = false;
     ExecutorService executor;
+    DistributeLimiter distributeLimiter;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Override
     public void afterPropertiesSet() {
@@ -62,8 +77,21 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
 
     public abstract int getMaximumPoolSize();
 
+    public int getLimitRatePerSeconds() {
+        return 500;
+    }
+
     @PostConstruct
     public void init() {
+        // 构建分布式限流器
+        RRateLimiter rateLimiter = redissonClient.getRateLimiter(String.format("%s:%s:%s",
+                PRE_KEY,
+                getGameType().getId(),
+                limitMethodName));
+        // 设置速率，1 秒中产生 x 个令牌
+        rateLimiter.trySetRate(RateType.OVERALL, 1, getLimitRatePerSeconds(), RateIntervalUnit.SECONDS);
+        distributeLimiter = new DistributeLimiter(rateLimiter);
+        // 构建执行任务线程池
         CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(getGameType().getName() + "-jackpot-consumber-pool-");
         threadFactory.setDaemon(true);
         executor = new WsThreadPoolExecutor(getCorePoolSize(),
@@ -106,8 +134,9 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
                         MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
                         Messages<byte[]> messages = getConsumer().batchReceive();
                         if (messages == null || messages.size() == 0) {
-                            log.warn("{}, not received any messages, sleep one second", getGameType().getName());
-                            Thread.currentThread().sleep(2000);
+                            long sleepSeconds = RandomUtil.randomInt(5, 10);
+                            log.warn("{}, not received any messages, sleep {} second", getGameType().getName(), sleepSeconds);
+                            Thread.sleep( sleepSeconds * 1000);
                             continue;
                         }
                         onMessages(messages);
@@ -131,7 +160,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
                     this.getTypeReference());
             BetRecordDo<T> betRecord = mqMessage.getBody();
             if (message.getRedeliveryCount() > 0) {
-                log.info("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}, messageId: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount(), message.getMessageId());
+                log.warn("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}, messageId: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount(), message.getMessageId());
             }
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 // 避免一批次消息里面有重复消息
@@ -183,7 +212,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             });
             // 批量处理
             try {
-                this.jackpotManager().batchAddRewardPoolInputRecord(recordList);
+                distributeLimiter.run(() -> this.jackpotManager().batchAddRewardPoolInputRecord(recordList));
             } catch (Exception e) {
                 log.error("batchAddRewardPoolInputRecord error", e);
                 List<Long> failList = this.addRewardPoolInputRecord(recordList);
@@ -203,9 +232,12 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
         List<Long> failList = new ArrayList<>();
         recordList.forEach(record -> {
             try {
-                this.jackpotManager().batchAddRewardPoolInputRecord(Arrays.asList(record));
+                distributeLimiter.run(()-> this.jackpotManager().batchAddRewardPoolInputRecord(Arrays.asList(record)));
             } catch (DuplicateKeyException e) {
                 log.warn("addRewardPoolInputRecord DuplicateKeyException", e);
+            } catch (RateLimitException e) {
+                failList.add(record.getId());
+                log.warn("addRewardPoolInputRecord RateLimitException", e);
             } catch (Exception e) {
                 failList.add(record.getId());
                 log.error("addRewardPoolInputRecord Exception", e);

@@ -59,11 +59,11 @@ public class LamangJackpotPulsarConfig {
                 .subscriptionName(lamangTenant + Constants.JACKPOT_LAMANG_PULSAR_SUBSCRIPTION)
                 .subscriptionType(SubscriptionType.Key_Shared)
                 // 增加内部缓存，提高吞吐量
-                .receiverQueueSize(2000)
+                .receiverQueueSize(4000)
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
                         // 批量最多100条
-                        .maxNumMessages(200)
+                        .maxNumMessages(800)
                         .timeout(100, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
