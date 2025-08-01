@@ -3,6 +3,7 @@ package com.wegame.capi.dao.repository.domain.template;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class GameRecordTemplatePo implements Serializable {
-    private static final long serialVersionUID = -2044839391564867115L;
+    private static final long serialVersionUID = 7772981783085425990L;
     @Id
     @Field("_id")
     private Long id;

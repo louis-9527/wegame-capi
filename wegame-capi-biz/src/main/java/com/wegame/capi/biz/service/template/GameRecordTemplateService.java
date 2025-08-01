@@ -6,7 +6,6 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.template.GameRecordRecordQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.template.GameRecordTemplatePo;
 import org.springframework.cache.annotation.Cacheable;
@@ -24,7 +23,7 @@ public class GameRecordTemplateService<T> extends AbstractService {
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(tClass, ErrorCode.ERR_INTER);
-        BulkOperations bulkOps = getMongoTemplate(templateTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass);
+        BulkOperations bulkOps = getMongoTemplate(templateTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass, templateTypeEnum.getGameRecordTemplateCollectionName());
         bulkOps.insert(gameRecordList);
         bulkOps.execute();
         return true;
