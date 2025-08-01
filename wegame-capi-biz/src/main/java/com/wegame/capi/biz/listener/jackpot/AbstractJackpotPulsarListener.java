@@ -212,7 +212,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             });
             // 批量处理
             try {
-                distributeLimiter.run(() -> this.jackpotManager().batchAddRewardPoolInputRecord(recordList));
+                distributeLimiter.run(() -> this.jackpotManager().batchAddRewardPoolInputRecord(recordList), 1, 10, TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.error("batchAddRewardPoolInputRecord error", e);
                 List<Long> failList = this.addRewardPoolInputRecord(recordList);
@@ -232,7 +232,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
         List<Long> failList = new ArrayList<>();
         recordList.forEach(record -> {
             try {
-                distributeLimiter.run(()-> this.jackpotManager().batchAddRewardPoolInputRecord(Arrays.asList(record)));
+                distributeLimiter.run(()-> this.jackpotManager().batchAddRewardPoolInputRecord(Arrays.asList(record)), 1, 10, TimeUnit.SECONDS);
             } catch (DuplicateKeyException e) {
                 log.warn("addRewardPoolInputRecord DuplicateKeyException", e);
             } catch (RateLimitException e) {
