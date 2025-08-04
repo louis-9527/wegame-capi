@@ -56,11 +56,6 @@ public abstract class AbstractJackpotManager {
      */
     public abstract List<JackpotUserRewardRecordDo> listUserRewardRecord(JackpotUserRewardRecordQuery query);
 
-    //    /**
-    //     * 新增奖池记录
-    //     */
-    //    public abstract void addRewardPoolInputRecord(JackpotRewardPoolInputRecordDo jackpotRewardPoolInputRecordDo);
-
     /**
      * 批量新增奖池记录
      */

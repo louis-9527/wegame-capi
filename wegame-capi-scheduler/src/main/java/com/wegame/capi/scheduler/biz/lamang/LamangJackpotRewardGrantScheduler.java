@@ -33,15 +33,14 @@ public class LamangJackpotRewardGrantScheduler
      */
     @Scheduled(cron = "0 */5 * * * *")
     public void schedule() {
-        log.info("LamangJackpotRewardGrantScheduler#schedule start");
+        log.info("schedule start");
         try {
             scheduleWithLock(LockNameUtil.getJackpotRewardGrantSchedulerLock(this.getJackpotTypeEnum().getGameType()), this);
         } catch (LockException e) {
-            log.info("get lock fail");
+            log.info("schedule get lock fail");
         } catch (Exception e) {
-            log.error("LamangJackpotRewardGrantScheduler#schedule failed", e);
+            log.error("schedule failed", e);
         }
-        log.info("LamangJackpotRewardGrantScheduler#schedule end");
     }
 
 }

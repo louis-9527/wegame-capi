@@ -52,6 +52,7 @@ public class JackpotRewardPoolInputRecordConverter {
         po.setMajorAmount(jackpotRewardPoolInputRecordDo.getMajorAmount());
         po.setMinorAmount(jackpotRewardPoolInputRecordDo.getMinorAmount());
         po.setMiniAmount(jackpotRewardPoolInputRecordDo.getMiniAmount());
+        po.setAccFlag(jackpotRewardPoolInputRecordDo.getAccFlag().getCode());
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
             po.setCreator(operator.getName());
