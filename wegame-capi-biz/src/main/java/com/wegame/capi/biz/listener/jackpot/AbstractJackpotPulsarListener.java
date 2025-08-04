@@ -55,10 +55,10 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
 
     private volatile boolean start = false;
     ExecutorService executor;
-    DistributeLimiter distributeLimiter;
+//    DistributeLimiter distributeLimiter;
 
-    @Autowired
-    private RedissonClient redissonClient;
+//    @Autowired
+//    private RedissonClient redissonClient;
 
     @Override
     public void afterPropertiesSet() {
@@ -83,14 +83,14 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
 
     @PostConstruct
     public void init() {
-        // 构建分布式限流器
-        RRateLimiter rateLimiter = redissonClient.getRateLimiter(String.format("%s:%s:%s",
-                PRE_KEY,
-                getGameType().getId(),
-                limitMethodName));
-        // 设置速率，1 秒中产生 x 个令牌
-        rateLimiter.trySetRate(RateType.OVERALL, 1, getLimitRatePerSeconds(), RateIntervalUnit.SECONDS);
-        distributeLimiter = new DistributeLimiter(rateLimiter);
+//        // 构建分布式限流器
+//        RRateLimiter rateLimiter = redissonClient.getRateLimiter(String.format("%s:%s:%s",
+//                PRE_KEY,
+//                getGameType().getId(),
+//                limitMethodName));
+//        // 设置速率，1 秒中产生 x 个令牌
+//        rateLimiter.trySetRate(RateType.OVERALL, 1, getLimitRatePerSeconds(), RateIntervalUnit.SECONDS);
+//        distributeLimiter = new DistributeLimiter(rateLimiter);
         // 构建执行任务线程池
         CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(getGameType().getName() + "-jackpot-consumber-pool-");
         threadFactory.setDaemon(true);
@@ -212,7 +212,8 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             });
             // 批量处理
             try {
-                distributeLimiter.run(() -> this.jackpotManager().batchAddRewardPoolInputRecord(recordList), 1, 100, TimeUnit.SECONDS);
+                this.jackpotManager().batchAddRewardPoolInputRecord(recordList);
+                // distributeLimiter.run(() -> this.jackpotManager().batchAddRewardPoolInputRecord(recordList), 1, 100, TimeUnit.SECONDS);
             } catch (Exception e) {
                 log.error("batchAddRewardPoolInputRecord error", e);
                 List<Long> failList = this.addRewardPoolInputRecord(recordList);
@@ -232,7 +233,8 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
         List<Long> failList = new ArrayList<>();
         recordList.forEach(record -> {
             try {
-                distributeLimiter.run(()-> this.jackpotManager().batchAddRewardPoolInputRecord(Arrays.asList(record)));
+                this.jackpotManager().batchAddRewardPoolInputRecord(Arrays.asList(record));
+                //distributeLimiter.run(()-> this.jackpotManager().batchAddRewardPoolInputRecord(Arrays.asList(record)));
             } catch (DuplicateKeyException e) {
                 log.warn("addRewardPoolInputRecord DuplicateKeyException", e);
             } catch (RateLimitException e) {
