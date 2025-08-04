@@ -6,6 +6,7 @@ import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
+import com.wegame.capi.common.enums.JackpotAccFlagEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.jackpot.JackpotRewardPoolBuilder.buildList;
 import static com.wegame.capi.biz.config.mongo.LamangMongoConfig.lamangTransactionManager;
@@ -38,20 +40,34 @@ public class LamangJackpotManager extends AbstractJackpotManager {
             return;
         }
         jackpotRewardPoolInputRecordService.batchAdd(recordList, jackpotGameType());
-        // todo 通过定时任务处理
-        //        // 按照奖池金额统计
-        //        long grandAmount = 0;
-        //        long majorAmount = 0;
-        //        long minorAmount = 0;
-        //        long miniAmount = 0;
-        //        // 遍历列表并累加各个金额字段
-        //        for (JackpotRewardPoolInputRecordDo record : recordList) {
-        //            grandAmount += record.getGrandAmount() == null ? 0 : record.getGrandAmount();
-        //            majorAmount += record.getMajorAmount() == null ? 0 : record.getMajorAmount();
-        //            minorAmount += record.getMinorAmount() == null ? 0 : record.getMinorAmount();
-        //            miniAmount += record.getMiniAmount() == null ? 0 : record.getMiniAmount();
-        //        }
-        //        jackpotRewardPoolService.batchUpdate(buildList(grandAmount, majorAmount, minorAmount, miniAmount), jackpotGameType());
+    }
+
+    @Override
+    @Transactional(transactionManager = lamangTransactionManager, rollbackFor = Exception.class)
+    public void accRewardPool(List<JackpotRewardPoolInputRecordDo> recordList) {
+        if (CollectionUtils.isEmpty(recordList)) {
+            return;
+        }
+        recordList = recordList.stream()
+                .filter(item -> item.getAccFlag() == JackpotAccFlagEnum.NO)
+                .collect(Collectors.toList());
+        List<Long> idList = recordList.stream()
+                .map(JackpotRewardPoolInputRecordDo::getId)
+                .collect(Collectors.toList());
+        jackpotRewardPoolInputRecordService.batchUpdateAccFlag(idList, JackpotAccFlagEnum.YES, jackpotGameType());
+        // 按照奖池金额统计
+        long grandAmount = 0;
+        long majorAmount = 0;
+        long minorAmount = 0;
+        long miniAmount = 0;
+        // 遍历列表并累加各个金额字段
+        for (JackpotRewardPoolInputRecordDo record : recordList) {
+            grandAmount += record.getGrandAmount() == null ? 0 : record.getGrandAmount();
+            majorAmount += record.getMajorAmount() == null ? 0 : record.getMajorAmount();
+            minorAmount += record.getMinorAmount() == null ? 0 : record.getMinorAmount();
+            miniAmount += record.getMiniAmount() == null ? 0 : record.getMiniAmount();
+        }
+        jackpotRewardPoolService.batchUpdate(buildList(grandAmount, majorAmount, minorAmount, miniAmount), jackpotGameType());
     }
 
     @Override
