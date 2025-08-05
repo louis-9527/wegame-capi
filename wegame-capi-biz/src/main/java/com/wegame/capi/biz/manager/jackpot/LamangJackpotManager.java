@@ -13,7 +13,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.jackpot.JackpotRewardPoolBuilder.buildList;
@@ -45,16 +48,19 @@ public class LamangJackpotManager extends AbstractJackpotManager {
     @Override
     @Transactional(transactionManager = lamangTransactionManager, rollbackFor = Exception.class)
     public void accRewardPool(List<JackpotRewardPoolInputRecordDo> recordList) {
+        recordList = Optional.ofNullable(recordList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(item -> Objects.equals(item.getAccFlag(), JackpotAccFlagEnum.NO))
+                .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(recordList)) {
             return;
         }
-        recordList = recordList.stream()
-                .filter(item -> item.getAccFlag() == JackpotAccFlagEnum.NO)
-                .collect(Collectors.toList());
         List<Long> idList = recordList.stream()
                 .map(JackpotRewardPoolInputRecordDo::getId)
                 .collect(Collectors.toList());
-        jackpotRewardPoolInputRecordService.batchUpdateAccFlag(idList, JackpotAccFlagEnum.YES, jackpotGameType());
+        long modifyNum = jackpotRewardPoolInputRecordService.batchUpdateAccFlag(idList, JackpotAccFlagEnum.YES, jackpotGameType());
+        log.info("modifyNum: {}, idList size: {}", modifyNum, idList.size());
         // 按照奖池金额统计
         long grandAmount = 0;
         long majorAmount = 0;
