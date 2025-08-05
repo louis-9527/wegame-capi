@@ -7,18 +7,22 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.template.BetRecordTemplateQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.BetRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
-import com.wegame.capi.dao.repository.domain.operation.OperationEventDetailPo;
 import com.wegame.capi.dao.repository.domain.template.BetRecordTemplatePo;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.converter.BetRecordTemplateConverter.*;
+import static com.wegame.capi.biz.converter.BetRecordTemplateConverter.doToPo;
+import static com.wegame.capi.biz.converter.BetRecordTemplateConverter.doToPoList;
 
 @Service
 public class BetRecordTemplateService extends AbstractService {
@@ -44,9 +48,15 @@ public class BetRecordTemplateService extends AbstractService {
 
     @Cacheable(value = CacheConstants.OPERATION_EVENT_CONFIG, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(String multipleRangeStart, String multipleRangeEnd, TemplateTypeEnum typeEnum) {
-        return getMongoTemplate(typeEnum.getGameType())
-                .find(BetRecordTemplateQueryBuilder.buildQuery(multipleRangeStart, multipleRangeEnd),
-                        Long.class,
-                        typeEnum.getBetRecordTemplateCollectionName());
+        Query query = BetRecordTemplateQueryBuilder.buildQuery(multipleRangeStart, multipleRangeEnd);
+        String betRecordTemplateCollectionName = typeEnum.getBetRecordTemplateCollectionName();
+        MongoTemplate mongoTemplate = getMongoTemplate(typeEnum.getGameType());
+        // 1. 先查询为 ObjectId 类型的列表
+        List<BetRecordTemplatePo> betRecordTemplateList = mongoTemplate.find(query, BetRecordTemplatePo.class, betRecordTemplateCollectionName);
+        return Optional.of(betRecordTemplateList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(BetRecordTemplatePo::getId)
+                .collect(Collectors.toList());
     }
 }
