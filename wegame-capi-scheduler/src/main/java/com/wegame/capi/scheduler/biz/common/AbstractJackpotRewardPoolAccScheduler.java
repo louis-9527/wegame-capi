@@ -55,7 +55,9 @@ public abstract class AbstractJackpotRewardPoolAccScheduler
             if (CollectionUtil.isNotEmpty(recordList)) {
                 gtLastId = recordList.get(recordList.size() - 1).getId();
             }
-            lamangJackpotManager.accRewardPool(recordList);
+            if (CollectionUtils.isNotEmpty(recordList)) {
+                lamangJackpotManager.accRewardPool(recordList);
+            }
         } while (CollectionUtils.isNotEmpty(recordList));
         log.info("{} schedule run end...", taskName());
     }
