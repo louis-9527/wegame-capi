@@ -101,7 +101,6 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
 
             BetRecordQuery betRecordQuery = BetRecordQuery.builder()
                     .playerId(UserInfoContext.getUserInfo().getPlayerId())
-                    .status(BetStatusEnum.SUCCESS.getCode())
                     .betSubType(BetSubTypeEnum.NORMAL_BET.getCode())
                     .startCreateTime(oneMonthAgoMillis)
                     .orderByClause("createTime")
@@ -127,11 +126,12 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
 
         if (gamePlay.getBetSubType() == BetSubTypeEnum.NORMAL_BET && !freeFlag
                 && gamePlay.getContinuePlayContext() != null && gamePlay.getContinuePlayContext().getParentBetRecordId() != null) {
-            // 替换珍珠
             SirenaSymbolDo[][] symbolArr = wheelDo.getSymbolArr();
-            pearlWildIndexMap.forEach((indexDo, v) -> {
-                symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = v;
-            });
+            if(pearlWildIndexMap != null) {
+                pearlWildIndexMap.forEach((indexDo, v) -> {
+                    symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = v;
+                });
+            }
         }
         // 中奖以及滚轮后处理
         RewardResultDo<SirenaSymbolDo> rewardResultDo = this.rewardAndWheelAfterHandler(gamePlay, wheelDo, currentMultiple, totalRewardAmount.get());
@@ -256,14 +256,17 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
      * @param wheelChartModel 轮代表moudle 二维数组，一维：reel 二维：元素id轮带
      * @return 滚轮
      */
-    private WheelDo<SirenaSymbolDo> generateCommonWheel(List<List<String>> wheelChartModel,Map<IndexDo, SirenaSymbolDo> beforePearlWildIndex, boolean freeFlag,Boolean isScatter) {
+    private WheelDo<SirenaSymbolDo> generateCommonWheel(List<List<String>> wheelChartModel,
+                                                        Map<IndexDo, SirenaSymbolDo> beforePearlWildIndex,
+                                                        boolean freeFlag,
+                                                        Boolean isScatter) {
         SirenaSymbolDo[][] symbolArr = new SirenaSymbolDo[GAME_INFO.getRow()][GAME_INFO.getColumn()];
         if(freeFlag){
             // 免费轮,随机生成1-3个珍珠
             TreeMap<Integer, BigDecimal> freeWheelSmallPearlCountWeightConfig = sirenaConfig.getProbabilisticConfig().getFreeWheelSmallPearlCountWeightConfig();
             Integer pearlCount = GameUtil.randomKey(freeWheelSmallPearlCountWeightConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
             List<IndexDo> randomPositions = generateRandomPositionsExcluding(beforePearlWildIndex, pearlCount);
-            // 在随机位置生成珍珠
+            // 生成珍珠
             for (IndexDo position : randomPositions) {
                 SymbolDo pearlWild = SirenaGameHelper.SIRENA_Pearl_Wild;
                 // 计算小珍珠的倍率
@@ -279,7 +282,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
             List<String> currentColumSymbolIdList = super.randomCircularGenSymbolIdList(wheelChartModel.get(columNum), GAME_INFO.getRow());
             // 填充
             for (int rowNum = 0; rowNum < GAME_INFO.getRow(); rowNum++) {
-                // 如果该位置已经有珍珠，则跳过
+                // 如果该位置已经有元素，则跳过
                 if (symbolArr[rowNum][columNum] != null) {
                     continue;
                 }
@@ -301,9 +304,10 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
             }
         }
         if(freeFlag) {
-            // 填充完之后 从右上角遍历,如果珍珠组成2*2的格子，则将 [0][0] 替换为 sirenaBigPearlWild,其他3个位置替换为 sirenaSymbolPlaceholder
+            // 填充完之后 从左上角遍历,如果珍珠组成2*2的格子，则将 [0][0] 替换为 sirenaBigPearlWild,其他3个位置替换为 sirenaSymbolPlaceholder
             SymbolDo sirenaBigPearlWild = SirenaGameHelper.SIRENA_Big_Pearl_Wild;
             SirenaSymbolDo sirenaSymbolPlaceholder = SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER;
+            TreeMap<BigDecimal, BigDecimal> bigPearlMultipleWeightConfig = sirenaConfig.getProbabilisticConfig().getBigPearlMultipleWeightConfig();
 
             // 从左上角开始遍历，检查2*2格子
             for (int row = 0; row < GAME_INFO.getRow() - 1; row++) {
@@ -326,15 +330,15 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                         if (symbolArr[row + 1][col + 1] != null && symbolArr[row + 1][col + 1].getSymbolOdd() != null) {
                             totalSymbolOdd = totalSymbolOdd.add(symbolArr[row + 1][col + 1].getSymbolOdd());
                         }
-                        
+
+                        BigDecimal pearlMultiple = GameUtil.randomKey(bigPearlMultipleWeightConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
                         // 将左上角位置替换为大珍珠，并设置总和的symbolOdd
-                        symbolArr[row][col] = SirenaSymbolDo.buildPearlWildSymbol(sirenaBigPearlWild, totalSymbolOdd);
+                        symbolArr[row][col] = SirenaSymbolDo.buildPearlWildSymbol(sirenaBigPearlWild, totalSymbolOdd.multiply(pearlMultiple));
                         
                         // 将其他3个位置替换为占位符
                         symbolArr[row][col + 1] = sirenaSymbolPlaceholder;
                         symbolArr[row + 1][col] = sirenaSymbolPlaceholder;
                         symbolArr[row + 1][col + 1] = sirenaSymbolPlaceholder;
-                        // 继续遍历，替换所有2*2格子
                     }
                 }
             }
@@ -368,12 +372,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
 
         // 生成所有可用位置（排除指定坐标和第一列）
         for (int row = 0; row < GAME_INFO.getRow(); row++) {
-            for (int col = 0; col < GAME_INFO.getColumn(); col++) {
-                // 排除第一列（列索引为0）
-                if (col == 0) {
-                    continue;
-                }
-
+            for (int col = 1; col < GAME_INFO.getColumn(); col++) {
                 // 检查当前坐标是否在排除列表中
                 String coordinateKey = row + "," + col;
                 if (!excludeCoordinates.contains(coordinateKey)) {
@@ -395,7 +394,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
         List<IndexDo> selectedPositions = new ArrayList<>();
         Set<Integer> selectedIndices = new HashSet<>();
 
-        while (selectedPositions.size() < count) {
+        while (selectedPositions.size() <= count) {
             int randomIndex = randomService.randomInt(0, availablePositions.size() - 1);
             if (!selectedIndices.contains(randomIndex)) {
                 selectedIndices.add(randomIndex);
@@ -473,7 +472,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                             .rowIndex(rowNum)
                             .columnIndex(columNum)
                             .build();
-                    sirenaSymbolDoMap.put(indexDo, symbol.copy());
+                    sirenaSymbolDoMap.put(indexDo, symbol.getNestSymbol().copy());
                 }
             }
         }

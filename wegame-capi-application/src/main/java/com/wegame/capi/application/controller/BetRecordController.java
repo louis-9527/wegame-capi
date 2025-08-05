@@ -98,7 +98,6 @@ public class BetRecordController {
         long oneMonthAgoMillis = Instant.now().minus(30, ChronoUnit.DAYS).toEpochMilli();
         BetRecordQuery betRecordQuery = BetRecordQuery.builder()
                 .playerId(userInfo.getPlayerId())
-                .status(BetStatusEnum.SUCCESS.getCode())
                 .betSubType(BetSubTypeEnum.NORMAL_BET.getCode())
                 .startCreateTime(oneMonthAgoMillis)
                 .orderByClause("createTime")

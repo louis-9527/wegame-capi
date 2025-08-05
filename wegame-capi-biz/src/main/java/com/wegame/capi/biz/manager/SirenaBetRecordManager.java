@@ -117,19 +117,22 @@ public class SirenaBetRecordManager extends AbstractBetRecordManager<SirenaGameR
         if (!BetSubTypeEnum.NORMAL_BET.getCode().equals(oneLastByTime.getBetSubType())) {
             return null;
         }
+        if (oneLastByTime.getPayOutAmount().longValue() <= 0L) {
+            return null;
+        }
         // 查询对应的游戏记录
-        Sort sort = Sort.by(Sort.Direction.DESC, "index");
+        Sort sort = Sort.by(Sort.Direction.ASC, "index");
         GameRecordQuery recordQuery = GameRecordQuery.builder().betRecordId(oneLastByTime.getId()).sort(sort).build();
         SirenaGameRecordDo gameRecordDo = gameRecordService.findOne(recordQuery, gameType, SirenaGameRecordDo.class);
         if (gameRecordDo == null) {
             return null;
         }
-        // 判断是否中奖,并且符合条件
+        // 判断是否为空,并且符合条件
         if (CollectionUtils.isEmpty(gameRecordDo.getRewardResult().getRewardLineDetailList())) {
             return null;
         }
         // 判断是否有珍珠
-        boolean pearlWild = checkPearlWild(gameRecordDo.getRewardResult().getRewardLineDetailList());
+        boolean pearlWild = this.checkPearlWild(gameRecordDo.getRewardResult().getRewardLineDetailList());
         if (pearlWild) {
             oneLastByTime.setGameRecordList(Lists.newArrayList(gameRecordDo));
         }
