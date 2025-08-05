@@ -384,7 +384,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                 replaceMap.put(pos, DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_STICK)));
                 continue;
             }
-            if (diwataMayariSymbolDo.isStick()) {
+            if (diwataMayariSymbolDo.isSword()) {
                 // 如果已经是宝剑元素
                 replaceMap.put(pos, DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_COVER));
             }
