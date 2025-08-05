@@ -4,7 +4,6 @@ import com.wegame.base.exception.LockException;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.scheduler.biz.common.AbstractJackpotRewardPoolAccScheduler;
-import com.wegame.capi.scheduler.biz.common.AbstractJackpotRewardPoolInputRecordDeleteScheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;

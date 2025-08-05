@@ -111,7 +111,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
                         Messages<byte[]> messages = getConsumer().batchReceive();
                         if (messages == null || messages.size() == 0) {
                             long sleepSeconds = RandomUtil.randomInt(5, 10);
-                            log.warn("{}, not received any messages, sleep {} second", getGameType().getName(), sleepSeconds);
+                            log.warn("{}, not received any jackpot messages, sleep {} second", getGameType().getName(), sleepSeconds);
                             Thread.sleep(sleepSeconds * 1000);
                             continue;
                         }

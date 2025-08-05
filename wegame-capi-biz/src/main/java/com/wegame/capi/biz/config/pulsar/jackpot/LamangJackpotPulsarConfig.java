@@ -57,14 +57,14 @@ public class LamangJackpotPulsarConfig {
         return lamangJackpotPulsarClient.newConsumer()
                 .topic(fullTopic)
                 .subscriptionName(lamangTenant + Constants.JACKPOT_LAMANG_PULSAR_SUBSCRIPTION)
-                .subscriptionType(SubscriptionType.Exclusive)
+                .subscriptionType(SubscriptionType.Key_Shared)
                 // 增加内部缓存，提高吞吐量
-                .receiverQueueSize(40000)
+                .receiverQueueSize(10000)
                 .ackTimeout(120, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
                         // 批量最多100条
-                        .maxNumMessages(2500)
-                        .timeout(1000, TimeUnit.MILLISECONDS)
+                        .maxNumMessages(1500)
+                        .timeout(500, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**

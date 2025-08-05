@@ -48,7 +48,7 @@ public abstract class AbstractJackpotRewardPoolAccScheduler
                     .accFlag(JackpotAccFlagEnum.NO.getCode())
                     .startCreateTime(System.currentTimeMillis() - TEN_MINUTES)
                     .gtLastId(gtLastId)
-                    .limit(DEFAULT_PAGE_SIZE)
+                    .limit(200)
                     .orderByClause("_id")
                     .direction(Sort.Direction.ASC)
                     .build(), getJackpotTypeEnum());
