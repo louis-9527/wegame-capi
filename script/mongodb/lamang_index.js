@@ -117,8 +117,8 @@ db.createCollection("lamang_jackpot_reward_pool_input_record");
 db.lamang_jackpot_user_reward_record.createIndex(
     {_id: 1, accFlag: 1, createTime: 1}
 );
-// // 奖池流水ttl，索引:在expireAtTime时间的时候删除
-// db.getCollection("lamang_jackpot_reward_pool_input_record").createIndex(
-//     { "expireAtTime": 1 },
-//     { expireAfterSeconds: 0 }
-// );
+// 奖池流水ttl，索引:在expireAtTime时间的时候删除
+db.getCollection("lamang_jackpot_reward_pool_input_record").createIndex(
+    { "expireAtTime": 1 },
+    { expireAfterSeconds: 0 }
+);
