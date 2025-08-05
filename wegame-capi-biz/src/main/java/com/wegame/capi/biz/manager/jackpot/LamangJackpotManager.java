@@ -51,7 +51,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         recordList = Optional.ofNullable(recordList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .filter(item -> Objects.equals(item.getAccFlag(), JackpotAccFlagEnum.NO))
+                .filter(item -> Objects.equals(item.getAccFlag().getCode(), JackpotAccFlagEnum.NO.getCode()))
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(recordList)) {
             return;
