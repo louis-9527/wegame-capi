@@ -4,7 +4,6 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.mongodb.DuplicateKeyException;
 import com.wegame.base.exception.RateLimitException;
 import com.wegame.base.executor.WsThreadPoolExecutor;
 import com.wegame.base.mq.MQMessage;
@@ -26,6 +25,7 @@ import org.apache.pulsar.client.api.Messages;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import javax.annotation.PostConstruct;
