@@ -62,7 +62,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         AssertUtil.assertNotNull(templateConfig, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateConfig.getMultipleRangeStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateConfig.getMultipleRangeEnd(), ErrorCode.ERR_INTER);
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange("3", "4", MARIA_MAKILING);
+        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange("6", "7", MARIA_MAKILING);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         List<GameRecordTemplateDo> configRecordList = gameRecordTemplateService.listByBetRecordId(betRecordId, MARIA_MAKILING);
