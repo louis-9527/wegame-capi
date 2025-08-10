@@ -46,7 +46,7 @@ public class BetRecordTemplateService extends AbstractService {
         return true;
     }
 
-    @Cacheable(value = CacheConstants.OPERATION_EVENT_CONFIG, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+//    @Cacheable(value = CacheConstants.OPERATION_EVENT_CONFIG, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(String multipleRangeStart, String multipleRangeEnd, TemplateTypeEnum typeEnum) {
         Query query = BetRecordTemplateQueryBuilder.buildQuery(multipleRangeStart, multipleRangeEnd);
         String betRecordTemplateCollectionName = typeEnum.getBetRecordTemplateCollectionName();

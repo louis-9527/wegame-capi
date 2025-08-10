@@ -6,14 +6,15 @@ import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
+
 /**
  * AB类型枚举
  *
  * @author apple
  */
-@AllArgsConstructor
 @Getter
 @ToString
+@AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum AbTypeEnum {
 
