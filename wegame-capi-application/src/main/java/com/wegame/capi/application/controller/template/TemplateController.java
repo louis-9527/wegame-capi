@@ -34,7 +34,7 @@ public class TemplateController {
     @PostMapping("/generate/mariamakiling")
     public CommonResponse<Void> generateMariamakiling(@RequestBody TemplateGenerateRequest request) {
         request.validate();
-        templateService.generate(request);
+        templateService.generateMariamakiling(null);
         return CommonResponse.build(null);
     }
 }
