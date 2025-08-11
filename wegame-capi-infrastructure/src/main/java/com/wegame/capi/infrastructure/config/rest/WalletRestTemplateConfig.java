@@ -32,9 +32,9 @@ public class WalletRestTemplateConfig {
     int connectDefaultMaxPerRoute;
     @Value("${httpclient.wallet.connectTimeout:200}")
     int connectTimeout;
-    @Value("${httpclient.wallet.readTimeout:1000}")
+    @Value("${httpclient.wallet.readTimeout:1200}")
     int readTimeout;
-    @Value("${httpclient.wallet.connectionRequestTimeout:100}")
+    @Value("${httpclient.wallet.connectionRequestTimeout:50}")
     int connectionRequestTimeout;
     @Value("${httpclient.wallet.timeToLive:58}")
     int timeToLive;
