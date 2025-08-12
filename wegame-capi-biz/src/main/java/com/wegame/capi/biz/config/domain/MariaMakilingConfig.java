@@ -110,11 +110,11 @@ public class MariaMakilingConfig implements Serializable {
         /**
          * 倍数区间开始 todo 修改为Bigdeceimal
          */
-        private String multipleRangeStart;
+        private BigDecimal multipleRangeStart;
         /**
          * 倍数区间结束
          */
-        private String multipleRangeEnd;
+        private BigDecimal multipleRangeEnd;
     }
 
     public void validate() {
