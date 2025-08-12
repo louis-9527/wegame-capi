@@ -16,8 +16,6 @@ import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.common.Constants;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,6 @@ import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
-import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
@@ -68,7 +65,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
                 firstWheel = generateNormalWheel(gameInfo);
                 break;
             case BUY_BET:
-                firstWheel = generateRewardFreeWheel(gameInfo, getProbabilisticConfig(false));
+                firstWheel = generateRewardFreeWheel(gameInfo);
                 break;
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
@@ -148,7 +145,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         TreeMap<String, Integer> modeWeights = mariaMakilingConfig.getMainGame().getModeWeights();
         // 获取轮盘配置
         SymbolDo[][] symbolArr = null;
-        while (symbolArr == null){
+        while (symbolArr == null) {
             symbolArr = this.buildSymbol(gameInfo, modeWeights);
         }
         return WheelDo.<SymbolDo>builder()
@@ -156,13 +153,13 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
                 .symbolArr(symbolArr).build();
     }
 
-    private SymbolDo[][]  buildSymbol(GameInfoDo gameInfo, TreeMap<String, Integer> modeWeights){
-        String modelKey = this.randomKeyByWeight(modeWeights);
+    private SymbolDo[][] buildSymbol(GameInfoDo gameInfo, TreeMap<String, Integer> modeWeights) {
+        String modelKey = randomService.randomKeyByWeight(modeWeights);
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         for (int column = 0; column < gameInfo.getColumn(); column++) {
             // 一列只能包含一个scatter,出现一个以上则重新全部开始
             boolean colum = this.buildColum(gameInfo, column, modelKey, symbolArr);
-            if(!colum){
+            if (!colum) {
                 return null;
             }
         }
@@ -175,17 +172,17 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         boolean hasScatter = false;
         int row = gameInfo.getRow() - 1;
         while (row >= 0) {
-            String[] symbolArray = this.randomKeyByWeight(symbolWeights).split(",");
+            String[] symbolArray = randomService.randomKeyByWeight(symbolWeights).split(",");
             for (int i = 0; i < symbolArray.length; i++) {
                 if (row < 0) {
                     continue;
                 }
                 symbolArr[row][colum] = gameInfo.getSymbolById(symbolArray[i]);
-                if(symbolArr[row][colum].isScatterSymbol() && hasScatter){
+                if (symbolArr[row][colum].isScatterSymbol() && hasScatter) {
                     // 如果多个scatter
                     return false;
                 }
-                if(symbolArr[row][colum].isScatterSymbol()){
+                if (symbolArr[row][colum].isScatterSymbol()) {
                     hasScatter = true;
                 }
                 row--;
@@ -200,7 +197,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<SymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig) {
+    private WheelDo<SymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo) {
         WheelDo<SymbolDo> wheelDo = generateNormalWheel(gameInfo);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
         // 生成整盘随机数(SCATTER_COLUM_INDEX_LIST.size())个
@@ -245,58 +242,74 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         }
         for (int index = 0; index < wheelNumber; index++) {
             // 生成整盘随机数(row*column)
-            SymbolDo[][] symbolArr = generateWithWild(gameInfo, wildSymbolArr, wheelNumber);
-            wheels.add(WheelDo.<SymbolDo>builder()
-                    .index(index)
-                    .symbolArr(symbolArr)
-                    .build());
+            wheels.add(generateWheelWithWild(gameInfo, index, wildSymbolArr));
         }
         return wheels;
     }
 
-    private SymbolDo[][] generateWithWild(GameInfoDo gameInfo, SymbolDo[][] wildSymbolArr, int freeSpinIndex) {
+    private WheelDo<SymbolDo> generateWheelWithWild(GameInfoDo gameInfo, int freeSpinIndex, SymbolDo[][] wildSymbolArr) {
         SymbolDo[][] symbolArr = null;
-        do {
-            String modeName = randomService.randomKeyByWeight(mariaMakilingConfig.getMainGame().getModeWeights());
-            symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-            for (int i = 0; i < gameInfo.getColumn(); i++) {
-                generateColumnWithWild(modeName, freeSpinIndex, i, symbolArr, wildSymbolArr);
-            }
-        } while (!validateSymbolArr(symbolArr));
+        while (symbolArr == null) {
+            symbolArr = this.generateWithWild(gameInfo, freeSpinIndex, wildSymbolArr);
+        }
         rebuildWildSymbolArr(gameInfo, wildSymbolArr, symbolArr);
-        return symbolArr;
+        // index 为当前免费轮的index + 1
+        int index = freeSpinIndex + 1;
+        return WheelDo.<SymbolDo>builder()
+                .index(index)
+                .symbolArr(symbolArr)
+                .build();
     }
 
     private void rebuildWildSymbolArr(GameInfoDo gameInfo, SymbolDo[][] wildSymbolArr, SymbolDo[][] currentSymbolArr) {
-        for (int i = 0; i < gameInfo.getColumn(); i++) {
-            for (int j = 0; j < gameInfo.getRow(); j++) {
+        for (int i = 0; i < gameInfo.getRow(); i++) {
+            for (int j = 0; j < gameInfo.getColumn(); j++) {
                 if (currentSymbolArr[i][j].isWildSymbol()) {
-                    wildSymbolArr[j][i] = currentSymbolArr[j][i];
+                    wildSymbolArr[i][j] = currentSymbolArr[i][j];
                 }
             }
         }
     }
 
-    private boolean validateSymbolArr(SymbolDo[][] symbolArr) {
-        return true;
+    private SymbolDo[][] generateWithWild(GameInfoDo gameInfo, int freeSpinIndex, SymbolDo[][] wildSymbolArr) {
+        String modeName = randomService.randomKeyByWeight(mariaMakilingConfig.getFreeGame().getFgModeWeights());
+        SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+        for (int column = 0; column < gameInfo.getColumn(); column++) {
+            boolean colum = this.generateColumnWithWild(gameInfo, modeName, freeSpinIndex, column, symbolArr, wildSymbolArr);
+            if (!colum) {
+                return null;
+            }
+        }
+        return symbolArr;
     }
 
-    private void generateColumnWithWild(String modeName, int freeSpinIndex, int column, SymbolDo[][] symbolArr, SymbolDo[][] wildSymbolArr) {
+
+    private boolean generateColumnWithWild(GameInfoDo gameInfo, String modeName, int freeSpinIndex, int column, SymbolDo[][] symbolArr, SymbolDo[][] wildSymbolArr) {
         MariaMakilingConfig.ReelConfig reelConfig = mariaMakilingConfig.getFreeGame().getReelConfig(modeName, freeSpinIndex, column);
-        LinkedList<String> symbolList = new LinkedList<>();
-    }
-
-    private void fillSymbolList(MariaMakilingConfig.ReelConfig reelConfig, LinkedList<String> symbolList) {
-
-    }
-
-    public TreeMap<String, List<BigDecimal>> getProbabilisticConfig(boolean isFreeWheelFlag) {
-//        int randomNumber = randomService.randomInt(CONST_1, CONST_100000);
-//        TreeMap<String, Integer> weightConfigMap = mariaMakilingConfig.getWeightConfig(isFreeWheelFlag);
-//        String configName = getConfigName(weightConfigMap, randomNumber);
-//        log.info("configName:{}", configName);
-//        return mariaMakilingConfig.getProbabilisticConfig().getWheelProbabilisticConfig().get(configName);
-        //todo
-        return null;
+        boolean hasScatter = false;
+        int row = gameInfo.getRow() - 1;
+        while (row >= 0) {
+            String[] symbolArray = randomService.randomKeyByWeight(reelConfig.getSymbolWeights()).split(",");
+            for (int i = 0; i < symbolArray.length; i++) {
+                if (row < 0) {
+                    continue;
+                }
+                // 存在全局wild则用全局wild覆盖
+                if (Objects.nonNull(wildSymbolArr[row][column]) && wildSymbolArr[row][column].isWildSymbol()) {
+                    symbolArr[row][column] = wildSymbolArr[row][column];
+                } else {
+                    symbolArr[row][column] = gameInfo.getSymbolById(symbolArray[i]);
+                }
+                if (symbolArr[row][column].isScatterSymbol() && hasScatter) {
+                    // 如果多个scatter
+                    return false;
+                }
+                if (symbolArr[row][column].isScatterSymbol()) {
+                    hasScatter = true;
+                }
+                row--;
+            }
+        }
+        return true;
     }
 }

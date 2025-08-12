@@ -2,6 +2,7 @@ package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -216,7 +217,33 @@ public class MariaMakilingConfig implements Serializable {
             String key = generateReelKey(i);
             ReelConfig reelConfig = reelConfigMap.get(key);
             Assert.notNull(reelConfig, "reelConfig is null, reelName is " + key);
+            validateReel(reelConfig, i);
             validateWeightMap(reelConfig.getSymbolWeights());
+        }
+    }
+
+    /**
+     * 校验 ：
+     * 第一行不能有wild元素权重大于0
+     * 元素必须是正常元素
+     *
+     * @param
+     */
+    private void validateReel(ReelConfig reel, int reelIndex) {
+        Map<String, Integer> reelWeightMap = reel.getSymbolWeights();
+        Map<String, SymbolDo> symbolDoMap = MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO.getSymbolMap();
+        for (Map.Entry<String, Integer> entry : reelWeightMap.entrySet()) {
+            Integer weight = reelWeightMap.get(entry.getKey());
+            if (weight > 0) {
+                String[] symbols = entry.getKey().split(",");
+                for (String s : symbols) {
+                    SymbolDo symbol = symbolDoMap.get(s);
+                    Assert.notNull(symbol, "symbol is null, symbol is " + entry.getKey());
+                    if (reelIndex == 0) {
+                        Assert.isFalse(symbol.isWildSymbol(), "symbol is wild symbol in reel1, weight is " + weight);
+                    }
+                }
+            }
         }
     }
 
@@ -224,6 +251,7 @@ public class MariaMakilingConfig implements Serializable {
         int reel = index + 1;
         return REEL_PREFIX + reel;
     }
+
 
     public static String generateRoundKey(int index) {
         int round = index + 1;
