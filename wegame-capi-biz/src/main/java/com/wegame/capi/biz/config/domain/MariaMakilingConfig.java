@@ -98,6 +98,10 @@ public class MariaMakilingConfig implements Serializable {
          * TreeMap<modeName, <reelName,ReelConfig>>
          */
         private TreeMap<String, TreeMap<String, ReelConfig>> modeConfig;
+
+        public ReelConfig getReelConfig(String modeName, int reelIndex) {
+            return modeConfig.get(modeName).get(generateReelKey(reelIndex));
+        }
     }
 
     @Data
@@ -122,22 +126,11 @@ public class MariaMakilingConfig implements Serializable {
          * TreeMap<modeName，<roundName,<reelName, reelConfig>>>
          */
         private TreeMap<String, TreeMap<String, TreeMap<String, ReelConfig>>> fgModeConfig;
-    }
 
-    @Data
-    @ToString
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @EqualsAndHashCode(callSuper = false)
-    public static class RoundConfig implements Serializable {
-        private static final long serialVersionUID = -1002375630440628067L;
-        /**
-         * TreeMap<元素ID，<赔率类型，具体赔率>>
-         */
-        private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
+        public ReelConfig getReelConfig(String modeName, int freeSpinIndex, int reelIndex) {
+            return fgModeConfig.get(modeName).get(generateRoundKey(freeSpinIndex)).get(generateReelKey(reelIndex));
+        }
     }
-
 
     @Data
     @ToString
@@ -207,8 +200,8 @@ public class MariaMakilingConfig implements Serializable {
         // 必须有13项 并且是Round1 - Round13
         Assert.notNull(roundConfigMap);
         Assert.isTrue(roundConfigMap.size() == MAX_FREE_SPIN_TIMES);
-        for (int i = 1; i <= MAX_FREE_SPIN_TIMES; i++) {
-            String key = ROUND_PREFIX + i;
+        for (int i = 0; i < MAX_FREE_SPIN_TIMES; i++) {
+            String key = generateRoundKey(i);
             Map<String, ReelConfig> reelConfigMap = roundConfigMap.get(key);
             Assert.notNull(reelConfigMap, "roundConfigMap is null, roundName is " + key);
             validateReelConfigMap(reelConfigMap);
@@ -219,12 +212,22 @@ public class MariaMakilingConfig implements Serializable {
         // 必须有5列 并且是reel1 - reel5
         Assert.notNull(reelConfigMap);
         Assert.isTrue(reelConfigMap.size() == MAX_REEL_SIZE);
-        for (int i = 1; i <= MAX_REEL_SIZE; i++) {
-            String key = REEL_PREFIX + i;
+        for (int i = 0; i < MAX_REEL_SIZE; i++) {
+            String key = generateReelKey(i);
             ReelConfig reelConfig = reelConfigMap.get(key);
             Assert.notNull(reelConfig, "reelConfig is null, reelName is " + key);
             validateWeightMap(reelConfig.getSymbolWeights());
         }
+    }
+
+    private static String generateReelKey(int index) {
+        int reel = index + 1;
+        return REEL_PREFIX + reel;
+    }
+
+    private static String generateRoundKey(int index) {
+        int round = index + 1;
+        return ROUND_PREFIX + round;
     }
 
     private void validateWeightMap(Map<String, Long> weightMap) {
