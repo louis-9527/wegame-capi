@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class GameRecordTemplateCache extends AbstractCache {
 
     public GameRecordTemplateCache() {
-        super(CommonCacheEnvEnum.GAME_RECORD_TEMPLATE.cacheKeyPrefixName(), 180);
+        super(CommonCacheEnvEnum.GAME_RECORD_TEMPLATE.cacheKeyPrefixName(), 90 * 24 * 60 * 60);
     }
 
     @Override
