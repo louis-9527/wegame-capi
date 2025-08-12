@@ -28,7 +28,7 @@ import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_SCATTER;
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.CONST_1000000;
 import static com.wegame.capi.common.constants.GameConstants.*;
 
 @Slf4j
@@ -252,10 +252,12 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
     }
 
     public TreeMap<String, List<BigDecimal>> getProbabilisticConfig(boolean isFreeWheelFlag) {
-        int randomNumber = randomService.randomInt(CONST_1, CONST_100000);
-        TreeMap<String, Integer> weightConfigMap = mariaMakilingConfig.getWeightConfig(isFreeWheelFlag);
-        String configName = getConfigName(weightConfigMap, randomNumber);
-        log.info("configName:{}", configName);
-        return mariaMakilingConfig.getProbabilisticConfig().getWheelProbabilisticConfig().get(configName);
+//        int randomNumber = randomService.randomInt(CONST_1, CONST_100000);
+//        TreeMap<String, Integer> weightConfigMap = mariaMakilingConfig.getWeightConfig(isFreeWheelFlag);
+//        String configName = getConfigName(weightConfigMap, randomNumber);
+//        log.info("configName:{}", configName);
+//        return mariaMakilingConfig.getProbabilisticConfig().getWheelProbabilisticConfig().get(configName);
+        //todo
+        return null;
     }
 }

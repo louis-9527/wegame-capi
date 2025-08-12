@@ -1,11 +1,11 @@
 package com.wegame.capi.biz.domain;
 
 import io.swagger.annotations.ApiModel;
-import javafx.util.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
 

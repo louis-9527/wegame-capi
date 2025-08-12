@@ -226,15 +226,16 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
     }
 
     private Integer getFreeWheelNumber() {
-        int randomNumber = randomService.randomInt(1, 100);
-        int startVal = 0;
-        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(mariaMakilingConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
-            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-                return entry.getKey();
-            } else {
-                startVal += entry.getValue();
-            }
-        }
+//        int randomNumber = randomService.randomInt(1, 100);
+//        int startVal = 0;
+//        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(mariaMakilingConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
+//            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+//                return entry.getKey();
+//            } else {
+//                startVal += entry.getValue();
+//            }
+//        }
+        //todo
         throw new BusinessException(ErrorCode.ERR_INTER);
     }
 

@@ -4,8 +4,8 @@ import com.wegame.base.Validate;
 import com.wegame.base.domain.BaseRequest;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import javafx.util.Pair;
 import lombok.*;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
 
