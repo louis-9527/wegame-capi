@@ -42,6 +42,9 @@ public abstract class AbstractBetRecordTemplatePreLoadPostRunner implements Busi
      */
     protected abstract Map<String, MariaMakilingConfig.TemplateMultipleRange> getTemplateRangeConfigMap();
 
+    /**
+     * @return runner name
+     */
     protected abstract String getPostRunnerName();
 
     @Override
