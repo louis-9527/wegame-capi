@@ -78,7 +78,7 @@ public class MariaMakilingConfig implements Serializable {
         /**
          * TreeMap<元素ID，weight>
          */
-        private TreeMap<String, Long> symbolWeights;
+        private TreeMap<String, Integer> symbolWeights;
     }
 
     @Data
@@ -92,7 +92,7 @@ public class MariaMakilingConfig implements Serializable {
         /**
          * TreeMap<modeName，weight>
          */
-        private TreeMap<String, Long> modeWeights;
+        private TreeMap<String, Integer> modeWeights;
 
         /**
          * TreeMap<modeName, <reelName,ReelConfig>>
@@ -115,12 +115,12 @@ public class MariaMakilingConfig implements Serializable {
         /**
          * TreeMap<freeSpinTimes，weight>
          */
-        private TreeMap<String, Long> fgNumbersWeights;
+        private TreeMap<String, Integer> fgNumbersWeights;
 
         /**
          * TreeMap<modeName，weight>
          */
-        private TreeMap<String, Long> fgModeWeights;
+        private TreeMap<String, Integer> fgModeWeights;
 
         /**
          * TreeMap<modeName，<roundName,<reelName, reelConfig>>>
@@ -165,7 +165,7 @@ public class MariaMakilingConfig implements Serializable {
         validateWeightMap(mainGame.getModeWeights());
         // 2. 校验每个mode下的reel权重
         Assert.notNull(mainGame.getModeConfig());
-        for (Map.Entry<String, Long> entry : mainGame.getModeWeights().entrySet()) {
+        for (Map.Entry<String, Integer> entry : mainGame.getModeWeights().entrySet()) {
             if (entry.getValue() == 0) {
                 continue;
             }
@@ -185,7 +185,7 @@ public class MariaMakilingConfig implements Serializable {
         validateWeightMap(freeGame.getFgModeWeights());
         // 3. 校验 fgModeConfig
         Assert.notNull(freeGame.getFgModeConfig());
-        for (Map.Entry<String, Long> entry : freeGame.getFgModeWeights().entrySet()) {
+        for (Map.Entry<String, Integer> entry : freeGame.getFgModeWeights().entrySet()) {
             // 权重为0不去校验
             if (entry.getValue() == 0) {
                 continue;
@@ -230,9 +230,9 @@ public class MariaMakilingConfig implements Serializable {
         return ROUND_PREFIX + round;
     }
 
-    private void validateWeightMap(Map<String, Long> weightMap) {
+    private void validateWeightMap(Map<String, Integer> weightMap) {
         Long totalWeights = 0L;
-        for (Map.Entry<String, Long> entry : weightMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : weightMap.entrySet()) {
             Assert.isTrue(entry.getValue() >= 0, "weight can not be less than zero");
             totalWeights += entry.getValue();
         }
