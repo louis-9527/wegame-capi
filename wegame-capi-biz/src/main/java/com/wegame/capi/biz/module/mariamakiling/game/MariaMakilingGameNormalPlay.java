@@ -17,6 +17,7 @@ import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.Constants;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         // 根据投注类型：生成游戏滚轮
         switch (gamePlay.getBetType()) {
             case NORMAL_BET:
-                firstWheel = generateNormalWheel(gameInfo, getProbabilisticConfig(false));
+                firstWheel = generateNormalWheel(gameInfo);
                 break;
             case BUY_BET:
                 firstWheel = generateRewardFreeWheel(gameInfo, getProbabilisticConfig(false));
@@ -142,33 +143,55 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
      * @param gameInfo 游戏信息
      * @return 滚轮
      */
-    private WheelDo<SymbolDo> generateNormalWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig) {
-        SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-        // 生成整盘随机数(row*column)
-        List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
-        int randomNumberindex = 0;
-        for (int column = 0; column < gameInfo.getColumn(); column++) {
-            // 一列只能包含一个scatter
-            boolean hasScatter = false;
-            TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, probabilisticConfig);
-            for (int row = 0; row < gameInfo.getRow(); row++) {
-                Integer random = randomNumberList.get(randomNumberindex);
-                if (hasScatter) {
-                    // 生成非scatter
-                    SymbolDo symbolDo = randomNonScatterSymbol(random, gameInfo, columProbabilisticMap);
-                    symbolArr[row][column] = symbolDo;
-                } else {
-                    // 随机生成
-                    SymbolDo symbolDo = randomNormalSymbol(random, gameInfo, columProbabilisticMap);
-                    symbolArr[row][column] = symbolDo;
-                    hasScatter = symbolDo.isScatterSymbol();
-                }
-                randomNumberindex++;
-            }
+    private WheelDo<SymbolDo> generateNormalWheel(GameInfoDo gameInfo) {
+        // 选择轮盘model
+        TreeMap<String, Integer> modeWeights = mariaMakilingConfig.getMainGame().getModeWeights();
+        // 获取轮盘配置
+        SymbolDo[][] symbolArr = null;
+        while (symbolArr == null){
+            symbolArr = this.buildSymbol(gameInfo, modeWeights);
         }
         return WheelDo.<SymbolDo>builder()
                 .index(DEFAULT_WHEEL_INDEX)
                 .symbolArr(symbolArr).build();
+    }
+
+    private SymbolDo[][]  buildSymbol(GameInfoDo gameInfo, TreeMap<String, Integer> modeWeights){
+        String modelKey = this.randomKeyByWeight(modeWeights);
+        SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+        for (int column = 0; column < gameInfo.getColumn(); column++) {
+            // 一列只能包含一个scatter,出现一个以上则重新全部开始
+            boolean colum = this.buildColum(gameInfo, column, modelKey, symbolArr);
+            if(!colum){
+                return null;
+            }
+        }
+        return symbolArr;
+    }
+
+    private boolean buildColum(GameInfoDo gameInfo, int colum, String modelKey, SymbolDo[][] symbolArr) {
+        // 获取元素配置
+        TreeMap<String, Integer> symbolWeights = mariaMakilingConfig.getMainGame().getReelConfig(modelKey, colum).getSymbolWeights();
+        boolean hasScatter = false;
+        int row = gameInfo.getRow() - 1;
+        while (row >= 0) {
+            String[] symbolArray = this.randomKeyByWeight(symbolWeights).split(",");
+            for (int i = 0; i < symbolArray.length; i++) {
+                if (row < 0) {
+                    continue;
+                }
+                symbolArr[row][colum] = gameInfo.getSymbolById(symbolArray[i]);
+                if(symbolArr[row][colum].isScatterSymbol() && hasScatter){
+                    // 如果多个scatter
+                    return false;
+                }
+                if(symbolArr[row][colum].isScatterSymbol()){
+                    hasScatter = true;
+                }
+                row--;
+            }
+        }
+        return true;
     }
 
     /**
@@ -178,7 +201,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
      * @return 滚轮
      */
     private WheelDo<SymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo, TreeMap<String, List<BigDecimal>> probabilisticConfig) {
-        WheelDo<SymbolDo> wheelDo = generateNormalWheel(gameInfo, probabilisticConfig);
+        WheelDo<SymbolDo> wheelDo = generateNormalWheel(gameInfo);
         SymbolDo[][] symbolArr = wheelDo.getSymbolArr();
         // 生成整盘随机数(SCATTER_COLUM_INDEX_LIST.size())个
         List<Integer> randomNumberList = randomService.randomIntList(0, gameInfo.getRow() - 1, SCATTER_COLUM_INDEX_LIST.size());
@@ -222,7 +245,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         }
         for (int number = 1; number <= wheelNumber; number++) {
             // 生成整盘随机数(row*column)
-            List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000,  gameInfo.getRow() * gameInfo.getColumn());
+            List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000, gameInfo.getRow() * gameInfo.getColumn());
             int randomNumberIndex = 0;
             TreeMap<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(true);
             SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
