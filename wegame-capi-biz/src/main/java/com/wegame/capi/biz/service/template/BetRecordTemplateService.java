@@ -7,9 +7,11 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.template.BetRecordTemplateQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.BetRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.template.BetRecordTemplatePo;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -58,5 +60,10 @@ public class BetRecordTemplateService extends AbstractService {
                 .stream()
                 .map(BetRecordTemplatePo::getId)
                 .collect(Collectors.toList());
+    }
+
+    @CacheEvict(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+    public void evictListIdByMultipleRange(String multipleRangeStart, String multipleRangeEnd, TemplateTypeEnum typeEnum) {
+        // do nothing
     }
 }

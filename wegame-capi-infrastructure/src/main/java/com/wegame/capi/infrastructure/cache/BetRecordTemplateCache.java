@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component(CacheConstants.BET_RECORD_TEMPLATE)
 public class BetRecordTemplateCache extends AbstractMultiCache {
     public BetRecordTemplateCache() {
-        super(CommonCacheEnvEnum.BET_RECORD_TEMPLATE.cacheKeyPrefixName(), 10 * 60, 300, 20);
+        super(CommonCacheEnvEnum.BET_RECORD_TEMPLATE.cacheKeyPrefixName(), 90 * 24 * 60 * 60, 30 * 24 * 60 * 60, 1000);
     }
 
     @Override

@@ -1,10 +1,12 @@
 package com.wegame.capi.biz.listener;
 
+import com.google.common.collect.Lists;
 import com.wegame.base.exception.LockException;
 import com.wegame.base.lock.DistributeLock;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.api.SingleWalletFreeSpinApi;
 import com.wegame.capi.api.promotion.BagApi;
+import com.wegame.capi.biz.listener.runner.BusinessPostRunner;
 import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.UserService;
@@ -75,6 +77,8 @@ public class AppLaunchPostProcessor {
     PoolingHttpClientConnectionManager freeSpinConnectionManager;
     @Autowired
     PoolingHttpClientConnectionManager promotionConnectionManager;
+    @Autowired
+    List<BusinessPostRunner> businessPostRunners = Lists.newArrayList();
 
     @Async(defaultThreadPoolExecutor)
     public void postProcess() {
@@ -83,6 +87,8 @@ public class AppLaunchPostProcessor {
         //        buildUserIdCache();
         //        initDomainConnections();
         //        healthCheck();
+        // 业务后处理runner
+        businessPostRunners.forEach(BusinessPostRunner::run);
     }
 
     private void businessWarmUp() {

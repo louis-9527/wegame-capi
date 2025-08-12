@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.template.GameRecordTemplatePo;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.stereotype.Service;
@@ -35,5 +36,10 @@ public class GameRecordTemplateService<T> extends AbstractService {
                         GameRecordTemplatePo.class,
                         typeEnum.getGameRecordTemplateCollectionName());
         return poToDoList(poList);
+    }
+
+    @CacheEvict(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betRecordId")
+    public void evictListByBetRecordId(Long betRecordId, TemplateTypeEnum typeEnum) {
+        // do nothing
     }
 }
