@@ -28,9 +28,7 @@ public class GameRecordTemplateService<T> extends AbstractService {
         bulkOps.execute();
         return true;
     }
-
-    // todo redis 缓存
-//    @Cacheable(value = CacheConstants.OPERATION_EVENT_CONFIG, key = "#typeEnum.name() + '_' + #betRecordId")
+    @Cacheable(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betRecordId")
     public List<GameRecordTemplateDo> listByBetRecordId(Long betRecordId, TemplateTypeEnum typeEnum) {
         List<GameRecordTemplatePo> poList = getMongoTemplate(typeEnum.getGameType())
                 .find(GameRecordRecordQueryBuilder.buildQuery(betRecordId),
