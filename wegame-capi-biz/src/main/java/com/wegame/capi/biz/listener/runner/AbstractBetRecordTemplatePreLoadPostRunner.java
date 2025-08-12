@@ -9,9 +9,7 @@ import com.wegame.capi.biz.service.template.GameRecordTemplateService;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.jcajce.provider.digest.Tiger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
