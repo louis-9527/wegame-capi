@@ -177,7 +177,7 @@ public class MariaMakilingConfig implements Serializable {
                 continue;
             }
             Map<String, ReelConfig> reelConfigMap = mainGame.getModeConfig().get(entry.getKey());
-            Assert.notNull(reelConfigMap, "reelConfigMap is null");
+            Assert.notNull(reelConfigMap, "reelConfigMap is null, modeName is " + entry.getKey());
             validateReelConfigMap(reelConfigMap);
         }
     }
@@ -198,7 +198,7 @@ public class MariaMakilingConfig implements Serializable {
                 continue;
             }
             TreeMap<String, TreeMap<String, ReelConfig>> roundConfig = freeGame.getFgModeConfig().get(entry.getKey());
-            Assert.notNull(roundConfig, "roundConfig is null");
+            Assert.notNull(roundConfig, "roundConfig is null, modeName is " + entry.getKey());
             validateRoundConfig(roundConfig);
         }
     }
@@ -210,7 +210,7 @@ public class MariaMakilingConfig implements Serializable {
         for (int i = 1; i <= MAX_FREE_SPIN_TIMES; i++) {
             String key = ROUND_PREFIX + i;
             Map<String, ReelConfig> reelConfigMap = roundConfigMap.get(key);
-            Assert.notNull(reelConfigMap, "roundConfigMap is null");
+            Assert.notNull(reelConfigMap, "roundConfigMap is null, roundName is " + key);
             validateReelConfigMap(reelConfigMap);
         }
     }
@@ -222,7 +222,7 @@ public class MariaMakilingConfig implements Serializable {
         for (int i = 1; i <= MAX_REEL_SIZE; i++) {
             String key = REEL_PREFIX + i;
             ReelConfig reelConfig = reelConfigMap.get(key);
-            Assert.notNull(reelConfig, "reelConfig is null");
+            Assert.notNull(reelConfig, "reelConfig is null, reelName is " + key);
             validateWeightMap(reelConfig.getSymbolWeights());
         }
     }
