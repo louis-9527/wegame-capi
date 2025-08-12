@@ -58,6 +58,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+
         MariaMakilingConfig.TemplateMultipleRange templateConfig = getTemplateConfig();
         AssertUtil.assertNotNull(templateConfig, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateConfig.getMultipleRangeStart(), ErrorCode.ERR_INTER);

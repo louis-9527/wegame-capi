@@ -108,7 +108,7 @@ public class MariaMakilingConfig implements Serializable {
     public static class TemplateMultipleRange implements Serializable {
         private static final long serialVersionUID = -734841249803450751L;
         /**
-         * 倍数区间开始
+         * 倍数区间开始 todo 修改为Bigdeceimal
          */
         private String multipleRangeStart;
         /**
