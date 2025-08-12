@@ -220,12 +220,12 @@ public class MariaMakilingConfig implements Serializable {
         }
     }
 
-    private static String generateReelKey(int index) {
+    public static String generateReelKey(int index) {
         int reel = index + 1;
         return REEL_PREFIX + reel;
     }
 
-    private static String generateRoundKey(int index) {
+    public static String generateRoundKey(int index) {
         int round = index + 1;
         return ROUND_PREFIX + round;
     }
