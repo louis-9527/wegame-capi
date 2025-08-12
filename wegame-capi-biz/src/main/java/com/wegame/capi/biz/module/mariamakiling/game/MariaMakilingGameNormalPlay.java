@@ -16,6 +16,7 @@ import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -259,5 +260,40 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
 //        return mariaMakilingConfig.getProbabilisticConfig().getWheelProbabilisticConfig().get(configName);
         //todo
         return null;
+    }
+
+    /**
+     * 根据权重随机key
+     *
+     * @param map 索引值 权重
+     * @return 索引值
+     */
+    private <T> T randomKeyByWeight(Map<T, Integer> map, Integer totalWeight) {
+        int mapSize = map.size();
+        AssertUtil.assertTrue(mapSize > 0, ErrorCode.ERR_INTER, "weight map size is less than 1");
+        AssertUtil.assertTrue(totalWeight > 0, ErrorCode.ERR_INTER, "total weight is less than 1");
+        if (mapSize > 1 && totalWeight > 1) {
+            int randomNumber = randomService.randomInt(Constants.CONST_1, totalWeight);
+            int startVal = 0;
+            for (Map.Entry<T, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+                if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+                    return entry.getKey();
+                } else {
+                    startVal += entry.getValue();
+                }
+            }
+        } else {
+            return map.entrySet().stream()
+                    .filter(e -> e.getValue() > 0)
+                    .findFirst()
+                    .map(Map.Entry::getKey)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER, "random key generation failed"));
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER, "random key generation failed");
+    }
+
+    private <T> T randomKeyByWeight(Map<T, Integer> map) {
+        int totalWeights = map.values().stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum();
+        return randomKeyByWeight(map, totalWeights);
     }
 }
