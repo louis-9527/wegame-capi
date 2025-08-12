@@ -46,8 +46,7 @@ public class BetRecordTemplateService extends AbstractService {
         return true;
     }
 
-    // todo 缓存 + 预加载(抢到分布式锁的服务redis缓存和本地缓存)
-    @Cacheable(value = CacheConstants.OPERATION_EVENT_CONFIG, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(String multipleRangeStart, String multipleRangeEnd, TemplateTypeEnum typeEnum) {
         Query query = BetRecordTemplateQueryBuilder.buildQuery(multipleRangeStart, multipleRangeEnd);
         String betRecordTemplateCollectionName = typeEnum.getBetRecordTemplateCollectionName();
