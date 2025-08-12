@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public abstract class AbstractBetRecordTemplatePreLoadPostRunner implements BusinessPostRunner {
-    private static final String MESSAGE_FORMAT = "%s,投注模版预加载失败,模版倍率范围：%s，投注失败";
+    private static final String MESSAGE_FORMAT = "%s,投注模版预加载失败,模版倍率范围：%s";
     @Value("${spring.application.name}")
     private String appName;
     @Value("${spring.application.env}")
