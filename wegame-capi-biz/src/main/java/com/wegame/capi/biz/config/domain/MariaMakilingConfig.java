@@ -20,6 +20,15 @@ import java.util.TreeMap;
 public class MariaMakilingConfig implements Serializable {
 
     private static final long serialVersionUID = -7867808743045979621L;
+
+    public static final String REEL_PREFIX = "reel";
+
+    public static final String ROUND_PREFIX = "Round";
+
+    private static final Integer MAX_REEL_SIZE = 5;
+
+    private static final Integer MAX_FREE_SPIN_TIMES = 13;
+
     /**
      * 中奖最大倍数
      */
@@ -29,8 +38,14 @@ public class MariaMakilingConfig implements Serializable {
      */
     private OddsConfig oddsConfig;
 
+    /**
+     * 首轮游戏配置
+     */
     private MainGame mainGame;
 
+    /**
+     * 免费游戏配置
+     */
     private FreeGame freeGame;
 
     /**
@@ -73,6 +88,7 @@ public class MariaMakilingConfig implements Serializable {
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
     public static class MainGame implements Serializable {
+        private static final long serialVersionUID = 6797290129033623348L;
         /**
          * TreeMap<modeName，weight>
          */
@@ -91,6 +107,7 @@ public class MariaMakilingConfig implements Serializable {
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
     public static class FreeGame implements Serializable {
+        private static final long serialVersionUID = 6151000233708276160L;
         /**
          * TreeMap<freeSpinTimes，weight>
          */
@@ -143,7 +160,80 @@ public class MariaMakilingConfig implements Serializable {
     public void validate() {
         rewardMaxMultipleValidate();
         oddsConfigValidate();
+        validateMainGame();
+        validateFreeGame();
         templateRangeConfigMapValidate();
+    }
+
+    private void validateMainGame() {
+        Assert.notNull(mainGame);
+        // 1. 校验权重 : modeWeights
+        Assert.notNull(mainGame.getModeWeights());
+        validateWeightMap(mainGame.getModeWeights());
+        // 2. 校验每个mode下的reel权重
+        Assert.notNull(mainGame.getModeConfig());
+        for (Map.Entry<String, Long> entry : mainGame.getModeWeights().entrySet()) {
+            if (entry.getValue() == 0) {
+                continue;
+            }
+            Map<String, ReelConfig> reelConfigMap = mainGame.getModeConfig().get(entry.getKey());
+            Assert.notNull(reelConfigMap, "reelConfigMap is null");
+            validateReelConfigMap(reelConfigMap);
+        }
+    }
+
+    private void validateFreeGame() {
+        Assert.notNull(freeGame);
+        // 1. 校验权重 : fgNumbersWeights
+        Assert.notNull(freeGame.getFgNumbersWeights());
+        validateWeightMap(freeGame.getFgNumbersWeights());
+        // 2. 校验权重 : fgModeWeights
+        Assert.notNull(freeGame.getFgModeWeights());
+        validateWeightMap(freeGame.getFgModeWeights());
+        // 3. 校验 fgModeConfig
+        Assert.notNull(freeGame.getFgModeConfig());
+        for (Map.Entry<String, Long> entry : freeGame.getFgModeWeights().entrySet()) {
+            // 权重为0不去校验
+            if (entry.getValue() == 0) {
+                continue;
+            }
+            TreeMap<String, TreeMap<String, ReelConfig>> roundConfig = freeGame.getFgModeConfig().get(entry.getKey());
+            Assert.notNull(roundConfig, "roundConfig is null");
+            validateRoundConfig(roundConfig);
+        }
+    }
+
+    private void validateRoundConfig(TreeMap<String, TreeMap<String, ReelConfig>> roundConfigMap) {
+        // 必须有13项 并且是Round1 - Round13
+        Assert.notNull(roundConfigMap);
+        Assert.isTrue(roundConfigMap.size() == MAX_FREE_SPIN_TIMES);
+        for (int i = 1; i <= MAX_FREE_SPIN_TIMES; i++) {
+            String key = ROUND_PREFIX + i;
+            Map<String, ReelConfig> reelConfigMap = roundConfigMap.get(key);
+            Assert.notNull(reelConfigMap, "roundConfigMap is null");
+            validateReelConfigMap(reelConfigMap);
+        }
+    }
+
+    private void validateReelConfigMap(Map<String, ReelConfig> reelConfigMap) {
+        // 必须有5列 并且是reel1 - reel5
+        Assert.notNull(reelConfigMap);
+        Assert.isTrue(reelConfigMap.size() == MAX_REEL_SIZE);
+        for (int i = 1; i <= MAX_REEL_SIZE; i++) {
+            String key = REEL_PREFIX + i;
+            ReelConfig reelConfig = reelConfigMap.get(key);
+            Assert.notNull(reelConfig, "reelConfig is null");
+            validateWeightMap(reelConfig.getSymbolWeights());
+        }
+    }
+
+    private void validateWeightMap(Map<String, Long> weightMap) {
+        Long totalWeights = 0L;
+        for (Map.Entry<String, Long> entry : weightMap.entrySet()) {
+            Assert.isTrue(entry.getValue() >= 0, "weight can not be less than zero");
+            totalWeights += entry.getValue();
+        }
+        Assert.isTrue(totalWeights > 0, "weight must be greater than zero");
     }
 
     private void rewardMaxMultipleValidate() {
