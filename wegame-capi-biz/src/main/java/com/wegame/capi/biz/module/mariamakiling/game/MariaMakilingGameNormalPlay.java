@@ -16,7 +16,6 @@ import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,36 +219,51 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         if (wheelNumber == 0) {
             return wheels;
         }
-        for (int number = 1; number <= wheelNumber; number++) {
+        for (int index = 0; index < wheelNumber; index++) {
             // 生成整盘随机数(row*column)
-            List<Integer> randomNumberList = randomService.randomIntList(1, CONST_1000000,  gameInfo.getRow() * gameInfo.getColumn());
-            int randomNumberIndex = 0;
-            TreeMap<String, List<BigDecimal>> probabilisticConfig = getProbabilisticConfig(true);
-            SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
-            for (int column = 0; column < gameInfo.getColumn(); column++) {
-                // 当前列元素概率
-                TreeMap<String, Integer> columProbabilisticMap = buildColumProbabilisticMap(column, probabilisticConfig);
-                for (int row = 0; row < gameInfo.getRow(); row++) {
-                    if (Objects.nonNull(wildSymbolArr[row][column])) {
-                        // 当前坐标对应元素为wild
-                        symbolArr[row][column] = wildSymbolArr[row][column];
-                    } else {
-                        // 当前坐标对应元素为wild，重新生成(非Scatter)元素
-                        SymbolDo symbolDo = randomNonScatterSymbol(randomNumberList.get(randomNumberIndex), gameInfo, columProbabilisticMap);
-                        symbolArr[row][column] = symbolDo;
-                        if (symbolDo.isWildSymbol()) {
-                            wildSymbolArr[row][column] = symbolDo;
-                        }
-                    }
-                    randomNumberIndex++;
-                }
-            }
+            SymbolDo[][] symbolArr = generateWithWild(gameInfo, wildSymbolArr, wheelNumber);
             wheels.add(WheelDo.<SymbolDo>builder()
-                    .index(number)
+                    .index(index)
                     .symbolArr(symbolArr)
                     .build());
         }
         return wheels;
+    }
+
+    private SymbolDo[][] generateWithWild(GameInfoDo gameInfo, SymbolDo[][] wildSymbolArr, int freeSpinIndex) {
+        SymbolDo[][] symbolArr = null;
+        do {
+            String modeName = randomService.randomKeyByWeight(mariaMakilingConfig.getMainGame().getModeWeights());
+            symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
+            for (int i = 0; i < gameInfo.getColumn(); i++) {
+                generateColumnWithWild(modeName, freeSpinIndex, i, symbolArr, wildSymbolArr);
+            }
+        } while (!validateSymbolArr(symbolArr));
+        rebuildWildSymbolArr(gameInfo, wildSymbolArr, symbolArr);
+        return symbolArr;
+    }
+
+    private void rebuildWildSymbolArr(GameInfoDo gameInfo, SymbolDo[][] wildSymbolArr, SymbolDo[][] currentSymbolArr) {
+        for (int i = 0; i < gameInfo.getColumn(); i++) {
+            for (int j = 0; j < gameInfo.getRow(); j++) {
+                if (currentSymbolArr[i][j].isWildSymbol()) {
+                    wildSymbolArr[j][i] = currentSymbolArr[j][i];
+                }
+            }
+        }
+    }
+
+    private boolean validateSymbolArr(SymbolDo[][] symbolArr) {
+        return true;
+    }
+
+    private void generateColumnWithWild(String modeName, int freeSpinIndex, int column, SymbolDo[][] symbolArr, SymbolDo[][] wildSymbolArr) {
+        MariaMakilingConfig.ReelConfig reelConfig = mariaMakilingConfig.getFreeGame().getReelConfig(modeName, freeSpinIndex, column);
+        LinkedList<String> symbolList = new LinkedList<>();
+    }
+
+    private void fillSymbolList(MariaMakilingConfig.ReelConfig reelConfig, LinkedList<String> symbolList) {
+
     }
 
     public TreeMap<String, List<BigDecimal>> getProbabilisticConfig(boolean isFreeWheelFlag) {
@@ -260,40 +274,5 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
 //        return mariaMakilingConfig.getProbabilisticConfig().getWheelProbabilisticConfig().get(configName);
         //todo
         return null;
-    }
-
-    /**
-     * 根据权重随机key
-     *
-     * @param map 索引值 权重
-     * @return 索引值
-     */
-    private <T> T randomKeyByWeight(Map<T, Integer> map, Integer totalWeight) {
-        int mapSize = map.size();
-        AssertUtil.assertTrue(mapSize > 0, ErrorCode.ERR_INTER, "weight map size is less than 1");
-        AssertUtil.assertTrue(totalWeight > 0, ErrorCode.ERR_INTER, "total weight is less than 1");
-        if (mapSize > 1 && totalWeight > 1) {
-            int randomNumber = randomService.randomInt(Constants.CONST_1, totalWeight);
-            int startVal = 0;
-            for (Map.Entry<T, Integer> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
-                if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-                    return entry.getKey();
-                } else {
-                    startVal += entry.getValue();
-                }
-            }
-        } else {
-            return map.entrySet().stream()
-                    .filter(e -> e.getValue() > 0)
-                    .findFirst()
-                    .map(Map.Entry::getKey)
-                    .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER, "random key generation failed"));
-        }
-        throw new BusinessException(ErrorCode.ERR_INTER, "random key generation failed");
-    }
-
-    private <T> T randomKeyByWeight(Map<T, Integer> map) {
-        int totalWeights = map.values().stream().filter(Objects::nonNull).mapToInt(Integer::intValue).sum();
-        return randomKeyByWeight(map, totalWeights);
     }
 }

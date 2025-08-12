@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
@@ -226,17 +225,8 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
     }
 
     private Integer getFreeWheelNumber() {
-//        int randomNumber = randomService.randomInt(1, 100);
-//        int startVal = 0;
-//        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(mariaMakilingConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
-//            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-//                return entry.getKey();
-//            } else {
-//                startVal += entry.getValue();
-//            }
-//        }
-        //todo
-        throw new BusinessException(ErrorCode.ERR_INTER);
+        String key = randomService.randomKeyByWeight(mariaMakilingConfig.getFreeGame().getFgNumbersWeights());
+        return Integer.parseInt(key);
     }
 
     private void validate(RewardHandleDo<SymbolDo> rewardHandle) {
