@@ -264,7 +264,7 @@ public class MariaMakilingConfig implements Serializable {
             Assert.isTrue(entry.getValue() >= 0, "weight can not be less than zero");
             totalWeights += entry.getValue();
         }
-        Assert.isTrue(totalWeights > 0, "weight must be greater than zero");
+        Assert.isTrue(totalWeights > 0, "total weight must be greater than zero");
     }
 
     private void rewardMaxMultipleValidate() {
