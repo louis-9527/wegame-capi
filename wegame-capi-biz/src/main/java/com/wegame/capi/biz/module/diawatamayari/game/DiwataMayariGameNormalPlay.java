@@ -67,7 +67,10 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                 break;
             // 购买投注
             case BUY_BET:
-                wheel = generateRewardFreeWheel(false);
+                wheel = null;
+                while (wheel == null) {
+                    wheel = generateRewardFreeWheel(false);
+                }
                 break;
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "NOT SUPPORT");
@@ -248,11 +251,12 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                 }
             }
         }
+        if (indexList.size() < needAddCount) {
+            return null;
+        }
         // indexList 中随机取 needAddCount 个坐标 替换为scatter
         Collections.shuffle(indexList, new Random());
-        // 计算循环次数,极限情况下needAddCount 可能会大于indexList.size()
-        int loopCount = Math.min(needAddCount, indexList.size());
-        for (int i = 0; i < loopCount; i++) {
+        for (int i = 0; i < needAddCount; i++) {
             IndexDo indexDo = indexList.get(i);
             DiwataMayariSymbolDo[][] symbolArr1 = wheel.getSymbolArr();
             symbolArr1[indexDo.getRowIndex()][indexDo.getColumnIndex()] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_SCATTER);
@@ -306,7 +310,7 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                     // 重新生成非 棒子元素
                     SymbolDo symbolDoNoSword = this.randomNonWildSymbol(randomNumber, columProbabilisticMap);
                     symbolArr[row][column] = DiwataMayariSymbolDo.buildFromSymbol(symbolDoNoSword);
-                }else {
+                } else {
                     symbolArr[row][column].setMain(true);
                 }
                 continue;
