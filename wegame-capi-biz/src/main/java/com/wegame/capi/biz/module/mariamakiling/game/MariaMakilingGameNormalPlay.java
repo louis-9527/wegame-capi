@@ -205,7 +205,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
      */
     private WheelDo<SymbolDo> generateRewardFreeWheel(GameInfoDo gameInfo) {
         // 选择轮盘model
-        TreeMap<String, Integer> modeWeights = mariaMakilingConfig.getFreeGame().getFgModeWeights();
+        TreeMap<String, Integer> modeWeights = mariaMakilingConfig.getFreeGame().getBuyFgStartMapWeights();
         // 获取轮盘配置
         SymbolDo[][] symbolArr = null;
         while (symbolArr == null) {
