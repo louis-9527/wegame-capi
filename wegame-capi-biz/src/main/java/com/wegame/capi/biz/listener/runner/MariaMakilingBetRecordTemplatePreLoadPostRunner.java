@@ -23,8 +23,8 @@ public class MariaMakilingBetRecordTemplatePreLoadPostRunner extends AbstractBet
     }
 
     @Override
-    protected Map<String, MariaMakilingConfig.TemplateMultipleRange> getTemplateRangeConfigMap() {
-        return mariaMakilingConfig.getTemplateRangeConfigMap();
+    protected MariaMakilingConfig.TemplateRangeConfig getTemplateRangeConfigMap() {
+        return mariaMakilingConfig.getTemplateRangeConfig();
     }
 
     @Override

@@ -20,16 +20,14 @@ import com.wegame.capi.biz.service.template.BetRecordTemplateService;
 import com.wegame.capi.biz.service.template.GameRecordTemplateService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
@@ -59,11 +57,11 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
 
-        MariaMakilingConfig.TemplateMultipleRange templateConfig = getTemplateConfig();
+        MariaMakilingConfig.TemplateMultipleRange templateConfig = getTemplateConfig(gamePlay.getBetType());
         AssertUtil.assertNotNull(templateConfig, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateConfig.getMultipleRangeStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateConfig.getMultipleRangeEnd(), ErrorCode.ERR_INTER);
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange("0", "0", MARIA_MAKILING);
+        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(gamePlay.getBetType(), templateConfig.getMultipleRangeStart(), templateConfig.getMultipleRangeEnd(), MARIA_MAKILING);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         List<GameRecordTemplateDo> configRecordList = gameRecordTemplateService.listByBetRecordId(betRecordId, MARIA_MAKILING);
@@ -152,9 +150,14 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         });
     }
 
-    private MariaMakilingConfig.TemplateMultipleRange getTemplateConfig() {
+    private MariaMakilingConfig.TemplateMultipleRange getTemplateConfig(BetTypeEnum betTypeEnum) {
         int randomNumber = randomService.randomInt(CONST_1, CONST_100000);
-        Map<String, MariaMakilingConfig.TemplateMultipleRange> templateRangeConfigMap = mariaMakilingConfig.getTemplateRangeConfigMap();
+        Map<String, MariaMakilingConfig.TemplateMultipleRange> templateRangeConfigMap;
+        if (Objects.equals(betTypeEnum, BetTypeEnum.NORMAL_BET)) {
+            templateRangeConfigMap =  mariaMakilingConfig.getTemplateRangeConfig().getMainGame();
+        } else {
+            templateRangeConfigMap =  mariaMakilingConfig.getTemplateRangeConfig().getFreeGame();
+        }
         int startVal = 0;
         for (Map.Entry<String, MariaMakilingConfig.TemplateMultipleRange> entry : CollectionUtils.emptyIfNull(templateRangeConfigMap.entrySet())) {
             int i = NumberUtil.mul(new BigDecimal(entry.getKey()), new BigDecimal(CONST_100000)).intValue();

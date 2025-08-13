@@ -52,7 +52,7 @@ public class MariaMakilingConfig implements Serializable {
     /**
      * 模板配置
      */
-    private Map<String, TemplateMultipleRange> templateRangeConfigMap;
+    private TemplateRangeConfig templateRangeConfig;
 
     @Data
     @ToString
@@ -156,10 +156,28 @@ public class MariaMakilingConfig implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = -734841249803450751L;
+        /**
+         * 主游戏模板配置
+         */
+        private Map<String, TemplateMultipleRange> mainGame;
+        /**
+         * 免费游戏模板配置
+         */
+        private Map<String, TemplateMultipleRange> freeGame;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
     public static class TemplateMultipleRange implements Serializable {
         private static final long serialVersionUID = -734841249803450751L;
         /**
-         * 倍数区间开始 todo 修改为Bigdeceimal
+         * 倍数区间开始
          */
         private BigDecimal multipleRangeStart;
         /**

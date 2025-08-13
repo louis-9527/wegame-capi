@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.template.BetRecordTemplateQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.BetRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
@@ -18,6 +19,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -48,9 +50,9 @@ public class BetRecordTemplateService extends AbstractService {
         return true;
     }
 
-    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
-    public List<Long> listIdByMultipleRange(String multipleRangeStart, String multipleRangeEnd, TemplateTypeEnum typeEnum) {
-        Query query = BetRecordTemplateQueryBuilder.buildQuery(multipleRangeStart, multipleRangeEnd);
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betTypeEnum.code() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+    public List<Long> listIdByMultipleRange(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, TemplateTypeEnum typeEnum) {
+        Query query = BetRecordTemplateQueryBuilder.buildQuery(betTypeEnum, multipleRangeStart, multipleRangeEnd);
         String betRecordTemplateCollectionName = typeEnum.getBetRecordTemplateCollectionName();
         MongoTemplate mongoTemplate = getMongoTemplate(typeEnum.getGameType());
         // 1. 先查询为 ObjectId 类型的列表
@@ -63,7 +65,7 @@ public class BetRecordTemplateService extends AbstractService {
     }
 
     @CacheEvict(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
-    public void evictListIdByMultipleRange(String multipleRangeStart, String multipleRangeEnd, TemplateTypeEnum typeEnum) {
+    public void evictListIdByMultipleRange(BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, TemplateTypeEnum typeEnum) {
         // do nothing
     }
 }
