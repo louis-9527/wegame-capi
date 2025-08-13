@@ -285,7 +285,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
 
 
     private boolean generateColumnWithWild(GameInfoDo gameInfo, String modeName, int freeSpinIndex, int column, SymbolDo[][] symbolArr, SymbolDo[][] wildSymbolArr) {
-        MariaMakilingConfig.ReelConfig reelConfig = mariaMakilingConfig.getFreeGame().getReelConfig(modeName, freeSpinIndex, column);
+        MariaMakilingConfig.ReelConfig reelConfig = mariaMakilingConfig.getFreeGame().getFreeGameReelConfig(modeName, freeSpinIndex, column);
         boolean hasScatter = false;
         int row = gameInfo.getRow() - 1;
         while (row >= 0) {

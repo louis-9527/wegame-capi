@@ -113,6 +113,19 @@ public class MariaMakilingConfig implements Serializable {
     @EqualsAndHashCode(callSuper = false)
     public static class FreeGame implements Serializable {
         private static final long serialVersionUID = 6151000233708276160L;
+
+        /**
+         * 免费轮首轮权重
+         * TreeMap<modeName，weight>
+         */
+        private TreeMap<String, Integer> buyFgStartMapWeights;
+
+        /**
+         * 免费轮首轮配置
+         * TreeMap<modeName，<reelName,reelConfig>>
+         */
+        private TreeMap<String, TreeMap<String, ReelConfig>> buyFgStartMapConfig;
+
         /**
          * TreeMap<freeSpinTimes，weight>
          */
@@ -128,8 +141,12 @@ public class MariaMakilingConfig implements Serializable {
          */
         private TreeMap<String, TreeMap<String, TreeMap<String, ReelConfig>>> fgModeConfig;
 
-        public ReelConfig getReelConfig(String modeName, int freeSpinIndex, int reelIndex) {
+        public ReelConfig getFreeGameReelConfig(String modeName, int freeSpinIndex, int reelIndex) {
             return fgModeConfig.get(modeName).get(generateRoundKey(freeSpinIndex)).get(generateReelKey(reelIndex));
+        }
+
+        public ReelConfig getFreeGameStartReelConfig(String modeName, int reelIndex) {
+            return buyFgStartMapConfig.get(modeName).get(generateReelKey(reelIndex));
         }
     }
 
@@ -184,7 +201,7 @@ public class MariaMakilingConfig implements Serializable {
         // 2. 校验权重 : fgModeWeights
         Assert.notNull(freeGame.getFgModeWeights());
         validateWeightMap(freeGame.getFgModeWeights());
-        // 3. 校验 fgModeConfig
+        // 3. 校验 fgModeConfig 按round校验
         Assert.notNull(freeGame.getFgModeConfig());
         for (Map.Entry<String, Integer> entry : freeGame.getFgModeWeights().entrySet()) {
             // 权重为0不去校验
@@ -194,6 +211,21 @@ public class MariaMakilingConfig implements Serializable {
             TreeMap<String, TreeMap<String, ReelConfig>> roundConfig = freeGame.getFgModeConfig().get(entry.getKey());
             Assert.notNull(roundConfig, "roundConfig is null, modeName is " + entry.getKey());
             validateRoundConfig(roundConfig);
+        }
+
+        // 4. 校验 buyFgStartMapWeights
+        Assert.notNull(freeGame.getBuyFgStartMapWeights());
+        validateWeightMap(freeGame.getBuyFgStartMapWeights());
+
+        // 5. 校验 buyFgStartMapConfig - 按行校验
+        Assert.notNull(freeGame.getBuyFgStartMapConfig());
+        for (Map.Entry<String, Integer> entry : freeGame.getBuyFgStartMapWeights().entrySet()) {
+            if (entry.getValue() == 0) {
+                continue;
+            }
+            Map<String, ReelConfig> reelConfigMap = freeGame.getBuyFgStartMapConfig().get(entry.getKey());
+            Assert.notNull(reelConfigMap, "reelConfigMap is null, modeName is " + entry.getKey());
+            validateReelConfigMap(reelConfigMap);
         }
     }
 
