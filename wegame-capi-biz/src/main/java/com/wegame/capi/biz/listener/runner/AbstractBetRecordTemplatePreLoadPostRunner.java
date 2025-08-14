@@ -87,7 +87,7 @@ public abstract class AbstractBetRecordTemplatePreLoadPostRunner implements Busi
         TemplateTypeEnum templateType = this.getTemplateType();
         try {
             // 投注记录模版缓存 先失效，再加载
-            betRecordTemplateService.evictListIdByMultipleRange(templateMultipleRange.getMultipleRangeStart(), templateMultipleRange.getMultipleRangeEnd(), templateType);
+            betRecordTemplateService.evictListIdByMultipleRange(betTypeEnum, templateMultipleRange.getMultipleRangeStart(), templateMultipleRange.getMultipleRangeEnd(), templateType);
             List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(betTypeEnum, templateMultipleRange.getMultipleRangeStart(), templateMultipleRange.getMultipleRangeEnd(), templateType);
             if (CollectionUtil.isNotEmpty(betRecordTemplateIdList)) {
                 // gameRecord模版缓存 先失效，再加载

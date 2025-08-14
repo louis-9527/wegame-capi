@@ -8,7 +8,6 @@ import com.wegame.capi.biz.builder.template.BetRecordTemplateQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.BetRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.template.BetRecordTemplatePo;
@@ -64,8 +63,8 @@ public class BetRecordTemplateService extends AbstractService {
                 .collect(Collectors.toList());
     }
 
-    @CacheEvict(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
-    public void evictListIdByMultipleRange(BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, TemplateTypeEnum typeEnum) {
+    @CacheEvict(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betTypeEnum.code() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+    public void evictListIdByMultipleRange(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, TemplateTypeEnum typeEnum) {
         // do nothing
     }
 }
