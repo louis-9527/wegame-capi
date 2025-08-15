@@ -252,17 +252,20 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         if (wheelNumber == 0) {
             return wheels;
         }
+        TreeMap<String, Integer> weightMap = Objects.equals(BetTypeEnum.BUY_BET.getCode(), gamePlay.getBetType().getCode()) ?
+                mariaMakilingConfig.getFreeGame().getBuyFgModeWeights() : mariaMakilingConfig.getFreeGame().getFgModeWeights();
+        String modeName = randomService.randomKeyByWeight(weightMap);
         for (int index = 0; index < wheelNumber; index++) {
             // 生成整盘随机数(row*column)
-            wheels.add(generateWheelWithWild(gameInfo, gamePlay, index, wildSymbolArr));
+            wheels.add(generateWheelWithWild(gameInfo, modeName, index, wildSymbolArr));
         }
         return wheels;
     }
 
-    private WheelDo<SymbolDo> generateWheelWithWild(GameInfoDo gameInfo, GamePlayDo gamePlay, int freeSpinIndex, SymbolDo[][] wildSymbolArr) {
+    private WheelDo<SymbolDo> generateWheelWithWild(GameInfoDo gameInfo, String modeName, int freeSpinIndex, SymbolDo[][] wildSymbolArr) {
         SymbolDo[][] symbolArr = null;
         while (symbolArr == null) {
-            symbolArr = this.generateWithWild(gameInfo, gamePlay, freeSpinIndex, wildSymbolArr);
+            symbolArr = this.generateWithWild(gameInfo, modeName, freeSpinIndex, wildSymbolArr);
         }
         rebuildWildSymbolArr(gameInfo, wildSymbolArr, symbolArr);
         // index 为当前免费轮的index + 1
@@ -283,10 +286,7 @@ public class MariaMakilingGameNormalPlay extends AbstractGame<MariaMakilingGameR
         }
     }
 
-    private SymbolDo[][] generateWithWild(GameInfoDo gameInfo, GamePlayDo gamePlay, int freeSpinIndex, SymbolDo[][] wildSymbolArr) {
-        TreeMap<String, Integer> weightMap = Objects.equals(BetTypeEnum.BUY_BET.getCode(), gamePlay.getBetType().getCode()) ?
-                mariaMakilingConfig.getFreeGame().getBuyFgModeWeights() : mariaMakilingConfig.getFreeGame().getFgModeWeights();
-        String modeName = randomService.randomKeyByWeight(weightMap);
+    private SymbolDo[][] generateWithWild(GameInfoDo gameInfo, String modeName, int freeSpinIndex, SymbolDo[][] wildSymbolArr) {
         SymbolDo[][] symbolArr = new SymbolDo[gameInfo.getRow()][gameInfo.getColumn()];
         for (int column = 0; column < gameInfo.getColumn(); column++) {
             boolean colum = this.generateColumnWithWild(gameInfo, modeName, freeSpinIndex, column, symbolArr, wildSymbolArr);
