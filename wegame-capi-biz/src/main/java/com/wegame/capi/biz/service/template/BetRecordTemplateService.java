@@ -49,7 +49,7 @@ public class BetRecordTemplateService extends AbstractService {
         return true;
     }
 
-    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betTypeEnum.code() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betTypeEnum.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, TemplateTypeEnum typeEnum) {
         Query query = BetRecordTemplateQueryBuilder.buildQuery(betTypeEnum, multipleRangeStart, multipleRangeEnd);
         String betRecordTemplateCollectionName = typeEnum.getBetRecordTemplateCollectionName();
@@ -63,7 +63,7 @@ public class BetRecordTemplateService extends AbstractService {
                 .collect(Collectors.toList());
     }
 
-    @CacheEvict(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betTypeEnum.code() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+    @CacheEvict(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betTypeEnum.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public void evictListIdByMultipleRange(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, TemplateTypeEnum typeEnum) {
         // do nothing
     }
