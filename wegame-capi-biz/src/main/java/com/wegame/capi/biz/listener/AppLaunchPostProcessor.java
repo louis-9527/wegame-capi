@@ -25,6 +25,8 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -79,12 +81,14 @@ public class AppLaunchPostProcessor {
     PoolingHttpClientConnectionManager promotionConnectionManager;
     @Autowired
     List<BusinessPostRunner> businessPostRunners = Lists.newArrayList();
+    @Autowired
+    RedisTemplate<String, Object> redisTemplate;
 
     @Async(defaultThreadPoolExecutor)
     public void postProcess() {
         businessWarmUp();
         // todo 第一次上线后， 后续屏蔽该动作
-        //        buildUserIdCache();
+        buildUserIdCache();
         //        initDomainConnections();
         //        healthCheck();
         // 业务后处理runner
@@ -107,6 +111,11 @@ public class AppLaunchPostProcessor {
     private void buildUserIdCache() {
         try {
             distributeLock.lockThenRun(LockNameUtil.getBuildUserIdCacheLockName(), 60, TimeUnit.SECONDS, () -> {
+                redisTemplate.execute((RedisCallback<Void>) connection -> {
+                    connection.flushAll();
+                    log.info("delete all redis data");
+                    return null;
+                });
                 try {
                     log.info("buildUserIdCache begin");
                     List<UserDo> userList;
