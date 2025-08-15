@@ -21,6 +21,7 @@ import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
 import com.wegame.capi.biz.service.RandomService;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -115,7 +116,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
                 .hasRewardFreeWheel(hasRewardScatter(rewardLineList))
-                .rewardFreeWheelTimes(getFreeWheelNumber())
+                .rewardFreeWheelTimes(getFreeWheelNumber(rewardHandle.getBetType()))
                 .rewardLineDetailList(rewardLineDetailList)
                 .totalMultiple(totalMultiple)
                 .build();
@@ -224,8 +225,10 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
                 || targetSymbol.isWildSymbol();
     }
 
-    private Integer getFreeWheelNumber() {
-        String key = randomService.randomKeyByWeight(mariaMakilingConfig.getFreeGame().getFgNumbersWeights());
+    private Integer getFreeWheelNumber(BetTypeEnum betType) {
+        TreeMap<String, Integer> weightMap = Objects.equals(BetTypeEnum.BUY_BET.getCode(), betType.getCode()) ?
+                mariaMakilingConfig.getFreeGame().getBuyFgNumbersWeights() : mariaMakilingConfig.getFreeGame().getFgNumbersWeights();
+        String key = randomService.randomKeyByWeight(weightMap);
         return Integer.parseInt(key);
     }
 

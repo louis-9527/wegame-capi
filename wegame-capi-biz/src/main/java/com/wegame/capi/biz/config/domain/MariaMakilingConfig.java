@@ -137,6 +137,16 @@ public class MariaMakilingConfig implements Serializable {
         private TreeMap<String, Integer> fgModeWeights;
 
         /**
+         * TreeMap<freeSpinTimes，weight>
+         */
+        private TreeMap<String, Integer> buyFgNumbersWeights;
+
+        /**
+         * TreeMap<modeName，weight>
+         */
+        private TreeMap<String, Integer> buyFgModeWeights;
+
+        /**
          * TreeMap<modeName，<roundName,<reelName, reelConfig>>>
          */
         private TreeMap<String, TreeMap<String, TreeMap<String, ReelConfig>>> fgModeConfig;
@@ -244,6 +254,21 @@ public class MariaMakilingConfig implements Serializable {
             Map<String, ReelConfig> reelConfigMap = freeGame.getBuyFgStartMapConfig().get(entry.getKey());
             Assert.notNull(reelConfigMap, "reelConfigMap is null, modeName is " + entry.getKey());
             validateReelConfigMap(reelConfigMap);
+        }
+
+        // 2. 校验权重 : buy fgModeWeights
+        Assert.notNull(freeGame.getBuyFgModeWeights());
+        validateWeightMap(freeGame.getBuyFgModeWeights());
+        // 3. 校验 buy fgModeConfig 按round校验
+        Assert.notNull(freeGame.getBuyFgModeWeights());
+        for (Map.Entry<String, Integer> entry : freeGame.getBuyFgModeWeights().entrySet()) {
+            // 权重为0不去校验
+            if (entry.getValue() == 0) {
+                continue;
+            }
+            TreeMap<String, TreeMap<String, ReelConfig>> roundConfig = freeGame.getFgModeConfig().get(entry.getKey());
+            Assert.notNull(roundConfig, "roundConfig is null, modeName is " + entry.getKey());
+            validateRoundConfig(roundConfig);
         }
     }
 
