@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.template.GameRecordTemplatePo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static com.wegame.capi.biz.converter.operation.GameRecordTemplateConvert.poToDoList;
 
+@Slf4j
 @Service
 public class GameRecordTemplateService<T> extends AbstractService {
 
@@ -31,6 +33,7 @@ public class GameRecordTemplateService<T> extends AbstractService {
     }
     @Cacheable(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betRecordId")
     public List<GameRecordTemplateDo> listByBetRecordId(Long betRecordId, TemplateTypeEnum typeEnum) {
+        log.info( "listByBetRecordId query, betRecordId: {}; typeEnum: {}", betRecordId, typeEnum.getGameType());
         List<GameRecordTemplatePo> poList = getMongoTemplate(typeEnum.getGameType())
                 .find(GameRecordRecordQueryBuilder.buildQuery(betRecordId),
                         GameRecordTemplatePo.class,

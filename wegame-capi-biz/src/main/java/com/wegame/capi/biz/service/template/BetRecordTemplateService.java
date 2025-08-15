@@ -11,6 +11,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.template.BetRecordTemplatePo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 import static com.wegame.capi.biz.converter.BetRecordTemplateConverter.doToPo;
 import static com.wegame.capi.biz.converter.BetRecordTemplateConverter.doToPoList;
 
+@Slf4j
 @Service
 public class BetRecordTemplateService extends AbstractService {
 
@@ -51,6 +53,7 @@ public class BetRecordTemplateService extends AbstractService {
 
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betTypeEnum.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, TemplateTypeEnum typeEnum) {
+        log.info("listIdByMultipleRange query, betTypeEnum: {}, multipleRangeStart: {}, multipleRangeEnd: {}, typeEnum: {}", betTypeEnum.getCode(), multipleRangeStart, multipleRangeEnd, typeEnum.getGameType());
         Query query = BetRecordTemplateQueryBuilder.buildQuery(betTypeEnum, multipleRangeStart, multipleRangeEnd);
         String betRecordTemplateCollectionName = typeEnum.getBetRecordTemplateCollectionName();
         MongoTemplate mongoTemplate = getMongoTemplate(typeEnum.getGameType());

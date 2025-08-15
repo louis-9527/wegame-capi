@@ -11,15 +11,15 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-public class TemplateAspect {
-    @Around("execution(* com.wegame.capi..module.mariamakiling.game.MariaMakilingGameTemplatePlay.play(..))")
+public class GameRecordTemplateAspect {
+    @Around("execution(* com.wegame.capi..service.template.GameRecordTemplateService.listByBetRecordId(..))")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Signature signature = joinPoint.getSignature();
         try {
             return joinPoint.proceed();
         } catch (Throwable throwable) {
-            log.error("RewardHandlerAspect#handle, param：{}, errMsg: {}",
+            log.error("GameRecordTemplateAspect#handle, param：{}, errMsg: {}",
                     FastJsonUtils.toJSONString(joinPoint.getArgs()),
                     throwable.getMessage(),
                     throwable);
@@ -27,17 +27,18 @@ public class TemplateAspect {
         } finally {
             long costTime = System.currentTimeMillis() - startTime;
             if (costTime > 10L) {
-                log.info("MariaMakilingGameTemplatePlay#play，{}#{}，COST TIME MORE THAN 10：{} ms",
+                log.info("GameRecordTemplateService#listByBetRecordId，{}#{}，COST TIME MORE THAN 10：{} ms",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         (System.currentTimeMillis() - startTime));
             } else {
-                log.info("MariaMakilingGameTemplatePlay#play，{}#{}，COST TIME：{} ms",
+                log.info("GameRecordTemplateService#listByBetRecordId，{}#{}，COST TIME：{} ms",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         (System.currentTimeMillis() - startTime));
             }
         }
     }
+
 }
 
