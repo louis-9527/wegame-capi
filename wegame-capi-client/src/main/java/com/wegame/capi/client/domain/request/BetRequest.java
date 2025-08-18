@@ -59,6 +59,7 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
         public static final long MIN_BET_AMOUNT = 300L;
         public static final long MAX_BET_AMOUNT = 10000000L;
         public static final long MULTIPLE_35 = 35;
+        public static final long MULTIPLE_70 = 70;
         public static final long MULTIPLE_75 = 75;
 
         @ApiModelProperty(value = "投注金额", required = true)
