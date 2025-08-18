@@ -109,7 +109,7 @@ public abstract class AbstractBetRecordTemplatePreLoadPostRunner implements Busi
                 .traceId(ThreadMdcUtil.getTraceId())
                 .body(String.format(MESSAGE_FORMAT,
                         templateType.name(),
-                        JSON.toJSONString(templateType)))
+                        JSON.toJSONString(templateMultipleRange)))
                 .build().buildMessage());
 
     }
