@@ -33,8 +33,7 @@ import java.util.stream.Collectors;
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.client.enums.TemplateTypeEnum.MARIA_MAKILING;
-import static com.wegame.capi.common.Constants.CONST_1;
-import static com.wegame.capi.common.Constants.CONST_100000;
+import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Component("mariaMakilingGameTemplatePlay")
@@ -151,7 +150,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     }
 
     private MariaMakilingConfig.TemplateMultipleRange getTemplateConfig(BetTypeEnum betTypeEnum) {
-        int randomNumber = randomService.randomInt(CONST_1, CONST_100000);
+        int randomNumber = randomService.randomInt(CONST_1, CONST_1000000);
         Map<String, MariaMakilingConfig.TemplateMultipleRange> templateRangeConfigMap;
         if (Objects.equals(betTypeEnum, BetTypeEnum.NORMAL_BET)) {
             templateRangeConfigMap =  mariaMakilingConfig.getTemplateRangeConfig().getMainGame();
@@ -160,7 +159,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         }
         int startVal = 0;
         for (Map.Entry<String, MariaMakilingConfig.TemplateMultipleRange> entry : CollectionUtils.emptyIfNull(templateRangeConfigMap.entrySet())) {
-            int i = NumberUtil.mul(new BigDecimal(entry.getKey()), new BigDecimal(CONST_100000)).intValue();
+            int i = NumberUtil.mul(new BigDecimal(entry.getKey()), new BigDecimal(CONST_1000000)).intValue();
             if (randomNumber > startVal && randomNumber <= startVal + i) {
                 return entry.getValue();
             } else {
