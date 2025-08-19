@@ -70,6 +70,9 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             if (Objects.equals(cpChannelId, userInfo.getChannelId()) && Objects.equals(betDo.getBetType(), NORMAL_BET)) {
+                if(betDo.getParentBetRecordId() != null){
+                    return false;
+                }
                 GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount());
                 canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
                 if (canOperationEventBet) {
