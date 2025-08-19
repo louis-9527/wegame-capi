@@ -169,7 +169,7 @@ public class MariaMakilingConfig implements Serializable {
     public static class TemplateRangeConfig implements Serializable {
         private static final long serialVersionUID = -734841249803450751L;
         /**
-         * 主游戏模板配置
+         * 主游戏模板配置    todo @maidong. 处理权重相等的问题
          */
         private Map<Integer, TemplateMultipleRange> mainGame;
         /**
