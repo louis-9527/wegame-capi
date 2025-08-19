@@ -171,11 +171,11 @@ public class MariaMakilingConfig implements Serializable {
         /**
          * 主游戏模板配置
          */
-        private Map<String, TemplateMultipleRange> mainGame;
+        private Map<Integer, TemplateMultipleRange> mainGame;
         /**
          * 免费游戏模板配置
          */
-        private Map<String, TemplateMultipleRange> freeGame;
+        private Map<Integer, TemplateMultipleRange> freeGame;
     }
 
     @Data
