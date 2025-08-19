@@ -9087,59 +9087,59 @@
 	},
 	"templateRangeConfig": {
 		"mainGame": {
-			"75.214": {
+			"75214": {
 				"multipleRangeStart": "0",
 				"multipleRangeEnd": "0.5"
 			},
-			"9.374": {
+			"9374": {
 				"multipleRangeStart": "0.5",
 				"multipleRangeEnd": "1"
 			},
-			"3.738": {
+			"3738": {
 				"multipleRangeStart": "1",
 				"multipleRangeEnd": "3"
 			},
-			"5.320": {
+			"5320": {
 				"multipleRangeStart": "3",
 				"multipleRangeEnd": "5"
 			},
-			"1.916": {
+			"1916": {
 				"multipleRangeStart": "5",
 				"multipleRangeEnd": "8"
 			},
-			"1.580": {
+			"1580": {
 				"multipleRangeStart": "8",
 				"multipleRangeEnd": "15"
 			},
-			"1.436": {
+			"1436": {
 				"multipleRangeStart": "15",
 				"multipleRangeEnd": "30"
 			},
-			"1.030": {
+			"1030": {
 				"multipleRangeStart": "30",
 				"multipleRangeEnd": "50"
 			},
-			"0.221": {
+			"221": {
 				"multipleRangeStart": "50",
 				"multipleRangeEnd": "70"
 			},
-			"0.070": {
+			"70": {
 				"multipleRangeStart": "70",
 				"multipleRangeEnd": "100"
 			},
-			"0.056": {
+			"56": {
 				"multipleRangeStart": "100",
 				"multipleRangeEnd": "300"
 			},
-			"0.039": {
+			"39": {
 				"multipleRangeStart": "300",
 				"multipleRangeEnd": "500"
 			},
-			"0.004": {
+			"4": {
 				"multipleRangeStart": "500",
 				"multipleRangeEnd": "1000"
 			},
-			"0.002": {
+			"2": {
 				"multipleRangeStart": "1000",
 				"multipleRangeEnd": "2500"
 			}
