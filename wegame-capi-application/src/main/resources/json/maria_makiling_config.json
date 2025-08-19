@@ -9145,31 +9145,31 @@
 			}
 		},
 		"freeGame": {
-			"75.214": {
+			"75214": {
 				"multipleRangeStart": "30",
 				"multipleRangeEnd": "50"
 			},
-			"9.374": {
+			"9374": {
 				"multipleRangeStart": "50",
 				"multipleRangeEnd": "70"
 			},
-			"3.738": {
+			"3738": {
 				"multipleRangeStart": "70",
 				"multipleRangeEnd": "100"
 			},
-			"5.320": {
+			"5320": {
 				"multipleRangeStart": "100",
 				"multipleRangeEnd": "300"
 			},
-			"1.916": {
+			"1916": {
 				"multipleRangeStart": "300",
 				"multipleRangeEnd": "500"
 			},
-			"1.580": {
+			"1580": {
 				"multipleRangeStart": "500",
 				"multipleRangeEnd": "1000"
 			},
-			"2.858": {
+			"2858": {
 				"multipleRangeStart": "1000",
 				"multipleRangeEnd": "2500"
 			}

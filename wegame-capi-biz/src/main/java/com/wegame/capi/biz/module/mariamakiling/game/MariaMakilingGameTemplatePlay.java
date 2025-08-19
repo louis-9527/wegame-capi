@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.module.mariamakiling.game;
 
-import cn.hutool.core.util.NumberUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
@@ -33,7 +32,6 @@ import java.util.stream.Collectors;
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
 import static com.wegame.capi.client.enums.TemplateTypeEnum.MARIA_MAKILING;
-import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Component("mariaMakilingGameTemplatePlay")
@@ -150,23 +148,18 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     }
 
     private MariaMakilingConfig.TemplateMultipleRange getTemplateConfig(BetTypeEnum betTypeEnum) {
-        int randomNumber = randomService.randomInt(CONST_1, CONST_1000000);
         Map<String, MariaMakilingConfig.TemplateMultipleRange> templateRangeConfigMap;
         if (Objects.equals(betTypeEnum, BetTypeEnum.NORMAL_BET)) {
             templateRangeConfigMap =  mariaMakilingConfig.getTemplateRangeConfig().getMainGame();
         } else {
             templateRangeConfigMap =  mariaMakilingConfig.getTemplateRangeConfig().getFreeGame();
         }
-        int startVal = 0;
-        for (Map.Entry<String, MariaMakilingConfig.TemplateMultipleRange> entry : CollectionUtils.emptyIfNull(templateRangeConfigMap.entrySet())) {
-            int i = NumberUtil.mul(new BigDecimal(entry.getKey()), new BigDecimal(CONST_1000000)).intValue();
-            if (randomNumber > startVal && randomNumber <= startVal + i) {
-                return entry.getValue();
-            } else {
-                startVal += i;
-            }
+        Map<MariaMakilingConfig.TemplateMultipleRange, Integer> weightMap = new HashMap<>(templateRangeConfigMap.size());
+        for (Map.Entry<String, MariaMakilingConfig.TemplateMultipleRange> entry : templateRangeConfigMap.entrySet()) {
+            weightMap.put(entry.getValue(), Integer.valueOf(entry.getKey()));
         }
-        return null;
+
+        return randomService.randomKeyByWeight(weightMap);
     }
 
     private static Long getRandomElement(List<Long> list) {
