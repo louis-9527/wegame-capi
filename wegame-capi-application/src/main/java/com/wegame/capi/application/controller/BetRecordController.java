@@ -103,7 +103,9 @@ public class BetRecordController {
                 .orderByClause("createTime")
                 .limit(1).build();
         BetRecordDo lastOneGameRecord = betRecordManager(gameType).findLastOneGameRecord(betRecordQuery, gameType);
-
+        if (lastOneGameRecord == null) {
+            return CommonResponse.build(null);
+        }
         BetRecordVo betRecordVo = BetRecordConverter.doToVo(lastOneGameRecord);
         AssertUtil.assertNotNull(betRecordVo, ErrorCode.ERR_PARAM);
         betRecordVo.setGameRecordList(lastOneGameRecord.getGameRecordList());
