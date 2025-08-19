@@ -263,6 +263,12 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                                                         Boolean isScatter) {
         SirenaSymbolDo[][] symbolArr = new SirenaSymbolDo[GAME_INFO.getRow()][GAME_INFO.getColumn()];
         if (freeFlag) {
+            // 保留上次珍珠
+            if(beforePearlWildIndex != null) {
+                beforePearlWildIndex.forEach((indexDo, sirenaSymbolDo) -> {
+                    symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = sirenaSymbolDo;
+                });
+            }
             // 免费轮,随机生成1-3个珍珠
             TreeMap<Integer, BigDecimal> freeWheelSmallPearlCountWeightConfig = sirenaConfig.getProbabilisticConfig().getFreeWheelSmallPearlCountWeightConfig();
             Integer pearlCount = GameUtil.randomKey(freeWheelSmallPearlCountWeightConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
