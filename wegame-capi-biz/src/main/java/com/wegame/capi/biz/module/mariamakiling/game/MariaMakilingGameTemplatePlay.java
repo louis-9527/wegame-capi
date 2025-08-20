@@ -15,12 +15,12 @@ import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
+import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.biz.service.template.BetRecordTemplateService;
 import com.wegame.capi.biz.service.template.GameRecordTemplateService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +52,8 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     BetRecordTemplateService betRecordTemplateService;
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
+    @Autowired
+    RandomService randomService;
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
@@ -152,26 +154,13 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     }
 
     private MariaMakilingConfig.TemplateMultipleRange getTemplateConfig(BetTypeEnum betTypeEnum) {
-        Map<Integer, MariaMakilingConfig.TemplateMultipleRange> templateRangeConfigMap;
+        String templateMultipleRange;
         if (Objects.equals(betTypeEnum, BetTypeEnum.NORMAL_BET)) {
-            templateRangeConfigMap = mariaMakilingConfig.getTemplateRangeConfig().getMainGame();
+            templateMultipleRange = randomService.randomKeyByWeight(mariaMakilingConfig.getTemplateRangeConfig().getMainGame());
         } else {
-            templateRangeConfigMap = mariaMakilingConfig.getTemplateRangeConfig().getFreeGame();
+            templateMultipleRange = randomService.randomKeyByWeight(mariaMakilingConfig.getTemplateRangeConfig().getFreeGame());
         }
-        int totalWeight = templateRangeConfigMap.keySet().stream()
-                .mapToInt(Integer::intValue)
-                .sum();
-        int randomNumber = randomService.randomInt(Constants.CONST_1, totalWeight);
-        int startVal = 0;
-        for (Map.Entry<Integer, MariaMakilingConfig.TemplateMultipleRange> entry : CollectionUtils.emptyIfNull(templateRangeConfigMap.entrySet())) {
-            int weight = entry.getKey();
-            if (randomNumber > startVal && randomNumber <= startVal + weight) {
-                return entry.getValue();
-            } else {
-                startVal += weight;
-            }
-        }
-        return null;
+        return MariaMakilingConfig.TemplateMultipleRange.convert(templateMultipleRange);
     }
 
     private Long getRandomElement(List<Long> list) {

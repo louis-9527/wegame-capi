@@ -68,8 +68,8 @@ public abstract class AbstractBetRecordTemplatePreLoadPostRunner implements Busi
                 try {
                     log.info("{} begin...", postRunnerName);
                     MariaMakilingConfig.TemplateRangeConfig templateRangeConfigMap = this.getTemplateRangeConfigMap();
-                    templateRangeConfigMap.getMainGame().values().forEach(item -> preLoadBetRecordTemplate(BetTypeEnum.NORMAL_BET, item));
-                    templateRangeConfigMap.getFreeGame().values().forEach(item -> preLoadBetRecordTemplate(BetTypeEnum.BUY_BET, item));
+                    templateRangeConfigMap.getMainGame().keySet().forEach((String key) -> preLoadBetRecordTemplate(BetTypeEnum.NORMAL_BET,  MariaMakilingConfig.TemplateMultipleRange.convert(key)));
+                    templateRangeConfigMap.getFreeGame().keySet().forEach((String key) -> preLoadBetRecordTemplate(BetTypeEnum.NORMAL_BET,  MariaMakilingConfig.TemplateMultipleRange.convert(key)));
                     log.info("{} end...", postRunnerName);
                 } catch (Exception e) {
                     log.error("{} error", postRunnerName, e);
@@ -91,9 +91,9 @@ public abstract class AbstractBetRecordTemplatePreLoadPostRunner implements Busi
             List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(betTypeEnum, templateMultipleRange.getMultipleRangeStart(), templateMultipleRange.getMultipleRangeEnd(), templateType);
             if (CollectionUtil.isNotEmpty(betRecordTemplateIdList)) {
                 // gameRecord模版缓存 先失效，再加载
-                betRecordTemplateIdList.forEach(betRecordTEmplateId -> {
-                    gameRecordTemplateService.evictListByBetRecordId(betRecordTEmplateId, templateType);
-                    gameRecordTemplateService.listByBetRecordId(betRecordTEmplateId, templateType);
+                betRecordTemplateIdList.forEach(betRecordTemplateId -> {
+                    gameRecordTemplateService.evictListByBetRecordId(betRecordTemplateId, templateType);
+                    gameRecordTemplateService.listByBetRecordId(betRecordTemplateId, templateType);
                 });
             }
         } catch (Exception e) {

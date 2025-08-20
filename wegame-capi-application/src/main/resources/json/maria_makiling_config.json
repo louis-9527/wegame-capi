@@ -9087,92 +9087,29 @@
 	},
 	"templateRangeConfig": {
 		"mainGame": {
-			"75214": {
-				"multipleRangeStart": "0",
-				"multipleRangeEnd": "0.5"
-			},
-			"9374": {
-				"multipleRangeStart": "0.5",
-				"multipleRangeEnd": "1"
-			},
-			"3738": {
-				"multipleRangeStart": "1",
-				"multipleRangeEnd": "3"
-			},
-			"5320": {
-				"multipleRangeStart": "3",
-				"multipleRangeEnd": "5"
-			},
-			"1916": {
-				"multipleRangeStart": "5",
-				"multipleRangeEnd": "8"
-			},
-			"1580": {
-				"multipleRangeStart": "8",
-				"multipleRangeEnd": "15"
-			},
-			"1436": {
-				"multipleRangeStart": "15",
-				"multipleRangeEnd": "30"
-			},
-			"1030": {
-				"multipleRangeStart": "30",
-				"multipleRangeEnd": "50"
-			},
-			"221": {
-				"multipleRangeStart": "50",
-				"multipleRangeEnd": "70"
-			},
-			"70": {
-				"multipleRangeStart": "70",
-				"multipleRangeEnd": "100"
-			},
-			"56": {
-				"multipleRangeStart": "100",
-				"multipleRangeEnd": "300"
-			},
-			"39": {
-				"multipleRangeStart": "300",
-				"multipleRangeEnd": "500"
-			},
-			"4": {
-				"multipleRangeStart": "500",
-				"multipleRangeEnd": "1000"
-			},
-			"2": {
-				"multipleRangeStart": "1000",
-				"multipleRangeEnd": "2500"
-			}
+			"0_0.5": 75214,
+			"0.5_1": 9374,
+			"1_3": 3738,
+			"3_5": 5320,
+			"5_8": 1916,
+			"8_15": 1580,
+			"15_30": 1436,
+			"30_50": 1030,
+			"50_70": 221,
+			"70_100": 70,
+			"100_300": 56,
+			"300_500": 39,
+			"500_1000": 4,
+			"1000_2500": 2
 		},
 		"freeGame": {
-			"75214": {
-				"multipleRangeStart": "30",
-				"multipleRangeEnd": "50"
-			},
-			"9374": {
-				"multipleRangeStart": "50",
-				"multipleRangeEnd": "70"
-			},
-			"3738": {
-				"multipleRangeStart": "70",
-				"multipleRangeEnd": "100"
-			},
-			"5320": {
-				"multipleRangeStart": "100",
-				"multipleRangeEnd": "300"
-			},
-			"1916": {
-				"multipleRangeStart": "300",
-				"multipleRangeEnd": "500"
-			},
-			"1580": {
-				"multipleRangeStart": "500",
-				"multipleRangeEnd": "1000"
-			},
-			"2858": {
-				"multipleRangeStart": "1000",
-				"multipleRangeEnd": "2500"
-			}
+			"30_50": 75214,
+			"50_70": 9374,
+			"70_100": 3738,
+			"100_300": 5320,
+			"300_500": 1916,
+			"500_1000": 1580,
+			"1000_2500": 2858
 		}
 	}
 }

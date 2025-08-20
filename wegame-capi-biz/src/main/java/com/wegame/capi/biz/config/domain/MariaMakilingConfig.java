@@ -1,6 +1,9 @@
 package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.NumberUtil;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper;
@@ -169,13 +172,13 @@ public class MariaMakilingConfig implements Serializable {
     public static class TemplateRangeConfig implements Serializable {
         private static final long serialVersionUID = -734841249803450751L;
         /**
-         * 主游戏模板配置    todo @maidong. 处理权重相等的问题
+         * 主游戏模板配置
          */
-        private Map<Integer, TemplateMultipleRange> mainGame;
+        private Map<String, Integer> mainGame;
         /**
          * 免费游戏模板配置
          */
-        private Map<Integer, TemplateMultipleRange> freeGame;
+        private Map<String, Integer> freeGame;
     }
 
     @Data
@@ -194,6 +197,16 @@ public class MariaMakilingConfig implements Serializable {
          * 倍数区间结束
          */
         private BigDecimal multipleRangeEnd;
+
+        public static TemplateMultipleRange convert(String templateMultipleRange) {
+            AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_PARAM);
+            String[] multipleRangeArr = templateMultipleRange.split("_");
+            AssertUtil.assertTrue(multipleRangeArr.length == 2, ErrorCode.ERR_PARAM);
+            return TemplateMultipleRange.builder()
+                    .multipleRangeStart(new BigDecimal(multipleRangeArr[0]))
+                    .multipleRangeEnd(new BigDecimal(multipleRangeArr[1]))
+                    .build();
+        }
     }
 
     public void validate() {
@@ -201,7 +214,7 @@ public class MariaMakilingConfig implements Serializable {
         oddsConfigValidate();
         validateMainGame();
         validateFreeGame();
-        templateRangeConfigMapValidate();
+        templateRangeConfigValidate();
     }
 
     private void validateMainGame() {
@@ -358,7 +371,16 @@ public class MariaMakilingConfig implements Serializable {
         });
     }
 
-    private void templateRangeConfigMapValidate() {
-        //todo mai dong 增加校验
+    private void templateRangeConfigValidate() {
+        Assert.notNull(templateRangeConfig, "templateRangeConfig is null");
+        Assert.notNull(templateRangeConfig.getMainGame(), "templateRangeConfig.mainGame is null");
+        Assert.notNull(templateRangeConfig.getFreeGame(), "templateRangeConfig.freeGame is null");
+        templateRangeConfig.getMainGame().keySet().forEach(templateMultipleRange -> {
+            Assert.isTrue(templateMultipleRange.contains("_"), "templateRangeConfig.mainGame.key not contain '_'");
+            String[] multipleRangeArr = templateMultipleRange.split("_");
+            Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.mainGame.key length is not eqauls 2");
+            Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.mainGame.key first number must be number");
+            Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.mainGame.key first number must be number");
+        });
     }
 }
