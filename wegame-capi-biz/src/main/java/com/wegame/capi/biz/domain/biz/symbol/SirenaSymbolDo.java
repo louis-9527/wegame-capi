@@ -41,6 +41,7 @@ public class SirenaSymbolDo extends SymbolDo {
                 .id(getId())
                 .name(getName())
                 .symbolType(getSymbolType())
+                .symbolOdd(getSymbolOdd())
                 .build();
     }
 
