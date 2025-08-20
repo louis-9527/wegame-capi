@@ -33,6 +33,10 @@ public enum StarCardUseTypeEnum {
             GameTypeEnum.DIWATA_MAYARI,
             "diwata_mayari_star_card_record"
     ),
+    KAPRE(
+            GameTypeEnum.KAPRE,
+            "kapre_star_card_record"
+    ),
 
     ;
     /**

@@ -31,6 +31,7 @@ public class OperationEventPulsarConfig {
     private static final String bakunawaOperationEventConsumer = "bakunawaOperationEventConsumer";
     private static final String lamangOperationEventConsumer = "lamangOperationEventConsumer";
     private static final String diwataMayariOperationEventConsumer = "diwataMayariOperationEventConsumer";
+    private static final String kapreOperationEventConsumer = "kapreOperationEventConsumer";
 
     // todo fix
     @Value("${dynamic.operation.pulsar_url}")
@@ -50,6 +51,8 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupLamang;
     @Value("${dynamic.operation.pulsar_group.diwata_mayari:_DiwataMayari}")
     String dynamicOperationGroupDiwataMayari;
+    @Value("${dynamic.operation.pulsar_group.kapre:_Kapre}")
+    String dynamicOperationGroupKapre;
     @Value("${dynamic.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.operation.pulsar.auth.credentials_file_path}")
@@ -161,6 +164,20 @@ public class OperationEventPulsarConfig {
                 .subscriptionName(dynamicOperationGroupDiwataMayari)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(diwataMayariOperationEventPulsarListener)
+                .subscribe();
+    }
+
+    @Bean(name = kapreOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
+    public Consumer<byte[]> kapreOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                               @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, kapreOperationEventConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupKapre)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(kapreOperationEventPulsarListener)
                 .subscribe();
     }
 }

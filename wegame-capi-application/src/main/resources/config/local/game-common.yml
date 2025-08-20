@@ -11,6 +11,7 @@ dynamic:
       lamang: ${api.game.cp.channelId}_Lamang
       bakunawa: ${api.game.cp.channelId}_Bakunawa
       diwata_mayari: ${api.game.cp.channelId}_DiwataMayari
+      kapre: ${api.game.cp.channelId}_Kapre
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud
