@@ -160,6 +160,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         } else {
             templateMultipleRange = randomService.randomKeyByWeight(mariaMakilingConfig.getTemplateRangeConfig().getFreeGame());
         }
+        AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_PARAM);
         return MariaMakilingConfig.TemplateMultipleRange.convert(templateMultipleRange);
     }
 

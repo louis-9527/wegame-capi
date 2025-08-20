@@ -69,7 +69,7 @@ public abstract class AbstractBetRecordTemplatePreLoadPostRunner implements Busi
                     log.info("{} begin...", postRunnerName);
                     MariaMakilingConfig.TemplateRangeConfig templateRangeConfigMap = this.getTemplateRangeConfigMap();
                     templateRangeConfigMap.getMainGame().keySet().forEach((String key) -> preLoadBetRecordTemplate(BetTypeEnum.NORMAL_BET,  MariaMakilingConfig.TemplateMultipleRange.convert(key)));
-                    templateRangeConfigMap.getFreeGame().keySet().forEach((String key) -> preLoadBetRecordTemplate(BetTypeEnum.NORMAL_BET,  MariaMakilingConfig.TemplateMultipleRange.convert(key)));
+                    templateRangeConfigMap.getFreeGame().keySet().forEach((String key) -> preLoadBetRecordTemplate(BetTypeEnum.BUY_BET,  MariaMakilingConfig.TemplateMultipleRange.convert(key)));
                     log.info("{} end...", postRunnerName);
                 } catch (Exception e) {
                     log.error("{} error", postRunnerName, e);
