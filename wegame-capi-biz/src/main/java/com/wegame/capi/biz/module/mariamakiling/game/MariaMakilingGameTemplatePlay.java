@@ -27,10 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
@@ -168,9 +165,8 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         if (list == null || list.isEmpty()) {
             return null;
         }
-        //        Random random = new Random();
-        //        int randomIndex = random.nextInt(list.size());
-        int randomIndex = randomService.randomInt(0, list.size() - 1);
+        Random random = new Random();
+        int randomIndex = random.nextInt(list.size());
         return list.get(randomIndex);
     }
 }
