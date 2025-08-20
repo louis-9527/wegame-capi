@@ -9,14 +9,13 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
-import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.symbol.KapreSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
+import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
 import com.wegame.capi.biz.module.sirena.reward.SirenaRewardHandler;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
@@ -25,7 +24,6 @@ import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,14 +31,13 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
 
 @Slf4j
 @Component("sirenaGameEventPlay")
 public class SirenaGameEventPlay extends AbstractGame<SirenaGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
-    private static final GameInfoDo gameInfo = MALAKAS_GAME_INFO;
+    private static final GameInfoDo gameInfo = SirenaGameHelper.SIRENA_GAME_INFO;
 
     @Autowired
     SirenaRewardHandler sirenaRewardHandler;
