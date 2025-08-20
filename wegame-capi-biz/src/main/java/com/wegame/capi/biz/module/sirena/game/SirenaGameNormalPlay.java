@@ -154,13 +154,13 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
         freeWheelQueue.addLast(FreeWheelHandleDo.builder().parentGameRecord(firstGameRecord).taskTimes(firstGameRecord.getRewardResult().getRewardFreeWheelTimes()).build());
         int scatter1Count = 0;
         boolean scatter = true;
+        Map<IndexDo, SirenaSymbolDo> beforePearlWildIndex = null;
         // 初始队列
         while (!freeWheelQueue.isEmpty()) {
             // 取出一个任务
             FreeWheelHandleDo freeWheelHandleDo = freeWheelQueue.pollFirst();
             SirenaGameRecordDo parentGameRecord = freeWheelHandleDo.getParentGameRecord();
             long parentGameRecordId = parentGameRecord.getId();
-            Map<IndexDo, SirenaSymbolDo> beforePearlWildIndex = null;
             for (int i = Constants.CONST_0; i < freeWheelHandleDo.getTaskTimes(); i++) {
                 scatter1Count++;
                 if (scatter1Count >= MAX_WHEEL) {
