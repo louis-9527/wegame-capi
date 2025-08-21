@@ -1,6 +1,7 @@
 package com.wegame.capi.infrastructure.cache;
 
 import com.wegame.base.CacheConstants;
+import com.wegame.base.cache.AbstractCache;
 import com.wegame.base.cache.AbstractLocalCache;
 import com.wegame.base.enums.CommonCacheEnvEnum;
 import org.springframework.stereotype.Component;
@@ -12,10 +13,10 @@ import org.springframework.stereotype.Component;
  * value:gameRecordTemplate--List
  */
 @Component(CacheConstants.GAME_RECORD_TEMPLATE_REDIS)
-public class GameRecordTemplateReidsCache extends AbstractLocalCache {
+public class GameRecordTemplateReidsCache extends AbstractCache {
 
     public GameRecordTemplateReidsCache() {
-        super(CommonCacheEnvEnum.GAME_RECORD_TEMPLATE_REDIS.cacheKeyPrefixName(), 365 * 24 * 60 * 60, 1000000);
+        super(CommonCacheEnvEnum.GAME_RECORD_TEMPLATE_REDIS.cacheKeyPrefixName(), 365 * 24 * 60 * 60);
     }
 
     @Override

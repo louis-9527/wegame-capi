@@ -43,11 +43,13 @@ public class GameRecordTemplateService<T> extends AbstractService {
 
     @CachePut(value = CacheConstants.GAME_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betRecordId")
     public List<GameRecordTemplateDo> putLocalCache(TemplateTypeEnum templateType, Long betRecordId, List<GameRecordTemplateDo> list) {
+        // log.info("putLocalCache, betRecordId: {}", betRecordId);
         return list;
     }
 
     @CachePut(value = CacheConstants.GAME_RECORD_TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
     public List<GameRecordTemplateDo> putRedisCache(TemplateTypeEnum templateType, Long betRecordId, List<GameRecordTemplateDo> list) {
+        // log.info("putRedisCache, betRecordId: {}", betRecordId);
         return list;
     }
 
