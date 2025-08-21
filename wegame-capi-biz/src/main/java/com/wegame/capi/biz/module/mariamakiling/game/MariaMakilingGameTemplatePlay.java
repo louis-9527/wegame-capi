@@ -64,7 +64,15 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
-        List<GameRecordTemplateDo> configRecordList = gameRecordTemplateService.listByBetRecordId(MARIA_MAKILING, betRecordId);
+        List<GameRecordTemplateDo> configRecordList = Collections.emptyList();
+        if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
+            gameRecordTemplateService.listByBetRecordIdWithLocalCache(MARIA_MAKILING, betRecordId);
+        } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
+            gameRecordTemplateService.listByBetRecordIdWithRedisCache(MARIA_MAKILING, betRecordId);
+        } else {
+            throw new BusinessException(ErrorCode.ERR_PARAM);
+        }
+        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         // 获取首轮(parent ==0 and index =0)
         GameRecordTemplateDo firstConfigRecord = configRecordList.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
@@ -157,7 +165,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         } else {
             templateMultipleRange = randomService.randomKeyByWeight(mariaMakilingConfig.getTemplateRangeConfig().getFreeGame());
         }
-        AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_PARAM);
+        AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_INTER);
         return TemplateMultipleRange.build(templateMultipleRange);
     }
 

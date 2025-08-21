@@ -51,7 +51,7 @@ public class BetRecordTemplateService extends AbstractService {
         return true;
     }
 
-    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
         log.info("listIdByMultipleRange query, betTypeEnum: {}, multipleRangeStart: {}, multipleRangeEnd: {}, typeEnum: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.getGameType());
         Query query = BetRecordTemplateQueryBuilder.buildQuery(betType, multipleRangeStart, multipleRangeEnd);
@@ -64,10 +64,5 @@ public class BetRecordTemplateService extends AbstractService {
                 .stream()
                 .map(BetRecordTemplatePo::getId)
                 .collect(Collectors.toList());
-    }
-
-    @CacheEvict(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betTypeEnum.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
-    public void evictListIdByMultipleRange(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, TemplateTypeEnum typeEnum) {
-        // do nothing
     }
 }

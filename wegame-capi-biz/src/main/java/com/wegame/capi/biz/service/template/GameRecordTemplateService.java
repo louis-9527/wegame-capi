@@ -6,12 +6,9 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.template.GameRecordRecordQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
-import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.template.GameRecordTemplatePo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
@@ -19,10 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.converter.operation.GameRecordTemplateConvert.poToDoList;
 
@@ -47,14 +41,31 @@ public class GameRecordTemplateService<T> extends AbstractService {
         return poToDoList(poList);
     }
 
-    @CachePut(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#templateType.name() + '_' + #betRecordId")
-    public List<GameRecordTemplateDo> putCache(TemplateTypeEnum templateType, Long betRecordId, List<GameRecordTemplateDo> list) {
+    @CachePut(value = CacheConstants.GAME_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betRecordId")
+    public List<GameRecordTemplateDo> putLocalCache(TemplateTypeEnum templateType, Long betRecordId, List<GameRecordTemplateDo> list) {
         return list;
     }
 
-    @Cacheable(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#templateType.name() + '_' + #betRecordId")
-    public List<GameRecordTemplateDo> listByBetRecordId(TemplateTypeEnum templateType, Long betRecordId) {
-        log.info( "listByBetRecordId query, betRecordId: {}; typeEnum: {}", betRecordId, templateType.getGameType());
+    @CachePut(value = CacheConstants.GAME_RECORD_TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
+    public List<GameRecordTemplateDo> putRedisCache(TemplateTypeEnum templateType, Long betRecordId, List<GameRecordTemplateDo> list) {
+        return list;
+    }
+
+    @Cacheable(value = CacheConstants.GAME_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betRecordId")
+    public List<GameRecordTemplateDo> listByBetRecordIdWithLocalCache(TemplateTypeEnum templateType, Long betRecordId) {
+        // todo delete log
+        log.info("listByBetRecordIdWithLocalCache, betRecordId: {}; templateType: {}", betRecordId, templateType.getGameType());
+        return listByBetRecordId(templateType, betRecordId);
+    }
+
+    @Cacheable(value = CacheConstants.GAME_RECORD_TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
+    public List<GameRecordTemplateDo> listByBetRecordIdWithRedisCache(TemplateTypeEnum templateType, Long betRecordId) {
+        // todo delete log
+        log.info( "listByBetRecordIdWithRedisCache, betRecordId: {}; templateType: {}", betRecordId, templateType.getGameType());
+        return listByBetRecordId(templateType, betRecordId);
+    }
+
+    private List<GameRecordTemplateDo> listByBetRecordId(TemplateTypeEnum templateType, Long betRecordId) {
         List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType())
                 .find(GameRecordRecordQueryBuilder.buildQuery(betRecordId),
                         GameRecordTemplatePo.class,
@@ -62,8 +73,4 @@ public class GameRecordTemplateService<T> extends AbstractService {
         return poToDoList(poList);
     }
 
-    //    @CacheEvict(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#templateType.name() + '_' + #betRecordId")
-    //    public void evictListByBetRecordId(TemplateTypeEnum templateType, Long betRecordId) {
-    //        // do nothing
-    //    }
 }

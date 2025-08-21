@@ -11,15 +11,15 @@ import org.springframework.stereotype.Component;
  * key: [起始倍数，终点倍数)
  * value: BetRecordTemplate Id ---list
  */
-@Component(CacheConstants.BET_RECORD_TEMPLATE)
+@Component(CacheConstants.BET_RECORD_TEMPLATE_LOCAL)
 public class BetRecordTemplateLocalCache extends AbstractLocalCache {
 
     public BetRecordTemplateLocalCache() {
-        super(CommonCacheEnvEnum.BET_RECORD_TEMPLATE.cacheKeyPrefixName(), 365 * 24 * 60 * 60,  1000);
+        super(CommonCacheEnvEnum.BET_RECORD_TEMPLATE_LOCAL.cacheKeyPrefixName(), 365 * 24 * 60 * 60,  1000);
     }
 
     @Override
     public String getName() {
-        return CommonCacheEnvEnum.BET_RECORD_TEMPLATE.cacheName();
+        return CommonCacheEnvEnum.BET_RECORD_TEMPLATE_LOCAL.cacheName();
     }
 }

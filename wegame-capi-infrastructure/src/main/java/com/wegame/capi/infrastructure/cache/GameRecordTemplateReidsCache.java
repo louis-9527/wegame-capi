@@ -11,15 +11,15 @@ import org.springframework.stereotype.Component;
  * key:betRecordTemplateId
  * value:gameRecordTemplate--List
  */
-@Component(CacheConstants.GAME_RECORD_TEMPLATE)
-public class GameRecordTemplateCache extends AbstractLocalCache {
+@Component(CacheConstants.GAME_RECORD_TEMPLATE_REDIS)
+public class GameRecordTemplateReidsCache extends AbstractLocalCache {
 
-    public GameRecordTemplateCache() {
-        super(CommonCacheEnvEnum.GAME_RECORD_TEMPLATE.cacheKeyPrefixName(), 365 * 24 * 60 * 60, 1000000);
+    public GameRecordTemplateReidsCache() {
+        super(CommonCacheEnvEnum.GAME_RECORD_TEMPLATE_REDIS.cacheKeyPrefixName(), 365 * 24 * 60 * 60, 1000000);
     }
 
     @Override
     public String getName() {
-        return CommonCacheEnvEnum.GAME_RECORD_TEMPLATE.cacheName();
+        return CommonCacheEnvEnum.GAME_RECORD_TEMPLATE_REDIS.cacheName();
     }
 }
