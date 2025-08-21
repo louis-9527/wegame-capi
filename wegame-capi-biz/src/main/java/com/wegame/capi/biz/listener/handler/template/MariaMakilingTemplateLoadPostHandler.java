@@ -72,7 +72,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
             List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd());
             if (CollectionUtil.isNotEmpty(betRecordTemplateIdList)) {
                 List<List<Long>> multiList = ListUtil.partition(betRecordTemplateIdList, 1000);
-                multiList.parallelStream().forEach(idList -> {
+                multiList.forEach(idList -> {
                     List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
                     idList.forEach(betRecordId -> {
                         gameRecordTemplateService.putCache(templateType, betRecordId, templateList.stream()
