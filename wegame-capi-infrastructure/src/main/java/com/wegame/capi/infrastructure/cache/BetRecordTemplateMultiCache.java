@@ -11,8 +11,9 @@ import org.springframework.stereotype.Component;
  * value: BetRecordTemplate Id ---list
  */
 @Component(CacheConstants.BET_RECORD_TEMPLATE)
-public class BetRecordTemplateCache extends AbstractMultiCache {
-    public BetRecordTemplateCache() {
+public class BetRecordTemplateMultiCache extends AbstractMultiCache {
+
+    public BetRecordTemplateMultiCache() {
         super(CommonCacheEnvEnum.BET_RECORD_TEMPLATE.cacheKeyPrefixName(), 90 * 24 * 60 * 60, 30 * 24 * 60 * 60, 1000);
     }
 
