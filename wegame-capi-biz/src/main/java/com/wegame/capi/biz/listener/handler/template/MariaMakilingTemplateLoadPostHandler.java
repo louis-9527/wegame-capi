@@ -65,7 +65,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                 || betType == BetTypeEnum.BUY_BET && multipleRange.getEnd().compareTo(new BigDecimal("0.5")) <= 0)) {
             return;
         }
-        log.info("template load start, range: {}-{}...", multipleRange.getStart(), multipleRange.getEnd());
+        log.info("template load start, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
         try {
             // todo 增加缓存策略
             // 投注记录模版缓存 先失效，再加载
@@ -87,9 +87,9 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                 //                    gameRecordTemplateService.listByBetRecordId(templateType, betRecordTemplateId);
                 //                });
             }
-            log.info("template load end, range: {}-{}...", multipleRange.getStart(), multipleRange.getEnd());
+            log.info("template load end, betType: {}, range: {}-{}, size: {}...", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
         } catch (Exception e) {
-            log.info("template load error, range: {}-{}...", multipleRange.getStart(), multipleRange.getEnd());
+            log.info("template load error, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
         }
     }
 }
