@@ -61,15 +61,16 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
 
     private void loadTemplate(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
         TemplateTypeEnum templateType = this.getTemplateType();
-        if (!(betType == BetTypeEnum.NORMAL_BET && multipleRange.getEnd().compareTo(BigDecimal.ONE) <= 0
-                || betType == BetTypeEnum.BUY_BET && multipleRange.getEnd().compareTo(new BigDecimal("0.5")) <= 0)) {
-            return;
-        }
         log.info("template load start, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
         try {
             // todo 增加缓存策略
             // 投注记录模版缓存 先失效，再加载
             List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd());
+            if (!(betType == BetTypeEnum.NORMAL_BET && multipleRange.getEnd().compareTo(BigDecimal.ONE) <= 0
+                    || betType == BetTypeEnum.BUY_BET && multipleRange.getEnd().compareTo(new BigDecimal("0.5")) <= 0)) {
+                log.info("template load end, betType: {}, range: {}-{}, size: {}...， no load gameRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+                return;
+            }
             if (CollectionUtil.isNotEmpty(betRecordTemplateIdList)) {
                 List<List<Long>> multiList = ListUtil.partition(betRecordTemplateIdList, 1000);
                 multiList.forEach(idList -> {
