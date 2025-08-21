@@ -1,6 +1,7 @@
 package com.wegame.capi.infrastructure.cache;
 
 import com.wegame.base.CacheConstants;
+import com.wegame.base.cache.AbstractLocalCache;
 import com.wegame.base.cache.AbstractMultiCache;
 import com.wegame.base.enums.CommonCacheEnvEnum;
 import org.springframework.stereotype.Component;
@@ -11,10 +12,10 @@ import org.springframework.stereotype.Component;
  * value: BetRecordTemplate Id ---list
  */
 @Component(CacheConstants.BET_RECORD_TEMPLATE)
-public class BetRecordTemplateMultiCache extends AbstractMultiCache {
+public class BetRecordTemplateLocalCache extends AbstractLocalCache {
 
-    public BetRecordTemplateMultiCache() {
-        super(CommonCacheEnvEnum.BET_RECORD_TEMPLATE.cacheKeyPrefixName(), 90 * 24 * 60 * 60, 30 * 24 * 60 * 60, 1000);
+    public BetRecordTemplateLocalCache() {
+        super(CommonCacheEnvEnum.BET_RECORD_TEMPLATE.cacheKeyPrefixName(), 365 * 24 * 60 * 60,  1000);
     }
 
     @Override
