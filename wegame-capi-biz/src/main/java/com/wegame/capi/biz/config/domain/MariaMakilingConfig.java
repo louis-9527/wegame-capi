@@ -181,34 +181,6 @@ public class MariaMakilingConfig implements Serializable {
         private Map<String, Integer> freeGame;
     }
 
-    @Data
-    @ToString
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @EqualsAndHashCode(callSuper = false)
-    public static class TemplateMultipleRange implements Serializable {
-        private static final long serialVersionUID = -734841249803450751L;
-        /**
-         * 倍数区间开始
-         */
-        private BigDecimal multipleRangeStart;
-        /**
-         * 倍数区间结束
-         */
-        private BigDecimal multipleRangeEnd;
-
-        public static TemplateMultipleRange convert(String templateMultipleRange) {
-            AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_PARAM);
-            String[] multipleRangeArr = templateMultipleRange.split("_");
-            AssertUtil.assertTrue(multipleRangeArr.length == 2, ErrorCode.ERR_PARAM);
-            return TemplateMultipleRange.builder()
-                    .multipleRangeStart(new BigDecimal(multipleRangeArr[0]))
-                    .multipleRangeEnd(new BigDecimal(multipleRangeArr[1]))
-                    .build();
-        }
-    }
-
     public void validate() {
         rewardMaxMultipleValidate();
         oddsConfigValidate();

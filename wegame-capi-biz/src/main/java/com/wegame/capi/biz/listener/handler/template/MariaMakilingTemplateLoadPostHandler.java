@@ -1,0 +1,86 @@
+package com.wegame.capi.biz.listener.handler.template;
+
+import cn.hutool.core.collection.CollectionUtil;
+import com.alibaba.fastjson.JSON;
+import com.wegame.base.exception.LockException;
+import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.wegame.capi.biz.domain.TemplateMultipleRange;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.TemplateTypeEnum;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+ * 模版预加载后处理执行器
+ */
+@Slf4j
+@Component
+public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
+    @Autowired
+    MariaMakilingConfig mariaMakilingConfig;
+
+    protected TemplateTypeEnum getTemplateType() {
+        return TemplateTypeEnum.MARIA_MAKILING;
+    }
+
+    protected MariaMakilingConfig.TemplateRangeConfig getTemplateRangeConfig() {
+        return mariaMakilingConfig.getTemplateRangeConfig();
+    }
+
+    @Override
+    public void handle() {
+        if (!supportGame(GameTypeEnum.MARIA_MAKILING)) {
+            return;
+        }
+        try {
+            //            distributeLock.lockThenRun(LockNameUtil.getBetRecordTemplatePreLoadLockName(this.getTemplateType()), 60, TimeUnit.SECONDS, () -> {
+            try {
+                log.info("template load start...");
+                MariaMakilingConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();
+                config.getMainGame().keySet().forEach((String key) -> loadTemplate(BetTypeEnum.NORMAL_BET, TemplateMultipleRange.build(key)));
+                config.getFreeGame().keySet().forEach((String key) -> loadTemplate(BetTypeEnum.BUY_BET, TemplateMultipleRange.build(key)));
+                log.info("template load end...");
+            } catch (Exception e) {
+                log.error("template load error", e);
+            }
+            //            }, "lock fail");
+        } catch (LockException e) {
+            log.warn("template load lock warn", e);
+        } catch (Exception e) {
+            log.error("template load error", e);
+        }
+    }
+
+    private void loadTemplate(BetTypeEnum betTypeEnum, TemplateMultipleRange multipleRange) {
+        TemplateTypeEnum templateType = this.getTemplateType();
+        log.info("template load start, range: {}-{}...", multipleRange.getStart(), multipleRange.getEnd());
+        try {
+            // todo 增加缓存策略
+            // 投注记录模版缓存 先失效，再加载
+            List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(templateType, betTypeEnum, multipleRange.getStart(), multipleRange.getEnd());
+            if (CollectionUtil.isNotEmpty(betRecordTemplateIdList)) {
+                // gameRecord模版缓存 先失效，再加载
+                betRecordTemplateIdList.forEach(betRecordTemplateId -> {
+                    // 正常投注：
+                    //0倍： 1.5 G
+                    //0-0.5 781M
+                    //0.5-1 703M       缓存到本地
+
+                    //免费投注：
+                    //0-0.5: 492M    缓存到本地
+                    //0.5-1: 6.5G
+                    //1-3: 3.5G
+                    // gameRecordTemplateService.evictListByBetRecordId(betRecordTemplateId, templateType);
+                    gameRecordTemplateService.listByBetRecordId(betRecordTemplateId, templateType);
+                });
+            }
+            log.info("template load end, range: {}-{}...", multipleRange.getStart(), multipleRange.getEnd());
+        } catch (Exception e) {
+            log.info("template load error, range: {}-{}...", multipleRange.getStart(), multipleRange.getEnd());
+        }
+    }
+}

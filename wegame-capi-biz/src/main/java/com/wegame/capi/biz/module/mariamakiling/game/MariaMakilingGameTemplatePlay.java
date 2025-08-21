@@ -6,6 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.wegame.capi.biz.domain.TemplateMultipleRange;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
@@ -56,12 +57,11 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-
-        MariaMakilingConfig.TemplateMultipleRange templateConfig = getTemplateConfig(gamePlay.getBetType());
-        AssertUtil.assertNotNull(templateConfig, ErrorCode.ERR_INTER);
-        AssertUtil.assertNotNull(templateConfig.getMultipleRangeStart(), ErrorCode.ERR_INTER);
-        AssertUtil.assertNotNull(templateConfig.getMultipleRangeEnd(), ErrorCode.ERR_INTER);
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(gamePlay.getBetType(), templateConfig.getMultipleRangeStart(), templateConfig.getMultipleRangeEnd(), MARIA_MAKILING);
+        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType());
+        AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
+        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         List<GameRecordTemplateDo> configRecordList = gameRecordTemplateService.listByBetRecordId(betRecordId, MARIA_MAKILING);
@@ -150,7 +150,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         });
     }
 
-    private MariaMakilingConfig.TemplateMultipleRange getTemplateConfig(BetTypeEnum betTypeEnum) {
+    private TemplateMultipleRange getTemplateMultipleRange(BetTypeEnum betTypeEnum) {
         String templateMultipleRange;
         if (Objects.equals(betTypeEnum, BetTypeEnum.NORMAL_BET)) {
             templateMultipleRange = randomService.randomKeyByWeight(mariaMakilingConfig.getTemplateRangeConfig().getMainGame());
@@ -158,7 +158,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
             templateMultipleRange = randomService.randomKeyByWeight(mariaMakilingConfig.getTemplateRangeConfig().getFreeGame());
         }
         AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_PARAM);
-        return MariaMakilingConfig.TemplateMultipleRange.convert(templateMultipleRange);
+        return TemplateMultipleRange.build(templateMultipleRange);
     }
 
     private Long getRandomElement(List<Long> list) {

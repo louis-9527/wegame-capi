@@ -51,12 +51,12 @@ public class BetRecordTemplateService extends AbstractService {
         return true;
     }
 
-    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betTypeEnum.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
-    public List<Long> listIdByMultipleRange(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, TemplateTypeEnum typeEnum) {
-        log.info("listIdByMultipleRange query, betTypeEnum: {}, multipleRangeStart: {}, multipleRangeEnd: {}, typeEnum: {}", betTypeEnum.getCode(), multipleRangeStart, multipleRangeEnd, typeEnum.getGameType());
-        Query query = BetRecordTemplateQueryBuilder.buildQuery(betTypeEnum, multipleRangeStart, multipleRangeEnd);
-        String betRecordTemplateCollectionName = typeEnum.getBetRecordTemplateCollectionName();
-        MongoTemplate mongoTemplate = getMongoTemplate(typeEnum.getGameType());
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+    public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
+        log.info("listIdByMultipleRange query, betTypeEnum: {}, multipleRangeStart: {}, multipleRangeEnd: {}, typeEnum: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.getGameType());
+        Query query = BetRecordTemplateQueryBuilder.buildQuery(betType, multipleRangeStart, multipleRangeEnd);
+        String betRecordTemplateCollectionName = templateType.getBetRecordTemplateCollectionName();
+        MongoTemplate mongoTemplate = getMongoTemplate(templateType.getGameType());
         // 1. 先查询为 ObjectId 类型的列表
         List<BetRecordTemplatePo> betRecordTemplateList = mongoTemplate.find(query, BetRecordTemplatePo.class, betRecordTemplateCollectionName);
         return Optional.of(betRecordTemplateList)
