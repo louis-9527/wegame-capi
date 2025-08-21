@@ -64,7 +64,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
-        List<GameRecordTemplateDo> configRecordList = gameRecordTemplateService.listByBetRecordId(betRecordId, MARIA_MAKILING);
+        List<GameRecordTemplateDo> configRecordList = gameRecordTemplateService.listByBetRecordId(MARIA_MAKILING, betRecordId);
         // 获取首轮(parent ==0 and index =0)
         GameRecordTemplateDo firstConfigRecord = configRecordList.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)

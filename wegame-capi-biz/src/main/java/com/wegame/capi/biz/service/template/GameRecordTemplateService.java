@@ -6,15 +6,23 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.template.GameRecordRecordQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
+import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.template.GameRecordTemplatePo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.converter.operation.GameRecordTemplateConvert.poToDoList;
 
@@ -31,18 +39,30 @@ public class GameRecordTemplateService<T> extends AbstractService {
         bulkOps.execute();
         return true;
     }
-    @Cacheable(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betRecordId")
-    public List<GameRecordTemplateDo> listByBetRecordId(Long betRecordId, TemplateTypeEnum typeEnum) {
-        log.info( "listByBetRecordId query, betRecordId: {}; typeEnum: {}", betRecordId, typeEnum.getGameType());
-        List<GameRecordTemplatePo> poList = getMongoTemplate(typeEnum.getGameType())
-                .find(GameRecordRecordQueryBuilder.buildQuery(betRecordId),
-                        GameRecordTemplatePo.class,
-                        typeEnum.getGameRecordTemplateCollectionName());
+
+    public List<GameRecordTemplateDo> listByBetRecordIdList(TemplateTypeEnum templateType, List<Long> betRecordIdList) {
+        Query query = Query.query(Criteria.where("betRecordId").in(betRecordIdList));
+        List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType()).find(query, GameRecordTemplatePo.class);
         return poToDoList(poList);
     }
 
-    @CacheEvict(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#typeEnum.name() + '_' + #betRecordId")
-    public void evictListByBetRecordId(Long betRecordId, TemplateTypeEnum typeEnum) {
-        // do nothing
+    @CachePut(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#templateType.name() + '_' + #betRecordId")
+    public List<GameRecordTemplateDo> putCache(TemplateTypeEnum templateType, Long betRecordId, List<GameRecordTemplateDo> list) {
+        return list;
     }
+
+    @Cacheable(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#templateType.name() + '_' + #betRecordId")
+    public List<GameRecordTemplateDo> listByBetRecordId(TemplateTypeEnum templateType, Long betRecordId) {
+        log.info( "listByBetRecordId query, betRecordId: {}; typeEnum: {}", betRecordId, templateType.getGameType());
+        List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType())
+                .find(GameRecordRecordQueryBuilder.buildQuery(betRecordId),
+                        GameRecordTemplatePo.class,
+                        templateType.getGameRecordTemplateCollectionName());
+        return poToDoList(poList);
+    }
+
+    //    @CacheEvict(value = CacheConstants.GAME_RECORD_TEMPLATE, key = "#templateType.name() + '_' + #betRecordId")
+    //    public void evictListByBetRecordId(TemplateTypeEnum templateType, Long betRecordId) {
+    //        // do nothing
+    //    }
 }
