@@ -149,11 +149,8 @@ public class SirenaBetRecordManager extends AbstractBetRecordManager<SirenaGameR
         for (RewardLineDetailDo<SirenaSymbolDo> rewardLineDetail : rewardLineDetailList) {
             List<RewardSymbolDo<SirenaSymbolDo>> rewardSymbolList = rewardLineDetail.getRewardSymbolList();
             for (RewardSymbolDo<SirenaSymbolDo> rewardSymbol : rewardSymbolList) {
-                if (SirenaGameHelper.SIRENA_Wild.getId().equals(rewardSymbol.getSymbol().getId()) && rewardSymbol.getSymbol().getNestSymbol() != null) {
-                    SirenaSymbolDo nestSymbol = rewardSymbol.getSymbol().getNestSymbol();
-                    if (SirenaGameHelper.SIRENA_Pearl_Wild.getId().equals(nestSymbol.getId())) {
-                        return true;
-                    }
+                if (SirenaGameHelper.SIRENA_Wild.getId().equals(rewardSymbol.getSymbol().getId())) {
+                    return true;
                 }
 
             }
