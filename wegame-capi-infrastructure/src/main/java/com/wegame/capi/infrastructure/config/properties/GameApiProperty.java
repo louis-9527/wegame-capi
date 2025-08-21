@@ -71,6 +71,9 @@ public class GameApiProperty implements InitializingBean, Serializable {
         private String channelId;
         private String privateKey;
         private String privateIv;
+        private String dosPublicKey;
+        private String dosPrivateKey;
+        private String dosPassword;
     }
 
 }
