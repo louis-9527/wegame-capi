@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.alibaba.fastjson.JSON;
 import com.wegame.base.exception.LockException;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.TemplateMultipleRange;
@@ -12,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -55,27 +55,23 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
         }
     }
 
-    private void loadTemplate(BetTypeEnum betTypeEnum, TemplateMultipleRange multipleRange) {
+    private void loadTemplate(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
         TemplateTypeEnum templateType = this.getTemplateType();
         log.info("template load start, range: {}-{}...", multipleRange.getStart(), multipleRange.getEnd());
         try {
             // todo 增加缓存策略
             // 投注记录模版缓存 先失效，再加载
-            List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(templateType, betTypeEnum, multipleRange.getStart(), multipleRange.getEnd());
+            List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd());
             if (CollectionUtil.isNotEmpty(betRecordTemplateIdList)) {
                 // gameRecord模版缓存 先失效，再加载
                 betRecordTemplateIdList.forEach(betRecordTemplateId -> {
-                    // 正常投注：
-                    //0倍： 1.5 G
-                    //0-0.5 781M
-                    //0.5-1 703M       缓存到本地
-
-                    //免费投注：
-                    //0-0.5: 492M    缓存到本地
-                    //0.5-1: 6.5G
-                    //1-3: 3.5G
+                    // 正常投注：0倍 缓存到本地
+                    // 免费投注： 0-0.5倍   缓存到本地
                     // gameRecordTemplateService.evictListByBetRecordId(betRecordTemplateId, templateType);
-                    gameRecordTemplateService.listByBetRecordId(betRecordTemplateId, templateType);
+                    if (betType == BetTypeEnum.NORMAL_BET && multipleRange.getEnd().compareTo(BigDecimal.ONE) <= 0
+                       || betType == BetTypeEnum.BUY_BET && multipleRange.getEnd().compareTo(new BigDecimal("0.5")) <= 0) {
+                        gameRecordTemplateService.listByBetRecordId(betRecordTemplateId, templateType);
+                    }
                 });
             }
             log.info("template load end, range: {}-{}...", multipleRange.getStart(), multipleRange.getEnd());
