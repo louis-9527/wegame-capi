@@ -16,6 +16,7 @@ import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.sirena.SirenaGameHelper;
+import com.wegame.capi.biz.module.sirena.SirenaSymbolUtil;
 import com.wegame.capi.biz.module.sirena.reward.SirenaRewardHandler;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
@@ -70,6 +71,7 @@ public class SirenaGameEventPlay extends AbstractGame<SirenaGameRecordDo> {
             // 迭代替代递归处理
             this.loopHandle(taskLinkedList, ret, gamePlay, batchIdMap);
         }
+        SirenaSymbolUtil.postProcessPlaceholderSymbol(ret);
         return ret;
     }
 
