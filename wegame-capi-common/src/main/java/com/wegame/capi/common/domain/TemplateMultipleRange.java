@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.domain;
+package com.wegame.capi.common.domain;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;

@@ -67,7 +67,7 @@ public class GameRecordTemplateService<T> extends AbstractService {
         return listByBetRecordId(templateType, betRecordId);
     }
 
-    private List<GameRecordTemplateDo> listByBetRecordId(TemplateTypeEnum templateType, Long betRecordId) {
+    public List<GameRecordTemplateDo> listByBetRecordId(TemplateTypeEnum templateType, Long betRecordId) {
         List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType())
                 .find(GameRecordRecordQueryBuilder.buildQuery(betRecordId),
                         GameRecordTemplatePo.class,

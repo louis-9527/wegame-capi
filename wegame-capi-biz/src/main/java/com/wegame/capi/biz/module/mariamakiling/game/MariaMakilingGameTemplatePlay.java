@@ -6,7 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
-import com.wegame.capi.biz.domain.TemplateMultipleRange;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
@@ -22,6 +22,7 @@ import com.wegame.capi.biz.service.template.GameRecordTemplateService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,16 +62,24 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
+
         List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
+
         List<GameRecordTemplateDo> configRecordList;
-        if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-            configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MARIA_MAKILING, betRecordId);
-        } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-            configRecordList = gameRecordTemplateService.listByBetRecordIdWithRedisCache(MARIA_MAKILING, betRecordId);
+        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(gamePlay.getBetType(), templateMultipleRange)) {
+            // 已经被预热的倍率，直接走缓存
+            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
+                configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MARIA_MAKILING, betRecordId);
+            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
+                configRecordList = gameRecordTemplateService.listByBetRecordIdWithRedisCache(MARIA_MAKILING, betRecordId);
+            } else {
+                throw new BusinessException(ErrorCode.ERR_PARAM);
+            }
         } else {
-            throw new BusinessException(ErrorCode.ERR_PARAM);
+            // 没有被预热的倍率，需要重新查询
+            configRecordList = gameRecordTemplateService.listByBetRecordId(MARIA_MAKILING, betRecordId);
         }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         // 获取首轮(parent ==0 and index =0)

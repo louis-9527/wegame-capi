@@ -4,11 +4,12 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import com.wegame.base.exception.LockException;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
-import com.wegame.capi.biz.domain.TemplateMultipleRange;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
+import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -64,9 +65,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
         log.info("template load start, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
         try {
             List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd());
-            // todo 上线注意修改 哪些 倍率范围需要load 缓存
-            if (!(betType == BetTypeEnum.NORMAL_BET && multipleRange.getEnd().compareTo(BigDecimal.ONE) <= 0
-                    || betType == BetTypeEnum.BUY_BET && multipleRange.getEnd().compareTo(new BigDecimal("17.5")) <= 0)) {
+            if (!TemplateCacheWarmUpUtil.isWarmUpMultipleRange(betType, multipleRange)) {
                 log.info("template load end, betType: {}, range: {}-{}, size: {}...， no load gameRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
                 return;
             }
