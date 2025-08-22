@@ -131,6 +131,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
 
     public GamePlayTypeEnum getGamePlayType() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
+        // todo 增加判断第一款游戏才回走模板
         if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
             return GamePlayTypeEnum.NORMAL_PLAY;
         } else {

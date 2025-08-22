@@ -10,12 +10,12 @@ import java.math.BigDecimal;
 
 public class BetRecordTemplateQueryBuilder {
 
-    public static Query buildQuery(BetTypeEnum betTypeEnum,BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
+    public static Query buildQuery(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
         AssertUtil.assertNotNull(betTypeEnum, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(multipleRangeStart, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(multipleRangeEnd, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(multipleRangeStart.compareTo(multipleRangeEnd) <= 0, ErrorCode.ERR_PARAM);
-        Criteria criteria = null;
+        Criteria criteria;
         if (multipleRangeStart.compareTo(multipleRangeEnd) == 0) {
             criteria = Criteria.where("multiple")
                     .is(multipleRangeStart.doubleValue())

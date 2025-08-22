@@ -27,6 +27,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
 
+
     protected TemplateTypeEnum getTemplateType() {
         return TemplateTypeEnum.MARIA_MAKILING;
     }
@@ -37,13 +38,14 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
 
     @Override
     public void handle() {
-        if (!supportWarnUpEnv()) {
+        if (!supportWarmUpEnv()) {
             return;
         }
         if (!supportGame(GameTypeEnum.MARIA_MAKILING)) {
             return;
         }
         try {
+            // todo 加载redis缓存的时候需要抢锁，加载本地是缓存的时候不需要抢锁
             //            distributeLock.lockThenRun(LockNameUtil.getBetRecordTemplatePreLoadLockName(this.getTemplateType()), 60, TimeUnit.SECONDS, () -> {
             try {
                 log.info("template load start...");

@@ -2,7 +2,6 @@ package com.wegame.capi.infrastructure.cache;
 
 import com.wegame.base.CacheConstants;
 import com.wegame.base.cache.AbstractLocalCache;
-import com.wegame.base.cache.AbstractMultiCache;
 import com.wegame.base.enums.CommonCacheEnvEnum;
 import org.springframework.stereotype.Component;
 

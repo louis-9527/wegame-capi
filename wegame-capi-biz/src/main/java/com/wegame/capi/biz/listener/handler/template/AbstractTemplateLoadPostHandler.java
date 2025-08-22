@@ -1,12 +1,14 @@
 package com.wegame.capi.biz.listener.handler.template;
 
-import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.google.common.collect.Lists;
+import com.wegame.base.enums.EnvEnum;
 import com.wegame.capi.biz.listener.handler.AbstractPostHandler;
 import com.wegame.capi.biz.service.template.BetRecordTemplateService;
 import com.wegame.capi.biz.service.template.GameRecordTemplateService;
-import com.wegame.capi.client.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 /**
  * 模版预加载后处理器
@@ -18,4 +20,9 @@ public abstract class AbstractTemplateLoadPostHandler extends AbstractPostHandle
     public BetRecordTemplateService betRecordTemplateService;
     @Autowired
     public GameRecordTemplateService gameRecordTemplateService;
+
+    public static final List<String> enableEnvList = Lists.newArrayList(EnvEnum.STS.getValue(), EnvEnum.PROD.getValue());
+    public boolean supportWarmUpEnv() {
+        return enableEnvList.contains(env);
+    }
 }

@@ -30,8 +30,6 @@ public abstract class AbstractPostHandler implements PostHandler {
     @Autowired
     public GameProperty gameProperty;
 
-    public static final List<String> enableEnvList = Lists.newArrayList(EnvEnum.STS.getValue(), EnvEnum.PROD.getValue());
-
     public boolean supportGame(GameTypeEnum gameType) {
         return gameProperty.enabledGameTypes()
                 .stream()
@@ -39,9 +37,7 @@ public abstract class AbstractPostHandler implements PostHandler {
                 .findFirst()
                 .orElse(null) != null;
     }
-    public boolean supportWarnUpEnv() {
-        return enableEnvList.contains(env);
-    }
+
 
     public void warning(String warningMsg) {
         LarkUtil.sendTextMsg(warningRobot, BizAlertMessage.builder()
