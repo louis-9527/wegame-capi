@@ -6,6 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
@@ -68,7 +69,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         Long betRecordId = getRandomElement(betRecordIdList);
 
         List<GameRecordTemplateDo> configRecordList;
-        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(gamePlay.getBetType(), templateMultipleRange)) {
+        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
                 configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MARIA_MAKILING, betRecordId);
