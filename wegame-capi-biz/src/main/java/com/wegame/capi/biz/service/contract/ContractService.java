@@ -1,19 +1,15 @@
 package com.wegame.capi.biz.service.contract;
 
 import com.wegame.capi.api.contract.ContractApi;
-import com.wegame.capi.api.domain.res.contract.RedeemPlayerContractRes;
 import com.wegame.capi.biz.builder.req.GetPlayerContractReqBuilder;
 import com.wegame.capi.biz.builder.req.RedeemPlayerContractReqBuilder;
-import com.wegame.capi.biz.domain.biz.promotion.AchievementDo;
-import com.wegame.capi.biz.domain.biz.promotion.RedeemAchievementDo;
+import com.wegame.capi.biz.converter.promotion.GetPlayerContractConverter;
+import com.wegame.capi.biz.converter.promotion.RedeemPlayerContractConverter;
+import com.wegame.capi.biz.domain.biz.contract.GetPlayerContractDo;
+import com.wegame.capi.biz.domain.biz.contract.RedeemPlayerContractDo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-
-import static com.wegame.capi.biz.converter.promotion.AchievementConverter.toDoList;
-import static com.wegame.capi.biz.converter.promotion.RedeemAchievementConverter.toDo;
 
 /**
  * 契约service
@@ -25,18 +21,14 @@ public class ContractService {
     @Autowired
     ContractApi contractApi;
 
-    public List<AchievementDo.Achievement> getPlayerContract() {
-
+    public GetPlayerContractDo getPlayerContract() {
         contractApi.getPlayerContract(GetPlayerContractReqBuilder.buildGetPlayerContractReq());
-        return toDoList(getAchievementRes.getAchievementList());
+        return GetPlayerContractConverter.resToDo(contractApi.getPlayerContract(GetPlayerContractReqBuilder.buildGetPlayerContractReq()));
     }
 
-    public RedeemAchievementDo redeemPlayerContract() {
-        RedeemPlayerContractRes redeemPlayerContractRes = contractApi.redeemPlayerContract(RedeemPlayerContractReqBuilder.buildRedeemPlayerContractReq());
-        return toDo(redeemAchievementRes);
+    public RedeemPlayerContractDo redeemPlayerContract() {
+        return RedeemPlayerContractConverter.resToDo(contractApi.redeemPlayerContract(RedeemPlayerContractReqBuilder.buildRedeemPlayerContractReq()));
     }
-
-
 
 
 }

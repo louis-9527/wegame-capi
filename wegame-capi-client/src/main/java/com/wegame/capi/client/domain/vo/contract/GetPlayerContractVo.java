@@ -1,5 +1,7 @@
 package com.wegame.capi.client.domain.vo.contract;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -12,58 +14,33 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@ApiModel(description = "获取玩家契约模型")
 public class GetPlayerContractVo implements Serializable {
     private static final long serialVersionUID = -632887243L;
-    /**
-     * 平台id
-     */
+    @ApiModelProperty(value = "pId", required = true)
     private String pId;
-    /**
-     * 渠道id
-     */
+    @ApiModelProperty(value = "channelId", required = true)
     private String channelId;
-    /**
-     * refId
-     */
+    @ApiModelProperty(value = "refId", required = true)
     private String refId;
-    /**
-     * 玩家姓名
-     */
+    @ApiModelProperty(value = "playerName", required = true)
     private String playerName;
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty(value = "createTime", required = true)
     private String createTime;
-    /**
-     * 结束时间
-     */
+    @ApiModelProperty(value = "endTime", required = true)
     private String endTime;
-    /**
-     * rewardId
-     */
+    @ApiModelProperty(value = "rewardId", required = true)
     private String rewardId;
-    /**
-     * experience
-     */
+    @ApiModelProperty(value = "experience", required = true)
     private BigDecimal experience;
-    /**
-     * target
-     */
+    @ApiModelProperty(value = "target", required = true)
     private BigDecimal target;
-    /**
-     * Contract status: 1:'Unassigned',2:'Countdown',3:'Claimable'
-     */
+    @ApiModelProperty(value = "status", required = true)
     private String status;
-    /**
-     * imgURL
-     */
+    @ApiModelProperty(value = "imgURL", required = true)
     private String imgURL;
-    /**
-     * rewardType
-     */
+    @ApiModelProperty(value = "rewardType", required = true)
     private Integer rewardType;
-    /**
-     * isEnabled
-     */
+    @ApiModelProperty(value = "isEnabled", required = true)
     private Boolean isEnabled;
 }

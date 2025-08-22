@@ -1,5 +1,7 @@
 package com.wegame.capi.client.domain.vo.contract;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -12,19 +14,14 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@ApiModel(description = "获取玩家契约模型")
 public class RedeemPlayerContractVo implements Serializable {
     private static final long serialVersionUID = -656567423784L;
-    /**
-     * isClaimed
-     */
+    @ApiModelProperty(value = "isClaimed", required = true)
     private Boolean isClaimed;
-    /**
-     * Reward type: 1: starCard / 2: freeSpin
-     */
+    @ApiModelProperty(value = "rewardType", required = true)
     private String rewardType;
-    /**
-     * Reward info
-     */
+    @ApiModelProperty(value = "rewardInfo", required = true)
     private ContractRewardInfo rewardInfo;
 
     @Data
@@ -35,53 +32,29 @@ public class RedeemPlayerContractVo implements Serializable {
     @EqualsAndHashCode
     public static class ContractRewardInfo implements Serializable {
         private static final long serialVersionUID = -656782432534L;
-        /**
-         * gameId
-         */
+        @ApiModelProperty(value = "gameId", required = true)
         private String gameId;
-        /**
-         * gameCode
-         */
+        @ApiModelProperty(value = "gameCode", required = true)
         private String gameCode;
-        /**
-         * gameName
-         */
+        @ApiModelProperty(value = "gameName", required = true)
         private String gameName;
-        /**
-         * imgURL
-         */
+        @ApiModelProperty(value = "imgURL", required = true)
         private String imgURL;
-        /**
-         * StarCard name / FreeSpin name
-         */
+        @ApiModelProperty(value = "rewardName", required = true)
         private String rewardName;
-        /**
-         * rewardConfigId
-         */
+        @ApiModelProperty(value = "rewardConfigId", required = true)
         private String rewardConfigId;
-        /**
-         * starLevel
-         */
+        @ApiModelProperty(value = "starLevel", required = true)
         private Integer starLevel;
-        /**
-         * betValue
-         */
+        @ApiModelProperty(value = "betValue", required = true)
         private BigDecimal betValue;
-        /**
-         * balanceRequired
-         */
+        @ApiModelProperty(value = "balanceRequired", required = true)
         private BigDecimal balanceRequired;
-        /**
-         * campaignId
-         */
+        @ApiModelProperty(value = "campaignId", required = true)
         private String campaignId;
-        /**
-         * freeBet
-         */
+        @ApiModelProperty(value = "freeBet", required = true)
         private Integer freeBet;
-        /**
-         * count
-         */
+        @ApiModelProperty(value = "count", required = true)
         private Integer count;
     }
 

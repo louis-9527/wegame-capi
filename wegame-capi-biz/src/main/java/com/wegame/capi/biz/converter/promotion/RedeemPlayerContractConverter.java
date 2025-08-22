@@ -1,72 +1,76 @@
 package com.wegame.capi.biz.converter.promotion;
 
+import com.wegame.capi.api.domain.res.contract.RedeemPlayerContractRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemTreasureRes;
+import com.wegame.capi.biz.domain.biz.contract.RedeemPlayerContractDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemTreasureDo;
+import com.wegame.capi.client.domain.vo.contract.RedeemPlayerContractVo;
 import com.wegame.capi.client.domain.vo.promotion.RedeemTreasureVo;
 
 import java.util.Objects;
 
 public class RedeemPlayerContractConverter {
 
-    public static RedeemTreasureDo resToDo(RedeemTreasureRes res) {
+    public static RedeemPlayerContractDo resToDo(RedeemPlayerContractRes res) {
         if (Objects.isNull(res)) {
             return null;
         }
-        return RedeemTreasureDo.builder()
-                .treasureId(res.getTreasureId())
-                .playerName(res.getPlayerName())
-                .channelId(res.getChannelId())
-                .pId(res.getPId())
-                .level(res.getLevel())
-                .experience(res.getExperience())
-                .refId(res.getRefId())
-                .reward(rewardToDo(res.getReward()))
+        return RedeemPlayerContractDo.builder()
+                .isClaimed(res.getIsClaimed())
+                .rewardType(res.getRewardType())
+                .rewardInfo(resToDo(res.getRewardInfo()))
                 .build();
     }
 
-    private static RedeemTreasureDo.Reward rewardToDo(RedeemTreasureRes.Reward reward) {
-        if (Objects.isNull(reward)) {
+    public static RedeemPlayerContractDo.ContractRewardInfo resToDo(RedeemPlayerContractRes.ContractRewardInfo res) {
+        if (Objects.isNull(res)) {
             return null;
         }
-        return RedeemTreasureDo.Reward.builder()
-                .rewardConfigId(reward.getRewardConfigId())
-                .name(reward.getName())
-                .count(reward.getCount())
-                .imgUrl(reward.getImgUrl())
-                .betValue(reward.getBetValue())
-                .balanceRequired(reward.getBalanceRequired())
-                .starLevel(reward.getStarLevel())
+        return RedeemPlayerContractDo.ContractRewardInfo.builder()
+                .gameId(res.getGameId())
+                .gameCode(res.getGameCode())
+                .gameName(res.getGameName())
+                .imgURL(res.getImgURL())
+                .rewardName(res.getRewardName())
+                .rewardConfigId(res.getRewardConfigId())
+                .starLevel(res.getStarLevel())
+                .betValue(res.getBetValue())
+                .balanceRequired(res.getBalanceRequired())
+                .campaignId(res.getCampaignId())
+                .freeBet(res.getFreeBet())
+                .count(res.getCount())
                 .build();
     }
 
-    public static RedeemTreasureVo doToVo(RedeemTreasureDo redeemTreasureDo) {
-        if (Objects.isNull(redeemTreasureDo)) {
+
+    public static RedeemPlayerContractVo doToVo(RedeemPlayerContractDo redeemPlayerContractDo) {
+        if (Objects.isNull(redeemPlayerContractDo)) {
             return null;
         }
-        return RedeemTreasureVo.builder()
-                .treasureId(redeemTreasureDo.getTreasureId())
-                .playerName(redeemTreasureDo.getPlayerName())
-                .channelId(redeemTreasureDo.getChannelId())
-                .pId(redeemTreasureDo.getPId())
-                .level(redeemTreasureDo.getLevel())
-                .experience(redeemTreasureDo.getExperience())
-                .refId(redeemTreasureDo.getRefId())
-                .reward(rewardToVo(redeemTreasureDo.getReward()))
+        return RedeemPlayerContractVo.builder()
+                .isClaimed(redeemPlayerContractDo.getIsClaimed())
+                .rewardType(redeemPlayerContractDo.getRewardType())
+                .rewardInfo(doToVo(redeemPlayerContractDo.getRewardInfo()))
                 .build();
     }
 
-    private static RedeemTreasureVo.Reward rewardToVo(RedeemTreasureDo.Reward reward) {
-        if (Objects.isNull(reward)) {
+    public static RedeemPlayerContractVo.ContractRewardInfo doToVo(RedeemPlayerContractDo.ContractRewardInfo doRewardInfo) {
+        if (Objects.isNull(doRewardInfo)) {
             return null;
         }
-        return RedeemTreasureVo.Reward.builder()
-                .rewardConfigId(reward.getRewardConfigId())
-                .name(reward.getName())
-                .count(reward.getCount())
-                .imgUrl(reward.getImgUrl())
-                .betValue(reward.getBetValue())
-                .balanceRequired(reward.getBalanceRequired())
-                .starLevel(reward.getStarLevel())
+        return RedeemPlayerContractVo.ContractRewardInfo.builder()
+                .gameId(doRewardInfo.getGameId())
+                .gameCode(doRewardInfo.getGameCode())
+                .gameName(doRewardInfo.getGameName())
+                .imgURL(doRewardInfo.getImgURL())
+                .rewardName(doRewardInfo.getRewardName())
+                .rewardConfigId(doRewardInfo.getRewardConfigId())
+                .starLevel(doRewardInfo.getStarLevel())
+                .betValue(doRewardInfo.getBetValue())
+                .balanceRequired(doRewardInfo.getBalanceRequired())
+                .campaignId(doRewardInfo.getCampaignId())
+                .freeBet(doRewardInfo.getFreeBet())
+                .count(doRewardInfo.getCount())
                 .build();
     }
 }
