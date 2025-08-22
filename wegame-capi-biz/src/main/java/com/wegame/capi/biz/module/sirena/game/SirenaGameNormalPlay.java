@@ -311,9 +311,8 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
             }
         }
         if (freeFlag) {
-            // 填充完之后 从左上角遍历,如果珍珠组成2*2的格子，则将 [0][0] 替换为 sirenaBigPearlWild,其他3个位置替换为 sirenaSymbolPlaceholder
+            // 填充完之后 从左上角遍历,如果珍珠组成2*2的格子，则将 [0][0] 替换next为 sirenaBigPearlWild
             SymbolDo sirenaBigPearlWild = SirenaGameHelper.SIRENA_Big_Pearl_Wild;
-            SirenaSymbolDo sirenaSymbolPlaceholder = SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER;
             TreeMap<BigDecimal, BigDecimal> bigPearlMultipleWeightConfig = sirenaConfig.getProbabilisticConfig().getBigPearlMultipleWeightConfig();
 
             // 从左上角开始遍历，检查2*2格子
@@ -321,31 +320,11 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                 for (int col = 0; col < GAME_INFO.getColumn() - 1; col++) {
                     // 检查当前2*2格子是否都是珍珠
                     if (isPearl2x2Grid(symbolArr, row, col)) {
-                        // 计算2*2格子中所有位置的symbolOdd总和
-                        BigDecimal totalSymbolOdd = BigDecimal.ZERO;
-
-                        // 累加2*2格子中4个位置的symbolOdd
-                        if (symbolArr[row][col] != null && symbolArr[row][col].getSymbolOdd() != null) {
-                            totalSymbolOdd = totalSymbolOdd.add(symbolArr[row][col].getSymbolOdd());
-                        }
-                        if (symbolArr[row][col + 1] != null && symbolArr[row][col + 1].getSymbolOdd() != null) {
-                            totalSymbolOdd = totalSymbolOdd.add(symbolArr[row][col + 1].getSymbolOdd());
-                        }
-                        if (symbolArr[row + 1][col] != null && symbolArr[row + 1][col].getSymbolOdd() != null) {
-                            totalSymbolOdd = totalSymbolOdd.add(symbolArr[row + 1][col].getSymbolOdd());
-                        }
-                        if (symbolArr[row + 1][col + 1] != null && symbolArr[row + 1][col + 1].getSymbolOdd() != null) {
-                            totalSymbolOdd = totalSymbolOdd.add(symbolArr[row + 1][col + 1].getSymbolOdd());
-                        }
 
                         BigDecimal pearlMultiple = GameUtil.randomKey(bigPearlMultipleWeightConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
                         // 将左上角位置替换为大珍珠，并设置总和的symbolOdd
-                        symbolArr[row][col] = SirenaSymbolDo.buildPearlWildSymbol(sirenaBigPearlWild, totalSymbolOdd.multiply(pearlMultiple));
-
-                        // 将其他3个位置替换为占位符
-                        symbolArr[row][col + 1] = sirenaSymbolPlaceholder;
-                        symbolArr[row + 1][col] = sirenaSymbolPlaceholder;
-                        symbolArr[row + 1][col + 1] = sirenaSymbolPlaceholder;
+                        SirenaSymbolDo sirenaSymbolDo = symbolArr[row][col];
+                        sirenaSymbolDo.setNestSymbol(SirenaSymbolDo.buildPearlWildSymbol(sirenaBigPearlWild, pearlMultiple));
                     }
                 }
             }
