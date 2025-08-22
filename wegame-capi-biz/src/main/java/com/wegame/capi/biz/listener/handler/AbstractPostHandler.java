@@ -1,6 +1,8 @@
 package com.wegame.capi.biz.listener.handler;
 
+import com.google.common.collect.Lists;
 import com.wegame.base.domain.BizAlertMessage;
+import com.wegame.base.enums.EnvEnum;
 import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.LarkUtil;
 import com.wegame.base.utils.ThreadMdcUtil;
@@ -9,6 +11,8 @@ import com.wegame.capi.infrastructure.config.properties.GameProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.util.List;
 
 /**
  * 抽象后处理器
@@ -26,12 +30,17 @@ public abstract class AbstractPostHandler implements PostHandler {
     @Autowired
     public GameProperty gameProperty;
 
+    public static final List<String> enableEnvList = Lists.newArrayList(EnvEnum.STS.getValue(), EnvEnum.PROD.getValue());
+
     public boolean supportGame(GameTypeEnum gameType) {
         return gameProperty.enabledGameTypes()
                 .stream()
                 .filter(item -> item == gameType)
                 .findFirst()
                 .orElse(null) != null;
+    }
+    public boolean supportWarnUpEnv() {
+        return enableEnvList.contains(env);
     }
 
     public void warning(String warningMsg) {

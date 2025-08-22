@@ -4,17 +4,16 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import com.wegame.base.exception.LockException;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
-import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,6 +37,9 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
 
     @Override
     public void handle() {
+        if (!supportWarnUpEnv()) {
+            return;
+        }
         if (!supportGame(GameTypeEnum.MARIA_MAKILING)) {
             return;
         }
