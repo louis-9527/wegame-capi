@@ -139,6 +139,7 @@ public class SymbolBuilder {
                         .symbolFireBorder(mangkukulamSymbolDo.isSymbolFireBorder())
                         .remainClearTimes(mangkukulamSymbolDo.getRemainClearTimes())
                         .multiples(mangkukulamSymbolDo.getMultiples())
+                        .sourceIndex(Objects.isNull(mangkukulamSymbolDo.getSourceIndex()) ? null : IndexFactory.buildVo(mangkukulamSymbolDo.getSourceIndex()))
                         .build();
             }
         }

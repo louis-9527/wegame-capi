@@ -42,7 +42,7 @@ public class MangkukulamSymbolUtil {
                         newSymbolArr[row][column] = MANGKUKULAM_SYMBOL_PLACEHOLDER;
                     }
                 } else {
-                    newSymbolArr[row][column] = symbolArr[row][column].copy();
+                    newSymbolArr[row][column] = symbolArr[row][column].copyWithOriginIndex();
                 }
             }
         }
@@ -329,7 +329,11 @@ public class MangkukulamSymbolUtil {
                         if (current.isSpecialWild()) {
                             System.out.print(current.getId() + ":" + current.getRemainClearTimes() + "\t");
                         } else {
-                            System.out.print(current.getId() + "\t\t");
+                            if (Objects.nonNull(current.getSourceIndex())) {
+                                System.out.print(current.getSourceIndex().getRowIndex() + "-" + current.getSourceIndex().getColumnIndex() +"->" + current.getId() + "\t");
+                            } else {
+                                System.out.print(current.getId() + "\t\t");
+                            }
                         }
                     }
                 } else {

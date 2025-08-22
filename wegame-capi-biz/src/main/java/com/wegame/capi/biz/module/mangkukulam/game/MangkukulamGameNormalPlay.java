@@ -309,7 +309,9 @@ public class MangkukulamGameNormalPlay extends AbstractGame<MangkukulamGameRecor
         int canBeWildIndexCount = Math.min(availableIndexes.size(), borderWildIndexes.size());
         for (int i = 0; i < canBeWildIndexCount; i++) {
             IndexDo indexDo = availableIndexes.get(i);
+            IndexDo sourceIndex = borderWildIndexes.get(i);
             symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = MangkukulamSymbolDo.buildFromSymbol(MANGKUKULAM_Wild);
+            symbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()].setSourceIndex(sourceIndex);
         }
     }
 
