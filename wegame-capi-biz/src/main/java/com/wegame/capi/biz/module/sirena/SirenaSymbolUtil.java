@@ -4,6 +4,7 @@ import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
+import com.wegame.capi.biz.module.sirena.game.SirenaGameContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -40,7 +41,14 @@ public class SirenaSymbolUtil {
                 for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
                     if (Objects.nonNull(symbolArr[row][column])) {
                         if (symbolArr[row][column].isPlaceholderSymbol()) {
-                            symbolArr[row][column] = null;
+                            symbolArr[row][column] = symbolArr[row][column].getNestSymbol();
+                        }
+                        if(SirenaGameHelper.SIRENA_Big_Pearl_Wild.getId().equals(symbolArr[row][column].getId())){
+                            SirenaSymbolDo temp = symbolArr[row][column];
+                            SirenaSymbolDo nestSymbolTemp = symbolArr[row][column].getNestSymbol();
+                            nestSymbolTemp.setNestSymbol(temp);
+                            symbolArr[row][column] = nestSymbolTemp;
+
                         }
                     }
                 }
