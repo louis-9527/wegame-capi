@@ -90,7 +90,7 @@ public class MangkukulamSymbolDo extends SymbolDo {
                 .build();
     }
 
-    public MangkukulamSymbolDo copyWithOriginIndex() {
+    public MangkukulamSymbolDo copyForEventPlay() {
         return MangkukulamSymbolDo.builder()
                 .id(getId())
                 .name(getName())
