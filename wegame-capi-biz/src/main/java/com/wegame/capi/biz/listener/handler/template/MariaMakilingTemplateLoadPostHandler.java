@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
-    private static final String key = "load:template:cache:MariaMakiling";
+    private static final String key = "load:template:redis:cache:MariaMakiling";
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
@@ -76,7 +76,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                     freeGameTemplateIdList.addAll(idList);
                 }
             });
-            loadRedisCache(BetTypeEnum.NORMAL_BET, freeGameTemplateIdList);
+            loadRedisCache(BetTypeEnum.BUY_BET, freeGameTemplateIdList);
             log.info("free game template load end...");
         } catch (Exception e) {
             log.info("free game template load error", e);
@@ -89,22 +89,22 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
         try {
             List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd());
             if (!TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MARIA_MAKILING, betType, multipleRange)) {
-                log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}...， no load gameRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+                log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}， no load gameRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
                 return null;
             }
-            log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}...", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+            log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
             return betRecordTemplateIdList;
         } catch (Exception e) {
-            log.info("templateIdList load error, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
+            log.info("templateIdList load error, betType: {}, range: {}-{}", betType, multipleRange.getStart(), multipleRange.getEnd(), e);
             return null;
         }
     }
 
     private void loadLocalCache(BetTypeEnum betType, List<Long> templateIdList) {
         TemplateTypeEnum templateType = this.getTemplateType();
-        log.info("loadLocalCache start, betType: {}, size: {}...", betType, templateIdList.size());
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
+                log.info("loadLocalCache start, betType: {}, size: {}", betType, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
                     List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
@@ -114,8 +114,8 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                                 .collect(Collectors.toList()));
                     });
                 });
+                log.info("loadLocalCache end, betType: {}, size: {}", betType, templateIdList.size());
             }
-            log.info("loadLocalCache end, betType: {}, size: {}...", betType, templateIdList.size());
         } catch (Exception e) {
             log.info("loadLocalCache error, betType: {}", betType, e);
         }
@@ -129,7 +129,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                 return;
             }
             distributeLock.lockThenRun(LockNameUtil.getBetRecordTemplatePreLoadLockName(this.getTemplateType()), 10, TimeUnit.SECONDS, () -> {
-                log.info("loadRedisCache start, betType: {}, size: {}...", betType, templateIdList.size());
+                log.info("loadRedisCache start, betType: {}, size: {}", betType, templateIdList.size());
                 if (CollectionUtil.isNotEmpty(templateIdList)) {
                     List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                     multiList.forEach(idList -> {
@@ -142,7 +142,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                     });
                 }
                 redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());
-                log.info("loadRedisCache end, betType: {}, size: {}...", betType, templateIdList.size());
+                log.info("loadRedisCache end, betType: {}, size: {}", betType, templateIdList.size());
             }, "lock fail");
         } catch (Exception e) {
             log.info("loadRedisCache error, betType: {}", betType, e);
