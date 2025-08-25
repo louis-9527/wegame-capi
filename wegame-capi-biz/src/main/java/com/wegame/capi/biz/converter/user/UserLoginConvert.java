@@ -20,6 +20,7 @@ public class UserLoginConvert {
                 .userLevel(request.getUserLevel())
                 .userName(request.getUserName())
                 .token(request.getToken())
+                .ut(request.getUt())
                 .build();
     }
 }
