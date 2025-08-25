@@ -82,6 +82,9 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
             // 没有被预热的倍率，需要重新查询
             configRecordList = gameRecordTemplateService.listByBetRecordId(MARIA_MAKILING, betRecordId);
         }
+        if (CollectionUtils.isEmpty(configRecordList)) {
+            log.error("template is empty, betType:{}, range start: [], end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+        }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         // 获取首轮(parent ==0 and index =0)
         GameRecordTemplateDo firstConfigRecord = configRecordList.stream()
