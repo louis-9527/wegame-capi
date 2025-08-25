@@ -35,6 +35,7 @@ public class SirenaSymbolDo extends SymbolDo {
      * wild 参与中奖之后，有值
      */
     private SirenaSymbolDo nestSymbol;
+
     @JsonIgnore
     public SirenaSymbolDo copy() {
         return SirenaSymbolDo.builder()
@@ -42,11 +43,13 @@ public class SirenaSymbolDo extends SymbolDo {
                 .name(getName())
                 .symbolType(getSymbolType())
                 .symbolOdd(getSymbolOdd())
+                .nestSymbol(Objects.nonNull(this.nestSymbol) ? this.nestSymbol.copy() : null)
                 .build();
     }
 
     /**
      * 是否贝壳元素
+     *
      * @return
      */
     @JsonIgnore
@@ -63,6 +66,7 @@ public class SirenaSymbolDo extends SymbolDo {
     public boolean isScatterIdSymbol() {
         return StringUtils.equals(this.getId(), SirenaGameHelper.SIRENA_SCATTER.getId());
     }
+
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
         return StringUtils.equals(getId(), SirenaGameHelper.SIRENA_SYMBOL_PLACEHOLDER.getId());
@@ -80,16 +84,18 @@ public class SirenaSymbolDo extends SymbolDo {
 
     /**
      * 是否贝壳元素+珍珠
+     *
      * @return
      */
     public boolean isConchAndPearlSymbol() {
-        if(StringUtils.equals(this.getId(), SirenaGameHelper.SIRENA_Wild.getId())){
-            if(this.nestSymbol !=null){
+        if (StringUtils.equals(this.getId(), SirenaGameHelper.SIRENA_Wild.getId())) {
+            if (this.nestSymbol != null) {
                 return StringUtils.equals(this.nestSymbol.getId(), SirenaGameHelper.SIRENA_Pearl_Wild.getId());
             }
         }
         return false;
     }
+
     public static SirenaSymbolDo buildFromSymbol(SymbolDo symbol, BigDecimal symbolMultiple, SirenaSymbolDo nestSymbol) {
         return SirenaSymbolDo.builder()
                 .id(symbol.getId())
@@ -99,6 +105,7 @@ public class SirenaSymbolDo extends SymbolDo {
                 .nestSymbol(nestSymbol)
                 .build();
     }
+
     public static SirenaSymbolDo buildPearlWildSymbol(SymbolDo symbol, BigDecimal symbolMultiple) {
         return SirenaSymbolDo.builder()
                 .id(symbol.getId())
