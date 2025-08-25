@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.sirena;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
@@ -45,10 +46,11 @@ public class SirenaSymbolUtil {
                         }
                         if(SirenaGameHelper.SIRENA_Big_Pearl_Wild.getId().equals(symbolArr[row][column].getId())){
                             SirenaSymbolDo temp = symbolArr[row][column];
-                            SirenaSymbolDo nestSymbolTemp = symbolArr[row][column].getNestSymbol();
+                            log.info("SirenaSymbolUtil#postProcessPlaceholderSymbol,temp:{}", JSON.toJSONString(temp));
+                            SirenaSymbolDo nestSymbolTemp = temp.getNestSymbol().copy();
                             nestSymbolTemp.setNestSymbol(temp);
+                            temp.setNestSymbol(null);
                             symbolArr[row][column] = nestSymbolTemp;
-
                         }
                     }
                 }

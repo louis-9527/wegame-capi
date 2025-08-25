@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.sirena.game;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
@@ -347,6 +348,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                         setSymbolPlaceholder(row, col + 1, symbolArr);
                         setSymbolPlaceholder(row+1, col, symbolArr);
                         setSymbolPlaceholder(row+1, col+1, symbolArr);
+                        log.info("free game sirenaBigPearlWild:{}", JSON.toJSONString(symbolArr[row][col]));
                     }
                 }
             }
