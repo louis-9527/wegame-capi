@@ -9,6 +9,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -45,18 +47,18 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
             return;
         }
         try {
-            // todo 加载redis缓存的时候需要抢锁，加载本地是缓存的时候不需要抢锁
-            //            distributeLock.lockThenRun(LockNameUtil.getBetRecordTemplatePreLoadLockName(this.getTemplateType()), 60, TimeUnit.SECONDS, () -> {
-            try {
-                log.info("template load start...");
-                MariaMakilingConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();
-                config.getMainGame().keySet().forEach((String key) -> loadTemplate(BetTypeEnum.NORMAL_BET, TemplateMultipleRange.build(key)));
-                config.getFreeGame().keySet().forEach((String key) -> loadTemplate(BetTypeEnum.BUY_BET, TemplateMultipleRange.build(key)));
-                log.info("template load end...");
-            } catch (Exception e) {
-                log.error("template load error", e);
-            }
-            //            }, "lock fail");
+            // todo maidong 加载redis缓存的时候需要抢锁，加载本地是缓存的时候不需要抢锁
+//            distributeLock.lockThenRun(LockNameUtil.getBetRecordTemplatePreLoadLockName(this.getTemplateType()), 60, TimeUnit.SECONDS, () -> {
+                try {
+                    log.info("template load start...");
+                    MariaMakilingConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();
+                    config.getMainGame().keySet().forEach((String key) -> loadTemplate(BetTypeEnum.NORMAL_BET, TemplateMultipleRange.build(key)));
+                    config.getFreeGame().keySet().forEach((String key) -> loadTemplate(BetTypeEnum.BUY_BET, TemplateMultipleRange.build(key)));
+                    log.info("template load end...");
+                } catch (Exception e) {
+                    log.error("template load error", e);
+                }
+//            }, "lock fail");
         } catch (LockException e) {
             log.warn("template load lock warn", e);
         } catch (Exception e) {

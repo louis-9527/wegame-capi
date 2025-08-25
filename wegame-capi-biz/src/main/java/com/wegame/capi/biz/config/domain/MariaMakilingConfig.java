@@ -347,7 +347,7 @@ public class MariaMakilingConfig implements Serializable {
         Assert.notNull(templateRangeConfig, "templateRangeConfig is null");
         Assert.notNull(templateRangeConfig.getMainGame(), "templateRangeConfig.mainGame is null");
         Assert.notNull(templateRangeConfig.getFreeGame(), "templateRangeConfig.freeGame is null");
-        // 增加校验倍率范围区间开始值要小于等于结束值
+        // todo maidong 增加校验倍率范围区间开始值要小于等于结束值
         templateRangeConfig.getMainGame().keySet().forEach(templateMultipleRange -> {
             Assert.isTrue(templateMultipleRange.contains("_"), "templateRangeConfig.mainGame.key not contain '_'");
             String[] multipleRangeArr = templateMultipleRange.split("_");
