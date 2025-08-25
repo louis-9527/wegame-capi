@@ -26,8 +26,8 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <wegame-base.version>1.0.2.20250724-RELEASE</wegame-base.version>
-        <wegame-capi-client.version>1.0.0-RELEASE</wegame-capi-client.version>
+        <wegame-base.version>1.0.2.20250821-SNAPSHOT</wegame-base.version>
+        <wegame-capi-client.version>1.0.1.20250815-SNAPSHOT</wegame-capi-client.version>
         <pulsar-client.version>4.0.2</pulsar-client.version>
     </properties>
 

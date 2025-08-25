@@ -44,4 +44,6 @@ public class UserInfo implements Serializable {
     private String userName;
     @ApiModelProperty(value = "中台token")
     private String token;
+    @ApiModelProperty(value = "AB测试(afe: A, aff: B)")
+    private String ut = "afe";
 }
