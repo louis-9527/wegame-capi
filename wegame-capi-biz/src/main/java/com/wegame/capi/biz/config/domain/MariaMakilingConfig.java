@@ -347,13 +347,13 @@ public class MariaMakilingConfig implements Serializable {
         Assert.notNull(templateRangeConfig, "templateRangeConfig is null");
         Assert.notNull(templateRangeConfig.getMainGame(), "templateRangeConfig.mainGame is null");
         Assert.notNull(templateRangeConfig.getFreeGame(), "templateRangeConfig.freeGame is null");
-        // todo maidong 增加校验倍率范围区间开始值要小于等于结束值
         templateRangeConfig.getMainGame().keySet().forEach(templateMultipleRange -> {
             Assert.isTrue(templateMultipleRange.contains("_"), "templateRangeConfig.mainGame.key not contain '_'");
             String[] multipleRangeArr = templateMultipleRange.split("_");
             Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.mainGame.key length is not eqauls 2");
             Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.mainGame.key first number must be number");
             Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.mainGame.key first number must be number");
+            Assert.isTrue(new BigDecimal(multipleRangeArr[0]).compareTo(new BigDecimal(multipleRangeArr[1])) <= 0, "templateRangeConfig.mainGame.key first number must be less than or equal to the second number");
         });
         templateRangeConfig.getFreeGame().keySet().forEach(templateMultipleRange -> {
             Assert.isTrue(templateMultipleRange.contains("_"), "templateRangeConfig.freeGame.key not contain '_'");
@@ -361,6 +361,7 @@ public class MariaMakilingConfig implements Serializable {
             Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.freeGame.key length is not eqauls 2");
             Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.freeGame.key first number must be number");
             Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.freeGame.key first number must be number");
+            Assert.isTrue(new BigDecimal(multipleRangeArr[0]).compareTo(new BigDecimal(multipleRangeArr[1])) <= 0, "templateRangeConfig.freeGame.key first number must be less than or equal to the second number");
         });
     }
 }
