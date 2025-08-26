@@ -15,7 +15,6 @@ import java.util.List;
  */
 @Slf4j
 public abstract class AbstractTemplateLoadPostHandler extends AbstractPostHandler {
-    public static final String MESSAGE_FORMAT = "%s,投注模版预加载失败,模版倍率范围：%s";
     @Autowired
     public BetRecordTemplateService betRecordTemplateService;
     @Autowired

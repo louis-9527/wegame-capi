@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
-    private static final String key = "load:template:redis:cache:MariaMakiling";
+    private static final String key = "load:template:redis:cache:MariaMakiling1";
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
@@ -92,7 +92,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                 log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}， no load gameRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
                 return null;
             }
-            log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
+            log.info("templateIdList load success, betType: {}, range: {}-{}, size: {}", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
             return betRecordTemplateIdList;
         } catch (Exception e) {
             log.info("templateIdList load error, betType: {}, range: {}-{}", betType, multipleRange.getStart(), multipleRange.getEnd(), e);
@@ -114,7 +114,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                                 .collect(Collectors.toList()));
                     });
                 });
-                log.info("loadLocalCache end, betType: {}, size: {}", betType, templateIdList.size());
+                log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
             }
         } catch (Exception e) {
             log.info("loadLocalCache error, betType: {}", betType, e);
@@ -126,6 +126,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
         try {
             Object hasLoad = redisTemplate.opsForValue().get(key);
             if (Objects.equals(hasLoad, BooleanEnum.TRUE.getCode())) {
+                log.info("loadRedisCache fail, hasLoad. betType: {}, size: {}", betType, templateIdList.size());
                 return;
             }
             distributeLock.lockThenRun(LockNameUtil.getBetRecordTemplatePreLoadLockName(this.getTemplateType()), 10, TimeUnit.SECONDS, () -> {
@@ -142,7 +143,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                     });
                 }
                 redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());
-                log.info("loadRedisCache end, betType: {}, size: {}", betType, templateIdList.size());
+                log.info("loadRedisCache success, betType: {}, size: {}", betType, templateIdList.size());
             }, "lock fail");
         } catch (Exception e) {
             log.info("loadRedisCache error, betType: {}", betType, e);
