@@ -242,7 +242,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     }
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {
-        GamePlayTypeEnum playTypeEnum = GamePlayTypeEnum.NORMAL_PLAY;
+        GamePlayTypeEnum playTypeEnum = getGamePlayType();
         GameOperationEventDo gameEventDo = betDo.getGameOperationEvent();
         if (Objects.equals(betDo.getBetPromotionType(), OPERATION_EVENT)) {
             if (Objects.nonNull(gameEventDo) && gameEventDo.isEventResult()) {

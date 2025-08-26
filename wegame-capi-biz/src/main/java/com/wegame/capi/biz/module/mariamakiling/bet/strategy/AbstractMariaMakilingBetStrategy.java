@@ -30,7 +30,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
  * MariaMakiling类游戏投注抽象接口
@@ -145,7 +144,7 @@ public abstract class AbstractMariaMakilingBetStrategy
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeWheel(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<MariaMakilingGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
+        List<MariaMakilingGameRecordDo> list = gameContext().play(build(getGamePlayType(), betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
         BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.buildBetRecord(betRecordId, betDo, list);
