@@ -1,17 +1,19 @@
 package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 import static com.wegame.capi.common.Constants.CONST_10000;
 import static com.wegame.capi.common.Constants.CONST_1000000;
@@ -40,6 +42,10 @@ public class MalakasConfig {
      * 中奖最大倍数
      */
     private Integer rewardMaxMultiple;
+    /**
+     * 模板配置
+     */
+    private MalakasConfig.TemplateRangeConfig templateRangeConfig;
 
     @Data
     @SuperBuilder
@@ -87,11 +93,30 @@ public class MalakasConfig {
         private List<BigDecimal> goldBoarderProbabilisticConfig;
     }
 
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = -734841249803450751L;
+        /**
+         * 主游戏模板配置
+         */
+        private Map<String, Integer> mainGame;
+        /**
+         * 免费游戏模板配置
+         */
+        private Map<String, Integer> freeGame;
+    }
+
     public void validate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
         scatterFreeWheelTimesConfigValidate();
         rewardMaxMultipleValidate();
+        templateRangeConfigValidate();
     }
 
     private void rewardMaxMultipleValidate() {
@@ -163,5 +188,27 @@ public class MalakasConfig {
     }
     private void goldBoarderProbabilisticConfigValid(List<BigDecimal> list) {
         AssertUtil.assertTrue(Objects.equals(list.size(), 7), ErrorCode.ERR_INTER, "probabilisticConfig.freeWheelGoldBoarderProbabilisticConfig size error");
+    }
+
+    private void templateRangeConfigValidate() {
+        Assert.notNull(templateRangeConfig, "templateRangeConfig is null");
+        Assert.notNull(templateRangeConfig.getMainGame(), "templateRangeConfig.mainGame is null");
+        Assert.notNull(templateRangeConfig.getFreeGame(), "templateRangeConfig.freeGame is null");
+        templateRangeConfig.getMainGame().keySet().forEach(templateMultipleRange -> {
+            Assert.isTrue(templateMultipleRange.contains("_"), "templateRangeConfig.mainGame.key not contain '_'");
+            String[] multipleRangeArr = templateMultipleRange.split("_");
+            Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.mainGame.key length is not eqauls 2");
+            Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.mainGame.key first number must be number");
+            Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.mainGame.key first number must be number");
+            Assert.isTrue(new BigDecimal(multipleRangeArr[0]).compareTo(new BigDecimal(multipleRangeArr[1])) <= 0, "templateRangeConfig.mainGame.key first number must be less than or equal to the second number");
+        });
+        templateRangeConfig.getFreeGame().keySet().forEach(templateMultipleRange -> {
+            Assert.isTrue(templateMultipleRange.contains("_"), "templateRangeConfig.freeGame.key not contain '_'");
+            String[] multipleRangeArr = templateMultipleRange.split("_");
+            Assert.isTrue(multipleRangeArr.length == 2, "templateRangeConfig.freeGame.key length is not eqauls 2");
+            Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[0]), "templateRangeConfig.freeGame.key first number must be number");
+            Assert.isTrue(NumberUtil.isNumber(multipleRangeArr[1]), "templateRangeConfig.freeGame.key first number must be number");
+            Assert.isTrue(new BigDecimal(multipleRangeArr[0]).compareTo(new BigDecimal(multipleRangeArr[1])) <= 0, "templateRangeConfig.freeGame.key first number must be less than or equal to the second number");
+        });
     }
 }
