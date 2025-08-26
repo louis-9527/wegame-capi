@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
-    private static final String key = "load:template:redis:cache:MariaMakiling1";
+    private static final String key = "load:template:redis:cache:MariaMakiling2";
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
@@ -46,9 +46,11 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
     @Override
     public void handle() {
         if (!supportWarmUpEnv()) {
+            log.warn("not support env: {}", env);
             return;
         }
         if (!supportGame(GameTypeEnum.MARIA_MAKILING)) {
+            log.warn("not support game MARIA_MAKILING");
             return;
         }
         MariaMakilingConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();

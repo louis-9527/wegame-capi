@@ -35,7 +35,7 @@ public class GameRecordTemplateService<T> extends AbstractService {
     }
 
     public List<GameRecordTemplateDo> listByBetRecordIdList(TemplateTypeEnum templateType, List<Long> betRecordIdList) {
-        log.info( "listByBetRecordIdList query, size: {}; betRecordIdList: {}; typeEnum: {}", betRecordIdList.size(), betRecordIdList, templateType.getGameType());
+        log.info( "listByBetRecordIdList query, size: {}; typeEnum: {}", betRecordIdList.size(), templateType.getGameType());
         Query query = Query.query(Criteria.where("betRecordId").in(betRecordIdList));
         List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType()).find(query, GameRecordTemplatePo.class, templateType.getGameRecordTemplateCollectionName());
         return poToDoList(poList);
