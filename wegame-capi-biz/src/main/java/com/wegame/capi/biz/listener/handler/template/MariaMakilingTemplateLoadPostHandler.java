@@ -74,7 +74,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
             });
             if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
                 loadLocalCache(BetTypeEnum.NORMAL_BET, templateIdList);
-            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)){
+            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
                 loadRedisCache(BetTypeEnum.BUY_BET, templateIdList);
             } else {
                 return;
@@ -103,53 +103,57 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
     }
 
     private void loadLocalCache(BetTypeEnum betType, List<Long> templateIdList) {
-        TemplateTypeEnum templateType = this.getTemplateType();
-        try {
-            if (CollectionUtil.isNotEmpty(templateIdList)) {
-                log.info("loadLocalCache start, betType: {}, size: {}", betType, templateIdList.size());
-                List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
-                multiList.forEach(idList -> {
-                    List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
-                    idList.forEach(betRecordId -> {
-                        gameRecordTemplateService.putLocalCache(templateType, betRecordId, templateList.stream()
-                                .filter(template -> Objects.equals(template.getBetRecordId(), betRecordId))
-                                .collect(Collectors.toList()));
-                    });
-                });
-                log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
-            } else {
-                log.warn("loadLocalCache fail, betType: {}, size is 0", betType);
-            }
-        } catch (Exception e) {
-            log.info("loadLocalCache error, betType: {}", betType, e);
+        if (CollectionUtil.isEmpty(templateIdList)) {
+            log.warn("loadLocalCache fail, betType: {}, size is 0", betType);
+            return;
         }
+        TemplateTypeEnum templateType = this.getTemplateType();
+        log.info("loadLocalCache start, betType: {}, size: {}", betType, templateIdList.size());
+        List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
+        multiList.forEach(idList -> {
+            try {
+                List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
+                idList.forEach(betRecordId -> {
+                    gameRecordTemplateService.putLocalCache(templateType, betRecordId, templateList.stream()
+                            .filter(template -> Objects.equals(template.getBetRecordId(), betRecordId))
+                            .collect(Collectors.toList()));
+                });
+            } catch (Exception e) {
+                log.info("loadLocalCache error, betType: {}, idListSize: {}", betType, idList.size(), e);
+            }
+        });
+        log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
     }
 
     private void loadRedisCache(BetTypeEnum betType, List<Long> templateIdList) {
+        if (CollectionUtil.isEmpty(templateIdList)) {
+            log.warn("loadRedisCache fail, betType: {}, size is 0", betType);
+            return;
+        }
+        Object hasLoad = redisTemplate.opsForValue().get(key);
+        if (Objects.equals(hasLoad, BooleanEnum.TRUE.getCode())) {
+            log.info("loadRedisCache fail, hasLoad. betType: {}, size: {}", betType, templateIdList.size());
+            return;
+        }
         TemplateTypeEnum templateType = this.getTemplateType();
         try {
-            Object hasLoad = redisTemplate.opsForValue().get(key);
-            if (Objects.equals(hasLoad, BooleanEnum.TRUE.getCode())) {
-                log.info("loadRedisCache fail, hasLoad. betType: {}, size: {}", betType, templateIdList.size());
-                return;
-            }
             distributeLock.lockThenRun(LockNameUtil.getBetRecordTemplatePreLoadLockName(this.getTemplateType()), 10, TimeUnit.SECONDS, () -> {
-                if (CollectionUtil.isNotEmpty(templateIdList)) {
-                    log.info("loadRedisCache start, betType: {}, size: {}", betType, templateIdList.size());
-                    List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
-                    multiList.forEach(idList -> {
+                log.info("loadRedisCache start, betType: {}, size: {}", betType, templateIdList.size());
+                List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
+                multiList.forEach(idList -> {
+                    try {
                         List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
                         idList.forEach(betRecordId -> {
                             gameRecordTemplateService.putRedisCache(templateType, betRecordId, templateList.stream()
                                     .filter(template -> Objects.equals(template.getBetRecordId(), betRecordId))
                                     .collect(Collectors.toList()));
                         });
-                    });
-                    redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());
-                    log.info("loadRedisCache success, betType: {}, size: {}", betType, templateIdList.size());
-                } else {
-                    log.warn("loadRedisCache fail, betType: {}, size is 0", betType);
-                }
+                    } catch (Exception e) {
+                        log.info("loadRedisCache error, betType: {}, idListSize: {}", betType, idList.size(), e);
+                    }
+                });
+                redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());
+                log.info("loadRedisCache success, betType: {}, size: {}", betType, templateIdList.size());
             }, "lock fail");
         } catch (Exception e) {
             log.info("loadRedisCache error, betType: {}", betType, e);
