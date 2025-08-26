@@ -20,7 +20,6 @@
         <dependency>
             <groupId>com.wegame</groupId>
             <artifactId>wegame-base</artifactId>
-            <version>${wegame-base.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
