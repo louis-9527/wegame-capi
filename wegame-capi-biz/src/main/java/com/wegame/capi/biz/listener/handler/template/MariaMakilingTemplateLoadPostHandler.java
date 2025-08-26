@@ -20,11 +20,12 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * 模版预加载后处理执行器
+ * 模版加载后处理执行器
  */
 @Slf4j
 @Component
@@ -54,34 +55,33 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
             return;
         }
         MariaMakilingConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();
-        try {
-            log.info("main game template load start...");
-            List<Long> mainGameTemplateIdList = new LinkedList<>();
-            config.getMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.NORMAL_BET, TemplateMultipleRange.build(key));
-                if (CollectionUtils.isNotEmpty(idList)) {
-                    mainGameTemplateIdList.addAll(idList);
-                }
-            });
-            loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
-            log.info("main game template load end...");
-        } catch (Exception e) {
-            log.error("template load error", e);
-        }
+        loadTemplate(config.getMainGame().keySet(), BetTypeEnum.NORMAL_BET);
+        loadTemplate(config.getFreeGame().keySet(), BetTypeEnum.BUY_BET);
+    }
 
+    public void loadTemplate(Set<String> keySet, BetTypeEnum betType) {
+        if (CollectionUtil.isEmpty(keySet)) {
+            return;
+        }
         try {
-            log.info("free game template load start...");
-            List<Long> freeGameTemplateIdList = new LinkedList<>();
-            config.getFreeGame().keySet().forEach((String key) -> {
+            log.info("{} game template load start...", betType);
+            List<Long> templateIdList = new LinkedList<>();
+            keySet.forEach((String key) -> {
                 List<Long> idList = loadTemplateIdList(BetTypeEnum.BUY_BET, TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
-                    freeGameTemplateIdList.addAll(idList);
+                    templateIdList.addAll(idList);
                 }
             });
-            loadRedisCache(BetTypeEnum.BUY_BET, freeGameTemplateIdList);
-            log.info("free game template load end...");
+            if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
+                loadLocalCache(BetTypeEnum.NORMAL_BET, templateIdList);
+            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)){
+                loadRedisCache(BetTypeEnum.BUY_BET, templateIdList);
+            } else {
+                return;
+            }
+            log.info("{} game template load end...", betType);
         } catch (Exception e) {
-            log.info("free game template load error", e);
+            log.info("{} game template load error", betType, e);
         }
     }
 
@@ -117,6 +117,8 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                     });
                 });
                 log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
+            } else {
+                log.warn("loadLocalCache fail, betType: {}, size is 0", betType);
             }
         } catch (Exception e) {
             log.info("loadLocalCache error, betType: {}", betType, e);
@@ -132,8 +134,8 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                 return;
             }
             distributeLock.lockThenRun(LockNameUtil.getBetRecordTemplatePreLoadLockName(this.getTemplateType()), 10, TimeUnit.SECONDS, () -> {
-                log.info("loadRedisCache start, betType: {}, size: {}", betType, templateIdList.size());
                 if (CollectionUtil.isNotEmpty(templateIdList)) {
+                    log.info("loadRedisCache start, betType: {}, size: {}", betType, templateIdList.size());
                     List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                     multiList.forEach(idList -> {
                         List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
@@ -143,9 +145,11 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                                     .collect(Collectors.toList()));
                         });
                     });
+                    redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());
+                    log.info("loadRedisCache success, betType: {}, size: {}", betType, templateIdList.size());
+                } else {
+                    log.warn("loadRedisCache fail, betType: {}, size is 0", betType);
                 }
-                redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());
-                log.info("loadRedisCache success, betType: {}, size: {}", betType, templateIdList.size());
             }, "lock fail");
         } catch (Exception e) {
             log.info("loadRedisCache error, betType: {}", betType, e);
