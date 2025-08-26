@@ -20,6 +20,7 @@
         <dependency>
             <groupId>com.wegame</groupId>
             <artifactId>wegame-base</artifactId>
+            <version>1.0.1.20250825-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
