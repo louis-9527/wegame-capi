@@ -41,7 +41,7 @@ import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolN
 import static com.wegame.capi.client.enums.TemplateTypeEnum.MARIA_MAKILING;
 
 @Slf4j
-@Component("malakasGameEventPlay")
+@Component("malakasGameTemplatePlay")
 public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
