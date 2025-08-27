@@ -70,7 +70,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
             log.info("{} game template load start...", betType);
             List<Long> templateIdList = new LinkedList<>();
             keySet.forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.BUY_BET, TemplateMultipleRange.build(key));
+                List<Long> idList = loadTemplateIdList(betType, TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     templateIdList.addAll(idList);
                 }
