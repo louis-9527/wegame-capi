@@ -6,8 +6,6 @@ import com.wegame.capi.biz.listener.handler.PostHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -24,23 +22,14 @@ public class AppLaunchPostProcessor {
 
     @Autowired
     List<PostHandler> postHandlers;
-    //    @Autowired
-    //    RedisTemplate<String, Object> redisTemplate;
 
-    @Async(defaultThreadPoolExecutor)
+    // @Async(defaultThreadPoolExecutor)
     public void postProcess() {
-        //        try {
-        //            redisTemplate.execute((RedisCallback<Void>) connection -> {
-        //                connection.flushAll();
-        //                log.info("delete all redis data");
-        //                return null;
-        //            });
-        //        } catch (Exception e) {
-        //
-        //        }
+        log.info("before postProcess");
         // 业务后处理runner
         MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
         postHandlers.forEach(PostHandler::handle);
+        log.info("after postProcess");
         MDC.clear();
     }
 }
