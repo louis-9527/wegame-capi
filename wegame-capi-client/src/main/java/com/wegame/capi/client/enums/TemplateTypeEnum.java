@@ -19,6 +19,12 @@ public enum TemplateTypeEnum {
             "mariamakiling_bet_record_template",
             "mariamakiling_game_record_template"
     ),
+
+    MALAKAS(
+            GameTypeEnum.MALAKAS,
+            "malakas_bet_record_template",
+            "malakas_game_record_template"
+    ),
     ;
 
 
