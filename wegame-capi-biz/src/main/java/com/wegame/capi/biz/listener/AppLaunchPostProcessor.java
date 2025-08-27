@@ -25,8 +25,8 @@ public class AppLaunchPostProcessor {
 
     // @Async(defaultThreadPoolExecutor)
     public void postProcess() {
-        log.info("before postProcess");
         // 业务后处理runner
+        log.info("before postProcess");
         MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
         postHandlers.forEach(PostHandler::handle);
         log.info("after postProcess");
