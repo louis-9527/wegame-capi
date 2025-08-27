@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
-    private static final String key = "load:template:redis:cache:MariaMakiling2";
+    private static final String key = "load:template:redis:cache:MariaMakiling3";
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
@@ -111,16 +111,16 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
         log.info("loadLocalCache start, betType: {}, size: {}", betType, templateIdList.size());
         List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
         multiList.forEach(idList -> {
-            try {
-                List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
-                idList.forEach(betRecordId -> {
+            List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
+            idList.forEach(betRecordId -> {
+                try {
                     gameRecordTemplateService.putLocalCache(templateType, betRecordId, templateList.stream()
                             .filter(template -> Objects.equals(template.getBetRecordId(), betRecordId))
                             .collect(Collectors.toList()));
-                });
-            } catch (Exception e) {
-                log.info("loadLocalCache error, betType: {}, idListSize: {}", betType, idList.size(), e);
-            }
+                } catch (Exception e) {
+                    log.info("loadLocalCache error, betType: {}, betRecordId: {}", betType, betRecordId, e);
+                }
+            });
         });
         log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
     }
@@ -141,16 +141,16 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                 log.info("loadRedisCache start, betType: {}, size: {}", betType, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
-                    try {
-                        List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
-                        idList.forEach(betRecordId -> {
+                    List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
+                    idList.forEach(betRecordId -> {
+                        try {
                             gameRecordTemplateService.putRedisCache(templateType, betRecordId, templateList.stream()
                                     .filter(template -> Objects.equals(template.getBetRecordId(), betRecordId))
                                     .collect(Collectors.toList()));
-                        });
-                    } catch (Exception e) {
-                        log.info("loadRedisCache error, betType: {}, idListSize: {}", betType, idList.size(), e);
-                    }
+                        } catch (Exception e) {
+                            log.info("loadRedisCache error, betType: {}, betRecordId: {}", betType, betRecordId, e);
+                        }
+                    });
                 });
                 redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());
                 log.info("loadRedisCache success, betType: {}, size: {}", betType, templateIdList.size());
