@@ -12,7 +12,7 @@ import lombok.ToString;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeTemplateOddsWarmUpEnum {
 
-    MARIA_MAKILING("zhumeng001", "1", "17.5", "正常投注"),
+    MARIA_MAKILING("zhumeng001", "1", "-1", "正常投注"),
 
     ;
     /**
