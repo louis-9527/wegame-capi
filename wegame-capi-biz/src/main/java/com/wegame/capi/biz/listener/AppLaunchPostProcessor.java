@@ -1,7 +1,10 @@
 package com.wegame.capi.biz.listener;
 
+import cn.hutool.core.lang.UUID;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.listener.handler.PostHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -36,6 +39,8 @@ public class AppLaunchPostProcessor {
         //
         //        }
         // 业务后处理runner
+        MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
         postHandlers.forEach(PostHandler::handle);
+        MDC.clear();
     }
 }

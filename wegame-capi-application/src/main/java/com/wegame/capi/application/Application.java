@@ -66,7 +66,6 @@ public class Application implements CommandLineRunner {
     GameProperty gameProperty;
 
     public static void main(String[] args) {
-        MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
         log.info("Begin Start Application 😄😄😄😄😄😄");
         SpringApplication.run(Application.class, args);
         log.info("Started Application 🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉");

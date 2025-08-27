@@ -2,7 +2,9 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.lang.UUID;
 import com.wegame.base.enums.BooleanEnum;
+import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -13,6 +15,7 @@ import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
