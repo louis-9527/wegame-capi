@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
-    private static final String key = "load:template:redis:cache:MariaMakiling3";
+    private static final String key = "load:template:redis:cache:MariaMakiling5";
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
