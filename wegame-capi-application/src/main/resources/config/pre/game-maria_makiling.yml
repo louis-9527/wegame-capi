@@ -10,9 +10,9 @@ spring:
 ## pulsar
 pulsar:
   dynamic:
-    ibong_adarna:
+    maria_makiling:
       url: pulsar://pulsar.makillingslot.org:6650
-      tenant: ${spring.application.name}_IbongAdarna
+      tenant: ${spring.application.name}_MariaMakiling
       namespace: ${spring.application.env}
-      bet_topic: IbongAdarna_topic
-      bet_deadLetter_topic: IbongAdarna_deadLetter_topic
+      bet_topic: MariaMakiling_topic
+      bet_deadLetter_topic: MariaMakiling_deadLetter_topic
