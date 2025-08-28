@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
-    private static final String key = "load:template:redis:cache:MariaMakiling5";
+    private static final String key = "load:template:redis:cache:MariaMakiling6";
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
@@ -134,6 +134,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
             return;
         }
         Object hasLoad = redisTemplate.opsForValue().get(key);
+        log.info("loadRedisCache redis, hasLoad: {},. betType: {}", hasLoad, betType);
         if (Objects.equals(hasLoad, BooleanEnum.TRUE.getCode())) {
             log.info("loadRedisCache fail, hasLoad. betType: {}, size: {}", betType, templateIdList.size());
             return;
