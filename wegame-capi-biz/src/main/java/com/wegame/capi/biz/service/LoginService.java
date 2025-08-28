@@ -52,7 +52,7 @@ public class LoginService {
                 .playerId(userLoginDo.getPlayerId())
                 .loginTime(new Date())
                 .build());
-        failedBetPostProcessService.processFailedBetAfterLogin(GameTypeEnum.valueOfId(userInfo.getGameId()));
+        failedBetPostProcessService.processFailedBetAfterLogin(GameTypeEnum.valueOfId(userInfo.getGameId()), Long.valueOf(userId));
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
         return userInfo;
