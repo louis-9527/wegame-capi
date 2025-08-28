@@ -65,7 +65,7 @@ public class Application implements CommandLineRunner {
     public static void main(String[] args) {
         log.info("Begin Start Application 😄😄😄😄😄😄");
         SpringApplication.run(Application.class, args);
-        log.info("Started Application 🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉");
+        log.info("Started ApplicationIbong 🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉");
         log.info("see doc: http://localhost:9500/capi/game/doc.html#/home");
     }
 
