@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.UUID;
 import com.wegame.base.enums.BooleanEnum;
+import com.wegame.base.exception.LockException;
 import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
@@ -159,6 +160,8 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                 redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());
                 log.info("loadRedisCache success, betType: {}, size: {}", betType, templateIdList.size());
             }, "lock fail");
+        } catch (LockException e) {
+            log.info("loadRedisCache fail, can not get lock  betType: {}", betType);
         } catch (Exception e) {
             log.info("loadRedisCache error, betType: {}", betType, e);
         }
