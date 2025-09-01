@@ -47,6 +47,13 @@ public class OperationEventCallbackController {
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
 
+    /**
+     * 干预事件回调接口
+     * 主要功能：
+     * @param request
+     * @param encryptRequest
+     * @return
+     */
     @ApiOperation(value = "获取干预事件结果", httpMethod = "POST")
     @PostMapping("/getStatusOfEvents")
     public PlatformResponse<List<StatusOfEventsResultVo>> getStatusOfEvents(HttpServletRequest request,

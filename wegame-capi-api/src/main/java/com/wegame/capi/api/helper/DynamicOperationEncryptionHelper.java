@@ -39,7 +39,7 @@ public class DynamicOperationEncryptionHelper {
     @Autowired
     private GameApiProperty gameApiProperty;
 
-    private Map<String,AesSecretKey> aesSecretmap = new HashMap<>();
+    private Map<String, AesSecretKey> aesSecretmap = new HashMap<>();
 
     /**
      * 启动时初始化 RSA 公钥、AES 密钥和 IV
@@ -48,7 +48,7 @@ public class DynamicOperationEncryptionHelper {
     public void init() {
         try {
             List<GameApiProperty.PrivateInfo> privateInfoList = gameApiProperty.getPrivateInfoList();
-            for (GameApiProperty.PrivateInfo info: privateInfoList){
+            for (GameApiProperty.PrivateInfo info : privateInfoList) {
                 byte[] key = hexStringToByteArray(info.getPrivateKey());
                 byte[] iv = hexStringToByteArray(info.getPrivateIv());
                 SecretKeySpec aesSecretKey = new SecretKeySpec(key, "AES");
@@ -58,14 +58,14 @@ public class DynamicOperationEncryptionHelper {
                         .aesIvParameterSpec(aesIvParameterSpec)
                         .build();
                 // 加载rsa
-                if(StringUtils.isNotEmpty(info.getDosPublicKey()) && StringUtils.isNotEmpty(info.getDosPrivateKey())){
+                if (StringUtils.isNotEmpty(info.getDosPublicKey()) && StringUtils.isNotEmpty(info.getDosPrivateKey())) {
                     Security.addProvider(new BouncyCastleProvider());
                     RSAPublicKey rsaPublicKey = this.loadPublicKey(info.getDosPublicKey());
                     RSAPrivateKey rsaPrivateKey = this.loadPrivateKey(info.getDosPrivateKey(), info.getDosPassword());
                     secretKey.setRsaPublicKey(rsaPublicKey);
                     secretKey.setRsaPrivateKey(rsaPrivateKey);
                 }
-                aesSecretmap.put(info.getChannelId(),secretKey);
+                aesSecretmap.put(info.getChannelId(), secretKey);
             }
 
         } catch (Exception e) {
@@ -91,7 +91,7 @@ public class DynamicOperationEncryptionHelper {
     /**
      * 解密数据
      */
-    public String decrypt(String channelId,String encryptedData) {
+    public String decrypt(String channelId, String encryptedData) {
         try {
             AesSecretKey aesSecretKey = aesSecretmap.get(channelId);
             Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
@@ -107,10 +107,10 @@ public class DynamicOperationEncryptionHelper {
     /**
      * 使用 AES-256-CBC 加密
      */
-    public String encryptWithAES256CBC(String channelId,String plaintext) {
+    public String encryptWithAES256CBC(String channelId, String plaintext) {
         try {
             AesSecretKey aesSecret = aesSecretmap.get(channelId);
-            if(aesSecret == null){
+            if (aesSecret == null) {
                 throw new BusinessException(ErrorCode.ERR_INTER);
             }
             Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
@@ -207,7 +207,7 @@ public class DynamicOperationEncryptionHelper {
 
     @Data
     @Builder
-    static class AesSecretKey{
+    static class AesSecretKey {
         private SecretKeySpec aesSecretKey;
         private IvParameterSpec aesIvParameterSpec;
         private RSAPublicKey rsaPublicKey;
