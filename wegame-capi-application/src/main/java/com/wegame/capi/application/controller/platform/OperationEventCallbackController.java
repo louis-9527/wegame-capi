@@ -30,6 +30,12 @@ import java.util.Map;
 import static com.wegame.capi.biz.converter.operation.StatusOfEventsConverter.doToVoList;
 import static com.wegame.capi.client.domain.response.PlatformResponse.build;
 
+/**
+ * 干预逻辑：
+ * 1、干预接口
+ * 2、干预消息
+ * 3、干预投注
+ */
 @Slf4j
 @RestController
 @RequestMapping("operationEvent")
