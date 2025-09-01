@@ -46,9 +46,14 @@ public class OperationEventService extends AbstractService {
             OperationEventPo po = OperationEventConvert.doToPo(eventDo, OptEnum.ADD);
             AssertUtil.assertNotNull(po, ErrorCode.ERR_INTER);
             OperationEventPo insertPo = getMongoTemplate(gameEnum.getGameType()).insert(po, gameEnum.getEventCollectionName());
+            // 收到新的干预事件后，需要清空redis缓存中的干预事件
+            // 缓存命名（Map结构）：用户+游戏+渠道+玩家名称
+            // key：
             String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, eventDo.getGameId(), eventDo.getChannelId(), eventDo.getPlayerName());
+            // *** OPERATION_EVENT_EMPTY_KEY  标志当前是否正在干预
             Boolean empty = redisTemplate.opsForHash().hasKey(catch_key, OPERATION_EVENT_EMPTY_KEY);
             if (empty) {
+                // 若未正在干预，则删除缓存
                 redisTemplate.delete(catch_key);
             }
             return insertPo.getId();
