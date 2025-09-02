@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolNullArr;
-import static com.wegame.capi.client.enums.TemplateTypeEnum.MARIA_MAKILING;
+import static com.wegame.capi.client.enums.TemplateTypeEnum.MALAKAS;
 
 @Slf4j
 @Component("malakasGameTemplatePlay")
@@ -67,7 +67,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
 
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MARIA_MAKILING,
+        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MALAKAS,
                 gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
@@ -76,15 +76,15 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MARIA_MAKILING, betRecordId);
+                configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MALAKAS, betRecordId);
             } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                configRecordList = gameRecordTemplateService.listByBetRecordIdWithRedisCache(MARIA_MAKILING, betRecordId);
+                configRecordList = gameRecordTemplateService.listByBetRecordIdWithRedisCache(MALAKAS, betRecordId);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         } else {
             // 没有被预热的倍率，需要重新查询
-            configRecordList = gameRecordTemplateService.listByBetRecordId(MARIA_MAKILING, betRecordId);
+            configRecordList = gameRecordTemplateService.listByBetRecordId(MALAKAS, betRecordId);
         }
         if (CollectionUtils.isEmpty(configRecordList)) {
             log.error("template is empty, betType:{}, range start: [], end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
