@@ -132,7 +132,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
 
     public GamePlayTypeEnum getGamePlayType() {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
+        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
+                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS)) {
             if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
                 return GamePlayTypeEnum.NORMAL_PLAY;
             } else {
