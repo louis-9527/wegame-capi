@@ -11,7 +11,6 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
-import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
@@ -24,7 +23,6 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -91,9 +89,8 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
 
         List<MalakasGameRecordDo> ret = new ArrayList<>();
-        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.MALAKAS_DYNAMIC);
         // 获取首轮(batchId == 0 and index == 0)
-        OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
+        GameRecordTemplateDo firstRecord = configRecordList.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
@@ -103,18 +100,18 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         MalakasGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, BigDecimal.ZERO);
         ret.add(firstGameRecord);
         // 按 batchId 分组 & 记录 ID 映射
-        Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId = gameMultipleRecordDos.stream()
-                .collect(Collectors.groupingBy(OperationEventConfigRecordDo::getBatchId));
+        Map<Long, List<GameRecordTemplateDo>> groupedByBatchId = configRecordList.stream()
+                .collect(Collectors.groupingBy(GameRecordTemplateDo::getBatchId));
 
         // 获取首批次并排序
-        List<OperationEventConfigRecordDo> recordBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
+        List<GameRecordTemplateDo> recordBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
                 .stream()
-                .sorted(Comparator.comparing(OperationEventConfigRecordDo::getIndex))
+                .sorted(Comparator.comparing(GameRecordTemplateDo::getIndex))
                 .collect(Collectors.toList());
         // 处理每个批次
         MalakasGameRecordDo lastGameRecord = firstGameRecord;
 
-        for (OperationEventConfigRecordDo recordDo : recordBatchList) {
+        for (GameRecordTemplateDo recordDo : recordBatchList) {
             if (recordDo.getParentId() != 0L) {
                 // 处理首轮普通轮
                 long gameRecordId = generateGameRecordId();
@@ -139,18 +136,18 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
     private void processFreeRounds(
             List<MalakasGameRecordDo> ret,
             GamePlayDo gamePlay,
-            OperationEventConfigRecordDo recordDo,
+            GameRecordTemplateDo recordDo,
             MalakasGameRecordDo parent,
-            Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId) {
-        Map<OperationEventConfigRecordDo, MalakasGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
+            Map<Long, List<GameRecordTemplateDo>> groupedByBatchId) {
+        Map<GameRecordTemplateDo, MalakasGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
 
         List<Long> gameRecordIds = new ArrayList<>();
         for (Long batchId : recordDo.getGameRecordIds()) {
-            List<OperationEventConfigRecordDo> currentLevelRecords = groupedByBatchId.get(batchId);
-            currentLevelRecords.sort(Comparator.comparing(OperationEventConfigRecordDo::getIndex));
+            List<GameRecordTemplateDo> currentLevelRecords = groupedByBatchId.get(batchId);
+            currentLevelRecords.sort(Comparator.comparing(GameRecordTemplateDo::getIndex));
             // 处理当前层级的每个记录
             MalakasGameRecordDo preGameRecord = null;
-            for (OperationEventConfigRecordDo record : currentLevelRecords) {
+            for (GameRecordTemplateDo record : currentLevelRecords) {
                 BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
                 long gameRecordId = generateGameRecordId();
                 MalakasGameRecordDo gameRecord = null;
@@ -169,8 +166,8 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
             }
         }
         parent.setGameRecordIds(gameRecordIds);
-        for (Map.Entry<OperationEventConfigRecordDo, MalakasGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
-            OperationEventConfigRecordDo key = entry.getKey();
+        for (Map.Entry<GameRecordTemplateDo, MalakasGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
+            GameRecordTemplateDo key = entry.getKey();
             MalakasGameRecordDo value = entry.getValue();
             processFreeRounds(ret, gamePlay, key,value, groupedByBatchId);
         }
@@ -184,7 +181,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
             long gameRecordId,
             long parentId,
             long batchId,
-            OperationEventConfigRecordDo recordDo,
+            GameRecordTemplateDo recordDo,
             BigDecimal totalMultiple) {
 
         // 确定 `TotalMultiple` 参数
