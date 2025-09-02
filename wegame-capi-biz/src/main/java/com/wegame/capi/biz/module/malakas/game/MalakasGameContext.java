@@ -13,7 +13,7 @@ import java.util.Map;
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
 
 /**
- * MariaMakilingGameContext GamePlay上下文
+ * MalakasGameContext GamePlay上下文
  */
 @Component("malakasGameContext")
 public class MalakasGameContext<R> extends AbstractGameContext<R> {
