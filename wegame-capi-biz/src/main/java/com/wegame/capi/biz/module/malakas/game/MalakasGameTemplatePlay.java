@@ -67,13 +67,12 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
 
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MALAKAS,
-                gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MALAKAS, gamePlay.getBetType(), new BigDecimal("0"), new BigDecimal("1"));
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
 
         List<GameRecordTemplateDo> configRecordList;
-        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange)) {
+        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MALAKAS, gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
                 configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MALAKAS, betRecordId);
