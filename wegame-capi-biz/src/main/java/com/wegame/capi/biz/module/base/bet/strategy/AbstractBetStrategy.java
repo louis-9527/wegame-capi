@@ -136,6 +136,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
             if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
                 return GamePlayTypeEnum.NORMAL_PLAY;
             } else {
+                log.info("userInfo.ut: {}, template bet", userInfo.getUt());
                 return GamePlayTypeEnum.TEMPLATE_PLAY;
             }
         } else {

@@ -1,5 +1,6 @@
 package com.wegame.capi.client.context;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @ApiModel("用户信息")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfo implements Serializable {
     private static final long serialVersionUID = -701740428094376475L;
 
