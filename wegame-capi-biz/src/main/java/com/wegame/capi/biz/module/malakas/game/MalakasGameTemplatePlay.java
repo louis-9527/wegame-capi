@@ -16,7 +16,6 @@ import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.malakas.reward.MalakasRewardHandler;
-import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.biz.service.template.BetRecordTemplateService;
 import com.wegame.capi.biz.service.template.GameRecordTemplateService;
 import com.wegame.capi.client.context.UserInfo;
@@ -51,8 +50,6 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
     GameRecordTemplateService gameRecordTemplateService;
     @Autowired
     BetRecordTemplateService betRecordTemplateService;
-    @Autowired
-    OperationEventConfigRecordService operationEventConfigRecordService;
     @Autowired
     MalakasConfig malakasConfig;
 
