@@ -1,0 +1,45 @@
+package com.wegame.capi.common.constants;
+
+public class MetricsConstants {
+    /**
+     * 用户指标缓存Format
+     * capi:player:aggregation:cache:{pid}:{channelId}:{gameId}:{playerId}
+     */
+    private static final String USER_PLAY_METRICS_CACHE_FORMAT = "capi:player:aggregation:cache:%s:%s:%s:%s";
+    /**
+     * 大盘指标缓存Format
+     * capi:game:aggregation:cache:{pid}:{channelId}:{gameId}
+     */
+    private static final String GAME_METRICS_CACHE_FORMAT = "capi:game:aggregation:cache:%s:%s:%s";
+    /**
+     * 游戏投注总金额缓存Format
+     * capi:game:totalBetAmount:cache:{pid}:{channelId}:{gameId}
+     */
+    private static final String GAME_BET_AMOUNT_CACHE_FORMAT = "capi:game:totalBetAmount:cache:%s:%s:%s";
+    /**
+     * 游戏派奖总金额缓存Format
+     */
+    private static final String GAME_PAYOUT_AMOUNT_CACHE_FORMAT = "capi:game:totalPayoutAmount:cache:%s:%s:%s";
+    /**
+     * 用户指标缓存时间:秒
+     * 暂定30分钟，每次操作都续约
+     */
+    public static final long USER_METRICS_CACHE_TIME = 60 * 30;
+
+    public static String buildGameMetricsCacheKey(String pId, String channelId, String gameId) {
+        return String.format(GAME_METRICS_CACHE_FORMAT, pId, channelId, gameId);
+    }
+
+    public static String buildUserMetricsCacheKey(String pId, String channelId, String gameId, String playerId) {
+        return String.format(USER_PLAY_METRICS_CACHE_FORMAT, pId, channelId, gameId, playerId);
+    }
+
+    public static String buildGameBetAmountCacheKey(String pId, String channelId, String gameId) {
+        return String.format(GAME_BET_AMOUNT_CACHE_FORMAT, pId, channelId, gameId);
+    }
+
+    public static String buildGamePayoutAmountCacheKey(String pId, String channelId, String gameId) {
+        return String.format(GAME_PAYOUT_AMOUNT_CACHE_FORMAT, pId, channelId, gameId);
+    }
+
+}
