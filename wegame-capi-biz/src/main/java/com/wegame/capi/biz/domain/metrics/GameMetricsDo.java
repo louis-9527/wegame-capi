@@ -1,19 +1,13 @@
 package com.wegame.capi.biz.domain.metrics;
 
-import cn.hutool.core.collection.CollectionUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 游戏大盘指标
@@ -95,6 +89,3 @@ public class GameMetricsDo implements Serializable {
     }
 }
 
-
-
-}
