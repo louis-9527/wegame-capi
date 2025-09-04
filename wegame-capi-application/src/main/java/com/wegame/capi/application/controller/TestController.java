@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
+import com.wegame.capi.biz.listener.operation.MalakasOperationEventPulsarListener;
 import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,6 +21,8 @@ public class TestController {
 
     @Autowired
     MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
+    @Autowired
+    MalakasOperationEventPulsarListener malakasOperationEventPulsarListener;
 
     @ApiOperation(value = "eventMsg", httpMethod = "POST")
     @PostMapping("/event/msg")
@@ -40,7 +43,8 @@ public class TestController {
                 "    \"timesOrSessionDuration\": 10\n" +
                 "}";
         OperationEventMessageDo msgDo = JSON.parseObject(event, OperationEventMessageDo.class);
-        mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
+        // mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
+        malakasOperationEventPulsarListener.handleMessage(msgDo);
 
 
         //            for (int i = 0; i <= 210; i++) {
