@@ -1,11 +1,13 @@
 package com.wegame.capi.test.biz.service.template;
 
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasGameRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasGameRecordTemplateListEsDo;
 import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.biz.service.template.es.GameRecordTemplateEsService;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
+import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -34,7 +36,7 @@ public class GameRecordTemplateEsServiceTest extends BaseTest {
         x.setIndex(2);
         MalakasGameRecordTemplateListEsDo listEsDo = MalakasGameRecordTemplateListEsDo.builder()
                 .betRecordId(1000L)
-                .list(Arrays.asList(x, y))
+                .bytes(JsonGzipUtil.compress(FastJsonUtils.toJSONString(Arrays.asList(x, y))))
                 .build();
         boolean isSuc = gameRecordTemplateEsService.add(TemplateTypeEnum.MALAKAS, listEsDo);
         log.info("test_add ret: {}", isSuc);
@@ -45,6 +47,7 @@ public class GameRecordTemplateEsServiceTest extends BaseTest {
     public void test_findById() {
         MalakasGameRecordTemplateListEsDo listEsDo = gameRecordTemplateEsService.findById(1000L, MalakasGameRecordTemplateListEsDo.class);
         log.info("test_findById ret: {}", listEsDo);
+        log.info("test_findById ret bytes json: {}", JsonGzipUtil.decompress(listEsDo.getBytes()));
         Assert.assertNotNull(listEsDo);
     }
 }
