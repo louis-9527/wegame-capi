@@ -63,17 +63,16 @@ public class MetricsFlushTimerService {
     /**
      * 添加用户指标刷盘任务
      */
-    public void addUserMetricsFlushTask(UserInfo userInfo, MetricsTypeEnum metricsType) {
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+    public void addUserMetricsFlushTask(String pId, String channelId, String playerId,MetricsTypeEnum metricsType) {
         // 任务是否已经存在
-        UserPlayTimerKey userPlayTimerKey = new UserPlayTimerKey(userInfo.getPId(), userInfo.getChannelId(), metricsType.getGameType(), userInfo.getPlayerId());
+        UserPlayTimerKey userPlayTimerKey = new UserPlayTimerKey(pId, channelId, metricsType.getGameType(), playerId);
         if (Objects.nonNull(userPlayTimerMap.get(userPlayTimerKey))) {
             return;
         }
         // 生成新任务
         TimerTask timerTask = timeout -> {
             try {
-                userPlayMetricsService.flush(userInfo.getPId(), userInfo.getPlayerId(), userInfo.getChannelId(), metricsType);
+                userPlayMetricsService.flush(pId, playerId, channelId, metricsType);
             } catch (Exception e) {
                 log.error("MetricsFlushTimerService#addUserMetricsFlushTask error: {}", e.getMessage(), e);
             } finally {

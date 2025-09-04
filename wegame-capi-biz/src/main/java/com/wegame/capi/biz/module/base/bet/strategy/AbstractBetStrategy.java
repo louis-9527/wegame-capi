@@ -64,6 +64,13 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                 return asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
             }
         }
+
+        // todo 内部干预数据指标处理
+
+
+
+
+
     }
 
     private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
