@@ -62,7 +62,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
 
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MALAKAS, gamePlay.getBetType(), new BigDecimal("0"), new BigDecimal("1"));
+        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MALAKAS, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
 
