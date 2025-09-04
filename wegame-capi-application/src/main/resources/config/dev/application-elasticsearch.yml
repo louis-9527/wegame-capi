@@ -2,9 +2,11 @@
 spring:
   elasticsearch:
     rest:
-      uris: es-sg-o514f8oz90004x19o.public.elasticsearch.aliyuncs.com
-      connection-timeout: 1s
-      socket-timeout: 1s
+      uris: http://es-sg-o514f8oz90004x19o.public.elasticsearch.aliyuncs.com:9200
+      connection-timeout: 10s
+      socket-timeout: 10s
+      username: elastic
+      password: Innovatech@123
   data:
     elasticsearch:
       repositories:
