@@ -19,10 +19,6 @@ public class BetRecordTemplateEsService extends AbstractService {
 
     public Long add(MalakasBetRecordTemplatePo po, TemplateTypeEnum templateTypeEnum) {
         // todo 通用性改造
-//        MalakasBetRecordTemplatePo po = new MalakasBetRecordTemplatePo();
-//        po.setId(1000L);
-//        po.setBetType(BetTypeEnum.BUY_BET.getCode());
-//        po.set
         malakasBetRecordTemplateRepo.save(po);
         return po.getId();
     }
