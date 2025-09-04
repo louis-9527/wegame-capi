@@ -2,7 +2,7 @@ package com.wegame.capi.application.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.wegame.base.domain.CommonResponse;
-import com.wegame.capi.api.base.TestApi;
+import com.wegame.capi.api.SingleWalletApi;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.biz.listener.operation.MariamakilingOperationEventPulsarListener;
 import io.swagger.annotations.Api;
@@ -20,8 +20,6 @@ public class TestController {
 
     @Autowired
     MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener;
-    @Autowired
-    TestApi testApi;
 
     @ApiOperation(value = "eventMsg", httpMethod = "POST")
     @PostMapping("/event/msg")
@@ -45,16 +43,26 @@ public class TestController {
         mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
 
 
-//        for (int i = 0; i <= 210; i++) {
-//            msgDo.setEventId(msgDo.getEventId() + "_" + i);
-//            mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
-//        }
+        //            for (int i = 0; i <= 210; i++) {
+        //                msgDo.setEventId(msgDo.getEventId() + "_" + i);
+        //                mariamakilingOperationEventPulsarListener.handleMessage(msgDo);
+        //            }
         return CommonResponse.build(true);
     }
-    @ApiOperation(value = "test/api", httpMethod = "GET")
-    @GetMapping("/test/api")
-    public CommonResponse<Boolean> testApi() {
-        testApi.initConnections();
+    @ApiOperation(value = "test/api/ping", httpMethod = "GET")
+    @GetMapping("/test/api/ping")
+    public CommonResponse<Boolean> testApiPing() {
+        //testApi.ping();
+        return CommonResponse.build(true);
+    }
+
+    @Autowired
+    SingleWalletApi singleWalletApi;
+
+    @ApiOperation(value = "test/api/ping", httpMethod = "GET")
+    @GetMapping("/test/singleWalletApi/healthCheck")
+    public CommonResponse<Boolean> testSingleWalletApiHealthCheck() {
+        singleWalletApi.healthCheck();
         return CommonResponse.build(true);
     }
 
