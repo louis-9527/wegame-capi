@@ -1,24 +1,24 @@
-package com.wegame.capi.dao.repo.domain;
+package com.wegame.capi.biz.domain.biz.template;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(indexName = "MalakasBetRecordTemplate")
-public class MalakasBetRecordTemplatePo implements Serializable {
-    private static final long serialVersionUID = 180L;
-
+@EqualsAndHashCode(callSuper = false)
+public class BetRecordTemplateEsDo<T> implements Serializable {
+    private static final long serialVersionUID = -49339619792477969L;
     @Id
     @Field(type = FieldType.Keyword)
     private Long id;
@@ -46,5 +46,4 @@ public class MalakasBetRecordTemplatePo implements Serializable {
      * hash
      */
     private String hash;
-
 }
