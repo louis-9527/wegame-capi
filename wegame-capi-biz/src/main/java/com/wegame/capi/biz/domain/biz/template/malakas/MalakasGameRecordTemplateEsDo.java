@@ -1,14 +1,15 @@
 package com.wegame.capi.biz.domain.biz.template.malakas;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.wegame.capi.biz.domain.biz.template.GameRecordTemplateEsDo;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder
+@ToString
 @NoArgsConstructor
-@AllArgsConstructor
-public class MalakasGameRecordTemplateEsDo extends MalakasBetRecordTemplateEsDo {
+@EqualsAndHashCode(callSuper = true)
+public class MalakasGameRecordTemplateEsDo extends GameRecordTemplateEsDo {
+
     private static final long serialVersionUID = 181L;
+
 }

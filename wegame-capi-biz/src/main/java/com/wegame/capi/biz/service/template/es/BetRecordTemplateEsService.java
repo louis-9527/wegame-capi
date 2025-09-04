@@ -1,6 +1,8 @@
 package com.wegame.capi.biz.service.template.es;
 
 import com.wegame.base.CacheConstants;
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +22,17 @@ public class BetRecordTemplateEsService<T> {
     @Autowired
     ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    public boolean add(T t, TemplateTypeEnum templateType) {
+    @Deprecated  // 测试之用
+    public boolean add(TemplateTypeEnum templateType, T t) {
         T saveT = elasticsearchRestTemplate.save(t);
         return Objects.nonNull(saveT);
     }
 
-    public T findById(String id, Class<T> clazz) {
-        return elasticsearchRestTemplate.get(id, clazz);
+    @Deprecated  // 测试之用
+    public T findById(Long id, Class<T> clazz) {
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
+        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
     }
 
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")

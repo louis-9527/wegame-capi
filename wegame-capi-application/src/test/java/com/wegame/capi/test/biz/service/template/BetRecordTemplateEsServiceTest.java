@@ -1,4 +1,4 @@
-package com.wegame.capi.test.biz.service;
+package com.wegame.capi.test.biz.service.template;
 
 import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -21,20 +21,21 @@ public class BetRecordTemplateEsServiceTest extends BaseTest {
     @Test
     public void test_add() {
         MalakasBetRecordTemplateEsDo po = new MalakasBetRecordTemplateEsDo();
-        po.setId("1000");
+        po.setId(1000L);
         po.setBetType(BetTypeEnum.NORMAL_BET.getCode());
         po.setBetSubType(BetSubTypeEnum.NORMAL_BET.getCode());
         po.setTemplateType(TemplateTypeEnum.MALAKAS.name());
         po.setHash("42314234");
         po.setMultiple(12.3);
         po.setGameId(GameTypeEnum.MALAKAS.getId());
-        boolean isSuc = betRecordTemplateEsService.add(po, TemplateTypeEnum.MALAKAS);
+        boolean isSuc = betRecordTemplateEsService.add(TemplateTypeEnum.MALAKAS, po);
+        log.info("test_add ret: {}", isSuc);
         Assert.assertNotNull(isSuc);
     }
 
     @Test
     public void test_findById() {
-        MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById("1000", MalakasBetRecordTemplateEsDo.class);
+        MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(1000L, MalakasBetRecordTemplateEsDo.class);
         log.info("test_findById ret: {}", templateDo);
         Assert.assertNotNull(templateDo);
     }
