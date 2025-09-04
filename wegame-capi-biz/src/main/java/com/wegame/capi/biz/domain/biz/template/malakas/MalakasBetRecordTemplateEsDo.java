@@ -1,5 +1,6 @@
-package com.wegame.capi.biz.domain.biz.template;
+package com.wegame.capi.biz.domain.biz.template.malakas;
 
+import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

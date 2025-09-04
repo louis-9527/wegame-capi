@@ -5,7 +5,7 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
-import com.wegame.capi.biz.domain.biz.template.MalakasBetRecordTemplateEsDo;
+import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
