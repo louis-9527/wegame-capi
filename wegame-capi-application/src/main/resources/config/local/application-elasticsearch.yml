@@ -1,11 +1,13 @@
-## spring:redis
-spring:
-  data:
-    elasticsearch:
-      repositories:
-        enabled: true
-  elasticsearch:
-    rest:
-      uris: http://localhost:9200
-      username: ""
-      password: ""
+### spring:redis
+#spring:
+#  elasticsearch:
+#    rest:
+#      uris: http://localhost:9200
+#      connection-timeout: 1s
+#      socket-timeout: 1s
+#  data:
+#    elasticsearch:
+#      repositories:
+#        enabled: true
+#      # 启动时自动建索引
+#      auto-index-creation: true

@@ -1,29 +1,37 @@
 package com.wegame.capi.biz.service.template.es;
 
-import com.wegame.capi.biz.domain.biz.operation.BetRecordTemplateDo;
-import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.base.CacheConstants;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
-import com.wegame.capi.dao.repo.domain.MalakasBetRecordTemplatePo;
-import com.wegame.capi.dao.repo.MalakasBetRecordTemplateRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
-public class BetRecordTemplateEsService extends AbstractService {
+public class BetRecordTemplateEsService<T> {
 
     @Autowired
-    MalakasBetRecordTemplateRepo malakasBetRecordTemplateRepo;
+    ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    public Long add(MalakasBetRecordTemplatePo po, TemplateTypeEnum templateTypeEnum) {
-        // todo 通用性改造
-        malakasBetRecordTemplateRepo.save(po);
-        return po.getId();
+    public boolean add(T t, TemplateTypeEnum templateType) {
+        T saveT = elasticsearchRestTemplate.save(t);
+        return Objects.nonNull(saveT);
     }
 
-    public MalakasBetRecordTemplatePo getById(Long id) {
-        return malakasBetRecordTemplateRepo.findById(id).get();
+    public T findById(String id, Class<T> clazz) {
+        return elasticsearchRestTemplate.get(id, clazz);
+    }
+
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
+    public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
+        // todo
+        return null;
     }
 }
