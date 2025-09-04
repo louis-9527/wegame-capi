@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Service
-public class UserPlayMetricsService extends AbstractService {
+public class UserPlayMetricsDataService extends AbstractService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
     @Autowired

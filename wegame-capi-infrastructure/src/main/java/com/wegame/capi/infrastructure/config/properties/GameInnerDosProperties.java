@@ -2,6 +2,7 @@ package com.wegame.capi.infrastructure.config.properties;
 
 import com.google.common.collect.Lists;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.MetricsTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,9 +22,9 @@ import java.util.Optional;
 public class GameInnerDosProperties {
     public static final String GAME_INNER_DOS_PROPERTIES_PREFIX = "game.inner.dos";
 
-    private List<GameTypeEnum> enableGameList;
+    private List<MetricsTypeEnum> enableGameList;
 
-    public List<GameTypeEnum> getEnableGameList() {
+    public List<MetricsTypeEnum> getEnableGameList() {
         return Optional.ofNullable(this.enableGameList).orElse(Lists.newArrayList());
     }
 }

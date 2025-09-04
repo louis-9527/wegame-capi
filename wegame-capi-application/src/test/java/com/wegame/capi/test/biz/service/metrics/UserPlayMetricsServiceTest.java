@@ -1,6 +1,6 @@
 package com.wegame.capi.test.biz.service.metrics;
 
-import com.wegame.capi.biz.service.metrics.UserPlayMetricsService;
+import com.wegame.capi.biz.service.metrics.UserPlayMetricsDataService;
 import com.wegame.capi.client.enums.MetricsTypeEnum;
 import com.wegame.capi.test.BaseTest;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UserPlayMetricsServiceTest extends BaseTest {
     private static final Logger log = LoggerFactory.getLogger(UserPlayMetricsServiceTest.class);
     @Autowired
-    private UserPlayMetricsService userPlayMetricsService;
+    private UserPlayMetricsDataService userPlayMetricsService;
 
     @Test
     public void test_flush_normal(){

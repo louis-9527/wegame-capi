@@ -3,7 +3,6 @@ package com.wegame.capi.biz.service.metrics;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.service.RandomService;
-import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MetricsTypeEnum;
 import io.netty.util.HashedWheelTimer;
@@ -54,9 +53,9 @@ public class MetricsFlushTimerService {
     private Long userMetricsFlushTimerIntervalMax;
 
     @Autowired
-    private UserPlayMetricsService userPlayMetricsService;
+    private UserPlayMetricsDataService userPlayMetricsService;
     @Autowired
-    private GameMetricsService gameMetricsService;
+    private GameMetricsDataService gameMetricsService;
     @Autowired
     private RandomService randomService;
 

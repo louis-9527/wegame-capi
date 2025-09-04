@@ -1,74 +1,91 @@
 package com.wegame.capi.biz.service.metrics;
 
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
+import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
 import com.wegame.capi.client.enums.MetricsTypeEnum;
-import com.wegame.capi.infrastructure.config.properties.GameInnerDosProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * 指标聚合处理服务
  */
 @Slf4j
-public abstract class AbstractMetricsService implements MetricsService{
+public abstract class AbstractMetricsService implements MetricsService {
     @Autowired
-    private GameMetricsService gameMetricsService;
+    private GameMetricsDataService gameMetricsDataService;
     @Autowired
-    private UserPlayMetricsService userPlayMetricsService;
+    private UserPlayMetricsDataService userPlayMetricsDataService;
     @Autowired
     private MetricsFlushTimerService metricsFlushTimerService;
-    @Autowired
-    private GameInnerDosProperties gameInnerDosProperties;
+
+    /**
+     * 获取大盘增量指标
+     *
+     * @param betRecordDo betRecordDo
+     * @param extInfo     extInfo 自定义数据
+     * @return do
+     */
+    protected abstract GameMetricsDo getGameMetricsDo(BetRecordDo betRecordDo, Object extInfo);
+
+    /**
+     * 获取用户增量指标
+     *
+     * @param betRecordDo betRecordDo
+     * @param extInfo     extInfo 自定义数据
+     * @return do
+     */
+    protected abstract UserPlayMetricsDo getUserPlayMetricsDo(BetRecordDo betRecordDo, Object extInfo);
 
     /**
      * 指标获取
      *
      * @param betRecordDo 投注记录do
-     * @param gameType    gameType
+     * @param metricsType metricsType
      * @return true/false
      */
-    public boolean metrics(BetRecordDo betRecordDo, GameTypeEnum gameType) {
-        if (!this.canMetrics(gameType)) {
-            log.info("MetricsService#metrics.game inner dos not enable:{}", gameType);
-            return true;
-        }
-        this.gameMetrics(betRecordDo, gameType);
-        this.userPlayMetrics(betRecordDo, gameType);
+    @Override
+    public boolean metrics(BetRecordDo betRecordDo, MetricsTypeEnum metricsType, Object extInfo) {
+        this.gameMetrics(betRecordDo, metricsType, extInfo);
+        this.userPlayMetrics(betRecordDo, metricsType, extInfo);
         return true;
     }
 
-    private void gameMetrics(BetRecordDo betRecordDo, GameTypeEnum gameType) {
+    /**
+     * 大盘指标采集服务
+     * 1.指标采集
+     * 2.刷盘任务添加
+     *
+     * @param betRecordDo betRecordDo
+     * @param metricsType metricsType
+     * @param extInfo     extInfo
+     */
+    private void gameMetrics(BetRecordDo betRecordDo, MetricsTypeEnum metricsType, Object extInfo) {
         // 大盘指标缓存
-        gameMetricsService.cache();
+        gameMetricsDataService.cache(this.getGameMetricsDo(betRecordDo, extInfo), metricsType);
         // 大盘指标刷盘任务添加
-        metricsFlushTimerService.addGameMetricsFlushTask(betRecordDo.getPId(), betRecordDo.getChannelId(), MetricsTypeEnum.valueOfGameType(gameType));
-
+        metricsFlushTimerService.addGameMetricsFlushTask(betRecordDo.getPId(), betRecordDo.getChannelId(), metricsType);
     }
 
-    private void userPlayMetrics(BetRecordDo betRecordDo, GameTypeEnum gameType) {
+    /**
+     * 用户指标采集服务
+     * 1.指标采集
+     * 2.刷盘任务添加
+     *
+     * @param betRecordDo betRecordDo
+     * @param metricsType metricsType
+     * @param extInfo     extInfo
+     */
+    private void userPlayMetrics(BetRecordDo betRecordDo, MetricsTypeEnum metricsType, Object extInfo) {
         // 用户指标缓存
-        userPlayMetricsService.cache();
+        userPlayMetricsDataService.cache(this.getUserPlayMetricsDo(betRecordDo, extInfo), metricsType);
         // 用户指标刷盘任务添加
         metricsFlushTimerService.addUserMetricsFlushTask(betRecordDo.getPId(),
                 betRecordDo.getChannelId(),
                 betRecordDo.getPlayerId(),
-                MetricsTypeEnum.valueOfGameType(gameType));
+                metricsType);
 
     }
 
 
-    private boolean canMetrics(GameTypeEnum gameType) {
-        return this.gameEnable(gameType);
-    }
-
-    private boolean gameEnable(GameTypeEnum gameType) {
-        return gameInnerDosProperties.getEnableGameList().contains(gameType);
-    }
-
-    @Override
-    public boolean metrics(BetRecordDo betRecordDo, MetricsTypeEnum metricsType, Object extInfo) {
-        return false;
-    }
 }
