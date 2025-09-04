@@ -1,0 +1,13 @@
+### spring:redis
+spring:
+  elasticsearch:
+    rest:
+      uris: es-sg-o514f8oz90004x19o.public.elasticsearch.aliyuncs.com
+      connection-timeout: 1s
+      socket-timeout: 1s
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
+      # 启动时自动建索引
+      auto-index-creation: true
