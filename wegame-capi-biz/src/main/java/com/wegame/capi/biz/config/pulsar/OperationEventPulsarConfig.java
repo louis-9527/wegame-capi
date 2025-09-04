@@ -32,7 +32,7 @@ public class OperationEventPulsarConfig {
     @Value("${dynamic.operation.pulsar_topic}")
     String dynamicOperationTopic;
     // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
-    @Value("${dynamic.operation.pulsar_group.maria_makiling:_MariaMakiling}")
+    @Value("${dynamic.operation.pulsar_group.maria_makiling:cd_MariaMakiling}")
     String dynamicOperationGroupMariaMakiling;
     @Value("${dynamic.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
