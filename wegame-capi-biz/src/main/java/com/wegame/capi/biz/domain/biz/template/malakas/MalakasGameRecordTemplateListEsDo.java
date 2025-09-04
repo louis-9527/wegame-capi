@@ -23,6 +23,9 @@ public class MalakasGameRecordTemplateListEsDo implements Serializable {
     @Field(type = FieldType.Keyword)
     private Long betRecordId;
 
+    /**
+     * List<MalakasGameRecordTemplateEsDo> json格式compress
+     */
     private byte[] bytes;
 
 }
