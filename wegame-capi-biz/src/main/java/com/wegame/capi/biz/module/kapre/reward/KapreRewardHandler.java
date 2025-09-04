@@ -109,7 +109,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         RewardResultDo<KapreSymbolDo> rewardResult = RewardResultDo.<KapreSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
-                .rewardSubType(RewardHelper.calculateRewardSubType2(rewardHandle.getBetAmount(), totalRewardAmount))
+                .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
                 .totalRewardAmount(totalRewardAmount)
                 .rewardLineDetailList(rewardLineDetailList)
                 .hasRewardFreeWheel(rewardFreeWheel)
