@@ -5,6 +5,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class DynamicOperationEncryptionHelper {
     private static final String RSA_ALGORITHM = "RSA/ECB/OAEPWITHSHA-1ANDMGF1PADDING";
@@ -79,6 +81,7 @@ public class DynamicOperationEncryptionHelper {
     public String encryptWithPublicKey(String channelId, String message) {
         try {
             AesSecretKey aesSecretKey = aesSecretmap.get(channelId);
+            log.info("encryptWithPublicKey,aesSecretKey.getRsaPublicKey(),channelId:{},publicKey:{},message:{}",channelId,aesSecretKey.getRsaPublicKey(),message);
             Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, aesSecretKey.getRsaPublicKey());
             byte[] encryptedBytes = cipher.doFinal(message.getBytes(StandardCharsets.UTF_8));
@@ -94,6 +97,7 @@ public class DynamicOperationEncryptionHelper {
     public String decrypt(String channelId, String encryptedData) {
         try {
             AesSecretKey aesSecretKey = aesSecretmap.get(channelId);
+            log.info("encryptWithPublicKey,decrypt.getRsaPrivateKey(),channelId:{},privateKey:{},encryptedData:{}",channelId,aesSecretKey.getRsaPrivateKey(),encryptedData);
             Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, aesSecretKey.getRsaPrivateKey());
             byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedData));
