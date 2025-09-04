@@ -37,6 +37,7 @@ public class GameRecordTemplateEsServiceTest extends BaseTest {
                 .list(Arrays.asList(x, y))
                 .build();
         boolean isSuc = gameRecordTemplateEsService.add(TemplateTypeEnum.MALAKAS, listEsDo);
+        log.info("test_add ret: {}", isSuc);
         Assert.assertNotNull(isSuc);
     }
 

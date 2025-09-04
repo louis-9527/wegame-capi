@@ -5,11 +5,11 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class MalakasGameRecordTemplateEsDo extends GameRecordTemplateEsDo {
 
-    private static final long serialVersionUID = 181L;
+    private static final long serialVersionUID = 181000L;
 
 }

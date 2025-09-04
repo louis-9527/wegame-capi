@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Document(indexName = "malakas_game_record_list_template", createIndex = true)
 public class MalakasGameRecordTemplateListEsDo implements Serializable {
-    private static final long serialVersionUID = 181L;
+    private static final long serialVersionUID = 1814235315L;
 
     @Id
     @Field(type = FieldType.Keyword)

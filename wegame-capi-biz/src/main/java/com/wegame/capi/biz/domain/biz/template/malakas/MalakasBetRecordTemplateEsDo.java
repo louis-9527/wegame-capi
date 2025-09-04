@@ -8,13 +8,13 @@ import lombok.ToString;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 @Data
-@ToString
 @NoArgsConstructor
 //@AllArgsConstructor
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Document(indexName = "malakas_bet_record_template", createIndex = true)
 public class MalakasBetRecordTemplateEsDo extends BetRecordTemplateEsDo {
 
-    private static final long serialVersionUID = 180L;
+    private static final long serialVersionUID = 180432143L;
 
 }
