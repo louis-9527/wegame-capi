@@ -39,6 +39,7 @@ public class DefaultMetricsService extends AbstractMetricsService {
 
     @Override
     protected UserPlayMetricsDo getUserPlayMetricsDo(BetRecordDo betRecordDo, Object extInfo) {
+        Boolean hasFreeSpin = (Boolean) extInfo;
         UserPlayMetricsDo.builder()
                 .pId(betRecordDo.getPId())
                 .channelId(betRecordDo.getChannelId())
@@ -51,7 +52,7 @@ public class DefaultMetricsService extends AbstractMetricsService {
                 .continuousLostCount(betRecordDo.getPayOutAmount() > 0 ? 0 : 1)
                 .lastBetTime(betRecordDo.getBetTime())
                 // 这个值在各个游戏的地方给到,会涉及betRecord 生成的地方改造
-                .continuousNoFreeSpinCount(0L)
+                .continuousNoFreeSpinCount(hasFreeSpin ? 0L : 1L)
                 .build();
 
         return null;
