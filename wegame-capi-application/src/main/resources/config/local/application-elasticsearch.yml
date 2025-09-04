@@ -1,0 +1,7 @@
+## spring:redis
+spring:
+  data:
+    elasticsearch:
+      uris: http://localhost:9200      # 集群可写多个，逗号分隔
+      username: ""                     # 若开启安全认证再填
+      password: ""
