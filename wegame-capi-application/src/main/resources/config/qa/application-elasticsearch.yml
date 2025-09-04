@@ -1,0 +1,15 @@
+### spring:redis
+spring:
+  elasticsearch:
+    rest:
+      uris: http://es-sg-o514f8oz90004x19o.public.elasticsearch.aliyuncs.com:9200
+      connection-timeout: 10s
+      socket-timeout: 10s
+      username: elastic
+      password: Innovatech@123
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
+      # 启动时自动建索引
+      auto-index-creation: true
