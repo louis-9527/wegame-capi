@@ -17,4 +17,8 @@ public class MalakasBetRecordTemplateEsDo extends BetRecordTemplateEsDo {
 
     private static final long serialVersionUID = 180432143L;
 
+    /**
+     * bytes： List<T>的json格式后compress. T为具体游戏的模版
+     */
+    private byte[] bytes;
 }

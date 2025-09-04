@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetRecordTemplateEsDo<T> implements Serializable {
+public class BetRecordTemplateEsDo implements Serializable {
     private static final long serialVersionUID = -49339619792477969L;
     @Id
     @Field(type = FieldType.Keyword)

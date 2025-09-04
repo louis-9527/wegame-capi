@@ -22,13 +22,11 @@ public class BetRecordTemplateEsService<T> {
     @Autowired
     ElasticsearchRestTemplate elasticsearchRestTemplate;
 
-    @Deprecated  // 测试之用
     public boolean add(TemplateTypeEnum templateType, T t) {
         T saveT = elasticsearchRestTemplate.save(t);
         return Objects.nonNull(saveT);
     }
 
-    @Deprecated  // 测试之用
     public T findById(Long id, Class<T> clazz) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
