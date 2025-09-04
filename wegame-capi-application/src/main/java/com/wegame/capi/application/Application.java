@@ -42,8 +42,7 @@ import java.util.concurrent.ExecutorService;
 @EnableRetry
 @EnableCaching
 @EnableTransactionManagement
-@EnableElasticsearchRepositories
-@MapperScan(value = {"com.wegame.capi.dao.*", "com.wegame.capi.dao.repo"})
+@MapperScan(value = {"com.wegame.capi.dao.*"})
 @SpringBootApplication(scanBasePackages = {"com.wegame.*"}, exclude = {
         RedissonAutoConfiguration.class,
         SessionAutoConfiguration.class,
