@@ -13,11 +13,13 @@ import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
+import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.malakas.reward.MalakasRewardHandler;
 import com.wegame.capi.biz.service.template.BetRecordTemplateService;
 import com.wegame.capi.biz.service.template.GameRecordTemplateService;
+import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -52,6 +54,8 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
     BetRecordTemplateService betRecordTemplateService;
     @Autowired
     MalakasConfig malakasConfig;
+    @Autowired
+    BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     @Override
     public List<MalakasGameRecordDo> play(GamePlayDo gamePlay) {
@@ -62,7 +66,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
 
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MALAKAS, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(MALAKAS, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), MalakasBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
 
