@@ -4,8 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
-import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
+import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
+import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
@@ -35,6 +36,8 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
     MalakasConfig malakasConfig;
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     protected TemplateTypeEnum getTemplateType() {
         return TemplateTypeEnum.MALAKAS;
@@ -88,7 +91,7 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
         TemplateTypeEnum templateType = this.getTemplateType();
         log.info("templateIdList load start, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
         try {
-            List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd());
+            List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd(), MalakasBetRecordTemplateEsDo.class);
             if (!TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MARIA_MAKILING, betType, multipleRange)) {
                 log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}， no load gameRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
                 return null;
