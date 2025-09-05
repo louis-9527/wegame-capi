@@ -4,9 +4,9 @@ import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.template.BetRecordTemplateQueryBuilder;
+import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
-import com.wegame.capi.dao.repository.domain.template.BetRecordTemplatePo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -47,8 +47,8 @@ public class BetRecordTemplateEsService<T> {
         NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildEsQuery(betType, multipleRangeStart, multipleRangeEnd);
 
         // 执行查询
-        List<BetRecordTemplatePo> betRecordTemplateList = elasticsearchRestTemplate
-                .search(query, BetRecordTemplatePo.class)
+        List<BetRecordTemplateEsDo> betRecordTemplateList = elasticsearchRestTemplate
+                .search(query, BetRecordTemplateEsDo.class)
                 .stream()
                 .map(SearchHit::getContent)
                 .collect(Collectors.toList());
@@ -56,7 +56,7 @@ public class BetRecordTemplateEsService<T> {
         return Optional.of(betRecordTemplateList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(BetRecordTemplatePo::getId)
+                .map(BetRecordTemplateEsDo::getId)
                 .collect(Collectors.toList());
     }
 }
