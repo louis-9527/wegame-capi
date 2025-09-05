@@ -29,6 +29,7 @@ public class BetRecordTemplateEsDo implements Serializable {
     /**
      * 投注类型
      */
+    @Field(type = FieldType.Keyword)
     private String betType;
     /**
      * 投注子类型
@@ -37,10 +38,12 @@ public class BetRecordTemplateEsDo implements Serializable {
     /**
      * 倍数
      */
+    @Field(type = FieldType.Double_Range)
     private Double multiple;
     /**
      * 模版类型 common
      */
+    @Field(type = FieldType.Keyword)
     private String templateType;
     /**
      * hash
