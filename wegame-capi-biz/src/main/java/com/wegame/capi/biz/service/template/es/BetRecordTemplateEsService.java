@@ -44,7 +44,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
     public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
         log.info("listIdByMultipleRange query, betTypeEnum: {}, multipleRangeStart: {}, multipleRangeEnd: {}, typeEnum: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.getGameType());
         // 构建ES查询
-        NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildEsQueryIdList(betType, multipleRangeStart, multipleRangeEnd);
+        NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
 
         // 执行查询
         List<T> betRecordTemplateList = elasticsearchRestTemplate

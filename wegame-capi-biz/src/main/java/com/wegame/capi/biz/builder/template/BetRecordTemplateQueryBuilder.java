@@ -40,7 +40,7 @@ public class BetRecordTemplateQueryBuilder {
     }
 
 
-    public static NativeSearchQuery buildEsQueryIdList(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
+    public static NativeSearchQuery buildListIdEsQuery(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
         AssertUtil.assertNotNull(betTypeEnum, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(multipleRangeStart, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(multipleRangeEnd, ErrorCode.ERR_PARAM);
