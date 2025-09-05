@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class BetRecordTemplateEsService<T> {
+public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
 
     @Autowired
     ElasticsearchRestTemplate elasticsearchRestTemplate;
@@ -41,14 +41,14 @@ public class BetRecordTemplateEsService<T> {
     }
 
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
-    public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
+    public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
         log.info("listIdByMultipleRange query, betTypeEnum: {}, multipleRangeStart: {}, multipleRangeEnd: {}, typeEnum: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.getGameType());
         // 构建ES查询
-        NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildEsQuery(betType, multipleRangeStart, multipleRangeEnd);
+        NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildEsQueryIdList(betType, multipleRangeStart, multipleRangeEnd);
 
         // 执行查询
-        List<BetRecordTemplateEsDo> betRecordTemplateList = elasticsearchRestTemplate
-                .search(query, BetRecordTemplateEsDo.class)
+        List<T> betRecordTemplateList = elasticsearchRestTemplate
+                .search(query, clazz)
                 .stream()
                 .map(SearchHit::getContent)
                 .collect(Collectors.toList());
@@ -56,7 +56,7 @@ public class BetRecordTemplateEsService<T> {
         return Optional.of(betRecordTemplateList)
                 .orElse(Collections.emptyList())
                 .stream()
-                .map(BetRecordTemplateEsDo::getId)
+                .map(T::getId)
                 .collect(Collectors.toList());
     }
 }

@@ -3,6 +3,8 @@ package com.wegame.capi.biz.builder.template;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
+import org.springframework.data.elasticsearch.core.query.SourceFilter;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -38,7 +40,7 @@ public class BetRecordTemplateQueryBuilder {
     }
 
 
-    public static NativeSearchQuery buildEsQuery(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
+    public static NativeSearchQuery buildEsQueryIdList(BetTypeEnum betTypeEnum, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
         AssertUtil.assertNotNull(betTypeEnum, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(multipleRangeStart, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(multipleRangeEnd, ErrorCode.ERR_PARAM);
@@ -60,11 +62,13 @@ public class BetRecordTemplateQueryBuilder {
                     .gt(multipleRangeStart.doubleValue())
                     .lte(multipleRangeEnd.doubleValue()));
         }
-
+        // 只取id字段，不返回_source
+        SourceFilter sourceFilter = new FetchSourceFilter(new String[]{"id"}, null);
         // 构建NativeSearchQuery并只返回id字段
         return new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
-                .withFields("id") // 只查询id字段
+                .withSourceFilter(sourceFilter)
+//                .withFields("id") // 只查询id字段
                 .build();
     }
 }

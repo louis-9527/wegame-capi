@@ -2,7 +2,6 @@ package com.wegame.capi.test.biz.service.template;
 
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.utils.FastJsonUtils;
-import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
@@ -20,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -74,5 +73,12 @@ public class BetRecordTemplateEsServiceTest extends BaseTest {
             log.info("test_findById item: {}", item);
         });
         Assert.assertNotNull(templateDo);
+    }
+
+    @Test
+    public void test_listIdByMultipleRange() {
+        List<Long> idList = betRecordTemplateEsService.listIdByMultipleRange(TemplateTypeEnum.MALAKAS, BetTypeEnum.NORMAL_BET, BigDecimal.ZERO, new BigDecimal("1"), MalakasBetRecordTemplateEsDo.class);
+        log.info("test_listIdByMultipleRange ret: {}", FastJsonUtils.toJSONString(idList));
+        Assert.assertNotNull(idList);
     }
 }
