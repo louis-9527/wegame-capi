@@ -65,7 +65,7 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
                     mainGameTemplateIdList.addAll(idList);
                 }
             });
-            loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
+            //loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
             log.info("main game template load end...");
         } catch (Exception e) {
             log.error("template load error", e);
@@ -80,7 +80,7 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
                     freeGameTemplateIdList.addAll(idList);
                 }
             });
-            loadRedisCache(BetTypeEnum.BUY_BET, freeGameTemplateIdList);
+            //loadRedisCache(BetTypeEnum.BUY_BET, freeGameTemplateIdList);
             log.info("free game template load end...");
         } catch (Exception e) {
             log.info("free game template load error", e);
