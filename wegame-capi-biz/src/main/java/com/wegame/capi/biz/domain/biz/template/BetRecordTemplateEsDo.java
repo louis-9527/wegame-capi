@@ -38,7 +38,7 @@ public class BetRecordTemplateEsDo implements Serializable {
     /**
      * 倍数
      */
-    @Field(type = FieldType.Double_Range)
+    @Field(type = FieldType.Double)
     private Double multiple;
     /**
      * 模版类型 common
