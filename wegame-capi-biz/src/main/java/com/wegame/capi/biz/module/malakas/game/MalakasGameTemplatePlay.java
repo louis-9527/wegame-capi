@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
@@ -25,6 +26,7 @@ import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -69,26 +71,28 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(MALAKAS, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), MalakasBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
-
         List<GameRecordTemplateDo> configRecordList;
-        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MALAKAS, gamePlay.getBetType(), templateMultipleRange)) {
-            // 已经被预热的倍率，直接走缓存
-            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MALAKAS, betRecordId);
-            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                configRecordList = gameRecordTemplateService.listByBetRecordIdWithRedisCache(MALAKAS, betRecordId);
-            } else {
-                throw new BusinessException(ErrorCode.ERR_PARAM);
-            }
-        } else {
-            // 没有被预热的倍率，需要重新查询
-            configRecordList = gameRecordTemplateService.listByBetRecordId(MALAKAS, betRecordId);
-        }
+        //        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MALAKAS, gamePlay.getBetType(), templateMultipleRange)) {
+        //            //            // 已经被预热的倍率，直接走缓存
+        //            //            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
+        //            //                configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MALAKAS, betRecordId);
+        //            //            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
+        //            //                configRecordList = gameRecordTemplateService.listByBetRecordIdWithRedisCache(MALAKAS, betRecordId);
+        //            //            } else {
+        //            //                throw new BusinessException(ErrorCode.ERR_PARAM);
+        //            //            }
+        //        } else {
+        //            //            // 没有被预热的倍率，需要重新查询
+        //            //            configRecordList = gameRecordTemplateService.listByBetRecordId(MALAKAS, betRecordId);
+        //        }
+        MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(betRecordId, MalakasBetRecordTemplateEsDo.class);
+        AssertUtil.assertNotNull(templateDo, ErrorCode.ERR_INTER);
+        configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(templateDo.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
+        });
         if (CollectionUtils.isEmpty(configRecordList)) {
             log.error("template is empty, betType:{}, range start: [], end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
-
         List<MalakasGameRecordDo> ret = new ArrayList<>();
         // 获取首轮(batchId == 0 and index == 0)
         GameRecordTemplateDo firstRecord = configRecordList.stream()
