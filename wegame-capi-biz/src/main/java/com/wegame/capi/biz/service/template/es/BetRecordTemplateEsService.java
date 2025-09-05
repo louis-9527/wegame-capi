@@ -8,11 +8,18 @@ import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -59,4 +66,26 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
                 .map(T::getId)
                 .collect(Collectors.toList());
     }
+
+
+    public List<T> batchByIdList(List<Long> ids, String indexName, Class<T> clazz) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+
+        // 构造 terms 查询
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termsQuery("id", ids));
+
+        NativeSearchQuery query = new NativeSearchQueryBuilder()
+                .withQuery(boolQuery)
+                .withPageable(Pageable.unpaged())   // 一次拿完
+                .build();
+
+        SearchHits<T> hits = elasticsearchRestTemplate.search(query, clazz, IndexCoordinates.of(indexName));
+
+        return hits.stream()
+                .map(SearchHit::getContent)
+                .collect(Collectors.toList());
+    }
+
 }

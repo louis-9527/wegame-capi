@@ -68,7 +68,6 @@ public class BetRecordTemplateQueryBuilder {
         return new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withSourceFilter(sourceFilter)
-//                .withFields("id") // 只查询id字段
                 .build();
     }
 }
