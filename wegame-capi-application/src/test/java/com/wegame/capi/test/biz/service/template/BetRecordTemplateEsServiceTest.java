@@ -3,6 +3,7 @@ package com.wegame.capi.test.biz.service.template;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
+import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -64,10 +65,10 @@ public class BetRecordTemplateEsServiceTest extends BaseTest {
 
     @Test
     public void test_findById() {
-        MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(1000L, MalakasBetRecordTemplateEsDo.class);
+        MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(1963141355374907392L, MalakasBetRecordTemplateEsDo.class);
         log.info("test_findById ret: {}", FastJsonUtils.toJSONString(templateDo));
         log.info("test_findById ret bytes json: {}", JsonGzipUtil.decompress(templateDo.getBytes()));
-        List<MalakasGameRecordDo> list = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(templateDo.getBytes()), new TypeReference<List<MalakasGameRecordDo>>() {
+        List<GameRecordTemplateDo> list = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(templateDo.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
         });
         list.stream().forEach(item -> {
             log.info("test_findById item: {}", item);
