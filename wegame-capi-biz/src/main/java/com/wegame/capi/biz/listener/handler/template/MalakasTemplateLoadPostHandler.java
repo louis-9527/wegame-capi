@@ -52,9 +52,6 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
 
     @Override
     public void handle() {
-        if (!supportWarmUpEnv()) {
-            return;
-        }
         if (!supportGame(GameTypeEnum.MALAKAS)) {
             return;
         }
@@ -108,6 +105,9 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
     }
 
     private void loadLocalCache(BetTypeEnum betType, List<Long> templateIdList) {
+        if (!supportWarmUpEnv()) {
+            return;
+        }
         TemplateTypeEnum templateType = this.getTemplateType();
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
@@ -127,6 +127,9 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
     }
 
     private void loadRedisCache(BetTypeEnum betType, List<Long> templateIdList) {
+        if (!supportWarmUpEnv()) {
+            return;
+        }
         TemplateTypeEnum templateType = this.getTemplateType();
         try {
             Object hasLoad = redisTemplate.opsForValue().get(key);
