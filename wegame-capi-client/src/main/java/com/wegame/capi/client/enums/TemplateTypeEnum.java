@@ -23,7 +23,7 @@ public enum TemplateTypeEnum {
     MALAKAS(
             GameTypeEnum.MALAKAS,
             "malakas_bet_record_template",
-            "malakas_game_record_template"
+            ""
     ),
     ;
 
@@ -35,11 +35,11 @@ public enum TemplateTypeEnum {
     /**
      * 投注记录
      */
-    private final String betRecordTemplateCollectionName;
+    private final String betRecordTemplateName;
     /**
      * 游戏记录
      */
-    private final String gameRecordTemplateCollectionName;
+    private final String gameRecordTemplateName;
 
     public static TemplateTypeEnum valueOfGameType(GameTypeEnum gameType) {
         if (gameType == null) {

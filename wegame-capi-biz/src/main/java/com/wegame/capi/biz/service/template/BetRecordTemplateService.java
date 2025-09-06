@@ -12,7 +12,6 @@ import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.template.BetRecordTemplatePo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -34,7 +33,7 @@ public class BetRecordTemplateService extends AbstractService {
 
     public Long add(BetRecordTemplateDo betRecordTemplateDo, TemplateTypeEnum templateTypeEnum) {
         BetRecordTemplatePo po = getMongoTemplate(templateTypeEnum.getGameType()).insert(doToPo(betRecordTemplateDo, OptEnum.ADD),
-                templateTypeEnum.getBetRecordTemplateCollectionName());
+                templateTypeEnum.getBetRecordTemplateName());
         return po.getId();
     }
 
@@ -45,7 +44,7 @@ public class BetRecordTemplateService extends AbstractService {
         List<BetRecordTemplatePo> poList = doToPoList(betRecordList, OptEnum.ADD);
         BulkOperations bulkOps = getMongoTemplate(templateTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED,
                 BetRecordPo.class,
-                templateTypeEnum.getBetRecordTemplateCollectionName());
+                templateTypeEnum.getBetRecordTemplateName());
         poList.forEach(bulkOps::insert);
         bulkOps.execute();
         return true;
@@ -55,7 +54,7 @@ public class BetRecordTemplateService extends AbstractService {
     public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
         log.info("listIdByMultipleRange query, betTypeEnum: {}, multipleRangeStart: {}, multipleRangeEnd: {}, typeEnum: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.getGameType());
         Query query = BetRecordTemplateQueryBuilder.buildQuery(betType, multipleRangeStart, multipleRangeEnd);
-        String betRecordTemplateCollectionName = templateType.getBetRecordTemplateCollectionName();
+        String betRecordTemplateCollectionName = templateType.getBetRecordTemplateName();
         MongoTemplate mongoTemplate = getMongoTemplate(templateType.getGameType());
         // 1. 先查询为 ObjectId 类型的列表
         List<BetRecordTemplatePo> betRecordTemplateList = mongoTemplate.find(query, BetRecordTemplatePo.class, betRecordTemplateCollectionName);

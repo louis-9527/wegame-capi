@@ -18,6 +18,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
@@ -50,7 +51,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
         return Objects.nonNull(saveT);
     }
 
-    public T findById(Long id, Class<T> clazz) {
+    public T findById(TemplateTypeEnum templateType, Long id, Class<T> clazz) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
         //        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
@@ -63,7 +64,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
 //        restHighLevelClient.asyncSearch().get()
         try {
             // 1. 组装请求
-            GetRequest getRequest = new GetRequest("malakas_bet_record_template", id.toString())
+            GetRequest getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
                     .fetchSourceContext(new FetchSourceContext(true,
                             new String[]{"id", "bytes"},   // 包含
                             null));
@@ -84,7 +85,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
 
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
-        log.info("listIdByMultipleRange query, betTypeEnum: {}, multipleRangeStart: {}, multipleRangeEnd: {}, typeEnum: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.getGameType());
+        log.info("listIdByMultipleRange query, betType: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateType: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.name());
         // 构建ES查询
         NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
 
@@ -102,9 +103,14 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
                 .collect(Collectors.toList());
     }
 
+<<<<<<< Updated upstream
 
     public List<T> batchByIdList(List<Long> ids, String indexName, Class<T> clazz) {
         if (CollectionUtils.isEmpty(ids)) {
+=======
+    public List<T> listByIdList(TemplateTypeEnum templateType, List<Long> idList, String indexName, Class<T> clazz) {
+        if (CollectionUtils.isEmpty(idList)) {
+>>>>>>> Stashed changes
             return Collections.emptyList();
         }
 
@@ -123,4 +129,32 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
                 .collect(Collectors.toList());
     }
 
+<<<<<<< Updated upstream
+=======
+    @CachePut(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betRecordId")
+    public T putTemplateLocalCache(TemplateTypeEnum templateType, Long betRecordId, T t) {
+        // log.info("putLocalCache, betRecordId: {}", betRecordId);
+        return t;
+    }
+
+    @CachePut(value = CacheConstants.TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
+    public T putTemplateRedisCache(TemplateTypeEnum templateType, Long betRecordId, T t) {
+        // log.info("putRedisCache, betRecordId: {}", betRecordId);
+        return t;
+    }
+
+    @Cacheable(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betRecordId")
+    public T getTemplateWithLocalCache(TemplateTypeEnum templateType, Long betRecordId, Class<T> clazz) {
+        // todo delete log
+        log.info("getTemplateWithLocalCache, betRecordId: {}; templateType: {}", betRecordId, templateType.name());
+        return findById(templateType, betRecordId, clazz);
+    }
+
+    @Cacheable(value = CacheConstants.TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
+    public T getTemplateWithRedisCache(TemplateTypeEnum templateType, Long betRecordId, Class<T> clazz) {
+        // todo delete log
+        log.info( "getTemplateWithRedisCache, betRecordId: {}; templateType: {}", betRecordId, templateType.name());
+        return findById(templateType, betRecordId, clazz);
+    }
+>>>>>>> Stashed changes
 }

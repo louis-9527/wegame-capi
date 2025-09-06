@@ -28,7 +28,7 @@ public class GameRecordTemplateService<T> extends AbstractService {
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(tClass, ErrorCode.ERR_INTER);
-        BulkOperations bulkOps = getMongoTemplate(templateTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass, templateTypeEnum.getGameRecordTemplateCollectionName());
+        BulkOperations bulkOps = getMongoTemplate(templateTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass, templateTypeEnum.getGameRecordTemplateName());
         bulkOps.insert(gameRecordList);
         bulkOps.execute();
         return true;
@@ -37,7 +37,7 @@ public class GameRecordTemplateService<T> extends AbstractService {
     public List<GameRecordTemplateDo> listByBetRecordIdList(TemplateTypeEnum templateType, List<Long> betRecordIdList) {
         log.info( "listByBetRecordIdList query, size: {}; typeEnum: {}", betRecordIdList.size(), templateType.getGameType());
         Query query = Query.query(Criteria.where("betRecordId").in(betRecordIdList));
-        List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType()).find(query, GameRecordTemplatePo.class, templateType.getGameRecordTemplateCollectionName());
+        List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType()).find(query, GameRecordTemplatePo.class, templateType.getGameRecordTemplateName());
         return poToDoList(poList);
     }
 
@@ -72,7 +72,7 @@ public class GameRecordTemplateService<T> extends AbstractService {
         List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType())
                 .find(GameRecordRecordQueryBuilder.buildQuery(betRecordId),
                         GameRecordTemplatePo.class,
-                        templateType.getGameRecordTemplateCollectionName());
+                        templateType.getGameRecordTemplateName());
         return poToDoList(poList);
     }
 

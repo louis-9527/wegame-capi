@@ -87,7 +87,11 @@ public class BetRecordTemplateEsServiceTest extends BaseTest {
         });
 
         Lists.partition(idList, 1000).forEach(item -> {
+<<<<<<< Updated upstream
             List<MalakasBetRecordTemplateEsDo> list = betRecordTemplateEsService.batchByIdList(item, TemplateTypeEnum.MALAKAS.getBetRecordTemplateCollectionName(), MalakasBetRecordTemplateEsDo.class);
+=======
+            List<MalakasBetRecordTemplateEsDo> list = betRecordTemplateEsService.listByIdList(item, TemplateTypeEnum.MALAKAS.getBetRecordTemplateName(), MalakasBetRecordTemplateEsDo.class);
+>>>>>>> Stashed changes
             Assert.assertNotNull(list);
         });
         Assert.assertNotNull(idList);
