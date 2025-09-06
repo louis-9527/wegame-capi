@@ -18,8 +18,8 @@ spring:
     rest:
       uris: es-sg-u7g4f8un40002xovb.public.elasticsearch.aliyuncs.com:9200
 #      uris: 43.199.119.200:9200
-      connection-timeout: 10s
-      socket-timeout: 10s
+      connection-timeout: 3s
+      socket-timeout: 30s
       username: elastic
       password: Innovatech@123
   data:
