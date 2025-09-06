@@ -16,16 +16,16 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class EsRestClientConfig {
-    @Value("${spring.elasticsearch.rest.uris")
+    @Value("${spring.elasticsearch.rest.uris}")
     private String uris;
-    @Value("${spring.elasticsearch.rest.username")
+    @Value("${spring.elasticsearch.rest.username}")
     private String username;
-    @Value("${spring.elasticsearch.rest.password")
+    @Value("${spring.elasticsearch.rest.password}")
     private String password;
 
-    @Value("${spring.elasticsearch.rest.connection-timeout")
+    @Value("${spring.elasticsearch.rest.connection-timeout}")
     private Integer connectTimeOut;
-    @Value("${spring.elasticsearch.rest.read-timeout")
+    @Value("${spring.elasticsearch.rest.read-timeout}")
     private Integer readTimeOut;
 
     @Bean
