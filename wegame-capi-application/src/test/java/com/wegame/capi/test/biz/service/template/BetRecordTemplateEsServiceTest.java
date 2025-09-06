@@ -78,11 +78,13 @@ public class BetRecordTemplateEsServiceTest extends BaseTest {
 
     @Test
     public void test_listIdByMultipleRange() {
-        List<Long> idList = betRecordTemplateEsService.listIdByMultipleRange(TemplateTypeEnum.MALAKAS, BetTypeEnum.NORMAL_BET, BigDecimal.ZERO, new BigDecimal("1"), MalakasBetRecordTemplateEsDo.class);
+        List<Long> idList = betRecordTemplateEsService.listIdByMultipleRange(TemplateTypeEnum.MALAKAS, BetTypeEnum.BUY_BET, BigDecimal.ZERO, new BigDecimal("17.5"), MalakasBetRecordTemplateEsDo.class);
         log.info("test_listIdByMultipleRange ret: {}", FastJsonUtils.toJSONString(idList));
 
         idList.forEach(item -> {
-            MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(item, MalakasBetRecordTemplateEsDo.class);
+            long start = System.currentTimeMillis();
+            MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(1963917945969053726L, MalakasBetRecordTemplateEsDo.class);
+            log.info("cost time: {} ms", System.currentTimeMillis() - start);
             Assert.assertNotNull(templateDo);
         });
 

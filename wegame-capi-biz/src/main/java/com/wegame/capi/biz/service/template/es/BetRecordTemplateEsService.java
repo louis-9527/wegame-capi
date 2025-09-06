@@ -3,12 +3,17 @@ package com.wegame.capi.biz.service.template.es;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.template.BetRecordTemplateQueryBuilder;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +41,9 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
     @Autowired
     ElasticsearchRestTemplate elasticsearchRestTemplate;
 
+    @Autowired
+    RestHighLevelClient restHighLevelClient;
+
     public boolean add(TemplateTypeEnum templateType, T t) {
         T saveT = elasticsearchRestTemplate.save(t);
         return Objects.nonNull(saveT);
@@ -44,7 +52,28 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
     public T findById(Long id, Class<T> clazz) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
-        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
+        //        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
+//        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+//        boolQuery.filter(QueryBuilders.termQuery("id", id));
+//        return elasticsearchRestTemplate.searchOne(new NativeSearchQueryBuilder()
+//                .withQuery(boolQuery)
+//                .build(), clazz)
+//                .getContent();
+//        restHighLevelClient.asyncSearch().get()
+        try {
+            // 1. 组装请求
+            GetRequest getRequest = new GetRequest("malakas_bet_record_template", id.toString());
+            // 2. 执行
+            GetResponse resp = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
+            // 3. 无结果返回 null
+            if (!resp.isExists()) {
+                return null;
+            }
+            // 4. 反序列化（JSON → 对象）
+            return FastJsonUtils.fromJSONString(resp.getSourceAsString(), clazz);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
