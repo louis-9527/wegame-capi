@@ -114,12 +114,7 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
                 log.info("loadLocalCache start, betType: {}, size: {}", betType, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
-<<<<<<< Updated upstream
-                    List<MalakasBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.batchByIdList(idList, templateType.getBetRecordTemplateCollectionName(), MalakasBetRecordTemplateEsDo.class);
-=======
-                    List<MalakasBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(idList, templateType.getBetRecordTemplateName(), MalakasBetRecordTemplateEsDo.class);
->>>>>>> Stashed changes
-
+                    List<MalakasBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.MALAKAS, idList, templateType.getBetRecordTemplateName(), MalakasBetRecordTemplateEsDo.class);
                     templateList.forEach(templateItem -> {
                         List<GameRecordTemplateDo> list = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(templateItem.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
                         });

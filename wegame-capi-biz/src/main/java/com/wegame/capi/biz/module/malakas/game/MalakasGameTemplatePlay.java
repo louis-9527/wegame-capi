@@ -85,7 +85,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         //            //            // 没有被预热的倍率，需要重新查询
         //            //            configRecordList = gameRecordTemplateService.listByBetRecordId(MALAKAS, betRecordId);
         //        }
-        MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(betRecordId, MalakasBetRecordTemplateEsDo.class);
+        MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(MALAKAS, betRecordId, MalakasBetRecordTemplateEsDo.class);
         AssertUtil.assertNotNull(templateDo, ErrorCode.ERR_INTER);
         configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(templateDo.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
         });

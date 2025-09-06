@@ -65,7 +65,7 @@ public class BetRecordTemplateEsServiceTest extends BaseTest {
 
     @Test
     public void test_findById() {
-        MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(1963141355374907392L, MalakasBetRecordTemplateEsDo.class);
+        MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(TemplateTypeEnum.MALAKAS, 1963141355374907392L, MalakasBetRecordTemplateEsDo.class);
         log.info("test_findById ret: {}", FastJsonUtils.toJSONString(templateDo));
         log.info("test_findById ret bytes json: {}", JsonGzipUtil.decompress(templateDo.getBytes()));
         List<GameRecordTemplateDo> list = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(templateDo.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
@@ -82,16 +82,12 @@ public class BetRecordTemplateEsServiceTest extends BaseTest {
         log.info("test_listIdByMultipleRange ret: {}", FastJsonUtils.toJSONString(idList));
 
         idList.forEach(item -> {
-            MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(item, MalakasBetRecordTemplateEsDo.class);
+            MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(TemplateTypeEnum.MALAKAS, item, MalakasBetRecordTemplateEsDo.class);
             Assert.assertNotNull(templateDo);
         });
 
         Lists.partition(idList, 1000).forEach(item -> {
-<<<<<<< Updated upstream
-            List<MalakasBetRecordTemplateEsDo> list = betRecordTemplateEsService.batchByIdList(item, TemplateTypeEnum.MALAKAS.getBetRecordTemplateCollectionName(), MalakasBetRecordTemplateEsDo.class);
-=======
-            List<MalakasBetRecordTemplateEsDo> list = betRecordTemplateEsService.listByIdList(item, TemplateTypeEnum.MALAKAS.getBetRecordTemplateName(), MalakasBetRecordTemplateEsDo.class);
->>>>>>> Stashed changes
+            List<MalakasBetRecordTemplateEsDo> list = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.MALAKAS, item, TemplateTypeEnum.MALAKAS.getBetRecordTemplateName(), MalakasBetRecordTemplateEsDo.class);
             Assert.assertNotNull(list);
         });
         Assert.assertNotNull(idList);

@@ -55,13 +55,13 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
         //        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
-//        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-//        boolQuery.filter(QueryBuilders.termQuery("id", id));
-//        return elasticsearchRestTemplate.searchOne(new NativeSearchQueryBuilder()
-//                .withQuery(boolQuery)
-//                .build(), clazz)
-//                .getContent();
-//        restHighLevelClient.asyncSearch().get()
+        //        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        //        boolQuery.filter(QueryBuilders.termQuery("id", id));
+        //        return elasticsearchRestTemplate.searchOne(new NativeSearchQueryBuilder()
+        //                .withQuery(boolQuery)
+        //                .build(), clazz)
+        //                .getContent();
+        //        restHighLevelClient.asyncSearch().get()
         try {
             // 1. 组装请求
             GetRequest getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
@@ -103,20 +103,12 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
                 .collect(Collectors.toList());
     }
 
-<<<<<<< Updated upstream
-
-    public List<T> batchByIdList(List<Long> ids, String indexName, Class<T> clazz) {
-        if (CollectionUtils.isEmpty(ids)) {
-=======
     public List<T> listByIdList(TemplateTypeEnum templateType, List<Long> idList, String indexName, Class<T> clazz) {
         if (CollectionUtils.isEmpty(idList)) {
->>>>>>> Stashed changes
             return Collections.emptyList();
         }
-
         // 构造 terms 查询
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termsQuery("id", ids));
-
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termsQuery("id", idList));
         NativeSearchQuery query = new NativeSearchQueryBuilder()
                 .withQuery(boolQuery)
                 .withPageable(Pageable.unpaged())   // 一次拿完
@@ -129,8 +121,6 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
                 .collect(Collectors.toList());
     }
 
-<<<<<<< Updated upstream
-=======
     @CachePut(value = CacheConstants.TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betRecordId")
     public T putTemplateLocalCache(TemplateTypeEnum templateType, Long betRecordId, T t) {
         // log.info("putLocalCache, betRecordId: {}", betRecordId);
@@ -156,5 +146,4 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
         log.info( "getTemplateWithRedisCache, betRecordId: {}; templateType: {}", betRecordId, templateType.name());
         return findById(templateType, betRecordId, clazz);
     }
->>>>>>> Stashed changes
 }
