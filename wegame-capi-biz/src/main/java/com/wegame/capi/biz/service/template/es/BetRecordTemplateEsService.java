@@ -52,35 +52,36 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
     }
 
     public T findById(TemplateTypeEnum templateType, Long id, Class<T> clazz) {
+        log.info("findById query, id: {}, templateType: {}", id, templateType.name());
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
-        //        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
-        //        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-        //        boolQuery.filter(QueryBuilders.termQuery("id", id));
-        //        return elasticsearchRestTemplate.searchOne(new NativeSearchQueryBuilder()
-        //                .withQuery(boolQuery)
-        //                .build(), clazz)
-        //                .getContent();
-        //        restHighLevelClient.asyncSearch().get()
-        try {
-            // 1. 组装请求
-            GetRequest getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
-                    .fetchSourceContext(new FetchSourceContext(true,
-                            new String[]{"id", "bytes"},   // 包含
-                            null));
-            long start = System.currentTimeMillis();
-            // 2. 执行
-            GetResponse resp = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
-            log.info("cost time: {} ms", System.currentTimeMillis() - start);
-            // 3. 无结果返回 null
-            if (!resp.isExists()) {
-                return null;
-            }
-            // 4. 反序列化（JSON → 对象）
-            return FastJsonUtils.fromJSONString(resp.getSourceAsString(), clazz);
-        } catch (Exception e) {
-            return null;
-        }
+        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
+        //                BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        //                boolQuery.filter(QueryBuilders.termQuery("id", id));
+        //                return elasticsearchRestTemplate.searchOne(new NativeSearchQueryBuilder()
+        //                        .withQuery(boolQuery)
+        //                        .build(), clazz)
+        //                        .getContent();
+        //                restHighLevelClient.asyncSearch().get()
+        //        try {
+        //            // 1. 组装请求
+        //            GetRequest getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
+        //                    .fetchSourceContext(new FetchSourceContext(true,
+        //                            new String[]{"id", "bytes"},   // 包含
+        //                            null));
+        //            long start = System.currentTimeMillis();
+        //            // 2. 执行
+        //            GetResponse resp = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
+        //            log.info("cost time: {} ms", System.currentTimeMillis() - start);
+        //            // 3. 无结果返回 null
+        //            if (!resp.isExists()) {
+        //                return null;
+        //            }
+        //            // 4. 反序列化（JSON → 对象）
+        //            return FastJsonUtils.fromJSONString(resp.getSourceAsString(), clazz);
+        //        } catch (Exception e) {
+        //            return null;
+        //        }
     }
 
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
