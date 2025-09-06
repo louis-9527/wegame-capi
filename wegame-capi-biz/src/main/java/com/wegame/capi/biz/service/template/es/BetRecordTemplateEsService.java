@@ -14,7 +14,7 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,15 +107,20 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
         if (CollectionUtils.isEmpty(idList)) {
             return Collections.emptyList();
         }
-        // 构造 terms 查询
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.termsQuery("id", idList));
+
+        // 转换Long类型的ID为字符串（Elasticsearch的 _id 始终是字符串类型）
+        List<String> idStrList = idList.stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+
+        // 构造ids查询
+        IdsQueryBuilder idsQuery = QueryBuilders.idsQuery().addIds(idStrList.toArray(new String[0]));
         NativeSearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(boolQuery)
-                .withPageable(Pageable.unpaged())   // 一次拿完
+                .withQuery(idsQuery)
+                .withPageable(Pageable.unpaged())
                 .build();
 
         SearchHits<T> hits = elasticsearchRestTemplate.search(query, clazz, IndexCoordinates.of(templateType.getBetRecordTemplateName()));
-
         return hits.stream()
                 .map(SearchHit::getContent)
                 .collect(Collectors.toList());
