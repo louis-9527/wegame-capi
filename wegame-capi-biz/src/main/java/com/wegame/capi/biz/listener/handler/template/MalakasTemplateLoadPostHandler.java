@@ -19,6 +19,7 @@ import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -28,11 +29,15 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
+
 /**
  * 模版预加载后处理执行器
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
 public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
     private static final String key = "load:template:redis:cache:Malakas0";
     @Autowired
