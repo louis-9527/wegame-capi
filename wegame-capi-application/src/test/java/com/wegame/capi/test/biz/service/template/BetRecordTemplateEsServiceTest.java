@@ -87,7 +87,7 @@ public class BetRecordTemplateEsServiceTest extends BaseTest {
         });
 
         Lists.partition(idList, 1000).forEach(item -> {
-            List<MalakasBetRecordTemplateEsDo> list = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.MALAKAS, item, TemplateTypeEnum.MALAKAS.getBetRecordTemplateName(), MalakasBetRecordTemplateEsDo.class);
+            List<MalakasBetRecordTemplateEsDo> list = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.MALAKAS, item, MalakasBetRecordTemplateEsDo.class);
             Assert.assertNotNull(list);
         });
         Assert.assertNotNull(idList);
