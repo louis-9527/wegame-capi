@@ -82,9 +82,7 @@ public class BetRecordTemplateEsServiceTest extends BaseTest {
         log.info("test_listIdByMultipleRange ret: {}", FastJsonUtils.toJSONString(idList));
 
         idList.forEach(item -> {
-            long start = System.currentTimeMillis();
-            MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(1963917945969053726L, MalakasBetRecordTemplateEsDo.class);
-            log.info("cost time: {} ms", System.currentTimeMillis() - start);
+            MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(item, MalakasBetRecordTemplateEsDo.class);
             Assert.assertNotNull(templateDo);
         });
 

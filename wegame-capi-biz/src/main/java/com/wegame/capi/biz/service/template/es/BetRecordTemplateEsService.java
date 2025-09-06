@@ -16,6 +16,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -62,9 +63,14 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
 //        restHighLevelClient.asyncSearch().get()
         try {
             // 1. 组装请求
-            GetRequest getRequest = new GetRequest("malakas_bet_record_template", id.toString());
+            GetRequest getRequest = new GetRequest("malakas_bet_record_template", id.toString())
+                    .fetchSourceContext(new FetchSourceContext(true,
+                            new String[]{"id", "bytes"},   // 包含
+                            null));
+            long start = System.currentTimeMillis();
             // 2. 执行
             GetResponse resp = restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);
+            log.info("cost time: {} ms", System.currentTimeMillis() - start);
             // 3. 无结果返回 null
             if (!resp.isExists()) {
                 return null;
