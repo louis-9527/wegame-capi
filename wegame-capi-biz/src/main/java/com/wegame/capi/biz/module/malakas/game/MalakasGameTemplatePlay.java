@@ -51,10 +51,6 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
     @Autowired
     MalakasRewardHandler malakasRewardHandler;
     @Autowired
-    GameRecordTemplateService gameRecordTemplateService;
-    @Autowired
-    BetRecordTemplateService betRecordTemplateService;
-    @Autowired
     MalakasConfig malakasConfig;
     @Autowired
     BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
@@ -72,22 +68,22 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         List<GameRecordTemplateDo> configRecordList;
-        //        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MALAKAS, gamePlay.getBetType(), templateMultipleRange)) {
-        //            //            // 已经被预热的倍率，直接走缓存
-        //            //            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-        //            //                configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MALAKAS, betRecordId);
-        //            //            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-        //            //                configRecordList = gameRecordTemplateService.listByBetRecordIdWithRedisCache(MALAKAS, betRecordId);
-        //            //            } else {
-        //            //                throw new BusinessException(ErrorCode.ERR_PARAM);
-        //            //            }
-        //        } else {
-        //            //            // 没有被预热的倍率，需要重新查询
-        //            //            configRecordList = gameRecordTemplateService.listByBetRecordId(MALAKAS, betRecordId);
-        //        }
-        MalakasBetRecordTemplateEsDo templateDo = betRecordTemplateEsService.findById(MALAKAS, betRecordId, MalakasBetRecordTemplateEsDo.class);
-        AssertUtil.assertNotNull(templateDo, ErrorCode.ERR_INTER);
-        configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(templateDo.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
+        MalakasBetRecordTemplateEsDo template;
+        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MALAKAS, gamePlay.getBetType(), templateMultipleRange)) {
+            // 已经被预热的倍率，直接走缓存
+            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
+                template = betRecordTemplateEsService.getTemplateWithLocalCache(MALAKAS, betRecordId, MalakasBetRecordTemplateEsDo.class);
+            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
+                template = betRecordTemplateEsService.getTemplateWithRedisCache(MALAKAS, betRecordId, MalakasBetRecordTemplateEsDo.class);
+            } else {
+                throw new BusinessException(ErrorCode.ERR_PARAM);
+            }
+        } else {
+            // 没有被预热的倍率，需要重新查询
+            template = betRecordTemplateEsService.findById(MALAKAS, betRecordId, MalakasBetRecordTemplateEsDo.class);
+        }
+        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
+        configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
         });
         if (CollectionUtils.isEmpty(configRecordList)) {
             log.error("template is empty, betType:{}, range start: [], end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
