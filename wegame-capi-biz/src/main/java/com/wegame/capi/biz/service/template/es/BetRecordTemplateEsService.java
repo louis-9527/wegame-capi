@@ -103,7 +103,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
                 .collect(Collectors.toList());
     }
 
-    public List<T> listByIdList(TemplateTypeEnum templateType, List<Long> idList, String indexName, Class<T> clazz) {
+    public List<T> listByIdList(TemplateTypeEnum templateType, List<Long> idList, Class<T> clazz) {
         if (CollectionUtils.isEmpty(idList)) {
             return Collections.emptyList();
         }
@@ -114,7 +114,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
                 .withPageable(Pageable.unpaged())   // 一次拿完
                 .build();
 
-        SearchHits<T> hits = elasticsearchRestTemplate.search(query, clazz, IndexCoordinates.of(indexName));
+        SearchHits<T> hits = elasticsearchRestTemplate.search(query, clazz, IndexCoordinates.of(templateType.getBetRecordTemplateName()));
 
         return hits.stream()
                 .map(SearchHit::getContent)

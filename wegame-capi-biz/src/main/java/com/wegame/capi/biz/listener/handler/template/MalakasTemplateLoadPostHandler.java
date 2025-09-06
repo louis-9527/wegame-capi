@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
-    private static final String key = "load:template:redis:cache:Malakas1";
+    private static final String key = "load:template:redis:cache:Malakas0";
     @Autowired
     MalakasConfig malakasConfig;
     @Autowired
@@ -68,7 +68,7 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
                     mainGameTemplateIdList.addAll(idList);
                 }
             });
-//            loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
+            loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
             log.info("main game template load end...");
         } catch (Exception e) {
             log.error("template load error", e);
@@ -114,11 +114,9 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
                 log.info("loadLocalCache start, betType: {}, size: {}", betType, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
-                    List<MalakasBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.MALAKAS, idList, templateType.getBetRecordTemplateName(), MalakasBetRecordTemplateEsDo.class);
+                    List<MalakasBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.MALAKAS, idList, MalakasBetRecordTemplateEsDo.class);
                     templateList.forEach(templateItem -> {
-                        List<GameRecordTemplateDo> list = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(templateItem.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
-                        });
-                        gameRecordTemplateService.putLocalCache(templateType, templateItem.getId(), list);
+                        betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
                 });
                 log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
@@ -141,11 +139,9 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
                 if (CollectionUtil.isNotEmpty(templateIdList)) {
                     List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                     multiList.forEach(idList -> {
-                        List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
-                        idList.forEach(betRecordId -> {
-                            gameRecordTemplateService.putRedisCache(templateType, betRecordId, templateList.stream()
-                                    .filter(template -> Objects.equals(template.getBetRecordId(), betRecordId))
-                                    .collect(Collectors.toList()));
+                        List<MalakasBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(templateType, idList, MalakasBetRecordTemplateEsDo.class);
+                        templateList.forEach(template -> {
+                            betRecordTemplateEsService.putTemplateRedisCache(templateType, template.getId(), template);
                         });
                     });
                 }
