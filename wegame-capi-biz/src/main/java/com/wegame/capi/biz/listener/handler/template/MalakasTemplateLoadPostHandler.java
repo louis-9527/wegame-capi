@@ -2,7 +2,9 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
+import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.BooleanEnum;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
@@ -11,6 +13,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +68,7 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
                     mainGameTemplateIdList.addAll(idList);
                 }
             });
-            //loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
+//            loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
             log.info("main game template load end...");
         } catch (Exception e) {
             log.error("template load error", e);
@@ -111,11 +114,12 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
                 log.info("loadLocalCache start, betType: {}, size: {}", betType, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
-                    List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
-                    idList.forEach(betRecordId -> {
-                        gameRecordTemplateService.putLocalCache(templateType, betRecordId, templateList.stream()
-                                .filter(template -> Objects.equals(template.getBetRecordId(), betRecordId))
-                                .collect(Collectors.toList()));
+                    List<MalakasBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.batchByIdList(idList, templateType.getBetRecordTemplateCollectionName(), MalakasBetRecordTemplateEsDo.class);
+
+                    templateList.forEach(templateItem -> {
+                        List<GameRecordTemplateDo> list = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(templateItem.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
+                        });
+                        gameRecordTemplateService.putLocalCache(templateType, templateItem.getId(), list);
                     });
                 });
                 log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
