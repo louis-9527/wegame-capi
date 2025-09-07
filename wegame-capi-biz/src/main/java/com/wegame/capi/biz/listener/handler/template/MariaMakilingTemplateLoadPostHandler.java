@@ -2,10 +2,8 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.lang.UUID;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.base.exception.LockException;
-import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -16,8 +14,8 @@ import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -28,11 +26,15 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
+
 /**
  * 模版加载后处理执行器
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
 public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
     private static final String key = "load:template:redis:cache:MariaMakiling6";
     @Autowired
