@@ -5,9 +5,9 @@ dynamic:
     pulsar_url: pulsar+ssl://pc-c2f76b54.aws-apse1-qat-snsoft-public.o-sn9dy.aws-apse1-qat-snsoft.aws.snio.cloud:6651
     pulsar_topic: dos_game_slot_event
     pulsar_group:
-      maria_makiling: ${api.game.cp.channelId}_MariaMakiling
-      malakas: ${api.game.cp.channelId}_Malakas
-      ibong: ${api.game.cp.channelId}_Ibong
+      maria_makiling: cd_MariaMakiling
+      malakas: cd_Malakas
+      ibong: cd_Ibong
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud
