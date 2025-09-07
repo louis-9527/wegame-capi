@@ -13,7 +13,7 @@ import lombok.ToString;
 public enum GameTypeTemplateOddsWarmUpEnum {
 
     MARIA_MAKILING("zhumeng001", "1", "17.5", "MARIA_MAKILING"),
-    MALAKAS("zhumeng002", "1", "-1", "MALAKAS"),
+    MALAKAS("zhumeng002", "3", "-1", "MALAKAS"),
 
     ;
     /**
