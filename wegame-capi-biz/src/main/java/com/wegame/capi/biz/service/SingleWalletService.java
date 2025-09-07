@@ -52,7 +52,7 @@ public class SingleWalletService {
     FreeSpinService freeSpinService;
 
     public boolean authLoginToken(UserLoginDo userLoginDo) {
-        if (!invokeSingle) {
+        if (!gameApiProperty.isInvokeSingle()) {
             return true;
         } else {
             AuthLoginTokenRes res = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.buildReq(userLoginDo));
