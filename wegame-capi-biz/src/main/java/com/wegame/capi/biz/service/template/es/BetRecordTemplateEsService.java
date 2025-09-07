@@ -4,7 +4,6 @@ import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
-import com.wegame.capi.biz.builder.template.BetRecordTemplateQueryBuilder;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
@@ -12,11 +11,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,11 +34,9 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -52,6 +55,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
     }
 
     public T findById(TemplateTypeEnum templateType, Long id, Class<T> clazz) {
+        long startTime = System.currentTimeMillis();
         log.info("findById query, id: {}, templateType: {}", id, templateType.name());
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
@@ -82,6 +86,8 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
         } catch (Exception e) {
             log.error("findById error, id: {}", id, e);
             return null;
+        } finally {
+            log.info("findId cost time: {} ms", System.currentTimeMillis() - startTime);
         }
     }
 
@@ -89,20 +95,44 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
     public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
         log.info("listIdByMultipleRange query, betType: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateType: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.name());
         // 构建ES查询
-        NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
+        // NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
+        // 创建布尔查询构建器
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        // 添加betType条件
+        boolQuery.filter(QueryBuilders.termQuery("betType", betType.getCode()));
+        // 添加multiple范围条件
+        if (multipleRangeStart.compareTo(multipleRangeEnd) == 0) {
+            // 等于条件
+            boolQuery.filter(QueryBuilders.termQuery("multiple", multipleRangeStart.doubleValue()));
+        } else {
+            // 范围条件 (大于start，小于等于end)
+            boolQuery.filter(QueryBuilders.rangeQuery("multiple")
+                    .gt(multipleRangeStart.doubleValue())
+                    .lte(multipleRangeEnd.doubleValue()));
+        }
+        List<Long> result = new ArrayList<>();
+        // 第一次不带 search_after
+        Object[] searchAfter = null;
+        do {
+            List<Long> batch = fetchBatchUntilSuc(templateType, boolQuery, searchAfter, 5000);
+            if (batch.isEmpty()) break;
+            result.addAll(batch);
+            searchAfter = new Object[]{batch.get(batch.size() - 1)}; // 最后一条 id
+        } while (true);
+        return result;
+        //        // 执行查询
+        //        List<T> betRecordTemplateList = elasticsearchRestTemplate
+        //                .search(query, clazz)
+        //                .stream()
+        //                .map(SearchHit::getContent)
+        //                .collect(Collectors.toList());
+        //
+        //        return Optional.of(betRecordTemplateList)
+        //                .orElse(Collections.emptyList())
+        //                .stream()
+        //                .map(T::getId)
+        //                .collect(Collectors.toList());
 
-        // 执行查询
-        List<T> betRecordTemplateList = elasticsearchRestTemplate
-                .search(query, clazz)
-                .stream()
-                .map(SearchHit::getContent)
-                .collect(Collectors.toList());
-
-        return Optional.of(betRecordTemplateList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(T::getId)
-                .collect(Collectors.toList());
     }
 
     public List<T> listByIdList(TemplateTypeEnum templateType, List<Long> idList, Class<T> clazz) {
@@ -152,5 +182,42 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
         // todo delete log
         log.info("getTemplateWithRedisCache, betRecordId: {}; templateType: {}", betRecordId, templateType.name());
         return findById(templateType, betRecordId, clazz);
+    }
+
+    private List<Long> fetchBatchUntilSuc(TemplateTypeEnum templateType,
+                                          BoolQueryBuilder boolQuery,
+                                          Object[] searchAfter,
+                                          int size) {
+        try {
+            return fetchBatch(templateType, boolQuery, searchAfter, size);
+        } catch (Exception e) {
+            log.error("fetchBatchUntilSuc error", e);
+            return fetchBatchUntilSuc(templateType, boolQuery, searchAfter, size);
+        }
+    }
+
+    private List<Long> fetchBatch(TemplateTypeEnum templateType,
+                                  BoolQueryBuilder boolQuery,
+                                  Object[] searchAfter,
+                                  int size) throws IOException {
+
+        // 只返回 id（doc value 字段）
+        SearchSourceBuilder source = new SearchSourceBuilder()
+                .query(boolQuery)
+                .size(size)
+                .fetchSource(false)                      // _source 不要
+                .docValueField("id")                     // 只取 id 列存
+                .sort(SortBuilders.fieldSort("id").order(SortOrder.ASC));
+
+        if (searchAfter != null) {
+            source.searchAfter(searchAfter);
+        }
+        SearchRequest request = new SearchRequest(templateType.getBetRecordTemplateName())
+                .source(source)
+                .preference("_primary");   // 可选：避免副本 reorder
+        SearchResponse resp = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+        return Arrays.stream(resp.getHits().getHits())
+                .map(h -> (Long) h.getFields().get("id").getValue())
+                .collect(Collectors.toList());
     }
 }
