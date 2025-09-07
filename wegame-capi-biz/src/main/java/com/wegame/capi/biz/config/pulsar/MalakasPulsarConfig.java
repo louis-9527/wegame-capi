@@ -45,6 +45,15 @@ public class MalakasPulsarConfig {
         return PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
+                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
+                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
+                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
+                .listenerThreads(Runtime.getRuntime().availableProcessors())
+                .connectionsPerBroker(60)
+                .connectionMaxIdleSeconds(3000)
+                .enableTcpNoDelay(true)
+                // 10分钟打印一次统计信息
+                .statsInterval(600, TimeUnit.SECONDS)
                 .build();
     }
 
@@ -84,16 +93,18 @@ public class MalakasPulsarConfig {
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .negativeAckRedeliveryDelay(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(200)  // 批量最多100条
+                        .maxNumMessages(500)  // 批量最多100条
                         .timeout(100, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**
-                        .maxRedeliverCount(15)
+                        .maxRedeliverCount(10)
                         // **死信队列**
                         .deadLetterTopic(deadLetterTopic)
                         .build())
                 // .keySharedPolicy(KeySharedPolicy.stickyHashRange())
+                .autoUpdatePartitions(true)
+                .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
                 .subscribe();
     }
 
@@ -113,6 +124,9 @@ public class MalakasPulsarConfig {
                     } catch (Exception e) {
                         log.error("Message moved acknowledge error:", e);
                     }
-                }).subscribe();
+                })
+                .autoUpdatePartitions(true)
+                .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
+                .subscribe();
     }
 }
