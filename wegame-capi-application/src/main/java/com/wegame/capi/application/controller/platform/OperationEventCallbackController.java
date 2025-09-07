@@ -30,6 +30,12 @@ import java.util.Map;
 import static com.wegame.capi.biz.converter.operation.StatusOfEventsConverter.doToVoList;
 import static com.wegame.capi.client.domain.response.PlatformResponse.build;
 
+/**
+ * 干预逻辑：
+ * 1、干预接口
+ * 2、干预消息
+ * 3、干预投注
+ */
 @Slf4j
 @RestController
 @RequestMapping("operationEvent")
@@ -49,6 +55,13 @@ public class OperationEventCallbackController {
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
 
+    /**
+     * 干预事件回调接口
+     * 主要功能：
+     * @param request
+     * @param encryptRequest
+     * @return
+     */
     @ApiOperation(value = "获取干预事件结果", httpMethod = "POST")
     @PostMapping("/getStatusOfEvents")
     public PlatformResponse<List<StatusOfEventsResultVo>> getStatusOfEvents(HttpServletRequest request,
@@ -58,9 +71,10 @@ public class OperationEventCallbackController {
         String encryptedIv = request.getHeader("iv");
         AssertUtil.assertStrNotEmpty(encryptedKey, ErrorCode.ERR_PARAM);
         AssertUtil.assertStrNotEmpty(encryptedIv, ErrorCode.ERR_PARAM);
+        String agentCode = encryptRequest.getAgentCode();
         // 使用私钥解密 encryptedKey 和 encryptedIv
-        String keyString = dynamicOperationEncryptionHelper.decrypt(encryptedKey);
-        String ivString = dynamicOperationEncryptionHelper.decrypt(encryptedIv);
+        String keyString = dynamicOperationEncryptionHelper.decrypt(agentCode,encryptedKey);
+        String ivString = dynamicOperationEncryptionHelper.decrypt(agentCode,encryptedIv);
         // String key 和iv 解密message
         String messageBody = dynamicOperationEncryptionHelper.decryptWithAES256CBC(encryptRequest.getMessage(), keyString, ivString);
         GetStatusOfEventRequest eventRequest = JSON.parseObject(messageBody, GetStatusOfEventRequest.class);

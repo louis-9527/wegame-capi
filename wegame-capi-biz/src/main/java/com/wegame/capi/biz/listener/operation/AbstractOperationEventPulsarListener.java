@@ -24,6 +24,9 @@ import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 
 /**
  * 干预事件消息监听
+ *
+ * 核销逻辑：监听干预消息，然后落干预事件到mongodb
+ * db中 eventId 为消息id，防止重复消费
  */
 @Slf4j
 @Service
@@ -58,6 +61,7 @@ public abstract class AbstractOperationEventPulsarListener implements MessageLis
 
     public boolean handleMessage(OperationEventMessageDo messageDo) {
         try {
+            // 只处理本渠道的消息
             if (!gameApiProperty.getChannelIdAll().contains(messageDo.getChannelId())) {
                 return true;
             }

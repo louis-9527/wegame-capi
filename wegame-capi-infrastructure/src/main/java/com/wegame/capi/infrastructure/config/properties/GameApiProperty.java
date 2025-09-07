@@ -69,8 +69,26 @@ public class GameApiProperty implements InitializingBean, Serializable {
     public static class PrivateInfo implements Serializable {
         private String platformId;
         private String channelId;
+        /**
+         * 用于上报干预结果
+         */
         private String privateKey;
+        /**
+         * 用于上报干预结果
+         */
         private String privateIv;
+        /**
+         * 用于上报干预结果
+         */
+        private String dosPublicKey;
+        /**
+         * 用于上报干预结果
+         */
+        private String dosPrivateKey;
+        /**
+         * 用于上报干预结果
+         */
+        private String dosPassword;
     }
 
 }
