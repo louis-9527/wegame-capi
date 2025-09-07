@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.GameTypeTemplateOddsWarmUpEnum;
+import com.wegame.capi.common.enums.GameTypeTemplateOddsWarmUpEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package com.wegame.capi.client.enums;
+package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.ToString;
