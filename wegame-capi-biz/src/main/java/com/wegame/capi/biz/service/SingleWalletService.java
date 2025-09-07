@@ -18,15 +18,11 @@ import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.FreeSpinErrorCode;
-import com.wegame.capi.common.enums.BetPromotionTypeEnum;
-import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.enums.SingleWalletBetStatusEnum;
-import com.wegame.capi.common.enums.SingleWalletResStatusEnum;
+import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -46,8 +42,8 @@ import static com.wegame.capi.common.enums.SingleWalletBetStatusEnum.valueOfCode
 @Service
 public class SingleWalletService {
 
-    @Value("${api.game.invokeSingle}")
-    boolean invokeSingle;
+    @Autowired
+    GameApiProperty gameApiProperty;
     @Autowired
     SingleWalletApi singleWalletApi;
     @Autowired
@@ -73,7 +69,7 @@ public class SingleWalletService {
     }
 
     public SingleWalletBetResultDo betWithPayout(BetRecordDo betRecordDo) {
-        if (!invokeSingle) {
+        if (!gameApiProperty.isInvokeSingle()) {
             return SingleWalletBetResultDo.builder()
                     .betId(RandomUtil.randomNumbers(8))
                     .refId(RandomUtil.randomString(10))

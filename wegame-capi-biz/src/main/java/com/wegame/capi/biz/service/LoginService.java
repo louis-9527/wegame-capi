@@ -9,6 +9,7 @@ import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.common.Constants;
+import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,12 @@ public class LoginService {
     RedisTemplate redisTemplate;
     @Autowired
     SingleWalletService singleWalletService;
+    @Autowired
+    GameApiProperty gameApiProperty;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
+        GameApiProperty.PrivateInfo info = gameApiProperty.getPrivateInfo(userLoginDo.getPId(), userLoginDo.getChannelId());
+        AssertUtil.assertNotNull(info, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(singleWalletService.authLoginToken(userLoginDo), ErrorCode.ERR_MIDDLE_PLATFORM);
         String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);

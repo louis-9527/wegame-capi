@@ -7,6 +7,7 @@ import com.wegame.capi.biz.domain.biz.operation.OperationEventMessageDo;
 import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
+import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
@@ -28,12 +29,12 @@ import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 @Service
 public abstract class AbstractOperationEventPulsarListener implements MessageListener<byte[]>, InitializingBean {
 
-    @Value("${api.game.cp.channelId}")
-    String cpChannelId;
     @Autowired
     OperationEventService operationEventService;
     @Autowired
     SnowflakeIdGenerator snowflakeIdGenerator;
+    @Autowired
+    private GameApiProperty gameApiProperty;
 
     @Override
     public void afterPropertiesSet() {
@@ -57,7 +58,7 @@ public abstract class AbstractOperationEventPulsarListener implements MessageLis
 
     public boolean handleMessage(OperationEventMessageDo messageDo) {
         try {
-            if (!Objects.equals(cpChannelId, messageDo.getChannelId())) {
+            if (!gameApiProperty.getChannelIdAll().contains(messageDo.getChannelId())) {
                 return true;
             }
             GameTypeEnum gameType = GameTypeEnum.valueOfId(messageDo.getGameId());

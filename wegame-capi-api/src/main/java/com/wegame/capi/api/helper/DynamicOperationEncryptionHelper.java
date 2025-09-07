@@ -1,5 +1,10 @@
 package com.wegame.capi.api.helper;
 
+import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
+import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
+import lombok.Builder;
+import lombok.Data;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
@@ -7,6 +12,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8DecryptorProviderBuilder;
 import org.bouncycastle.operator.InputDecryptorProvider;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -21,16 +27,17 @@ import java.security.Security;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class DynamicOperationEncryptionHelper {
     private static final String RSA_ALGORITHM = "RSA/ECB/OAEPWITHSHA-1ANDMGF1PADDING";
     private static final String AES_ALGORITHM = "AES/CBC/PKCS5Padding";
 
-    @Value("${api.game.cp.privateKey}")
-    String cpPrivateKey;
-    @Value("${api.game.cp.privateIv}")
-    String cpPrivateIv;
+    @Autowired
+    private GameApiProperty gameApiProperty;
     @Value("${dynamic.operation.rsa.public_key}")
     private String publicKeyStr;
     @Value("${dynamic.operation.rsa.private_key}")
@@ -40,8 +47,8 @@ public class DynamicOperationEncryptionHelper {
 
     private RSAPublicKey rsaPublicKey;
     private RSAPrivateKey privateKey;
-    private SecretKeySpec aesSecretKey;
-    private IvParameterSpec aesIvParameterSpec;
+
+    private Map<String,AesSecretKey> aesSecretmap = new HashMap<>();
 
     /**
      * 启动时初始化 RSA 公钥、AES 密钥和 IV
@@ -52,11 +59,16 @@ public class DynamicOperationEncryptionHelper {
             Security.addProvider(new BouncyCastleProvider());
             this.rsaPublicKey = loadPublicKey(publicKeyStr);
             this.privateKey = loadPrivateKey(privateKeyStr, privateKeyPassword);
-            // 初始化 AES 密钥和 IV
-            byte[] key = hexStringToByteArray(cpPrivateKey);
-            byte[] iv = hexStringToByteArray(cpPrivateIv);
-            this.aesSecretKey = new SecretKeySpec(key, "AES");
-            this.aesIvParameterSpec = new IvParameterSpec(iv);
+
+            List<GameApiProperty.PrivateInfo> privateInfoList = gameApiProperty.getPrivateInfoList();
+            for (GameApiProperty.PrivateInfo info: privateInfoList){
+                byte[] key = hexStringToByteArray(info.getPrivateKey());
+                byte[] iv = hexStringToByteArray(info.getPrivateIv());
+                SecretKeySpec aesSecretKey = new SecretKeySpec(key, "AES");
+                IvParameterSpec aesIvParameterSpec = new IvParameterSpec(iv);
+                aesSecretmap.put(info.getChannelId(),AesSecretKey.builder().aesSecretKey(aesSecretKey).aesIvParameterSpec(aesIvParameterSpec).build());
+            }
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize encryption keys", e);
         }
@@ -94,10 +106,15 @@ public class DynamicOperationEncryptionHelper {
     /**
      * 使用 AES-256-CBC 加密
      */
-    public String encryptWithAES256CBC(String plaintext) {
+    public String encryptWithAES256CBC(String channelId,String plaintext) {
         try {
+            AesSecretKey aesSecret = aesSecretmap.get(channelId);
+            if(aesSecret == null){
+                throw new BusinessException(ErrorCode.ERR_INTER);
+            }
             Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, aesSecretKey, aesIvParameterSpec);
+
+            cipher.init(Cipher.ENCRYPT_MODE, aesSecret.aesSecretKey, aesSecret.aesIvParameterSpec);
             byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
             // 转换为 HEX
             StringBuilder encrypted = new StringBuilder();
@@ -139,26 +156,6 @@ public class DynamicOperationEncryptionHelper {
         }
     }
 
-    /**
-     * 使用 AES-256-CBC 解密
-     */
-    public String decryptWithAES256CBC(String encryptedHex) {
-        try {
-            Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, aesSecretKey, aesIvParameterSpec);
-
-            // 将 HEX 转换回字节数组
-            byte[] encryptedBytes = hexStringToByteArray(encryptedHex);
-
-            // 执行 AES 解密
-            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-
-            // 返回解密后的字符串
-            return new String(decryptedBytes, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            throw new RuntimeException("AES decryption failed", e);
-        }
-    }
 
     private byte[] hexStringToByteArray(String hex) {
         int len = hex.length();
@@ -205,5 +202,12 @@ public class DynamicOperationEncryptionHelper {
         } else {
             throw new IllegalArgumentException("Unsupported private key format");
         }
+    }
+
+    @Data
+    @Builder
+    static class AesSecretKey{
+        private SecretKeySpec aesSecretKey;
+        private IvParameterSpec aesIvParameterSpec;
     }
 }

@@ -19,7 +19,8 @@ public class RewardLoadPostHandler extends AbstractPostHandler {
     public void handle() {
         try {
             gameProperty.enabledGameTypes().forEach(gameType -> {
-                rewardService.getWithCache(gameType);
+                // todo
+                // rewardService.getWithCache(gameType);
             });
         } catch (Exception e) {
             log.error("RewardLoadPostExecutor error", e);
