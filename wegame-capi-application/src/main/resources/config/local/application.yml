@@ -168,7 +168,6 @@ api:
           JQplBVJdmDw95QC9MvyFFdIsr9B1jHdyLPj9YA8iacBA
           -----END ENCRYPTED PRIVATE KEY-----
         dosPassword: egame-secure-passphrase
-
     igo:
       - platformId: 55
         channelId: 1051
