@@ -36,7 +36,15 @@ public class Constants {
     public static final int CONST_100000 = 100000;
     public static final int CONST_1000000 = 1000000;
 
+    /**
+     * map结构：
+     * key：为干预事件主键id 或者 -1（标志，不存在干预事件）
+     */
     public static final String OPERATION_EVENT_CACHE_KEY = "wegame:cuser:operation_event_channel:%s_%s_%s";
+    /**
+     * key-val结构
+     * 用于存储当前干预事件的干预状态
+     */
     public static final String OPERATION_EVENT_ING_KEY = "wegame:cuser:operation_event_ing:%s_%s";
     public static final Long OPERATION_EVENT_ING_EXPIRED = 20 * 60L;
 

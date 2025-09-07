@@ -56,8 +56,8 @@ public class OperationEventApi extends SingleWalletBaseApi {
             // 获取渠道对应的cpPrivateKey 和 cpPrivateIv
 
             GameApiProperty.PrivateInfo privateInfo = gameApiProperty.getPrivateInfo(channelId);
-            String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(privateInfo.getPrivateKey());
-            String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(privateInfo.getPrivateIv());
+            String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(channelId,privateInfo.getPrivateKey());
+            String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(channelId,privateInfo.getPrivateIv());
             // 构建header
             MultiValueMap<String, String> headers = buildHeaders(sign, keyString, ivString);
             UpdateEventsStatusReq.OperationReq operationReq = UpdateEventsStatusReq.OperationReq.builder()

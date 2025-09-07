@@ -77,29 +77,31 @@ public abstract class AbstractOperationEventManager {
     /**
      * 获取当前玩家在生效中的干预事件,并按时间取第一条
      */
-    public OperationEventDo getEffectedEvent(String playName,String channelId) {
+    public OperationEventDo getEffectedEvent(String playName, String channelId) {
         OperationEventTypeEnum dynamicOperationGame = operationEventType();
-        List<DynamicOperationEffectEventCatchDo> entries = operationEventService.getEffectList(playName,channelId, operationEventType());
+        List<DynamicOperationEffectEventCatchDo> entries = operationEventService.getEffectList(playName, channelId, operationEventType());
         for (DynamicOperationEffectEventCatchDo entry : entries) {
             long recordId = entry.getId();
             long effectedTime = entry.getEffectedTime();
             long expiredTime = entry.getExpiredTime();
             long currentMilli = DateUtil.getCurrentMilli();
             // 为啥加1000?是为了防止时间误差,dos系统干预事件立即上报会触发event not find
+            // 延后1s干预，让干预方有时间落库
             if (currentMilli < effectedTime + 1000) {
                 // 未到执行时间
                 continue;
             }
             // 判断是否过期
             if (currentMilli > expiredTime) {
-                // 过期 删除缓存并触发异步上报
-                operationEventService.cleanOperationByCatch(recordId, channelId,playName, operationEventType());
+                // 过期 删除缓存并触发异步上报： 删除Map中对应的key/val
+                operationEventService.cleanOperationByCatch(recordId, channelId, playName, operationEventType());
                 asyncUpdateFinishEvent(recordId, playName, OperationEventSubStatusEnum.FINISH_EXPIRED);
                 continue;
             }
             //判断是否有未完成的干预事件
             OperationEventStatusEnum operationEventStatusEnum = operationEventService.checkOperationUseStatus(recordId, dynamicOperationGame);
             if (operationEventStatusEnum != null) {
+                // 用户的多个事件，可以依次干预。 不需要保证事件顺序干预完成
                 if (OperationEventStatusEnum.ING == operationEventStatusEnum) {
                     continue;
                 }
@@ -108,7 +110,7 @@ public abstract class AbstractOperationEventManager {
             OperationEventDo eventDo = operationEventService.getById(recordId, dynamicOperationGame);
             if (eventDo == null) {
                 log.warn("dynamicOperationEventService.getById is null:{}", recordId);
-                operationEventService.cleanOperationByCatch(recordId,channelId, playName, dynamicOperationGame);
+                operationEventService.cleanOperationByCatch(recordId, channelId, playName, dynamicOperationGame);
                 continue;
             }
             if (OperationEventStatusEnum.ING == eventDo.getEventStatus()) {
@@ -116,23 +118,22 @@ public abstract class AbstractOperationEventManager {
             }
             if (OperationEventStatusEnum.FINISH == eventDo.getEventStatus()) {
                 //已完成 删除缓存并触发异步上报
-                operationEventService.cleanOperationByCatch(recordId,channelId, playName, operationEventType());
+                operationEventService.cleanOperationByCatch(recordId, channelId, playName, operationEventType());
                 asyncReportEventById(recordId);
                 continue;
             }
             if (OperationEventReportStatusEnum.reportSuccess(eventDo.getReportStatus())) {
-                //已完成 删除缓存并触发异步上报
-                operationEventService.cleanOperationByCatch(recordId,channelId, playName, operationEventType());
+                //已上报则删除缓存
+                operationEventService.cleanOperationByCatch(recordId, channelId, playName, operationEventType());
                 continue;
             }
             // 判断金额
             if (eventDo.getFinishBonus() != null && (eventDo.getFinishBonus() >= eventDo.getMinBonus())) {
-                // 干预完成,删除缓存并触发异步上报
-                operationEventService.cleanOperationByCatch(recordId,channelId, playName, operationEventType());
+                // 干预完成到最小金额则认为干预完成,删除缓存并触发异步上报
+                operationEventService.cleanOperationByCatch(recordId, channelId, playName, operationEventType());
                 asyncUpdateFinishEvent(recordId, playName, OperationEventSubStatusEnum.FINISH_NORMAL);
                 continue;
             }
-
             return eventDo;
         }
 
@@ -230,20 +231,20 @@ public abstract class AbstractOperationEventManager {
     /**
      * 获取干预事件结果
      */
-    public GameOperationEventDo getEventBetResult(Long payOutAmount,String channelId) {
+    public GameOperationEventDo getEventBetResult(Long payAmount, String channelId) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         // 判断是否存在干预事件
-        OperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName(),channelId);
+        OperationEventDo eventDo = getEffectedEvent(userInfo.getPlayerName(), channelId);
         if (eventDo == null) {
             return GameOperationEventDo.builder().eventResult(false).build();
         }
         // 获取需要干预的金额
-        Long interventionAmount = getInterventionAmount(eventDo, userInfo.getPlayerName(), payOutAmount);
+        Long interventionAmount = getInterventionAmount(eventDo, userInfo.getPlayerName(), payAmount);
         if (interventionAmount == null) {
             return GameOperationEventDo.builder().eventResult(false).build();
         }
-        // 构建并获取Wheel
-        Long wheelId = getWheelId(interventionAmount, payOutAmount);
+        // 获取干预模版id
+        Long wheelId = getWheelId(interventionAmount, payAmount);
         if (Objects.isNull(wheelId)) {
             return GameOperationEventDo.builder().eventResult(false).build();
         }
@@ -261,33 +262,39 @@ public abstract class AbstractOperationEventManager {
         // 判断需要干预金额
         long finishBonus = eventDo.getFinishBonus() == null ? 0L : eventDo.getFinishBonus();
         long eventAmount = eventDo.getBonus() - finishBonus;
-
+        // 可干预金额 = min[干预金额-已完成干预金额， 最大可干预金额-已完成干预金额], todo 优化实现逻辑
         if ((finishBonus + eventAmount) > eventDo.getMaxBonus()) {
             // 如果干预后的金额,比最大金额还大,取最小的
             eventAmount = eventDo.getMaxBonus() - finishBonus;
         }
 
         // 如果投注金额小于系统最小的投注金额,需要判断是否可以赠送出去
-            if (eventAmount < Constants.MIN_BET_AMOUNT_M * betAmount) {
-                // 上报
-                log.info("event getInterventionAmount finish amount error eventId:{}", eventDo.getEventId());
-                // 修改事件状态是进行中
-                this.updateOperationUseStatus(eventDo.getId(), OperationEventStatusEnum.ING);
-                if (finishBonus > 0L) {
-                    asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_FIND_DETAIL);
-                } else {
-                    asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_NOT_DETAIL);
-                }
-                return null;
+        if (eventAmount < Constants.MIN_BET_AMOUNT_M * betAmount) {
+            // 系统最小赔率为1.1倍。 需判断最小投注金额*最小赔率是否大于干预金额， 则不可干预
+            // 上报
+            log.info("event getInterventionAmount finish amount error eventId:{}", eventDo.getEventId());
+            // 修改事件状态是进行中。
+            this.updateOperationUseStatus(eventDo.getId(), OperationEventStatusEnum.ING); // 该行代码可干掉： todo
+            if (finishBonus > 0L) {
+                // 该干预事件被干预过
+                asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_FIND_DETAIL);
+            } else {
+                // 该干预事件未被干预过
+                asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_NOT_DETAIL);
             }
+            return null;
+        }
         return eventAmount;
     }
 
-    public Long getWheelId(Long interventionAmount, Long betPayAmount) {
-        // 计算干预金额是投注金额的多少倍,派奖金额应该是betAmount+干预金额,
-        long interveneBalance = interventionAmount + betPayAmount;
+    /**
+     * 获取模版id
+     */
+    public Long getWheelId(Long interventionAmount, Long payAmount) {
+        // 计算干预金额是投注金额的多少倍,派奖金额应该是 支付金额+干预金额,
+        long interveneBalance = interventionAmount + payAmount;
         //计算最大倍数
-        double multiple = ((double) interveneBalance / betPayAmount);
+        double multiple = ((double) interveneBalance / payAmount);
         // 根据倍数找最接近的
         Double closestMultiple = MultipleUtil.findClosestMultiple(multiple, getConfigMultipleArray());
         if (closestMultiple == null) {
@@ -337,7 +344,9 @@ public abstract class AbstractOperationEventManager {
                     .eventStatus(OperationEventStatusEnum.FINISH)
                     .eventSubStatus(eventSubStatusEnum)
                     .build();
+            // 1. 更新db， 干预状态更新为已完成
             operationEventService.update(build, operationEventType());
+            // 2.
             operationEventService.cleanOperationUseStatus(recordId, operationEventType());
             // 上报
             reportEventById(recordId);
@@ -450,7 +459,7 @@ public abstract class AbstractOperationEventManager {
                 .eventStatus(eventDo.getEventSubStatus().getCode())
                 .build();
         // 上报
-        UpdateEventsStatusRes updateEventsStatusRes = operationEventApi.updateEventsStatus(eventDo.getChannelId(),updateEventsStatusReq);
+        UpdateEventsStatusRes updateEventsStatusRes = operationEventApi.updateEventsStatus(eventDo.getChannelId(), updateEventsStatusReq);
         if (updateEventsStatusRes.isSuccess()) {
             // 更新事件状态为已上报
             OperationEventDo eventReportUpdate = OperationEventDo.builder().id(recordId)
