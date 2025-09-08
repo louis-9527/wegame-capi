@@ -57,5 +57,13 @@ public class RedeemTreasureVo implements Serializable {
         private BigDecimal balanceRequired;
         @ApiModelProperty(value = "星级", required = true)
         private Integer starLevel;
+        @ApiModelProperty(value = "奖励id", required = true)
+        private String rewardId;
+        @ApiModelProperty(value = "游戏id", required = true)
+        private String gameId;
+        @ApiModelProperty(value = "游戏code", required = true)
+        private String gameCode;
+        @ApiModelProperty(value = "游戏名称", required = true)
+        private String gameName;
     }
 }
