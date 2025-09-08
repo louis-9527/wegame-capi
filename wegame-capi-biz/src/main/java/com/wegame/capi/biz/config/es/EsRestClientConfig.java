@@ -22,7 +22,6 @@ public class EsRestClientConfig {
     private String username;
     @Value("${spring.elasticsearch.rest.password}")
     private String password;
-
     @Value("${spring.elasticsearch.rest.connection-timeout}")
     private Integer connectTimeOut;
     @Value("${spring.elasticsearch.rest.read-timeout}")
@@ -33,8 +32,7 @@ public class EsRestClientConfig {
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(
                 AuthScope.ANY,
-                new UsernamePasswordCredentials(username, password)
-        );
+                new UsernamePasswordCredentials(username, password));
         // 1. 连接池管理器
         HttpAsyncClientBuilder httpClientBuilder = HttpAsyncClientBuilder.create()
                 .setDefaultCredentialsProvider(credentialsProvider)
@@ -43,24 +41,19 @@ public class EsRestClientConfig {
                 // 每路由最大并发（通常=ES节点数*5）
                 .setMaxConnPerRoute(200)
                 // 保持长活（默认就是 keep-alive，这里再写一次）
-                .setDefaultRequestConfig(
-                        RequestConfig.custom()
+                .setDefaultRequestConfig(RequestConfig.custom()
                                 .setConnectionRequestTimeout(readTimeOut * 1000)
                                 .setConnectTimeout(connectTimeOut * 1000)
                                 .setSocketTimeout(60_000)
                                 .setContentCompressionEnabled(true) // gzip
-                                .build()
-                )
-
+                                .build())
                 .setKeepAliveStrategy((r, c) -> 3 * 60 * 1000)
                 // 定期清理过期连接
                 .setConnectionManagerShared(false);
-//                .evictExpiredConnections()
-//                .evictIdleConnections(30L, TimeUnit.SECONDS);
-
+                //                .evictExpiredConnections()
+                //                .evictIdleConnections(30L, TimeUnit.SECONDS);
         // 2. 构建 RestClient
         RestClientBuilder lowLevelBuilder = RestClient.builder(HttpHost.create(uris)).setHttpClientConfigCallback(h -> httpClientBuilder);
-
         // 3. 返回高级客户端（Spring 单例）
         return new RestHighLevelClient(lowLevelBuilder);
     }

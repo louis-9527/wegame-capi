@@ -2,6 +2,7 @@ package com.wegame.capi.biz.service.template.es;
 
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
@@ -114,7 +115,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
         // 第一次不带 search_after
         Object[] searchAfter = null;
         do {
-            List<Long> batch = fetchBatchUntilSuc(templateType, boolQuery, searchAfter, 5000);
+            List<Long> batch = fetchBatch(templateType, boolQuery, searchAfter, 5000);
             if (batch.isEmpty()) break;
             result.addAll(batch);
             searchAfter = new Object[]{batch.get(batch.size() - 1)}; // 最后一条 id
@@ -184,40 +185,33 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
         return findById(templateType, betRecordId, clazz);
     }
 
-    private List<Long> fetchBatchUntilSuc(TemplateTypeEnum templateType,
-                                          BoolQueryBuilder boolQuery,
-                                          Object[] searchAfter,
-                                          int size) {
-        try {
-            return fetchBatch(templateType, boolQuery, searchAfter, size);
-        } catch (Exception e) {
-            log.error("fetchBatchUntilSuc error", e);
-            return fetchBatchUntilSuc(templateType, boolQuery, searchAfter, size);
-        }
-    }
-
     private List<Long> fetchBatch(TemplateTypeEnum templateType,
                                   BoolQueryBuilder boolQuery,
                                   Object[] searchAfter,
-                                  int size) throws IOException {
-
-        // 只返回 id（doc value 字段）
-        SearchSourceBuilder source = new SearchSourceBuilder()
-                .query(boolQuery)
-                .size(size)
-                .fetchSource(false)                      // _source 不要
-                .docValueField("id")                     // 只取 id 列存
-                .sort(SortBuilders.fieldSort("id").order(SortOrder.ASC));
-
-        if (searchAfter != null) {
-            source.searchAfter(searchAfter);
+                                  int size) {
+        try {
+            // 只返回 id（doc value 字段）
+            SearchSourceBuilder source = new SearchSourceBuilder()
+                    .query(boolQuery)
+                    .size(size)
+                    // _source 不要
+                    .fetchSource(false)
+                    // 只取 id 列存
+                    .docValueField("id")
+                    .sort(SortBuilders.fieldSort("id").order(SortOrder.ASC));
+            if (searchAfter != null) {
+                source.searchAfter(searchAfter);
+            }
+            SearchRequest request = new SearchRequest(templateType.getBetRecordTemplateName())
+                    .source(source)
+                    .preference("_primary");   // 可选：避免副本 reorder
+            SearchResponse resp = restHighLevelClient.search(request, RequestOptions.DEFAULT);
+            return Arrays.stream(resp.getHits().getHits())
+                    .map(h -> (Long) h.getFields().get("id").getValue())
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("fetchBatch error", e);
+            throw new BusinessException(ErrorCode.ERR_INTER);
         }
-        SearchRequest request = new SearchRequest(templateType.getBetRecordTemplateName())
-                .source(source)
-                .preference("_primary");   // 可选：避免副本 reorder
-        SearchResponse resp = restHighLevelClient.search(request, RequestOptions.DEFAULT);
-        return Arrays.stream(resp.getHits().getHits())
-                .map(h -> (Long) h.getFields().get("id").getValue())
-                .collect(Collectors.toList());
     }
 }
