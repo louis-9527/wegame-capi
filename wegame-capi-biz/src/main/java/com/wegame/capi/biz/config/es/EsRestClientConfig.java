@@ -52,7 +52,7 @@ public class EsRestClientConfig {
                                 .build()
                 )
 
-                .setKeepAliveStrategy((r, c) -> 15 * 60 * 1000)
+                .setKeepAliveStrategy((r, c) -> 3 * 60 * 1000)
                 // 定期清理过期连接
                 .setConnectionManagerShared(false);
 //                .evictExpiredConnections()
