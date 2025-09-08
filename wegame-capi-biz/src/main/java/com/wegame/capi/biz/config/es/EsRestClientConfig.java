@@ -44,10 +44,10 @@ public class EsRestClientConfig {
                 .setDefaultRequestConfig(RequestConfig.custom()
                                 .setConnectionRequestTimeout(readTimeOut * 1000)
                                 .setConnectTimeout(connectTimeOut * 1000)
-                                .setSocketTimeout(60_000)
+                                .setSocketTimeout(10_000)
                                 .setContentCompressionEnabled(true) // gzip
                                 .build())
-                .setKeepAliveStrategy((r, c) -> 3 * 60 * 1000)
+                .setKeepAliveStrategy((r, c) -> 2 * 60 * 1000)
                 // 定期清理过期连接
                 .setConnectionManagerShared(false);
                 //                .evictExpiredConnections()
