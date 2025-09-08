@@ -3,7 +3,7 @@ package com.wegame.capi.biz.service.metrics;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
-import com.wegame.capi.client.enums.MetricsTypeEnum;
+import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 

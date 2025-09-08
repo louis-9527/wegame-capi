@@ -7,7 +7,7 @@ import com.wegame.capi.biz.builder.metrics.GameMetricsQueryBuilder;
 import com.wegame.capi.biz.converter.metrics.GameMetricsConverter;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.service.AbstractService;
-import com.wegame.capi.client.enums.MetricsTypeEnum;
+import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.common.constants.MetricsConstants;
 import com.wegame.capi.dao.repository.domain.metrics.GameMetricsPo;
 import com.wegame.capi.dao.repository.domain.metrics.GameMetricsQuery;

@@ -1,7 +1,7 @@
 package com.wegame.capi.biz.service.metrics;
 
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.client.enums.MetricsTypeEnum;
+import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 
 /**
  * 指标采集服务

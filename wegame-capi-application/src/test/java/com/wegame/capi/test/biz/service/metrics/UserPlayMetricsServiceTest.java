@@ -1,7 +1,7 @@
 package com.wegame.capi.test.biz.service.metrics;
 
 import com.wegame.capi.biz.service.metrics.UserPlayMetricsDataService;
-import com.wegame.capi.client.enums.MetricsTypeEnum;
+import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.test.BaseTest;
 import org.junit.Test;
 import org.slf4j.Logger;

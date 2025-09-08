@@ -1,8 +1,7 @@
 package com.wegame.capi.infrastructure.config.properties;
 
 import com.google.common.collect.Lists;
-import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.MetricsTypeEnum;
+import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

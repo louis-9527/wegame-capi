@@ -1,6 +1,7 @@
-package com.wegame.capi.client.enums;
+package com.wegame.capi.client.enums.innerdos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;

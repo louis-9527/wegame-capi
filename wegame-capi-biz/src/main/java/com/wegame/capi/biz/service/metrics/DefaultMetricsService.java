@@ -3,7 +3,7 @@ package com.wegame.capi.biz.service.metrics;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
-import com.wegame.capi.client.enums.MetricsTypeEnum;
+import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +40,7 @@ public class DefaultMetricsService extends AbstractMetricsService {
     @Override
     protected UserPlayMetricsDo getUserPlayMetricsDo(BetRecordDo betRecordDo, Object extInfo) {
         Boolean hasFreeSpin = (Boolean) extInfo;
-        UserPlayMetricsDo.builder()
+        return UserPlayMetricsDo.builder()
                 .pId(betRecordDo.getPId())
                 .channelId(betRecordDo.getChannelId())
                 .gameId(betRecordDo.getGameId())
@@ -54,8 +54,6 @@ public class DefaultMetricsService extends AbstractMetricsService {
                 // 这个值在各个游戏的地方给到,会涉及betRecord 生成的地方改造
                 .continuousNoFreeSpinCount(hasFreeSpin ? 0L : 1L)
                 .build();
-
-        return null;
     }
 
 }
