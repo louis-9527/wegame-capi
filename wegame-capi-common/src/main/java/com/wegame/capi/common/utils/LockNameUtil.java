@@ -3,6 +3,7 @@ package com.wegame.capi.common.utils;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.TemplateTypeEnum;
 
 public class LockNameUtil {
 
@@ -26,6 +27,8 @@ public class LockNameUtil {
 
 
     private static final String BUILD_USER_ID_CACHE_LOCK = "lock:build_user_id_cache_lock";
+    // BetRecordTemplatePreLoad
+    private static final String LOAD_BET_RECORD_TEMPLATE_CACHE_LOCK = "lock:load_bet_record_template_cache_lock:%s";
 
 
     private static final String JACKPOT_REWARD_LOCK  = "lock:jackpot_reward_lock:%s";
@@ -72,6 +75,10 @@ public class LockNameUtil {
 
     public static String getBuildUserIdCacheLockName() {
         return BUILD_USER_ID_CACHE_LOCK;
+    }
+
+    public static String getBetRecordTemplatePreLoadLockName(TemplateTypeEnum templateType) {
+        return String.format(LOAD_BET_RECORD_TEMPLATE_CACHE_LOCK, templateType.name());
     }
 
     public static String getJackpotRewardGrantSchedulerLock(GameTypeEnum gameType) {
