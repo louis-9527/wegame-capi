@@ -47,6 +47,10 @@ public class JackpotRewardPoolInputRecordPo implements Serializable {
      */
     private Long miniAmount;
     /**
+     * 累计flag：0未累计， 1已累计
+     */
+    private Integer accFlag;
+    /**
      * 创建人
      */
     private String creator;

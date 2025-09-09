@@ -60,8 +60,6 @@ public class PulsarProducer implements InitializingBean {
 
     @Async(sendMessageThreadPoolExecutor)
     public <T> void asyncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
-        // todo 去掉日志
-        log.info("{}Producer asyncSendMessageThenRetry msgType:{}, msgId:{}", gameType.getName(), mqMessage.getType(), mqMessage.getMsgId());
         MessageId id = syncSendMessage(gameType, mqMessage, 100);
         if (Objects.isNull(id)) {
             log.error("asyncSendMessage send fail, mqMessage: {}", mqMessage);
@@ -70,8 +68,6 @@ public class PulsarProducer implements InitializingBean {
 
     private <T> MessageId syncSendMessage(GameTypeEnum gameType, MQMessage<T> mqMessage) {
         try {
-            // todo 去掉日志
-            log.info("syncSendMessage messageId: {}", mqMessage.getMsgId());
             return getProducer(gameType)
                     .newMessage()
                     .key(mqMessage.getMsgId())

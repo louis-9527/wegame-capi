@@ -77,12 +77,14 @@ public class OperationEventQueryBuilder {
     }
 
 
-    public static Query buildQueryEffectList(String playName, String gameId) {
+    public static Query buildQueryEffectList(String playName, String gameId,String channelId) {
         Criteria criteria = new Criteria();
         long currentMilli = DateUtil.getCurrentMilli();
         criteria.and("playerName").is(playName);
         criteria.and("effectedTime").lte(currentMilli);
         criteria.and("expiredTime").gte(currentMilli);
+        criteria.and("channelId").is(channelId);
+        criteria.and("gameId").is(gameId);
         criteria.and("eventStatus").in(Lists.newArrayList(OperationEventStatusEnum.NONE.getCode(), OperationEventStatusEnum.ING.getCode()));
         criteria.and("$expr").is(
                 new Document("lt", Arrays.asList("$finishBonus", "$minBonus"))
@@ -90,7 +92,7 @@ public class OperationEventQueryBuilder {
         Query query = new Query(criteria);
         query.with(Sort.by(Sort.Direction.ASC, "effectedTime"));
         query.limit(10);
-        query.fields().include("_id", "gameId", "effectedTime", "expiredTime", "eventStatus");
+        query.fields().include("_id", "gameId", "channelId", "effectedTime", "expiredTime", "eventStatus");
         return query;
     }
 

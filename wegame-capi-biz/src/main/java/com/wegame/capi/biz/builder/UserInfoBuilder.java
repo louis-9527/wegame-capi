@@ -24,6 +24,7 @@ public class UserInfoBuilder {
                 .userLevel(userLoginDo.getUserLevel())
                 .userName(userLoginDo.getUserName())
                 .token(token)
+                .ut(userLoginDo.getUt())
                 .build();
     }
 

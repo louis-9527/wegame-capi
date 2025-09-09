@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
@@ -22,6 +21,7 @@ import com.wegame.capi.biz.module.base.multiple.MultipleCalculateStrategy;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
 import com.wegame.capi.biz.service.RandomService;
+import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.*;
 import lombok.extern.slf4j.Slf4j;
@@ -116,7 +116,7 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
                 .betAmount(rewardHandle.getBetAmount())
                 .totalRewardAmount(totalRewardAmount)
                 .hasRewardFreeWheel(hasRewardScatter(rewardLineList))
-                .rewardFreeWheelTimes(getFreeWheelNumber())
+                .rewardFreeWheelTimes(getFreeWheelNumber(rewardHandle.getBetType()))
                 .rewardLineDetailList(rewardLineDetailList)
                 .totalMultiple(totalMultiple)
                 .build();
@@ -225,17 +225,11 @@ public class MariaMakilingRewardHandler extends AbstractRewardHandler<SymbolDo> 
                 || targetSymbol.isWildSymbol();
     }
 
-    private Integer getFreeWheelNumber() {
-        int randomNumber = randomService.randomInt(1, 100);
-        int startVal = 0;
-        for (Map.Entry<Integer, Integer> entry : CollectionUtils.emptyIfNull(mariaMakilingConfig.getProbabilisticConfig().getFreeWheelTimesProbabilisticConfig().entrySet())) {
-            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
-                return entry.getKey();
-            } else {
-                startVal += entry.getValue();
-            }
-        }
-        throw new BusinessException(ErrorCode.ERR_INTER);
+    private Integer getFreeWheelNumber(BetTypeEnum betType) {
+        TreeMap<String, Integer> weightMap = Objects.equals(BetTypeEnum.BUY_BET.getCode(), betType.getCode()) ?
+                mariaMakilingConfig.getFreeGame().getBuyFgNumbersWeights() : mariaMakilingConfig.getFreeGame().getFgNumbersWeights();
+        String key = randomService.randomKeyByWeight(weightMap);
+        return Integer.parseInt(key);
     }
 
     private void validate(RewardHandleDo<SymbolDo> rewardHandle) {

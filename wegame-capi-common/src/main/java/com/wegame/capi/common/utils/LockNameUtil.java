@@ -3,6 +3,7 @@ package com.wegame.capi.common.utils;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.TemplateTypeEnum;
 
 public class LockNameUtil {
 
@@ -27,9 +28,13 @@ public class LockNameUtil {
      */
     private static final String JACKPOT_REWARD_GRANT_STATUS_SCHEDULER_LOCK = "lock:jackpot_reward_grant_status_scheduler_lock:%s";
     private static final String JACKPOT_REWARD_GRANT_STATUS_ALERT_SCHEDULER_LOCK = "lock:jackpot_reward_grant_status_alert_scheduler_lock:%s";
+    private static final String JACKPOT_REWARD_POOL_INPUT_RECORD_DELETE_SCHEDULER_LOCK = "lock:jackpot_reward_pool_input_record_delete_scheduler_lock:%s";
+    private static final String JACKPOT_REWARD_POOL_ACC_SCHEDULER_LOCK = "lock:jackpot_reward_pool_acc_scheduler_lock:%s";
 
 
     private static final String BUILD_USER_ID_CACHE_LOCK = "lock:build_user_id_cache_lock";
+    // BetRecordTemplatePreLoad
+    private static final String LOAD_BET_RECORD_TEMPLATE_CACHE_LOCK = "lock:load_bet_record_template_cache_lock:%s";
 
 
     private static final String JACKPOT_REWARD_LOCK = "lock:jackpot_reward_lock:%s";
@@ -88,6 +93,10 @@ public class LockNameUtil {
         return BUILD_USER_ID_CACHE_LOCK;
     }
 
+    public static String getBetRecordTemplatePreLoadLockName(TemplateTypeEnum templateType) {
+        return String.format(LOAD_BET_RECORD_TEMPLATE_CACHE_LOCK, templateType.name());
+    }
+
     public static String getJackpotRewardGrantSchedulerLock(GameTypeEnum gameType) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         return String.format(JACKPOT_REWARD_GRANT_STATUS_SCHEDULER_LOCK, gameType.getName());
@@ -101,5 +110,15 @@ public class LockNameUtil {
     public static String getJackpotRewardLock(GameTypeEnum gameType) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
         return String.format(JACKPOT_REWARD_LOCK, gameType.getName());
+    }
+
+    public static String getJackpotRewardPoolInputRecordDeleteSchedulerSchedulerLock(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(JACKPOT_REWARD_POOL_INPUT_RECORD_DELETE_SCHEDULER_LOCK, gameType.getName());
+    }
+
+    public static String getJackpotRewardPoolAccSchedulerSchedulerLock(GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM, "gameType is null");
+        return String.format(JACKPOT_REWARD_POOL_ACC_SCHEDULER_LOCK, gameType.getName());
     }
 }

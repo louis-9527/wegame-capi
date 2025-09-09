@@ -31,6 +31,7 @@ public class OperationEventPulsarConfig {
     private static final String bakunawaOperationEventConsumer = "bakunawaOperationEventConsumer";
     private static final String lamangOperationEventConsumer = "lamangOperationEventConsumer";
     private static final String diwataMayariOperationEventConsumer = "diwataMayariOperationEventConsumer";
+    private static final String kapreOperationEventConsumer = "kapreOperationEventConsumer";
 
     private static final String mangkukulamOperationEventConsumer = "mangkukulamOperationEventConsumer";
 
@@ -40,23 +41,22 @@ public class OperationEventPulsarConfig {
     @Value("${dynamic.operation.pulsar_topic}")
     String dynamicOperationTopic;
     // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
-    @Value("${dynamic.operation.pulsar_group.maria_makiling:_MariaMakiling}")
+    @Value("${dynamic.operation.pulsar_group.maria_makiling:cd_MariaMakiling}")
     String dynamicOperationGroupMariaMakiling;
-    @Value("${dynamic.operation.pulsar_group.malakas:_Malakas}")
+    @Value("${dynamic.operation.pulsar_group.malakas:cd_Malakas}")
     String dynamicOperationGroupMalakas;
-    @Value("${dynamic.operation.pulsar_group.ibong:_Ibong}")
+    @Value("${dynamic.operation.pulsar_group.ibong:cd_Ibong}")
     String dynamicOperationGroupIbong;
-    @Value("${dynamic.operation.pulsar_group.bakunawa:_Bakunawa}")
+    @Value("${dynamic.operation.pulsar_group.bakunawa:cd_Bakunawa}")
     String dynamicOperationGroupBakunawa;
-    @Value("${dynamic.operation.pulsar_group.lamang:_Lamang}")
+    @Value("${dynamic.operation.pulsar_group.lamang:cd_Lamang}")
     String dynamicOperationGroupLamang;
-    @Value("${dynamic.operation.pulsar_group.diwata_mayari:_DiwataMayari}")
+    @Value("${dynamic.operation.pulsar_group.diwata_mayari:cd_DiwataMayari}")
     String dynamicOperationGroupDiwataMayari;
-
-
+    @Value("${dynamic.operation.pulsar_group.kapre:_Kapre}")
+    String dynamicOperationGroupKapre;
     @Value("${dynamic.operation.pulsar_group.mangkukulam:_Mangkukulam}")
     String dynamicOperationGroupMangkukulam;
-
     @Value("${dynamic.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.operation.pulsar.auth.credentials_file_path}")
@@ -157,7 +157,7 @@ public class OperationEventPulsarConfig {
                 .subscribe();
     }
 
-    @Bean(name = "diwataMayariOperationEventConsumer", destroyMethod = COMMON_CLOSE_METHOD)
+    @Bean(name = diwataMayariOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(DiwataMayariOperationEventPulsarListener.class)
     public Consumer<byte[]> diwataMayariOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
@@ -168,6 +168,20 @@ public class OperationEventPulsarConfig {
                 .subscriptionName(dynamicOperationGroupDiwataMayari)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(diwataMayariOperationEventPulsarListener)
+                .subscribe();
+    }
+
+    @Bean(name = kapreOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
+    public Consumer<byte[]> kapreOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                               @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, kapreOperationEventConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupKapre)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(kapreOperationEventPulsarListener)
                 .subscribe();
     }
 
