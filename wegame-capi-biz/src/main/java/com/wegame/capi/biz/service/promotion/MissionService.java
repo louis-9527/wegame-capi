@@ -3,6 +3,7 @@ package com.wegame.capi.biz.service.promotion;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.api.domain.res.promotion.GetDailyMissionRes;
+import com.wegame.capi.api.domain.res.promotion.RedeemDailyMissionRes;
 import com.wegame.capi.api.promotion.MissionApi;
 import com.wegame.capi.biz.builder.req.MissionReqBuilder;
 import com.wegame.capi.biz.domain.biz.promotion.DailyMissionDo;
@@ -10,7 +11,7 @@ import com.wegame.capi.biz.domain.biz.promotion.RedeemDailyMissionDo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static com.wegame.capi.biz.converter.promotion.MissionConverter.toDo;
+import static com.wegame.capi.biz.converter.promotion.MissionConverter.*;
 
 /**
  * 任务service
@@ -28,6 +29,7 @@ public class MissionService {
     }
 
     public RedeemDailyMissionDo redeemDailyMission(String dailyMissionId) {
-        return null;
+        RedeemDailyMissionRes res = missionApi.redeemDailyMission(MissionReqBuilder.buildRedeemDailyMissionReq(dailyMissionId));
+        return resToDo(res);
     }
 }

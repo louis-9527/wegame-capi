@@ -15,9 +15,9 @@ import java.math.BigDecimal;
 public class RedeemDailyMissionDo implements Serializable {
     private static final long serialVersionUID = 8718553488187817145L;
     /**
-     * 宝箱id
+     * 任务id
      */
-    private String treasureId;
+    private String dailyMissionId;
     /**
      * 玩家姓名
      */
@@ -31,17 +31,9 @@ public class RedeemDailyMissionDo implements Serializable {
      */
     private String pId;
     /**
-     * 等级
-     */
-    private Integer level;
-    /**
      * refId
      */
     private String refId;
-    /**
-     * 经验值
-     */
-    private String experience;
     /**
      * 奖励
      */
@@ -54,7 +46,7 @@ public class RedeemDailyMissionDo implements Serializable {
     @AllArgsConstructor
     @EqualsAndHashCode
     public static class Reward implements Serializable {
-        private static final long serialVersionUID = -63633463436518L;
+        private static final long serialVersionUID = 1047330279480673183L;
         /**
          * 奖励配置id
          */
