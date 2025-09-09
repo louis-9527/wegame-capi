@@ -5,7 +5,7 @@ spring:
     timeout: 500
     cluster:
       nodes:
-        - prod-malakas-valkey-sg.7odqjm.clustercfg.apse1.cache.amazonaws.com:6379
+        - prod-bakunawa-valkey-sg.7odqjm.clustercfg.apse1.cache.amazonaws.com:6379
       max-redirects: 3
     redisson:
       minIdlePoolSize: 50
