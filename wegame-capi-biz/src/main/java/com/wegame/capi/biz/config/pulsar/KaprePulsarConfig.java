@@ -41,7 +41,7 @@ public class KaprePulsarConfig {
 
     @Bean(name = kaprePulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient kaprePulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, kaprePulsarClient);
+        log.info(BUILD_BEAN_FORMAT, kaprePulsarClient);
         return PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -50,7 +50,7 @@ public class KaprePulsarConfig {
 
     @Bean(name = kapreProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> kapreProducer(@Autowired PulsarClient kaprePulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, kapreProducer);
+        log.info(BUILD_BEAN_FORMAT, kapreProducer);
         return kaprePulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic))
                 .producerName(tenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -71,7 +71,7 @@ public class KaprePulsarConfig {
 
     @Bean(name = kapreConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> kapreConsumer(@Autowired PulsarClient kaprePulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, kapreConsumer);
+        log.info(BUILD_BEAN_FORMAT, kapreConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return kaprePulsarClient.newConsumer()
@@ -99,7 +99,7 @@ public class KaprePulsarConfig {
 
     @Bean(name = kapreDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> kapreDeadLetterConsumer(@Autowired PulsarClient kaprePulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, kapreDeadLetterConsumer);
+        log.info(BUILD_BEAN_FORMAT, kapreDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return kaprePulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

@@ -37,7 +37,7 @@ public class LamangMongoConfig {
      */
     @Bean(lamangMongoTemplate)
     public MongoTemplate lamangMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, lamangMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, lamangMongoTemplate);
         return new MongoTemplate(MongoClients.create(lamangMdbUri), lamangMdb);
     }
 
@@ -46,7 +46,7 @@ public class LamangMongoConfig {
      */
     @Bean(lamangPrimaryMongoTemplate)
     public MongoTemplate lamangPrimaryMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, lamangPrimaryMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, lamangPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(lamangMdbPrimaryUri), lamangMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -54,7 +54,7 @@ public class LamangMongoConfig {
 
     @Bean(name = lamangTransactionManager)
     public MongoTransactionManager lamangTransactionManager(@Autowired MongoTemplate lamangMongoTemplate) {
-        log.debug(BUILD_BEAN_FORMAT, lamangTransactionManager);
+        log.info(BUILD_BEAN_FORMAT, lamangTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(lamangMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)

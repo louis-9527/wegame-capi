@@ -34,13 +34,13 @@ public class SirenaMongoConfig {
 
     @Bean(sirenaMongoTemplate)
     public MongoTemplate sirenaMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, sirenaMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, sirenaMongoTemplate);
         return new MongoTemplate(MongoClients.create(sirenaMdbUri), sirenaMdb);
     }
 
     @Bean(sirenaPrimaryMongoTemplate)
     public MongoTemplate sirenaPrimaryMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, sirenaPrimaryMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, sirenaPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(sirenaMdbPrimaryUri), sirenaMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -48,7 +48,7 @@ public class SirenaMongoConfig {
 
     @Bean(name = sirenaTransactionManager)
     public MongoTransactionManager sirenaTransactionManager(@Autowired MongoTemplate sirenaMongoTemplate) {
-        log.debug(BUILD_BEAN_FORMAT, sirenaTransactionManager);
+        log.info(BUILD_BEAN_FORMAT, sirenaTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(sirenaMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)

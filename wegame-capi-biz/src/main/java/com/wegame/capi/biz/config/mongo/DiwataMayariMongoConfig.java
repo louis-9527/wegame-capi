@@ -34,13 +34,13 @@ public class DiwataMayariMongoConfig {
 
     @Bean(diwatamayariMongoTemplate)
     public MongoTemplate diwataMayariMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, diwatamayariMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, diwatamayariMongoTemplate);
         return new MongoTemplate(MongoClients.create(mdiwataMayariMdbUri), diwataMayariMdb);
     }
 
     @Bean(diwatamayariPrimaryMongoTemplate)
     public MongoTemplate diwataMayariPrimaryMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, diwatamayariPrimaryMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, diwatamayariPrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(diwataMayariMdbPrimaryUri), diwataMayariMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -48,7 +48,7 @@ public class DiwataMayariMongoConfig {
 
     @Bean(name = diwatamayariTransactionManager)
     public MongoTransactionManager diwataMayariTransactionManager(@Autowired MongoTemplate diwatamayariMongoTemplate) {
-        log.debug(BUILD_BEAN_FORMAT, diwatamayariTransactionManager);
+        log.info(BUILD_BEAN_FORMAT, diwatamayariTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(diwatamayariMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)

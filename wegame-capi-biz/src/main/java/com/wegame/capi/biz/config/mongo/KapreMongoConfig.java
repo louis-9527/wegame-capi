@@ -34,13 +34,13 @@ public class KapreMongoConfig {
 
     @Bean(kapreMongoTemplate)
     public MongoTemplate kapreMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, kapreMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, kapreMongoTemplate);
         return new MongoTemplate(MongoClients.create(kapreMdbUri), kapreMdb);
     }
 
     @Bean(kaprePrimaryMongoTemplate)
     public MongoTemplate kaprePrimaryMongoTemplate() {
-        log.debug(BUILD_BEAN_FORMAT, kaprePrimaryMongoTemplate);
+        log.info(BUILD_BEAN_FORMAT, kaprePrimaryMongoTemplate);
         MongoTemplate mongoTemplate = new MongoTemplate(MongoClients.create(kapreMdbPrimaryUri), kapreMdb);
         mongoTemplate.setReadPreference(ReadPreference.primary());
         return mongoTemplate;
@@ -48,7 +48,7 @@ public class KapreMongoConfig {
 
     @Bean(name = kapreTransactionManager)
     public MongoTransactionManager kapreTransactionManager(@Autowired MongoTemplate kapreMongoTemplate) {
-        log.debug(BUILD_BEAN_FORMAT, kapreTransactionManager);
+        log.info(BUILD_BEAN_FORMAT, kapreTransactionManager);
         MongoTransactionManager manager = new MongoTransactionManager(kapreMongoTemplate.getMongoDbFactory());
         TransactionOptions options = TransactionOptions.builder()
                 .maxCommitTime(20L, TimeUnit.SECONDS)

@@ -41,7 +41,7 @@ public class SirenaPulsarConfig {
 
     @Bean(name = sirenaPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient sirenaPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, sirenaPulsarClient);
+        log.info(BUILD_BEAN_FORMAT, sirenaPulsarClient);
         return PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -50,7 +50,7 @@ public class SirenaPulsarConfig {
 
     @Bean(name = sirenaProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> sirenaProducer(@Autowired PulsarClient sirenaPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, sirenaProducer);
+        log.info(BUILD_BEAN_FORMAT, sirenaProducer);
         return sirenaPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic))
                 .producerName(tenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -71,7 +71,7 @@ public class SirenaPulsarConfig {
 
     @Bean(name = sirenaConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> sirenaConsumer(@Autowired PulsarClient sirenaPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, sirenaConsumer);
+        log.info(BUILD_BEAN_FORMAT, sirenaConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return sirenaPulsarClient.newConsumer()
@@ -99,7 +99,7 @@ public class SirenaPulsarConfig {
 
     @Bean(name = sirenaDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> sirenaDeadLetterConsumer(@Autowired PulsarClient sirenaPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, sirenaDeadLetterConsumer);
+        log.info(BUILD_BEAN_FORMAT, sirenaDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return sirenaPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

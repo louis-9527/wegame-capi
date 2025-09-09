@@ -41,7 +41,7 @@ public class DiwataMayariPulsarConfig {
 
     @Bean(name = diwatamayariPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient diwataMayariPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, diwatamayariPulsarClient);
+        log.info(BUILD_BEAN_FORMAT, diwatamayariPulsarClient);
         return PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -50,7 +50,7 @@ public class DiwataMayariPulsarConfig {
 
     @Bean(name = diwatamayariProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> diwataMayariProducer(@Autowired PulsarClient diwatamayariPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, diwatamayariProducer);
+        log.info(BUILD_BEAN_FORMAT, diwatamayariProducer);
         return diwatamayariPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic))
                 .producerName(tenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -71,7 +71,7 @@ public class DiwataMayariPulsarConfig {
 
     @Bean(name = diwataMayariConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> diwataMayariConsumer(@Autowired PulsarClient diwatamayariPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, diwataMayariConsumer);
+        log.info(BUILD_BEAN_FORMAT, diwataMayariConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return diwatamayariPulsarClient.newConsumer()
@@ -99,7 +99,7 @@ public class DiwataMayariPulsarConfig {
 
     @Bean(name = diwatamayariDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> diwataMayariDeadLetterConsumer(@Autowired PulsarClient diwatamayariPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, diwatamayariDeadLetterConsumer);
+        log.info(BUILD_BEAN_FORMAT, diwatamayariDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, tenant, namespace, betDeadLetterTopic);
         return diwatamayariPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)

@@ -69,7 +69,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = operationEventPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient operationEventPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
+        log.info(BUILD_BEAN_FORMAT, "operationEventPulsarClient");
         if (StringUtils.isEmpty(dynamicOperationAuthIssuerUrl)) {
             return PulsarClient.builder()
                     .serviceUrl(dynamicOperationTopicUrl)
@@ -95,7 +95,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(MariamakilingOperationEventPulsarListener.class)
     public Consumer<byte[]> mariaMakilingOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                 @Autowired MariamakilingOperationEventPulsarListener mariamakilingOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, mariaMakilingOperationEventConsumer);
+        log.info(BUILD_BEAN_FORMAT, mariaMakilingOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMariaMakiling)
@@ -165,7 +165,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(DiwataMayariOperationEventPulsarListener.class)
     public Consumer<byte[]> diwataMayariOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                @Autowired DiwataMayariOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, diwataMayariOperationEventConsumer);
+        log.info(BUILD_BEAN_FORMAT, diwataMayariOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupDiwataMayari)
@@ -179,7 +179,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
     public Consumer<byte[]> kapreOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, kapreOperationEventConsumer);
+        log.info(BUILD_BEAN_FORMAT, kapreOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupKapre)
@@ -193,7 +193,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
     public Consumer<byte[]> mangkukulamOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                               @Autowired MangkukulamOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, mangkukulamOperationEventConsumer);
+        log.info(BUILD_BEAN_FORMAT, mangkukulamOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMangkukulam)
@@ -207,7 +207,7 @@ public class OperationEventPulsarConfig {
     @ConditionalOnBean(SirenaOperationEventPulsarListener.class)
     public Consumer<byte[]> sirenaOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                @Autowired SirenaOperationEventPulsarListener  sirenaOperationEventPulsarListener) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, sirenaOperationEventConsumer);
+        log.info(BUILD_BEAN_FORMAT, sirenaOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupSirena)

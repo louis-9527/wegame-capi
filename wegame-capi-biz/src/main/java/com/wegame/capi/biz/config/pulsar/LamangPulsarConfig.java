@@ -42,7 +42,7 @@ public class LamangPulsarConfig {
 
     @Bean(name = lamangPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient lamangPulsarClient() throws Exception {
-        log.debug(BUILD_BEAN_FORMAT, lamangPulsarClient);
+        log.info(BUILD_BEAN_FORMAT, lamangPulsarClient);
         PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(lamangUrl)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
@@ -61,7 +61,7 @@ public class LamangPulsarConfig {
 
     @Bean(name = lamangProducer, destroyMethod = COMMON_CLOSE_METHOD)
     public Producer<byte[]> lamangProducer(@Autowired @Qualifier("lamangPulsarClient") PulsarClient lamangPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, lamangProducer);
+        log.info(BUILD_BEAN_FORMAT, lamangProducer);
         return lamangPulsarClient.newProducer(Schema.BYTES)
                 .topic(String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetTopic))
                 .producerName(lamangTenant + "_" + UUID.randomUUID() + "_" + IpUtil.getLocalIp())
@@ -84,7 +84,7 @@ public class LamangPulsarConfig {
 
     @Bean(name = lamangConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> lamangConsumer(@Autowired @Qualifier("lamangPulsarClient") PulsarClient lamangPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, lamangConsumer);
+        log.info(BUILD_BEAN_FORMAT, lamangConsumer);
         String fullTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetTopic);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetDeadLetterTopic);
         return lamangPulsarClient.newConsumer()
@@ -114,7 +114,7 @@ public class LamangPulsarConfig {
 
     @Bean(name = lamangDeadLetterConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     public Consumer<byte[]> lamangDeadLetterConsumer(@Autowired @Qualifier("lamangPulsarClient") PulsarClient lamangPulsarClient) throws PulsarClientException {
-        log.debug(BUILD_BEAN_FORMAT, lamangDeadLetterConsumer);
+        log.info(BUILD_BEAN_FORMAT, lamangDeadLetterConsumer);
         String deadLetterTopic = String.format(PULSAR_TOPIC_FORMAT, lamangTenant, lamangNamespace, lamangBetDeadLetterTopic);
         return lamangPulsarClient.newConsumer(Schema.BYTES)
                 .topic(deadLetterTopic)
