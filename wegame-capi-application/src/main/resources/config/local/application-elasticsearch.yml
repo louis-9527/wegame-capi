@@ -5,6 +5,8 @@ spring:
       uris: http://localhost:9200
       connection-timeout: 1s
       read-timeout: 1
+      username: elastic
+      password: Innovatech@123
   data:
     elasticsearch:
       repositories:
