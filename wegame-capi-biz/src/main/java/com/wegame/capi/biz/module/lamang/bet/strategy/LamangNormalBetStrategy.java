@@ -77,8 +77,8 @@ public class LamangNormalBetStrategy extends AbstractLamangBetStrategy {
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.LAMANG_REWARD_NOTIFY_SIZE);
-            rewardService.evict(GameTypeEnum.LAM_ANG);
-            rewardService.getWithCache(GameTypeEnum.LAM_ANG);
+            rewardService.evict(GameTypeEnum.LAM_ANG, userInfo.getPId(), userInfo.getChannelId());
+            rewardService.getWithCache(GameTypeEnum.LAM_ANG, userInfo.getPId(), userInfo.getChannelId());
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }

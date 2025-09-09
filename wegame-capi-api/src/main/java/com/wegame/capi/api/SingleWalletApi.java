@@ -252,7 +252,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
      * @param req
      * @return
      */
-    @Retryable(value = RetryException.class, exclude = BusinessException.class)
+    @Retryable(value = RetryException.class, maxAttempts = 2, backoff = @Backoff(delay = 0), exclude = BusinessException.class)
     public CommonRes<JackpotRes> jackpot(JackpotReq req) {
         try {
             // 参数签名
@@ -279,7 +279,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
     private MultiValueMap<String, String> buildHeaders() {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Connection", "Keep-Alive");
-        headers.add("Keep-Alive", "timeout=59");
+        headers.add("Keep-Alive", "timeout=58");
         return headers;
     }
 }

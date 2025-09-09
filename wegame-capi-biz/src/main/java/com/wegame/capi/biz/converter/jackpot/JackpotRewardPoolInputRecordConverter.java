@@ -8,6 +8,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.common.Constants;
+import com.wegame.capi.common.enums.JackpotAccFlagEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolInputRecordPo;
 
@@ -32,6 +33,7 @@ public class JackpotRewardPoolInputRecordConverter {
         jackpotRewardPoolInputRecordDo.setMajorAmount(po.getMajorAmount());
         jackpotRewardPoolInputRecordDo.setMinorAmount(po.getMinorAmount());
         jackpotRewardPoolInputRecordDo.setMiniAmount(po.getMiniAmount());
+        jackpotRewardPoolInputRecordDo.setAccFlag(JackpotAccFlagEnum.valueOfCode(po.getAccFlag()));
         jackpotRewardPoolInputRecordDo.setCreator(po.getCreator());
         jackpotRewardPoolInputRecordDo.setCreateTime(po.getCreateTime());
         jackpotRewardPoolInputRecordDo.setUpdater(po.getUpdater());
@@ -52,6 +54,7 @@ public class JackpotRewardPoolInputRecordConverter {
         po.setMajorAmount(jackpotRewardPoolInputRecordDo.getMajorAmount());
         po.setMinorAmount(jackpotRewardPoolInputRecordDo.getMinorAmount());
         po.setMiniAmount(jackpotRewardPoolInputRecordDo.getMiniAmount());
+        po.setAccFlag(jackpotRewardPoolInputRecordDo.getAccFlag().getCode());
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();
             po.setCreator(operator.getName());

@@ -37,7 +37,7 @@ public enum JackpotTypeEnum {
     /**
      * 集合名称(奖池流水)
      */
-    private final String jackpotRewardPoolInputCollectionName;
+    private final String jackpotRewardPoolInputRecordCollectionName;
     /**
      * 集合名称(派奖记录)
      */

@@ -43,6 +43,6 @@ public class RewardController extends AbstractController {
         GameTypeEnum gameType = GameTypeEnum.valueOfId(userInfo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         noCacheControl(response);
-        return build(doToVo(rewardService.getWithCache(gameType)));
+        return build(doToVo(rewardService.getWithCache(gameType, userInfo.getPId(), userInfo.getChannelId())));
     }
 }
