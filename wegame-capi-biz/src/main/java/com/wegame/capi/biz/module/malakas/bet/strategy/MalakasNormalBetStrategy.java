@@ -77,8 +77,8 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.MALAKAS_REWARD_NOTIFY_SIZE);
-            rewardService.evict(GameTypeEnum.MALAKAS);
-            rewardService.getWithCache(GameTypeEnum.MALAKAS);
+            rewardService.evict(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId());
+            rewardService.getWithCache(GameTypeEnum.MALAKAS, userInfo.getPId(), userInfo.getChannelId());
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }

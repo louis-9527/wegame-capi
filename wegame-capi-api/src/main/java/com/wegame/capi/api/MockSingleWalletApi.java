@@ -13,7 +13,6 @@
 //import com.wegame.capi.api.domain.res.singlewallet.GetCreditRes;
 //import com.wegame.capi.api.domain.res.singlewallet.SingleWalletBetWithPayoutRes;
 //import lombok.extern.slf4j.Slf4j;
-//import org.springframework.retry.annotation.Retryable;
 //import org.springframework.stereotype.Component;
 //
 //import java.math.BigDecimal;
@@ -38,7 +37,6 @@
 //    }
 //
 //    @Override
-//    @Retryable(value = RetryException.class, exclude = BusinessException.class)
 //    public GetCreditRes getCredit(GetCreditReq req) {
 //        try {
 //            return GetCreditRes.builder().credit(new BigDecimal("1000000")).build();
@@ -52,7 +50,6 @@
 //    }
 //
 //    @Override
-//    @Retryable(value = RetryException.class, exclude = BusinessException.class)
 //    public CommonRes<SingleWalletBetWithPayoutRes> betWithPayout(BetWithPayoutReq req) {
 //        try {
 //            SingleWalletBetWithPayoutRes data = SingleWalletBetWithPayoutRes.builder()

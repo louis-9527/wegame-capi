@@ -33,6 +33,11 @@ public class MangkukulamSymbolDo extends SymbolDo {
     private int remainClearTimes;
 
     /**
+     * 原位置，只有火框wild消除后移动到后的wild有该参数
+     */
+    private IndexDo sourceIndex;
+
+    /**
      * 倍率列表， 只有特殊wild才有
      */
     private List<BigDecimal> multiples;
@@ -81,6 +86,19 @@ public class MangkukulamSymbolDo extends SymbolDo {
                 .symbolFireBorder(isSymbolFireBorder())
                 .remainClearTimes(remainClearTimes)
                 .multiples(multiples)
+                .sourceIndex(null)
+                .build();
+    }
+
+    public MangkukulamSymbolDo copyForEventPlay() {
+        return MangkukulamSymbolDo.builder()
+                .id(getId())
+                .name(getName())
+                .symbolType(getSymbolType())
+                .symbolFireBorder(isSymbolFireBorder())
+                .remainClearTimes(remainClearTimes)
+                .multiples(multiples)
+                .sourceIndex(sourceIndex)
                 .build();
     }
 

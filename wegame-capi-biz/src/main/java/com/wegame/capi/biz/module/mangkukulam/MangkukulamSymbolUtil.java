@@ -22,19 +22,27 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 @Slf4j
 public class MangkukulamSymbolUtil {
+    private static final List<Integer> SPECIAL_WILD_COLUMN = Arrays.asList(1, 2, 3);
 
 
     public static MangkukulamSymbolDo[][] copySymbolArrWithPlaceHolder(MangkukulamSymbolDo[][] symbolArr) {
         AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
-        int row = symbolArr.length;
-        int col = symbolArr[0].length;
-        MangkukulamSymbolDo[][] newSymbolArr = new MangkukulamSymbolDo[row][col];
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < col; j++) {
-                if (Objects.isNull(symbolArr[i][j])) {
-                    newSymbolArr[i][j] = MANGKUKULAM_SYMBOL_PLACEHOLDER;
+        int rowLength = symbolArr.length;
+        int colLength = symbolArr[0].length;
+        MangkukulamSymbolDo[][] newSymbolArr = new MangkukulamSymbolDo[rowLength][colLength];
+
+        // 按列， 04列填充普通占位符，123列填充wild
+        for (int column = 0; column < colLength; column++) {
+            boolean wildColumn = SPECIAL_WILD_COLUMN.contains(column);
+            for (int row = 0; row < rowLength; row++) {
+                if (Objects.isNull(symbolArr[row][column])) {
+                    if (wildColumn) {
+                        newSymbolArr[row][column] = MangkukulamSymbolDo.buildPlaceholderWild();
+                    } else {
+                        newSymbolArr[row][column] = MANGKUKULAM_SYMBOL_PLACEHOLDER;
+                    }
                 } else {
-                    newSymbolArr[i][j] = symbolArr[i][j].copy();
+                    newSymbolArr[row][column] = symbolArr[row][column].copyForEventPlay();
                 }
             }
         }
@@ -61,7 +69,7 @@ public class MangkukulamSymbolUtil {
         if (CollectionUtils.isEmpty(gameRecordList)) {
             return;
         }
-        gameRecordList.parallelStream().forEach(gameRecord -> {
+        gameRecordList.forEach(gameRecord -> {
             MangkukulamSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
                 for (int column = ONE_COLUM_INDEX; column < symbolArr[row].length; column++) {
@@ -315,13 +323,21 @@ public class MangkukulamSymbolUtil {
                         if (current.isSpecialWild()) {
                             System.out.print("[" + current.getId() + ":" + current.getRemainClearTimes() + "]\t");
                         } else {
-                            System.out.print("[" + current.getId() + "]\t");
+                            if (Objects.nonNull(current.getSourceIndex())) {
+                                System.out.print("[" + current.getSourceIndex().getRowIndex() + "-" + current.getSourceIndex().getColumnIndex() +"->" + current.getId() + "]\t");
+                            } else {
+                                System.out.print("[" + current.getId() + "]\t");
+                            }
                         }
                     } else {
                         if (current.isSpecialWild()) {
                             System.out.print(current.getId() + ":" + current.getRemainClearTimes() + "\t");
                         } else {
-                            System.out.print(current.getId() + "\t\t");
+                            if (Objects.nonNull(current.getSourceIndex())) {
+                                System.out.print(current.getSourceIndex().getRowIndex() + "-" + current.getSourceIndex().getColumnIndex() +"->" + current.getId() + "\t");
+                            } else {
+                                System.out.print(current.getId() + "\t\t");
+                            }
                         }
                     }
                 } else {

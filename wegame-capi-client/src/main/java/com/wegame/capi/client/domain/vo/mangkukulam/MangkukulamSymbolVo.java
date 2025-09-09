@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.vo.mangkukulam;
 
+import com.wegame.capi.client.domain.vo.IndexVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -29,6 +30,9 @@ public class MangkukulamSymbolVo implements Serializable {
 
     @ApiModelProperty("倍率列表 只有特殊百搭有")
     private List<BigDecimal> multiples;
+
+    @ApiModelProperty("元素原来的位置")
+    private IndexVo sourceIndex;
 
     @Override
     public String toString() {

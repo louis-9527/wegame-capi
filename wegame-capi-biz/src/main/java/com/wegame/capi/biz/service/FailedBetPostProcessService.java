@@ -59,10 +59,9 @@ public class FailedBetPostProcessService {
     private ThreadPoolExecutor betRecordStatusExecutor;
 
     @Async(betRecordStatusThreadPoolExecutor)
-    public void processFailedBetAfterLogin(GameTypeEnum gameType) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        process(gameType, Long.valueOf(userInfo.getId()));
+    public void processFailedBetAfterLogin(GameTypeEnum gameType, Long userId) {
+        AssertUtil.assertNotNull(userId, ErrorCode.ERR_INTER);
+        process(gameType, userId);
     }
 
     @Async(betRecordStatusThreadPoolExecutor)

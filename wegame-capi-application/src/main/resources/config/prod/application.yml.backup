@@ -172,7 +172,7 @@ dynamic:
     pulsar_url: pulsar+ssl://pc-39401331.aws-apse1-production-ypeqz.aws.snio.cloud:6651
     pulsar_topic: dos_game_slot_event
     pulsar_group:
-      maria_makiling: ${api.game.cp.channelId}_MariaMakiling
+      maria_makiling: cd_MariaMakiling
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud

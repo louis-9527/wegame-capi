@@ -161,7 +161,7 @@ api:
 pulsar:
   dynamic:
     maria_makiling:
-      url: pulsar://pulsar.makillingslot.org:6650
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
       tenant: ${spring.application.name}_MariaMakiling
       namespace: ${spring.application.env}
       bet_topic: MariaMakiling_topic
@@ -173,7 +173,7 @@ dynamic:
     pulsar_url: pulsar+ssl://pc-de4144b6.aws-apse1-uat-snsoft.aws.snio.cloud:6651
     pulsar_topic: dos_game_slot_event
     pulsar_group:
-      maria_makiling: ${api.game.cp.channelId}_MariaMakiling
+      maria_makiling: cd_MariaMakiling
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud

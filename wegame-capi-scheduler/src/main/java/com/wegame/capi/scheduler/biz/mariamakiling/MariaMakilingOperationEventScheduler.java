@@ -29,7 +29,7 @@ public class MariaMakilingOperationEventScheduler extends AbstractOperationEvent
     @Qualifier("mariaMakilingOperationEventManager")
     MariaMakilingOperationEventManager mariaMakilingOperationEventManager;
 
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void schedule() {
         try {
             log.info("schedule start");

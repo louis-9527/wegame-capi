@@ -10,6 +10,7 @@ import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
+import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,13 @@ public class LoginService {
     @Autowired
     SingleWalletService singleWalletService;
     @Autowired
+    GameApiProperty gameApiProperty;
+    @Autowired
     FailedBetPostProcessService failedBetPostProcessService;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
+        GameApiProperty.PrivateInfo info = gameApiProperty.getPrivateInfo(userLoginDo.getPId(), userLoginDo.getChannelId());
+        AssertUtil.assertNotNull(info, ErrorCode.ERR_PARAM);
         AssertUtil.assertTrue(singleWalletService.authLoginToken(userLoginDo), ErrorCode.ERR_MIDDLE_PLATFORM);
         String token = SecureUtil.md5(userLoginDo.getToken() + userLoginDo.getGameId());
         response.addHeader(Constants._TOKEN_, token);
@@ -52,7 +57,7 @@ public class LoginService {
                 .playerId(userLoginDo.getPlayerId())
                 .loginTime(new Date())
                 .build());
-        failedBetPostProcessService.processFailedBetAfterLogin(GameTypeEnum.valueOfId(userInfo.getGameId()));
+        failedBetPostProcessService.processFailedBetAfterLogin(GameTypeEnum.valueOfId(userInfo.getGameId()), Long.valueOf(userId));
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
         return userInfo;

@@ -71,8 +71,8 @@ public class BakunawaNormalBetStrategy extends AbstractBakunawaBetStrategy {
             String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, BAKUNAWA.getId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.BAKUNAWA_ADARNA_REWARD_NOTIFY_SIZE);
-            rewardService.evict(gameType);
-            rewardService.getWithCache(gameType);
+            rewardService.evict(gameType, userInfo.getPId(), userInfo.getChannelId());
+            rewardService.getWithCache(gameType, userInfo.getPId(), userInfo.getChannelId());
         } catch (Exception e) {
             log.error("updateRewardNotifyInfo error", e);
         }

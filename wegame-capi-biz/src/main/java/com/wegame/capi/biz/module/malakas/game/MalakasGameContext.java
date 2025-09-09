@@ -13,7 +13,7 @@ import java.util.Map;
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
 
 /**
- * MariaMakilingGameContext GamePlay上下文
+ * MalakasGameContext GamePlay上下文
  */
 @Component("malakasGameContext")
 public class MalakasGameContext<R> extends AbstractGameContext<R> {
@@ -21,6 +21,7 @@ public class MalakasGameContext<R> extends AbstractGameContext<R> {
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "malakasGameNormalPlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "malakasGameEventPlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "malakasGameTemplatePlay")
             .build();
 
     @Autowired

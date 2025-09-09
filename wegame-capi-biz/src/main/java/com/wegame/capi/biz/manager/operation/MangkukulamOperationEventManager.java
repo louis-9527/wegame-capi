@@ -18,7 +18,7 @@ public class MangkukulamOperationEventManager extends AbstractOperationEventMana
 
     @Override
     public OperationEventTypeEnum operationEventType() {
-        return OperationEventTypeEnum.LAM_ANG;
+        return OperationEventTypeEnum.MANGKUKULAM;
     }
 
     // 使用 ConcurrentHashMap 进行缓存

@@ -18,6 +18,8 @@ public class DiwataMayariSymbolVo implements Serializable {
     private static final long serialVersionUID = 349924343626303L;
     @ApiModelProperty("元素Id")
     private String symbolId;
+    @ApiModelProperty("主元素")
+    private Boolean main;
 
     @Override
     public String toString() {

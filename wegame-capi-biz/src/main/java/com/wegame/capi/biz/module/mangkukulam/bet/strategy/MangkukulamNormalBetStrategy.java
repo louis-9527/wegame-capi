@@ -77,8 +77,8 @@ public class MangkukulamNormalBetStrategy extends AbstractMangkukulamBetStrategy
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.MANGKUKULAM_REWARD_NOTIFY_SIZE);
-            rewardService.evict(GameTypeEnum.MANGKUKULAM);
-            rewardService.getWithCache(GameTypeEnum.MANGKUKULAM);
+            rewardService.evict(GameTypeEnum.MANGKUKULAM, userInfo.getPId(), userInfo.getChannelId());
+            rewardService.getWithCache(GameTypeEnum.MANGKUKULAM, userInfo.getPId(), userInfo.getChannelId());
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }

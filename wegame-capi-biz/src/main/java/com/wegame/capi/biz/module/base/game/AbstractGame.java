@@ -124,7 +124,12 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
         AssertUtil.assertNotEmpty(sourceReelWheelChart, ErrorCode.ERR_INTER, "sourceReelWheelChart is empty");
         AssertUtil.assertTrue(resultListCount > 0, ErrorCode.ERR_INTER, "resultListCount is empty");
         // 生成随机数：从当前随机数开始，顺序循环取row个元素id
-        int reelSymbolStartIndex = randomService.randomInt(0, sourceReelWheelChart.size() - 1);
+        int sourceReelWheelSize = sourceReelWheelChart.size();
+        int reelSymbolStartIndex = 0;
+        // 边界问题处理:轮代表数量如果==1,randomService.randomInt内部会报错
+        if (sourceReelWheelSize > 1) {
+            reelSymbolStartIndex = randomService.randomInt(0, sourceReelWheelSize - 1);
+        }
         // 取出当前列的元素id 进行元素填充
         return GameUtil.circularGetList(sourceReelWheelChart, reelSymbolStartIndex, resultListCount);
     }

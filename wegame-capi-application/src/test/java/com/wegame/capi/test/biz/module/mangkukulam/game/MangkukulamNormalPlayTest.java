@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Random;
 
 @Slf4j
-public class MangkukulamGameTest extends BaseTest {
+public class MangkukulamNormalPlayTest extends BaseTest {
     @Autowired
     MangkukulamGameNormalPlay normalPlay;
 
-    private static final boolean PRINT_SYMBOLS = false;
+    private static final boolean PRINT_SYMBOLS = true;
     private static final int MAX_TIMES_IN_MS = 10;
 
 
@@ -60,7 +60,7 @@ public class MangkukulamGameTest extends BaseTest {
                 .id("1001")
                 .pId("50")
                 .channelId("1050")
-                .gameId(GameTypeEnum.LAM_ANG.getId())
+                .gameId(GameTypeEnum.MANGKUKULAM.getId())
                 .playerId(TEST_PLAYER_ID)
                 .playerName(TEST_PLAYER_NAME)
                 .userName(TEST_USER_NAME)
