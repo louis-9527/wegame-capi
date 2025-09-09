@@ -40,9 +40,11 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+
 @Slf4j
 @Service
-@ConditionalOnExpression(value = "${game.enable.Malakas}")
+@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "}")
 public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
 
     @Autowired

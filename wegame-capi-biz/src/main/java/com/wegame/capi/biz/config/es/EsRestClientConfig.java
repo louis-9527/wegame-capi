@@ -15,8 +15,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+
 @Configuration
-@ConditionalOnExpression(value = "${game.enable.Malakas}")
+@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "}")
 public class EsRestClientConfig {
     @Value("${spring.elasticsearch.rest.uris}")
     private String uris;
