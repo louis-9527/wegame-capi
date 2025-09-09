@@ -12,7 +12,7 @@ dynamic:
       bakunawa: cd_Bakunawa
       diwata_mayari: cd_DiwataMayari
       kapre: cd_Kapre
-      mangkukulam: ${api.game.cp.channelId}_Mangkukulam
+      mangkukulam: cd_Mangkukulam
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud

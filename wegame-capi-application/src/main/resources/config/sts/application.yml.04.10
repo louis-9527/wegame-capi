@@ -142,7 +142,7 @@ dynamic:
     pulsar_url: pulsar://pulsar-sw-main-external.client88.me:6650
     pulsar_topic: dos_game_slot_event
     pulsar_group:
-      maria_makiling: ${api.game.cp.channelId}_MariaMakiling
+      maria_makiling: cd_MariaMakiling
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud

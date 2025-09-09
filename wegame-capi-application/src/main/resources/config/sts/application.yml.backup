@@ -178,7 +178,7 @@ dynamic:
     pulsar_url: pulsar://pulsar-proxy-sw-main-stress.client88.me:6650
     pulsar_topic: dos_game_slot_event
     pulsar_group:
-      maria_makiling: ${api.game.cp.channelId}_MariaMakiling
+      maria_makiling: cd_MariaMakiling
     pulsar:
       auth:
         issuer_url: null

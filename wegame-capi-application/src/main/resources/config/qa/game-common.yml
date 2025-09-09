@@ -10,7 +10,7 @@ dynamic:
       ibong: cd_Ibong
       lamang: cd_Lamang
       bakunawa: cd_Bakunawa
-      mangkukulam: ${api.game.cp.channelId}_Mangkukulam
+      mangkukulam: cd_Mangkukulam
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud
