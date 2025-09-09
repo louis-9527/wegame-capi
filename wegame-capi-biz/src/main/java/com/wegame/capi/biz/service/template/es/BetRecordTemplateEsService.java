@@ -23,7 +23,9 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -35,20 +37,28 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+
 @Slf4j
 @Service
-public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> {
+@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "}")
+public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> implements InitializingBean {
 
     @Autowired
     ElasticsearchRestTemplate elasticsearchRestTemplate;
-
     @Autowired
     RestHighLevelClient restHighLevelClient;
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        log.info(BUILD_BEAN_FORMAT, "BetRecordTemplateEsService");
+    }
 
     public boolean add(TemplateTypeEnum templateType, T t) {
         T saveT = elasticsearchRestTemplate.save(t);
