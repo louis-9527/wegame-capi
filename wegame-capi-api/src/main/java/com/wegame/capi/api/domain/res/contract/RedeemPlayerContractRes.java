@@ -82,7 +82,7 @@ public class RedeemPlayerContractRes implements Serializable {
         /**
          * freeBet
          */
-        private Integer freeBet;
+        private BigDecimal freeBet;
         /**
          * count
          */
