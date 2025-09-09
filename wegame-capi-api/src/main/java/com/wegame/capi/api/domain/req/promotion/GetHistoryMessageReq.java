@@ -18,7 +18,7 @@ public class GetHistoryMessageReq extends BaseReq {
      * 页码
      */
     private Integer page;
-    /**
+    /**n
      * 条数
      */
     private Integer limit;

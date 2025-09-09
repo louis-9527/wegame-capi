@@ -34,7 +34,8 @@ public class FilterConfig {
             "/bag/*",
             "/mission/*",
             "/treasure/*",
-            "/freeSpin/*"
+            "/freeSpin/*",
+            "/contract/*"
     };
 
     @Bean
