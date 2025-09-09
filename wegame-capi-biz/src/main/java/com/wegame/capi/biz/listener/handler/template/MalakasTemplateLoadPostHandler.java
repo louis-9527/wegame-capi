@@ -3,6 +3,7 @@ package com.wegame.capi.biz.listener.handler.template;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import com.wegame.base.enums.BooleanEnum;
+import com.wegame.base.enums.EnvEnum;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
@@ -14,6 +15,7 @@ import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -53,6 +55,9 @@ public class MalakasTemplateLoadPostHandler extends AbstractTemplateLoadPostHand
     @Override
     public void handle() {
         if (!supportGame(GameTypeEnum.MALAKAS)) {
+            return;
+        }
+        if (StringUtils.equals(env, EnvEnum.LOCAL.getValue()) || StringUtils.equals(env, EnvEnum.DEV.getValue())) {
             return;
         }
         MalakasConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();

@@ -1,31 +1,31 @@
 ### spring:redis
-spring:
-  elasticsearch:
-    rest:
-      uris: http://localhost:9200
-      connection-timeout: 1s
-      read-timeout: 1
-      username: elastic
-      password: Innovatech@123
-  data:
-    elasticsearch:
-      repositories:
-        enabled: false
-#      # 启动时自动建索引
-#      auto-index-creation: true
-
-#### spring:redis local
 #spring:
 #  elasticsearch:
 #    rest:
-#      uris: es-sg-u7g4f8un40002xovb.public.elasticsearch.aliyuncs.com:9200
-#      connection-timeout: 5
+#      uris: http://localhost:9200
+#      connection-timeout: 1
+#      read-timeout: 1
 #      username: elastic
 #      password: Innovatech@123
-#      read-timeout: 1
 #  data:
 #    elasticsearch:
 #      repositories:
 #        enabled: false
+#      # 启动时自动建索引
+#      auto-index-creation: true
+
+#### spring:redis local
+spring:
+  elasticsearch:
+    rest:
+      uris: es-sg-u7g4f8un40002xovb.public.elasticsearch.aliyuncs.com:9200
+      connection-timeout: 5
+      username: elastic
+      password: Innovatech@123
+      read-timeout: 1
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
 #      # 启动时自动建索引
 ##      auto-index-creation: true
