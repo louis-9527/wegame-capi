@@ -48,6 +48,10 @@ public class RedeemPlayerContractDo implements Serializable {
          */
         private String gameName;
         /**
+         * rewardId
+         */
+        private String rewardId;
+        /**
          * imgURL
          */
         private String imgURL;

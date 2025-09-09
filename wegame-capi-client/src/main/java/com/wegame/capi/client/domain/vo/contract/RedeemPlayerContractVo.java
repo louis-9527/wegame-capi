@@ -38,6 +38,8 @@ public class RedeemPlayerContractVo implements Serializable {
         private String gameCode;
         @ApiModelProperty(value = "gameName", required = true)
         private String gameName;
+        @ApiModelProperty(value = "rewardId", required = true)
+        private String rewardId;
         @ApiModelProperty(value = "imgURL", required = true)
         private String imgURL;
         @ApiModelProperty(value = "rewardName", required = true)
