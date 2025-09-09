@@ -8,7 +8,9 @@ dynamic:
       maria_makiling: cd_MariaMakiling
       malakas: cd_Malakas
       ibong: cd_Ibong
+      lamang: cd_Lamang
       bakunawa: cd_Bakunawa
+      mangkukulam: cd_Mangkukulam
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud
