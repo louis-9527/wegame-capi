@@ -18,7 +18,10 @@ import org.apache.commons.lang3.StringUtils;
 public enum GamePlayTypeEnum {
 
     NORMAL_PLAY("NORMAL_PLAY", "NORMAL_PLAY"),
-    EVENT_PLAY("EVENT_PLAY", "EVENT_PLAY");
+    EVENT_PLAY("EVENT_PLAY", "EVENT_PLAY"),
+    TEMPLATE_PLAY("TEMPLATE_PLAY", "TEMPLATE_PLAY"),
+
+    ;
 
     /**
      * 枚举码.

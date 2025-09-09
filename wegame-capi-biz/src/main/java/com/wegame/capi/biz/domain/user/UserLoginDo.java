@@ -54,5 +54,10 @@ public class UserLoginDo implements Serializable {
      * 中台token
      */
     private String token;
+    /**
+     * AB测试(afe: A, aff: B)
+     * @see com.wegame.capi.client.enums.AbTypeEnum
+     */
+    private String ut;
 }
 

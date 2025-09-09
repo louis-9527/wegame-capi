@@ -39,6 +39,7 @@ public class GameEnableInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (!isGameEnabled(request)) {
+            log.info("preHandle - game : {} is not enabled", getGameId(request));
             CommonResponse<Object> commonResponse = CommonResponse.build(ErrorCode.ERR_PARAM.getCode(), ErrorCode.ERR_PARAM.getMsg());
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");

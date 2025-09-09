@@ -162,7 +162,7 @@ public class RestTemplateWarmUpHelper {
                     .parallel()
                     .forEach(i -> {
                         try {
-                            commonBaseApi.healthCheck();
+//                            commonBaseApi.healthCheck();
                         } catch (Exception ignored) {
                             // 忽略所有异常
                         }

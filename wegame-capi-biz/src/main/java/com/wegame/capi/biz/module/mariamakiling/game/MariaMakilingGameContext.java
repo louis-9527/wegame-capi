@@ -21,6 +21,7 @@ public class MariaMakilingGameContext extends AbstractGameContext {
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "mariaMakilingGameNormalPlay")
             .put(GamePlayTypeEnum.EVENT_PLAY,"mariaMakilingGameEventPlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY,"mariaMakilingGameTemplatePlay")
             .build();
 
     @Autowired

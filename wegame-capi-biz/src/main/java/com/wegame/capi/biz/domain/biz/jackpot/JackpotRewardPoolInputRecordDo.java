@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz.jackpot;
 
+import com.wegame.capi.common.enums.JackpotAccFlagEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -43,6 +44,10 @@ public class JackpotRewardPoolInputRecordDo implements Serializable {
      * mini金额
      */
     private Long miniAmount;
+    /**
+     * 累计标识：0：未累计， 1：已累计
+     */
+    private JackpotAccFlagEnum accFlag;
     /**
      * 创建人
      */

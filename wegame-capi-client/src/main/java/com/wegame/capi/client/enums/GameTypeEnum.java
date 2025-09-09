@@ -36,7 +36,7 @@ public enum GameTypeEnum {
     BAKUNAWA("zhumeng005",
             "Bakunawa",
             "bakunawa_bet_record",
-            "bakunawa_game_record", 300L,1.2),
+            "bakunawa_game_record", 300L,2),
     DIWATA_MAYARI("zhumeng006",
             "DiwataMayari",
             "diwataMayari_bet_record",
