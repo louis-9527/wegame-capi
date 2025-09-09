@@ -13,6 +13,7 @@ dynamic:
       diwata_mayari: cd_DiwataMayari
       kapre: cd_Kapre
       mangkukulam: cd_Mangkukulam
+      sirena: cd_Sirena
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud
