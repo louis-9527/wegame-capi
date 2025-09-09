@@ -32,6 +32,10 @@ public class RedeemAchievementConverter {
                 .betValue(reward.getBetValue())
                 .balanceRequired(reward.getBalanceRequired())
                 .starLevel(reward.getStarLevel())
+                .rewardId(reward.getRewardId())
+                .gameId(reward.getGameId())
+                .gameCode(reward.getGameCode())
+                .gameName(reward.getGameName())
                 .build();
     }
 
@@ -59,6 +63,10 @@ public class RedeemAchievementConverter {
                 .betValue(reward.getBetValue())
                 .balanceRequired(reward.getBalanceRequired())
                 .starLevel(reward.getStarLevel())
+                .rewardId(reward.getRewardId())
+                .gameId(reward.getGameId())
+                .gameCode(reward.getGameCode())
+                .gameName(reward.getGameName())
                 .build();
     }
 }

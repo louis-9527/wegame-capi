@@ -2,7 +2,7 @@
 spring:
   redis:
     connectTimeout: 500
-    timeout: 500
+    timeout: 800
     cluster:
       nodes:
         - qat-makiling-redis-sg.3ttnyh.clustercfg.apse1.cache.amazonaws.com:6379

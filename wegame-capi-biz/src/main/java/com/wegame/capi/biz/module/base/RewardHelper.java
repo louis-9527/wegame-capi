@@ -23,14 +23,12 @@ public class RewardHelper {
             return RewardSubTypeEnum.NONE;
         }
         double rewardTimes = NumberUtil.div(totalRewardAmount.longValue(), betAmount.longValue());
-        if (rewardTimes >= 5 && rewardTimes < 10) {
+        if (rewardTimes >= 10 && rewardTimes < 30) {
             return RewardSubTypeEnum.NICE;
-        } else if (rewardTimes >= 10 && rewardTimes < 15) {
+        } else if (rewardTimes >= 30 && rewardTimes < 50) {
             return RewardSubTypeEnum.MEGA;
-        } else if (rewardTimes >= 15 && rewardTimes < 20) {
+        } else if (rewardTimes >= 50) {
             return RewardSubTypeEnum.SUPER;
-        } else if (rewardTimes >= 20) {
-            return RewardSubTypeEnum.SENSATIONAL;
         } else {
             return RewardSubTypeEnum.OTHER;
         }
