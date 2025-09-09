@@ -51,5 +51,13 @@ public class RedeemAchievementVo implements  Serializable {
         private BigDecimal betValue;
         @ApiModelProperty(value = "使用余额要求", required = true)
         private BigDecimal balanceRequired;
+        @ApiModelProperty(value = "奖励id", required = true)
+        private String rewardId;
+        @ApiModelProperty(value = "游戏id", required = true)
+        private String gameId;
+        @ApiModelProperty(value = "游戏code", required = true)
+        private String gameCode;
+        @ApiModelProperty(value = "游戏名称", required = true)
+        private String gameName;
     }
 }

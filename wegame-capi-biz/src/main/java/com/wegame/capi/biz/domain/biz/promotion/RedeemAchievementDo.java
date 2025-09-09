@@ -71,5 +71,21 @@ public class RedeemAchievementDo implements Serializable {
          * 使用余额要求
          */
         private BigDecimal balanceRequired;
+        /**
+         * 奖励id
+         */
+        private String rewardId;
+        /**
+         * 游戏id
+         */
+        private String gameId;
+        /**
+         * 游戏code
+         */
+        private String gameCode;
+        /**
+         * 游戏名称
+         */
+        private String gameName;
     }
 }
