@@ -55,7 +55,7 @@ public class RedeemPlayerContractVo implements Serializable {
         @ApiModelProperty(value = "campaignId", required = true)
         private String campaignId;
         @ApiModelProperty(value = "freeBet", required = true)
-        private Integer freeBet;
+        private BigDecimal freeBet;
         @ApiModelProperty(value = "count", required = true)
         private Integer count;
     }
