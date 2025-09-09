@@ -83,5 +83,21 @@ public class RedeemTreasureRes implements Serializable {
          * 星级
          */
         private Integer starLevel;
+        /**
+         * 奖励id
+         */
+        private String rewardId;
+        /**
+         * 游戏id
+         */
+        private String gameId;
+        /**
+         * 游戏code
+         */
+        private String gameCode;
+        /**
+         * 游戏名称
+         */
+        private String gameName;
     }
 }
