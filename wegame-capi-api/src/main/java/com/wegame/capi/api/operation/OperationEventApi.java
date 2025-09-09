@@ -10,7 +10,9 @@ import com.wegame.capi.api.base.SingleWalletBaseApi;
 import com.wegame.capi.api.domain.req.operation.UpdateEventsStatusReq;
 import com.wegame.capi.api.domain.res.operation.UpdateEventsStatusRes;
 import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
+import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -35,6 +37,8 @@ public class OperationEventApi extends SingleWalletBaseApi {
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
     @Value("${api.game.operationDomain}")
     String operationDomain;
+    @Autowired
+    private GameApiProperty gameApiProperty;
 
     /**
      * 更新事件状态
@@ -43,19 +47,22 @@ public class OperationEventApi extends SingleWalletBaseApi {
      * @return 更新结果
      */
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
-    public UpdateEventsStatusRes updateEventsStatus(UpdateEventsStatusReq req) {
+    public UpdateEventsStatusRes updateEventsStatus(String channelId,UpdateEventsStatusReq req) {
         try {
             // 参数加密
             String reqString = JSON.toJSONString(req);
             log.info("updateEventsStatus req:{}", reqString);
             String sign = SecureUtil.md5(reqString);
-            String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateKey);
-            String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(cpPrivateIv);
+            // 获取渠道对应的cpPrivateKey 和 cpPrivateIv
+
+            GameApiProperty.PrivateInfo privateInfo = gameApiProperty.getPrivateInfo(channelId);
+            String keyString = dynamicOperationEncryptionHelper.encryptWithPublicKey(channelId,privateInfo.getPrivateKey());
+            String ivString = dynamicOperationEncryptionHelper.encryptWithPublicKey(channelId,privateInfo.getPrivateIv());
             // 构建header
             MultiValueMap<String, String> headers = buildHeaders(sign, keyString, ivString);
             UpdateEventsStatusReq.OperationReq operationReq = UpdateEventsStatusReq.OperationReq.builder()
-                    .agentCode(cpChannelId)
-                    .message(dynamicOperationEncryptionHelper.encryptWithAES256CBC(reqString))
+                    .agentCode(channelId)
+                    .message(dynamicOperationEncryptionHelper.encryptWithAES256CBC(channelId,reqString))
                     .build();
             RequestEntity<UpdateEventsStatusReq.OperationReq> requestEntity = new RequestEntity<>(operationReq,
                     headers,

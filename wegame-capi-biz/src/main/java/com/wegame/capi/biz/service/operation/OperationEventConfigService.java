@@ -57,6 +57,7 @@ public class OperationEventConfigService extends AbstractService {
     }
 
     public List<Double> listMultiple(OperationEventTypeEnum typeEnum) {
+        // 从干预模版中获取倍率范围
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.group().addToSet("multiple").as("values")
         );

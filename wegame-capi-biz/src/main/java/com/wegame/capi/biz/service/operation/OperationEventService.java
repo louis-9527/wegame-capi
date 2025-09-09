@@ -46,9 +46,14 @@ public class OperationEventService extends AbstractService {
             OperationEventPo po = OperationEventConvert.doToPo(eventDo, OptEnum.ADD);
             AssertUtil.assertNotNull(po, ErrorCode.ERR_INTER);
             OperationEventPo insertPo = getMongoTemplate(gameEnum.getGameType()).insert(po, gameEnum.getEventCollectionName());
-            String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, eventDo.getGameId(), eventDo.getPlayerName());
+            // 收到新的干预事件后，需要清空redis缓存中的干预事件
+            // 缓存命名（Map结构）：用户+游戏+渠道+玩家名称
+            // key：
+            String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, eventDo.getGameId(), eventDo.getChannelId(), eventDo.getPlayerName());
+            // *** OPERATION_EVENT_EMPTY_KEY  标志当前redis中是否存在干预事件
             Boolean empty = redisTemplate.opsForHash().hasKey(catch_key, OPERATION_EVENT_EMPTY_KEY);
             if (empty) {
+                // 若redis中不存在干预事件，则删除整个缓存Map
                 redisTemplate.delete(catch_key);
             }
             return insertPo.getId();
@@ -76,24 +81,32 @@ public class OperationEventService extends AbstractService {
         return OperationEventConvert.poToDoList(poList);
     }
 
-    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, OperationEventTypeEnum dynamicOperationGame) {
-        String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, dynamicOperationGame.getGameType().getId(), playName);
+    /**
+     * 获取用户有效的干预事件
+     */
+    public List<DynamicOperationEffectEventCatchDo> getEffectList(String playName, String channelId, OperationEventTypeEnum dynamicOperationGame) {
+        // 从缓存中获取用户干预事件
+        String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, dynamicOperationGame.getGameType().getId(), channelId, playName);
         Map<Object, Object> entries = redisTemplate.opsForHash().entries(catch_key);
         if (!entries.isEmpty()) {
+            //// 缓存中存在
             if (entries.containsKey(OPERATION_EVENT_EMPTY_KEY)) {
+                //// 缓存中存在，但是没有干预事件，则直接返回空。 （主要为了防止大部分流量达到db）
                 return new ArrayList<>();
             }
             List<DynamicOperationEffectEventCatchDo> resultList = new ArrayList<>(entries.size());
             for (Map.Entry<Object, Object> entry : entries.entrySet()) {
                 resultList.add(JSON.parseObject((String) entry.getValue(), DynamicOperationEffectEventCatchDo.class));
             }
+            // 按照事件的生效日期生序排列处理：
             return resultList.stream()
                     .sorted(Comparator.comparing(DynamicOperationEffectEventCatchDo::getEffectedTime))
                     .collect(Collectors.toList());
         }
-
-        List<OperationEventPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(OperationEventQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId()), OperationEventPo.class, dynamicOperationGame.getEventCollectionName());
+        //// 缓存中不存在，从数据库中获取
+        List<OperationEventPo> operationPoList = getMongoTemplate(dynamicOperationGame.getGameType()).find(OperationEventQueryBuilder.buildQueryEffectList(playName, dynamicOperationGame.getGameType().getId(), channelId), OperationEventPo.class, dynamicOperationGame.getEventCollectionName());
         if (CollectionUtils.isEmpty(operationPoList)) {
+            // 如果db中干预事件为空，则在缓存中设置干预事件为空的标志
             Map<String, String> catchMap = new HashMap<>();
             catchMap.put(OPERATION_EVENT_EMPTY_KEY, OPERATION_EVENT_EMPTY_KEY);
             this.saveCatch(catch_key, catchMap);
@@ -143,21 +156,22 @@ public class OperationEventService extends AbstractService {
         return null;
     }
 
-    public void updateOperationUseStatus(Long id,OperationEventStatusEnum eventStatusEnum, OperationEventTypeEnum gameEnum) {
+    public void updateOperationUseStatus(Long id, OperationEventStatusEnum eventStatusEnum, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         String catch_key = String.format(Constants.OPERATION_EVENT_ING_KEY, gameEnum.getGameType().getId(), id);
         redisTemplate.opsForValue().set(catch_key, String.valueOf(eventStatusEnum.getCode()), Constants.OPERATION_EVENT_ING_EXPIRED, TimeUnit.SECONDS);
     }
 
     public void cleanOperationUseStatus(Long id, OperationEventTypeEnum gameEnum) {
+        // 该缓存为记录当前干预事件的干预状态
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         String catch_key = String.format(Constants.OPERATION_EVENT_ING_KEY, gameEnum.getGameType().getId(), id);
         redisTemplate.delete(catch_key);
     }
 
-    public void cleanOperationByCatch(Long id, String playerName, OperationEventTypeEnum gameEnum) {
+    public void cleanOperationByCatch(Long id, String channelId,String playerName, OperationEventTypeEnum gameEnum) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
-        String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, gameEnum.getGameType().getId(), playerName);
+        String catch_key = String.format(Constants.OPERATION_EVENT_CACHE_KEY, gameEnum.getGameType().getId(),channelId, playerName);
         redisTemplate.opsForHash().delete(catch_key, String.valueOf(id));
     }
 
@@ -172,6 +186,7 @@ public class OperationEventService extends AbstractService {
             args.add(Long.valueOf(entry.getKey()));
             args.add(entry.getValue());
         }
+        // 过期时间： 24小时
         args.add(24 * 60 * 60); // 24小时转换成秒
         redisTemplate.execute(
                 new DefaultRedisScript<>(luaScript, Long.class),

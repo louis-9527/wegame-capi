@@ -17,7 +17,10 @@ import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * 抽象游戏
@@ -34,7 +37,7 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
 
     public long generateGameRecordId() {
         long gameRecordId = snowflakeIdGenerator.nextId();
-         log.info("generateGameRecord id:{}", gameRecordId);
+        // log.info("generateGameRecord id:{}", gameRecordId);
         return gameRecordId;
     }
 
@@ -82,6 +85,19 @@ public abstract class AbstractGame<R extends ToVoConverter> implements Game<R> {
     public SymbolDo randomNormalSymbol(Integer randomNumber, GameInfoDo gameInfo, TreeMap<String, Integer> columnProbabilisticMap) {
         SymbolEnum symbol = randomOneSymbol(columnProbabilisticMap, randomNumber);
         return gameInfo.getSymbolById(symbol.getId());
+    }
+
+    public String getConfigName(TreeMap<String, Integer> weightConfigMap, int randomNumber) {
+        AssertUtil.assertTrue(MapUtils.isNotEmpty(weightConfigMap), ErrorCode.ERR_INTER);
+        int startVal = 0;
+        for (Map.Entry<String, Integer> entry : CollectionUtils.emptyIfNull(weightConfigMap.entrySet())) {
+            if (randomNumber > startVal && randomNumber <= startVal + entry.getValue()) {
+                return entry.getKey();
+            } else {
+                startVal += entry.getValue();
+            }
+        }
+        throw new BusinessException(ErrorCode.ERR_INTER);
     }
 
     public SymbolSizeEnum randomSymbolSize(Map<String, Integer> map, int randomNumber) {

@@ -23,11 +23,11 @@ public class RewardService {
     @Autowired
     RedisTemplate redisTemplate;
 
-    @Cacheable(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id")
-    public RewardInfoDo getWithCache(GameTypeEnum gameType) {
+    @Cacheable(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id + '_'  + #pId + '_'  + #channelId")
+    public RewardInfoDo getWithCache(GameTypeEnum gameType, String pId, String channelId) {
         RewardInfoDo rewardInfoDo = new RewardInfoDo();
         try {
-            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
+            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId(), pId, channelId);
             List<RewardNotifyInfoDo> messageList = (List<RewardNotifyInfoDo>) redisTemplate.opsForList().range(key, 0, -1);
             if (CollectionUtils.isNotEmpty(messageList)) {
                 rewardInfoDo.setRewardMessageList(messageList.stream()
@@ -40,8 +40,8 @@ public class RewardService {
         return rewardInfoDo;
     }
 
-    @CacheEvict(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id")
-    public void evict(GameTypeEnum gameType) {
+    @CacheEvict(value = CacheConstants.REWARD_INFO, key = "#gameType.name + '_'  + #gameType.id + '_'  + #pId + '_'  + #channelId")
+    public void evict(GameTypeEnum gameType, String pId, String channelId) {
         // do nothing
     }
 }

@@ -58,7 +58,6 @@ public abstract   class AbstractMalakasBetStrategy
         return malakasGameContext;
     }
 
-
     @Override
     public AbstractBetRecordManager<MalakasGameRecordDo> betRecordManager() {
         return malakasBetRecordManager;
@@ -77,7 +76,7 @@ public abstract   class AbstractMalakasBetStrategy
 
     @Override
     public BetResultDo<MalakasBetRecordDetailDo> bet(BetDo betDo) {
-        if (!BetSubTypeEnum.isFreeWheel(betDo.getBetSubType().getCode())) {
+        if (!BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
             // 非免费轮投注流程
             //// 1、是否使用星卡
             if (isCanStarCardBet(betDo)) {
@@ -99,7 +98,7 @@ public abstract   class AbstractMalakasBetStrategy
             }
         } else {
             // 免费轮投注, 走查询
-            return betForFreeWheel(betDo);
+            return betForFreeWheelQuery(betDo);
         }
     }
 
@@ -109,7 +108,7 @@ public abstract   class AbstractMalakasBetStrategy
     private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<MalakasGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
+        List<MalakasGameRecordDo> list = gameContext().play(build(getGamePlayType(), betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
@@ -123,7 +122,7 @@ public abstract   class AbstractMalakasBetStrategy
     /**
      * 免费轮投注
      */
-    private BetResultDo<MalakasBetRecordDetailDo> betForFreeWheel(BetDo betDo) {
+    private BetResultDo<MalakasBetRecordDetailDo> betForFreeWheelQuery(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         List<MalakasGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
                 GameRecordQuery.builder()
