@@ -43,8 +43,6 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
             return this.decideForNewPlayer(context);
         } else {
             return this.decideForNormal(context);
-            // 非新人，走常态干预，交给rtp决策
-            // 如果没有中奖：交给空盘干预处理
         }
     }
 
@@ -73,7 +71,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         return InnerDosDecideResult.builder().templateIdRange(multipleRange).build();
     }
 
-    public Integer calcActualWeight(Map<String, BigDecimal> templateRangeMap, Integer randomWeight, BigDecimal dosCoefficient) {
+    private Integer calcActualWeight(Map<String, BigDecimal> templateRangeMap, Integer randomWeight, BigDecimal dosCoefficient) {
         //
         Integer weightSum = templateRangeMap.values().stream().reduce(0, Integer::sum);
         // 随机一个权重
