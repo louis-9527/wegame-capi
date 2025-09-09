@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.config.es;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -15,8 +16,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 
+@Slf4j
 @Configuration
 @ConditionalOnExpression(value = "${" + MALAKAS_PROP + "}")
 public class EsRestClientConfig {
@@ -33,6 +36,7 @@ public class EsRestClientConfig {
 
     @Bean
     public RestHighLevelClient restHighLevelClient() {
+        log.info(BUILD_BEAN_FORMAT, "restHighLevelClient");
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(
                 AuthScope.ANY,

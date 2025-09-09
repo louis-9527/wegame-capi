@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -40,10 +41,11 @@ import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolNullArr;
 import static com.wegame.capi.client.enums.TemplateTypeEnum.MALAKAS;
 import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 @Slf4j
 @Component("malakasGameTemplatePlay")
-@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "}")
+@ConditionalOnProperty(name = MALAKAS_PROP, havingValue = TRUE_VAL)
 public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
