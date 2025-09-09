@@ -49,9 +49,9 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupBakunawa;
     @Value("${dynamic.operation.pulsar_group.lamang:cd_Lamang}")
     String dynamicOperationGroupLamang;
-    @Value("${dynamic.operation.pulsar_group.diwata_mayari:_DiwataMayari}")
+    @Value("${dynamic.operation.pulsar_group.diwata_mayari:cd_DiwataMayari}")
     String dynamicOperationGroupDiwataMayari;
-    @Value("${dynamic.operation.pulsar_group.kapre:_Kapre}")
+    @Value("${dynamic.operation.pulsar_group.kapre:cd_Kapre}")
     String dynamicOperationGroupKapre;
     @Value("${dynamic.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;

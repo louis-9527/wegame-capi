@@ -10,6 +10,8 @@ dynamic:
       ibong: cd_Ibong
       lamang: cd_Lamang
       bakunawa: cd_Bakunawa
+      diwata_mayari: cd_DiwataMayari
+      kapre: cd_Kapre
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud
