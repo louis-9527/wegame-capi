@@ -6,6 +6,10 @@ import com.wegame.capi.biz.domain.user.UserDo;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.biz.service.UserService;
 import com.wegame.capi.biz.service.backend.GameMaintainConfigService;
+import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
+import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.dao.mapper.domain.user.UserQuery;
 import com.wegame.capi.infrastructure.config.properties.GameProperty;
@@ -43,6 +47,11 @@ public class AppLaunchPostProcessor {
     @Autowired
     RestTemplateWarmUpHelper restTemplateWarmUpHelper;
 
+    @Autowired
+    JackpotRewardPoolService jackpotRewardPoolService;
+    @Autowired
+    JackpotUserRewardRecordService jackpotUserRewardRecordService;
+
     @Async(defaultThreadPoolExecutor)
     public void postProcess() {
         businessWarmUp();
@@ -55,6 +64,13 @@ public class AppLaunchPostProcessor {
         try {
             gameProperty.enabledGameTypes().forEach(gameType -> rewardService.getWithCache(gameType));
             gameProperty.enabledGameTypes().forEach(gameType -> gameMaintainConfigService.selectByGameId(gameType.getId()));
+            // jackpot
+            gameProperty.enabledGameTypes().forEach(item -> {
+                if (item == GameTypeEnum.LAM_ANG) {
+                    jackpotRewardPoolService.listAllWithCache(JackpotTypeEnum.LAM_ANG);
+                    jackpotUserRewardRecordService.getHighestUserRewardRecordWithCache(JackpotTypeEnum.LAM_ANG);
+                }
+            });
         } catch (Exception e) {
             log.error("businessWarmUp error", e);
         }

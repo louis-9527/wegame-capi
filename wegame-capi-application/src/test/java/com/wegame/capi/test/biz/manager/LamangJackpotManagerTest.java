@@ -13,17 +13,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-public class LamangJackpotManagerTest  extends BaseTest {
+public class LamangJackpotManagerTest extends BaseTest {
     @Autowired
     @Qualifier("lamangJackpotManager")
     private LamangJackpotManager lamangJackpotManager;
 
 
     @Test
-    public void batchAddJackpotRewardRecord(){
+    public void batchAddJackpotRewardRecord() {
         Operator operator = Operator.builder()
                 .adminId(1L)
                 .userId(1L)
@@ -56,14 +57,14 @@ public class LamangJackpotManagerTest  extends BaseTest {
 
         try {
             lamangJackpotManager.batchAddRewardPoolInputRecord(rewardPoolInputRecordDos);
-        }catch (Exception e){
+        } catch (Exception e) {
             List<Long> failList = new ArrayList<>();
-            rewardPoolInputRecordDos.forEach(record->{
+            rewardPoolInputRecordDos.forEach(record -> {
                 try {
-                    lamangJackpotManager.addRewardPoolInputRecord(record);
-                }catch (DuplicateKeyException t){
+                    lamangJackpotManager.batchAddRewardPoolInputRecord(Arrays.asList(record));
+                } catch (DuplicateKeyException t) {
                     log.warn("Error add user reward record, record: {}, error: {}", record, t.getErrorMessage());
-                }catch (Exception t){
+                } catch (Exception t) {
                     failList.add(record.getId());
                     log.error("Error add user reward record", t);
                 }

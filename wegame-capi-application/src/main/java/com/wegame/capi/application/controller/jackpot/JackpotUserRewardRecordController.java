@@ -57,6 +57,7 @@ public class JackpotUserRewardRecordController extends AbstractJackpotController
         return build(doToVo(jackpotManager(gameType).getUserRewardRecord(JackpotUserRewardRecordQuery.builder()
                 .betRecordId(Long.valueOf(betRecordId))
                 .gameRecordId(Long.valueOf(gameRecordId))
+                .fromPrimary(true)
                 .build())));
     }
 

@@ -82,25 +82,25 @@ public class LamangSymbolUtil {
         return count;
     }
 
-    /**
-     * 统计新的scatter+1
-     *
-     * @param symbolArr
-     * @return
-     */
-    public static int countNewScatter1InWheel(LamangSymbolDo[][] symbolArr) {
-        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
-        int count = 0;
-        for (int row = 0; row < symbolArr.length; row++) {
-            for (int col = 0; col < symbolArr[row].length; col++) {
-                LamangSymbolDo current = symbolArr[row][col];
-                if (Objects.nonNull(current) && current.getId().equals(LAMANG_SCATTER1.getId()) && current.isNewSymbol()) {
-                    count = count + 1;
-                }
-            }
-        }
-        return count;
-    }
+    //    /**
+    //     * 统计新的scatter+1
+    //     *
+    //     * @param symbolArr
+    //     * @return
+    //     */
+    //    public static int countNewScatter1InWheel(LamangSymbolDo[][] symbolArr) {
+    //        AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
+    //        int count = 0;
+    //        for (int row = 0; row < symbolArr.length; row++) {
+    //            for (int col = 0; col < symbolArr[row].length; col++) {
+    //                LamangSymbolDo current = symbolArr[row][col];
+    //                if (Objects.nonNull(current) && current.getId().equals(LAMANG_SCATTER1.getId()) && current.isNewSymbol()) {
+    //                    count = count + 1;
+    //                }
+    //            }
+    //        }
+    //        return count;
+    //    }
 
     public static int countScatterInWheel(LamangSymbolDo[][] symbolArr) {
         AssertUtil.assertNotNull(symbolArr, ErrorCode.ERR_PARAM);
@@ -159,7 +159,6 @@ public class LamangSymbolUtil {
         if (CollectionUtils.isEmpty(gameRecordList)) {
             return;
         }
-        long startTime = System.currentTimeMillis();
         gameRecordList.parallelStream().forEach(gameRecord -> {
             LamangSymbolDo[][] symbolArr = gameRecord.getWheel().getSymbolArr();
             for (int row = ONE_ROW_INDEX; row < symbolArr.length; row++) {
@@ -172,8 +171,6 @@ public class LamangSymbolUtil {
                 }
             }
         });
-        long endTime = System.currentTimeMillis();
-        log.info("postPlaceholderSymbol cost time: {} ms", (endTime - startTime));
     }
 
 

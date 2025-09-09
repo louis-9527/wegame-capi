@@ -1,9 +1,10 @@
 package com.wegame.capi.biz.listener.jackpot;
 
 import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.mongodb.DuplicateKeyException;
+import com.wegame.base.exception.RateLimitException;
 import com.wegame.base.executor.WsThreadPoolExecutor;
 import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.ThreadMdcUtil;
@@ -14,6 +15,7 @@ import com.wegame.capi.biz.manager.jackpot.AbstractJackpotManager;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.JackpotAccFlagEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolInputTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -23,6 +25,7 @@ import org.apache.pulsar.client.api.Messages;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import javax.annotation.PostConstruct;
@@ -64,6 +67,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
 
     @PostConstruct
     public void init() {
+        // 构建执行任务线程池
         CustomizableThreadFactory threadFactory = new CustomizableThreadFactory(getGameType().getName() + "-jackpot-consumber-pool-");
         threadFactory.setDaemon(true);
         executor = new WsThreadPoolExecutor(getCorePoolSize(),
@@ -106,8 +110,9 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
                         MDC.put(ThreadMdcUtil.TRACE_ID, UUID.randomUUID().toString(true));
                         Messages<byte[]> messages = getConsumer().batchReceive();
                         if (messages == null || messages.size() == 0) {
-                            log.warn("{}, not received any messages, sleep one second", getGameType().getName());
-                            Thread.currentThread().sleep(2000);
+                            long sleepSeconds = RandomUtil.randomInt(5, 10);
+                            log.warn("{}, not received any jackpot messages, sleep {} second", getGameType().getName(), sleepSeconds);
+                            Thread.sleep(sleepSeconds * 1000);
                             continue;
                         }
                         onMessages(messages);
@@ -131,12 +136,12 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
                     this.getTypeReference());
             BetRecordDo<T> betRecord = mqMessage.getBody();
             if (message.getRedeliveryCount() > 0) {
-                log.info("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}, messageId: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount(), message.getMessageId());
+                log.warn("{}, processMessages, msgType:{}, msgId:{}, retryTimes: {}, messageId: {}", getGameType().getName(), mqMessage.getType(), mqMessage.getMsgId(), message.getRedeliveryCount(), message.getMessageId());
             }
             if (mqMessage.getType().equals(MessageTypeEnum.ADD.getCode())) {
                 // 避免一批次消息里面有重复消息
                 addMessageIdList.add(message.getMessageId());
-            } else if (mqMessage.getType().equals(MessageTypeEnum.UPDATE.getCode()) && Objects.equals(BetStatusEnum.SUCCESS.getCode(),betRecord.getStatus())) {
+            } else if (mqMessage.getType().equals(MessageTypeEnum.UPDATE.getCode()) && Objects.equals(BetStatusEnum.SUCCESS.getCode(), betRecord.getStatus())) {
                 // 避免一批次消息里面有重复消息
                 if (!updateMessageIdMap.containsKey(betRecord.getId())) {
                     updateMessageIdMap.put(betRecord.getId(), message.getMessageId());
@@ -148,7 +153,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
                         log.error("Error ack message", e);
                     }
                 }
-            }else {
+            } else {
                 try {
                     this.getConsumer().acknowledge(message.getMessageId());
                 } catch (PulsarClientException e) {
@@ -172,6 +177,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
                             .majorAmount(record.getJackpot().getMajorContributionAmount())
                             .minorAmount(record.getJackpot().getMinorContributionAmount())
                             .miniAmount(record.getJackpot().getMiniContributionAmount())
+                            .accFlag(JackpotAccFlagEnum.NO)
                             .build());
                 } else {
                     try {
@@ -185,7 +191,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
             try {
                 this.jackpotManager().batchAddRewardPoolInputRecord(recordList);
             } catch (Exception e) {
-                log.error("Error batch add user reward record", e);
+                log.error("batchAddRewardPoolInputRecord error", e);
                 List<Long> failList = this.addRewardPoolInputRecord(recordList);
                 if (CollectionUtils.isNotEmpty(failList)) {
                     failList.forEach(updateMessageIdMap::remove);
@@ -199,15 +205,19 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
      * 循环单个添加,返回失败的ID
      */
     private List<Long> addRewardPoolInputRecord(List<JackpotRewardPoolInputRecordDo> recordList) {
+        log.info("loop single addRewardPoolInputRecord");
         List<Long> failList = new ArrayList<>();
         recordList.forEach(record -> {
             try {
-                this.jackpotManager().addRewardPoolInputRecord(record);
+                this.jackpotManager().batchAddRewardPoolInputRecord(Arrays.asList(record));
             } catch (DuplicateKeyException e) {
-                log.warn("Error add user reward record, record: {}, error: {}", record, e.getErrorMessage());
+                log.warn("addRewardPoolInputRecord DuplicateKeyException", e);
+            } catch (RateLimitException e) {
+                failList.add(record.getId());
+                log.warn("addRewardPoolInputRecord RateLimitException", e);
             } catch (Exception e) {
                 failList.add(record.getId());
-                log.error("Error add user reward record", e);
+                log.error("addRewardPoolInputRecord Exception", e);
             }
         });
         return failList;
@@ -217,7 +227,7 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
         // 批量ack
         try {
             this.getConsumer().acknowledge(messageIds);
-        } catch (PulsarClientException e) {
+        } catch (Exception e) {
             log.error("Error batch ack message", e);
         }
     }
