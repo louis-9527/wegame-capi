@@ -22,7 +22,6 @@ import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.*;
-import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
@@ -168,7 +167,7 @@ public class SingleWalletService {
                     .errorCode(ErrorCode.INSUFFICIENT_CREDIT)
                     .errorMsg(commonRes.getErrorMessage())
                     .build();
-        } else if(Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INVALID_BET.getCode())){
+        } else if (Objects.equals(commonRes.getStatus(), SingleWalletResStatusEnum.INVALID_BET.getCode())) {
             return SingleWalletBetResultDo.builder()
                     .betStatus(BetStatusEnum.FAIL)
                     .errorCode(ErrorCode.INVALID_BET)
