@@ -18,8 +18,6 @@ import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateE
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.malakas.reward.MalakasRewardHandler;
-import com.wegame.capi.biz.service.template.BetRecordTemplateService;
-import com.wegame.capi.biz.service.template.GameRecordTemplateService;
 import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -31,6 +29,7 @@ import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -40,9 +39,11 @@ import java.util.stream.Collectors;
 import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
 import static com.wegame.capi.biz.module.malakas.MalakasSymbolUtil.handleSymbolNullArr;
 import static com.wegame.capi.client.enums.TemplateTypeEnum.MALAKAS;
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 
 @Slf4j
 @Component("malakasGameTemplatePlay")
+@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "}")
 public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;

@@ -27,7 +27,7 @@ import java.util.List;
 @Slf4j
 public class BetRecordTemplateEsServiceTest extends BaseTest {
 
-    @Autowired
+    @Autowired(required = false)
     BetRecordTemplateEsService<MalakasBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     private String readJson() throws IOException {
