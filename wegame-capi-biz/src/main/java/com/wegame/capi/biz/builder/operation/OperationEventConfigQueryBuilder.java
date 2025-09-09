@@ -11,4 +11,11 @@ public class OperationEventConfigQueryBuilder {
         criteria.and("multiple").is(recordQuery.getMultiple());
         return new Query(criteria);
     }
+
+    public static Query buildQuery(String multipleRangeStart, String multipleRangeEnd) {
+        Criteria criteria = Criteria.where("multiple").gte(multipleRangeStart).lte(multipleRangeEnd);
+        Query query = new Query(criteria);
+        query.fields().include("_id");
+        return query;
+    }
 }
