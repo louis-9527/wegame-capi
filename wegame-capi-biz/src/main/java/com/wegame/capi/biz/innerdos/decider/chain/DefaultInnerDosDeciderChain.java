@@ -8,7 +8,6 @@ import com.wegame.capi.biz.innerdos.initializer.InnerDosContextInitializerManage
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,16 +17,8 @@ import java.util.List;
  */
 @Slf4j
 @Component("defaultInnerDosDeciderChain")
+@Deprecated
 public class DefaultInnerDosDeciderChain extends AbstractInnerDosDeciderChain {
-    @Autowired
-    @Qualifier("defaultByEmptyDiskInnerDosDecider")
-    private ByEmptyDiskInnerDosDecider byEmptyDiskInnerDosDecider;
-    @Autowired
-    @Qualifier("defaultByRoundInnerDosDecider")
-    private ByRoundInnerDosDecider byRoundInnerDosDecider;
-    @Autowired
-    @Qualifier("defaultByRtpInnerDosDecider")
-    private ByRtpInnerDosDecider byRtpInnerDosDecider;
     @Autowired
     private InnerDosContextInitializerManager innerDosContextInitializerManager;
 
@@ -39,7 +30,7 @@ public class DefaultInnerDosDeciderChain extends AbstractInnerDosDeciderChain {
 
     @Override
     public List<InnerDosDecider> deciders(BetDo betDo) {
-        return Lists.newArrayList(byRoundInnerDosDecider, byRtpInnerDosDecider, byEmptyDiskInnerDosDecider);
+        return Lists.newArrayList();
     }
 
     @Override

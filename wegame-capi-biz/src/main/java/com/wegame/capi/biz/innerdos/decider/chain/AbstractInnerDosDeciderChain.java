@@ -14,6 +14,7 @@ import java.util.Map;
  * 抽象干预决策器链
  */
 @Slf4j
+@Deprecated
 public abstract class AbstractInnerDosDeciderChain implements InnerDosDeciderChain {
 
     @Override
@@ -25,9 +26,9 @@ public abstract class AbstractInnerDosDeciderChain implements InnerDosDeciderCha
         for (InnerDosDecider decider : this.deciders(betDo)) {
             // 调用决策器
             result = decider.decide(context);
-            if (result.hasEnd()) {
-                return result;
-            }
+//            if (result.hasEnd()) {
+//                return result;
+//            }
         }
         return result;
     }

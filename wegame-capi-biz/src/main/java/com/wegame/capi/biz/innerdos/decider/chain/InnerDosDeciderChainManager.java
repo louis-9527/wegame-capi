@@ -21,6 +21,7 @@ import java.util.Optional;
  */
 @Slf4j
 @Component
+@Deprecated
 public class InnerDosDeciderChainManager implements InitializingBean, ApplicationContextAware {
     private ApplicationContext applicationContext;
     private final Map<GameTypeEnum, InnerDosDeciderChain> innerDosDeciderChainMap = new HashMap<>();

@@ -3,6 +3,7 @@ package com.wegame.capi.biz.innerdos.initializer;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
 import com.wegame.capi.biz.innerdos.config.InnerDosCondition;
@@ -47,6 +48,7 @@ public class IbongAdarnaInnerDosContextInitializer implements InnerDosContextIni
         DefaultInnerDosContext.DefaultTemplateRangeConfig templateRangeConfig = this.buildDefaultTemplateRangeConfig();
         InnerDosCondition innerDosCondition = this.buildInnerDosCondition();
         return DefaultInnerDosContext.builder()
+                .betDo((BetDo) initParams[0])
                 .defaultTemplateRangeConfig(templateRangeConfig)
                 .innerDosCondition(innerDosCondition)
                 .gameMetricsDo(gameMetricsDo)

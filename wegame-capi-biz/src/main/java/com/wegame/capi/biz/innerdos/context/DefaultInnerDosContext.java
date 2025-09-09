@@ -1,23 +1,35 @@
 package com.wegame.capi.biz.innerdos.context;
 
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
 import com.wegame.capi.biz.innerdos.config.InnerDosCondition;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * 内部干预上下文(默认)
  */
+
+@Data
 @ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class DefaultInnerDosContext implements InnerDosContext {
+    /**
+     * betDo
+     */
+    private BetDo betDo;
+
     /**
      * 模版权重配置
      */
@@ -39,6 +51,11 @@ public class DefaultInnerDosContext implements InnerDosContext {
     private GameMetricsDo gameMetricsDo;
 
     @Override
+    public BetDo getBetDo() {
+        return this.betDo;
+    }
+
+    @Override
     public UserPlayMetricsDo getUserPlayMetricsDo() {
         return this.userPlayMetricsDo;
     }
@@ -49,10 +66,18 @@ public class DefaultInnerDosContext implements InnerDosContext {
     }
 
     @Override
-    public Map<String, Integer> getTemplateRangeMap(Object... args) {
-        String typeName = args[0].toString();
-        String templateName = args[1].toString();
+    public Map<String, BigDecimal> getTemplateRangeMap(Object... args) {
+        GameInnerDosTypeEnum typeName = (GameInnerDosTypeEnum) args[0];
+        BetSubTypeEnum templateName = (BetSubTypeEnum) args[1];
         return defaultTemplateRangeConfig.getTemplateRangeMap(typeName, templateName);
+    }
+
+    @Override
+    public boolean isNewPlayer(Object... args) {
+        // 累计游戏局数是否小于配置的最大局数
+        Long totalGameCount = this.userPlayMetricsDo.getTotalGameCount();
+        InnerDosCondition.NormalCondition newPlayerCondition = innerDosCondition.getNewPlayerCondition();
+        return totalGameCount <= newPlayerCondition.getRoundsCountLimit();
     }
 
     @Data
@@ -70,12 +95,44 @@ public class DefaultInnerDosContext implements InnerDosContext {
          * Map<96.5, Map<Normal, Map<1-10, 100>>>
          * Map<96.5, Map<ex, Map<1-10, 100>>>
          */
-        private Map<String, Map<String, Map<String, Integer>>> templateRangeMap;
+        private LinkedHashMap<String, LinkedHashMap<String, LinkedHashMap<String, BigDecimal>>> templateRangeMap;
 
-        public Map<String, Integer> getTemplateRangeMap(String typeName, String templateName) {
-            return this.templateRangeMap.get(typeName).get(templateName);
+        /**
+         * 大盘内部干预类型和模版名称映射
+         * 如：
+         * Map<TOO_LOW_DOS, "96.5">
+         */
+        private Map<GameInnerDosTypeEnum, String> dosTypeToTemplateNameMapping;
+
+        public Map<String, BigDecimal> getTemplateRangeMap(GameInnerDosTypeEnum dosTypeEnum, BetSubTypeEnum templateName) {
+            String typeName = dosTypeToTemplateNameMapping.get(dosTypeEnum);
+            return this.templateRangeMap.get(typeName).get(templateName.getCode());
+        }
+
+        public Map<String, LinkedHashMap<String, BigDecimal>> getTemplateRangeMap(GameInnerDosTypeEnum dosTypeEnum) {
+            String typeName = dosTypeToTemplateNameMapping.get(dosTypeEnum);
+            return this.templateRangeMap.get(typeName);
         }
     }
 
+    /**
+     * 是否触发新人空盘限制
+     *
+     * @return true/false
+     */
+    public boolean triggerNewPlayerEmptyDisk() {
+        return this.userPlayMetricsDo.getContinuousLostCount()
+                >= this.innerDosCondition.getNewPlayerCondition().getEmptyDiskLimit();
+    }
+
+    /**
+     * 是否触发常态空盘限制
+     *
+     * @return true/false
+     */
+    public boolean triggerNormalPlayerEmptyDisk() {
+        return this.userPlayMetricsDo.getContinuousLostCount()
+                >= this.innerDosCondition.getNormalCondition().getEmptyDiskLimit();
+    }
 
 }

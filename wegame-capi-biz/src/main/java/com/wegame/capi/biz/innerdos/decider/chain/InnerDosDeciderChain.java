@@ -8,6 +8,7 @@ import com.wegame.capi.client.enums.GameTypeEnum;
  * 内部干预决策器链
  * 所有干预由决策器链发起
  */
+@Deprecated
 public interface InnerDosDeciderChain {
 
     GameTypeEnum gameType();
