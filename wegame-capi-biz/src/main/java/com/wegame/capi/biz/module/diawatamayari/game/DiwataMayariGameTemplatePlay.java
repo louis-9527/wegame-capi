@@ -45,7 +45,7 @@ import static com.wegame.capi.client.enums.TemplateTypeEnum.MALAKAS;
 
 
 @Slf4j
-@Component("diwataMayariGameEventPlay")
+@Component("diwataMayariGameTemplatePlay")
 public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
@@ -53,9 +53,6 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
 
     @Autowired
     DiwataMayariRewardHandler diwataMayariRewardHandler;
-
-    @Autowired
-    OperationEventConfigRecordService operationEventConfigRecordService;
 
     @Autowired
     BetRecordTemplateEsService<DiwataBetRecordTemplateEsDo> betRecordTemplateEsService;
