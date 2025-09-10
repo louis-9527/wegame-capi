@@ -25,7 +25,13 @@ public enum TemplateTypeEnum {
             "malakas_bet_record_template",
             ""
     ),
-    ;
+
+
+    DIWATA_MAYARI(
+            GameTypeEnum.DIWATA_MAYARI,
+            "diwataMayari_bet_record_template",
+            ""
+    ),    ;
 
 
     /**
