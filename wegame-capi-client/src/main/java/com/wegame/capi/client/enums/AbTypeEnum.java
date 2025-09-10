@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
-
 /**
  * AB类型枚举
  *
@@ -18,7 +17,13 @@ import org.apache.commons.lang3.StringUtils;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum AbTypeEnum {
 
+    /**
+     * 数值化
+     */
     A("afe", "A"),
+    /**
+     * 模拟盘面/模版
+     */
     B("aff", "B"),
 
     ;
