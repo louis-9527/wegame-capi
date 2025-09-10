@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 用户登录
@@ -59,5 +60,9 @@ public class UserLoginDo implements Serializable {
      * @see com.wegame.capi.client.enums.AbTypeEnum
      */
     private String ut;
+    /**
+     * 扩展参数
+     */
+    private Map<String, Object> ext;
 }
 

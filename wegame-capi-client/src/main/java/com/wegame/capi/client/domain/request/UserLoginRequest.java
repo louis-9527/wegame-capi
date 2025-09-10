@@ -5,6 +5,7 @@ import com.wegame.base.Validate;
 import com.wegame.base.domain.BaseRequest;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,6 +13,7 @@ import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 用户登录请求参数
@@ -42,8 +44,10 @@ public class UserLoginRequest extends BaseRequest implements Validate, Serializa
     private String userName;
     @ApiModelProperty(value = "中台token", required = true)
     private String token;
-    @ApiModelProperty(value = "AB测试(afe: A（数值化）, aff: B（模拟盘面/模版）)", required = true)
-    private String ut = "aff";
+    @ApiModelProperty(value = "AB测试(afe: A（数值化）, aff: B（模拟盘面/模版）)", required = false)
+    private String ut = AbTypeEnum.B.getId();
+    @ApiModelProperty(value = "扩展参数", required = false)
+    private Map<String, Object> ext;
 
     @Override
     public void validateParam() {
