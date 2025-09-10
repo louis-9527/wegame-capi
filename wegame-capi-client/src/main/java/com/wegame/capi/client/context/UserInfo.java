@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 玩家
@@ -46,6 +47,8 @@ public class UserInfo implements Serializable {
     private String userName;
     @ApiModelProperty(value = "中台token")
     private String token;
-    @ApiModelProperty(value = "AB测试(afe: A, aff: B)")
-    private String ut = "afe";
+    @ApiModelProperty(value = "AB测试(afe: A（数值化）, aff: B（模拟盘面/模版）)")
+    private String ut = "aff";
+    @ApiModelProperty(value = "扩展参数")
+    private Map<String, Object> ext;
 }
