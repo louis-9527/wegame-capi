@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.metrics;
 
+import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -72,6 +73,11 @@ public class GameMetricsDo implements Serializable {
      * 更新时间
      */
     private Long updateTime;
+
+    /**
+     * 新增一个参数。当前的常态干预类型
+     */
+    private GameInnerDosTypeEnum inUseNormalDosType;
 
 
     /**

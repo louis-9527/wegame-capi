@@ -10,6 +10,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -133,6 +134,45 @@ public class DefaultInnerDosContext implements InnerDosContext {
     public boolean triggerNormalPlayerEmptyDisk() {
         return this.userPlayMetricsDo.getContinuousLostCount()
                 >= this.innerDosCondition.getNormalCondition().getEmptyDiskLimit();
+    }
+
+    /**
+     * 根据dos类型获取 模版名称
+     *
+     * @param dosTypeEnum dos类型枚举
+     * @return 模版名称
+     */
+    public String getTemplateName(GameInnerDosTypeEnum dosTypeEnum) {
+        return defaultTemplateRangeConfig.getDosTypeToTemplateNameMapping().get(dosTypeEnum);
+    }
+
+    /**
+     * 获取用户当前rtp
+     *
+     * @return rtp
+     */
+    public BigDecimal getUserCurrentRtp() {
+        Long totalBetAmount = this.userPlayMetricsDo.getTotalBetAmount();
+        Long totalPayoutAmount = this.userPlayMetricsDo.getTotalPayoutAmount();
+        return BigDecimal.valueOf(totalPayoutAmount).divide(BigDecimal.valueOf(totalBetAmount), 2, RoundingMode.FLOOR);
+    }
+
+    /**
+     * 获取新玩家DOS干预系数
+     *
+     * @return DOS干预系数
+     */
+    public BigDecimal getNewPlayerDosCoefficient() {
+        return this.innerDosCondition.getNewPlayerCondition().getDosCoefficient();
+    }
+
+    /**
+     * 获取常态DOS干预系数
+     *
+     * @return DOS干预系数
+     */
+    public BigDecimal getNormalDosCoefficient() {
+        return this.innerDosCondition.getNewPlayerCondition().getDosCoefficient();
     }
 
 }

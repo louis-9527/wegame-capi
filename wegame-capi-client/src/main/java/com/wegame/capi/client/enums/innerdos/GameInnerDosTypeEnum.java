@@ -1,5 +1,6 @@
 package com.wegame.capi.client.enums.innerdos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameInnerDosTypeEnum {
     TOO_LOW_DOS("too_low_dos", "过低干预"),
     TOO_HIGH_DOS("too_high_dos", "过高干预"),
