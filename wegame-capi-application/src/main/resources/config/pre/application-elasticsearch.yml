@@ -2,10 +2,10 @@
 spring:
   elasticsearch:
     rest:
-      uris: es-sg-toy4fht4h0003kiyj.public.elasticsearch.aliyuncs.com:9200
+      uris: es-sg-u7g4f8un40002xovb.public.elasticsearch.aliyuncs.com:9200
       connection-timeout: 5
       username: elastic
-      password: Innovatech@2025
+      password: Innovatech@123
       read-timeout: 1
   data:
     elasticsearch:
