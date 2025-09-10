@@ -48,7 +48,7 @@ public class UserInfo implements Serializable {
     @ApiModelProperty(value = "中台token")
     private String token;
     @ApiModelProperty(value = "AB测试(afe: A（数值化）, aff: B（模拟盘面/模版）)")
-    private String ut = "aff";
+    private String ut;
     @ApiModelProperty(value = "扩展参数")
     private Map<String, Object> ext;
 }
