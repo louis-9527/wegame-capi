@@ -19,7 +19,7 @@ import java.util.Map;
 public class DiwataMayariGameContext<R> extends AbstractGameContext<R> {
 
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
-            .put(GamePlayTypeEnum.NORMAL_PLAY, "diwataMayariGameTemplatePlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "diwataMayariGameTemplatePlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "diwataMayariGameEventPlay")
             .build();
 

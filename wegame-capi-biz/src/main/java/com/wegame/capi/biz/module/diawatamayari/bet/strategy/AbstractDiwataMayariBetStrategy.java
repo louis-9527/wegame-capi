@@ -20,7 +20,10 @@ import com.wegame.capi.biz.module.diawatamayari.bet.DiwataMayariBetHelper;
 import com.wegame.capi.biz.module.diawatamayari.game.DiwataMayariGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -103,13 +106,17 @@ public abstract class AbstractDiwataMayariBetStrategy
         }
     }
 
+    public GamePlayTypeEnum getGamePlayType() {
+        return GamePlayTypeEnum.TEMPLATE_PLAY;
+    }
+
     /**
      * 非免费轮投注(正常投注、购买投注)
      */
     private BetResultDo<DiwataMayariBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<DiwataMayariGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
+        List<DiwataMayariGameRecordDo> list = gameContext().play(build(this.getGamePlayType(), betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<DiwataMayariGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
