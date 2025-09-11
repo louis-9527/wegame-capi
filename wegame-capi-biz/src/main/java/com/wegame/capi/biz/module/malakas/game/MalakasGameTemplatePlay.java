@@ -131,6 +131,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
             // 处理免费轮
             processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId);
         }
+        ret.get(0).setLastGameFlag(true);
         return ret;
     }
 
