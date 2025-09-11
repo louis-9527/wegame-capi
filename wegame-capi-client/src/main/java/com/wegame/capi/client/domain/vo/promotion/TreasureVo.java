@@ -42,16 +42,20 @@ public class TreasureVo implements  Serializable {
     @ApiModel(description = "宝箱奖励")
     public static class Reward implements Serializable {
         private static final long serialVersionUID = 7692352397871708565L;
-        @ApiModelProperty(value = "奖励ID", required = true)
-        private String rewardId;
-        @ApiModelProperty(value = "奖励名称", required = true)
-        private String rewardName;
-        @ApiModelProperty(value = "奖励次数", required = true)
-        private Integer rewardCount;
-        @ApiModelProperty(value = "奖励等级", required = true)
-        private Integer starLevel;
-        @ApiModelProperty(value = "icon地址", required = true)
+        @ApiModelProperty(value = "奖励配置id")
+        private String rewardConfigId;
+        @ApiModelProperty(value = "奖励名称")
+        private String name;
+        @ApiModelProperty(value = "奖励数量")
+        private Integer count;
+        @ApiModelProperty(value = "奖励图片")
         private String imgUrl;
+        @ApiModelProperty(value = "奖励投注金额")
+        private BigDecimal betValue;
+        @ApiModelProperty(value = "使用余额要求")
+        private BigDecimal balanceRequired;
+        @ApiModelProperty(value = "星级")
+        private Integer starLevel;
     }
 }
 
