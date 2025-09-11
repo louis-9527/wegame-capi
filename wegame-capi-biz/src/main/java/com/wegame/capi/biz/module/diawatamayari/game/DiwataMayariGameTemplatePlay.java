@@ -35,6 +35,7 @@ import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -42,10 +43,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.client.enums.TemplateTypeEnum.MALAKAS;
+import static com.wegame.capi.common.Constants.*;
 
 
 @Slf4j
 @Component("diwataMayariGameTemplatePlay")
+@ConditionalOnProperty(name = DIWATA_MAYARI_PROP, havingValue = TRUE_VAL)
 public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
