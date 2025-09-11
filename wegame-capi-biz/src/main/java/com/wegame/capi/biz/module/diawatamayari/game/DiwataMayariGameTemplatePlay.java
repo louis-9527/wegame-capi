@@ -51,7 +51,6 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final GameInfoDo gameInfo = DiwataMayariGameHelper.DIWATA_MAYARI_GAME_INFO;
-    private static final Long DEFAULT_AMOUNT = 0L;
 
     @Autowired
     DiwataMayariRewardHandler diwataMayariRewardHandler;
