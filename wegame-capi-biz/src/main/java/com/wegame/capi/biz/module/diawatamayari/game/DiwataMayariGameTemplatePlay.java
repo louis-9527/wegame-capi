@@ -37,6 +37,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.client.enums.TemplateTypeEnum.DIWATA_MAYARI;
@@ -50,6 +51,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
     private static final GameInfoDo gameInfo = DiwataMayariGameHelper.DIWATA_MAYARI_GAME_INFO;
+    private static final Long DEFAULT_AMOUNT = 0L;
 
     @Autowired
     DiwataMayariRewardHandler diwataMayariRewardHandler;
@@ -99,6 +101,10 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
             }
             // 处理免费轮
             processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId);
+        }
+        // 设置结束
+        if (CollectionUtils.isNotEmpty(ret)) {
+            ret.get(ret.size() - 1).setLastGameFlag(true);
         }
         return ret;
     }
@@ -220,7 +226,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
         DiwataMayariSymbolDo[][] symbolArr = diwataMayariSymbolWheel.getSymbolArr();
         // 处理空值
         diwataMayariSymbolWheel.setSymbolArr(DiwataMayariSymbolUtil.handleSymbolNullArr(symbolArr));
-        RewardResultDo<DiwataMayariSymbolDo> rewardResult = diwataMayariRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, diwataMayariSymbolWheel, totalMultiple));
+        RewardResultDo<DiwataMayariSymbolDo> rewardResult = diwataMayariRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, diwataMayariSymbolWheel, totalMultiple,DEFAULT_AMOUNT));
         // 构建时还原
         diwataMayariSymbolWheel.setSymbolArr(symbolArr);
         return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, diwataMayariSymbolWheel, rewardResult);
