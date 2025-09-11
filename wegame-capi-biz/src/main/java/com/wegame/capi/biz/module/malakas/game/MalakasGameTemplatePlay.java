@@ -102,11 +102,13 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
 
         // 处理首轮
         long firstGameRecordId = super.generateGameRecordId();
-        MalakasGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, BigDecimal.ZERO);
+        MalakasGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, BigDecimal.ZERO, false);
         ret.add(firstGameRecord);
         // 按 batchId 分组 & 记录 ID 映射
         Map<Long, List<GameRecordTemplateDo>> groupedByBatchId = configRecordList.stream()
                 .collect(Collectors.groupingBy(GameRecordTemplateDo::getBatchId));
+
+        Long maxBatchId = Collections.max(configRecordList, Comparator.comparing(GameRecordTemplateDo::getBatchId)).getBatchId();
 
         // 获取首批次并排序
         List<GameRecordTemplateDo> recordBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
@@ -120,7 +122,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
             if (recordDo.getParentId() != 0L) {
                 // 处理首轮普通轮
                 long gameRecordId = generateGameRecordId();
-                MalakasGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, BigDecimal.ZERO);
+                MalakasGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, BigDecimal.ZERO, false);
                 ret.add(gameRecord);
                 lastGameRecord = gameRecord;
             }
@@ -129,9 +131,8 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
                 continue;
             }
             // 处理免费轮
-            processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId);
+            processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId, maxBatchId);
         }
-        ret.get(0).setLastGameFlag(true);
         return ret;
     }
 
@@ -144,7 +145,8 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
             GamePlayDo gamePlay,
             GameRecordTemplateDo recordDo,
             MalakasGameRecordDo parent,
-            Map<Long, List<GameRecordTemplateDo>> groupedByBatchId) {
+            Map<Long, List<GameRecordTemplateDo>> groupedByBatchId,
+            long maxBatchId) {
         Map<GameRecordTemplateDo, MalakasGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
 
         List<Long> gameRecordIds = new ArrayList<>();
@@ -159,10 +161,11 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
                 MalakasGameRecordDo gameRecord = null;
                 if (record.getIndex() == 0) {
                     gameRecordIds.add(gameRecordId);
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record,totalMultipleAmount);
+                    boolean lastGameFlag = batchId == maxBatchId;
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record,totalMultipleAmount, lastGameFlag);
                     ret.add(gameRecord);
                 } else {
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record,totalMultipleAmount);
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record,totalMultipleAmount, false);
                     ret.add(gameRecord);
                 }
                 preGameRecord = gameRecord;
@@ -175,7 +178,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         for (Map.Entry<GameRecordTemplateDo, MalakasGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
             GameRecordTemplateDo key = entry.getKey();
             MalakasGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key,value, groupedByBatchId);
+            processFreeRounds(ret, gamePlay, key,value, groupedByBatchId, maxBatchId);
         }
     }
 
@@ -188,7 +191,8 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
             long parentId,
             long batchId,
             GameRecordTemplateDo recordDo,
-            BigDecimal totalMultiple) {
+            BigDecimal totalMultiple,
+            boolean lastGameFlag) {
 
         // 确定 `TotalMultiple` 参数
         WheelDo<MalakasSymbolDo> malakasSymbolWheel = this.convertWheel(recordDo.getWheel());
@@ -198,7 +202,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         RewardResultDo<MalakasSymbolDo> rewardResult = malakasRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, malakasSymbolWheel, totalMultiple));
         // 构建时还原
         malakasSymbolWheel.setSymbolArr(symbolArr);
-        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, malakasSymbolWheel, rewardResult);
+        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, malakasSymbolWheel, rewardResult, lastGameFlag);
 
 
     }
@@ -208,7 +212,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
                                                 Long betRecordId,
                                                 Long batchId,
                                                 WheelDo<MalakasSymbolDo> wheel,
-                                                RewardResultDo<MalakasSymbolDo> rewardResult) {
+                                                RewardResultDo<MalakasSymbolDo> rewardResult, boolean lastGameFlag) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         return MalakasGameRecordDo.builder()
@@ -223,7 +227,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
                 .wheel(wheel)
                 .rewardResult(rewardResult)
                 .gameRecordIds(null)
-                .lastGameFlag(false)
+                .lastGameFlag(lastGameFlag)
                 .build();
     }
 
