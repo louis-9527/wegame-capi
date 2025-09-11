@@ -73,7 +73,7 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
                             AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(totalRewardAmount)),
                             freeWheelCount))
                     .build();
-            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MALAKAS.getId());
+            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.MALAKAS.getId(), userInfo.getPId(), userInfo.getChannelId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.MALAKAS_REWARD_NOTIFY_SIZE);
