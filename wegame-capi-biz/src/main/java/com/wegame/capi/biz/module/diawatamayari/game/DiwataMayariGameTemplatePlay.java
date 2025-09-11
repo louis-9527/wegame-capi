@@ -12,17 +12,14 @@ import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
-import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.DiwataMayariSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.DiwataBetRecordTemplateEsDo;
-import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.diawatamayari.DiwataMayariGameHelper;
 import com.wegame.capi.biz.module.diawatamayari.DiwataMayariSymbolUtil;
 import com.wegame.capi.biz.module.diawatamayari.reward.DiwataMayariRewardHandler;
-import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -42,7 +39,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.client.enums.TemplateTypeEnum.MALAKAS;
+import static com.wegame.capi.client.enums.TemplateTypeEnum.DIWATA_MAYARI;
 import static com.wegame.capi.common.Constants.*;
 
 
@@ -114,24 +111,24 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
 
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(MALAKAS, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), DiwataBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(DIWATA_MAYARI, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), DiwataBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         log.info("betRecordId:{}", betRecordId);
         List<GameRecordTemplateDo> configRecordList;
         DiwataBetRecordTemplateEsDo template;
-        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MALAKAS, gamePlay.getBetType(), templateMultipleRange)) {
+        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.DIWATA_MAYARI, gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithLocalCache(MALAKAS, betRecordId, DiwataBetRecordTemplateEsDo.class);
+                template = betRecordTemplateEsService.getTemplateWithLocalCache(DIWATA_MAYARI, betRecordId, DiwataBetRecordTemplateEsDo.class);
             } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithRedisCache(MALAKAS, betRecordId, DiwataBetRecordTemplateEsDo.class);
+                template = betRecordTemplateEsService.getTemplateWithRedisCache(DIWATA_MAYARI, betRecordId, DiwataBetRecordTemplateEsDo.class);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         } else {
             // 没有被预热的倍率，需要重新查询
-            template = betRecordTemplateEsService.findById(MALAKAS, betRecordId, DiwataBetRecordTemplateEsDo.class);
+            template = betRecordTemplateEsService.findById(DIWATA_MAYARI, betRecordId, DiwataBetRecordTemplateEsDo.class);
         }
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
         configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
