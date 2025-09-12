@@ -6,13 +6,14 @@
     <name>wegame-capi-client</name>
     <groupId>com.wegame</groupId>
     <artifactId>wegame-capi-client</artifactId>
-    <version>1.0.1.20250910-SNAPSHOT</version>
+    <!--    <version>1.0.1.20250911-RELEASE</version> 推包的时候放开！！！-->
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <wegame-base.version>1.0.2.20250910-SNAPSHOT</wegame-base.version>
+        <wegame-base.version>1.0.2.20250911-RELEASE</wegame-base.version>
         <lombok.version>1.18.24</lombok.version>
     </properties>
 

@@ -46,11 +46,13 @@ public class TreasureConverter {
             return null;
         }
         return TreasureDo.Reward.builder()
-                .rewardId(reward.getRewardConfigId())
-                .rewardName(reward.getName())
-                .rewardCount(reward.getCount())
-                .starLevel(reward.getStarLevel())
+                .rewardConfigId(reward.getRewardConfigId())
+                .name(reward.getName())
+                .count(reward.getCount())
                 .imgUrl(reward.getImgUrl())
+                .betValue(reward.getBetValue())
+                .balanceRequired(reward.getBalanceRequired())
+                .starLevel(reward.getStarLevel())
                 .build();
     }
 
@@ -91,11 +93,13 @@ public class TreasureConverter {
             return null;
         }
         return TreasureVo.Reward.builder()
-                .rewardId(reward.getRewardId())
-                .rewardName(reward.getRewardName())
-                .rewardCount(reward.getRewardCount())
-                .starLevel(reward.getStarLevel())
+                .rewardConfigId(reward.getRewardConfigId())
+                .name(reward.getName())
+                .count(reward.getCount())
                 .imgUrl(reward.getImgUrl())
+                .betValue(reward.getBetValue())
+                .balanceRequired(reward.getBalanceRequired())
+                .starLevel(reward.getStarLevel())
                 .build();
     }
 }
