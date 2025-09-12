@@ -18,7 +18,7 @@
 spring:
   elasticsearch:
     rest:
-      uris: es-sg-u7g4f8un40002xovb.public.elasticsearch.aliyuncs.com:9200
+      uris: 127.0.0.1:9200
       connection-timeout: 5
       username: elastic
       password: Innovatech@123

@@ -21,6 +21,7 @@ public class UserLoginConvert {
                 .userName(request.getUserName())
                 .token(request.getToken())
                 .ut(request.getUt())
+                .ext(request.getExt())
                 .build();
     }
 }

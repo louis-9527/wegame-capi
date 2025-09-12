@@ -54,24 +54,32 @@ public class TreasureDo implements  Serializable {
     public static class Reward implements Serializable {
         private static final long serialVersionUID = 7692352397871708565L;
         /**
-         * 奖励ID
+         * 奖励配置id
          */
-        private String rewardId;
+        private String rewardConfigId;
         /**
          * 奖励名称
          */
-        private String rewardName;
+        private String name;
         /**
-         * 奖励次数
+         * 奖励数量
          */
-        private Integer rewardCount;
+        private Integer count;
         /**
-         * 奖励等级
-         */
-        private Integer starLevel;
-        /**
-         * icon地址
+         * 奖励图片
          */
         private String imgUrl;
+        /**
+         * 奖励投注金额
+         */
+        private BigDecimal betValue;
+        /**
+         * 使用余额要求
+         */
+        private BigDecimal balanceRequired;
+        /**
+         * 星级
+         */
+        private Integer starLevel;
     }
 }

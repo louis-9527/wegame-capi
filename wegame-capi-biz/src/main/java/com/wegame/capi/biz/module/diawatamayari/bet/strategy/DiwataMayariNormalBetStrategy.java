@@ -73,7 +73,7 @@ public class DiwataMayariNormalBetStrategy extends AbstractDiwataMayariBetStrate
                             AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(totalRewardAmount)),
                             freeWheelCount))
                     .build();
-            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.DIWATA_MAYARI.getId());
+            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.DIWATA_MAYARI.getId(), userInfo.getPId(), userInfo.getChannelId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.DIWATA_MAYARI_REWARD_NOTIFY_SIZE);
