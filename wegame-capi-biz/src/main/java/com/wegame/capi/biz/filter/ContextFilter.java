@@ -93,8 +93,8 @@ public class ContextFilter extends OncePerRequestFilter {
             }
             UserInfo user = null;
             if (StringUtils.isNotEmpty(_token_)) {
-                user = (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, _token_));
-//                user = loginService.getUserInfoByToken(_token_);
+//                user = (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, _token_));
+                user = loginService.getUserInfoByToken(_token_);
             }
             UserInfoContext.setUserInfo(user);
         } catch (Exception e) {

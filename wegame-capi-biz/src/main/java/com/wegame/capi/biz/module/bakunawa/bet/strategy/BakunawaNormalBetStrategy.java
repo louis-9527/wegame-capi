@@ -68,7 +68,7 @@ public class BakunawaNormalBetStrategy extends AbstractBakunawaBetStrategy {
                             multiple,
                             AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(totalRewardAmount))))
                     .build();
-            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, BAKUNAWA.getId());
+            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, BAKUNAWA.getId(), userInfo.getPId(), userInfo.getChannelId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.BAKUNAWA_ADARNA_REWARD_NOTIFY_SIZE);
             rewardService.evict(gameType, userInfo.getPId(), userInfo.getChannelId());
