@@ -3,15 +3,14 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
@@ -58,6 +57,11 @@ public class DiwataMayariConfig {
      * 中奖最大倍数
      */
     private Integer rewardMaxMultiple;
+
+    /**
+     * 模板配置
+     */
+    private TemplateRangeConfig templateRangeConfig;
 
     @Data
     @SuperBuilder
@@ -130,6 +134,24 @@ public class DiwataMayariConfig {
          * 步长-在基础次数基础上，每增加一个scatter,次数增加的次数-2
          */
         private Integer stepFreeWheelTimes;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = -734841249803450751L;
+        /**
+         * 主游戏模板配置
+         */
+        private Map<String, Integer> mainGame;
+        /**
+         * 免费游戏模板配置
+         */
+        private Map<String, Integer> freeGame;
     }
 
     public void validate() {

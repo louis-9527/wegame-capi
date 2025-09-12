@@ -103,8 +103,11 @@ public class DiwataMayariRewardHandler extends AbstractRewardHandler<DiwataMayar
         }
 
         // 5.构建中奖结果
-        long totalAmount = Objects.equals(rewardHandle.getGamePlayType(), GamePlayTypeEnum.EVENT_PLAY) ? 0L : rewardHandle.getCurrentTotalRewardAmount();
-        boolean reachMaxMultiple = reachMaxMultiple(totalAmount + totalRewardAmount, rewardHandle.getBetAmount(), diwataMayariConfig.getRewardMaxMultiple());
+        boolean reachMaxMultiple = reachMaxMultiple(
+                rewardHandle.getGamePlayType(),
+                Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount : rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount,
+                rewardHandle.getBetAmount(),
+                diwataMayariConfig.getRewardMaxMultiple());
         RewardResultDo<DiwataMayariSymbolDo> rewardResult = RewardResultDo.<DiwataMayariSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))

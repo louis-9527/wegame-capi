@@ -39,6 +39,8 @@ spring:
       - game-maria_makiling.yml
       - game-malakas.yml
       - game-ibong.yml
+      - game-bakunawa.yml
+      - game-diwata_mayari.yml
       - game-kapre.yml
       - game-mangkukulam.yml
   main:
@@ -132,13 +134,3 @@ api:
         channelId: 3051
         privateKey: fd86c6c8040ab02e6303f9c632543d27579c2b21009a6a58535db6157d39978d
         privateIv: d3cb0efe3c18b10db7a2723dec401cc8
-#    cp:
-#      platformId: 50
-#      channelId: 3050
-#      privateKey: 83b3c7bfe1c1419d383b9ca24fcde99b3ba98546324a00318915a8680ffef78b
-#      privateIv: 32f6f527671d53424647ae30c014ac9e
-#    igo:
-#      platformId: 55
-#      channelId: 3051
-#      privateKey: fd86c6c8040ab02e6303f9c632543d27579c2b21009a6a58535db6157d39978d
-#      privateIv: d3cb0efe3c18b10db7a2723dec401cc8

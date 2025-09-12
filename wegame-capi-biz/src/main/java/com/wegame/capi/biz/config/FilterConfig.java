@@ -35,6 +35,7 @@ public class FilterConfig {
             "/mission/*",
             "/treasure/*",
             "/freeSpin/*",
+            "/contract/*",
             "/jackpotRewardPool/*",
             "/jackpotUserRewardRecord/*"
     };
