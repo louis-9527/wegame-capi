@@ -41,6 +41,7 @@ spring:
       - game-ibong.yml
       - game-lamang.yml
       - game-bakunawa.yml
+      - game-diwata_mayari.yml
       - game-kapre.yml
   main:
     allow-circular-references: true
