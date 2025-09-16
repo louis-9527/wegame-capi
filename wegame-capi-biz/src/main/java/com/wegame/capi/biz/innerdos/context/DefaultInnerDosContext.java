@@ -73,7 +73,6 @@ public class DefaultInnerDosContext implements InnerDosContext {
         return defaultTemplateRangeConfig.getTemplateRangeMap(typeName, templateName);
     }
 
-    @Override
     public boolean isNewPlayer(Object... args) {
         // 累计游戏局数是否小于配置的最大局数
         Long totalGameCount = this.userPlayMetricsDo.getTotalGameCount();

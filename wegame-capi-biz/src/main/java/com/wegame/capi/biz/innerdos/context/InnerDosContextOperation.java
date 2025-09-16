@@ -37,12 +37,4 @@ public interface InnerDosContextOperation {
      * value:权重
      */
     Map<String, BigDecimal> getTemplateRangeMap(Object... args);
-
-    /**
-     * 是否新人判断
-     *
-     * @param args 灵活参数
-     */
-    boolean isNewPlayer(Object... args);
-
 }
