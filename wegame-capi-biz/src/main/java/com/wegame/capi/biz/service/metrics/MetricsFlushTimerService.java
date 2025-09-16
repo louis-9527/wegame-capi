@@ -80,7 +80,7 @@ public class MetricsFlushTimerService {
             }
         };
         // 添加任务
-        userPlayWheelTimer.newTimeout(userPlayTimerMap.get(userPlayTimerKey), this.getDelay(this.userMetricsFlushTimerIntervalMin, this.userMetricsFlushTimerIntervalMax), TimeUnit.SECONDS);
+        userPlayWheelTimer.newTimeout(timerTask, this.getDelay(this.userMetricsFlushTimerIntervalMin, this.userMetricsFlushTimerIntervalMax), TimeUnit.SECONDS);
         userPlayTimerMap.put(userPlayTimerKey, timerTask);
     }
 
@@ -106,7 +106,7 @@ public class MetricsFlushTimerService {
             }
         };
         // 添加任务
-        this.gameWheelTimer.newTimeout(this.gameMetricsTimerMap.get(gameTimerKey), this.getDelay(this.gameMetricsFlushTimerIntervalMin, this.gameMetricsFlushTimerIntervalMax), TimeUnit.SECONDS);
+        this.gameWheelTimer.newTimeout(timerTask, this.getDelay(this.gameMetricsFlushTimerIntervalMin, this.gameMetricsFlushTimerIntervalMax), TimeUnit.SECONDS);
         this.gameMetricsTimerMap.put(gameTimerKey, timerTask);
     }
 
