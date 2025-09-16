@@ -9,6 +9,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 
@@ -22,7 +23,8 @@ public class BetRecordBuilder {
                                            Long payOutAmount,
                                            Boolean reachMaxMultiple,
                                            BetRecordDo.Jackpot jackpot,
-                                           List<T> gameRecordList) {
+                                           List<T> gameRecordList,
+                                           GamePlayTypeEnum gamePlayType) {
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
@@ -64,6 +66,7 @@ public class BetRecordBuilder {
                 .status(BetStatusEnum.ING.getCode())
                 .jackpot(jackpot)
                 .extendInfo(extendInfo)
+                .gamePlayType(gamePlayType)
                 .creator(operator.getName())
                 .updater(operator.getName())
                 .betTime(currentMilli)

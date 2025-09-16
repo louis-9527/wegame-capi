@@ -15,6 +15,7 @@ import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,8 @@ public class IbongAdarnaBetHelper implements BetHelper<IbongAdarnaGameRecordDo, 
     @Override
     public BetRecordDo<IbongAdarnaGameRecordDo> buildBetRecord(long betRecordId,
                                                                BetDo betDo,
-                                                               List<IbongAdarnaGameRecordDo> gameRecordList) {
+                                                               List<IbongAdarnaGameRecordDo> gameRecordList,
+                                                               GamePlayTypeEnum gamePlayType) {
         // 构建投注记录
         long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
@@ -46,7 +48,8 @@ public class IbongAdarnaBetHelper implements BetHelper<IbongAdarnaGameRecordDo, 
                 totalRewardAmount,
                 false,
                 null,
-                gameRecordList);
+                gameRecordList,
+                gamePlayType);
     }
 
     @Override

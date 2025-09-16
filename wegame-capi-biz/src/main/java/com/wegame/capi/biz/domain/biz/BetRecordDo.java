@@ -1,5 +1,7 @@
 package com.wegame.capi.biz.domain.biz;
 
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -105,6 +107,11 @@ public class BetRecordDo<T> implements Serializable {
      * 扩展信息
      */
     private ExtendInfo extendInfo;
+
+    /**
+     * play Type 用户内部动态干预数据采集判断
+     */
+    private GamePlayTypeEnum gamePlayType;
     /**
      * 创建人
      */

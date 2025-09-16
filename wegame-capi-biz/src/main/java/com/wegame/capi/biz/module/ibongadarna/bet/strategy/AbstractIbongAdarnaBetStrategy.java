@@ -73,7 +73,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
         if (isCanFreeSpinBet(betDo)) {
             // 1.1 是，则预定投注流程
             return betForFreeSpin(betDo);
-        }  else {
+        } else {
             // 1.2 否，则走其他投注流程
             // 1.2.1、判断能否走干预事件投注
             if (isCanOperationEventBet(betDo)) {
@@ -92,7 +92,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         IbongAdarnaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
-        BetRecordDo<IbongAdarnaGameRecordDo> betRecord = ibongAdarnaBetHelper.buildBetRecord(betRecordId, betDo, list);
+        BetRecordDo<IbongAdarnaGameRecordDo> betRecord = ibongAdarnaBetHelper.buildBetRecord(betRecordId, betDo, list, NORMAL_PLAY);
         // 保存投注记录并派奖
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<IbongAdarnaGameRecordDo> result = ibongAdarnaBetHelper.handleBetResult(betRecord, resultDo);

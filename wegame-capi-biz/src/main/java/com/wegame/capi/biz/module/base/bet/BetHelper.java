@@ -5,6 +5,7 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface BetHelper<RD extends ToVoConverter, R> {
      * @param gameRecordList 游戏记录列表
      * @return 投注记录
      */
-    BetRecordDo<R> buildBetRecord(long betRecordId, BetDo betDo, List<R> gameRecordList);
+    BetRecordDo<R> buildBetRecord(long betRecordId, BetDo betDo, List<R> gameRecordList,GamePlayTypeEnum gamePlayType);
 
     /**
      * 投注结果处理
