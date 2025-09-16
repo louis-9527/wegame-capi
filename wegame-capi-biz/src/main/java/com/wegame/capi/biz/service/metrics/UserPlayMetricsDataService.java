@@ -3,11 +3,14 @@ package com.wegame.capi.biz.service.metrics;
 import com.alibaba.fastjson.JSON;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.id.SnowflakeIdGenerator;
+import com.wegame.capi.biz.builder.metrics.UserPlayMetricsBuilder;
 import com.wegame.capi.biz.builder.metrics.UserPlayMetricsQueryBuilder;
 import com.wegame.capi.biz.converter.metrics.UserPlayMetricsConverter;
+import com.wegame.capi.biz.domain.metrics.MetricsCacheKeyDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
+import com.wegame.capi.client.enums.innerdos.UserPlayMetricsPropertyNameEnum;
 import com.wegame.capi.common.constants.MetricsConstants;
 import com.wegame.capi.dao.repository.domain.metrics.UserPlayMetricsPo;
 import com.wegame.capi.dao.repository.domain.metrics.UserPlayMetricsQuery;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -33,25 +37,27 @@ public class UserPlayMetricsDataService extends AbstractService {
     /**
      * 指标数据缓存存储
      *
-     * @param addDataMetricsDo do
-     * @param metricsType      metricsType
+     * @param metricsDataMap 指标数据map
+     * @param metricsType    metricsType
      * @return true/false
      */
-    public boolean cache(UserPlayMetricsDo addDataMetricsDo, MetricsTypeEnum metricsType) {
-        String key = MetricsConstants.buildUserMetricsCacheKey(addDataMetricsDo.getPId(), addDataMetricsDo.getChannelId(), metricsType.getGameType().getId(), addDataMetricsDo.getPlayerId());
+    public boolean cache(Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap, MetricsCacheKeyDo cacheKeyDo, MetricsTypeEnum metricsType) {
+        String key = MetricsConstants.buildUserMetricsCacheKey(cacheKeyDo.getPId(), cacheKeyDo.getChannelId(), metricsType.getGameType().getId(), cacheKeyDo.getPlayerId());
         // 先查找缓存数据，再找库数据
-        UserPlayMetricsDo existMetricsDo = this.query(addDataMetricsDo.getPId(), addDataMetricsDo.getPlayerId(), addDataMetricsDo.getChannelId(), metricsType);
+        UserPlayMetricsDo existMetricsDo = this.query(cacheKeyDo.getPId(), cacheKeyDo.getPlayerId(), cacheKeyDo.getChannelId(), metricsType);
         if (Objects.nonNull(existMetricsDo)) {
             // 修改数据
-            existMetricsDo.injectNewData(addDataMetricsDo);
+            existMetricsDo.injectNewData(metricsDataMap);
             // 每次修改都续约时间
             redisTemplate.opsForValue().set(key, existMetricsDo, MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         } else {
             // 没有，则新建一条数据
-            redisTemplate.opsForValue().set(key, addDataMetricsDo, MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(key, UserPlayMetricsBuilder.build(metricsDataMap, cacheKeyDo, metricsType),
+                    MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         }
         return true;
     }
+
 
     /**
      * 指标数据刷盘

@@ -6,6 +6,7 @@ import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
+import com.wegame.capi.biz.innerdos.config.GameRtpDosCondition;
 import com.wegame.capi.biz.innerdos.config.InnerDosCondition;
 import com.wegame.capi.biz.innerdos.context.DefaultInnerDosContext;
 import com.wegame.capi.biz.innerdos.context.InnerDosContext;
@@ -14,10 +15,14 @@ import com.wegame.capi.biz.service.metrics.UserPlayMetricsDataService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * ibong context初始化器
@@ -54,6 +59,11 @@ public class IbongAdarnaInnerDosContextInitializer implements InnerDosContextIni
                 .gameMetricsDo(gameMetricsDo)
                 .userPlayMetricsDo(userPlayMetricsDo)
                 .build();
+    }
+
+    @Override
+    public Map<GameInnerDosTypeEnum, GameRtpDosCondition> getGameRtpDosConditionMap() {
+        return ibongAdarnaConfig.getInnerDosConfig().getGameRtpDosConditionMap();
     }
 
     private InnerDosCondition buildInnerDosCondition() {

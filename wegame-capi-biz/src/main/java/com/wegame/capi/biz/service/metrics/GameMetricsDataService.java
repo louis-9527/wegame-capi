@@ -3,10 +3,16 @@ package com.wegame.capi.biz.service.metrics;
 import com.alibaba.fastjson.JSON;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.id.SnowflakeIdGenerator;
+import com.wegame.capi.biz.builder.metrics.GameMetricsBuilder;
 import com.wegame.capi.biz.builder.metrics.GameMetricsQueryBuilder;
 import com.wegame.capi.biz.converter.metrics.GameMetricsConverter;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
+import com.wegame.capi.biz.domain.metrics.MetricsCacheKeyDo;
+import com.wegame.capi.biz.innerdos.config.GameRtpDosCondition;
+import com.wegame.capi.biz.innerdos.initializer.InnerDosContextInitializerManager;
 import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
+import com.wegame.capi.client.enums.innerdos.GameMetricsPropertyNameEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.common.constants.MetricsConstants;
 import com.wegame.capi.dao.repository.domain.metrics.GameMetricsPo;
@@ -17,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,38 +38,46 @@ public class GameMetricsDataService extends AbstractService {
     private RedisTemplate<String, Object> redisTemplate;
     @Autowired
     private SnowflakeIdGenerator snowflakeIdGenerator;
+    @Autowired
+    private InnerDosContextInitializerManager innerDosContextInitializerManager;
 
     /**
      * 指标数据缓存存储
      *
-     * @param addDataMetricsDo do
      * @param metricsType      metricsType
      * @return true/false
      */
-    public boolean cache(GameMetricsDo addDataMetricsDo, MetricsTypeEnum metricsType) {
-        String key = MetricsConstants.buildGameMetricsCacheKey(addDataMetricsDo.getPId(), addDataMetricsDo.getChannelId(), metricsType.getGameType().getId());
+    public boolean cache(Map<GameMetricsPropertyNameEnum, Object> metricsDataMap, MetricsCacheKeyDo cacheKeyDo, MetricsTypeEnum metricsType) {
+        String key = MetricsConstants.buildGameMetricsCacheKey(cacheKeyDo.getPId(), cacheKeyDo.getChannelId(), metricsType.getGameType().getId());
         // 先查找缓存数据，再找库数据
-        GameMetricsDo existMetricsDo = this.query(addDataMetricsDo.getPId(), addDataMetricsDo.getChannelId(), metricsType);
-        // 先cache 投注和派奖的金额
-        this.cacheBetAndPayoutAmount(addDataMetricsDo, existMetricsDo, metricsType);
+        GameMetricsDo existMetricsDo = this.query(cacheKeyDo.getPId(), cacheKeyDo.getChannelId(), metricsType);
+        // 先cache 投注和派奖的金额:趋势性数据，这块先不处理
+//        this.cacheBetAndPayoutAmount(metricsDataMap, existMetricsDo,cacheKeyDo, metricsType);
+        Map<GameInnerDosTypeEnum, GameRtpDosCondition> gameRtpDosConditionMap
+                = innerDosContextInitializerManager.getInitializer(metricsType.getGameType()).getGameRtpDosConditionMap();
         if (Objects.nonNull(existMetricsDo)) {
             // 修改数据
-            existMetricsDo.injectNewData(addDataMetricsDo);
+            existMetricsDo.injectNewData(metricsDataMap, gameRtpDosConditionMap);
             // 每次修改都续约时间
-            redisTemplate.opsForValue().set(key, existMetricsDo, MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(key, existMetricsDo, MetricsConstants.GAME_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         } else {
             // 没有，则新建一条数据
-            redisTemplate.opsForValue().set(key, addDataMetricsDo, MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(key,
+                    GameMetricsBuilder.build(metricsDataMap, cacheKeyDo,gameRtpDosConditionMap, metricsType),
+                    MetricsConstants.GAME_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         }
         return true;
     }
 
-    private void cacheBetAndPayoutAmount(GameMetricsDo addDataMetricsDo, GameMetricsDo existMetricsDo, MetricsTypeEnum metricsType) {
+    private void cacheBetAndPayoutAmount(Map<GameMetricsPropertyNameEnum, Object> metricsDataMap, GameMetricsDo existMetricsDo,MetricsCacheKeyDo cacheKeyDo, MetricsTypeEnum metricsType) {
+        Object totalBetAmountObj = metricsDataMap.get(GameMetricsPropertyNameEnum.totalBetAmount);
+        Object totalPayoutAmountObj = metricsDataMap.get(GameMetricsPropertyNameEnum.totalPayoutAmount);
         // bet amount
         // 1.key是否存在(评估必要性)
-        String betAmountCacheKey = MetricsConstants.buildGameBetAmountCacheKey(addDataMetricsDo.getPId(), addDataMetricsDo.getChannelId(), addDataMetricsDo.getGameId());
+        String betAmountCacheKey = MetricsConstants.buildGameBetAmountCacheKey(cacheKeyDo.getPId(), cacheKeyDo.getChannelId(), metricsType.getGameType().getId());
         Boolean hasBetAmountCacheKey = redisTemplate.hasKey(betAmountCacheKey);
-        Long incBetAmount = addDataMetricsDo.getTotalBetAmount();
+
+        Long incBetAmount = Optional.ofNullable(totalBetAmountObj).map(t->(long)t).orElse(0L);
         // 2.不存在 && 已有do不为空:获取现有的值作为基础
         if (!Objects.equals(hasBetAmountCacheKey, true) && Objects.nonNull(existMetricsDo)) {
             incBetAmount = existMetricsDo.getTotalBetAmount();
@@ -69,9 +85,9 @@ public class GameMetricsDataService extends AbstractService {
         redisTemplate.opsForValue().increment(betAmountCacheKey, incBetAmount);
 
         // payout amount
-        String payoutAmountCacheKey = MetricsConstants.buildGamePayoutAmountCacheKey(addDataMetricsDo.getPId(), addDataMetricsDo.getChannelId(), addDataMetricsDo.getGameId());
+        String payoutAmountCacheKey = MetricsConstants.buildGamePayoutAmountCacheKey(cacheKeyDo.getPId(), cacheKeyDo.getChannelId(), metricsType.getGameType().getId());
         Boolean hasPayoutAmountCacheKey = redisTemplate.hasKey(payoutAmountCacheKey);
-        Long incPayoutAmount = addDataMetricsDo.getTotalPayoutAmount();
+        Long incPayoutAmount = Optional.ofNullable(totalPayoutAmountObj).map(t->(long)t).orElse(0L);
         if (!Objects.equals(hasPayoutAmountCacheKey, true) && Objects.nonNull(existMetricsDo)) {
             incPayoutAmount = existMetricsDo.getTotalPayoutAmount();
         }

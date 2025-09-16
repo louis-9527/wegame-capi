@@ -3,12 +3,16 @@ package com.wegame.capi.biz.service.metrics;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
+import com.wegame.capi.client.enums.innerdos.GameMetricsPropertyNameEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
+import com.wegame.capi.client.enums.innerdos.UserPlayMetricsPropertyNameEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 默认指标服务
@@ -23,37 +27,24 @@ public class DefaultMetricsService extends AbstractMetricsService {
     }
 
     @Override
-    protected GameMetricsDo getGameMetricsDo(BetRecordDo betRecordDo, Object extInfo) {
-        BigDecimal totalBetAmount = new BigDecimal(betRecordDo.getPayAmount());
-        BigDecimal totalPayoutAmount = new BigDecimal(betRecordDo.getPayOutAmount());
-        return GameMetricsDo.builder()
-                .pId(betRecordDo.getPId())
-                .channelId(betRecordDo.getChannelId())
-                .gameId(betRecordDo.getGameId())
-                .totalBetAmount(betRecordDo.getPayAmount())
-                .totalPayoutAmount(betRecordDo.getPayOutAmount())
-                // 只代表增量
-                .currentRtp(totalPayoutAmount.divide(totalBetAmount, 5, RoundingMode.FLOOR))
-                .build();
+    protected Map<GameMetricsPropertyNameEnum, Object> getGameMetricsMap(BetRecordDo betRecordDo, Object extInfo) {
+        Map<GameMetricsPropertyNameEnum, Object> gameMetricsMap = new HashMap<>();
+        gameMetricsMap.put(GameMetricsPropertyNameEnum.totalBetAmount, betRecordDo.getPayAmount());
+        gameMetricsMap.put(GameMetricsPropertyNameEnum.totalPayoutAmount, betRecordDo.getPayOutAmount());
+        return gameMetricsMap;
     }
 
     @Override
-    protected UserPlayMetricsDo getUserPlayMetricsDo(BetRecordDo betRecordDo, Object extInfo) {
+    protected Map<UserPlayMetricsPropertyNameEnum, Object> getUserPlayMetricsMap(BetRecordDo betRecordDo, Object extInfo) {
+        Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap = new HashMap<>();
         Boolean hasFreeSpin = (Boolean) extInfo;
-        return UserPlayMetricsDo.builder()
-                .pId(betRecordDo.getPId())
-                .channelId(betRecordDo.getChannelId())
-                .gameId(betRecordDo.getGameId())
-                .playerId(betRecordDo.getPlayerId())
-                .playerName(betRecordDo.getPlayerName())
-                .totalGameCount(1L)
-                .totalBetAmount(betRecordDo.getPayAmount())
-                .totalPayoutAmount(betRecordDo.getPayOutAmount())
-                .continuousLostCount(betRecordDo.getPayOutAmount() > 0 ? 0 : 1)
-                .lastBetTime(betRecordDo.getBetTime())
-                // 这个值在各个游戏的地方给到,会涉及betRecord 生成的地方改造
-                .continuousNoFreeSpinCount(hasFreeSpin ? 0L : 1L)
-                .build();
+        metricsDataMap.put(UserPlayMetricsPropertyNameEnum.totalGameCount, 1);
+        metricsDataMap.put(UserPlayMetricsPropertyNameEnum.totalBetAmount, betRecordDo.getBetAmount());
+        metricsDataMap.put(UserPlayMetricsPropertyNameEnum.totalPayoutAmount, betRecordDo.getPayOutAmount());
+        metricsDataMap.put(UserPlayMetricsPropertyNameEnum.continuousLostCount, betRecordDo.getPayOutAmount() > 0 ? 0 : 1);
+        metricsDataMap.put(UserPlayMetricsPropertyNameEnum.lastBetTime, betRecordDo.getBetTime());
+        metricsDataMap.put(UserPlayMetricsPropertyNameEnum.continuousNoFreeSpinCount, hasFreeSpin ? 0L : 1L);
+        return metricsDataMap;
     }
 
 }

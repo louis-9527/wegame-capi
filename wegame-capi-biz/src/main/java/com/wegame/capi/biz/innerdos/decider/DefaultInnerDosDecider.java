@@ -88,7 +88,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 1.获取当前使用中的大盘常态干预类型
         GameMetricsDo gameMetricsDo = context.getGameMetricsDo();
         AssertUtil.assertNotNull(gameMetricsDo, ErrorCode.ERR_INTER, "gameMetricsDo is null");
-        GameInnerDosTypeEnum inUseNormalDosType = gameMetricsDo.getInUseNormalDosType();
+        GameInnerDosTypeEnum inUseNormalDosType = GameInnerDosTypeEnum.valueOfCode(gameMetricsDo.getInUseNormalDosType());
         // 2.获取对应的模版倍率配置
         Map<String, BigDecimal> templateRangeMap = context.getTemplateRangeMap(inUseNormalDosType, context.getBetDo().getBetSubType());
         // 3.随机权重

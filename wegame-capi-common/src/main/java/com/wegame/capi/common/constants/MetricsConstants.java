@@ -26,6 +26,12 @@ public class MetricsConstants {
      */
     public static final long USER_METRICS_CACHE_TIME = 60 * 30;
 
+    /**
+     * 大盘指标缓存时间:秒
+     * 暂定30分钟，每次操作都续约
+     */
+    public static final long GAME_METRICS_CACHE_TIME = 60 * 30;
+
     public static String buildGameMetricsCacheKey(String pId, String channelId, String gameId) {
         return String.format(GAME_METRICS_CACHE_FORMAT, pId, channelId, gameId);
     }

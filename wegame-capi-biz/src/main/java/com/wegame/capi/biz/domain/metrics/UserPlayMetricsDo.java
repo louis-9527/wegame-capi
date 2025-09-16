@@ -1,6 +1,10 @@
 package com.wegame.capi.biz.domain.metrics;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.NumberUtil;
+import com.wegame.capi.client.enums.innerdos.MetricsPropertyTypeEnum;
+import com.wegame.capi.client.enums.innerdos.UserPlayMetricsPropertyNameEnum;
+import com.wegame.capi.common.Constants;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -98,6 +102,10 @@ public class UserPlayMetricsDo implements Serializable {
      * 更新时间
      */
     private Long updateTime;
+    /**
+     * 上次刷盘时间:暂时不写值
+     */
+    private Long lastFlushTime;
 
     /**
      * 特殊规则
@@ -145,44 +153,118 @@ public class UserPlayMetricsDo implements Serializable {
                 .findFirst().orElse(null);
     }
 
-
     /**
      * 添加增量
      *
-     * @param newDataDo 新增数据
+     * @param metricsDataMap 单次采集数据
      */
-    public void injectNewData(UserPlayMetricsDo newDataDo) {
-        this.totalGameCount = this.totalGameCount + Optional.ofNullable(newDataDo.getTotalGameCount()).orElse(0L);
-        this.totalBetAmount = this.totalBetAmount + Optional.ofNullable(newDataDo.getTotalBetAmount()).orElse(0L);
-        this.totalPayoutAmount = this.totalPayoutAmount + Optional.ofNullable(newDataDo.getTotalPayoutAmount()).orElse(0L);
-        this.continuousLostCount = this.continuousLostCount + Optional.ofNullable(newDataDo.getContinuousLostCount()).orElse(0);
-        this.lastBetTime = Math.max(this.lastBetTime, Optional.ofNullable(newDataDo.getLastBetTime()).orElse(System.currentTimeMillis()));
-        this.continuousNoFreeSpinCount = this.continuousNoFreeSpinCount + Optional.ofNullable(newDataDo.getContinuousNoFreeSpinCount()).orElse(0L);
-        if (CollectionUtil.isEmpty(this.specialRuleList)) {
-            this.specialRuleList = newDataDo.getSpecialRuleList();
-        } else {
-            if (CollectionUtil.isNotEmpty(newDataDo.getSpecialRuleList())) {
-                // 找出当前没有的规则
-                List<SpecialRuleDo> newList = newDataDo.getSpecialRuleList().stream().filter(item -> !this.specialRuleList.contains(item)).collect(Collectors.toList());
-                // 存量规则匹配
-                Map<SpecialRuleDo, SpecialRuleDo> newDoMap = newDataDo.getSpecialRuleList().stream().collect(Collectors.toMap(s -> s, s -> s, (s1, s2) -> s1));
-                for (SpecialRuleDo specialRuleDo : this.specialRuleList) {
-                    SpecialRuleDo specialRuleDo1 = newDoMap.get(specialRuleDo);
-                    // 新增里面没有原有的规则
-                    if (Objects.isNull(specialRuleDo1)) {
-                        continue;
+    public void injectNewData(Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap) {
+        // 添加固定数据
+        this.injectNewFixedData(metricsDataMap);
+        // 添加扩展数据
+        this.injectNewExtendData(metricsDataMap);
+        // 跟新基础数据
+        this.updateBaseData();
+    }
+
+    private void updateBaseData() {
+        // 版本号
+        this.version = Optional.ofNullable(this.version).map(v -> v + 1).orElse(1L);
+        // 更新人
+        this.updater = Constants.SYSTEM;
+        // 更新时间
+        this.updateTime = System.currentTimeMillis();
+    }
+
+    /**
+     * 注入固定属性增量数据
+     *
+     * @param metricsDataMap 采集map
+     */
+    private void injectNewFixedData(Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap) {
+        // 累计游戏局数
+        Object totalGameCountObj = metricsDataMap.get(UserPlayMetricsPropertyNameEnum.totalGameCount);
+        this.totalGameCount = UserPlayMetricsPropertyNameEnum.totalGameCount.calc(this.totalGameCount, totalGameCountObj, Long.class);
+
+        // 累计投注金额
+        Object totalBetAmountObj = metricsDataMap.get(UserPlayMetricsPropertyNameEnum.totalBetAmount);
+        this.totalBetAmount = UserPlayMetricsPropertyNameEnum.totalBetAmount.calc(this.totalBetAmount, totalBetAmountObj, Long.class);
+
+        // 累计获奖金额
+        Object totalPayoutAmountObj = metricsDataMap.get(UserPlayMetricsPropertyNameEnum.totalPayoutAmount);
+        this.totalPayoutAmount = UserPlayMetricsPropertyNameEnum.totalPayoutAmount.calc(this.totalPayoutAmount, totalPayoutAmountObj, Long.class);
+
+        // 连续空盘次数
+        Object continuousLostCountObj = metricsDataMap.get(UserPlayMetricsPropertyNameEnum.continuousLostCount);
+        this.continuousLostCount = UserPlayMetricsPropertyNameEnum.continuousLostCount.calc(this.continuousLostCount, continuousLostCountObj, Integer.class);
+
+        // 最后投注时间.获取最新时间作为最后投注时间
+        Object lastBetTimeObj = metricsDataMap.get(UserPlayMetricsPropertyNameEnum.lastBetTime);
+        this.lastBetTime = UserPlayMetricsPropertyNameEnum.lastBetTime.calc(this.lastBetTime, lastBetTimeObj, Long.class);
+
+        // 连续不中免费轮次数
+        Object continuousNoFreeSpinCountObj = metricsDataMap.get(UserPlayMetricsPropertyNameEnum.continuousNoFreeSpinCount);
+        this.continuousNoFreeSpinCount = UserPlayMetricsPropertyNameEnum.continuousNoFreeSpinCount.calc(this.continuousNoFreeSpinCount, continuousNoFreeSpinCountObj, Long.class);
+
+        // 机制列表
+        this.injectNewFixedSpecialRule(metricsDataMap);
+    }
+
+    /**
+     * 注入新的特殊规则 数据
+     *
+     * @param metricsDataMap 数据
+     */
+    private void injectNewFixedSpecialRule(Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap) {
+        Object specialRuleListObj = metricsDataMap.get(UserPlayMetricsPropertyNameEnum.specialRuleList);
+        if (Objects.nonNull(specialRuleListObj)) {
+            List<SpecialRuleDo> sourceSpecialRuleList = (List<SpecialRuleDo>) specialRuleListObj;
+            if (CollectionUtil.isEmpty(this.specialRuleList)) {
+                // 当前模型为空，直接替换
+                this.specialRuleList = sourceSpecialRuleList;
+            } else {
+                if (CollectionUtil.isNotEmpty(sourceSpecialRuleList)) {
+                    // 找出当前没有的规则
+                    List<SpecialRuleDo> newRuleList = sourceSpecialRuleList.stream().filter(item -> !this.specialRuleList.contains(item)).collect(Collectors.toList());
+                    // 存量规则匹配
+                    Map<SpecialRuleDo, SpecialRuleDo> newSpecialRuleMap = sourceSpecialRuleList.stream().collect(Collectors.toMap(s -> s, s -> s, (s1, s2) -> s1));
+                    for (SpecialRuleDo specialRuleDo : this.specialRuleList) {
+                        SpecialRuleDo sourceSpecialRuleDo = newSpecialRuleMap.get(specialRuleDo);
+                        // 新增里面没有原有的规则
+                        if (Objects.isNull(sourceSpecialRuleDo)) {
+                            continue;
+                        }
+                        // 特殊规则固定属性.连续不中当前规则次数添加.如果新增里面没有数据，原有数据清零
+                        if (Objects.isNull(sourceSpecialRuleDo.getContinuousNoCount()) || sourceSpecialRuleDo.getContinuousNoCount() == 0) {
+                            specialRuleDo.setContinuousNoCount(0);
+                        } else {
+                            specialRuleDo.setContinuousNoCount(specialRuleDo.getContinuousNoCount() + sourceSpecialRuleDo.getContinuousNoCount());
+                        }
+
+                        // exitInfo 当前没有数据，后续有数据需要靠约定属性进行处理
                     }
-                    // 连续不中当前规则次数添加
-                    specialRuleDo.setContinuousNoCount(specialRuleDo.getContinuousNoCount() + Optional.ofNullable(specialRuleDo1.getContinuousNoCount()).orElse(0));
-                    // exitInfo 当前没有数据，后续有数据需要靠约定属性进行处理
+                    // 将新规则加入进来
+                    this.specialRuleList.addAll(newRuleList);
                 }
-                // 将新规则加入进来
-                this.specialRuleList.addAll(newList);
             }
-            // this.extend 属性，当前没有数据，后续有数据需要靠约定属性进行处理
         }
+    }
 
-
+    /**
+     * 注入新的扩展数据
+     *
+     * @param metricsDataMap 数据map
+     */
+    private void injectNewExtendData(Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap) {
+        for (Map.Entry<UserPlayMetricsPropertyNameEnum, Object> entry : metricsDataMap.entrySet()) {
+            // 只处理扩展类型参数
+            if (!Objects.equals(entry.getKey().getType(), MetricsPropertyTypeEnum.EXTEND)) {
+                continue;
+            }
+            // 计算值
+            Object newExtendValue = entry.getKey().calc(this.extend.get(entry.getKey().getPropertyName()), entry.getValue(), Object.class);
+            this.extend.put(entry.getKey().getPropertyName(), newExtendValue);
+        }
     }
 
 }
