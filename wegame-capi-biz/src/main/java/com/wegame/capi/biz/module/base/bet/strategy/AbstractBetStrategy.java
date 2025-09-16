@@ -12,11 +12,16 @@ import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MetricsManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.SingleWalletService;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.AbTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.MessageId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -134,11 +139,19 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                         .build());
     }
 
-    //    private BetRecordDo<R> buildUpdateRecord(BetRecordDo<R> betRecordDo, BetStatusEnum status, SingleWalletBetResultDo betSingleWalletResult) {
-    //        return BetRecordDo.<R>builder()
-    //                .id(betRecordDo.getId())
-    //                .betId(Objects.equals(BetStatusEnum.SUCCESS, status) ? betSingleWalletResult.getBetId() : null)
-    //                .status(status.getCode())
-    //                .build();
-    //    }
+    public GamePlayTypeEnum getGamePlayType() {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
+                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS)) {
+            if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
+                return GamePlayTypeEnum.NORMAL_PLAY;
+            } else {
+                log.info("userInfo.ut: {}, template bet", userInfo.getUt());
+                return GamePlayTypeEnum.TEMPLATE_PLAY;
+            }
+        } else {
+            return GamePlayTypeEnum.NORMAL_PLAY;
+        }
+
+    }
 }

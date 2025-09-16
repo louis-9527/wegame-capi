@@ -7,10 +7,10 @@ import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.service.RewardService;
-import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.Constants;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -55,11 +55,11 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
                             AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(totalRewardAmount)),
                             freeWheelCount))
                     .build();
-            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId());
+            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, gameType.getId(), userInfo.getPId(), userInfo.getChannelId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.MARIA_MARKILING_REWARD_NOTIFY_SIZE);
-            rewardService.evict(gameType);
-            rewardService.getWithCache(gameType);
+            rewardService.evict(gameType, userInfo.getPId(), userInfo.getChannelId());
+            rewardService.getWithCache(gameType, userInfo.getPId(), userInfo.getChannelId());
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }

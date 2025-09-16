@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class GetHistoryMessageRes implements Serializable {
-
+    private static final long serialVersionUID = -125659990255750255L;
     /**
      * refId
      */

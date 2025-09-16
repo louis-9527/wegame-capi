@@ -15,16 +15,16 @@ import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
+import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.biz.service.promotion.BagService;
-import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
-import com.wegame.capi.common.enums.AchievementErrorCode;
 import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
+import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +59,8 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     BagService bagService;
     @Autowired
     FreeSpinService freeSpinService;
-    @Value("${api.game.cp.channelId}")
-    public String cpChannelId;
+    @Autowired
+    private GameApiProperty gameApiProperty;
     @Value("${dynamic.operation.switch}")
     public boolean operationSwitch;
 
@@ -76,8 +76,14 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             boolean canOperationEventBet = false;
             UserInfo userInfo = UserInfoContext.getUserInfo();
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-            if (Objects.equals(cpChannelId, userInfo.getChannelId()) && Objects.equals(betDo.getBetType(), NORMAL_BET)) {
-                GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount());
+            AssertUtil.assertNotNull(userInfo.getChannelId(), ErrorCode.ERR_NOT_LOGIN);
+            // 判断渠道
+            if (!gameApiProperty.getChannelIdAll().contains(userInfo.getChannelId())) {
+                return false;
+            }
+            // 仅正常投注时可干预
+            if (Objects.equals(betDo.getBetType(), NORMAL_BET)) {
+                GameOperationEventDo gameOperationEvent = operationEventManager().getEventBetResult(betDo.getPayAmount(), userInfo.getChannelId());
                 canOperationEventBet = Objects.nonNull(gameOperationEvent) && gameOperationEvent.isEventResult();
                 if (canOperationEventBet) {
                     // 设置betDo
@@ -242,7 +248,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     }
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {
-        GamePlayTypeEnum playTypeEnum = GamePlayTypeEnum.NORMAL_PLAY;
+        GamePlayTypeEnum playTypeEnum = getGamePlayType();
         GameOperationEventDo gameEventDo = betDo.getGameOperationEvent();
         if (Objects.equals(betDo.getBetPromotionType(), OPERATION_EVENT)) {
             if (Objects.nonNull(gameEventDo) && gameEventDo.isEventResult()) {

@@ -1,5 +1,6 @@
 package com.wegame.capi.client.context;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -7,6 +8,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 玩家
@@ -20,6 +22,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @ApiModel("用户信息")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfo implements Serializable {
     private static final long serialVersionUID = -701740428094376475L;
 
@@ -44,4 +47,8 @@ public class UserInfo implements Serializable {
     private String userName;
     @ApiModelProperty(value = "中台token")
     private String token;
+    @ApiModelProperty(value = "AB测试(afe: A（数值化）, aff: B（模拟盘面/模版）)")
+    private String ut;
+    @ApiModelProperty(value = "扩展参数")
+    private Map<String, Object> ext;
 }

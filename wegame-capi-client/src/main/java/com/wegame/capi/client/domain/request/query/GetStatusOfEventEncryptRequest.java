@@ -20,8 +20,14 @@ import java.io.Serializable;
 @ApiModel(description = "查询干预事件结果-加密请求参数")
 public class GetStatusOfEventEncryptRequest extends BaseRequest implements Validate, Serializable {
     private static final long serialVersionUID = 723094469043351839L;
+    /**
+     * agentCode 对应 channelId
+     */
     @ApiModelProperty(value = "agentCode", required = true)
     private String agentCode;
+    /**
+     * 加密数据
+     */
     @ApiModelProperty(value = "message", required = true)
     private String message;
 
