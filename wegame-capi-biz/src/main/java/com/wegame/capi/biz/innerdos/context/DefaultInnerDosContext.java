@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.innerdos.context;
 
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
 import com.wegame.capi.biz.innerdos.config.InnerDosCondition;
@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,10 +25,11 @@ import java.util.Map;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class DefaultInnerDosContext implements InnerDosContext {
+
     /**
-     * betDo
+     * gamePlayDo
      */
-    private BetDo betDo;
+    private GamePlayDo gamePlayDo;
 
     /**
      * 模版权重配置
@@ -52,8 +52,8 @@ public class DefaultInnerDosContext implements InnerDosContext {
     private GameMetricsDo gameMetricsDo;
 
     @Override
-    public BetDo getBetDo() {
-        return this.betDo;
+    public GamePlayDo getGamePlayDo() {
+        return this.gamePlayDo;
     }
 
     @Override

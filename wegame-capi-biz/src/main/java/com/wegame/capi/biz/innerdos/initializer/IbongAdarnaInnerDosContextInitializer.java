@@ -1,9 +1,12 @@
 package com.wegame.capi.biz.innerdos.initializer;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.builder.metrics.GameMetricsBuilder;
+import com.wegame.capi.biz.builder.metrics.UserPlayMetricsBuilder;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
 import com.wegame.capi.biz.innerdos.config.GameRtpDosCondition;
@@ -21,8 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * ibong context初始化器
@@ -46,24 +49,44 @@ public class IbongAdarnaInnerDosContextInitializer implements InnerDosContextIni
     public InnerDosContext init(Object... initParams) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        MetricsTypeEnum metricsType = MetricsTypeEnum.valueOfGameType(GameTypeEnum.valueOfId(userInfo.getGameId()));
-        GameMetricsDo gameMetricsDo = gameMetricsDataService.query(userInfo.getPId(), userInfo.getChannelId(), metricsType);
-        UserPlayMetricsDo userPlayMetricsDo = userPlayMetricsDataService.query(userInfo.getPId(), userInfo.getPlayerId(), userInfo.getChannelId(), metricsType);
-
         DefaultInnerDosContext.DefaultTemplateRangeConfig templateRangeConfig = this.buildDefaultTemplateRangeConfig();
         InnerDosCondition innerDosCondition = this.buildInnerDosCondition();
         return DefaultInnerDosContext.builder()
-                .betDo((BetDo) initParams[0])
+                .gamePlayDo((GamePlayDo) initParams[0])
                 .defaultTemplateRangeConfig(templateRangeConfig)
                 .innerDosCondition(innerDosCondition)
-                .gameMetricsDo(gameMetricsDo)
-                .userPlayMetricsDo(userPlayMetricsDo)
+                .gameMetricsDo(this.queryGameMetricsDo(userInfo))
+                .userPlayMetricsDo(this.queryUserPlayMetricsDo(userInfo))
                 .build();
     }
 
     @Override
     public Map<GameInnerDosTypeEnum, GameRtpDosCondition> getGameRtpDosConditionMap() {
         return ibongAdarnaConfig.getInnerDosConfig().getGameRtpDosConditionMap();
+    }
+
+    private GameMetricsDo queryGameMetricsDo(UserInfo userInfo) {
+        GameMetricsDo gameMetricsDo = gameMetricsDataService.query(userInfo.getPId(), userInfo.getChannelId(), MetricsTypeEnum.valueOfGameType(GameTypeEnum.valueOfId(userInfo.getGameId())));
+        if (Objects.isNull(gameMetricsDo)) {
+            // 没有返回默认：针对用户第一次访问兜底逻辑
+            log.info("IbongAdarnaInnerDosContextInitializer no GameMetricsDo cache use default,userInfo:{}", JSON.toJSONString(userInfo));
+            gameMetricsDo = GameMetricsBuilder.buildDefault(userInfo.getPId(), userInfo.getChannelId(), userInfo.getGameId());
+        }
+        return gameMetricsDo;
+    }
+
+    private UserPlayMetricsDo queryUserPlayMetricsDo(UserInfo userInfo) {
+        UserPlayMetricsDo userPlayMetricsDo = userPlayMetricsDataService.query(userInfo.getPId(),
+                userInfo.getPlayerId(),
+                userInfo.getChannelId(),
+                MetricsTypeEnum.valueOfGameType(GameTypeEnum.valueOfId(userInfo.getGameId())));
+
+        if (Objects.isNull(userPlayMetricsDo)) {
+            // 没有返回默认：针对用户第一次访问兜底逻辑
+            log.info("IbongAdarnaInnerDosContextInitializer no UserPlayMetricsDo cache use default,userInfo:{}", JSON.toJSONString(userInfo));
+            userPlayMetricsDo = UserPlayMetricsBuilder.buildDefault(userInfo);
+        }
+        return userPlayMetricsDo;
     }
 
     private InnerDosCondition buildInnerDosCondition() {

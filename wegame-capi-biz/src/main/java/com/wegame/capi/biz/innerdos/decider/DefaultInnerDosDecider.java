@@ -56,7 +56,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
      */
     private InnerDosDecideResult decideForNewPlayer(DefaultInnerDosContext context) {
         // 1.获取标准rtp模版倍率配置
-        Map<String, BigDecimal> templateRangeMap = context.getTemplateRangeMap(GameInnerDosTypeEnum.NORMAL_DOS, context.getBetDo().getBetSubType());
+        Map<String, BigDecimal> templateRangeMap = context.getTemplateRangeMap(GameInnerDosTypeEnum.NORMAL_DOS, context.getGamePlayDo().getBetSubType());
         // 2.随机权重
         int weightSum = templateRangeMap.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(Constants.CONST_10000)).intValue();
         int randomWeight = randomService.randomInt(1, weightSum);
@@ -90,7 +90,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         AssertUtil.assertNotNull(gameMetricsDo, ErrorCode.ERR_INTER, "gameMetricsDo is null");
         GameInnerDosTypeEnum inUseNormalDosType = GameInnerDosTypeEnum.valueOfCode(gameMetricsDo.getInUseNormalDosType());
         // 2.获取对应的模版倍率配置
-        Map<String, BigDecimal> templateRangeMap = context.getTemplateRangeMap(inUseNormalDosType, context.getBetDo().getBetSubType());
+        Map<String, BigDecimal> templateRangeMap = context.getTemplateRangeMap(inUseNormalDosType, context.getGamePlayDo().getBetSubType());
         // 3.随机权重
         int weightSum = templateRangeMap.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(Constants.CONST_10000)).intValue();
         int randomWeight = randomService.randomInt(1, weightSum);

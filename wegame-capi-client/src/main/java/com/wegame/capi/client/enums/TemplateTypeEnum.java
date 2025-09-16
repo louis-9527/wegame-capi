@@ -25,8 +25,12 @@ public enum TemplateTypeEnum {
             "malakas_bet_record_template",
             ""
     ),
+    IBONG_ADARNA(
+            GameTypeEnum.IBONG_ADARNA,
+            "ibongadarna_bet_record_template",
+            ""
+    ),
     ;
-
 
     /**
      * 枚举码.

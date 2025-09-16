@@ -2,6 +2,7 @@ package com.wegame.capi.biz.builder.metrics;
 
 import com.wegame.capi.biz.domain.metrics.MetricsCacheKeyDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
+import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.client.enums.innerdos.UserPlayMetricsPropertyNameEnum;
 import com.wegame.capi.common.Constants;
@@ -25,6 +26,22 @@ public class UserPlayMetricsBuilder {
         aDo.setCreator(Constants.SYSTEM);
         aDo.setCreateTime(System.currentTimeMillis());
         return aDo;
+    }
+
+
+    public static UserPlayMetricsDo buildDefault(UserInfo userInfo) {
+        return UserPlayMetricsDo.builder()
+                .pId(userInfo.getPId())
+                .channelId(userInfo.getChannelId())
+                .gameId(userInfo.getGameId())
+                .playerId(userInfo.getPlayerId())
+                .playerName(userInfo.getPlayerName())
+                .continuousLostCount(0)
+                .continuousNoFreeSpinCount(0L)
+                .totalBetAmount(0L)
+                .totalPayoutAmount(0L)
+                .totalGameCount(0L)
+                .build();
     }
 
 

@@ -9,6 +9,7 @@ import com.wegame.capi.client.enums.innerdos.GameMetricsPropertyNameEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.common.Constants;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,6 +26,19 @@ public class GameMetricsBuilder {
         aDo.setCreator(Constants.SYSTEM);
         aDo.setCreateTime(System.currentTimeMillis());
         return aDo;
+    }
+
+    public static GameMetricsDo buildDefault(String pId, String channelId, String gameId) {
+        return GameMetricsDo.builder()
+                .pId(pId)
+                .channelId(channelId)
+                .gameId(gameId)
+                .currentRtp(BigDecimal.ZERO)
+                .totalBetAmount(0L)
+                .totalPayoutAmount(0L)
+                .version(0L)
+                .inUseNormalDosType(GameInnerDosTypeEnum.NORMAL_DOS.getCode())
+                .build();
     }
 
 }

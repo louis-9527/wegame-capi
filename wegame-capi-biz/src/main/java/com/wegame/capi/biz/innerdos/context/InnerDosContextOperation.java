@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.innerdos.context;
 
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
 
@@ -13,9 +13,9 @@ import java.util.Map;
 public interface InnerDosContextOperation {
 
     /**
-     * 获取投注BetDo
+     * 获取玩法do
      */
-    BetDo getBetDo();
+    GamePlayDo getGamePlayDo();
 
     /**
      * 获取用户指标数据

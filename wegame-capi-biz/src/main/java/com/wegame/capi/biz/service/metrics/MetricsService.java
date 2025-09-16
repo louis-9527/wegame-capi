@@ -18,6 +18,8 @@ public interface MetricsService {
      */
     boolean metrics(BetRecordDo betRecordDo, MetricsTypeEnum metricsType, Object extInfo);
 
+    // 可扩展按照特定指标采集
+
     /**
      * 采集类型，一个bean只能用于一个type使用
      *

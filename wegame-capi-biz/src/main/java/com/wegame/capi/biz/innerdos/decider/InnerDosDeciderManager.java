@@ -2,6 +2,7 @@ package com.wegame.capi.biz.innerdos.decider;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.innerdos.context.InnerDosContext;
 import com.wegame.capi.biz.innerdos.initializer.InnerDosContextInitializerManager;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -31,8 +32,8 @@ public class InnerDosDeciderManager implements InitializingBean, ApplicationCont
     @Autowired
     private InnerDosContextInitializerManager innerDosContextInitializerManager;
 
-    public InnerDosDecideResult decide(GameTypeEnum gameType, BetDo betDo, Object... extParams) {
-        InnerDosContext context = innerDosContextInitializerManager.getInitializer(gameType).init(betDo, extParams);
+    public InnerDosDecideResult decide(GameTypeEnum gameType, GamePlayDo gamePlayDo, Object... extParams) {
+        InnerDosContext context = innerDosContextInitializerManager.getInitializer(gameType).init(gamePlayDo, extParams);
         return this.getOrDefaultInnerDosDecider(gameType).decide(context);
     }
 

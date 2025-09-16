@@ -29,7 +29,7 @@ public enum UserPlayMetricsPropertyNameEnum {
             }
 
             if (Objects.nonNull(target)) {
-                return targetClass.cast((long) target + (long) source);
+                return targetClass.cast(Long.parseLong(target.toString()) + (long) source);
             } else {
                 return targetClass.cast(source);
             }
@@ -45,7 +45,7 @@ public enum UserPlayMetricsPropertyNameEnum {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "property totalBetAmount must be type Long");
             }
             if (Objects.nonNull(target)) {
-                return targetClass.cast((long) target + (long) source);
+                return targetClass.cast(Long.parseLong(target.toString()) + (long) source);
             } else {
                 return targetClass.cast(source);
             }
@@ -61,7 +61,7 @@ public enum UserPlayMetricsPropertyNameEnum {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "property totalPayoutAmount must be type Long");
             }
             if (Objects.nonNull(target)) {
-                return targetClass.cast((long) target + (long) source);
+                return targetClass.cast(Long.parseLong(target.toString()) + (long) source);
             } else {
                 return targetClass.cast(source);
             }
@@ -80,7 +80,7 @@ public enum UserPlayMetricsPropertyNameEnum {
             if (Objects.nonNull(target)) {
                 // 当前增量空盘大于0,则增加
                 if (longSource > 0) {
-                    return targetClass.cast((int) target + longSource);
+                    return targetClass.cast(Integer.parseInt(target.toString()) + longSource);
                 } else {
                     // 当前增量空盘小于0,则重置为0
                     return targetClass.cast(0);
@@ -101,7 +101,7 @@ public enum UserPlayMetricsPropertyNameEnum {
             }
             long longSource = (long) source;
             if (Objects.nonNull(target)) {
-                return targetClass.cast(Math.max((long) target, longSource));
+                return targetClass.cast(Math.max(Long.parseLong(target.toString()), longSource));
             } else {
                 return targetClass.cast(longSource);
             }
@@ -120,7 +120,7 @@ public enum UserPlayMetricsPropertyNameEnum {
             if (Objects.nonNull(target)) {
                 // 当前增量大于0,则增加
                 if (longSource > 0) {
-                    return targetClass.cast((long) target + longSource);
+                    return targetClass.cast(Long.parseLong(target.toString()) + longSource);
                 } else {
                     // 当前增量小于0,则重置为0
                     return targetClass.cast(0);

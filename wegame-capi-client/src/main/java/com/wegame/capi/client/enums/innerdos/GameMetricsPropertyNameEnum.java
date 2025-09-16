@@ -28,7 +28,7 @@ public enum GameMetricsPropertyNameEnum {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "property totalBetAmount must be type Long");
             }
             if (Objects.nonNull(target)) {
-                return targetClass.cast((long) target + (long) source);
+                return targetClass.cast(Long.parseLong(target.toString()) + (long) source);
             } else {
                 return targetClass.cast(source);
             }
@@ -44,7 +44,7 @@ public enum GameMetricsPropertyNameEnum {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "property totalPayoutAmount must be type Long");
             }
             if (Objects.nonNull(target)) {
-                return targetClass.cast((long) target + (long) source);
+                return targetClass.cast(Long.parseLong(target.toString()) + (long) source);
             } else {
                 return targetClass.cast(source);
             }

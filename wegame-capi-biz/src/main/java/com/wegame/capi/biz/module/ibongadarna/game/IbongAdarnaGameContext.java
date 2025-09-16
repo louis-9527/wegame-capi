@@ -22,6 +22,7 @@ public class IbongAdarnaGameContext extends AbstractGameContext {
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "ibongAdarnaGameNormalPlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "ibongAdarnaGameEventPlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "ibongAdarnaGameTemplatePlay")
             .build();
 
     @Autowired
