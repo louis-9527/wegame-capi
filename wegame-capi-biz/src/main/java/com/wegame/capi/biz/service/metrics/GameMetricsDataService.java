@@ -2,7 +2,9 @@ package com.wegame.capi.biz.service.metrics;
 
 import com.alibaba.fastjson.JSON;
 import com.mongodb.client.result.UpdateResult;
+import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.SnowflakeIdGenerator;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.metrics.GameMetricsBuilder;
 import com.wegame.capi.biz.builder.metrics.GameMetricsQueryBuilder;
 import com.wegame.capi.biz.converter.metrics.GameMetricsConverter;
@@ -44,7 +46,7 @@ public class GameMetricsDataService extends AbstractService {
     /**
      * 指标数据缓存存储
      *
-     * @param metricsType      metricsType
+     * @param metricsType metricsType
      * @return true/false
      */
     public boolean cache(Map<GameMetricsPropertyNameEnum, Object> metricsDataMap, MetricsCacheKeyDo cacheKeyDo, MetricsTypeEnum metricsType) {
@@ -63,13 +65,13 @@ public class GameMetricsDataService extends AbstractService {
         } else {
             // 没有，则新建一条数据
             redisTemplate.opsForValue().set(key,
-                    GameMetricsBuilder.build(metricsDataMap, cacheKeyDo,gameRtpDosConditionMap, metricsType),
+                    GameMetricsBuilder.build(metricsDataMap, cacheKeyDo, gameRtpDosConditionMap, metricsType),
                     MetricsConstants.GAME_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         }
         return true;
     }
 
-    private void cacheBetAndPayoutAmount(Map<GameMetricsPropertyNameEnum, Object> metricsDataMap, GameMetricsDo existMetricsDo,MetricsCacheKeyDo cacheKeyDo, MetricsTypeEnum metricsType) {
+    private void cacheBetAndPayoutAmount(Map<GameMetricsPropertyNameEnum, Object> metricsDataMap, GameMetricsDo existMetricsDo, MetricsCacheKeyDo cacheKeyDo, MetricsTypeEnum metricsType) {
         Object totalBetAmountObj = metricsDataMap.get(GameMetricsPropertyNameEnum.totalBetAmount);
         Object totalPayoutAmountObj = metricsDataMap.get(GameMetricsPropertyNameEnum.totalPayoutAmount);
         // bet amount
@@ -77,7 +79,7 @@ public class GameMetricsDataService extends AbstractService {
         String betAmountCacheKey = MetricsConstants.buildGameBetAmountCacheKey(cacheKeyDo.getPId(), cacheKeyDo.getChannelId(), metricsType.getGameType().getId());
         Boolean hasBetAmountCacheKey = redisTemplate.hasKey(betAmountCacheKey);
 
-        Long incBetAmount = Optional.ofNullable(totalBetAmountObj).map(t->(long)t).orElse(0L);
+        Long incBetAmount = Optional.ofNullable(totalBetAmountObj).map(t -> (long) t).orElse(0L);
         // 2.不存在 && 已有do不为空:获取现有的值作为基础
         if (!Objects.equals(hasBetAmountCacheKey, true) && Objects.nonNull(existMetricsDo)) {
             incBetAmount = existMetricsDo.getTotalBetAmount();
@@ -87,7 +89,7 @@ public class GameMetricsDataService extends AbstractService {
         // payout amount
         String payoutAmountCacheKey = MetricsConstants.buildGamePayoutAmountCacheKey(cacheKeyDo.getPId(), cacheKeyDo.getChannelId(), metricsType.getGameType().getId());
         Boolean hasPayoutAmountCacheKey = redisTemplate.hasKey(payoutAmountCacheKey);
-        Long incPayoutAmount = Optional.ofNullable(totalPayoutAmountObj).map(t->(long)t).orElse(0L);
+        Long incPayoutAmount = Optional.ofNullable(totalPayoutAmountObj).map(t -> (long) t).orElse(0L);
         if (!Objects.equals(hasPayoutAmountCacheKey, true) && Objects.nonNull(existMetricsDo)) {
             incPayoutAmount = existMetricsDo.getTotalPayoutAmount();
         }
@@ -103,6 +105,10 @@ public class GameMetricsDataService extends AbstractService {
      * @return 刷盘结果
      */
     public boolean flush(String pId, String channelId, MetricsTypeEnum metricsType) {
+        log.info("GameMetricsDataService#flush start,pId:{},channelId:{},metricsType:{}", pId, channelId, metricsType);
+        AssertUtil.assertStrNotEmpty(pId, ErrorCode.ERR_PARAM, "pId is empty");
+        AssertUtil.assertStrNotEmpty(channelId, ErrorCode.ERR_PARAM, "channelId is empty");
+        AssertUtil.assertNotNull(metricsType, ErrorCode.ERR_PARAM, "metricsType is null");
         GameMetricsDo metricsDo = this.queryCache(pId, channelId, metricsType);
         // 缓存没有则不处理
         if (Objects.nonNull(metricsDo)) {
@@ -123,6 +129,7 @@ public class GameMetricsDataService extends AbstractService {
                 super.getMongoTemplate(metricsType.getGameType()).insert(po, metricsType.getGameMetricsCollectionName());
             }
         }
+        log.info("GameMetricsDataService#flush end,pId:{},channelId:{},metricsType:{},flushData:{}", pId, channelId, metricsType, JSON.toJSONString(metricsDo));
         return true;
     }
 

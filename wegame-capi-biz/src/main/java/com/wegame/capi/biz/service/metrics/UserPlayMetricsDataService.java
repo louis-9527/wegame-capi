@@ -2,7 +2,9 @@ package com.wegame.capi.biz.service.metrics;
 
 import com.alibaba.fastjson.JSON;
 import com.mongodb.client.result.UpdateResult;
+import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.SnowflakeIdGenerator;
+import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.metrics.UserPlayMetricsBuilder;
 import com.wegame.capi.biz.builder.metrics.UserPlayMetricsQueryBuilder;
 import com.wegame.capi.biz.converter.metrics.UserPlayMetricsConverter;
@@ -58,7 +60,6 @@ public class UserPlayMetricsDataService extends AbstractService {
         return true;
     }
 
-
     /**
      * 指标数据刷盘
      *
@@ -69,6 +70,11 @@ public class UserPlayMetricsDataService extends AbstractService {
      * @return 刷盘结果
      */
     public boolean flush(String pId, String playerId, String channelId, MetricsTypeEnum metricsType) {
+        log.info("UserPlayMetricsDataService#flush start,pId:{},channelId:{},playerId:{},metricsType:{}", pId, channelId, playerId, metricsType);
+        AssertUtil.assertStrNotEmpty(pId, ErrorCode.ERR_PARAM, "pId is empty");
+        AssertUtil.assertStrNotEmpty(channelId, ErrorCode.ERR_PARAM, "channelId is empty");
+        AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM, "playerId is empty");
+        AssertUtil.assertNotNull(metricsType, ErrorCode.ERR_PARAM, "metricsType is null");
         UserPlayMetricsDo userPlayMetricsDo = this.queryCache(pId, playerId, channelId, metricsType);
         // 缓存没有则不处理
         if (Objects.nonNull(userPlayMetricsDo)) {
@@ -90,6 +96,7 @@ public class UserPlayMetricsDataService extends AbstractService {
                 super.getMongoTemplate(metricsType.getGameType()).insert(po, metricsType.getUserPlayMetricsCollectionName());
             }
         }
+        log.info("UserPlayMetricsDataService#flush end,pId:{},channelId:{},playerId:{},metricsType:{},flushData:{}", pId, channelId, playerId, metricsType, JSON.toJSONString(userPlayMetricsDo));
         return true;
     }
 

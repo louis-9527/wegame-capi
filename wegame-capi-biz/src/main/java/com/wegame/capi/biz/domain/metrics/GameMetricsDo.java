@@ -119,7 +119,8 @@ public class GameMetricsDo implements Serializable {
         // 当前rtp 计算
         BigDecimal totalBetAmount = new BigDecimal(this.totalBetAmount);
         BigDecimal totalPayoutAmount = new BigDecimal(this.totalPayoutAmount);
-        this.currentRtp = totalPayoutAmount.divide(totalBetAmount, 5, RoundingMode.FLOOR);
+        // 按照百分比计算
+        this.currentRtp = totalPayoutAmount.divide(totalBetAmount).multiply(BigDecimal.valueOf(100)).setScale(4, RoundingMode.FLOOR);
 
         // 当前的常态干预类型
         this.injectInUseNormalDosType(gameRtpDosConditionMap);
@@ -132,33 +133,36 @@ public class GameMetricsDo implements Serializable {
             this.inUseNormalDosType = GameInnerDosTypeEnum.NORMAL_DOS.getCode();
         } else {
             GameRtpDosCondition gameRtpDosCondition = gameRtpDosConditionMap.get(gameInnerDosTypeEnum);
-            if (Objects.isNull(gameRtpDosCondition)) {
-                // 如果没有匹配条件的类型，则不处理:一般来说normal 不会配置
-                return;
-            }
-
-            // 先校验是否满足退出条件
-            boolean outFlag = gameRtpDosCondition.getOut().assertIt(this.currentRtp);
-            if (!outFlag) {
-                // 没有退出当前条件，则返回
-                return;
-            }
-
-            // 校验其他进入条件
-            GameInnerDosTypeEnum inUseType = GameInnerDosTypeEnum.NORMAL_DOS;
-            for (Map.Entry<GameInnerDosTypeEnum, GameRtpDosCondition> entry : gameRtpDosConditionMap.entrySet()) {
-                if (Objects.equals(entry.getKey(), gameInnerDosTypeEnum)) {
-                    // 当前条件不处理
-                    continue;
-                }
-                boolean inFlag = entry.getValue().getIn().assertIt(this.currentRtp);
-                if (inFlag) {
-                    // 如果满足进入条件，则使用改条件
-                    inUseType = entry.getKey();
-                    break;
+            // 为空校验一下，因为normal 一般来说是不配置的
+            if (Objects.nonNull(gameRtpDosCondition)){
+                // 先校验是否满足退出条件
+                if (!gameRtpDosCondition.getOut().assertIt(this.currentRtp)) {
+                    // 没有退出当前条件，则返回
+                    return;
                 }
             }
-            this.inUseNormalDosType = inUseType.getCode();
+
+            // 单个匹配是否满足对应干预
+            // 特殊干预
+            GameRtpDosCondition specialCondition = gameRtpDosConditionMap.get(GameInnerDosTypeEnum.SPECIAL_DOS);
+            if (Objects.nonNull(specialCondition) && specialCondition.getIn().assertIt(this.currentRtp)){
+                this.inUseNormalDosType=GameInnerDosTypeEnum.SPECIAL_DOS.getCode();
+                return;
+            }
+            // 过高干预
+            GameRtpDosCondition tooHighCondition = gameRtpDosConditionMap.get(GameInnerDosTypeEnum.TOO_HIGH_DOS);
+            if (Objects.nonNull(tooHighCondition) && tooHighCondition.getIn().assertIt(this.currentRtp)){
+                this.inUseNormalDosType=GameInnerDosTypeEnum.TOO_HIGH_DOS.getCode();
+                return;
+            }
+            // 过低干预
+            GameRtpDosCondition tooLowCondition = gameRtpDosConditionMap.get(GameInnerDosTypeEnum.TOO_LOW_DOS);
+            if (Objects.nonNull(tooLowCondition) && tooLowCondition.getIn().assertIt(this.currentRtp)){
+                this.inUseNormalDosType=GameInnerDosTypeEnum.TOO_LOW_DOS.getCode();
+                return;
+            }
+            // 如果没有匹配，则使用默认normal
+            this.inUseNormalDosType = GameInnerDosTypeEnum.NORMAL_DOS.getCode();
         }
     }
 
