@@ -76,6 +76,7 @@ public class UserPlayMetricsDataService extends AbstractService {
         AssertUtil.assertStrNotEmpty(playerId, ErrorCode.ERR_PARAM, "playerId is empty");
         AssertUtil.assertNotNull(metricsType, ErrorCode.ERR_PARAM, "metricsType is null");
         UserPlayMetricsDo userPlayMetricsDo = this.queryCache(pId, playerId, channelId, metricsType);
+        boolean resultFlag = true;
         // 缓存没有则不处理
         if (Objects.nonNull(userPlayMetricsDo)) {
             UserPlayMetricsQuery metricsQuery = UserPlayMetricsQuery.builder()
@@ -87,7 +88,7 @@ public class UserPlayMetricsDataService extends AbstractService {
             UpdateResult result = super.getMongoTemplate(metricsType.getGameType()).updateFirst(UserPlayMetricsQueryBuilder.buildMongodbQuery(metricsQuery), UserPlayMetricsQueryBuilder.buildMongoUpdate(userPlayMetricsDo), UserPlayMetricsPo.class,
                     metricsType.getUserPlayMetricsCollectionName());
             if (result.getMatchedCount() > 0) {
-                return result.getModifiedCount() >= 1;
+                resultFlag = result.getModifiedCount() >= 1;
             } else {
                 log.warn("UserPlayMetricsService#flush update matched count 0,insert a new data.data:{}", JSON.toJSONString(userPlayMetricsDo));
                 // 如果没有数据，则插入数据
@@ -97,7 +98,7 @@ public class UserPlayMetricsDataService extends AbstractService {
             }
         }
         log.info("UserPlayMetricsDataService#flush end,pId:{},channelId:{},playerId:{},metricsType:{},flushData:{}", pId, channelId, playerId, metricsType, JSON.toJSONString(userPlayMetricsDo));
-        return true;
+        return resultFlag;
     }
 
     /**

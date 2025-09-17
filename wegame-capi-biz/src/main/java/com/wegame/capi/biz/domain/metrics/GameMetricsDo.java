@@ -120,7 +120,8 @@ public class GameMetricsDo implements Serializable {
         BigDecimal totalBetAmount = new BigDecimal(this.totalBetAmount);
         BigDecimal totalPayoutAmount = new BigDecimal(this.totalPayoutAmount);
         // 按照百分比计算
-        this.currentRtp = totalPayoutAmount.divide(totalBetAmount).multiply(BigDecimal.valueOf(100)).setScale(4, RoundingMode.FLOOR);
+        this.currentRtp = totalPayoutAmount.divide(totalBetAmount, 6, RoundingMode.FLOOR)
+                .multiply(BigDecimal.valueOf(100)).setScale(4, RoundingMode.FLOOR);
 
         // 当前的常态干预类型
         this.injectInUseNormalDosType(gameRtpDosConditionMap);
