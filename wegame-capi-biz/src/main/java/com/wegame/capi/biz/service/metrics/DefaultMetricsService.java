@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 默认指标服务
@@ -37,7 +38,7 @@ public class DefaultMetricsService extends AbstractMetricsService {
     @Override
     protected Map<UserPlayMetricsPropertyNameEnum, Object> getUserPlayMetricsMap(BetRecordDo betRecordDo, Object extInfo) {
         Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap = new HashMap<>();
-        Boolean hasFreeSpin = (Boolean) extInfo;
+        Boolean hasFreeSpin = Optional.ofNullable(extInfo).map(o -> (Boolean)extInfo).orElse(false);
         metricsDataMap.put(UserPlayMetricsPropertyNameEnum.totalGameCount, 1);
         metricsDataMap.put(UserPlayMetricsPropertyNameEnum.totalBetAmount, betRecordDo.getBetAmount());
         metricsDataMap.put(UserPlayMetricsPropertyNameEnum.totalPayoutAmount, betRecordDo.getPayOutAmount());
