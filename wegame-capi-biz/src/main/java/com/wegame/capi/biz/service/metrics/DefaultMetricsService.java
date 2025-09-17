@@ -39,7 +39,7 @@ public class DefaultMetricsService extends AbstractMetricsService {
     protected Map<UserPlayMetricsPropertyNameEnum, Object> getUserPlayMetricsMap(BetRecordDo betRecordDo, Object extInfo) {
         Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap = new HashMap<>();
         Boolean hasFreeSpin = Optional.ofNullable(extInfo).map(o -> (Boolean)extInfo).orElse(false);
-        metricsDataMap.put(UserPlayMetricsPropertyNameEnum.totalGameCount, 1);
+        metricsDataMap.put(UserPlayMetricsPropertyNameEnum.totalGameCount, 1L);
         metricsDataMap.put(UserPlayMetricsPropertyNameEnum.totalBetAmount, betRecordDo.getBetAmount());
         metricsDataMap.put(UserPlayMetricsPropertyNameEnum.totalPayoutAmount, betRecordDo.getPayOutAmount());
         metricsDataMap.put(UserPlayMetricsPropertyNameEnum.continuousLostCount, betRecordDo.getPayOutAmount() > 0 ? 0 : 1);

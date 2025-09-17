@@ -183,13 +183,13 @@ game:
     flush:
       timer:
         interval:
-          min: 60
-          max: 80
+          min: 20
+          max: 30
 #
 user:
   metrics:
     flush:
       timer:
         interval:
-          min: 60
-          max: 80
+          min: 20
+          max: 30

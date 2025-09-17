@@ -123,7 +123,7 @@ public enum UserPlayMetricsPropertyNameEnum {
                     return targetClass.cast(Long.parseLong(target.toString()) + longSource);
                 } else {
                     // 当前增量小于0,则重置为0
-                    return targetClass.cast(0);
+                    return targetClass.cast(0L);
                 }
             } else {
                 return targetClass.cast(longSource);

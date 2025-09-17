@@ -104,6 +104,9 @@ public class UserPlayMetricsQueryBuilder {
         if (Objects.nonNull(metricsDo.getContinuousLostCount())) {
             update.set("continuousLostCount", metricsDo.getContinuousLostCount());
         }
+        if (Objects.nonNull(metricsDo.getContinuousNoFreeSpinCount())) {
+            update.set("continuousNoFreeSpinCount", metricsDo.getContinuousNoFreeSpinCount());
+        }
         if (Objects.nonNull(metricsDo.getLastBetTime())) {
             update.set("lastBetTime", metricsDo.getLastBetTime());
         }
