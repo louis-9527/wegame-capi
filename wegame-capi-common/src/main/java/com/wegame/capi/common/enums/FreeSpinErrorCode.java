@@ -36,11 +36,13 @@ public enum FreeSpinErrorCode {
     NO_BONUS_PERMISSION("4021", "No bonus permission", ErrorCode.FREE_SPIN_NO_BONUS_PERMISSION),
     INVALID_UID("4022", "Invalid Uid", ErrorCode.FREE_SPIN_INVALID_UID),
     NO_LUCKY_DRAW_PERMISSION("4023", "No Lucky Draw Permission", ErrorCode.FREE_SPIN_NO_LUCKY_DRAW_PERMISSION),
-    NOT_SAME_PROVIDER_GAME("4024", "The player is not within the same provider game", ErrorCode.FREE_SPIN_NOT_SAME_PROVIDER_GAME),
-    NO_SWAP_GAME_PERMISSION("4025", "No Swap Game Permission", ErrorCode.FREE_SPIN_NO_SWAP_GAME_PERMISSION),
-    FREE_SPIN_DISABLED("4026", "free spin disabled", ErrorCode.FREE_SPIN_FREE_SPIN_DISABLED),
-    CAMPAIGN_EXPIRED("4027", "campaign expired", ErrorCode.FREE_SPIN_CAMPAIGN_EXPIRED),
-    FREE_SPINS_REMAINING_0("4028", "free spins remaining 0", ErrorCode.FREE_SPIN_FREE_SPINS_REMAINING_0),
+    NO_SWAP_GAME_PERMISSION("4024", "No Swap Game Permission", ErrorCode.FREE_SPIN_NO_SWAP_GAME_PERMISSION),
+    FREE_SPIN_DISABLED("4025", "free spin disabled", ErrorCode.FREE_SPIN_FREE_SPIN_DISABLED),
+    CAMPAIGN_EXPIRED("4026", "campaign expired", ErrorCode.FREE_SPIN_CAMPAIGN_EXPIRED),
+    FREE_SPINS_REMAINING_0("4027", "free spins remaining 0", ErrorCode.FREE_SPIN_FREE_SPINS_REMAINING_0),
+    CAMPAIGN_NOT_FOUND("4028", "campaign not found", ErrorCode.FREE_SPIN_CAMPAIGN_NOT_FOUND),
+    DUPLICATE_BET_ID_REQUEST("4029", "duplicate bet id request", ErrorCode.FREE_SPIN_DUPLICATE_BET_ID_REQUEST),
+    FREE_SPIN_BET_VALUE_NOT_MATCH("4030", "free spin bet value not match", ErrorCode.FREE_SPIN_FREE_SPIN_BET_VALUE_NOT_MATCH),
     ;
 
     /** 三方错误码 */
