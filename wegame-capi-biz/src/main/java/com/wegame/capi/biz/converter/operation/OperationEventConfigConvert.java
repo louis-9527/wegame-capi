@@ -37,10 +37,10 @@ public class OperationEventConfigConvert {
             return null;
         }
         OperationEventConfigPo configPo = new OperationEventConfigPo();
-        configPo.setId(configPo.getId());
-        configPo.setGameId(configPo.getGameId());
+        configPo.setId(configDo.getId());
+        configPo.setGameId(configDo.getGameId());
         configPo.setBetType(Objects.nonNull(configDo.getBetType()) ? configDo.getBetType().getCode() : "");
-        configPo.setMultiple(configPo.getMultiple());
+        configPo.setMultiple(configDo.getMultiple());
         return configPo;
     }
 }
