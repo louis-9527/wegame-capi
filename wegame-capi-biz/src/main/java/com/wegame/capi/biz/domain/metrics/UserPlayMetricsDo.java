@@ -9,10 +9,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -81,7 +78,7 @@ public class UserPlayMetricsDo implements Serializable {
     /**
      * 扩展信息,用于扩展配置
      */
-    private Map<String, Object> extend;
+    private Map<String, Object> extend = new HashMap<>();
     /**
      * 版本号
      */
@@ -256,6 +253,7 @@ public class UserPlayMetricsDo implements Serializable {
      * @param metricsDataMap 数据map
      */
     private void injectNewExtendData(Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap) {
+        this.extend = Optional.ofNullable(this.extend).orElse(new HashMap<>());
         for (Map.Entry<UserPlayMetricsPropertyNameEnum, Object> entry : metricsDataMap.entrySet()) {
             // 只处理扩展类型参数
             if (!Objects.equals(entry.getKey().getType(), MetricsPropertyTypeEnum.EXTEND)) {

@@ -50,6 +50,20 @@ public enum GameMetricsPropertyNameEnum {
             }
         }
     },
+    extend_example("extend_example", MetricsPropertyTypeEnum.EXTEND, "扩展字段示例") {
+        @Override
+        public <T> T calc(T target, Object source, Class<T> targetClass) {
+            Long longTarget = (Long) target;
+            Long longSource = (Long) source;
+            if (Objects.nonNull(longTarget) && Objects.nonNull(longSource)) {
+                return targetClass.cast(longTarget + longSource);
+            } else if (Objects.isNull(longTarget)) {
+                return targetClass.cast(longSource);
+            } else {
+                return targetClass.cast(longTarget);
+            }
+        }
+    },
     ;
 
     private final String propertyName;

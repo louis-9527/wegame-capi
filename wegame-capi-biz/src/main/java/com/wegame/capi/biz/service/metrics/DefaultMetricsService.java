@@ -32,6 +32,8 @@ public class DefaultMetricsService extends AbstractMetricsService {
         Map<GameMetricsPropertyNameEnum, Object> gameMetricsMap = new HashMap<>();
         gameMetricsMap.put(GameMetricsPropertyNameEnum.totalBetAmount, betRecordDo.getPayAmount());
         gameMetricsMap.put(GameMetricsPropertyNameEnum.totalPayoutAmount, betRecordDo.getPayOutAmount());
+        // todo 测试一下扩展参数
+        gameMetricsMap.put(GameMetricsPropertyNameEnum.extend_example, 2L);
         return gameMetricsMap;
     }
 
@@ -45,6 +47,8 @@ public class DefaultMetricsService extends AbstractMetricsService {
         metricsDataMap.put(UserPlayMetricsPropertyNameEnum.continuousLostCount, betRecordDo.getPayOutAmount() > 0 ? 0 : 1);
         metricsDataMap.put(UserPlayMetricsPropertyNameEnum.lastBetTime, betRecordDo.getBetTime());
         metricsDataMap.put(UserPlayMetricsPropertyNameEnum.continuousNoFreeSpinCount, hasFreeSpin ? 0L : 1L);
+        // todo 测试一下扩展参数
+        metricsDataMap.put(UserPlayMetricsPropertyNameEnum.extend_example,1L);
         return metricsDataMap;
     }
 

@@ -22,7 +22,7 @@ public class DefaultMetricsServiceTest extends BaseTest {
     @Test
     public void metrics_normal_test() {
         // exInfo 这里代表是否有免费轮
-        boolean metricsFlag = defaultMetricsService.metrics(MetricsManagerTestMocker.betRecordDo_normal(GameTypeEnum.IBONG_ADARNA), MetricsTypeEnum.IBONG_ADARNA, true);
+        boolean metricsFlag = defaultMetricsService.metrics(MetricsManagerTestMocker.betRecordDo_normal(GameTypeEnum.IBONG_ADARNA), MetricsTypeEnum.IBONG_ADARNA, false);
         // 等一会儿，让定时任务执行
         LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(120));
         assertTrue(metricsFlag);
