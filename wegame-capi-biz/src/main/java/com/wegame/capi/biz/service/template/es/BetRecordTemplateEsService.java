@@ -5,6 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.capi.biz.config.es.EsRestClientConfig;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -26,6 +27,7 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -47,7 +49,7 @@ import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Service
-@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "} || ${" + IBONG_ADARNA_PROP + "}")
+@ConditionalOnBean(EsRestClientConfig.class)
 public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> implements InitializingBean {
 
     @Autowired
@@ -260,8 +262,8 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
                 source.searchAfter(searchAfter);
             }
             SearchRequest request = new SearchRequest(templateType.getBetRecordTemplateName())
-                    .source(source);
-//                    .preference("_primary");   // 可选：避免副本 reorder
+                    .source(source)
+                    .preference("_primary");   // 可选：避免副本 reorder
             SearchResponse resp = restHighLevelClient.search(request, RequestOptions.DEFAULT);
             return Arrays.stream(resp.getHits().getHits())
                     .map(h -> (Long) h.getFields().get("id").getValue())
