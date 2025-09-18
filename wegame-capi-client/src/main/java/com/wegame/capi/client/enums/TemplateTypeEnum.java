@@ -25,6 +25,12 @@ public enum TemplateTypeEnum {
             "malakas_bet_record_template",
             ""
     ),
+
+    LAM_ANG(
+            GameTypeEnum.LAM_ANG,
+            "lamang_bet_record_template",
+            ""
+    ),
     ;
 
 
