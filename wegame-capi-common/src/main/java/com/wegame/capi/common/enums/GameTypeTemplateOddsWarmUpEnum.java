@@ -14,7 +14,7 @@ public enum GameTypeTemplateOddsWarmUpEnum {
 
     MARIA_MAKILING("zhumeng001", "1", "17.5", "MARIA_MAKILING"),
     MALAKAS("zhumeng002", "3", "-1", "MALAKAS"),
-    DIWATA_MAYARI("zhumeng006", "3", "-1", "DIWATA_MAYARI"),
+    DIWATA_MAYARI("zhumeng006", "2", "-1", "DIWATA_MAYARI"),
 
     ;
     /**
