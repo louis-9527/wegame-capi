@@ -62,7 +62,7 @@ public class MetricsFlushTimerService {
     /**
      * 添加用户指标刷盘任务
      */
-    public void addUserMetricsFlushTask(String pId, String channelId, String playerId,MetricsTypeEnum metricsType) {
+    public void addUserMetricsFlushTask(String pId, String channelId, String playerId, MetricsTypeEnum metricsType) {
         // 任务是否已经存在
         UserPlayTimerKey userPlayTimerKey = new UserPlayTimerKey(pId, channelId, metricsType.getGameType(), playerId);
         if (Objects.nonNull(userPlayTimerMap.get(userPlayTimerKey))) {

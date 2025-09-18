@@ -43,7 +43,7 @@ public class UserPlayMetricsDataService extends AbstractService {
      * @param metricsType    metricsType
      * @return true/false
      */
-    public boolean cache(Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap, MetricsCacheKeyDo cacheKeyDo, MetricsTypeEnum metricsType) {
+    public synchronized boolean cache(Map<UserPlayMetricsPropertyNameEnum, Object> metricsDataMap, MetricsCacheKeyDo cacheKeyDo, MetricsTypeEnum metricsType) {
         String key = MetricsConstants.buildUserMetricsCacheKey(cacheKeyDo.getPId(), cacheKeyDo.getChannelId(), metricsType.getGameType().getId(), cacheKeyDo.getPlayerId());
         // 先查找缓存数据，再找库数据
         UserPlayMetricsDo existMetricsDo = this.query(cacheKeyDo.getPId(), cacheKeyDo.getPlayerId(), cacheKeyDo.getChannelId(), metricsType);

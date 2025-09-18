@@ -30,7 +30,7 @@ public class MetricsManagerTestMocker {
                 .gameId(gameType.getId())
                 .betAmount(10000L)
                 .payAmount(10000L)
-                .payOutAmount(9900L)
+                .payOutAmount(10000L)
                 .gamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY)
                 .betId("testBetId00001")
                 .betPromotionType(BetPromotionTypeEnum.OPERATION_EVENT.getCode())
