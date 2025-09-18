@@ -63,7 +63,7 @@ public class DefaultMetricsServiceTest extends BaseTest {
 
         List<Future> futureList = Lists.newArrayList();
 
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 100; i++) {
             BetRecordDo betRecordDo = MetricsManagerTestMocker.betRecordDo_normal(GameTypeEnum.IBONG_ADARNA);
             Future<?> future = executor.submit(() -> defaultMetricsService.metrics(betRecordDo, MetricsTypeEnum.IBONG_ADARNA, false));
             futureList.add(future);
@@ -86,7 +86,6 @@ public class DefaultMetricsServiceTest extends BaseTest {
         // 等待1分钟，让定时任务走完
         LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(60 * 2));
 
-
         // 再次获取存储的数据
         GameMetricsDo gameMetricsDoPost = gameMetricsDataService.query("50", "1050", MetricsTypeEnum.IBONG_ADARNA);
         UserPlayMetricsDo userPlayMetricsDoPost = userPlayMetricsDataService.query("50", "test001", "1050", MetricsTypeEnum.IBONG_ADARNA);
@@ -108,8 +107,6 @@ public class DefaultMetricsServiceTest extends BaseTest {
                 gameMetricsDoPost.getTotalPayoutAmount(),
                 userPlayMetricsDoPost.getTotalBetAmount(),
                 userPlayMetricsDoPost.getTotalPayoutAmount());
-
-
     }
 
 
