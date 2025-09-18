@@ -14,14 +14,14 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
+import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 
 @Slf4j
 @Configuration
-@Conditional(EsEnableCondition.class)
+@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "}")
 public class EsRestClientConfig {
     @Value("${spring.elasticsearch.rest.uris}")
     private String uris;

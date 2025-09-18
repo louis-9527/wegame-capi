@@ -5,7 +5,6 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
-import com.wegame.capi.biz.config.es.EsRestClientConfig;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
@@ -26,7 +25,6 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -49,7 +47,7 @@ import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 
 @Slf4j
 @Service
-@ConditionalOnBean(EsRestClientConfig.class)
+@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "}")
 public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> implements InitializingBean {
 
     @Autowired
