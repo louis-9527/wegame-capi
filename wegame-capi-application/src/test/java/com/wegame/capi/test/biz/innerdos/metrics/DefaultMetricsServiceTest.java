@@ -27,6 +27,7 @@ public class DefaultMetricsServiceTest extends BaseTest {
         LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(120));
         assertTrue(metricsFlag);
     }
+    // 大盘采集并发请看下测试
 
 
 }
