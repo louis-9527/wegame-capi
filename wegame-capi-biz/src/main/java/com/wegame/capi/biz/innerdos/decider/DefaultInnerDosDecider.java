@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 默认内部干预决策器
@@ -89,6 +90,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         GameMetricsDo gameMetricsDo = context.getGameMetricsDo();
         AssertUtil.assertNotNull(gameMetricsDo, ErrorCode.ERR_INTER, "gameMetricsDo is null");
         GameInnerDosTypeEnum inUseNormalDosType = GameInnerDosTypeEnum.valueOfCode(gameMetricsDo.getInUseNormalDosType());
+        inUseNormalDosType = Optional.ofNullable(inUseNormalDosType).orElse(GameInnerDosTypeEnum.NORMAL_DOS);
         // 2.获取对应的模版倍率配置
         Map<String, BigDecimal> templateRangeMap = context.getTemplateRangeMap(inUseNormalDosType, context.getGamePlayDo().getBetSubType());
         // 3.随机权重
