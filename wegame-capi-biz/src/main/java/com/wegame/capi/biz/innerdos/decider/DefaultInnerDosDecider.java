@@ -58,7 +58,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 1.获取标准rtp模版倍率配置
         Map<String, BigDecimal> templateRangeMap = context.getTemplateRangeMap(GameInnerDosTypeEnum.NORMAL_DOS, context.getGamePlayDo().getBetSubType());
         // 2.随机权重
-        int weightSum = templateRangeMap.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(Constants.CONST_10000)).intValue();
+        int weightSum = templateRangeMap.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(Constants.CONST_100)).intValue();
         int randomWeight = randomService.randomInt(1, weightSum);
         // 3.计算实际权重
         String normalRtpType = context.getTemplateName(GameInnerDosTypeEnum.NORMAL_DOS);
@@ -68,7 +68,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
                 randomWeight,
                 weightSum);
         // 4.获取模版倍率范围区间
-        String multipleRange = GameUtil.randomKey(templateRangeMap, Constants.CONST_10000, actualWeight);
+        String multipleRange = GameUtil.randomKey(templateRangeMap, Constants.CONST_100, actualWeight);
         // 5.是否中奖
         if (NO_REWARD_TEMPLATE_RANGE_NAME.equals(multipleRange) && context.triggerNewPlayerEmptyDisk()) {
             // 5.1 如果没有中奖 && 触发了空盘限制，则返回最低倍率区间
@@ -92,7 +92,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 2.获取对应的模版倍率配置
         Map<String, BigDecimal> templateRangeMap = context.getTemplateRangeMap(inUseNormalDosType, context.getGamePlayDo().getBetSubType());
         // 3.随机权重
-        int weightSum = templateRangeMap.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(Constants.CONST_10000)).intValue();
+        int weightSum = templateRangeMap.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(Constants.CONST_100)).intValue();
         int randomWeight = randomService.randomInt(1, weightSum);
         // 4.如果是常态干预,则计算实际权重
         Integer actualWeight = randomWeight;
@@ -105,7 +105,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
                     weightSum);
         }
         // 5.随机获取模版倍率范围区间
-        String multipleRange = GameUtil.randomKey(templateRangeMap, Constants.CONST_10000, actualWeight);
+        String multipleRange = GameUtil.randomKey(templateRangeMap, Constants.CONST_100, actualWeight);
         // 6.是否中奖
         if (NO_REWARD_TEMPLATE_RANGE_NAME.equals(multipleRange) && context.triggerNormalPlayerEmptyDisk()) {
             // 6.1 如果没有中奖 && 触发了空盘限制，则返回最低倍率区间
@@ -133,8 +133,12 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 1.计算倾斜值.偏斜值 = （标准RTP – 用户当前RTP）* 干预系数
         BigDecimal inclineValue = normalRtpType.subtract(userCurrentRtp).multiply(dosCoefficient);
         // 2.计算实际计算权重.（1+ 偏斜值）* 权重 = 实际使用权重
-        int calcActualWeight = BigDecimal.ONE.add(inclineValue).multiply(BigDecimal.valueOf(randomWeight)).intValue();
-        // 3.获取实际使用权重.如果calcActualWeight大于总和了则取总和
-        return calcActualWeight > weightSum ? weightSum : calcActualWeight;
+        long calcActualWeight = BigDecimal.ONE.add(inclineValue).multiply(BigDecimal.valueOf(randomWeight)).longValue();
+        // 3.获取实际使用权重.如果calcActualWeight大于总和了则取总和,如果小于1取1
+        if (calcActualWeight < 1) {
+            return 1;
+        } else {
+            return calcActualWeight > weightSum ? weightSum : (int) calcActualWeight;
+        }
     }
 }

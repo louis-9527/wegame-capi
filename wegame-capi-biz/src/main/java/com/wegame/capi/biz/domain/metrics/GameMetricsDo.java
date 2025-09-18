@@ -5,6 +5,7 @@ import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
 import com.wegame.capi.client.enums.innerdos.GameMetricsPropertyNameEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsPropertyTypeEnum;
 import com.wegame.capi.common.Constants;
+import com.wegame.capi.common.utils.RtpUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -117,11 +118,8 @@ public class GameMetricsDo implements Serializable {
         this.totalPayoutAmount = GameMetricsPropertyNameEnum.totalPayoutAmount.calc(this.totalPayoutAmount, totalPayoutAmountObj, Long.class);
 
         // 当前rtp 计算
-        BigDecimal totalBetAmount = new BigDecimal(this.totalBetAmount);
-        BigDecimal totalPayoutAmount = new BigDecimal(this.totalPayoutAmount);
         // 按照百分比计算
-        this.currentRtp = totalPayoutAmount.divide(totalBetAmount, 6, RoundingMode.FLOOR)
-                .multiply(BigDecimal.valueOf(100)).setScale(4, RoundingMode.FLOOR);
+        this.currentRtp = RtpUtil.calculateRtp(this.totalBetAmount, this.totalPayoutAmount);
 
         // 当前的常态干预类型
         this.injectInUseNormalDosType(gameRtpDosConditionMap);
@@ -135,7 +133,7 @@ public class GameMetricsDo implements Serializable {
         } else {
             GameRtpDosCondition gameRtpDosCondition = gameRtpDosConditionMap.get(gameInnerDosTypeEnum);
             // 为空校验一下，因为normal 一般来说是不配置的
-            if (Objects.nonNull(gameRtpDosCondition)){
+            if (Objects.nonNull(gameRtpDosCondition)) {
                 // 先校验是否满足退出条件
                 if (!gameRtpDosCondition.getOut().assertIt(this.currentRtp)) {
                     // 没有退出当前条件，则返回
@@ -146,20 +144,20 @@ public class GameMetricsDo implements Serializable {
             // 单个匹配是否满足对应干预
             // 特殊干预
             GameRtpDosCondition specialCondition = gameRtpDosConditionMap.get(GameInnerDosTypeEnum.SPECIAL_DOS);
-            if (Objects.nonNull(specialCondition) && specialCondition.getIn().assertIt(this.currentRtp)){
-                this.inUseNormalDosType=GameInnerDosTypeEnum.SPECIAL_DOS.getCode();
+            if (Objects.nonNull(specialCondition) && specialCondition.getIn().assertIt(this.currentRtp)) {
+                this.inUseNormalDosType = GameInnerDosTypeEnum.SPECIAL_DOS.getCode();
                 return;
             }
             // 过高干预
             GameRtpDosCondition tooHighCondition = gameRtpDosConditionMap.get(GameInnerDosTypeEnum.TOO_HIGH_DOS);
-            if (Objects.nonNull(tooHighCondition) && tooHighCondition.getIn().assertIt(this.currentRtp)){
-                this.inUseNormalDosType=GameInnerDosTypeEnum.TOO_HIGH_DOS.getCode();
+            if (Objects.nonNull(tooHighCondition) && tooHighCondition.getIn().assertIt(this.currentRtp)) {
+                this.inUseNormalDosType = GameInnerDosTypeEnum.TOO_HIGH_DOS.getCode();
                 return;
             }
             // 过低干预
             GameRtpDosCondition tooLowCondition = gameRtpDosConditionMap.get(GameInnerDosTypeEnum.TOO_LOW_DOS);
-            if (Objects.nonNull(tooLowCondition) && tooLowCondition.getIn().assertIt(this.currentRtp)){
-                this.inUseNormalDosType=GameInnerDosTypeEnum.TOO_LOW_DOS.getCode();
+            if (Objects.nonNull(tooLowCondition) && tooLowCondition.getIn().assertIt(this.currentRtp)) {
+                this.inUseNormalDosType = GameInnerDosTypeEnum.TOO_LOW_DOS.getCode();
                 return;
             }
             // 如果没有匹配，则使用默认normal

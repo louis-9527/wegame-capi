@@ -6,6 +6,7 @@ import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
 import com.wegame.capi.biz.innerdos.config.InnerDosCondition;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
+import com.wegame.capi.common.utils.RtpUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -153,7 +154,7 @@ public class DefaultInnerDosContext implements InnerDosContext {
     public BigDecimal getUserCurrentRtp() {
         Long totalBetAmount = this.userPlayMetricsDo.getTotalBetAmount();
         Long totalPayoutAmount = this.userPlayMetricsDo.getTotalPayoutAmount();
-        return BigDecimal.valueOf(totalPayoutAmount).divide(BigDecimal.valueOf(totalBetAmount), 2, RoundingMode.FLOOR);
+        return RtpUtil.calculateRtp(totalBetAmount, totalPayoutAmount);
     }
 
     /**
