@@ -42,12 +42,11 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
-import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Service
-@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "}")
+@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "} || ${" + IBONG_ADARNA_PROP + "}")
 public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> implements InitializingBean {
 
     @Autowired

@@ -1,11 +1,18 @@
 package com.wegame.capi.biz.module.ibongadarna.game;
 
+import cn.hutool.core.util.NumberUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
+import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
+import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.ibong.IbongAdarnaBetRecordTemplateEsDo;
@@ -18,15 +25,24 @@ import com.wegame.capi.biz.module.ibongadarna.reward.IbongAdarnaRewardHandler;
 import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.utils.JsonGzipUtil;
+import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.*;
 
+import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.client.enums.TemplateTypeEnum.IBONG_ADARNA;
+import static com.wegame.capi.client.enums.TemplateTypeEnum.MALAKAS;
 import static com.wegame.capi.common.Constants.IBONG_ADARNA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
 
@@ -36,7 +52,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 public class IbongAdarnaGameTemplatePlay extends AbstractGame<IbongAdarnaGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
-    private static final GameInfoDo gameInfo = IbongAdarnaGameHelper.IBONG_ADARNA_GAME_INFO;
+    private static final GameInfoDo GAME_INFO = IbongAdarnaGameHelper.IBONG_ADARNA_GAME_INFO;
 
     @Autowired
     IbongAdarnaRewardHandler ibongAdarnaRewardHandler;
@@ -55,28 +71,56 @@ public class IbongAdarnaGameTemplatePlay extends AbstractGame<IbongAdarnaGameRec
         TemplateMultipleRange templateMultipleRange = this.getTemplateMultipleRange(gamePlay);
 
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(IBONG_ADARNA, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), IbongAdarnaBetRecordTemplateEsDo.class);
-        // todo ibong 模版玩法逻辑
-        List<IbongAdarnaGameRecordDo> ret = new ArrayList<>();
+        AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
+        Long betRecordId = this.getRandomElement(betRecordIdList);
+        log.info("betRecordId:{}", betRecordId);
+        List<GameRecordTemplateDo> configRecordList;
+        IbongAdarnaBetRecordTemplateEsDo template;
+        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.IBONG_ADARNA, gamePlay.getBetType(), templateMultipleRange)) {
+            // 已经被预热的倍率，直接走缓存
+            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
+                template = betRecordTemplateEsService.getTemplateWithLocalCache(TemplateTypeEnum.IBONG_ADARNA, betRecordId, IbongAdarnaBetRecordTemplateEsDo.class);
+            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
+                template = betRecordTemplateEsService.getTemplateWithRedisCache(TemplateTypeEnum.IBONG_ADARNA, betRecordId, IbongAdarnaBetRecordTemplateEsDo.class);
+            } else {
+                throw new BusinessException(ErrorCode.ERR_PARAM);
+            }
+        } else {
+            // 没有被预热的倍率，需要重新查询
+            template = betRecordTemplateEsService.findById(TemplateTypeEnum.IBONG_ADARNA, betRecordId, IbongAdarnaBetRecordTemplateEsDo.class);
+        }
+        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
+        configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
+        });
+        if (CollectionUtils.isEmpty(configRecordList)) {
+            log.error("template is empty, betType:{}, range start: [], end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+        }
 
-        return ret;
+        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER, "configRecordList is empty");
+        GameRecordTemplateDo configRecordDo = configRecordList.get(0);
+        AssertUtil.assertNotNull(configRecordDo.getExtInfo(), ErrorCode.ERR_INTER, "extInfo is null");
+        AssertUtil.assertTrue(NumberUtil.isNumber(configRecordDo.getExtInfo().toString()), ErrorCode.ERR_INTER, "extInfo is not number");
+        WheelDo<IbongAdarnaSymbolDo> wheel = convertWheel(configRecordDo.getWheel());
+        RewardResultDo<IbongAdarnaSymbolDo> firstWheelRewardResult = ibongAdarnaRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, new BigDecimal(configRecordDo.getExtInfo().toString())));
+        long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
+        return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, firstWheelRewardResult, overallRewardAmount));
+
     }
 
-
-    private IbongAdarnaGameRecordDo buildGameRecord(Long id,
-                                                    Long parentId,
+    private IbongAdarnaGameRecordDo buildGameRecord(UserInfo userInfo,
+                                                    Long gameRecordId,
                                                     Long betRecordId,
-                                                    Long batchId,
                                                     WheelDo<IbongAdarnaSymbolDo> wheel,
-                                                    RewardResultDo<IbongAdarnaSymbolDo> rewardResult, boolean lastGameFlag) {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
+                                                    RewardResultDo<IbongAdarnaSymbolDo> rewardResult,
+                                                    Long TotalRewardAmount) {
         return IbongAdarnaGameRecordDo.builder()
-                .id(id)
+                .id(gameRecordId)
                 .betRecordId(betRecordId)
                 .playerId(userInfo.getPlayerId())
                 .playerName(userInfo.getPlayerName())
                 .wheel(wheel)
                 .rewardResult(rewardResult)
+                .overallRewardAmount(TotalRewardAmount)
                 .build();
     }
 
@@ -87,5 +131,19 @@ public class IbongAdarnaGameTemplatePlay extends AbstractGame<IbongAdarnaGameRec
         String templateIdRange = decideResult.getTemplateIdRange();
         AssertUtil.assertStrNotEmpty(templateIdRange, ErrorCode.ERR_INTER);
         return TemplateMultipleRange.build(templateIdRange);
+    }
+
+    private Long getRandomElement(List<Long> list) {
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt(list.size());
+        return list.get(randomIndex);
+    }
+
+    private WheelDo<IbongAdarnaSymbolDo> convertWheel(Object obj) {
+        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<IbongAdarnaSymbolDo>>() {
+        });
     }
 }
