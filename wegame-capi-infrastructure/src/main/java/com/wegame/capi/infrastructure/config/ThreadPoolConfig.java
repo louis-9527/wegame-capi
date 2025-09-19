@@ -145,7 +145,7 @@ public class ThreadPoolConfig {
                 100,
                 100L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(10000),
+                new LinkedBlockingQueue<>(300000),
                 new CustomizableThreadFactory("inner-dos-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);

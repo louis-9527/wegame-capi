@@ -1,6 +1,8 @@
 package com.wegame.capi.test.biz.innerdos.metrics;
 
+import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
+import com.wegame.base.lock.DistributeLock;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
@@ -13,18 +15,20 @@ import com.wegame.capi.infrastructure.config.ThreadPoolConfig;
 import com.wegame.capi.test.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 
+import static com.wegame.capi.common.Constants.OPT_BUSY;
 import static org.junit.Assert.*;
 
 @Slf4j
@@ -38,6 +42,11 @@ public class DefaultMetricsServiceTest extends BaseTest {
     @Autowired
     @Qualifier(ThreadPoolConfig.innerDosThreadPoolExecutor)
     private ThreadPoolExecutor executor;
+
+    @Autowired
+    private DistributeLock distributeLock;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Test
     public void metrics_normal_test() {
@@ -59,7 +68,6 @@ public class DefaultMetricsServiceTest extends BaseTest {
         long gameTotalPayoutAmount = gameMetricsDoPre.getTotalPayoutAmount();
         long userTotalBetAmount = userPlayMetricsDoPre.getTotalBetAmount();
         long userTotalPayoutAmount = userPlayMetricsDoPre.getTotalPayoutAmount();
-
 
         List<Future> futureList = Lists.newArrayList();
 
@@ -109,5 +117,54 @@ public class DefaultMetricsServiceTest extends BaseTest {
                 userPlayMetricsDoPost.getTotalPayoutAmount());
     }
 
+    @Test
+    public void redisTest() throws Exception {
+        long distLockStartTime = System.currentTimeMillis();
+        long redisOpStartTime = System.currentTimeMillis();
+        AtomicLong lockCount = new AtomicLong(0);
+        AtomicLong redisCount = new AtomicLong(0);
 
+        List<Future> lockFutures = new ArrayList<>();
+        List<Future> redisFutures = new ArrayList<>();
+        for (int i = 0; i < 100000; i++) {
+            Future<?> lockFuture = executor.submit(() -> {
+                distributeLock.tryLockThenCall("test_lock_lock_name",
+                        2000,
+                        3000,
+                        () -> {
+//                            Thread.sleep(10);
+                            log.info("lock次数:{}", lockCount.addAndGet(1));
+                            return true;
+                        },
+                        OPT_BUSY);
+            });
+
+            Future<?> redisFuture = executor.submit(() -> {
+                String randomStr = RandomUtil.randomNumbers(10);
+                redisTemplate.opsForValue().set(randomStr, randomStr, 30, TimeUnit.SECONDS);
+                log.info("redis次数:{}", redisCount.addAndGet(1));
+            });
+            redisFutures.add(lockFuture);
+            lockFutures.add(redisFuture);
+        }
+        lockFutures.forEach(future ->{
+            try {
+                future.get();
+            } catch (Exception e) {
+                log.error("redis test error", e);
+            }
+        });
+
+        log.info("lock耗时：{}",System.currentTimeMillis()-distLockStartTime);
+
+        redisFutures.forEach(future ->{
+            try {
+                future.get();
+            } catch (Exception e) {
+                log.error("redis test error", e);
+            }
+        });
+        log.info("redis耗时：{}",System.currentTimeMillis()-redisOpStartTime);
+
+    }
 }
