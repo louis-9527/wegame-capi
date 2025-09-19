@@ -96,7 +96,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 3.随机权重
         int weightSum = templateRangeMap.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(Constants.CONST_100)).intValue();
         int randomWeight = randomService.randomInt(1, weightSum);
-        // 4.如果是常态干预,则计算实际权重
+        // 4.如果是正常干预,则计算实际权重
         Integer actualWeight = randomWeight;
         if (Objects.equals(inUseNormalDosType, GameInnerDosTypeEnum.NORMAL_DOS)) {
             // 4.1计算实际权重
