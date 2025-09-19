@@ -60,7 +60,7 @@ public enum GameTypeTemplateMultipleWarmUpEnum {
      * @return true/false
      */
     public boolean canWarmUp(BetSubTypeEnum betSubType, BigDecimal currentEndMultiple) {
-        WarmUpValidator warmUpValidator = warmUpValidatorMap.get(betSubType);
+        WarmUpValidator warmUpValidator = this.warmUpValidatorMap.get(betSubType);
         AssertUtil.assertNotNull(warmUpValidator, ErrorCode.ERR_PARAM, "no can use warmUpValidator");
         return warmUpValidator.canWarmUp(currentEndMultiple);
     }
