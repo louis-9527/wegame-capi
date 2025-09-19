@@ -76,15 +76,9 @@ public class IbongAdarnaGameTemplatePlay extends AbstractGame<IbongAdarnaGameRec
         log.info("betRecordId:{}", betRecordId);
         List<GameRecordTemplateDo> configRecordList;
         IbongAdarnaBetRecordTemplateEsDo template;
-        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.IBONG_ADARNA, gamePlay.getBetType(), templateMultipleRange)) {
-            // 已经被预热的倍率，直接走缓存
-            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithLocalCache(TemplateTypeEnum.IBONG_ADARNA, betRecordId, IbongAdarnaBetRecordTemplateEsDo.class);
-            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithRedisCache(TemplateTypeEnum.IBONG_ADARNA, betRecordId, IbongAdarnaBetRecordTemplateEsDo.class);
-            } else {
-                throw new BusinessException(ErrorCode.ERR_PARAM);
-            }
+        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.IBONG_ADARNA, gamePlay.getBetType(), gamePlay.getBetSubType(), templateMultipleRange)) {
+            // 已经被预热的倍率，直接走缓存.ibong只存在本地缓存
+            template = betRecordTemplateEsService.getTemplateWithLocalCache(TemplateTypeEnum.IBONG_ADARNA, betRecordId, IbongAdarnaBetRecordTemplateEsDo.class);
         } else {
             // 没有被预热的倍率，需要重新查询
             template = betRecordTemplateEsService.findById(TemplateTypeEnum.IBONG_ADARNA, betRecordId, IbongAdarnaBetRecordTemplateEsDo.class);
