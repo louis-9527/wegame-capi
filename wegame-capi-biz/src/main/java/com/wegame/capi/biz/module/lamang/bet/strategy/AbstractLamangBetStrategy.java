@@ -21,7 +21,10 @@ import com.wegame.capi.biz.module.lamang.bet.LamangBetHelper;
 import com.wegame.capi.biz.module.lamang.game.LamangGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -110,7 +113,7 @@ public abstract class AbstractLamangBetStrategy
     private BetResultDo<LamangBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<LamangGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
+        List<LamangGameRecordDo> list = gameContext().play(build(getGamePlayType(), betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<LamangGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
@@ -166,6 +169,10 @@ public abstract class AbstractLamangBetStrategy
         return list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
                 .collect(Collectors.toList());
+    }
+
+    public GamePlayTypeEnum getGamePlayType() {
+        return GamePlayTypeEnum.TEMPLATE_PLAY;
     }
 
     public void freeWheelAfterHandle(Long betRecordId) {

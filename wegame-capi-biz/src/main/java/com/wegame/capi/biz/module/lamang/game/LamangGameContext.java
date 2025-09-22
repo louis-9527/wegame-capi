@@ -19,7 +19,7 @@ import static com.wegame.capi.biz.module.lamang.LamangGameHelper.LAMANG_GAME_INF
 public class LamangGameContext<R> extends AbstractGameContext<R> {
 
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
-            .put(GamePlayTypeEnum.NORMAL_PLAY, "lamangGameNormalPlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "lamangGameTemplatePlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "lamangGameEventPlay")
             .build();
 
