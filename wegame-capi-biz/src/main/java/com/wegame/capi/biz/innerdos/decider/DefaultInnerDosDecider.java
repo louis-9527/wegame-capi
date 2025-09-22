@@ -74,7 +74,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 5.是否中奖
         if (NO_REWARD_TEMPLATE_RANGE_NAME.equals(multipleRange) && context.triggerNewPlayerEmptyDisk()) {
             // 5.1 如果没有中奖 && 触发了空盘限制，则返回最低倍率区间
-            return InnerDosDecideResult.builder().templateIdRange(new ArrayList<>(templateRangeMap.keySet()).get(0)).build();
+            return InnerDosDecideResult.builder().templateIdRange(new ArrayList<>(templateRangeMap.keySet()).get(1)).build();
         }
         // 6.返回
         return InnerDosDecideResult.builder().templateIdRange(multipleRange).build();
