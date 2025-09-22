@@ -9,7 +9,7 @@ ssh -i ${centos} centos@ec2-16-163-214-1.ap-east-1.compute.amazonaws.com "sh /ho
 echo "部署成功"
 ############################# notify lark #####################################
 URL=${BUILD_URL}
-new_url="${URL/38.54.88.143:8089/spherelinkgrid.click:8089}"
+new_url="${URL/38.54.88.143:8089/47.236.11.207:8089}"
 
 commit_message=$(git log -1 --pretty=%B)
 # 构建用户：$BUILD_USER
