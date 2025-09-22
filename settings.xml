@@ -58,7 +58,7 @@
     <mirror>
       <id>maven-public</id>
       <name>maven-public</name>
-      <url>http://38.54.89.102:8083/repository/maven-public/</url>
+      <url>http://47.236.11.207:8083/repository/maven-public/</url>
       <mirrorOf>central</mirrorOf>
     </mirror>
   </mirrors>
