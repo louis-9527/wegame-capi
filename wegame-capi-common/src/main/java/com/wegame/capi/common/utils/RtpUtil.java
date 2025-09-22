@@ -23,9 +23,9 @@ public class RtpUtil {
         AssertUtil.assertNotNull(payoutAmount, ErrorCode.ERR_PARAM, "payoutAmount is null");
         AssertUtil.assertTrue(betAmount >= 0, ErrorCode.ERR_PARAM, "betAmount is must than 0");
         AssertUtil.assertTrue(payoutAmount >= 0, ErrorCode.ERR_PARAM, "payoutAmount is must than or equals 0");
-        // 派彩进入位0,则返回0
+        // 派彩金额0,则返回百分之95.特别说明：当派彩金额为0的时候，是刚上线用户刚进来时，给一个稍微合适的值即可
         if (payoutAmount == 0) {
-            return BigDecimal.ZERO.setScale(4, RoundingMode.FLOOR);
+            return BigDecimal.valueOf(95).setScale(4, RoundingMode.FLOOR);
         }
         // 投注金额为0，则返回100
         if (betAmount == 0) {
