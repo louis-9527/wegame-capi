@@ -41,11 +41,11 @@
             <!-- 这里对应之前 settings.xml 里配置的server-id -->
             <id>maven-releases</id>
             <!-- 这里代表私服仓库的地址,大家只需要把后面的名字换掉即可 -->
-            <url>http://spherelinkgrid.click:8083/repository/maven-releases/</url>
+            <url>http://47.236.11.207:8083/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>maven-snapshots</id>
-            <url>http://spherelinkgrid.click:8083/repository/maven-snapshots/</url>
+            <url>http://47.236.11.207:8083/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -91,7 +91,7 @@
         </repository>
         <repository>
             <id>maven-public</id>
-            <url>http://spherelinkgrid.click:8083/repository/maven-public/</url>
+            <url>http://47.236.11.207:8083/repository/maven-public/</url>
             <!-- 允许从中拉取稳定版的依赖 -->
             <releases>
                 <enabled>true</enabled>
