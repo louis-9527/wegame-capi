@@ -88,7 +88,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
 
     private BetResultDo<IbongAdarnaGameRecordDo> normalBet(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
+        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(super.getGamePlayType(), betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         IbongAdarnaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
