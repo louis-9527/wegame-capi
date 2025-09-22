@@ -168,6 +168,52 @@ api:
           2Xs3r+wtjZBpOrZxn5dMUhEHC7jm/0eLUcwOJ0lkoEnl
           -----END ENCRYPTED PRIVATE KEY-----
         dosPassword: egame-secure-passphrase
+      - platformId: 50
+        channelId: 3087
+        privateKey: 954b9267084cd3fc110d167e5f083fe4d9890c9318d94b3fe84ada73bfaac199
+        privateIv: 4841aed49180c15dc74356a4ad6a4e10
+        dosPublicKey: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAo8d7PbFEe77cwf7o3cjf
+          NO627OtltqU1v0N5TADVsEBZggG6AkQKdkviJMtsrAjvYyXEA539dHZ4oXXx9VAF
+          D91QfR1LAb70HWhyL9QqqQTmX15CxHn7DVj5YUXub265C1aHqcECsRtlmZ435Ydw
+          e3l09IyF3iaL9p1CmT7JnK+fuW58Jr07YKp9KBQPI6ZBHxt5hI4jsGmxNzTI92Tj
+          vDoajErCQfWgHrba9QR3jA/0ol4Z8OXBoLp3gkmT8pL20mvaMmEfqF1zah5BZv0C
+          rSTeHWJgEGbsGbf/axLjf1u6Z7SU2zFjL3fw/LcVWdGsAkNDc/Swd489I/8p4mUZ
+          3wIDAQAB
+          -----END PUBLIC KEY-----
+        dosPrivateKey: |
+          -----BEGIN ENCRYPTED PRIVATE KEY-----
+          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
+          -----END ENCRYPTED PRIVATE KEY-----
+        dosPassword: egame-secure-passphrase
     igo:
       - platformId: 55
         channelId: 3051
