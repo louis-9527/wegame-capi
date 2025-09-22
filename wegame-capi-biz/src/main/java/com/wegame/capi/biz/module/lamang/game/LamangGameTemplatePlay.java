@@ -69,7 +69,6 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
         List<GameRecordTemplateDo> configRecordList = getTemplateConfigList(gamePlay);
         AssertUtil.assertNotNull(configRecordList, ErrorCode.ERR_INTER);
 
-
         List<LamangGameRecordDo> ret = new ArrayList<>();
         // 获取首轮(batchId == 0 and index == 0)
         GameRecordTemplateDo firstRecord = configRecordList.stream()
@@ -118,17 +117,35 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
     }
 
     private List<GameRecordTemplateDo> getTemplateConfigList(GamePlayDo gamePlay) {
+        // 1 加载倍率范围
         TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType());
         log.info("random templateMultipleRange: {}", templateMultipleRange);
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
 
+        // 2 加载记录idList
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(LAM_ANG, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), LamangBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
+
+        // 3 随机一个betRecordId
         Long betRecordId = getRandomElement(betRecordIdList);
         log.info("betRecordId:{}", betRecordId);
-        List<GameRecordTemplateDo> configRecordList;
+
+        // 4 加载模板 & 解压
+        LamangBetRecordTemplateEsDo template = loadTemplate(gamePlay, betRecordId, templateMultipleRange);
+        List<GameRecordTemplateDo> configRecordList = decompressGameRecordList(template);
+        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
+
+        return configRecordList;
+    }
+
+    private List<GameRecordTemplateDo> decompressGameRecordList(LamangBetRecordTemplateEsDo templateEsDo) {
+        return FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(templateEsDo.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
+        });
+    }
+
+    private LamangBetRecordTemplateEsDo loadTemplate(GamePlayDo gamePlay, Long betRecordId, TemplateMultipleRange templateMultipleRange) {
         LamangBetRecordTemplateEsDo template;
         if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.LAM_ANG, gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
@@ -144,13 +161,7 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
             template = betRecordTemplateEsService.findById(LAM_ANG, betRecordId, LamangBetRecordTemplateEsDo.class);
         }
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-        configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
-        });
-        if (CollectionUtils.isEmpty(configRecordList)) {
-            log.error("template is empty, betType:{}, range start: [], end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
-        }
-        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
-        return configRecordList;
+        return template;
     }
 
 
