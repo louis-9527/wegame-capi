@@ -56,7 +56,7 @@ cat >/etc/maven/settings.xml<<EOF
     <mirror>
       <id>maven-public</id>
       <name>maven-public</name>
-      <url>http://spherelinkgrid.click:8081/repository/maven-public/</url>
+      <url>http://47.236.11.207:8081/repository/maven-public/</url>
       <mirrorOf>central</mirrorOf>
     </mirror>
   </mirrors>
