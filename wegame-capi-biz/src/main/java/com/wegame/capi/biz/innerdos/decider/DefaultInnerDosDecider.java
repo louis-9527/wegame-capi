@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
@@ -131,7 +132,8 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
                                      Integer randomWeight,
                                      Integer weightSum) {
         // 1.计算倾斜值.偏斜值 = （标准RTP – 用户当前RTP）* 干预系数
-        BigDecimal inclineValue = normalRtpType.subtract(userCurrentRtp).multiply(dosCoefficient);
+        BigDecimal inclineValue = normalRtpType.subtract(userCurrentRtp)
+                .multiply(dosCoefficient).divide(BigDecimal.valueOf(100), 6, RoundingMode.FLOOR);
         // 2.计算实际计算权重.（1+ 偏斜值）* 权重 = 实际使用权重
         long calcActualWeight = BigDecimal.ONE.add(inclineValue).multiply(BigDecimal.valueOf(randomWeight)).longValue();
         // 3.获取实际使用权重.如果calcActualWeight大于总和了则取总和,如果小于1取1
