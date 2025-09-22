@@ -97,9 +97,9 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
     }
 
     private void loadLocalCache(BetTypeEnum betType, List<Long> templateIdList) {
-//        if (!supportWarmUpEnv()) {
-//            return;
-//        }
+        if (!supportWarmUpEnv()) {
+            return;
+        }
         TemplateTypeEnum templateType = this.getTemplateType();
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
