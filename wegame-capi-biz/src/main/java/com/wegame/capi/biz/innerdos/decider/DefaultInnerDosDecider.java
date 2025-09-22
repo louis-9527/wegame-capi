@@ -108,8 +108,8 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         String multipleRange = GameUtil.randomKey(templateRangeMap, Constants.CONST_100, actualWeight);
         // 6.是否中奖
         if (NO_REWARD_TEMPLATE_RANGE_NAME.equals(multipleRange) && context.triggerNormalPlayerEmptyDisk()) {
-            // 6.1 如果没有中奖 && 触发了空盘限制，则返回最低倍率区间
-            return InnerDosDecideResult.builder().templateIdRange(new ArrayList<>(templateRangeMap.keySet()).get(0)).build();
+            // 6.1 如果没有中奖 && 触发了空盘限制，则返回最低倍率区间（非0）
+            return InnerDosDecideResult.builder().templateIdRange(new ArrayList<>(templateRangeMap.keySet()).get(1)).build();
         }
         // 7.返回
         return InnerDosDecideResult.builder().templateIdRange(multipleRange).build();
