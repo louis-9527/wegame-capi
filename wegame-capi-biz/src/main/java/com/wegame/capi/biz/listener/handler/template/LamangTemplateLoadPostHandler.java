@@ -97,9 +97,9 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
     }
 
     private void loadLocalCache(BetTypeEnum betType, List<Long> templateIdList) {
-        if (!supportWarmUpEnv()) {
-            return;
-        }
+//        if (!supportWarmUpEnv()) {
+//            return;
+//        }
         TemplateTypeEnum templateType = this.getTemplateType();
         try {
             if (CollectionUtil.isNotEmpty(templateIdList)) {
@@ -108,7 +108,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
                 multiList.forEach(idList -> {
                     List<LamangBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.LAM_ANG, idList, LamangBetRecordTemplateEsDo.class);
                     templateList.forEach(templateItem -> {
-                        betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
+                       \ betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
                 });
                 log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
