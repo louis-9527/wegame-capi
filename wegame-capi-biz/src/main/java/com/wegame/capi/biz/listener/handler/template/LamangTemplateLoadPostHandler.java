@@ -108,7 +108,7 @@ public class LamangTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
                 multiList.forEach(idList -> {
                     List<LamangBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.LAM_ANG, idList, LamangBetRecordTemplateEsDo.class);
                     templateList.forEach(templateItem -> {
-                       \ betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
+                        betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
                     });
                 });
                 log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
