@@ -16,7 +16,7 @@ logging:
 game:
   enable:
     MariaMakiling: false
-    Malakas: true
+    Malakas: false
     IbongAdarna: true
   inner:
     dos:
