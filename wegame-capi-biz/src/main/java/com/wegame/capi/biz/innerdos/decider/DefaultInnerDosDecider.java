@@ -98,14 +98,12 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         int randomWeight = randomService.randomInt(1, weightSum);
         // 4.如果是正常干预,则计算实际权重
         Integer actualWeight = randomWeight;
-        if (Objects.equals(inUseNormalDosType, GameInnerDosTypeEnum.NORMAL_DOS)) {
-            // 4.1计算实际权重
-            actualWeight = this.calcActualWeight(new BigDecimal(context.getTemplateName(GameInnerDosTypeEnum.NORMAL_DOS)),
-                    context.getUserCurrentRtp(),
-                    context.getNormalDosCoefficient(),
-                    randomWeight,
-                    weightSum);
-        }
+        // 4.1计算实际权重
+        actualWeight = this.calcActualWeight(new BigDecimal(context.getTemplateName(GameInnerDosTypeEnum.NORMAL_DOS)),
+                context.getUserCurrentRtp(),
+                context.getNormalDosCoefficient(),
+                randomWeight,
+                weightSum);
         // 5.随机获取模版倍率范围区间
         String multipleRange = GameUtil.randomKey(templateRangeMap, Constants.CONST_100, actualWeight);
         // 6.是否中奖
