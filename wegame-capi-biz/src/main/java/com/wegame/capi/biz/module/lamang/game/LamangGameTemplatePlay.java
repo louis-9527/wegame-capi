@@ -161,7 +161,6 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
             template = betRecordTemplateEsService.findById(LAM_ANG, betRecordId, LamangBetRecordTemplateEsDo.class);
         }
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-        log.info("template betRecordId :  {}, multiple : {}", betRecordId, template.getMultiple());
         return template;
     }
 
