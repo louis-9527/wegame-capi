@@ -51,6 +51,11 @@ public class LamangConfig {
      */
     private JackPotConfig jackPotConfig;
 
+    /**
+     * 模板配置
+     */
+    private TemplateRangeConfig templateRangeConfig;
+
     @Data
     @SuperBuilder
     @NoArgsConstructor
@@ -60,6 +65,24 @@ public class LamangConfig {
          * TreeMap<元素ID，<赔率类型，具体赔率>>
          */
         private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = 337972731551780223L;
+        /**
+         * 主游戏模板配置
+         */
+        private Map<String, Integer> mainGame;
+        /**
+         * 免费游戏模板配置
+         */
+        private Map<String, Integer> freeGame;
     }
 
     @Data
