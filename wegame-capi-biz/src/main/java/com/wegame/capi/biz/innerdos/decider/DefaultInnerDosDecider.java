@@ -29,6 +29,7 @@ import java.util.Optional;
 public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosContext> {
 
     private static final String NO_REWARD_TEMPLATE_RANGE_NAME = "0_0";
+    private static final String REWARD_TEMPLATE_RANGE_0_1 = "0_1";
 
     @Autowired
     private RandomService randomService;
@@ -78,7 +79,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 5.是否中奖
         if (NO_REWARD_TEMPLATE_RANGE_NAME.equals(multipleRange) && context.triggerNewPlayerEmptyDisk()) {
             // 5.1 如果没有中奖 && 触发了空盘限制，则返回最低倍率区间
-            multipleRange = new ArrayList<>(templateRangeMap.keySet()).get(1);
+            multipleRange = REWARD_TEMPLATE_RANGE_0_1;
         }
         // 6.返回
         return InnerDosDecideResult.builder().templateIdRange(multipleRange).innerDosType(GameInnerDosTypeEnum.NORMAL_DOS).build();
@@ -113,7 +114,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 6.是否中奖
         if (NO_REWARD_TEMPLATE_RANGE_NAME.equals(multipleRange) && context.triggerNormalPlayerEmptyDisk()) {
             // 6.1 如果没有中奖 && 触发了空盘限制，则返回最低倍率区间（非0）
-            multipleRange = new ArrayList<>(templateRangeMap.keySet()).get(1);
+            multipleRange = REWARD_TEMPLATE_RANGE_0_1;
         }
         // 7.返回
         return InnerDosDecideResult.builder().templateIdRange(multipleRange).innerDosType(inUseNormalDosType).build();
