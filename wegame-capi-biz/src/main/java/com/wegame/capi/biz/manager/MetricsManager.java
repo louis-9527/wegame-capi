@@ -8,6 +8,7 @@ import com.wegame.capi.biz.service.metrics.DefaultMetricsService;
 import com.wegame.capi.biz.service.metrics.MetricsService;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
+import com.wegame.capi.common.constants.MetricsConstants;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.infrastructure.config.ThreadPoolConfig;
@@ -109,8 +110,9 @@ public class MetricsManager implements InitializingBean, ApplicationContextAware
      * @return true/false
      */
     private boolean canMetricsPlayType(BetRecordDo betRecordDo) {
-        return Objects.equals(betRecordDo.getGamePlayType(), GamePlayTypeEnum.EVENT_PLAY)
-                || Objects.equals(betRecordDo.getGamePlayType(), GamePlayTypeEnum.TEMPLATE_PLAY);
+        String gamePlayTypeStr = betRecordDo.queryExtInfoMapValue(MetricsConstants.EXT_MAP_KEY_GAME_PLAY_TYPE);
+        return Objects.equals(gamePlayTypeStr, GamePlayTypeEnum.EVENT_PLAY.getCode())
+                || Objects.equals(gamePlayTypeStr, GamePlayTypeEnum.TEMPLATE_PLAY.getCode());
     }
 
     /**

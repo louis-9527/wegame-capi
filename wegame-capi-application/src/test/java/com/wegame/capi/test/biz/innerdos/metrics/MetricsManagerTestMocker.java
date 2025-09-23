@@ -7,6 +7,7 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.constants.MetricsConstants;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 
@@ -22,7 +23,7 @@ public class MetricsManagerTestMocker {
             .build();
 
     public static BetRecordDo betRecordDo_normal(GameTypeEnum gameType) {
-        return BetRecordDo.builder()
+        BetRecordDo<Object> betRecordDo = BetRecordDo.builder()
                 .pId(metricsCacheKeyDo_normal.getPId())
                 .channelId(metricsCacheKeyDo_normal.getChannelId())
                 .playerId(metricsCacheKeyDo_normal.getPlayerId())
@@ -31,7 +32,6 @@ public class MetricsManagerTestMocker {
                 .betAmount(10000L)
                 .payAmount(10000L)
                 .payOutAmount(10000L)
-                .gamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY)
                 .betId("testBetId00001")
                 .betPromotionType(BetPromotionTypeEnum.OPERATION_EVENT.getCode())
                 .betSerialNo("testBetSerialNo001")
@@ -40,10 +40,12 @@ public class MetricsManagerTestMocker {
                 .betType(BetTypeEnum.NORMAL_BET.getCode())
                 .creator("creator")
                 .createTime(System.currentTimeMillis()).build();
+        betRecordDo.addExtInfoMapValue(MetricsConstants.EXT_MAP_KEY_GAME_PLAY_TYPE, GamePlayTypeEnum.TEMPLATE_PLAY.getCode());
+        return betRecordDo;
     }
 
     public static BetRecordDo betRecordDo_cannotMetrics(GameTypeEnum gameType) {
-        return BetRecordDo.builder()
+        BetRecordDo<Object> betRecordDo = BetRecordDo.builder()
                 .pId(metricsCacheKeyDo_normal.getPId())
                 .channelId(metricsCacheKeyDo_normal.getChannelId())
                 .playerId(metricsCacheKeyDo_normal.getPlayerId())
@@ -52,8 +54,6 @@ public class MetricsManagerTestMocker {
                 .betAmount(11000L)
                 .payAmount(11000L)
                 .payOutAmount(0L)
-                // 给到normal
-                .gamePlayType(GamePlayTypeEnum.NORMAL_PLAY)
                 .betId("testBetId00001")
                 .betPromotionType(BetPromotionTypeEnum.OPERATION_EVENT.getCode())
                 .betSerialNo("testBetSerialNo001")
@@ -62,6 +62,8 @@ public class MetricsManagerTestMocker {
                 .betType(BetTypeEnum.NORMAL_BET.getCode())
                 .creator("creator")
                 .createTime(System.currentTimeMillis()).build();
+        betRecordDo.addExtInfoMapValue(MetricsConstants.EXT_MAP_KEY_GAME_PLAY_TYPE, GamePlayTypeEnum.NORMAL_PLAY.getCode());
+        return betRecordDo;
     }
 
 }
