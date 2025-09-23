@@ -54,9 +54,11 @@ public class UserPlayMetricsDataService extends AbstractService {
             redisTemplate.opsForValue().set(key, existMetricsDo, MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         } else {
             // 没有，则新建一条数据
-            redisTemplate.opsForValue().set(key, UserPlayMetricsBuilder.build(metricsDataMap, cacheKeyDo, metricsType),
+            existMetricsDo = UserPlayMetricsBuilder.build(metricsDataMap, cacheKeyDo, metricsType);
+            redisTemplate.opsForValue().set(key, existMetricsDo,
                     MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         }
+        log.info("UserPlayMetricsDataService#cache,cache data:{}", JSON.toJSONString(existMetricsDo));
         return true;
     }
 

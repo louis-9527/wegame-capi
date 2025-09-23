@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.innerdos.decider;
 
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
@@ -18,7 +19,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -43,11 +43,15 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
     public InnerDosDecideResult decide(DefaultInnerDosContext context) {
         // 判断是否是新人
         boolean newPlayer = context.isNewPlayer();
+        InnerDosDecideResult result;
         if (newPlayer) {
-            return this.decideForNewPlayer(context);
+            result = this.decideForNewPlayer(context);
         } else {
-            return this.decideForNormal(context);
+            result = this.decideForNormal(context);
         }
+
+        log.info("DefaultInnerDosDecider result.isNewPlayer:{},result:{}", newPlayer, JSON.toJSONString(result));
+        return result;
     }
 
     /**
@@ -74,10 +78,10 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 5.是否中奖
         if (NO_REWARD_TEMPLATE_RANGE_NAME.equals(multipleRange) && context.triggerNewPlayerEmptyDisk()) {
             // 5.1 如果没有中奖 && 触发了空盘限制，则返回最低倍率区间
-            return InnerDosDecideResult.builder().templateIdRange(new ArrayList<>(templateRangeMap.keySet()).get(1)).build();
+            multipleRange = new ArrayList<>(templateRangeMap.keySet()).get(1);
         }
         // 6.返回
-        return InnerDosDecideResult.builder().templateIdRange(multipleRange).build();
+        return InnerDosDecideResult.builder().templateIdRange(multipleRange).innerDosType(GameInnerDosTypeEnum.NORMAL_DOS).build();
     }
 
     /**
@@ -97,10 +101,9 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 3.随机权重
         int weightSum = templateRangeMap.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add).multiply(new BigDecimal(Constants.CONST_100)).intValue();
         int randomWeight = randomService.randomInt(1, weightSum);
-        // 4.如果是正常干预,则计算实际权重
-        Integer actualWeight = randomWeight;
-        // 4.1计算实际权重
-        actualWeight = this.calcActualWeight(new BigDecimal(context.getTemplateName(GameInnerDosTypeEnum.NORMAL_DOS)),
+        // 4计算实际权重
+        String normalRtpType = context.getTemplateName(GameInnerDosTypeEnum.NORMAL_DOS);
+        Integer actualWeight = this.calcActualWeight(new BigDecimal(normalRtpType),
                 context.getUserCurrentRtp(),
                 context.getNormalDosCoefficient(),
                 randomWeight,
@@ -110,10 +113,10 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         // 6.是否中奖
         if (NO_REWARD_TEMPLATE_RANGE_NAME.equals(multipleRange) && context.triggerNormalPlayerEmptyDisk()) {
             // 6.1 如果没有中奖 && 触发了空盘限制，则返回最低倍率区间（非0）
-            return InnerDosDecideResult.builder().templateIdRange(new ArrayList<>(templateRangeMap.keySet()).get(1)).build();
+            multipleRange = new ArrayList<>(templateRangeMap.keySet()).get(1);
         }
         // 7.返回
-        return InnerDosDecideResult.builder().templateIdRange(multipleRange).build();
+        return InnerDosDecideResult.builder().templateIdRange(multipleRange).innerDosType(inUseNormalDosType).build();
     }
 
     /**

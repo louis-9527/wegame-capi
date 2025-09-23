@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.manager;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.wegame.base.lock.DistributeLock;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.service.metrics.DefaultMetricsService;
@@ -8,6 +9,7 @@ import com.wegame.capi.biz.service.metrics.MetricsService;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.infrastructure.config.ThreadPoolConfig;
 import com.wegame.capi.infrastructure.config.properties.GameInnerDosProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import static com.wegame.capi.common.Constants.OPT_BUSY;
 
 /**
  * 指标采集处理管理
@@ -42,6 +46,8 @@ public class MetricsManager implements InitializingBean, ApplicationContextAware
     @Autowired
     @Qualifier(ThreadPoolConfig.innerDosThreadPoolExecutor)
     private ThreadPoolExecutor executor;
+    @Autowired
+    private DistributeLock distributeLock;
 
     /**
      * 执行采集指标
@@ -65,7 +71,12 @@ public class MetricsManager implements InitializingBean, ApplicationContextAware
             if (metricsService instanceof DefaultMetricsService) {
                 log.info("MetricsManager#metrics no match metricsService,use defaultMetricsService.metricsType:{}", metricsType);
             }
-            metricsService.metrics(betRecordDo, metricsType, extInfo);
+
+            distributeLock.tryLockThenCall(LockNameUtil.getMetricsLockName(metricsType.getGameType()),
+                    2000,
+                    3000,
+                    () -> metricsService.metrics(betRecordDo, metricsType, extInfo),
+                    OPT_BUSY);
         });
         return true;
     }

@@ -64,10 +64,12 @@ public class GameMetricsDataService extends AbstractService {
             redisTemplate.opsForValue().set(key, existMetricsDo, MetricsConstants.GAME_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         } else {
             // 没有，则新建一条数据
+            existMetricsDo = GameMetricsBuilder.build(metricsDataMap, cacheKeyDo, gameRtpDosConditionMap, metricsType);
             redisTemplate.opsForValue().set(key,
-                    GameMetricsBuilder.build(metricsDataMap, cacheKeyDo, gameRtpDosConditionMap, metricsType),
+                    existMetricsDo,
                     MetricsConstants.GAME_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         }
+        log.info("GameMetricsDataService#cache,cache data:{}", JSON.toJSONString(existMetricsDo));
         return true;
     }
 

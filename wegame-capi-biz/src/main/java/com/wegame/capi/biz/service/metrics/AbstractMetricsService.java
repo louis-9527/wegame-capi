@@ -1,18 +1,14 @@
 package com.wegame.capi.biz.service.metrics;
 
-import com.wegame.base.lock.DistributeLock;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.metrics.MetricsCacheKeyDo;
 import com.wegame.capi.client.enums.innerdos.GameMetricsPropertyNameEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.client.enums.innerdos.UserPlayMetricsPropertyNameEnum;
-import com.wegame.capi.common.utils.LockNameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
-
-import static com.wegame.capi.common.Constants.OPT_BUSY;
 
 /**
  * 指标聚合处理服务
@@ -25,8 +21,6 @@ public abstract class AbstractMetricsService implements MetricsService {
     private UserPlayMetricsDataService userPlayMetricsDataService;
     @Autowired
     private MetricsFlushTimerService metricsFlushTimerService;
-    @Autowired
-    private DistributeLock distributeLock;
 
     /**
      * 获取大盘增量指标
@@ -55,15 +49,9 @@ public abstract class AbstractMetricsService implements MetricsService {
      */
     @Override
     public boolean metrics(BetRecordDo betRecordDo, MetricsTypeEnum metricsType, Object extInfo) {
-        return distributeLock.tryLockThenCall(LockNameUtil.getMetricsLockName(metricsType.getGameType()),
-                2000,
-                3000,
-                () -> {
-                    this.gameMetrics(betRecordDo, metricsType, extInfo);
-                    this.userPlayMetrics(betRecordDo, metricsType, extInfo);
-                    return true;
-                },
-                OPT_BUSY);
+        this.gameMetrics(betRecordDo, metricsType, extInfo);
+        this.userPlayMetrics(betRecordDo, metricsType, extInfo);
+        return true;
     }
 
     /**
