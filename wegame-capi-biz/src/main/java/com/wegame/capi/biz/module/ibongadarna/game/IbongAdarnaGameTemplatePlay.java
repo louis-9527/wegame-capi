@@ -70,7 +70,7 @@ public class IbongAdarnaGameTemplatePlay extends AbstractGame<IbongAdarnaGameRec
         // 内部干预决策逻辑
         TemplateMultipleRange templateMultipleRange = this.getTemplateMultipleRange(gamePlay);
 
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(IBONG_ADARNA, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), IbongAdarnaBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(IBONG_ADARNA, gamePlay.getBetType(), gamePlay.getBetSubType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), IbongAdarnaBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = this.getRandomElement(betRecordIdList);
         log.info("betRecordId:{}", betRecordId);
