@@ -13,3 +13,6 @@ game:
     MariaMakiling: false
     Malakas: true
     IbongAdarna: true
+  inner:
+    dos:
+      enable-game-list: IBONG_ADARNA
