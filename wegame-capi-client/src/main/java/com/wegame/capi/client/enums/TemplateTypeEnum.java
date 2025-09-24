@@ -31,6 +31,12 @@ public enum TemplateTypeEnum {
             "lamang_bet_record_template",
             ""
     ),
+
+    BAKUNAWA(
+            GameTypeEnum.BAKUNAWA,
+            "bakunawa_bet_record_template",
+            ""
+    ),
     ;
 
 
