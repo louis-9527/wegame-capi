@@ -67,16 +67,7 @@ public abstract class AbstractMetricsService implements MetricsService {
         // 用户采集同步
         this.userPlayMetrics(betRecordDo, metricsType, extInfo);
         // 大盘采集async
-        executor.submit(() -> {
-            distributeLock.tryLockThenCall(LockNameUtil.getMetricsLockName(metricsType.getGameType()),
-                    2000,
-                    3000,
-                    () -> {
-                        this.gameMetrics(betRecordDo, metricsType, extInfo);
-                        return true;
-                    },
-                    OPT_BUSY);
-        });
+        executor.submit(() -> this.gameMetrics(betRecordDo, metricsType, extInfo));
         return true;
     }
 
