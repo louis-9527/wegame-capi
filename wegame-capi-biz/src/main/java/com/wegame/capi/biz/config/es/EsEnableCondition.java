@@ -18,7 +18,7 @@ public class EsEnableCondition implements Condition {
 
     static {
         esEnableGameMap.put(GameTypeEnum.MALAKAS, Constants.MALAKAS_PROP);
-        esEnableGameMap.put(GameTypeEnum.LAM_ANG, Constants.LAMANG_PROP);
+        esEnableGameMap.put(GameTypeEnum.IBONG_ADARNA, Constants.IBONG_ADARNA_PROP);
     }
 
     @Override
