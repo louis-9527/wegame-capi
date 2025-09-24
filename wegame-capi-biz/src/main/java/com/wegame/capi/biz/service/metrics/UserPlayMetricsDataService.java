@@ -11,18 +11,24 @@ import com.wegame.capi.biz.converter.metrics.UserPlayMetricsConverter;
 import com.wegame.capi.biz.domain.metrics.MetricsCacheKeyDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
 import com.wegame.capi.biz.service.AbstractService;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.client.enums.innerdos.UserPlayMetricsPropertyNameEnum;
 import com.wegame.capi.common.constants.MetricsConstants;
 import com.wegame.capi.dao.repository.domain.metrics.UserPlayMetricsPo;
 import com.wegame.capi.dao.repository.domain.metrics.UserPlayMetricsQuery;
+import com.wegame.capi.infrastructure.config.ThreadPoolConfig;
+import com.wegame.capi.infrastructure.config.properties.GameInnerDosProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,6 +41,11 @@ public class UserPlayMetricsDataService extends AbstractService {
     private RedisTemplate<String, Object> redisTemplate;
     @Autowired
     private SnowflakeIdGenerator snowflakeIdGenerator;
+    @Autowired
+    private GameInnerDosProperties gameInnerDosProperties;
+    @Autowired
+    @Qualifier(ThreadPoolConfig.innerDosThreadPoolExecutor)
+    private ThreadPoolExecutor executor;
 
     /**
      * 指标数据缓存存储
@@ -130,6 +141,38 @@ public class UserPlayMetricsDataService extends AbstractService {
     }
 
     /**
+     * 提前加载缓存
+     *
+     * @param pId       pid
+     * @param playerId  playerId
+     * @param channelId channelId
+     * @param gameId    gameId
+     * @return do
+     */
+    public boolean loadCache(String pId, String playerId, String channelId, String gameId) {
+        GameTypeEnum gameTypeEnum = GameTypeEnum.valueOfId(gameId);
+        MetricsTypeEnum metricsType = MetricsTypeEnum.valueOfGameType(gameTypeEnum);
+        if (!this.gameEnable(metricsType)) {
+            return false;
+        }
+        executor.execute(() -> {
+            UserPlayMetricsDo userPlayMetricsDo = this.query(pId, playerId, channelId, metricsType);
+            if (Objects.isNull(userPlayMetricsDo)) {
+                userPlayMetricsDo = UserPlayMetricsBuilder.buildDefault(UserInfo.builder()
+                        .pId(pId)
+                        .channelId(channelId)
+                        .gameId(metricsType.getGameType().getId())
+                        .playerId(playerId)
+                        .playerName(playerId)
+                        .build());
+            }
+            String key = MetricsConstants.buildUserMetricsCacheKey(pId, channelId, metricsType.getGameType().getId(), playerId);
+            redisTemplate.opsForValue().set(key, userPlayMetricsDo, MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
+        });
+        return true;
+    }
+
+    /**
      * 查询缓存
      *
      * @param pId         pid
@@ -140,5 +183,15 @@ public class UserPlayMetricsDataService extends AbstractService {
      */
     private UserPlayMetricsDo queryCache(String pId, String playerId, String channelId, MetricsTypeEnum metricsType) {
         return (UserPlayMetricsDo) redisTemplate.opsForValue().get(MetricsConstants.buildUserMetricsCacheKey(pId, channelId, metricsType.getGameType().getId(), playerId));
+    }
+
+    /**
+     * game维度的采集开关是否开启
+     *
+     * @param metricsType metricsType
+     * @return true/false
+     */
+    private boolean gameEnable(MetricsTypeEnum metricsType) {
+        return gameInnerDosProperties.getEnableGameList().contains(metricsType);
     }
 }
