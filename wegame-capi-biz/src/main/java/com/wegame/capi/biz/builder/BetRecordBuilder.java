@@ -9,8 +9,6 @@ import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
-import com.wegame.capi.common.constants.MetricsConstants;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 
@@ -24,8 +22,7 @@ public class BetRecordBuilder {
                                            Long payOutAmount,
                                            Boolean reachMaxMultiple,
                                            BetRecordDo.Jackpot jackpot,
-                                           List<T> gameRecordList,
-                                           GamePlayTypeEnum gamePlayType) {
+                                           List<T> gameRecordList) {
         Operator operator = OperatorContext.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
@@ -48,7 +45,7 @@ public class BetRecordBuilder {
                     .campaignId(betDo.getCampaignId())
                     .build();
         }
-        BetRecordDo<T> betRecordDo = BetRecordDo.<T>builder()
+        return BetRecordDo.<T>builder()
                 .id(betRecordId)
                 .pId(userInfo.getPId())
                 .channelId(userInfo.getChannelId())
@@ -74,10 +71,6 @@ public class BetRecordBuilder {
                 .updateTime(currentMilli)
                 .gameRecordList(gameRecordList)
                 .build();
-
-        // 添加扩展map信息
-        betRecordDo.addExtInfoMapValue(MetricsConstants.EXT_MAP_KEY_GAME_PLAY_TYPE, gamePlayType.getCode());
-        return betRecordDo;
     }
 
 }

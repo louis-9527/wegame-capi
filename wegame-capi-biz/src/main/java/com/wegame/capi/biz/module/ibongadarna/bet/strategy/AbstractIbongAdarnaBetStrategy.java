@@ -92,7 +92,8 @@ public abstract class AbstractIbongAdarnaBetStrategy
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         IbongAdarnaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
-        BetRecordDo<IbongAdarnaGameRecordDo> betRecord = ibongAdarnaBetHelper.buildBetRecord(betRecordId, betDo, list, super.getGamePlayType());
+        betDo.setGamePlayType(super.getGamePlayType());
+        BetRecordDo<IbongAdarnaGameRecordDo> betRecord = ibongAdarnaBetHelper.buildBetRecord(betRecordId, betDo, list);
         // 保存投注记录并派奖
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<IbongAdarnaGameRecordDo> result = ibongAdarnaBetHelper.handleBetResult(betRecord, resultDo);

@@ -5,17 +5,15 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
-import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
+import com.wegame.capi.common.constants.MetricsConstants;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
-
-import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 
 @Component
 public class IbongAdarnaBetHelper implements BetHelper<IbongAdarnaGameRecordDo, IbongAdarnaGameRecordDo> {
@@ -36,20 +31,23 @@ public class IbongAdarnaBetHelper implements BetHelper<IbongAdarnaGameRecordDo, 
     @Override
     public BetRecordDo<IbongAdarnaGameRecordDo> buildBetRecord(long betRecordId,
                                                                BetDo betDo,
-                                                               List<IbongAdarnaGameRecordDo> gameRecordList,
-                                                               GamePlayTypeEnum gamePlayType) {
+                                                               List<IbongAdarnaGameRecordDo> gameRecordList) {
         // 构建投注记录
         long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        return BetRecordBuilder.build(betRecordId,
+        BetRecordDo<IbongAdarnaGameRecordDo> betRecordDo = BetRecordBuilder.build(betRecordId,
                 betDo,
                 totalRewardAmount,
                 false,
                 null,
-                gameRecordList,
-                gamePlayType);
+                gameRecordList);
+        // 添加扩展map信息
+        if (Objects.nonNull(betDo.getGamePlayType())) {
+            betRecordDo.addExtInfoMapValue(MetricsConstants.EXT_MAP_KEY_GAME_PLAY_TYPE, betDo.getGamePlayType().getCode());
+        }
+        return betRecordDo;
     }
 
     @Override

@@ -38,7 +38,7 @@ import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
  * Malakas游戏投注抽象接口
  */
 @Slf4j
-public abstract   class AbstractMalakasBetStrategy
+public abstract class AbstractMalakasBetStrategy
         extends AbstractCommonBetStrategy<MalakasGameRecordDo, MalakasBetRecordDetailDo>
         implements MalakasBetStrategy<MalakasBetRecordDetailDo> {
 
@@ -85,7 +85,7 @@ public abstract   class AbstractMalakasBetStrategy
             } else if (isCanFreeSpinBet(betDo)) {
                 // 1.1 是，则预定投注流程
                 return betForFreeSpin(betDo);
-            }  else {
+            } else {
                 // 1.2 否，则走其他投注流程
                 // 1.2.1、判断能否走干预事件投注
                 if (isCanOperationEventBet(betDo)) {
@@ -112,7 +112,8 @@ public abstract   class AbstractMalakasBetStrategy
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
-        BetRecordDo<MalakasGameRecordDo> betRecord = malakasBetHelper.buildBetRecord(betRecordId, betDo, list,getGamePlayType());
+        betDo.setGamePlayType(getGamePlayType());
+        BetRecordDo<MalakasGameRecordDo> betRecord = malakasBetHelper.buildBetRecord(betRecordId, betDo, list);
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, malakasBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return malakasBetHelper.handleBetResult(betRecord, resultDo);

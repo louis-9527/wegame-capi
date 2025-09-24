@@ -15,7 +15,6 @@ import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,7 +33,7 @@ public class MalakasBetHelper implements BetHelper<MalakasBetRecordDetailDo, Mal
     MalakasConfig malakasConfig;
 
     @Override
-    public BetRecordDo<MalakasGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<MalakasGameRecordDo> gameRecordList, GamePlayTypeEnum gamePlayType) {
+    public BetRecordDo<MalakasGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<MalakasGameRecordDo> gameRecordList) {
         //// 总中奖金额
         long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
@@ -45,8 +44,7 @@ public class MalakasBetHelper implements BetHelper<MalakasBetRecordDetailDo, Mal
                 maxAmountControl(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
                 reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
                 null,
-                gameRecordList,
-                gamePlayType
+                gameRecordList
         );
     }
 
