@@ -26,7 +26,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <wegame-base.version>1.0.2.20250911-RELEASE</wegame-base.version>
+        <wegame-base.version>1.0.2.20250922-RELEASE</wegame-base.version>
         <pulsar-client.version>4.0.2</pulsar-client.version>
     </properties>
 
@@ -226,7 +226,7 @@
         </repository>
         <repository>
             <id>maven-public</id>
-            <url>http://spherelinkgrid.click:8083/repository/maven-public/</url>
+            <url>http://47.236.11.207:8083/repository/maven-public/</url>
             <!-- 允许从中拉取稳定版的依赖 -->
             <releases>
                 <enabled>true</enabled>
