@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  * 大盘指标服务
  */
 @Slf4j
-@Service
+//@Service
 public class GameMetricsDataService extends AbstractService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;

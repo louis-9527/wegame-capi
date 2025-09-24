@@ -126,7 +126,7 @@ public class GameMetricsDo implements Serializable {
         this.injectInUseNormalDosType(gameRtpDosConditionMap);
     }
 
-    private void injectInUseNormalDosType(Map<GameInnerDosTypeEnum, GameRtpDosCondition> gameRtpDosConditionMap) {
+    public void injectInUseNormalDosType(Map<GameInnerDosTypeEnum, GameRtpDosCondition> gameRtpDosConditionMap) {
         GameInnerDosTypeEnum gameInnerDosTypeEnum = GameInnerDosTypeEnum.valueOfCode(this.inUseNormalDosType);
         if (Objects.isNull(gameInnerDosTypeEnum)) {
             // 默认走normal

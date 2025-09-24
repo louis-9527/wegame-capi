@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.manager;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.wegame.base.lock.DistributeLock;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.service.metrics.DefaultMetricsService;
@@ -10,8 +9,6 @@ import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.common.constants.MetricsConstants;
 import com.wegame.capi.common.enums.BetStatusEnum;
-import com.wegame.capi.common.utils.LockNameUtil;
-import com.wegame.capi.infrastructure.config.ThreadPoolConfig;
 import com.wegame.capi.infrastructure.config.properties.GameInnerDosProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -26,9 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ThreadPoolExecutor;
-
-import static com.wegame.capi.common.Constants.OPT_BUSY;
 
 /**
  * 指标采集处理管理
@@ -44,11 +38,6 @@ public class MetricsManager implements InitializingBean, ApplicationContextAware
     private MetricsService defaultMetricsService;
     @Autowired
     private GameInnerDosProperties gameInnerDosProperties;
-    @Autowired
-    @Qualifier(ThreadPoolConfig.innerDosThreadPoolExecutor)
-    private ThreadPoolExecutor executor;
-    @Autowired
-    private DistributeLock distributeLock;
 
     /**
      * 执行采集指标
@@ -65,20 +54,13 @@ public class MetricsManager implements InitializingBean, ApplicationContextAware
             log.info("MetricsManager#metrics.game inner dos not enable:{}", metricsType);
             return false;
         }
-        // async
-        executor.execute(() -> {
-            // 没有定制化，则走默认
-            MetricsService metricsService = Optional.ofNullable(metricsServiceMap.get(metricsType)).orElse(defaultMetricsService);
-            if (metricsService instanceof DefaultMetricsService) {
-                log.info("MetricsManager#metrics no match metricsService,use defaultMetricsService.metricsType:{}", metricsType);
-            }
 
-            distributeLock.tryLockThenCall(LockNameUtil.getMetricsLockName(metricsType.getGameType()),
-                    2000,
-                    3000,
-                    () -> metricsService.metrics(betRecordDo, metricsType, extInfo),
-                    OPT_BUSY);
-        });
+        // 没有定制化，则走默认
+        MetricsService metricsService = Optional.ofNullable(metricsServiceMap.get(metricsType)).orElse(defaultMetricsService);
+        if (metricsService instanceof DefaultMetricsService) {
+            log.info("MetricsManager#metrics no match metricsService,use defaultMetricsService.metricsType:{}", metricsType);
+        }
+        metricsService.metrics(betRecordDo, metricsType, extInfo);
         return true;
     }
 

@@ -17,6 +17,12 @@ public class MetricsConstants {
      */
     private static final String GAME_METRICS_CACHE_FORMAT = "capi:game:aggregation:cache:%s:%s:%s";
     /**
+     * 大盘生效中的干预类型缓存Format
+     * capi:game:inuse:dos:type:cache:{pid}:{channelId}:{gameId}
+     */
+    private static final String GAME_INUSE_DOS_TYPE_CACHE_FORMAT = "capi:game:inuse:dos:type:cache:%s:%s:%s";
+
+    /**
      * 游戏投注总金额缓存Format
      * capi:game:totalBetAmount:cache:{pid}:{channelId}:{gameId}
      */
@@ -39,6 +45,10 @@ public class MetricsConstants {
 
     public static String buildGameMetricsCacheKey(String pId, String channelId, String gameId) {
         return String.format(GAME_METRICS_CACHE_FORMAT, pId, channelId, gameId);
+    }
+
+    public static String buildGameInUseDosTypeCacheKey(String pId, String channelId, String gameId) {
+        return String.format(GAME_INUSE_DOS_TYPE_CACHE_FORMAT, pId, channelId, gameId);
     }
 
     public static String buildUserMetricsCacheKey(String pId, String channelId, String gameId, String playerId) {
