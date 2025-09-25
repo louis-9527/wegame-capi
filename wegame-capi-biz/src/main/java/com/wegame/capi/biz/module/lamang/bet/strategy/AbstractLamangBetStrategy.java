@@ -172,7 +172,7 @@ public abstract class AbstractLamangBetStrategy
     }
 
     public GamePlayTypeEnum getGamePlayType() {
-        return GamePlayTypeEnum.TEMPLATE_PLAY;
+        return NORMAL_PLAY;
     }
 
     public void freeWheelAfterHandle(Long betRecordId) {
