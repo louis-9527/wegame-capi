@@ -260,8 +260,8 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
                 source.searchAfter(searchAfter);
             }
             SearchRequest request = new SearchRequest(templateType.getBetRecordTemplateName())
-                    .source(source);
-//                    .preference("_primary");   // 可选：避免副本 reorder
+                    .source(source)
+                    .preference("_primary");   // 可选：避免副本 reorder
             SearchResponse resp = restHighLevelClient.search(request, RequestOptions.DEFAULT);
             return Arrays.stream(resp.getHits().getHits())
                     .map(h -> (Long) h.getFields().get("id").getValue())

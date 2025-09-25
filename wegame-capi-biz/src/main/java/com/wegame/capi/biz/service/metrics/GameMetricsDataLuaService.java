@@ -97,6 +97,8 @@ public class GameMetricsDataLuaService extends GameMetricsDataService {
         if (!Objects.equals(inUseDosType, gameInnerDosTypeEnum.getCode())) {
             redisTemplate.opsForValue().set(inUseDosTypeCacheKey, gameInnerDosTypeEnum.getCode(), MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         }
+        log.info("GameMetricsDataService#cache,cache totalBetAmount:{},totalPayoutAmount:{},currentRtp:{},gameInnerDosType:{}",
+                totalBetAmount, totalPayoutAmount, currentRtp, gameInnerDosTypeEnum);
         return true;
     }
 

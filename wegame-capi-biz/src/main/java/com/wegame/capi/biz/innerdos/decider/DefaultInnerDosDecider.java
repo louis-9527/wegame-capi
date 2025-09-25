@@ -82,6 +82,8 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
             multipleRange = REWARD_TEMPLATE_RANGE_0_1;
         }
         // 6.返回
+        log.info("DefaultInnerDosDecider result.isNewPlayer:{},innerDosType:{},multipleRange:{},randomWeight:{},actualWeight:{}",
+                true, GameInnerDosTypeEnum.NORMAL_DOS, multipleRange, randomWeight, actualWeight);
         return InnerDosDecideResult.builder().templateIdRange(multipleRange).innerDosType(GameInnerDosTypeEnum.NORMAL_DOS).build();
     }
 
@@ -117,6 +119,8 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
             multipleRange = REWARD_TEMPLATE_RANGE_0_1;
         }
         // 7.返回
+        log.info("DefaultInnerDosDecider result.isNewPlayer:{},innerDosType:{},multipleRange:{},randomWeight:{},actualWeight:{}",
+                true, inUseNormalDosType, multipleRange, randomWeight, actualWeight);
         return InnerDosDecideResult.builder().templateIdRange(multipleRange).innerDosType(inUseNormalDosType).build();
     }
 
