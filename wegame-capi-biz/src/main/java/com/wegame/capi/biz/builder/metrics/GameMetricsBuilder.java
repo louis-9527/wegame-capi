@@ -3,8 +3,8 @@ package com.wegame.capi.biz.builder.metrics;
 
 import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
 import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
+import com.wegame.capi.common.utils.RtpUtil;
 
-import java.math.BigDecimal;
 
 public class GameMetricsBuilder {
 
@@ -13,7 +13,7 @@ public class GameMetricsBuilder {
                 .pId(pId)
                 .channelId(channelId)
                 .gameId(gameId)
-                .currentRtp(BigDecimal.ZERO)
+                .currentRtp(RtpUtil.calculateRtp(0L, 0L))
                 .totalBetAmount(0L)
                 .totalPayoutAmount(0L)
                 .version(0L)
