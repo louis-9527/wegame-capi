@@ -51,7 +51,6 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
             result = this.decideForNormal(context);
         }
 
-        log.info("DefaultInnerDosDecider result.isNewPlayer:{},result:{}", newPlayer, JSON.toJSONString(result));
         return result;
     }
 
@@ -120,7 +119,7 @@ public class DefaultInnerDosDecider implements InnerDosDecider<DefaultInnerDosCo
         }
         // 7.返回
         log.info("DefaultInnerDosDecider result.isNewPlayer:{},innerDosType:{},multipleRange:{},randomWeight:{},actualWeight:{}",
-                true, inUseNormalDosType, multipleRange, randomWeight, actualWeight);
+                false, inUseNormalDosType, multipleRange, randomWeight, actualWeight);
         return InnerDosDecideResult.builder().templateIdRange(multipleRange).innerDosType(inUseNormalDosType).build();
     }
 
