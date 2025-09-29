@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
 import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
+import static com.wegame.capi.client.enums.GamePlayTypeEnum.TEMPLATE_PLAY;
 
 /**
  * lamang游戏投注抽象接口
@@ -172,7 +173,7 @@ public abstract class AbstractLamangBetStrategy
     }
 
     public GamePlayTypeEnum getGamePlayType() {
-        return NORMAL_PLAY;
+        return TEMPLATE_PLAY;
     }
 
     public void freeWheelAfterHandle(Long betRecordId) {
