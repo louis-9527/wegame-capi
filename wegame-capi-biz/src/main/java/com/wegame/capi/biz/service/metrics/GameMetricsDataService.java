@@ -205,7 +205,7 @@ public class GameMetricsDataService extends AbstractService {
         // 如果：当前使用的干预类型不为空，&&当前干预类型对应的条件不为空 && 当前条件没有满足退出条件--》返回当前使用中的干预类型
         if (Objects.nonNull(gameInnerDosTypeEnum) &&
                 Objects.nonNull(gameRtpDosConditionMap.get(gameInnerDosTypeEnum)) &&
-                gameRtpDosConditionMap.get(gameInnerDosTypeEnum).getOut().assertIt(currentRtp)) {
+                !gameRtpDosConditionMap.get(gameInnerDosTypeEnum).getOut().assertIt(currentRtp)) {
             return gameInnerDosTypeEnum;
         } else {
             // 根据当前rtp单个匹配是否满足对应干预
