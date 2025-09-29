@@ -90,10 +90,10 @@ public class GameMetricsDataService extends AbstractService {
         // 常态干预类型处理
         String inUseDosTypeCacheKey = MetricsConstants.buildGameInUseDosTypeCacheKey(cacheKeyDo.getPId(), cacheKeyDo.getChannelId(), metricsType.getGameType().getId());
         String inUseDosType = (String) redisTemplate.opsForValue().get(inUseDosTypeCacheKey);
-        GameInnerDosTypeEnum gameInnerDosTypeEnum = this.injectInUseNormalDosType(inUseDosType, currentRtp, metricsType);
+        GameInnerDosTypeEnum gameInnerDosTypeEnum = this.calcInUseNormalDosType(inUseDosType, currentRtp, metricsType);
         // 如果和当前的不一样则设置值
         if (!Objects.equals(inUseDosType, gameInnerDosTypeEnum.getCode())) {
-            redisTemplate.opsForValue().set(inUseDosTypeCacheKey, gameInnerDosTypeEnum.getCode(), MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set(inUseDosTypeCacheKey, gameInnerDosTypeEnum.getCode(), MetricsConstants.GAME_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         }
         log.info("GameMetricsDataService#cache,cache totalBetAmount:{},totalPayoutAmount:{},currentRtp:{},gameInnerDosType:{}",
                 totalBetAmount, totalPayoutAmount, currentRtp, gameInnerDosTypeEnum);
@@ -198,25 +198,17 @@ public class GameMetricsDataService extends AbstractService {
                 .build();
     }
 
-    private GameInnerDosTypeEnum injectInUseNormalDosType(String inUseNormalDosType, BigDecimal currentRtp, MetricsTypeEnum metricsType) {
+    private GameInnerDosTypeEnum calcInUseNormalDosType(String inUseNormalDosType, BigDecimal currentRtp, MetricsTypeEnum metricsType) {
         GameInnerDosTypeEnum gameInnerDosTypeEnum = GameInnerDosTypeEnum.valueOfCode(inUseNormalDosType);
         Map<GameInnerDosTypeEnum, GameRtpDosCondition> gameRtpDosConditionMap
                 = innerDosContextInitializerManager.getInitializer(metricsType.getGameType()).getGameRtpDosConditionMap();
-        if (Objects.isNull(gameInnerDosTypeEnum)) {
-            // 默认走normal
-            return GameInnerDosTypeEnum.NORMAL_DOS;
+        // 如果：当前使用的干预类型不为空，&&当前干预类型对应的条件不为空 && 当前条件没有满足退出条件--》返回当前使用中的干预类型
+        if (Objects.nonNull(gameInnerDosTypeEnum) &&
+                Objects.nonNull(gameRtpDosConditionMap.get(gameInnerDosTypeEnum)) &&
+                gameRtpDosConditionMap.get(gameInnerDosTypeEnum).getOut().assertIt(currentRtp)) {
+            return gameInnerDosTypeEnum;
         } else {
-            GameRtpDosCondition gameRtpDosCondition = gameRtpDosConditionMap.get(gameInnerDosTypeEnum);
-            // 为空校验一下，因为normal 一般来说是不配置的
-            if (Objects.nonNull(gameRtpDosCondition)) {
-                // 先校验是否满足退出条件
-                if (!gameRtpDosCondition.getOut().assertIt(currentRtp)) {
-                    // 没有退出当前条件，则返回
-                    return gameInnerDosTypeEnum;
-                }
-            }
-
-            // 单个匹配是否满足对应干预
+            // 根据当前rtp单个匹配是否满足对应干预
             // 特殊干预
             GameRtpDosCondition specialCondition = gameRtpDosConditionMap.get(GameInnerDosTypeEnum.SPECIAL_DOS);
             if (Objects.nonNull(specialCondition) && specialCondition.getIn().assertIt(currentRtp)) {

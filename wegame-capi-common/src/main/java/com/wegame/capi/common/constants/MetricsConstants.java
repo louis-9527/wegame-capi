@@ -2,7 +2,7 @@ package com.wegame.capi.common.constants;
 
 public class MetricsConstants {
     //===================betRecord extInfoMap key constants ======start=====================
-    public static final String EXT_MAP_KEY_GAME_PLAY_TYPE="gamePlayType";
+    public static final String EXT_MAP_KEY_GAME_PLAY_TYPE = "gamePlayType";
 
     //===================betRecord extInfoMap key constants ======end=====================
 
@@ -39,9 +39,9 @@ public class MetricsConstants {
 
     /**
      * 大盘指标缓存时间:秒
-     * 暂定30分钟，每次操作都续约
+     * 暂定120分钟，每次操作都续约
      */
-    public static final long GAME_METRICS_CACHE_TIME = 60 * 30;
+    public static final long GAME_METRICS_CACHE_TIME = 60 * 60 * 2;
 
     public static String buildGameMetricsCacheKey(String pId, String channelId, String gameId) {
         return String.format(GAME_METRICS_CACHE_FORMAT, pId, channelId, gameId);
