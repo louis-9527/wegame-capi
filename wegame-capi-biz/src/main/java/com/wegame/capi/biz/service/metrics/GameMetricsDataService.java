@@ -27,6 +27,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class GameMetricsDataService extends AbstractService {
-    private static final String LUA_INCREMENT_SCRIPT =
+    private static final String LUA_INCREMENT_SCRIPT_STRING =
             "local hashKey = KEYS[1]\n" +
                     "local betAmountIncrement = tonumber(ARGV[1])\n" +
                     "local payoutAmountIncrement = tonumber(ARGV[2])\n" +
@@ -47,12 +48,15 @@ public class GameMetricsDataService extends AbstractService {
                     "local newPayoutAmount = redis.call('HINCRBY', hashKey, 'totalPayoutAmount', payoutAmountIncrement)\n" +
                     "return {newBetAmount, newPayoutAmount}";
 
-    private static final String LUA_GET_SCRIPT =
+    private static final String LUA_GET_SCRIPT_STRING =
             "local hashKey = KEYS[1]\n" +
                     "local values = redis.call('HMGET', hashKey, 'totalBetAmount', 'totalPayoutAmount')\n" +
                     "local betAmount = values[1] and tonumber(values[1]) or 0\n" +
                     "local payoutAmount = values[2] and tonumber(values[2]) or 0\n" +
                     "return {betAmount, payoutAmount}";
+
+    private  final DefaultRedisScript<List> LUA_INCREMENT_SCRIPT=new DefaultRedisScript<>();
+    private  final DefaultRedisScript<List> LUA_GET_SCRIPT=new DefaultRedisScript<>();
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -60,6 +64,17 @@ public class GameMetricsDataService extends AbstractService {
     private SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     private InnerDosContextInitializerManager innerDosContextInitializerManager;
+
+   @PostConstruct
+   public void init() {
+       LUA_INCREMENT_SCRIPT.setScriptText(LUA_INCREMENT_SCRIPT_STRING);
+       LUA_INCREMENT_SCRIPT.setResultType(List.class);
+
+       LUA_GET_SCRIPT.setScriptText(LUA_GET_SCRIPT_STRING);
+       LUA_GET_SCRIPT.setResultType(List.class);
+
+   }
+
 
     /**
      * 指标数据缓存存储
@@ -75,12 +90,9 @@ public class GameMetricsDataService extends AbstractService {
         Long totalPayoutAmountInc = (Long) totalPayoutAmountIncObj;
 
         // 构建lua脚本
-        DefaultRedisScript<List> script = new DefaultRedisScript<>();
-        script.setScriptText(LUA_INCREMENT_SCRIPT);
-        script.setResultType(List.class);
         List<String> keys = Lists.newArrayList(hashKey);
         List<Long> args = Lists.newArrayList(totalBetAmountInc, totalPayoutAmountInc);
-        List executeResult = redisTemplate.execute(script, keys, args.toArray());
+        List executeResult = redisTemplate.execute(LUA_INCREMENT_SCRIPT, keys, args.toArray());
 
         Object totalBetAmountObj = executeResult.get(0);
         Object totalPayoutAmountObj = executeResult.get(1);
@@ -174,12 +186,9 @@ public class GameMetricsDataService extends AbstractService {
      */
     private GameMetricsDo queryCache(String pId, String channelId, MetricsTypeEnum metricsType) {
         String hashKey = MetricsConstants.buildGameMetricsCacheKey(pId, channelId, metricsType.getGameType().getId());
-        DefaultRedisScript<List> script = new DefaultRedisScript<>();
-        script.setScriptText(LUA_GET_SCRIPT);
-        script.setResultType(List.class);
 
         List<String> keys = Lists.newArrayList(hashKey);
-        List execResult = redisTemplate.execute(script, keys);
+        List execResult = redisTemplate.execute(LUA_GET_SCRIPT, keys);
         Object totalBetAmountObj = execResult.get(0);
         Object totalPayoutAmountObj = execResult.get(1);
         Long totalBetAmount = (Long) totalBetAmountObj;
