@@ -172,7 +172,7 @@ public class DefaultInnerDosContext implements InnerDosContext {
      * @return DOS干预系数
      */
     public BigDecimal getNormalDosCoefficient() {
-        return this.innerDosCondition.getNewPlayerCondition().getDosCoefficient();
+        return this.innerDosCondition.getNormalCondition().getDosCoefficient();
     }
 
 }
