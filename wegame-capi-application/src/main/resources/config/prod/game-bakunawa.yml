@@ -4,8 +4,8 @@ spring:
     mongodb:
       dynamic:
         bakunawa_mdb:
-          primary_uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@bakunawa-prod-pri.hgmd9m.mongodb.net/bakunawa?compressors=zlib&retryWrites=true&w=majority&appName=bakunawa-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
-          uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@bakunawa-prod-pri.hgmd9m.mongodb.net/bakunawa?compressors=zlib&retryWrites=true&w=majority&appName=bakunawa-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://PRODbakunawa_Service:C1rf2AoMl9DjorvV@prod-bakunawa-pri.mongodb.singapore.nosql.aliyuncs.com/bakunawa?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=bakunawa-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://PRODbakunawa_Service:C1rf2AoMl9DjorvV@prod-bakunawa-pri.mongodb.singapore.nosql.aliyuncs.com/bakunawa?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=bakunawa-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: bakunawa
 ## pulsar
 pulsar:

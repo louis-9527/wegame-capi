@@ -13,7 +13,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <wegame-base.version>1.0.2.20250911-RELEASE</wegame-base.version>
+        <wegame-base.version>1.0.2.20250922-RELEASE</wegame-base.version>
         <lombok.version>1.18.24</lombok.version>
     </properties>
 
@@ -41,11 +41,11 @@
             <!-- 这里对应之前 settings.xml 里配置的server-id -->
             <id>maven-releases</id>
             <!-- 这里代表私服仓库的地址,大家只需要把后面的名字换掉即可 -->
-            <url>http://spherelinkgrid.click:8083/repository/maven-releases/</url>
+            <url>http://47.236.11.207:8083/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>maven-snapshots</id>
-            <url>http://spherelinkgrid.click:8083/repository/maven-snapshots/</url>
+            <url>http://47.236.11.207:8083/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -91,7 +91,7 @@
         </repository>
         <repository>
             <id>maven-public</id>
-            <url>http://spherelinkgrid.click:8083/repository/maven-public/</url>
+            <url>http://47.236.11.207:8083/repository/maven-public/</url>
             <!-- 允许从中拉取稳定版的依赖 -->
             <releases>
                 <enabled>true</enabled>

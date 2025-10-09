@@ -44,8 +44,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
-import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Service
@@ -215,8 +214,8 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
                 source.searchAfter(searchAfter);
             }
             SearchRequest request = new SearchRequest(templateType.getBetRecordTemplateName())
-                    .source(source)
-                    .preference("_primary");   // 可选：避免副本 reorder
+                    .source(source);
+//                    .preference("_primary");   // 可选：避免副本 reorder
             SearchResponse resp = restHighLevelClient.search(request, RequestOptions.DEFAULT);
             return Arrays.stream(resp.getHits().getHits())
                     .map(h -> (Long) h.getFields().get("id").getValue())

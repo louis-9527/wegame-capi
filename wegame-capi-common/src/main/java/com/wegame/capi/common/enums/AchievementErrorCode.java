@@ -27,6 +27,7 @@ public enum AchievementErrorCode {
     TREASURE_NOT_FOUND("5013", "treasure not found", ErrorCode.ACHIEVEMENT_TREASURE_NOT_FOUND),
     NO_CONFIG_MATCH_WITH_CHANNEL_ID("5014", "no config match with channelId", ErrorCode.ACHIEVEMENT_NO_CONFIG_MATCH_WITH_CHANNEL_ID),
     INVALID_REWARD_PAYOUT("5015", "invalid reward payout", ErrorCode.ACHIEVEMENT_INVALID_REWARD_PAYOUT),
+    DAILY_MISSION_AMOUNT_NOT_ENOUGH("5031", "daily mission amount not enough", ErrorCode.DAILY_MISSION_AMOUNT_NOT_ENOUGH),
     ACHIEVEMENT_INSUFFICIENT_CREDIT("4014", "insufficient credit", ErrorCode.ACHIEVEMENT_INSUFFICIENT_CREDIT);
 
 
