@@ -2,16 +2,11 @@ package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wegame.base.enums.ErrorCode;
-import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.domain.TemplateMultipleRange;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
-import java.lang.reflect.MalformedParameterizedTypeException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;

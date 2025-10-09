@@ -21,16 +21,6 @@ public class MetricsConstants {
      * capi:game:inuse:dos:type:cache:{pid}:{channelId}:{gameId}
      */
     private static final String GAME_INUSE_DOS_TYPE_CACHE_FORMAT = "capi:game:inuse:dos:type:cache:%s:%s:%s";
-
-    /**
-     * 游戏投注总金额缓存Format
-     * capi:game:totalBetAmount:cache:{pid}:{channelId}:{gameId}
-     */
-    private static final String GAME_BET_AMOUNT_CACHE_FORMAT = "capi:game:totalBetAmount:cache:%s:%s:%s";
-    /**
-     * 游戏派奖总金额缓存Format
-     */
-    private static final String GAME_PAYOUT_AMOUNT_CACHE_FORMAT = "capi:game:totalPayoutAmount:cache:%s:%s:%s";
     /**
      * 用户指标缓存时间:秒
      * 暂定30分钟，每次操作都续约
@@ -53,14 +43,6 @@ public class MetricsConstants {
 
     public static String buildUserMetricsCacheKey(String pId, String channelId, String gameId, String playerId) {
         return String.format(USER_PLAY_METRICS_CACHE_FORMAT, pId, channelId, gameId, playerId);
-    }
-
-    public static String buildGameBetAmountCacheKey(String pId, String channelId, String gameId) {
-        return String.format(GAME_BET_AMOUNT_CACHE_FORMAT, pId, channelId, gameId);
-    }
-
-    public static String buildGamePayoutAmountCacheKey(String pId, String channelId, String gameId) {
-        return String.format(GAME_PAYOUT_AMOUNT_CACHE_FORMAT, pId, channelId, gameId);
     }
 
 }

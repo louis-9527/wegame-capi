@@ -7,7 +7,6 @@ import com.wegame.capi.biz.domain.metrics.MetricsCacheKeyDo;
 import com.wegame.capi.client.enums.innerdos.GameMetricsPropertyNameEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.client.enums.innerdos.UserPlayMetricsPropertyNameEnum;
-import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.infrastructure.config.ThreadPoolConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static com.wegame.capi.common.Constants.OPT_BUSY;
 
 
 /**

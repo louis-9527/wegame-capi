@@ -2,9 +2,7 @@ package com.wegame.capi.biz.builder.metrics;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
-import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
-import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import com.wegame.capi.dao.repository.domain.metrics.UserPlayMetricsQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;

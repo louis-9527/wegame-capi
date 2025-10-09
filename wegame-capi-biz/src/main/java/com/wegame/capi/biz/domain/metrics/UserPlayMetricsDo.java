@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.domain.metrics;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.NumberUtil;
 import com.wegame.capi.client.enums.innerdos.MetricsPropertyTypeEnum;
 import com.wegame.capi.client.enums.innerdos.UserPlayMetricsPropertyNameEnum;
 import com.wegame.capi.common.Constants;

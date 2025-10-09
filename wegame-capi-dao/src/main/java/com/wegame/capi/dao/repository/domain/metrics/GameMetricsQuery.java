@@ -1,6 +1,5 @@
 package com.wegame.capi.dao.repository.domain.metrics;
 
-import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.Sort;
