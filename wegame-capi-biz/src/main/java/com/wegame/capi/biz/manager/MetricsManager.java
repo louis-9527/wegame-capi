@@ -82,7 +82,7 @@ public class MetricsManager implements InitializingBean, ApplicationContextAware
     }
 
     private boolean canMetrics(BetRecordDo betRecordDo, MetricsTypeEnum metricsType, SingleWalletBetResultDo betResultDo, Object extInfo) {
-        return this.gameEnable(metricsType) && this.betSuccess(betResultDo) && canMetricsPlayType(betRecordDo);
+        return this.gameEnable(metricsType) && this.betSuccess(betResultDo) && this.canMetricsPlayType(betRecordDo);
     }
 
     /**
