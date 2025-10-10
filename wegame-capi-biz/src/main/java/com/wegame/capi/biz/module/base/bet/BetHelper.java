@@ -2,7 +2,7 @@ package com.wegame.capi.biz.module.base.bet;
 
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetContextDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 
@@ -14,11 +14,11 @@ public interface BetHelper<RD extends ToVoConverter, R> {
      * 构建投注记录
      *
      * @param betRecordId    投注记录id
-     * @param betDo          投注参数
+     * @param betContextDo          投注参数
      * @param gameRecordList 游戏记录列表
      * @return 投注记录
      */
-    BetRecordDo<R> buildBetRecord(long betRecordId, BetDo betDo, List<R> gameRecordList);
+    BetRecordDo<R> buildBetRecord(long betRecordId, BetContextDo betContextDo, List<R> gameRecordList);
 
     /**
      * 投注结果处理
