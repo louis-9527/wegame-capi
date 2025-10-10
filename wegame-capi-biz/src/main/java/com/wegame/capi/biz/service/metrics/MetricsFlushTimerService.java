@@ -5,12 +5,15 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.service.RandomService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
+import com.wegame.capi.infrastructure.config.ThreadPoolConfig;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.TimerTask;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,7 @@ import javax.annotation.PreDestroy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,10 +30,14 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class MetricsFlushTimerService {
+    @Autowired
+    @Qualifier(ThreadPoolConfig.innerDosMetricsThreadPoolExecutor)
+    private ThreadPoolExecutor innerDosMetricsThreadPoolExecutor;
     /**
      * 大盘指标时间轮
      */
-    private final HashedWheelTimer gameWheelTimer = new HashedWheelTimer(100L, TimeUnit.MILLISECONDS, 512);
+    private final HashedWheelTimer gameWheelTimer = new HashedWheelTimer(new DefaultThreadFactory("gameWheelTimer"),
+            100L, TimeUnit.MILLISECONDS, 512, true, -1, innerDosMetricsThreadPoolExecutor);
     /**
      * 游戏任务map
      */
@@ -37,7 +45,8 @@ public class MetricsFlushTimerService {
     /**
      * 用户指标时间轮
      */
-    private final HashedWheelTimer userPlayWheelTimer = new HashedWheelTimer(100L, TimeUnit.MILLISECONDS, 512);
+    private final HashedWheelTimer userPlayWheelTimer = new HashedWheelTimer(new DefaultThreadFactory("userPlayWheelTimer"),
+            100L, TimeUnit.MILLISECONDS, 512, true, -1, innerDosMetricsThreadPoolExecutor);
     /**
      * 用户指标任务map
      */
@@ -58,6 +67,7 @@ public class MetricsFlushTimerService {
     private GameMetricsDataService gameMetricsService;
     @Autowired
     private RandomService randomService;
+
 
     /**
      * 添加用户指标刷盘任务
@@ -114,8 +124,7 @@ public class MetricsFlushTimerService {
         if (max - min <= 0) {
             return min;
         } else {
-            int random = randomService.randomInt(0, (int) (max - min));
-            return min + random;
+           return (long) randomService.randomInt((int) min, (int) max);
         }
     }
 

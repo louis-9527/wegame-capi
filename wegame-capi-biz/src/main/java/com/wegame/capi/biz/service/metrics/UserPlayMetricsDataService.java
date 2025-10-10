@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.service.metrics;
 
-import com.alibaba.fastjson.JSON;
 import com.mongodb.client.result.UpdateResult;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.id.SnowflakeIdGenerator;
@@ -69,7 +68,7 @@ public class UserPlayMetricsDataService extends AbstractService {
             redisTemplate.opsForValue().set(key, existMetricsDo,
                     MetricsConstants.USER_METRICS_CACHE_TIME, TimeUnit.SECONDS);
         }
-        log.info("UserPlayMetricsDataService#cache,cache data:{}", JSON.toJSONString(existMetricsDo));
+        log.info("UserPlayMetricsDataService#cache,cache data:{}", existMetricsDo);
         return true;
     }
 
@@ -103,14 +102,14 @@ public class UserPlayMetricsDataService extends AbstractService {
             if (result.getMatchedCount() > 0) {
                 resultFlag = result.getModifiedCount() >= 1;
             } else {
-                log.warn("UserPlayMetricsService#flush update matched count 0,insert a new data.data:{}", JSON.toJSONString(userPlayMetricsDo));
+                log.warn("UserPlayMetricsService#flush update matched count 0,insert a new data.data:{}", userPlayMetricsDo);
                 // 如果没有数据，则插入数据
                 UserPlayMetricsPo po = UserPlayMetricsConverter.doToPo(userPlayMetricsDo);
                 po.setId(snowflakeIdGenerator.nextId());
                 super.getMongoTemplate(metricsType.getGameType()).insert(po, metricsType.getUserPlayMetricsCollectionName());
             }
         }
-        log.info("UserPlayMetricsDataService#flush end,pId:{},channelId:{},playerId:{},metricsType:{},flushData:{}", pId, channelId, playerId, metricsType, JSON.toJSONString(userPlayMetricsDo));
+        log.info("UserPlayMetricsDataService#flush end,pId:{},channelId:{},playerId:{},metricsType:{},flushData:{}", pId, channelId, playerId, metricsType, userPlayMetricsDo);
         return resultFlag;
     }
 

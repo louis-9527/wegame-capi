@@ -27,7 +27,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -48,15 +47,7 @@ public class GameMetricsDataService extends AbstractService {
                     "local newPayoutAmount = redis.call('HINCRBY', hashKey, 'totalPayoutAmount', payoutAmountIncrement)\n" +
                     "return {newBetAmount, newPayoutAmount}";
 
-    private static final String LUA_GET_SCRIPT_STRING =
-            "local hashKey = KEYS[1]\n" +
-                    "local values = redis.call('HMGET', hashKey, 'totalBetAmount', 'totalPayoutAmount')\n" +
-                    "local betAmount = values[1] and tonumber(values[1]) or 0\n" +
-                    "local payoutAmount = values[2] and tonumber(values[2]) or 0\n" +
-                    "return {betAmount, payoutAmount}";
-
-    private  final DefaultRedisScript<List> LUA_INCREMENT_SCRIPT=new DefaultRedisScript<>();
-    private  final DefaultRedisScript<List> LUA_GET_SCRIPT=new DefaultRedisScript<>();
+    private  final DefaultRedisScript<List> LUA_INCREMENT_SCRIPT=new DefaultRedisScript<>(LUA_INCREMENT_SCRIPT_STRING, List.class);
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -64,17 +55,6 @@ public class GameMetricsDataService extends AbstractService {
     private SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     private InnerDosContextInitializerManager innerDosContextInitializerManager;
-
-   @PostConstruct
-   public void init() {
-       LUA_INCREMENT_SCRIPT.setScriptText(LUA_INCREMENT_SCRIPT_STRING);
-       LUA_INCREMENT_SCRIPT.setResultType(List.class);
-
-       LUA_GET_SCRIPT.setScriptText(LUA_GET_SCRIPT_STRING);
-       LUA_GET_SCRIPT.setResultType(List.class);
-
-   }
-
 
     /**
      * 指标数据缓存存储
@@ -147,7 +127,7 @@ public class GameMetricsDataService extends AbstractService {
                 super.getMongoTemplate(metricsType.getGameType()).insert(po, metricsType.getGameMetricsCollectionName());
             }
         }
-        log.info("GameMetricsDataService#flush end,pId:{},channelId:{},metricsType:{},flushData:{}", pId, channelId, metricsType, JSON.toJSONString(metricsDo));
+        log.info("GameMetricsDataService#flush end,pId:{},channelId:{},metricsType:{},flushData:{}", pId, channelId, metricsType, metricsDo);
         return resultFlag;
     }
 
@@ -187,8 +167,8 @@ public class GameMetricsDataService extends AbstractService {
     private GameMetricsDo queryCache(String pId, String channelId, MetricsTypeEnum metricsType) {
         String hashKey = MetricsConstants.buildGameMetricsCacheKey(pId, channelId, metricsType.getGameType().getId());
 
-        List<String> keys = Lists.newArrayList(hashKey);
-        List execResult = redisTemplate.execute(LUA_GET_SCRIPT, keys);
+        List<Object> execResult = redisTemplate.opsForHash().values(hashKey);
+
         Object totalBetAmountObj = execResult.get(0);
         Object totalPayoutAmountObj = execResult.get(1);
         Long totalBetAmount = (Long) totalBetAmountObj;

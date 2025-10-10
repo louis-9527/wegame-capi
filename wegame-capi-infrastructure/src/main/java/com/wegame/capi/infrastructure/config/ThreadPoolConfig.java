@@ -26,6 +26,7 @@ public class ThreadPoolConfig {
     public static final String operationEventReportThreadPoolExecutor = "operationEventReportThreadPoolExecutor";
     public static final String starCardUseRecordThreadPoolExecutor = "starCardUseRecordThreadPoolExecutor";
     public static final String innerDosThreadPoolExecutor = "innerDosThreadPoolExecutor";
+    public static final String innerDosMetricsThreadPoolExecutor = "innerDosMetricsThreadPoolExecutor";
 
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
@@ -147,6 +148,20 @@ public class ThreadPoolConfig {
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(300000),
                 new CustomizableThreadFactory("inner-dos-pool-"),
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        executor.allowCoreThreadTimeOut(true);
+        executor.prestartAllCoreThreads();
+        return executor;
+    }
+
+    @Bean(innerDosMetricsThreadPoolExecutor)
+    public ThreadPoolExecutor innerDosMetricsThreadPoolExecutor() {
+        WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
+                100,
+                100L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(10000),
+                new CustomizableThreadFactory("inner-dos-metrics-pool-"),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
