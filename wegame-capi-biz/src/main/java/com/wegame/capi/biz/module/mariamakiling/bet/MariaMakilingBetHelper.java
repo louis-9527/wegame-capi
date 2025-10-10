@@ -6,7 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetContextDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
@@ -32,7 +32,7 @@ public class MariaMakilingBetHelper implements BetHelper<MariaMakilingGameRecord
 
     @Override
     public BetRecordDo<MariaMakilingGameRecordDo> buildBetRecord(long betRecordId,
-                                                                 BetDo betDo,
+                                                                 BetContextDo betContextDo,
                                                                  List<MariaMakilingGameRecordDo> gameRecordList) {
         // 构建投注记录
         long totalRewardAmount = gameRecordList.stream()
@@ -40,9 +40,9 @@ public class MariaMakilingBetHelper implements BetHelper<MariaMakilingGameRecord
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
         return BetRecordBuilder.build(betRecordId,
-                betDo,
-                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                betContextDo,
+                maxAmountControl(totalRewardAmount, betContextDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, betContextDo.getBetAmount(), mariaMakilingConfig.getRewardMaxMultiple()),
                 null,
                 gameRecordList);
     }
