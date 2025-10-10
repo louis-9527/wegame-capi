@@ -15,13 +15,10 @@ import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
-import com.wegame.capi.biz.service.freespin.FreeSpinService;
-import com.wegame.capi.biz.service.operation.OperationEventService;
 import com.wegame.capi.biz.service.promotion.BagService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
@@ -54,11 +51,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     @Autowired
     StarCardUseRecordService startCardUseRecordService;
     @Autowired
-    OperationEventService operationEventService;
-    @Autowired
     BagService bagService;
-    @Autowired
-    FreeSpinService freeSpinService;
     @Autowired
     private GameApiProperty gameApiProperty;
     @Value("${dynamic.operation.switch}")
@@ -249,8 +242,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetContextDo betContextDo) {
         buildGamePlayType(betContextDo);
-        GameOperationEventDo gameEventDo = betContextDo.getGameOperationEvent();
-        List<R> list = gameContext().play(build(betContextDo, betRecordId, gameEventDo));
+        List<R> list = gameContext().play(build(betContextDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         return betHelper().buildBetRecord(betRecordId, betContextDo, list);
     }

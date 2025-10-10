@@ -145,7 +145,7 @@ public abstract class AbstractMariaMakilingBetStrategy
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeWheel(BetContextDo betContextDo) {
         long betRecordId = generateBetRecordId();
         buildGamePlayType(betContextDo);
-        List<MariaMakilingGameRecordDo> list = gameContext().play(build(betContextDo, betRecordId, null));
+        List<MariaMakilingGameRecordDo> list = gameContext().play(build(betContextDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
         BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.buildBetRecord(betRecordId, betContextDo, list);
