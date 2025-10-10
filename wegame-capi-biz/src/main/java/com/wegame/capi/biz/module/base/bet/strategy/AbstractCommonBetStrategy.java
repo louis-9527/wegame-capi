@@ -249,8 +249,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetContextDo betContextDo) {
         buildGamePlayType(betContextDo);
-        GameOperationEventDo gameEventDo = betContextDo.getGameOperationEvent();
-        List<R> list = gameContext().play(build(betContextDo, betRecordId, gameEventDo));
+        List<R> list = gameContext().play(build(betContextDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         return betHelper().buildBetRecord(betRecordId, betContextDo, list);
     }
