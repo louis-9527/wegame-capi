@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
-import com.wegame.capi.biz.domain.biz.bet.BetDo;
+import com.wegame.capi.biz.domain.biz.bet.BetContextDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
@@ -75,60 +75,60 @@ public abstract   class AbstractMalakasBetStrategy
     }
 
     @Override
-    public BetResultDo<MalakasBetRecordDetailDo> bet(BetDo betDo) {
-        if (!BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
+    public BetResultDo<MalakasBetRecordDetailDo> bet(BetContextDo betContextDo) {
+        if (!BetSubTypeEnum.isFreeWheelQuery(betContextDo.getBetSubType().getCode())) {
             // 非免费轮投注流程
             //// 1、是否使用星卡
-            if (isCanStarCardBet(betDo)) {
+            if (isCanStarCardBet(betContextDo)) {
                 // 1.1 是，则星卡投注流程
-                return betForStartCard(betDo);
-            } else if (isCanFreeSpinBet(betDo)) {
+                return betForStartCard(betContextDo);
+            } else if (isCanFreeSpinBet(betContextDo)) {
                 // 1.1 是，则预定投注流程
-                return betForFreeSpin(betDo);
+                return betForFreeSpin(betContextDo);
             }  else {
                 // 1.2 否，则走其他投注流程
                 // 1.2.1、判断能否走干预事件投注
-                if (isCanOperationEventBet(betDo)) {
+                if (isCanOperationEventBet(betContextDo)) {
                     // 1.2.11 命中干预事件：走干预事件投注
-                    return betForOperationEvent(betDo);
+                    return betForOperationEvent(betContextDo);
                 } else {
                     // 1.2.12 未命中干预事件：走正常投注。
-                    return betForNonFreeWheel(betDo);
+                    return betForNonFreeWheel(betContextDo);
                 }
             }
         } else {
             // 免费轮投注, 走查询
-            return betForFreeWheelQuery(betDo);
+            return betForFreeWheelQuery(betContextDo);
         }
     }
 
     /**
      * 非免费轮投注(正常投注、购买投注)
      */
-    private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
+    private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeWheel(BetContextDo betContextDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<MalakasGameRecordDo> list = gameContext().play(build(getGamePlayType(), betDo, betRecordId, null));
+        buildGamePlayType(betContextDo);
+        List<MalakasGameRecordDo> list = gameContext().play(build(betContextDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
-        BetRecordDo<MalakasGameRecordDo> betRecord = malakasBetHelper.buildBetRecord(betRecordId, betDo, list);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, malakasBetHelper.hasRewardFreeWheel(firstBatchList));
+        BetRecordDo<MalakasGameRecordDo> betRecord = malakasBetHelper.buildBetRecord(betRecordId, betContextDo, list);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betContextDo, betRecord, malakasBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return malakasBetHelper.handleBetResult(betRecord, resultDo);
-
     }
 
     /**
      * 免费轮投注
      */
-    private BetResultDo<MalakasBetRecordDetailDo> betForFreeWheelQuery(BetDo betDo) {
+    private BetResultDo<MalakasBetRecordDetailDo> betForFreeWheelQuery(BetContextDo betContextDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         List<MalakasGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
                 GameRecordQuery.builder()
-                        .betRecordId(betDo.getBetRecordId())
+                        .betRecordId(betContextDo.getBetRecordId())
                         .playerId(userInfo.getPlayerId())
-                        .batchId(betDo.getGameRecordId())
+                        .batchId(betContextDo.getGameRecordId())
                         .build(), gameContext().gameInfo().getGameType());
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
         // 按照index升序排列
@@ -149,14 +149,14 @@ public abstract   class AbstractMalakasBetStrategy
             }
         }
         return BetResultDo.<MalakasBetRecordDetailDo>builder()
-                .betRecordId(betDo.getBetRecordId())
-                .gameId(betDo.getGameId())
-                .betType(betDo.getBetType())
-                .betSubType(betDo.getBetSubType())
+                .betRecordId(betContextDo.getBetRecordId())
+                .gameId(betContextDo.getGameId())
+                .betType(betContextDo.getBetType())
+                .betSubType(betContextDo.getBetSubType())
                 .overallRewardAmount(overallRewardAmount)
                 .totalPayoutAmount(0L)
                 .resultDetail(MalakasBetRecordDetailDo.builder()
-                        .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetAmount(), overallRewardAmount))
+                        .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betContextDo.getBetAmount(), overallRewardAmount))
                         .gameRecordList(gameRecordList)
                         .build())
                 .build();
