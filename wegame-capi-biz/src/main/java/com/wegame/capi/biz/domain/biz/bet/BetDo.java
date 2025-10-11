@@ -4,7 +4,6 @@ import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import lombok.*;
@@ -12,16 +11,13 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
-/**
- * 投注上下文
- */
 @Data
 @ToString
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class BetContextDo implements Serializable {
+public class BetDo implements Serializable {
     private static final long serialVersionUID = -2266308277093710848L;
     /**
      * 游戏Id
@@ -91,10 +87,5 @@ public class BetContextDo implements Serializable {
      * 预定投注Id
      */
     private String campaignId;
-
-    /**
-     * 游戏Play类型
-     */
-    GamePlayTypeEnum gamePlayType = GamePlayTypeEnum.NORMAL_PLAY;
 }
 
