@@ -90,7 +90,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
             if (recordDo.getParentId() != 0L) {
                 // 处理首轮普通轮
                 long gameRecordId = generateGameRecordId();
-                DiwataMayariGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, BigDecimal.ZERO);
+                DiwataMayariGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, lastGameRecord.getRewardResult().getTotalMultiple());
                 ret.add(gameRecord);
                 lastGameRecord = gameRecord;
             }
