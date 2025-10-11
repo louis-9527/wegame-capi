@@ -109,7 +109,7 @@ public abstract   class AbstractMalakasBetStrategy
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
         buildGamePlayType(betContextDo);
-        List<MalakasGameRecordDo> list = gameContext().play(build(betContextDo, betRecordId));
+        List<MalakasGameRecordDo> list = gameContext().play(build(betContextDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
