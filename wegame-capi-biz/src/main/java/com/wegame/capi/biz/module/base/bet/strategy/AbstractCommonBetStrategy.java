@@ -54,7 +54,11 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     @Autowired
     StarCardUseRecordService startCardUseRecordService;
     @Autowired
+    OperationEventService operationEventService;
+    @Autowired
     BagService bagService;
+    @Autowired
+    FreeSpinService freeSpinService;
     @Autowired
     private GameApiProperty gameApiProperty;
     @Value("${dynamic.operation.switch}")
