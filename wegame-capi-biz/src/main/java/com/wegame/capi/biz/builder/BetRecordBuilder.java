@@ -6,7 +6,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.bet.BetContextDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
@@ -18,7 +18,7 @@ import java.util.Objects;
 public class BetRecordBuilder {
 
     public static <T> BetRecordDo<T> build(Long betRecordId,
-                                           BetContextDo betContextDo,
+                                           BetDo betDo,
                                            Long payOutAmount,
                                            Boolean reachMaxMultiple,
                                            BetRecordDo.Jackpot jackpot,
@@ -27,22 +27,22 @@ public class BetRecordBuilder {
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        AssertUtil.assertNotNull(betContextDo, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         long currentMilli = DateUtil.getCurrentMilli();
         BetRecordDo.ExtendInfo extendInfo = null;
-        BetPromotionTypeEnum betPromotionType = betContextDo.getBetPromotionType();
+        BetPromotionTypeEnum betPromotionType = betDo.getBetPromotionType();
         AssertUtil.assertNotNull(betPromotionType, ErrorCode.ERR_INTER);
         if (Objects.equals(betPromotionType, BetPromotionTypeEnum.OPERATION_EVENT)) {
             extendInfo = BetRecordDo.ExtendInfo.builder()
-                    .ieId(betContextDo.getGameOperationEvent().getOperationEvent().getEventId())
+                    .ieId(betDo.getGameOperationEvent().getOperationEvent().getEventId())
                     .build();
         }else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.STAR_CARD)) {
             extendInfo = BetRecordDo.ExtendInfo.builder()
-                    .rewardUrl(betContextDo.getRewardDetail().getDetails().getImgUrl())
+                    .rewardUrl(betDo.getRewardDetail().getDetails().getImgUrl())
                     .build();
         } else if (Objects.equals(betPromotionType, BetPromotionTypeEnum.FREE_SPIN)) {
             extendInfo = BetRecordDo.ExtendInfo.builder()
-                    .campaignId(betContextDo.getCampaignId())
+                    .campaignId(betDo.getCampaignId())
                     .build();
         }
         return BetRecordDo.<T>builder()
@@ -52,13 +52,13 @@ public class BetRecordBuilder {
                 .playerId(userInfo.getPlayerId())
                 .userId(Long.valueOf(userInfo.getId()))
                 .playerName(userInfo.getPlayerName())
-                .gameId(betContextDo.getGameId())
+                .gameId(betDo.getGameId())
                 .betSerialNo(String.valueOf(betRecordId))
-                .betType(betContextDo.getBetType().getCode())
-                .betSubType(betContextDo.getBetSubType().getCode())
+                .betType(betDo.getBetType().getCode())
+                .betSubType(betDo.getBetSubType().getCode())
                 .betPromotionType(betPromotionType.getCode())
-                .betAmount(betContextDo.getBetAmount())
-                .payAmount(betContextDo.getPayAmount())
+                .betAmount(betDo.getBetAmount())
+                .payAmount(betDo.getPayAmount())
                 .payOutAmount(payOutAmount)
                 .reachMaxMultiple(reachMaxMultiple)
                 .status(BetStatusEnum.ING.getCode())

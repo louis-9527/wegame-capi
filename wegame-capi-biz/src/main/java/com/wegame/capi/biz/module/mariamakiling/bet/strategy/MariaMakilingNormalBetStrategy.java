@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.MariaMakilingBetRecordDetailDo;
-import com.wegame.capi.biz.domain.biz.bet.BetContextDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.context.UserInfo;
@@ -32,9 +32,9 @@ public class MariaMakilingNormalBetStrategy extends AbstractMariaMakilingBetStra
     RewardService rewardService;
 
     @Override
-    public void freeWheelAfterHandle(BetContextDo betContextDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
-        if (detailDo.isLastFreeWheel(betContextDo.getGameRecordId())) {
-            updateRewardNotifyInfo(betContextDo.getGameType(), detailDo.freeWheelCount(), totalRewardAmount);
+    public void freeWheelAfterHandle(BetDo betDo, MariaMakilingBetRecordDetailDo detailDo, Long totalRewardAmount) {
+        if (detailDo.isLastFreeWheel(betDo.getGameRecordId())) {
+            updateRewardNotifyInfo(betDo.getGameType(), detailDo.freeWheelCount(), totalRewardAmount);
         }
     }
 

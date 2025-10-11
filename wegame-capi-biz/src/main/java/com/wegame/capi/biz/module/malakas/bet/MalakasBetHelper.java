@@ -7,7 +7,7 @@ import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
-import com.wegame.capi.biz.domain.biz.bet.BetContextDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
@@ -33,16 +33,16 @@ public class MalakasBetHelper implements BetHelper<MalakasBetRecordDetailDo, Mal
     MalakasConfig malakasConfig;
 
     @Override
-    public BetRecordDo<MalakasGameRecordDo> buildBetRecord(long betRecordId, BetContextDo betContextDo, List<MalakasGameRecordDo> gameRecordList) {
+    public BetRecordDo<MalakasGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<MalakasGameRecordDo> gameRecordList) {
         //// 总中奖金额
         long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
         return BetRecordBuilder.build(betRecordId,
-                betContextDo,
-                maxAmountControl(totalRewardAmount, betContextDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betContextDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
+                betDo,
+                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), malakasConfig.getRewardMaxMultiple()),
                 null,
                 gameRecordList
         );

@@ -4,7 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.bet.BetContextDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
@@ -68,41 +68,40 @@ public abstract class AbstractIbongAdarnaBetStrategy
 
 
     @Override
-    public BetResultDo<IbongAdarnaGameRecordDo> bet(BetContextDo betContextDo) {
+    public BetResultDo<IbongAdarnaGameRecordDo> bet(BetDo betDo) {
         //// 1、是否使用星卡
-        if (isCanFreeSpinBet(betContextDo)) {
+        if (isCanFreeSpinBet(betDo)) {
             // 1.1 是，则预定投注流程
-            return betForFreeSpin(betContextDo);
+            return betForFreeSpin(betDo);
         }  else {
             // 1.2 否，则走其他投注流程
             // 1.2.1、判断能否走干预事件投注
-            if (isCanOperationEventBet(betContextDo)) {
+            if (isCanOperationEventBet(betDo)) {
                 // 1.2.11 命中干预事件：走干预事件投注
-                return betForOperationEvent(betContextDo);
+                return betForOperationEvent(betDo);
             } else {
                 // 1.2.12 未命中干预事件：走正常投注。
-                return normalBet(betContextDo);
+                return normalBet(betDo);
             }
         }
     }
 
-    private BetResultDo<IbongAdarnaGameRecordDo> normalBet(BetContextDo betContextDo) {
+    private BetResultDo<IbongAdarnaGameRecordDo> normalBet(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        buildGamePlayType(betContextDo);
-        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(betContextDo, betRecordId));
+        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         IbongAdarnaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
-        BetRecordDo<IbongAdarnaGameRecordDo> betRecord = ibongAdarnaBetHelper.buildBetRecord(betRecordId, betContextDo, list);
+        BetRecordDo<IbongAdarnaGameRecordDo> betRecord = ibongAdarnaBetHelper.buildBetRecord(betRecordId, betDo, list);
         // 保存投注记录并派奖
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betContextDo, betRecord, gameRecord.hasRewardFreeSpins());
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<IbongAdarnaGameRecordDo> result = ibongAdarnaBetHelper.handleBetResult(betRecord, resultDo);
         // 中大奖处理
-        this.rewardAfterHandle(betContextDo, gameRecord.getRewardResult().getTotalRewardAmount());
+        this.rewardAfterHandle(betDo, gameRecord.getRewardResult().getTotalRewardAmount());
         return result;
     }
 
-    public void rewardAfterHandle(BetContextDo betContextDo, Long totalRewardAmount) {
+    public void rewardAfterHandle(BetDo betDo, Long totalRewardAmount) {
         // do nothing
     }
 }

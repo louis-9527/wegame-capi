@@ -78,7 +78,7 @@ api:
     invokeSingle: true
     freeSpinDomain: https://sw-inhouse-http-freespin.igo10.me
     promotionDomain: https://reward-http.igo10.me
-    operationDomain: http://dos-egame-aliyun.platform10.me
+    operationDomain: http://dos-egame.dos10.me
     cp:
       - platformId: 50
         channelId: 3050

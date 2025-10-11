@@ -1,4 +1,4 @@
-PUT /malakas_bet_record_template_v1
+PUT /malakas_bet_record_template
 {
     "mappings": {
         "properties": {
