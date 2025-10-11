@@ -114,12 +114,12 @@ public abstract class AbstractLamangBetStrategy
     private BetResultDo<LamangBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<LamangGameRecordDo> list = gameContext().play(build(getGamePlayType(), betDo, betRecordId, null));
+        List<LamangGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<LamangGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
         BetRecordDo<LamangGameRecordDo> betRecord = lamangBetHelper.buildBetRecord(betRecordId, betDo, list);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, betHelper().hasRewardFreeWheel(firstBatchList));
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, betHelper().hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return lamangBetHelper.handleBetResult(betRecord, resultDo);
     }

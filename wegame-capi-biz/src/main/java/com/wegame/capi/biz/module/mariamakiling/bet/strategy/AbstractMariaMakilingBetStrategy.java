@@ -144,13 +144,13 @@ public abstract class AbstractMariaMakilingBetStrategy
      */
     private BetResultDo<MariaMakilingGameRecordDo> betForNonFreeWheel(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<MariaMakilingGameRecordDo> list = gameContext().play(build(getGamePlayType(), betDo, betRecordId, null));
+        List<MariaMakilingGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         // 构建投注记录
         BetRecordDo<MariaMakilingGameRecordDo> betRecord = mariaMakilingBetHelper.buildBetRecord(betRecordId, betDo, list);
         // 保存投注记录并派奖
         boolean syncOpt = mariaMakilingBetHelper.hasRewardFreeWheel(list);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, syncOpt);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, syncOpt);
         return mariaMakilingBetHelper.handleBetResult(betRecord, resultDo);
     }
 
