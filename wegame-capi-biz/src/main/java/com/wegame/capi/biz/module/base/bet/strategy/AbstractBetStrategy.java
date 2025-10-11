@@ -6,22 +6,18 @@ import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
 import com.wegame.capi.biz.manager.MetricsManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.SingleWalletService;
-import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.AbTypeEnum;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.MessageId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -63,15 +59,15 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     /**
      * 保存投注记录并投注派彩
      */
-    public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
+    public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, Boolean syncOpt) {
         SingleWalletBetResultDo resultDo;
         if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
-            resultDo = asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+            resultDo = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         } else {
             if (syncOpt) {
-                resultDo = syncSaveBetRecordAndBetWithPayout(betRecordDo);
+                resultDo = syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
             } else {
-                resultDo = asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+                resultDo = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
             }
         }
 
@@ -80,7 +76,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         return resultDo;
     }
 
-    private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+    private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo) {
         Long betRecordId = betRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
         log.info("syncSaveBetRecordAndBetWithPayout betRecordId:{}", betRecordId);
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
@@ -103,7 +99,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         return betSingleWalletResult;
     }
 
-    public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, boolean syncOpt) {
+    public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, boolean syncOpt) {
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
         MessageId addMessageId = pulsarProducer.syncSendMessage(gameContext().gameInfo().getGameType(), addMqMessage, RETRY_TIMES);
@@ -137,23 +133,5 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                         .jackpot(betRecordDo.getJackpot())
                         .status(status.getCode())
                         .build());
-    }
-
-    public GamePlayTypeEnum getGamePlayType() {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING) ||
-                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MALAKAS) ||
-                Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.IBONG_ADARNA)
-        ) {
-            if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
-                return GamePlayTypeEnum.NORMAL_PLAY;
-            } else {
-                log.info("userInfo.ut: {}, template bet", userInfo.getUt());
-                return GamePlayTypeEnum.TEMPLATE_PLAY;
-            }
-        } else {
-            return GamePlayTypeEnum.NORMAL_PLAY;
-        }
-
     }
 }

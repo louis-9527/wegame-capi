@@ -88,7 +88,6 @@ public class BetDo implements Serializable {
      * 预定投注Id
      */
     private String campaignId;
-
     /**
      * gamePlayType
      */

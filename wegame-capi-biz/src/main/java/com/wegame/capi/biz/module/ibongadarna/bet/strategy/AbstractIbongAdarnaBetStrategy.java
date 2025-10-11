@@ -87,14 +87,13 @@ public abstract class AbstractIbongAdarnaBetStrategy
 
     private BetResultDo<IbongAdarnaGameRecordDo> normalBet(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(super.getGamePlayType(), betDo, betRecordId, null));
+        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         IbongAdarnaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
-        betDo.setGamePlayType(super.getGamePlayType());
         BetRecordDo<IbongAdarnaGameRecordDo> betRecord = ibongAdarnaBetHelper.buildBetRecord(betRecordId, betDo, list);
         // 保存投注记录并派奖
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<IbongAdarnaGameRecordDo> result = ibongAdarnaBetHelper.handleBetResult(betRecord, resultDo);
         // 中大奖处理
         this.rewardAfterHandle(betDo, gameRecord.getRewardResult().getTotalRewardAmount());
