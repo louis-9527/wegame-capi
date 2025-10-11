@@ -117,7 +117,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertNotNull(eventDetailId, ErrorCode.ERR_INTER);
         // 投注并派奖
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         // 异步更新干预事件&干预事件详情状态
         long eventAmount = betRecordDo.getPayOutAmount() - betRecordDo.getPayAmount();
@@ -222,7 +222,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
                 .build(), this.gameContext().gameInfo().getGameType());
         // 调用投注
         boolean syncOpt = betHelper().hasRewardFreeWheel(rBetRecordDo.getGameRecordList());
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(rBetRecordDo, syncOpt);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, rBetRecordDo, syncOpt);
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         if (Objects.equals(resultDo.getBetStatus(), BetStatusEnum.SUCCESS)) {
             // 更新星卡上报状态->无需上报
@@ -243,19 +243,18 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         AssertUtil.assertTrue(Objects.equals(betDo.getBetPromotionType(), FREE_SPIN), ErrorCode.ERR_INTER);
         BetRecordDo<R> betRecordDo = generateBetRecord(generateBetRecordId(), betDo);
         boolean syncOpt = betHelper().hasRewardFreeWheel(betRecordDo.getGameRecordList());
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         return betHelper().handleBetResult(betRecordDo, resultDo);
     }
 
     public BetRecordDo<R> generateBetRecord(long betRecordId, BetDo betDo) {
-        GamePlayTypeEnum playTypeEnum = getGamePlayType();
         GameOperationEventDo gameEventDo = betDo.getGameOperationEvent();
         if (Objects.equals(betDo.getBetPromotionType(), OPERATION_EVENT)) {
             if (Objects.nonNull(gameEventDo) && gameEventDo.isEventResult()) {
-                playTypeEnum = GamePlayTypeEnum.EVENT_PLAY;
+                betDo.setGamePlayType(GamePlayTypeEnum.EVENT_PLAY);
             }
         }
-        List<R> list = gameContext().play(build(playTypeEnum, betDo, betRecordId, gameEventDo));
+        List<R> list = gameContext().play(build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         return betHelper().buildBetRecord(betRecordId, betDo, list);
     }

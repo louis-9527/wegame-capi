@@ -6,6 +6,7 @@ import com.wegame.base.mq.MQMessage;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
@@ -59,19 +60,19 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     /**
      * 保存投注记录并投注派彩
      */
-    public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, Boolean syncOpt) {
+    public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, Boolean syncOpt) {
         if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
-            return asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+            return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         } else {
             if (syncOpt) {
-                return syncSaveBetRecordAndBetWithPayout(betRecordDo);
+                return syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
             } else {
-                return asyncSaveBetRecordAndBetWithPayout(betRecordDo, syncOpt);
+                return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
             }
         }
     }
 
-    private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo) {
+    private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo) {
         Long betRecordId = betRecordManager().add(betRecordDo, gameContext().gameInfo().getGameType());
         AssertUtil.assertNotNull(betRecordId, ErrorCode.ERR_INTER);
         SingleWalletBetResultDo betSingleWalletResult = singleWalletService.betWithPayout(betRecordDo);
@@ -93,7 +94,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         return betSingleWalletResult;
     }
 
-    public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetRecordDo<R> betRecordDo, boolean syncOpt) {
+    public SingleWalletBetResultDo asyncSaveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, boolean syncOpt) {
         // 发送消息(新增)
         MQMessage<BetRecordDo<R>> addMqMessage = MQMessage.buildMsg(String.valueOf(betRecordDo.getId()), MessageTypeEnum.ADD.getCode(), betRecordDo);
         MessageId addMessageId = pulsarProducer.syncSendMessage(gameContext().gameInfo().getGameType(), addMqMessage, RETRY_TIMES);
@@ -127,20 +128,5 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
                         .jackpot(betRecordDo.getJackpot())
                         .status(status.getCode())
                         .build());
-    }
-
-    public GamePlayTypeEnum getGamePlayType() {
-        UserInfo userInfo = UserInfoContext.getUserInfo();
-        if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
-            if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
-                return GamePlayTypeEnum.NORMAL_PLAY;
-            } else {
-                log.info("userInfo.ut: {}, template bet", userInfo.getUt());
-                return GamePlayTypeEnum.TEMPLATE_PLAY;
-            }
-        } else {
-            return GamePlayTypeEnum.NORMAL_PLAY;
-        }
-
     }
 }
