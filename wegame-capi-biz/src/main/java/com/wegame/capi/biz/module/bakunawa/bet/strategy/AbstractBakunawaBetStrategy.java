@@ -85,13 +85,13 @@ public abstract class AbstractBakunawaBetStrategy
 
     private BetResultDo<BakunawaGameRecordDo> normalBet(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<BakunawaGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
+        List<BakunawaGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         BakunawaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
         BetRecordDo<BakunawaGameRecordDo> betRecord = bakunawaBetHelper.buildBetRecord(betRecordId, betDo, list);
         // 保存投注记录并派奖
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<BakunawaGameRecordDo> result = bakunawaBetHelper.handleBetResult(betRecord, resultDo);
         // 中大奖处理
         this.rewardAfterHandle(betDo, gameRecord.getRewardResult().getTotalRewardAmount());
