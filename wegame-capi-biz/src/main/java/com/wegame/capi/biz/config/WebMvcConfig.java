@@ -33,6 +33,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/doc.html",
             "/swagger-resources",
             "/operationEvent/getStatusOfEvents",
+            "/jackpot/jackpotDetails",
             "/common/ping"
     };
     @Autowired

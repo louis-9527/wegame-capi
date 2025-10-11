@@ -6,15 +6,18 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.enums.OptEnum;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
+import com.wegame.capi.client.domain.vo.JackpotResultVo;
 import com.wegame.capi.client.domain.vo.jackpot.JackpotRewardPoolVo;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
+import com.wegame.capi.common.utils.AmountUtil;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotRewardPoolPo;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

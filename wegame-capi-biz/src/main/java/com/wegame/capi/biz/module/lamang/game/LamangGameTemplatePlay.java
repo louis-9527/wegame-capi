@@ -12,10 +12,8 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
-import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.LamangSymbolDo;
-import com.wegame.capi.biz.domain.biz.symbol.MalakasSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.lamang.LamangBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
@@ -27,7 +25,6 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
@@ -42,7 +39,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.client.enums.TemplateTypeEnum.LAM_ANG;
-import static com.wegame.capi.client.enums.TemplateTypeEnum.MALAKAS;
 import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
