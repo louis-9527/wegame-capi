@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class GamePlayBuilder {
 
-    public static GamePlayDo build(BetContextDo betContextDo, long betRecordId) {
+    public static GamePlayDo build(BetContextDo betContextDo, long betRecordId, GameOperationEventDo gameEventDo) {
         AssertUtil.assertNotNull(betContextDo, ErrorCode.ERR_PARAM);
         return GamePlayDo.builder()
                 .gamePlayType(betContextDo.getGamePlayType())
@@ -21,8 +21,8 @@ public class GamePlayBuilder {
                 .betAmount(betContextDo.getBetAmount())
                 .payAmount(betContextDo.getPayAmount())
                 .betRecordId(betRecordId)
-                .operationEventConfigBetRecordId(Objects.nonNull(betContextDo.getGameOperationEvent()) ? betContextDo.getGameOperationEvent().getConfigId() : null)
-                .gameEventDo(betContextDo.getGameOperationEvent())
+                .operationEventConfigBetRecordId(Objects.nonNull(gameEventDo) ? gameEventDo.getConfigId() : null)
+                .gameEventDo(gameEventDo)
                 .build();
     }
 }
