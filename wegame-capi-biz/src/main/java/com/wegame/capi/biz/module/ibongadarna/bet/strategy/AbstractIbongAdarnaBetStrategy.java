@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.List;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
  * IbongAdarna类游戏投注抽象接口
@@ -73,7 +72,7 @@ public abstract class AbstractIbongAdarnaBetStrategy
         if (isCanFreeSpinBet(betDo)) {
             // 1.1 是，则预定投注流程
             return betForFreeSpin(betDo);
-        }  else {
+        } else {
             // 1.2 否，则走其他投注流程
             // 1.2.1、判断能否走干预事件投注
             if (isCanOperationEventBet(betDo)) {
@@ -88,13 +87,13 @@ public abstract class AbstractIbongAdarnaBetStrategy
 
     private BetResultDo<IbongAdarnaGameRecordDo> normalBet(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
+        List<IbongAdarnaGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         IbongAdarnaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
         BetRecordDo<IbongAdarnaGameRecordDo> betRecord = ibongAdarnaBetHelper.buildBetRecord(betRecordId, betDo, list);
         // 保存投注记录并派奖
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, gameRecord.hasRewardFreeSpins());
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, gameRecord.hasRewardFreeSpins());
         BetResultDo<IbongAdarnaGameRecordDo> result = ibongAdarnaBetHelper.handleBetResult(betRecord, resultDo);
         // 中大奖处理
         this.rewardAfterHandle(betDo, gameRecord.getRewardResult().getTotalRewardAmount());
