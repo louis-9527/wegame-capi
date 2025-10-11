@@ -127,7 +127,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
     private BetResultDo<MangkukulamBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        GamePlayDo gamePlayDo = build(NORMAL_PLAY, betDo, betRecordId, null);
+        GamePlayDo gamePlayDo = build(betDo, betRecordId);
         if (BetSubTypeEnum.isFirstStep(betDo.getBetSubType().getCode())) {
             // 1、play
             List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);
@@ -135,7 +135,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             // 2、构建投注记录
             BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
             // 3、投注并派彩
-            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, betHelper().hasRewardFreeWheel(list));
+            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, betHelper().hasRewardFreeWheel(list));
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             return mangkukulamBetHelper.handleBetResult(betRecord, resultDo);
         } else if (BetSubTypeEnum.isSecondStep(betDo.getBetSubType().getCode())) {
@@ -155,7 +155,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             BetRecordDo<MangkukulamGameRecordDo> betRecord = mangkukulamBetHelper.buildBetRecord(betRecordId, betDo, list);
             betRecord.setFreeWheelHandleStatus(FreeWheelHandleStatusEnum.NOT_REQUIRED.getCode());
             // 3、投注并派彩
-            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, true);
+            SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, true);
             AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
             // 4、异步更新投注原始记录 todo，id和parentId加唯一索引
             preBetRecord.setFreeWheelHandleStatus(FreeWheelHandleStatusEnum.PROCESSED.getCode());
