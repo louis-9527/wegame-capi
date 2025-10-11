@@ -116,12 +116,12 @@ public abstract class AbstractDiwataMayariBetStrategy
     private BetResultDo<DiwataMayariBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<DiwataMayariGameRecordDo> list = gameContext().play(build(this.getGamePlayType(), betDo, betRecordId, null));
+        List<DiwataMayariGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<DiwataMayariGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
         BetRecordDo<DiwataMayariGameRecordDo> betRecord = diwataMayariBetHelper.buildBetRecord(betRecordId, betDo, list);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, diwataMayariBetHelper.hasRewardFreeWheel(firstBatchList));
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, diwataMayariBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return diwataMayariBetHelper.handleBetResult(betRecord, resultDo);
 

@@ -2,10 +2,7 @@ package com.wegame.capi.biz.domain.biz.bet;
 
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
-import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.VolatilityTypeEnum;
+import com.wegame.capi.client.enums.*;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -92,6 +89,10 @@ public class BetDo implements Serializable {
      * 预定投注Id
      */
     private String campaignId;
+    /**
+     * gamePlayType
+     */
+    private GamePlayTypeEnum gamePlayType;
     /////////////// 波动选择 ///////////////
     private VolatilityTypeEnum volatility;
 
