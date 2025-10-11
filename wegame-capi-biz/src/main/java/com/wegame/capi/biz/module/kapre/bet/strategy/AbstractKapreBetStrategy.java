@@ -32,7 +32,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 
 /**
@@ -119,12 +118,12 @@ public abstract class AbstractKapreBetStrategy
     private BetResultDo<KapreBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<KapreGameRecordDo> list = gameContext().play(build(NORMAL_PLAY, betDo, betRecordId, null));
+        List<KapreGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<KapreGameRecordDo> firstBatchList = kapreBetHelper.getFirstBatchGameRecordList(list);
         // 2、构建投注记录
         BetRecordDo<KapreGameRecordDo> betRecord = kapreBetHelper.buildBetRecord(betRecordId, betDo, list);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betRecord, kapreBetHelper.hasRewardFreeWheel(firstBatchList));
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, kapreBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return kapreBetHelper.handleBetResult(betRecord, resultDo);
     }
