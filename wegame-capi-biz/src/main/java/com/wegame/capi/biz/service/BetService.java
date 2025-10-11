@@ -6,13 +6,17 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.base.bet.AbstractBetContext;
+import com.wegame.capi.client.context.UserInfo;
+import com.wegame.capi.client.context.UserInfoContext;
+import com.wegame.capi.client.enums.AbTypeEnum;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 
 /**
@@ -37,10 +41,25 @@ public class BetService {
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_PARAM);
         GameTypeEnum gameType = GameTypeEnum.valueOfId(betDo.getGameId());
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
+        buildGamePlayType(betDo);
         String betContextName = contextNameMap.get(gameType);
         AssertUtil.assertStrNotEmpty(betContextName, ErrorCode.ERR_PARAM, "Not Support Game");
         AbstractBetContext betContext = contextMap.get(betContextName);
         AssertUtil.assertNotNull(betContext, ErrorCode.ERR_PARAM, "Not Support Game");
         return betContext.bet(betDo);
+    }
+
+    public void buildGamePlayType(BetDo betDo) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        if (Objects.equals(betDo.getGameType(), GameTypeEnum.MARIA_MAKILING)) {
+            if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
+                betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
+            } else {
+                log.info("userInfo.ut: {}, template bet", userInfo.getUt());
+                betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
+            }
+        } else {
+            betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
+        }
     }
 }
