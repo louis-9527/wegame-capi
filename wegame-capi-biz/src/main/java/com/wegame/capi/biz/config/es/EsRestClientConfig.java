@@ -20,7 +20,7 @@ import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Configuration
-@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "} || ${" + LAMANG_PROP +"}")
+@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "} || ${" + IBONG_ADARNA_PROP + "} || ${" + LAMANG_PROP +"}")
 public class EsRestClientConfig {
     @Value("${spring.elasticsearch.rest.uris}")
     private String uris;

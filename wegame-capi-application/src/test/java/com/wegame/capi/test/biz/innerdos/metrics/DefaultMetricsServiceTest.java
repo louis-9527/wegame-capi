@@ -1,0 +1,170 @@
+package com.wegame.capi.test.biz.innerdos.metrics;
+
+import cn.hutool.core.util.RandomUtil;
+import com.google.common.collect.Lists;
+import com.wegame.base.lock.DistributeLock;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.metrics.GameMetricsDo;
+import com.wegame.capi.biz.domain.metrics.UserPlayMetricsDo;
+import com.wegame.capi.biz.service.metrics.DefaultMetricsService;
+import com.wegame.capi.biz.service.metrics.GameMetricsDataService;
+import com.wegame.capi.biz.service.metrics.UserPlayMetricsDataService;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
+import com.wegame.capi.infrastructure.config.ThreadPoolConfig;
+import com.wegame.capi.test.BaseTest;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.LockSupport;
+
+import static com.wegame.capi.common.Constants.OPT_BUSY;
+import static org.junit.Assert.*;
+
+@Slf4j
+public class DefaultMetricsServiceTest extends BaseTest {
+    @Autowired
+    private DefaultMetricsService defaultMetricsService;
+    @Autowired
+    private GameMetricsDataService gameMetricsDataService;
+    @Autowired
+    private UserPlayMetricsDataService userPlayMetricsDataService;
+    @Autowired
+    @Qualifier(ThreadPoolConfig.innerDosThreadPoolExecutor)
+    private ThreadPoolExecutor executor;
+
+    @Autowired
+    private DistributeLock distributeLock;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Test
+    public void metrics_normal_test() {
+        // exInfo 这里代表是否有免费轮
+        boolean metricsFlag = defaultMetricsService.metrics(MetricsManagerTestMocker.betRecordDo_normal(GameTypeEnum.IBONG_ADARNA), MetricsTypeEnum.IBONG_ADARNA, false);
+        // 等一会儿，让定时任务执行
+        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(120));
+        assertTrue(metricsFlag);
+    }
+
+    // 大盘采集并发请看下测试
+    @Test
+    public void metrics_current_test() {
+        // exInfo 这里代表是否有免费轮
+        // 1.查询出当前已经有多少金额
+        GameMetricsDo gameMetricsDoPre = gameMetricsDataService.query("50", "1050", MetricsTypeEnum.IBONG_ADARNA);
+        UserPlayMetricsDo userPlayMetricsDoPre = userPlayMetricsDataService.query("50", "test001", "1050", MetricsTypeEnum.IBONG_ADARNA);
+        long gameTotalBetAmount = gameMetricsDoPre.getTotalBetAmount();
+        long gameTotalPayoutAmount = gameMetricsDoPre.getTotalPayoutAmount();
+        long userTotalBetAmount = userPlayMetricsDoPre.getTotalBetAmount();
+        long userTotalPayoutAmount = userPlayMetricsDoPre.getTotalPayoutAmount();
+
+        List<Future> futureList = Lists.newArrayList();
+
+        for (int i = 0; i < 100; i++) {
+            BetRecordDo betRecordDo = MetricsManagerTestMocker.betRecordDo_normal(GameTypeEnum.IBONG_ADARNA);
+            Future<?> future = executor.submit(() -> defaultMetricsService.metrics(betRecordDo, MetricsTypeEnum.IBONG_ADARNA, false));
+            futureList.add(future);
+            gameTotalBetAmount = gameTotalBetAmount + betRecordDo.getPayAmount();
+            gameTotalPayoutAmount = gameTotalPayoutAmount + betRecordDo.getPayOutAmount();
+            userTotalBetAmount = userTotalBetAmount + betRecordDo.getPayAmount();
+            userTotalPayoutAmount = userTotalPayoutAmount + betRecordDo.getPayOutAmount();
+        }
+
+        futureList.forEach(future -> {
+            try {
+                future.get();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // 等待1分钟，让定时任务走完
+        LockSupport.parkNanos(this, TimeUnit.SECONDS.toNanos(60 * 2));
+
+        // 再次获取存储的数据
+        GameMetricsDo gameMetricsDoPost = gameMetricsDataService.query("50", "1050", MetricsTypeEnum.IBONG_ADARNA);
+        UserPlayMetricsDo userPlayMetricsDoPost = userPlayMetricsDataService.query("50", "test001", "1050", MetricsTypeEnum.IBONG_ADARNA);
+
+        log.info("初始存储的数据,gameTotalBetAmount:{},gameTotalPayoutAmount:{},userTotalBetAmount:{},userTotalPayoutAmount:{}",
+                gameMetricsDoPre.getTotalBetAmount(),
+                gameMetricsDoPre.getTotalPayoutAmount(),
+                userPlayMetricsDoPre.getTotalBetAmount(),
+                userPlayMetricsDoPre.getTotalPayoutAmount());
+
+        log.info("并发后真实统计的数据,gameTotalBetAmount:{},gameTotalPayoutAmount:{},userTotalBetAmount:{},userTotalPayoutAmount:{}",
+                gameTotalBetAmount,
+                gameTotalPayoutAmount,
+                userTotalBetAmount,
+                userTotalPayoutAmount);
+
+        log.info("并发后存储中的数据,gameTotalBetAmount:{},gameTotalPayoutAmount:{},userTotalBetAmount:{},userTotalPayoutAmount:{}",
+                gameMetricsDoPost.getTotalBetAmount(),
+                gameMetricsDoPost.getTotalPayoutAmount(),
+                userPlayMetricsDoPost.getTotalBetAmount(),
+                userPlayMetricsDoPost.getTotalPayoutAmount());
+    }
+
+    @Test
+    public void redisTest() throws Exception {
+        long distLockStartTime = System.currentTimeMillis();
+        long redisOpStartTime = System.currentTimeMillis();
+        AtomicLong lockCount = new AtomicLong(0);
+        AtomicLong redisCount = new AtomicLong(0);
+
+        List<Future> lockFutures = new ArrayList<>();
+        List<Future> redisFutures = new ArrayList<>();
+        for (int i = 0; i < 100000; i++) {
+            Future<?> lockFuture = executor.submit(() -> {
+                distributeLock.tryLockThenCall("test_lock_lock_name",
+                        2000,
+                        3000,
+                        () -> {
+//                            Thread.sleep(10);
+                            log.info("lock次数:{}", lockCount.addAndGet(1));
+                            return true;
+                        },
+                        OPT_BUSY);
+            });
+
+            Future<?> redisFuture = executor.submit(() -> {
+                String randomStr = RandomUtil.randomNumbers(10);
+                redisTemplate.opsForValue().set(randomStr, randomStr, 30, TimeUnit.SECONDS);
+                log.info("redis次数:{}", redisCount.addAndGet(1));
+            });
+            redisFutures.add(lockFuture);
+            lockFutures.add(redisFuture);
+        }
+        lockFutures.forEach(future ->{
+            try {
+                future.get();
+            } catch (Exception e) {
+                log.error("redis test error", e);
+            }
+        });
+
+        log.info("lock耗时：{}",System.currentTimeMillis()-distLockStartTime);
+
+        redisFutures.forEach(future ->{
+            try {
+                future.get();
+            } catch (Exception e) {
+                log.error("redis test error", e);
+            }
+        });
+        log.info("redis耗时：{}",System.currentTimeMillis()-redisOpStartTime);
+
+    }
+}
