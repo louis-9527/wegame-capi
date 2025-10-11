@@ -5,7 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
-import com.wegame.capi.biz.domain.biz.bet.BetContextDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.context.UserInfo;
@@ -38,7 +38,7 @@ public class IbongAdarnaNormalBetStrategy extends AbstractIbongAdarnaBetStrategy
     RewardService rewardService;
 
     @Override
-    public void rewardAfterHandle(BetContextDo betDo, Long totalRewardAmount) {
+    public void rewardAfterHandle(BetDo betDo, Long totalRewardAmount) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         defaultThreadPoolExecutor.execute(() -> {
             Integer multiple = rewardMultiple(betDo.getBetAmount(), totalRewardAmount);

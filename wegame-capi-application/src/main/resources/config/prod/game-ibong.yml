@@ -4,8 +4,8 @@ spring:
     mongodb:
       dynamic:
         ibong_adarna_mdb:
-          primary_uri: mongodb+srv://PRODibong_Service:a7k1FE7LO33PhDiZ@prod-ibong-pri.mongodb.singapore.nosql.aliyuncs.com/ibong?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=ibong-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
-          uri: mongodb+srv://PRODibong_Service:a7k1FE7LO33PhDiZ@prod-ibong-pri.mongodb.singapore.nosql.aliyuncs.com/ibong?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=ibong-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@ibong-prod-pri.hgmd9m.mongodb.net/ibong?compressors=zlib&retryWrites=true&w=majority&appName=ibong-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@ibong-prod-pri.hgmd9m.mongodb.net/ibong?compressors=zlib&retryWrites=true&w=majority&appName=ibong-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: ibong
 ## pulsar
 pulsar:

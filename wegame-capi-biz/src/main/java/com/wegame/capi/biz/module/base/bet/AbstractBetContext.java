@@ -3,7 +3,7 @@ package com.wegame.capi.biz.module.base.bet;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.lock.DistributeLock;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.bet.BetContextDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.module.base.bet.strategy.BetStrategy;
 import com.wegame.capi.client.context.UserInfo;
@@ -41,21 +41,21 @@ public abstract class AbstractBetContext {
      */
     public abstract Map<String, BetStrategy> betStrategyMap();
 
-    public BetResultDo bet(BetContextDo betContextDo) {
-        String betStrategyName = betStrategyNameMap().get(betContextDo.getBetType());
+    public BetResultDo bet(BetDo betDo) {
+        String betStrategyName = betStrategyNameMap().get(betDo.getBetType());
         AssertUtil.assertStrNotEmpty(betStrategyName, ErrorCode.ERR_PARAM, "Not Support BetType");
         BetStrategy betStrategy = betStrategyMap().get(betStrategyName);
         AssertUtil.assertNotNull(betStrategy, ErrorCode.ERR_PARAM, "Not Support BetType");
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
 
-        if (BetSubTypeEnum.isFreeWheelQuery(betContextDo.getBetSubType().getCode())) {
-            return betStrategy.bet(betContextDo);
+        if (BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
+            return betStrategy.bet(betDo);
         } else {
             return distributeLock.tryLockThenCall(LockNameUtil.getBetLockName(userInfo.getPlayerId()),
                     100,
                     3000,
-                    () -> betStrategy.bet(betContextDo),
+                    () -> betStrategy.bet(betDo),
                     OPT_BUSY);
         }
     }

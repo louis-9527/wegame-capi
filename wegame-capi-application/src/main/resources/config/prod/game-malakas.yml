@@ -4,8 +4,8 @@ spring:
     mongodb:
       dynamic:
         malakas_mdb:
-          primary_uri: mongodb+srv://PRODmalakas_Service:iOh4F7Rig6HCb48Z@prod-malakas-pri.mongodb.singapore.nosql.aliyuncs.com/malakas?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=malakas-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
-          uri: mongodb+srv://PRODmalakas_Service:iOh4F7Rig6HCb48Z@prod-malakas-pri.mongodb.singapore.nosql.aliyuncs.com/malakas?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=malakas-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@malakas-prod-pri.hgmd9m.mongodb.net/malakas?compressors=zlib&retryWrites=true&w=majority&appName=malakas-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://AtLas_Makiling_SerViC3_Us3r:sFpR44MHPPiSCzFZ@malakas-prod-pri.hgmd9m.mongodb.net/malakas?compressors=zlib&retryWrites=true&w=majority&appName=malakas-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: malakas
 ## pulsar
 pulsar:

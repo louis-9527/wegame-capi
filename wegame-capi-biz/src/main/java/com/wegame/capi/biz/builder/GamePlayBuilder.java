@@ -2,7 +2,7 @@ package com.wegame.capi.biz.builder;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.bet.BetContextDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
@@ -11,18 +11,19 @@ import java.util.Objects;
 
 public class GamePlayBuilder {
 
-    public static GamePlayDo build(BetContextDo betContextDo, long betRecordId) {
-        AssertUtil.assertNotNull(betContextDo, ErrorCode.ERR_PARAM);
+    public static GamePlayDo build(GamePlayTypeEnum gamePlayType, BetDo betDo, long betRecordId, GameOperationEventDo gameEventDo) {
+        AssertUtil.assertNotNull(gamePlayType, ErrorCode.ERR_PARAM);
+        AssertUtil.assertNotNull(betDo, ErrorCode.ERR_PARAM);
         return GamePlayDo.builder()
-                .gamePlayType(betContextDo.getGamePlayType())
-                .gameType(betContextDo.getGameType())
-                .betType(betContextDo.getBetType())
-                .betSubType(betContextDo.getBetSubType())
-                .betAmount(betContextDo.getBetAmount())
-                .payAmount(betContextDo.getPayAmount())
+                .gamePlayType(gamePlayType)
+                .gameType(betDo.getGameType())
+                .betType(betDo.getBetType())
+                .betSubType(betDo.getBetSubType())
+                .betAmount(betDo.getBetAmount())
+                .payAmount(betDo.getPayAmount())
                 .betRecordId(betRecordId)
-                .operationEventConfigBetRecordId(Objects.nonNull(betContextDo.getGameOperationEvent()) ? betContextDo.getGameOperationEvent().getConfigId() : null)
-                .gameEventDo(betContextDo.getGameOperationEvent())
+                .operationEventConfigBetRecordId(Objects.nonNull(gameEventDo) ? gameEventDo.getConfigId() : null)
+                .gameEventDo(gameEventDo)
                 .build();
     }
 }
