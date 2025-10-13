@@ -42,7 +42,7 @@ import java.util.Random;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.bakunawa.BakunawaGameHelper.BAKUNAWA_GAME_INFO;
-import static com.wegame.capi.client.enums.TemplateTypeEnum.BAKUNAWA;
+import static com.wegame.capi.common.enums.TemplateTypeEnum.BAKUNAWA;
 
 @Slf4j
 @Component("bakunawaGameTemplatePlay")
