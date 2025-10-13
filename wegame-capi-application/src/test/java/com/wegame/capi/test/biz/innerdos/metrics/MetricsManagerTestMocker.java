@@ -40,7 +40,6 @@ public class MetricsManagerTestMocker {
                 .betType(BetTypeEnum.NORMAL_BET.getCode())
                 .creator("creator")
                 .createTime(System.currentTimeMillis()).build();
-        betRecordDo.addExtInfoMapValue(MetricsConstants.EXT_MAP_KEY_GAME_PLAY_TYPE, GamePlayTypeEnum.TEMPLATE_PLAY.getCode());
         return betRecordDo;
     }
 
@@ -62,7 +61,6 @@ public class MetricsManagerTestMocker {
                 .betType(BetTypeEnum.NORMAL_BET.getCode())
                 .creator("creator")
                 .createTime(System.currentTimeMillis()).build();
-        betRecordDo.addExtInfoMapValue(MetricsConstants.EXT_MAP_KEY_GAME_PLAY_TYPE, GamePlayTypeEnum.NORMAL_PLAY.getCode());
         return betRecordDo;
     }
 
