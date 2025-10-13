@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 import static com.wegame.capi.biz.module.ibongadarna.IbongAdarnaGameHelper.IBONG_ADARNA_GAME_INFO;
-import static com.wegame.capi.biz.module.malakas.MalakasGameHelper.MALAKAS_GAME_INFO;
 
 /**
  * IbongAdarnaGameContext GamePlay上下文
@@ -22,6 +21,7 @@ public class IbongAdarnaGameContext extends AbstractGameContext {
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "ibongAdarnaGameNormalPlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "ibongAdarnaGameEventPlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "ibongAdarnaGameTemplatePlay")
             .build();
 
     @Autowired

@@ -6,6 +6,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,6 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,7 +46,7 @@ import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Service
-@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "} || ${" + LAMANG_PROP +"}")
+@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "} || ${" + IBONG_ADARNA_PROP + "} || ${" + LAMANG_PROP +"}")
 public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> implements InitializingBean {
 
     @Autowired
@@ -144,6 +144,53 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
         //                .collect(Collectors.toList());
 
     }
+
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_'+ #betSubType.getCode()+'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
+    public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BetSubTypeEnum betSubType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
+        log.info("listIdByMultipleRange query, betType: {},betSubType:{}, multipleRangeStart: {}, multipleRangeEnd: {}, templateType: {}",
+                betType.getCode(),betSubType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.name());
+        // 构建ES查询
+        // NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
+        // 创建布尔查询构建器
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        // 添加betType条件
+        boolQuery.filter(QueryBuilders.termQuery("betType", betType.getCode()));
+        boolQuery.filter(QueryBuilders.termQuery("betSubType", betSubType.getCode()));
+        // 添加multiple范围条件
+        if (multipleRangeStart.compareTo(multipleRangeEnd) == 0) {
+            // 等于条件
+            boolQuery.filter(QueryBuilders.termQuery("multiple", multipleRangeStart.doubleValue()));
+        } else {
+            // 范围条件 (大于start，小于等于end)
+            boolQuery.filter(QueryBuilders.rangeQuery("multiple")
+                    .gt(multipleRangeStart.doubleValue())
+                    .lte(multipleRangeEnd.doubleValue()));
+        }
+        List<Long> result = new ArrayList<>();
+        // 第一次不带 search_after
+        Object[] searchAfter = null;
+        do {
+            List<Long> batch = fetchBatch(templateType, boolQuery, searchAfter, 5000);
+            if (batch.isEmpty()) break;
+            result.addAll(batch);
+            searchAfter = new Object[]{batch.get(batch.size() - 1)}; // 最后一条 id
+        } while (true);
+        return result;
+        //        // 执行查询
+        //        List<T> betRecordTemplateList = elasticsearchRestTemplate
+        //                .search(query, clazz)
+        //                .stream()
+        //                .map(SearchHit::getContent)
+        //                .collect(Collectors.toList());
+        //
+        //        return Optional.of(betRecordTemplateList)
+        //                .orElse(Collections.emptyList())
+        //                .stream()
+        //                .map(T::getId)
+        //                .collect(Collectors.toList());
+
+    }
+
 
     public List<T> listByIdList(TemplateTypeEnum templateType, List<Long> idList, Class<T> clazz) {
         if (CollectionUtils.isEmpty(idList)) {
