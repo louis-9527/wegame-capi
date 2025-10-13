@@ -1,0 +1,12 @@
+package com.wegame.capi.common.constants;
+
+public class TemplateConstants {
+    public static final String MARIAMAKILING_BET_RECORD_TEMPLATE = "mariamakiling_bet_record_template";
+    public static final String MARIAMAKILING_GAME_RECORD_TEMPLATE = "mariamakiling_game_record_template";
+
+    public static final String MALAKAS_BET_RECORD_TEMPLATE = "malakas_bet_record_template";
+
+    public static final String IBONGADARNA_BET_RECORD_TEMPLATE = "ibongadarna_bet_record_template";
+
+    public static final String LAMANG_BET_RECORD_TEMPLATE = "lamang_bet_record_template";
+}
