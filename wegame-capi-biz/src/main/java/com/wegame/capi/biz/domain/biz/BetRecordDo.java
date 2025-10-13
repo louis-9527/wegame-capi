@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.*;
 
 /**
  * bet_record：投注记录
@@ -189,5 +189,6 @@ public class BetRecordDo<T> implements Serializable {
          */
         private Long miniContributionAmount;
     }
+
 }
 

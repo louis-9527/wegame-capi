@@ -10,10 +10,12 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.listener.PulsarProducer;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.MetricsManager;
 import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.service.SingleWalletService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.MessageTypeEnum;
+import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.MessageId;
@@ -39,6 +41,8 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
     public SnowflakeIdGenerator snowflakeIdGenerator;
     @Autowired
     public PulsarProducer pulsarProducer;
+    @Autowired
+    private MetricsManager metricsManager;
 
     public abstract AbstractGameContext<R> gameContext();
 
@@ -56,15 +60,20 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
      * 保存投注记录并投注派彩
      */
     public SingleWalletBetResultDo saveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo, Boolean syncOpt) {
+        SingleWalletBetResultDo resultDo;
         if (Objects.equals(gameContext().gameInfo().getGameType(), GameTypeEnum.MARIA_MAKILING)) {
-            return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
+            resultDo = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
         } else {
             if (syncOpt) {
-                return syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
+                resultDo = syncSaveBetRecordAndBetWithPayout(betDo, betRecordDo);
             } else {
-                return asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
+                resultDo = asyncSaveBetRecordAndBetWithPayout(betDo, betRecordDo, syncOpt);
             }
         }
+
+        // 内部干预数据指标处理
+        metricsManager.metrics(betDo,betRecordDo, MetricsTypeEnum.valueOfGameType(gameContext().gameInfo().getGameType()), resultDo, syncOpt);
+        return resultDo;
     }
 
     private SingleWalletBetResultDo syncSaveBetRecordAndBetWithPayout(BetDo betDo, BetRecordDo<R> betRecordDo) {
