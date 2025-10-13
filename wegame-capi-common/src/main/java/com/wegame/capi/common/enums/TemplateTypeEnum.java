@@ -32,16 +32,14 @@ public enum TemplateTypeEnum {
             TemplateConstants.IBONGADARNA_BET_RECORD_TEMPLATE,
             ""
     ),
-
     LAM_ANG(
             GameTypeEnum.LAM_ANG,
             TemplateConstants.LAMANG_BET_RECORD_TEMPLATE,
             ""
     ),
-
     BAKUNAWA(
             GameTypeEnum.BAKUNAWA,
-            "bakunawa_bet_record_template",
+            TemplateConstants.BAKUNAWA_BET_RECORD_TEMPLATE,
             ""
     ),
     ;
