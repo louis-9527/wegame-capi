@@ -8,7 +8,7 @@ import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.TemplateTypeEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
