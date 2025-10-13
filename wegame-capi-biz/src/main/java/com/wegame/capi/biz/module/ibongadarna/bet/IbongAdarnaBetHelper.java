@@ -5,13 +5,11 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
 import com.wegame.capi.biz.config.domain.IbongAdarnaConfig;
-import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
-import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -22,9 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
-
-import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
-import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 
 @Component
 public class IbongAdarnaBetHelper implements BetHelper<IbongAdarnaGameRecordDo, IbongAdarnaGameRecordDo> {
@@ -41,12 +36,13 @@ public class IbongAdarnaBetHelper implements BetHelper<IbongAdarnaGameRecordDo, 
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        return BetRecordBuilder.build(betRecordId,
+        BetRecordDo<IbongAdarnaGameRecordDo> betRecordDo = BetRecordBuilder.build(betRecordId,
                 betDo,
                 totalRewardAmount,
                 false,
                 null,
                 gameRecordList);
+        return betRecordDo;
     }
 
     @Override
