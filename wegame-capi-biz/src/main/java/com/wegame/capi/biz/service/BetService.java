@@ -54,7 +54,9 @@ public class BetService {
 
     public void buildGamePlayType(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        if (Objects.equals(betDo.getGameType(), GameTypeEnum.MARIA_MAKILING)) {
+        if (Objects.equals(betDo.getGameType(), GameTypeEnum.MARIA_MAKILING) ||
+                Objects.equals(betDo.getGameType(), GameTypeEnum.MALAKAS) ||
+                Objects.equals(betDo.getGameType(), GameTypeEnum.IBONG_ADARNA)) {
             if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
                 betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
             } else {

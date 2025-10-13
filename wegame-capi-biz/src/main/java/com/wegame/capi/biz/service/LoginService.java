@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
+import com.wegame.capi.biz.service.metrics.UserPlayMetricsDataService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
@@ -35,6 +36,8 @@ public class LoginService {
     SingleWalletService singleWalletService;
     @Autowired
     GameApiProperty gameApiProperty;
+    @Autowired
+    private UserPlayMetricsDataService userPlayMetricsDataService;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
         GameApiProperty.PrivateInfo info = gameApiProperty.getPrivateInfo(userLoginDo.getPId(), userLoginDo.getChannelId());
@@ -56,6 +59,8 @@ public class LoginService {
                 .build());
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
+        // 提前加载用户数据采集缓存
+        userPlayMetricsDataService.loadCache(userInfo.getPId(), userInfo.getPlayerId(), userInfo.getChannelId(), userInfo.getGameId());
         return userInfo;
     }
 
