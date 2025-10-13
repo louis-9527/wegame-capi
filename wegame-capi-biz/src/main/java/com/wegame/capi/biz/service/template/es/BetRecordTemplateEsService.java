@@ -5,6 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
+import com.wegame.capi.biz.config.es.EsRestClientConfig;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -26,7 +27,7 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -42,11 +43,11 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
 
 @Slf4j
 @Service
-@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "} || ${" + IBONG_ADARNA_PROP + "}")
+@ConditionalOnBean(EsRestClientConfig.class)
 public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> implements InitializingBean {
 
     @Autowired
@@ -69,14 +70,14 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
         log.info("findById query, id: {}, templateType: {}", id, templateType.name());
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
-//        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
-//                        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-//                        boolQuery.filter(QueryBuilders.termQuery("id", id));
-//                        return elasticsearchRestTemplate.searchOne(new NativeSearchQueryBuilder()
-//                                .withQuery(boolQuery)
-//                                .build(), clazz)
-//                                .getContent();
-//                        restHighLevelClient.asyncSearch().get()
+        //        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
+        //                        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        //                        boolQuery.filter(QueryBuilders.termQuery("id", id));
+        //                        return elasticsearchRestTemplate.searchOne(new NativeSearchQueryBuilder()
+        //                                .withQuery(boolQuery)
+        //                                .build(), clazz)
+        //                                .getContent();
+        //                        restHighLevelClient.asyncSearch().get()
         try {
             // 1. 组装请求
             GetRequest getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
@@ -148,7 +149,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_'+ #betSubType.getCode()+'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BetSubTypeEnum betSubType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
         log.info("listIdByMultipleRange query, betType: {},betSubType:{}, multipleRangeStart: {}, multipleRangeEnd: {}, templateType: {}",
-                betType.getCode(),betSubType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.name());
+                betType.getCode(), betSubType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.name());
         // 构建ES查询
         // NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
         // 创建布尔查询构建器
