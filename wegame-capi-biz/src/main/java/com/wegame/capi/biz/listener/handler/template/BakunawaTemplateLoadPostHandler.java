@@ -8,8 +8,8 @@ import com.wegame.capi.biz.domain.biz.template.bakunawa.BakunawaBetRecordTemplat
 import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -69,21 +69,6 @@ public class BakunawaTemplateLoadPostHandler extends AbstractTemplateLoadPostHan
             log.info("main game template load end...");
         } catch (Exception e) {
             log.error("template load error", e);
-        }
-
-        try {
-            log.info("free game template load start...");
-            List<Long> freeGameTemplateIdList = new LinkedList<>();
-            config.getFreeGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.BUY_BET, TemplateMultipleRange.build(key));
-                if (CollectionUtils.isNotEmpty(idList)) {
-                    freeGameTemplateIdList.addAll(idList);
-                }
-            });
-            //loadRedisCache(BetTypeEnum.BUY_BET, freeGameTemplateIdList);
-            log.info("free game template load end...");
-        } catch (Exception e) {
-            log.info("free game template load error", e);
         }
     }
 

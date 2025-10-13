@@ -18,8 +18,8 @@ game:
     MariaMakiling: false
     Malakas: false
     IbongAdarna: false
-    Lamang: true
-    Bakunawa: false
+    Lamang: false
+    Bakunawa: true
   inner:
     dos:
       enable-game-list: IBONG_ADARNA

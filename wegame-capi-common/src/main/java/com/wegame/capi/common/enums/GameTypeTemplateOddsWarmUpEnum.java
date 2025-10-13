@@ -15,6 +15,7 @@ public enum GameTypeTemplateOddsWarmUpEnum {
     MARIA_MAKILING("zhumeng001", "1", "17.5", "MARIA_MAKILING"),
     MALAKAS("zhumeng002", "3", "-1", "MALAKAS"),
     LAM_ANG("zhumeng004", "3", "-1", "LAMANG"),
+    BAKUNAWA("zhumeng005", "3", "-1", "BAKUNAWA")
 
     ;
     /**
@@ -24,7 +25,7 @@ public enum GameTypeTemplateOddsWarmUpEnum {
     /**
      * 正常投注预热赔率
      */
-    private final String normalBetOdds;
+    private  final String normalBetOdds;
     /**
      * 购买投注预热赔率
      */
