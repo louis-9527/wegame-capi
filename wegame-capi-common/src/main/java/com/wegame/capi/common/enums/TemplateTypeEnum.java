@@ -44,7 +44,7 @@ public enum TemplateTypeEnum {
     ),
     DIWATA_MAYARI(
             GameTypeEnum.DIWATA_MAYARI,
-            "diwatamayari_bet_record_template",
+            TemplateConstants.DIWATA_MAYARI_BET_RECORD_TEMPLATE,
             ""
     ),
     ;
