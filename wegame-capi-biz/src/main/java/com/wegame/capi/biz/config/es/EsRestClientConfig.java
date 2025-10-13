@@ -21,7 +21,10 @@ import static com.wegame.capi.common.Constants.MALAKAS_PROP;
 
 @Slf4j
 @Configuration
-@ConditionalOnExpression(value = "${" + MALAKAS_PROP + "}")
+@ConditionalOnExpression(value = "${" +
+       // + XXX_PROP + "} || ${"   // 新增游戏加该配置
+        MALAKAS_PROP
+        + "}")
 public class EsRestClientConfig {
     @Value("${spring.elasticsearch.rest.uris}")
     private String uris;
