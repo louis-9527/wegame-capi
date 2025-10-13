@@ -26,8 +26,8 @@ import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.TemplateTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -40,9 +40,9 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
-import static com.wegame.capi.client.enums.TemplateTypeEnum.IBONG_ADARNA;
 import static com.wegame.capi.common.Constants.IBONG_ADARNA_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
+import static com.wegame.capi.common.enums.TemplateTypeEnum.IBONG_ADARNA;
 
 @Slf4j
 @Component("ibongAdarnaGameTemplatePlay")

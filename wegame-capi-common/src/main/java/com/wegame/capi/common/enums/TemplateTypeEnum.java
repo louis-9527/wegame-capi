@@ -1,6 +1,8 @@
-package com.wegame.capi.client.enums;
+package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.common.constants.TemplateConstants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -16,18 +18,18 @@ public enum TemplateTypeEnum {
 
     MARIA_MAKILING(
             GameTypeEnum.MARIA_MAKILING,
-            "mariamakiling_bet_record_template",
-            "mariamakiling_game_record_template"
+            TemplateConstants.MARIAMAKILING_BET_RECORD_TEMPLATE,
+            TemplateConstants.MARIAMAKILING_GAME_RECORD_TEMPLATE
     ),
 
     MALAKAS(
             GameTypeEnum.MALAKAS,
-            "malakas_bet_record_template",
+            TemplateConstants.MALAKAS_BET_RECORD_TEMPLATE,
             ""
     ),
     IBONG_ADARNA(
             GameTypeEnum.IBONG_ADARNA,
-            "ibongadarna_bet_record_template",
+            TemplateConstants.IBONGADARNA_BET_RECORD_TEMPLATE,
             ""
     ),
 
