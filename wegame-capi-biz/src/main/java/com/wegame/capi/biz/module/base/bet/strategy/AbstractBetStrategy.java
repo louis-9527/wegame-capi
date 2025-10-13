@@ -72,7 +72,7 @@ public abstract class AbstractBetStrategy<R extends ToVoConverter, RD extends To
         }
 
         // 内部干预数据指标处理
-        metricsManager.metrics(betRecordDo, MetricsTypeEnum.valueOfGameType(gameContext().gameInfo().getGameType()), resultDo, syncOpt);
+        metricsManager.metrics(betDo,betRecordDo, MetricsTypeEnum.valueOfGameType(gameContext().gameInfo().getGameType()), resultDo, syncOpt);
         return resultDo;
     }
 

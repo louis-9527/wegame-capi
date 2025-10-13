@@ -1,11 +1,6 @@
 package com.wegame.capi.common.constants;
 
 public class MetricsConstants {
-    //===================betRecord extInfoMap key constants ======start=====================
-    public static final String EXT_MAP_KEY_GAME_PLAY_TYPE = "gamePlayType";
-
-    //===================betRecord extInfoMap key constants ======end=====================
-
     /**
      * 用户指标缓存Format
      * capi:player:aggregation:cache:{pid}:{channelId}:{gameId}:{playerId}
