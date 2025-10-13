@@ -4,6 +4,10 @@ import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.innerdos.config.GameRtpDosCondition;
+import com.wegame.capi.biz.innerdos.config.InnerDosCondition;
+import com.wegame.capi.biz.innerdos.context.DefaultInnerDosContext;
+import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
 import com.wegame.capi.common.enums.MultipleTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,11 +41,14 @@ public class IbongAdarnaConfig {
      * Map<线路号，坐标：行号 & 列号>
      */
     private TreeMap<Integer, List<List<Integer>>> rewardFixedLinesConfig;
-
     /**
      * 中奖通知最小倍数
      */
     private Integer rewardNotifyMinMultiple;
+    /**
+     * innerDos 配置
+     */
+    private InnerDosConfig innerDosConfig;
 
     @Data
     @SuperBuilder
@@ -82,6 +89,26 @@ public class IbongAdarnaConfig {
          * Map<重复类型，概率>
          */
         private List<TreeMap<String, BigDecimal>> perColumSymbolRepeatProbabilisticConfig;
+    }
+
+    @Data
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class InnerDosConfig implements Serializable {
+        /**
+         * 【inner-dos】模版范围配置
+         */
+        private DefaultInnerDosContext.DefaultTemplateRangeConfig templateRangeConfig;
+        /**
+         * 【inner-dos】内部干预条件配置
+         */
+        private InnerDosCondition innerDosCondition;
+        /**
+         * 大盘rtp干预条件 配置
+         * Map<游戏内干预类型，游戏内干预条件>
+         */
+        private Map<GameInnerDosTypeEnum, GameRtpDosCondition> gameRtpDosConditionMap;
     }
 
     public void validate() {
