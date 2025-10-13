@@ -1,6 +1,8 @@
 package com.wegame.capi.test.biz.innerdos.metrics;
 
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.manager.MetricsManager;
+import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.innerdos.MetricsTypeEnum;
 import com.wegame.capi.test.BaseTest;
@@ -18,7 +20,7 @@ public class MetricsManagerTest extends BaseTest {
 
     @Test
     public void metrics_canNotMetrics_test(){
-        boolean resultFlag = metricsManager.metrics(MetricsManagerTestMocker.betRecordDo_cannotMetrics(GameTypeEnum.IBONG_ADARNA),
+        boolean resultFlag = metricsManager.metrics(BetDo.builder().gamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY).build(),MetricsManagerTestMocker.betRecordDo_cannotMetrics(GameTypeEnum.IBONG_ADARNA),
                 MetricsTypeEnum.IBONG_ADARNA, MetricsManagerTestMocker.success_betResult, true);
         assertFalse(resultFlag);
     }

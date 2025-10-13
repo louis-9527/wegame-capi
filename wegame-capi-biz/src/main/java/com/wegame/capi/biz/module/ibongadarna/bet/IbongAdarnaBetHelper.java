@@ -13,7 +13,6 @@ import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.common.constants.MetricsConstants;
 import com.wegame.capi.common.enums.BetStatusEnum;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +42,6 @@ public class IbongAdarnaBetHelper implements BetHelper<IbongAdarnaGameRecordDo, 
                 false,
                 null,
                 gameRecordList);
-        // 添加扩展map信息
-        if (Objects.nonNull(betDo.getGamePlayType())) {
-            betRecordDo.addExtInfoMapValue(MetricsConstants.EXT_MAP_KEY_GAME_PLAY_TYPE, betDo.getGamePlayType().getCode());
-        }
         return betRecordDo;
     }
 

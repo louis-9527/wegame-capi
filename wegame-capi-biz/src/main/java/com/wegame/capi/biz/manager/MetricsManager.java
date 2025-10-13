@@ -2,6 +2,7 @@ package com.wegame.capi.biz.manager;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.service.metrics.DefaultMetricsService;
 import com.wegame.capi.biz.service.metrics.MetricsService;
@@ -48,9 +49,9 @@ public class MetricsManager implements InitializingBean, ApplicationContextAware
      * @param extInfo     extInfo
      * @return true/false
      */
-    public boolean metrics(BetRecordDo betRecordDo, MetricsTypeEnum metricsType, SingleWalletBetResultDo betResultDo, Object extInfo) {
+    public boolean metrics(BetDo betDo, BetRecordDo betRecordDo, MetricsTypeEnum metricsType, SingleWalletBetResultDo betResultDo, Object extInfo) {
         // 准入
-        if (!this.canMetrics(betRecordDo, metricsType, betResultDo, extInfo)) {
+        if (!this.canMetrics(betDo, metricsType, betResultDo, extInfo)) {
             log.info("MetricsManager#metrics.game inner dos not enable:{}", metricsType);
             return false;
         }
@@ -81,20 +82,19 @@ public class MetricsManager implements InitializingBean, ApplicationContextAware
         this.applicationContext = applicationContext;
     }
 
-    private boolean canMetrics(BetRecordDo betRecordDo, MetricsTypeEnum metricsType, SingleWalletBetResultDo betResultDo, Object extInfo) {
-        return this.gameEnable(metricsType) && this.betSuccess(betResultDo) && this.canMetricsPlayType(betRecordDo);
+    private boolean canMetrics(BetDo betDo, MetricsTypeEnum metricsType, SingleWalletBetResultDo betResultDo, Object extInfo) {
+        return this.gameEnable(metricsType) && this.betSuccess(betResultDo) && this.canMetricsPlayType(betDo);
     }
 
     /**
      * 属于采集范围.dos || template
      *
-     * @param betRecordDo begRecordDo
+     * @param betDo betDo
      * @return true/false
      */
-    private boolean canMetricsPlayType(BetRecordDo betRecordDo) {
-        String gamePlayTypeStr = betRecordDo.queryExtInfoMapValue(MetricsConstants.EXT_MAP_KEY_GAME_PLAY_TYPE);
-        return Objects.equals(gamePlayTypeStr, GamePlayTypeEnum.EVENT_PLAY.getCode())
-                || Objects.equals(gamePlayTypeStr, GamePlayTypeEnum.TEMPLATE_PLAY.getCode());
+    private boolean canMetricsPlayType(BetDo betDo) {
+        return Objects.equals(betDo.getGamePlayType(), GamePlayTypeEnum.EVENT_PLAY)
+                || Objects.equals(betDo.getGamePlayType(), GamePlayTypeEnum.TEMPLATE_PLAY);
     }
 
     /**

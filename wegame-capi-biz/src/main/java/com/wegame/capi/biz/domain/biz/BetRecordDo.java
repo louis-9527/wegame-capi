@@ -1,7 +1,5 @@
 package com.wegame.capi.biz.domain.biz;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -107,16 +105,6 @@ public class BetRecordDo<T> implements Serializable {
      * 扩展信息
      */
     private ExtendInfo extendInfo;
-
-    /**
-     * 扩展map信息
-     * 初始设计：内部干预采集校验信息
-     * 1.key:"gamePlayType",value:gamePlayType {@link GamePlayTypeEnum}
-     * 此值不进行序列化和反序列化
-     */
-    @JSONField(serialize = false, deserialize = false)
-    private Map<String, String> extInfoMap;
-
     /**
      * 创建人
      */
@@ -189,17 +177,6 @@ public class BetRecordDo<T> implements Serializable {
          * mini奖池贡献金额
          */
         private Long miniContributionAmount;
-    }
-
-    public void addExtInfoMapValue(String key, String value) {
-        if (Objects.isNull(this.extInfoMap)) {
-            this.extInfoMap = new HashMap<>();
-        }
-        this.extInfoMap.put(key, value);
-    }
-
-    public String queryExtInfoMapValue(String key) {
-        return Optional.ofNullable(this.extInfoMap).map(map -> map.get(key)).orElse(null);
     }
 
 }

@@ -17,8 +17,8 @@ import lombok.ToString;
 public enum MetricsTypeEnum {
     IBONG_ADARNA(
             GameTypeEnum.IBONG_ADARNA,
-            GameTypeEnum.IBONG_ADARNA.getName() + "_" + "user_play_metrics",
-            GameTypeEnum.IBONG_ADARNA.getName() + "_" + "game_metrics"
+            GameTypeEnum.IBONG_ADARNA.getName().toLowerCase() + "_" + "user_play_metrics",
+            GameTypeEnum.IBONG_ADARNA.getName().toLowerCase() + "_" + "game_metrics"
     ),
     ;
 

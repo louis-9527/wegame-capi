@@ -26,7 +26,8 @@ public class ThreadPoolConfig {
     public static final String operationEventReportThreadPoolExecutor = "operationEventReportThreadPoolExecutor";
     public static final String starCardUseRecordThreadPoolExecutor = "starCardUseRecordThreadPoolExecutor";
     public static final String innerDosThreadPoolExecutor = "innerDosThreadPoolExecutor";
-    public static final String innerDosMetricsThreadPoolExecutor = "innerDosMetricsThreadPoolExecutor";
+    // 采集刷盘，采用静态配置
+    public static final ThreadPoolExecutor innerDosMetricsThreadPoolExecutor;
 
     @Bean(defaultThreadPoolExecutor)
     public ThreadPoolExecutor defaultThreadPoolExecutor() {
@@ -154,8 +155,7 @@ public class ThreadPoolConfig {
         return executor;
     }
 
-    @Bean(innerDosMetricsThreadPoolExecutor)
-    public ThreadPoolExecutor innerDosMetricsThreadPoolExecutor() {
+    static {
         WsThreadPoolExecutor executor = new WsThreadPoolExecutor(10,
                 100,
                 100L,
@@ -165,6 +165,6 @@ public class ThreadPoolConfig {
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         executor.allowCoreThreadTimeOut(true);
         executor.prestartAllCoreThreads();
-        return executor;
+        innerDosMetricsThreadPoolExecutor = executor;
     }
 }

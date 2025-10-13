@@ -13,7 +13,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -30,14 +29,11 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class MetricsFlushTimerService {
-    @Autowired
-    @Qualifier(ThreadPoolConfig.innerDosMetricsThreadPoolExecutor)
-    private ThreadPoolExecutor innerDosMetricsThreadPoolExecutor;
     /**
      * 大盘指标时间轮
      */
     private final HashedWheelTimer gameWheelTimer = new HashedWheelTimer(new DefaultThreadFactory("gameWheelTimer"),
-            100L, TimeUnit.MILLISECONDS, 512, true, -1, innerDosMetricsThreadPoolExecutor);
+            100L, TimeUnit.MILLISECONDS, 512, true, -1, ThreadPoolConfig.innerDosMetricsThreadPoolExecutor);
     /**
      * 游戏任务map
      */
@@ -46,7 +42,7 @@ public class MetricsFlushTimerService {
      * 用户指标时间轮
      */
     private final HashedWheelTimer userPlayWheelTimer = new HashedWheelTimer(new DefaultThreadFactory("userPlayWheelTimer"),
-            100L, TimeUnit.MILLISECONDS, 512, true, -1, innerDosMetricsThreadPoolExecutor);
+            100L, TimeUnit.MILLISECONDS, 512, true, -1, ThreadPoolConfig.innerDosMetricsThreadPoolExecutor);
     /**
      * 用户指标任务map
      */
