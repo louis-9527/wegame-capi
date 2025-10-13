@@ -24,7 +24,7 @@ public enum TemplateTypeEnum {
 
     MALAKAS(
             GameTypeEnum.MALAKAS,
-            "malakas_bet_record_template",
+            TemplateConstants.MALAKAS_BET_RECORD_TEMPLATE,
             ""
     ),
     ;

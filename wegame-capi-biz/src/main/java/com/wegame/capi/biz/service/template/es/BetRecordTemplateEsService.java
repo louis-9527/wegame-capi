@@ -8,7 +8,7 @@ import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.config.es.EsRestClientConfig;
 import com.wegame.capi.biz.domain.biz.template.BetRecordTemplateEsDo;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.TemplateTypeEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.elasticsearch.action.get.GetRequest;
