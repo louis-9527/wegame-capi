@@ -30,13 +30,16 @@ public enum TemplateTypeEnum {
             "ibongadarna_bet_record_template",
             ""
     ),
-
     LAM_ANG(
             GameTypeEnum.LAM_ANG,
             "lamang_bet_record_template",
             ""
     ),
-
+    BAKUNAWA(
+            GameTypeEnum.BAKUNAWA,
+            "bakunawa_bet_record_template",
+            ""
+    ),
     DIWATA_MAYARI(
             GameTypeEnum.DIWATA_MAYARI,
             "diwatamayari_bet_record_template",
