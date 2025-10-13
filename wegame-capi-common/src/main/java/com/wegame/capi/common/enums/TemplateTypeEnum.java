@@ -35,7 +35,7 @@ public enum TemplateTypeEnum {
 
     LAM_ANG(
             GameTypeEnum.LAM_ANG,
-            "lamang_bet_record_template",
+            TemplateConstants.LAMANG_BET_RECORD_TEMPLATE,
             ""
     ),
     ;
