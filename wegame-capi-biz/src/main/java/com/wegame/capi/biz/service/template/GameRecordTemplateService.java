@@ -6,7 +6,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.template.GameRecordRecordQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
-import com.wegame.capi.client.enums.TemplateTypeEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.template.GameRecordTemplatePo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;

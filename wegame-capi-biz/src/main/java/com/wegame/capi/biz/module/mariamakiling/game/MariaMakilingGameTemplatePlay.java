@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
-import static com.wegame.capi.client.enums.TemplateTypeEnum.MARIA_MAKILING;
+import static com.wegame.capi.common.enums.TemplateTypeEnum.MARIA_MAKILING;
 
 @Slf4j
 @Component("mariaMakilingGameTemplatePlay")

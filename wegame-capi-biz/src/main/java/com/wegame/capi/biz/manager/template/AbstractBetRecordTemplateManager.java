@@ -2,8 +2,7 @@ package com.wegame.capi.biz.manager.template;
 
 import com.wegame.capi.biz.domain.biz.operation.BetRecordTemplateDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateService;
-import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.TemplateTypeEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
