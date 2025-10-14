@@ -1,4 +1,4 @@
-package com.wegame.capi.application.controller.contract;
+package com.wegame.capi.application.controller.promotion;
 
 import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
@@ -6,7 +6,7 @@ import com.wegame.capi.biz.converter.promotion.GetPlayerContractConverter;
 import com.wegame.capi.biz.converter.promotion.RedeemPlayerContractConverter;
 import com.wegame.capi.biz.domain.biz.contract.GetPlayerContractDo;
 import com.wegame.capi.biz.domain.biz.contract.RedeemPlayerContractDo;
-import com.wegame.capi.biz.service.contract.ContractService;
+import com.wegame.capi.biz.service.promotion.ContractService;
 import com.wegame.capi.client.domain.vo.contract.GetPlayerContractVo;
 import com.wegame.capi.client.domain.vo.contract.RedeemPlayerContractVo;
 import io.swagger.annotations.Api;
