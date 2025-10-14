@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.service.contract;
+package com.wegame.capi.biz.service.promotion;
 
 import com.wegame.capi.api.contract.ContractApi;
 import com.wegame.capi.biz.builder.req.GetPlayerContractReqBuilder;
@@ -22,13 +22,10 @@ public class ContractService {
     ContractApi contractApi;
 
     public GetPlayerContractDo getPlayerContract() {
-        contractApi.getPlayerContract(GetPlayerContractReqBuilder.buildGetPlayerContractReq());
         return GetPlayerContractConverter.resToDo(contractApi.getPlayerContract(GetPlayerContractReqBuilder.buildGetPlayerContractReq()));
     }
 
     public RedeemPlayerContractDo redeemPlayerContract() {
         return RedeemPlayerContractConverter.resToDo(contractApi.redeemPlayerContract(RedeemPlayerContractReqBuilder.buildRedeemPlayerContractReq()));
     }
-
-
 }
