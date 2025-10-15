@@ -23,6 +23,7 @@ import static com.wegame.capi.common.Constants.*;
 @ConditionalOnExpression(value = "${" +
         // XXX_PROP + "} || ${" +   // 新增游戏加该配置
         DIWATA_MAYARI_PROP + "} || ${" +
+        BAKUNAWA_PROP + "} || ${" +
         LAMANG_PROP + "} || ${" +
         IBONG_ADARNA_PROP + "} || ${" +
         MALAKAS_PROP
