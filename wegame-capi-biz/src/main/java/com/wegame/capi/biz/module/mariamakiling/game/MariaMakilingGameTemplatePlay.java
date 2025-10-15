@@ -83,7 +83,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
             configRecordList = gameRecordTemplateService.listByBetRecordId(MARIA_MAKILING, betRecordId);
         }
         if (CollectionUtils.isEmpty(configRecordList)) {
-            log.error("template is empty, betType:{}, range start: [], end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         // 获取首轮(parent ==0 and index =0)
