@@ -61,7 +61,10 @@ public class BetService {
                 log.info("userInfo.ut: {}, template bet", userInfo.getUt());
                 betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
             }
-        } else {
+        }else if (Objects.equals(betDo.getGameType(), GameTypeEnum.LAM_ANG)) {
+            log.info("userInfo.ut: {}, template bet", userInfo.getUt());
+            betDo.setGamePlayType(GamePlayTypeEnum.TEMPLATE_PLAY);
+        }else {
             betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
         }
     }
