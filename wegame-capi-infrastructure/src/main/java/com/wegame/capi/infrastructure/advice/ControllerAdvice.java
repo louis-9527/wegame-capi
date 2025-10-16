@@ -32,7 +32,7 @@ public class ControllerAdvice {
     @ExceptionHandler({BusinessException.class})
     public CommonResponse handleBusinessException(BusinessException ex) {
         log.error("Got BusinessException: [{}]", ex.getMessage(), ex);
-        return CommonResponse.build(ex.getErrorCode().getCode(), StringUtils.isNotBlank(ex.getMessage()) ? ex.getMessage() : ex.getErrorCode().getMsg());
+        return CommonResponse.build(ex.getErrCode(), StringUtils.isNotBlank(ex.getMessage()) ? ex.getMessage() : ex.getErrMsg());
     }
 
     @ExceptionHandler({MyBatisSystemException.class})

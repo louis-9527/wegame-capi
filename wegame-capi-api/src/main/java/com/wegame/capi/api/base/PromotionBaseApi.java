@@ -9,6 +9,8 @@ import org.springframework.util.MultiValueMap;
 @Slf4j
 public class PromotionBaseApi extends CommonBaseApi {
 
+    public static final String CONTRACT_PREFIX_CODE = "2";
+
     @Value("${api.game.promotionDomain}")
     public String promotionDomain;
 
