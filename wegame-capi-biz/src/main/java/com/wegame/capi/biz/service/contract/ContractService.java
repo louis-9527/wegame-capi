@@ -22,7 +22,6 @@ public class ContractService {
     ContractApi contractApi;
 
     public GetPlayerContractDo getPlayerContract() {
-        contractApi.getPlayerContract(GetPlayerContractReqBuilder.buildGetPlayerContractReq());
         return GetPlayerContractConverter.resToDo(contractApi.getPlayerContract(GetPlayerContractReqBuilder.buildGetPlayerContractReq()));
     }
 
