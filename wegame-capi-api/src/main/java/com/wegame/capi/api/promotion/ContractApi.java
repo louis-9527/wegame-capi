@@ -10,7 +10,6 @@ import com.wegame.capi.api.domain.req.contract.RedeemPlayerContractReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.contract.GetPlayerContractRes;
 import com.wegame.capi.api.domain.res.contract.RedeemPlayerContractRes;
-import com.wegame.capi.common.enums.AchievementErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -24,6 +23,7 @@ import java.net.URI;
 
 /**
  * 成就api
+ *
  * @see <a href="https://casinoplus.sg.larksuite.com/docx/XZzMdmW4aonhYfxtMEili1qGgkb"/>
  */
 @Slf4j
@@ -44,7 +44,7 @@ public class ContractApi extends PromotionBaseApi {
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
             if (!responseEntity.getBody().isSuc()) {
-                throw new BusinessException("5" + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
+                throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
@@ -67,7 +67,7 @@ public class ContractApi extends PromotionBaseApi {
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
             if (!responseEntity.getBody().isSuc()) {
-                throw new BusinessException(CONTRACT_PREFIX_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
+                throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
