@@ -45,10 +45,13 @@ public class BagApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            //            if (!responseEntity.getBody().isSuc()) {
+            //                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+            //                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            //                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+            //            }
             if (!responseEntity.getBody().isSuc()) {
-                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
-                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+                throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
@@ -71,10 +74,13 @@ public class BagApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            //            if (!responseEntity.getBody().isSuc()) {
+            //                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+            //                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            //                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+            //            }
             if (!responseEntity.getBody().isSuc()) {
-                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
-                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+                throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
@@ -89,22 +95,23 @@ public class BagApi extends PromotionBaseApi {
 
     /**
      * 核销星卡
-     *  •   00 成功
-     * 	•	5001 无效的奖励
-     * 	•	5002 未找到成就
-     * 	•	5003 无效的兑换 ID
-     * 	•	5004 成就未完成
-     * 	•	5005 操作进行中
-     * 	•	5006 成就已兑换
-     * 	•	5007 奖励已过期
-     * 	•	5008 无效的宝藏配置
-     * 	•	5009 宝藏已兑换
-     * 	•	5010 未找到提供者任务
-     * 	•	5011 等级未达到要求
-     * 	•	5012 经验未达到要求
-     * 	•	5013 未找到宝藏
-     * 	•	5014 无与频道 ID 匹配的配置
-     * 	•	5015 无效的奖励支付
+     * •   00 成功
+     * •	5001 无效的奖励
+     * •	5002 未找到成就
+     * •	5003 无效的兑换 ID
+     * •	5004 成就未完成
+     * •	5005 操作进行中
+     * •	5006 成就已兑换
+     * •	5007 奖励已过期
+     * •	5008 无效的宝藏配置
+     * •	5009 宝藏已兑换
+     * •	5010 未找到提供者任务
+     * •	5011 等级未达到要求
+     * •	5012 经验未达到要求
+     * •	5013 未找到宝藏
+     * •	5014 无与频道 ID 匹配的配置
+     * •	5015 无效的奖励支付
+     *
      * @param req 请求参数
      * @return
      */
@@ -153,6 +160,7 @@ public class BagApi extends PromotionBaseApi {
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
+
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public GetHistoryMessageRes getHistoryMessage(GetHistoryMessageReq req) {
         try {
