@@ -20,7 +20,7 @@ public class LamangGameContext<R> extends AbstractGameContext<R> {
 
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.TEMPLATE_PLAY, "lamangGameTemplatePlay")
-            .put(GamePlayTypeEnum.NORMAL_PLAY, "lamangGameTemplatePlay")
+            .put(GamePlayTypeEnum.NORMAL_PLAY, "lamangGameNormalPlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "lamangGameEventPlay")
             .build();
 
