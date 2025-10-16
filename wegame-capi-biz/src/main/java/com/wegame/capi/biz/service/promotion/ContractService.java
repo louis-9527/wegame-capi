@@ -1,6 +1,6 @@
 package com.wegame.capi.biz.service.promotion;
 
-import com.wegame.capi.api.contract.ContractApi;
+import com.wegame.capi.api.promotion.ContractApi;
 import com.wegame.capi.biz.builder.req.GetPlayerContractReqBuilder;
 import com.wegame.capi.biz.builder.req.RedeemPlayerContractReqBuilder;
 import com.wegame.capi.biz.converter.promotion.GetPlayerContractConverter;
