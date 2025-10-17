@@ -31,7 +31,7 @@ public class ControllerAdvice {
 
     @ExceptionHandler({BusinessException.class})
     public CommonResponse handleBusinessException(BusinessException ex) {
-        log.error("Got BusinessException: [{}], errCode: {}", ex.getMessage(), ex.getErrCode(), ex);
+        log.error("Got BusinessException: [{}]", ex.getMessage(), ex);
         return CommonResponse.build(ex.getErrCode(), StringUtils.isNotBlank(ex.getMessage()) ? ex.getMessage() : ex.getErrMsg());
     }
 
