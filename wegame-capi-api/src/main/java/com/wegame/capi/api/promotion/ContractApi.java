@@ -24,7 +24,7 @@ import java.net.URI;
 /**
  * 成就api
  *
- * @see <a href="https://casinoplus.sg.larksuite.com/docx/XZzMdmW4aonhYfxtMEili1qGgkb"/>
+ * @see https://casinoplus.sg.larksuite.com/docx/O5d4dhv05ouRRTxdLA9lPNKzgxb
  */
 @Slf4j
 @Component
@@ -44,7 +44,6 @@ public class ContractApi extends PromotionBaseApi {
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
             if (!responseEntity.getBody().isSuc()) {
-                log.info("status: {}, message: {}", responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
                 throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
@@ -68,7 +67,6 @@ public class ContractApi extends PromotionBaseApi {
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
             if (!responseEntity.getBody().isSuc()) {
-                log.info("status: {}, message: {}", responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
                 throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
