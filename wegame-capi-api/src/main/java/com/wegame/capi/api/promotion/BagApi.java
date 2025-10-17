@@ -52,6 +52,7 @@ public class BagApi extends PromotionBaseApi {
             //                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
             //            }
             if (!responseEntity.getBody().isSuc()) {
+                log.info("status: {}, message: {}", responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
                 throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
@@ -81,6 +82,7 @@ public class BagApi extends PromotionBaseApi {
             //                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
             //            }
             if (!responseEntity.getBody().isSuc()) {
+                log.info("status: {}, message: {}", responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
                 throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
