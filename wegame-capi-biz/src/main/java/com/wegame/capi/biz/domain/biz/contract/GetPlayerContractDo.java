@@ -55,11 +55,15 @@ public class GetPlayerContractDo implements Serializable {
      */
     private String status;
     /**
-     * imgURL
+     * StarCard Image UR
      */
-    private String imgURL;
+    private String starCardImgUrl;
     /**
-     * rewardType
+     * freeSpin Image URL
+     */
+    private String freeSpinImgUrl;
+    /**
+     * Reward type: 1: starCard / 2: freeSpin
      */
     private Integer rewardType;
     /**
