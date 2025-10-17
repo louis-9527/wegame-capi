@@ -2,9 +2,7 @@ package com.wegame.capi.biz.converter.promotion;
 
 import com.wegame.capi.api.domain.res.contract.GetPlayerContractRes;
 import com.wegame.capi.biz.domain.biz.contract.GetPlayerContractDo;
-import com.wegame.capi.biz.domain.biz.promotion.AchievementDo;
 import com.wegame.capi.client.domain.vo.contract.GetPlayerContractVo;
-import com.wegame.capi.client.domain.vo.promotion.AchievementVo;
 
 import java.util.Objects;
 
@@ -24,7 +22,8 @@ public class GetPlayerContractConverter {
                 .experience(res.getExperience())
                 .target(res.getTarget())
                 .status(res.getStatus())
-                .imgURL(res.getImgURL())
+                .starCardImgUrl(res.getStarCardImgUrl())
+                .freeSpinImgUrl(res.getFreeSpinImgUrl())
                 .rewardType(res.getRewardType())
                 .isEnabled(res.getIsEnabled())
                 .build();
@@ -45,7 +44,8 @@ public class GetPlayerContractConverter {
                 .experience(getPlayerContractDo.getExperience())
                 .target(getPlayerContractDo.getTarget())
                 .status(getPlayerContractDo.getStatus())
-                .imgURL(getPlayerContractDo.getImgURL())
+                .starCardImgUrl(getPlayerContractDo.getStarCardImgUrl())
+                .freeSpinImgUrl(getPlayerContractDo.getFreeSpinImgUrl())
                 .rewardType(getPlayerContractDo.getRewardType())
                 .isEnabled(getPlayerContractDo.getIsEnabled())
                 .build();

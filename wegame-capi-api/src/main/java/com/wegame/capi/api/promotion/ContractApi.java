@@ -24,7 +24,7 @@ import java.net.URI;
 /**
  * 成就api
  *
- * @see <a href="https://casinoplus.sg.larksuite.com/docx/XZzMdmW4aonhYfxtMEili1qGgkb"/>
+ * @see https://casinoplus.sg.larksuite.com/docx/O5d4dhv05ouRRTxdLA9lPNKzgxb
  */
 @Slf4j
 @Component
