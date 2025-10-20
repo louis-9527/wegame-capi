@@ -70,11 +70,11 @@ lark:
 ## api
 api:
   game:
-    singleDomain: http://sw-http-main-apisix.igo8.me
+    singleDomain:  http://sw-http-main-apisix-internal-ali.igo8.me
     invokeSingle: true
-    freeSpinDomain: https://sw-http-freespin.igo8.me
-    promotionDomain: http://reward-http.igo8.me
-    operationDomain: https://dos-egame.dos88.me
+    freeSpinDomain: http://sw-http-freespin-internal-ali.igo8.me
+    promotionDomain: http://reward-http-internal-ali.igo8.me
+    operationDomain:  https://dos-egame-aliyun-qat.dos88.me
     cp:
       - platformId: 50
         channelId: 1050
