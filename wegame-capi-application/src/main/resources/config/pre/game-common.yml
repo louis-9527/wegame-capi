@@ -2,12 +2,17 @@
 dynamic:
   operation:
     switch: true
-    pulsar_url: pulsar+ssl://pc-de4144b6.aws-apse1-uat-snsoft.aws.snio.cloud:6651
+    pulsar_url: pulsar+ssl://pc-06daaa29.alicloud-apse1-uat-by8ki.ali.snio.cloud:6651
     pulsar_topic: dos_game_slot_event
     pulsar_group:
       maria_makiling: cd_MariaMakiling
+      malakas: cd_Malakas
+      ibong: cd_Ibong
+      lamang: cd_Lamang
+      bakunawa: cd_Bakunawa
+      diwata_mayari: cd_DiwataMayari
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud
         credentials_file_path: /operation_pulsar_privateKey.json
-        audience: urn:sn:pulsar:o-382ss:uat
+        audience: urn:sn:pulsar:o-0676f:platform-aliyun-uat
