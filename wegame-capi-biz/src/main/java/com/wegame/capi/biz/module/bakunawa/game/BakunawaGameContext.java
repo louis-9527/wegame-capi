@@ -21,7 +21,7 @@ public class BakunawaGameContext extends AbstractGameContext {
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "bakunawaGameNormalPlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "bakunawaGameEventPlay")
-            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "bakunawaGameTemplatePlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "bakunawaGameNormalPlay")
             .build();
 
     @Autowired
