@@ -74,17 +74,11 @@ lark:
 ## api
 api:
   game:
-    #外网地址
-    #singleDomain: https://sw-http-main-apisix-stress.igo8.me
-    #freeSpinDomain: https://sw-http-freespin.igo8.me
-    #promotionDomain: https://reward-http-stress.igo8.me
-    #operationDomain: https://dos-egame-stresstest.dos88.me
-    #内网地址
-    singleDomain: https://sw-http-main-apisix-internal-stress.igo8.me
+    singleDomain: https://sw-http-main-apisix-internal-stress-ali.igo8.me
     invokeSingle: true
-    freeSpinDomain: https://sw-http-freespin-stress.igo8.me
-    promotionDomain: https://reward-http-internal-stress.igo8.me
-    operationDomain: http://dos-egame-stresstest-internal.dos88.me
+    freeSpinDomain: https://sw-http-freespin-internal-stress-ali.igo8.me
+    operationDomain: http://dos-egame-ali-stress-internal.dos88.me
+    promotionDomain: https://reward-http-internal-stress-ali.igo8.me
     cp:
       - platformId: 50
         channelId: 1050
