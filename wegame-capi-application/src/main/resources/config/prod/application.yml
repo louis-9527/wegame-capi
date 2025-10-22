@@ -39,6 +39,7 @@ spring:
       - game-maria_makiling.yml
       - game-malakas.yml
       - game-ibong.yml
+      - metrics.yml
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
@@ -222,20 +223,3 @@ api:
         channelId: 3051
         privateKey: fd86c6c8040ab02e6303f9c632543d27579c2b21009a6a58535db6157d39978d
         privateIv: d3cb0efe3c18b10db7a2723dec401cc8
-  # 内部干预数据采集配置
-  # 大盘采集刷盘任务时间区间
-game:
-  metrics:
-    flush:
-      timer:
-        interval:
-          min: 120
-          max: 180
-#
-user:
-  metrics:
-    flush:
-      timer:
-        interval:
-          min: 130
-          max: 190
