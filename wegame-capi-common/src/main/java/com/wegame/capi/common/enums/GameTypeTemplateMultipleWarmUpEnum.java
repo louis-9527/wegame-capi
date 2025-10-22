@@ -1,6 +1,7 @@
 package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -22,9 +23,15 @@ import java.util.Map;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeTemplateMultipleWarmUpEnum {
 
-    IBONG_ADARNA(GameTypeEnum.IBONG_ADARNA, createWarmUpValidatorMap_ibongAdarna(), "IBONG_ADARNA"),
+    IBONG_ADARNA(GameTypeEnum.IBONG_ADARNA,
+            new ImmutableMap.Builder<BetSubTypeEnum, WarmUpValidator>()
+                    .put(BetSubTypeEnum.NORMAL_BET, new WarmUpValidator(new BigDecimal("30")))
+                    .put(BetSubTypeEnum.EX_BET, new WarmUpValidator(new BigDecimal("30")))
+                    .build(),
+            "IBONG_ADARNA"),
 
     ;
+
     /**
      * 枚举码.
      */
@@ -58,14 +65,6 @@ public enum GameTypeTemplateMultipleWarmUpEnum {
         WarmUpValidator warmUpValidator = this.warmUpValidatorMap.get(betSubType);
         AssertUtil.assertNotNull(warmUpValidator, ErrorCode.ERR_PARAM, "no can use warmUpValidator");
         return warmUpValidator.canWarmUp(currentEndMultiple);
-    }
-
-
-    private static Map<BetSubTypeEnum, WarmUpValidator> createWarmUpValidatorMap_ibongAdarna() {
-        Map<BetSubTypeEnum, WarmUpValidator> warmUpSubMap = new HashMap<>();
-        warmUpSubMap.put(BetSubTypeEnum.NORMAL_BET, new WarmUpValidator(new BigDecimal("30")));
-        warmUpSubMap.put(BetSubTypeEnum.EX_BET, new WarmUpValidator(new BigDecimal("30")));
-        return warmUpSubMap;
     }
 
     /**
