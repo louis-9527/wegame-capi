@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service.metrics;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.mongodb.client.result.UpdateResult;
@@ -166,9 +167,11 @@ public class GameMetricsDataService extends AbstractService {
      */
     private GameMetricsDo queryCache(String pId, String channelId, MetricsTypeEnum metricsType) {
         String hashKey = MetricsConstants.buildGameMetricsCacheKey(pId, channelId, metricsType.getGameType().getId());
-
         List<Object> execResult = redisTemplate.opsForHash().values(hashKey);
-        AssertUtil.assertNotEmpty(execResult, ErrorCode.ERR_PARAM, "execResult is empty");
+        if (CollectionUtil.isEmpty(execResult) || execResult.size() < 2) {
+            log.warn("GameMetricsDataService#queryCache execResult is empty.pId:{},channelId:{},metricsType:{}", pId, channelId, metricsType.name());
+            return null;
+        }
         Object totalBetAmountObj = execResult.get(0);
         Object totalPayoutAmountObj = execResult.get(1);
         AssertUtil.assertNotNull(totalBetAmountObj, ErrorCode.ERR_PARAM, "totalBetAmountObj is null");
