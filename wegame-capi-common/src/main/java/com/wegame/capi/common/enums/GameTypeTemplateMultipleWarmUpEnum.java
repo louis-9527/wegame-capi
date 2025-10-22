@@ -63,8 +63,8 @@ public enum GameTypeTemplateMultipleWarmUpEnum {
 
     private static Map<BetSubTypeEnum, WarmUpValidator> createWarmUpValidatorMap_ibongAdarna() {
         Map<BetSubTypeEnum, WarmUpValidator> warmUpSubMap = new HashMap<>();
-        warmUpSubMap.put(BetSubTypeEnum.NORMAL_BET, new WarmUpValidator(new BigDecimal("10000")));
-        warmUpSubMap.put(BetSubTypeEnum.EX_BET, new WarmUpValidator(new BigDecimal("10000")));
+        warmUpSubMap.put(BetSubTypeEnum.NORMAL_BET, new WarmUpValidator(new BigDecimal("30")));
+        warmUpSubMap.put(BetSubTypeEnum.EX_BET, new WarmUpValidator(new BigDecimal("30")));
         return warmUpSubMap;
     }
 
