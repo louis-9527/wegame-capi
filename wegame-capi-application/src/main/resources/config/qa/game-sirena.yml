@@ -4,8 +4,8 @@ spring:
     mongodb:
       dynamic:
         sirena_mdb:
-          primary_uri: mongodb://43.199.119.200:27017/sirena?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
-          uri: mongodb://43.199.119.200:27017/sirena?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
+          primary_uri: mongodb+srv://QATmakiling_Service:t1FHb30UjHsBU0BX0T@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/sirena?maxPoolSize=10&minPoolSize=2&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&readPreference=primary&ssl=false
+          uri: mongodb+srv://QATmakiling_Service:t1FHb30UjHsBU0BX0T@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/sirena?maxPoolSize=10&minPoolSize=2&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&ssl=false
           db: sirena
 ## pulsar
 pulsar:

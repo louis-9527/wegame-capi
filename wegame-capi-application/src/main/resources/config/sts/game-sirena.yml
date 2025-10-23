@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        sirena_mdb:
+          primary_uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/sirena?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/sirena?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          db: sirena
+## pulsar
+pulsar:
+  dynamic:
+    sirena:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_Srena
+      namespace: ${spring.application.env}
+      bet_topic: Srena_topic
+      bet_deadLetter_topic: Srena_deadLetter_topic
