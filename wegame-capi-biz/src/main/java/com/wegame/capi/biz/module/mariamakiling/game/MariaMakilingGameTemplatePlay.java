@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
-import static com.wegame.capi.client.enums.TemplateTypeEnum.MARIA_MAKILING;
+import static com.wegame.capi.common.enums.TemplateTypeEnum.MARIA_MAKILING;
 
 @Slf4j
 @Component("mariaMakilingGameTemplatePlay")
@@ -83,7 +83,7 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
             configRecordList = gameRecordTemplateService.listByBetRecordId(MARIA_MAKILING, betRecordId);
         }
         if (CollectionUtils.isEmpty(configRecordList)) {
-            log.error("template is empty, betType:{}, range start: [], end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         // 获取首轮(parent ==0 and index =0)
