@@ -95,9 +95,9 @@ public class BakunawaGameTemplatePlay extends AbstractGame<BakunawaGameRecordDo>
         RewardHandleDo<SymbolDo> rewardHandleDo = build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO);
         JSONObject multipleJsonObject = JSON.parseObject(JSON.toJSONString(configRecordDo.getExtInfo()));
         MultiplePieTypeEnum multiplePieType = MultiplePieTypeEnum.valueOf(multipleJsonObject.getString("multiplePieType"));
-        AssertUtil.assertNotNull(multiplePieType, ErrorCode.ERR_PARAM);
-        rewardHandleDo.setMultiplePieType(multiplePieType);
-        rewardHandleDo.setCurrentMultiple(new BigDecimal(multipleJsonObject.getString("multiplePie")));
+        rewardHandleDo.setMultiplePieType(Objects.isNull(multiplePieType) ? null : multiplePieType);
+        String multiplePie = multipleJsonObject.getString("multiplePie");
+        rewardHandleDo.setCurrentMultiple(Objects.isNull(multiplePie) ? null : new BigDecimal(multiplePie));
         RewardResultDo<SymbolDo> rewardResult = bakunawaRewardHandler.handle(rewardHandleDo);
         long overallRewardAmount = rewardResult.getTotalRewardAmount();
         return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, rewardResult, overallRewardAmount));
