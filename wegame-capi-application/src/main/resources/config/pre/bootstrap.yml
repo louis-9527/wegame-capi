@@ -14,3 +14,6 @@ game:
     DiwataMayari: false
     Kapre: false
     Mangkukulam: true
+  inner:
+    dos:
+      enable-game-list: IBONG_ADARNA

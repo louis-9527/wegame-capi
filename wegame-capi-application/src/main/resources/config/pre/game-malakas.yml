@@ -4,14 +4,14 @@ spring:
     mongodb:
       dynamic:
         malakas_mdb:
-          primary_uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/malakas?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=primary
-          uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/malakas?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://UATmakiling_Service:4ZyEc42NCg6DfRMl@uat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/malakas?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&ssl=false&readPreference=primary
+          uri: mongodb+srv://UATmakiling_Service:4ZyEc42NCg6DfRMl@uat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/malakas?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&ssl=false&readPreference=secondaryPreferred
           db: malakas
 ## pulsar
 pulsar:
   dynamic:
     malakas:
-      url: pulsar://pulsar.makillingslot.org:6650
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
       tenant: ${spring.application.name}_Malakas
       namespace: ${spring.application.env}
       bet_topic: Malakas_topic

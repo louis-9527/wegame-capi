@@ -1,4 +1,4 @@
-package com.wegame.capi.api.contract;
+package com.wegame.capi.api.promotion;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
@@ -10,7 +10,6 @@ import com.wegame.capi.api.domain.req.contract.RedeemPlayerContractReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.contract.GetPlayerContractRes;
 import com.wegame.capi.api.domain.res.contract.RedeemPlayerContractRes;
-import com.wegame.capi.common.enums.AchievementErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -24,7 +23,8 @@ import java.net.URI;
 
 /**
  * 成就api
- * @see <a href="https://casinoplus.sg.larksuite.com/docx/XZzMdmW4aonhYfxtMEili1qGgkb"/>
+ *
+ * @see https://casinoplus.sg.larksuite.com/docx/O5d4dhv05ouRRTxdLA9lPNKzgxb
  */
 @Slf4j
 @Component
@@ -44,9 +44,7 @@ public class ContractApi extends PromotionBaseApi {
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
             if (!responseEntity.getBody().isSuc()) {
-                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
-                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+                throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
@@ -69,14 +67,12 @@ public class ContractApi extends PromotionBaseApi {
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
             if (!responseEntity.getBody().isSuc()) {
-                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
-                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+                throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
-            log.error("redeemPlayerContract BusinessException, req: {}, errorCode: {}, errMsg: {}", req, e.getErrorCode().getCode(), e.getMessage(), e);
+            log.error("redeemPlayerContract BusinessException, req: {}, errorCode: {}, errMsg: {}", req, e.getErrCode(), e.getMessage(), e);
             throw e;
         } catch (Exception e) {
             log.error("redeemPlayerContract Exception, req: {}, errMsg: {}", req, e.getMessage(), e);

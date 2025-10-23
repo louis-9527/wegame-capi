@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        diwata_mayari_mdb:
+          primary_uri: mongodb+srv://UATmakiling_Service:4ZyEc42NCg6DfRMl@uat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/diwata_mayari?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&ssl=false&readPreference=primary
+          uri: mongodb+srv://UATmakiling_Service:4ZyEc42NCg6DfRMl@uat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/diwata_mayari?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&ssl=false&readPreference=secondaryPreferred
+          db: diwata_mayari
+## pulsar
+pulsar:
+  dynamic:
+    diwataMayari:
+      url: pulsar://pulsar.makillingslot.net:6650
+      tenant: ${spring.application.name}_DiwataMayari
+      namespace: ${spring.application.env}
+      bet_topic: DiwataMayari_topic
+      bet_deadLetter_topic: DiwataMayari_deadLetter_topic

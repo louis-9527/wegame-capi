@@ -38,7 +38,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.client.enums.TemplateTypeEnum.LAM_ANG;
+import static com.wegame.capi.common.enums.TemplateTypeEnum.LAM_ANG;
 import static com.wegame.capi.common.Constants.*;
 
 @Slf4j

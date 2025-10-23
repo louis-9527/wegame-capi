@@ -26,7 +26,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <wegame-base.version>1.0.2.20250922-RELEASE</wegame-base.version>
+        <wegame-base.version>1.0.2.20251020-RELEASE</wegame-base.version>
         <pulsar-client.version>4.0.2</pulsar-client.version>
     </properties>
 

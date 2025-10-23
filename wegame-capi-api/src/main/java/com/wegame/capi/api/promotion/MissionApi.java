@@ -10,7 +10,6 @@ import com.wegame.capi.api.domain.req.promotion.RedeemDailyMissionReq;
 import com.wegame.capi.api.domain.res.CommonRes;
 import com.wegame.capi.api.domain.res.promotion.GetDailyMissionRes;
 import com.wegame.capi.api.domain.res.promotion.RedeemDailyMissionRes;
-import com.wegame.capi.common.enums.AchievementErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -25,6 +24,7 @@ import java.net.URI;
 
 /**
  * 任务api
+ *
  * @see <a href="https://casinoplus.sg.larksuite.com/docx/XZzMdmW4aonhYfxtMEili1qGgkb"/>
  */
 @Slf4j
@@ -44,10 +44,13 @@ public class MissionApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            //            if (!responseEntity.getBody().isSuc()) {
+            //                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+            //                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            //                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+            //            }
             if (!responseEntity.getBody().isSuc()) {
-                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
-                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+                throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
@@ -69,10 +72,13 @@ public class MissionApi extends PromotionBaseApi {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
             AssertUtil.assertNotNull(responseEntity.getBody(), ErrorCode.ERR_MIDDLE_PLATFORM);
+            //            if (!responseEntity.getBody().isSuc()) {
+            //                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
+            //                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
+            //                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+            //            }
             if (!responseEntity.getBody().isSuc()) {
-                AchievementErrorCode achievementErrorCode = AchievementErrorCode.valueOfThirdCode(responseEntity.getBody().getStatus());
-                AssertUtil.assertNotNull(achievementErrorCode, ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
-                throw new BusinessException(achievementErrorCode.getErrorCode(), achievementErrorCode.getMsg());
+                throw new BusinessException(PROMOTION_PREFIX_ERR_CODE + responseEntity.getBody().getStatus(), responseEntity.getBody().getMessage());
             }
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();

@@ -39,7 +39,11 @@ public class GetPlayerContractVo implements Serializable {
     private String status;
     @ApiModelProperty(value = "imgURL", required = true)
     private String imgURL;
-    @ApiModelProperty(value = "rewardType", required = true)
+    @ApiModelProperty(value = "imgURL", required = true)
+    private String starCardImgUrl;
+    @ApiModelProperty(value = "imgURL", required = true)
+    private String freeSpinImgUrl;
+    @ApiModelProperty(value = "Reward type: 1: starCard / 2: freeSpin", required = true)
     private Integer rewardType;
     @ApiModelProperty(value = "isEnabled", required = true)
     private Boolean isEnabled;

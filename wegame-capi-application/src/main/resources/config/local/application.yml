@@ -34,6 +34,7 @@ spring:
       - game-maria_makiling.yml
       - game-malakas.yml
       - game-ibong.yml
+      - metrics.yml
       - game-lamang.yml
       - game-bakunawa.yml
       - game-diwata_mayari.yml
@@ -181,20 +182,3 @@ api:
         channelId: 1051
         privateKey: 42a495b8c0e9416bd91ff6a7b65043c970acd88f3665e20cb6a12ddeb8e7e47d
         privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
- # 内部干预数据采集配置
- # 大盘采集刷盘任务时间区间
-game:
-  metrics:
-    flush:
-      timer:
-        interval:
-          min: 20
-          max: 30
-#
-user:
-  metrics:
-    flush:
-      timer:
-        interval:
-          min: 20
-          max: 30

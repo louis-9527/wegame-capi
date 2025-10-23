@@ -8,7 +8,7 @@ import com.wegame.capi.biz.builder.template.BetRecordTemplateQueryBuilder;
 import com.wegame.capi.biz.domain.biz.operation.BetRecordTemplateDo;
 import com.wegame.capi.biz.service.AbstractService;
 import com.wegame.capi.client.enums.BetTypeEnum;
-import com.wegame.capi.client.enums.TemplateTypeEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.template.BetRecordTemplatePo;
 import lombok.extern.slf4j.Slf4j;

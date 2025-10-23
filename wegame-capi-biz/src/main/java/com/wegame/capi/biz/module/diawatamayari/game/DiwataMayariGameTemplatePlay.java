@@ -37,10 +37,9 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.client.enums.TemplateTypeEnum.DIWATA_MAYARI;
+import static com.wegame.capi.common.enums.TemplateTypeEnum.DIWATA_MAYARI;
 import static com.wegame.capi.common.Constants.*;
 
 
