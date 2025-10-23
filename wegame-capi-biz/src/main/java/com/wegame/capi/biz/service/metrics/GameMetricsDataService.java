@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.service.metrics;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.mongodb.client.result.UpdateResult;
@@ -47,7 +48,7 @@ public class GameMetricsDataService extends AbstractService {
                     "local newPayoutAmount = redis.call('HINCRBY', hashKey, 'totalPayoutAmount', payoutAmountIncrement)\n" +
                     "return {newBetAmount, newPayoutAmount}";
 
-    private  final DefaultRedisScript<List> LUA_INCREMENT_SCRIPT=new DefaultRedisScript<>(LUA_INCREMENT_SCRIPT_STRING, List.class);
+    private final DefaultRedisScript<List> LUA_INCREMENT_SCRIPT = new DefaultRedisScript<>(LUA_INCREMENT_SCRIPT_STRING, List.class);
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -166,13 +167,17 @@ public class GameMetricsDataService extends AbstractService {
      */
     private GameMetricsDo queryCache(String pId, String channelId, MetricsTypeEnum metricsType) {
         String hashKey = MetricsConstants.buildGameMetricsCacheKey(pId, channelId, metricsType.getGameType().getId());
-
         List<Object> execResult = redisTemplate.opsForHash().values(hashKey);
-
+        if (CollectionUtil.isEmpty(execResult) || execResult.size() < 2) {
+            log.warn("GameMetricsDataService#queryCache execResult is empty.pId:{},channelId:{},metricsType:{}", pId, channelId, metricsType.name());
+            return null;
+        }
         Object totalBetAmountObj = execResult.get(0);
         Object totalPayoutAmountObj = execResult.get(1);
-        Long totalBetAmount = (Long) totalBetAmountObj;
-        Long totalPayoutAmount = (Long) totalPayoutAmountObj;
+        AssertUtil.assertNotNull(totalBetAmountObj, ErrorCode.ERR_PARAM, "totalBetAmountObj is null");
+        AssertUtil.assertNotNull(totalPayoutAmountObj, ErrorCode.ERR_PARAM, "totalPayoutAmountObj is null");
+        Long totalBetAmount = Long.valueOf(totalBetAmountObj.toString());
+        Long totalPayoutAmount = Long.valueOf(totalPayoutAmountObj.toString());
         String inUseDosTypeCacheKey = MetricsConstants.buildGameInUseDosTypeCacheKey(pId, channelId, metricsType.getGameType().getId());
         String inUseDosType = (String) redisTemplate.opsForValue().get(inUseDosTypeCacheKey);
 

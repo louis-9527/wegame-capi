@@ -13,3 +13,6 @@ game:
     Lamang: false
     DiwataMayari: false
     Kapre: true
+  inner:
+    dos:
+      enable-game-list: IBONG_ADARNA

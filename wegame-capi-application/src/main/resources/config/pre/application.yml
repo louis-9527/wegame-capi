@@ -39,6 +39,7 @@ spring:
       - game-maria_makiling.yml
       - game-malakas.yml
       - game-ibong.yml
+      - metrics.yml
       - game-lamang.yml
       - game-bakunawa.yml
       - game-diwata_mayari.yml
@@ -80,8 +81,8 @@ api:
     singleDomain: https://sw-http-main-apisix.igo9.me
     invokeSingle: true
     freeSpinDomain: https://sw-http-freespin.igo9.me
-    promotionDomain: http://reward-http.igo9.me
-    operationDomain: http://dos-egame.dos99.me
+    promotionDomain: https://reward-http.igo9.me
+    operationDomain: http://dos-egame-aliyun.fpms99.me
     cp:
       - platformId: 50
         channelId: 2050

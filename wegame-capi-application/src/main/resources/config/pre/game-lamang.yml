@@ -4,14 +4,14 @@ spring:
     mongodb:
       dynamic:
         lamang_mdb:
-          primary_uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/lamang?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=primary
-          uri: mongodb+srv://makiling-uat-pri.ac9hy.mongodb.net/lamang?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://UATmakiling_Service:4ZyEc42NCg6DfRMl@uat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/lamang?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=primary
+          uri: mongodb+srv://UATmakiling_Service:4ZyEc42NCg6DfRMl@uat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/lamang?retryWrites=false&w=majority&authSource=%24external&authMechanism=MONGODB-AWS&readPreference=secondaryPreferred
           db: lamang
 ## pulsar
 pulsar:
   dynamic:
     lamang:
-      url: pulsar://pulsar.makillingslot.org:6650
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
       tenant: ${spring.application.name}_Lamang
       namespace: ${spring.application.env}
       bet_topic: Lamang_topic

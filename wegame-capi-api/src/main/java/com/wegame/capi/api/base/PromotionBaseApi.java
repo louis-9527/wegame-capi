@@ -6,8 +6,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * see doc:
+ * https://casinoplus.sg.larksuite.com/docx/O5d4dhv05ouRRTxdLA9lPNKzgxb
+ *
+ */
 @Slf4j
 public class PromotionBaseApi extends CommonBaseApi {
+
+    public static final String PROMOTION_PREFIX_ERR_CODE = "2";
 
     @Value("${api.game.promotionDomain}")
     public String promotionDomain;

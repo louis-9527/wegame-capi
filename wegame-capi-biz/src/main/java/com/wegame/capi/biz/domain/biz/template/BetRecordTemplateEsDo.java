@@ -34,6 +34,7 @@ public class BetRecordTemplateEsDo implements Serializable {
     /**
      * 投注子类型
      */
+    @Field(type = FieldType.Keyword)
     private String betSubType;
     /**
      * 倍数
