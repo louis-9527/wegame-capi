@@ -64,7 +64,7 @@ public class BakunawaGameTemplatePlay extends AbstractGame<BakunawaGameRecordDo>
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(BAKUNAWA, gamePlay.getBetType(), new BigDecimal("1"), new BigDecimal("1"), BakunawaBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(BAKUNAWA, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), BakunawaBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         log.info("betRecordId:{}", betRecordId);
