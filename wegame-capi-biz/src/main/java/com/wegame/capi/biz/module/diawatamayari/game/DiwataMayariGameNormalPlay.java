@@ -353,8 +353,8 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
                 symbolArr[row][column] = DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_SWORD);
             } else {
                 DiwataMayariSymbolDo diwataMayariSymbolDo = symbolArr[row][column];
-                if (diwataMayariSymbolDo.isPlaceholderSymbol()) {
-                    // 占位元素跳过
+                // main 元素 && 占位元素不处理
+                if (diwataMayariSymbolDo.isPlaceholderSymbol() || diwataMayariSymbolDo.isMainSymbol()) {
                     continue;
                 } else if (diwataMayariSymbolDo.isStick()) {
                     // 如果已经是大宝剑元素,做特殊标记
@@ -386,6 +386,10 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
             DiwataMayariSymbolDo diwataMayariSymbolDo = symbolArr[newRow][newColumn];
             if (diwataMayariSymbolDo == null || diwataMayariSymbolDo.isCommonSymbol()) {
                 replaceMap.put(pos, DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariSymbolDo.buildFromSymbol(DiwataMayariGameHelper.DIWATA_MAYARI_WILD_STICK)));
+                continue;
+            }
+            // 如果是main元素，则不覆盖
+            if (diwataMayariSymbolDo.isMainSymbol()) {
                 continue;
             }
             if (diwataMayariSymbolDo.isSword()) {

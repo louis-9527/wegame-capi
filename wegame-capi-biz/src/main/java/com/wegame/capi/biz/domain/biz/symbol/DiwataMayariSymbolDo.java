@@ -7,6 +7,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 
 /**
  * DiwataMayari游戏元素
@@ -33,6 +35,14 @@ public class DiwataMayariSymbolDo extends SymbolDo {
      * 判断是否 大宝剑元素
      */
     @JsonIgnore
+    public boolean isMainSymbol() {
+        return Objects.nonNull(this.main) && this.main;
+    }
+
+    /**
+     * 判断是否 大宝剑元素
+     */
+    @JsonIgnore
     public boolean isSword() {
         return StringUtils.equals(getId(), SymbolEnum.Wild_Sword.getId());
     }
@@ -44,10 +54,12 @@ public class DiwataMayariSymbolDo extends SymbolDo {
     public boolean isStick() {
         return StringUtils.equals(getId(), SymbolEnum.Wild_Stick.getId());
     }
+
     @JsonIgnore
     public boolean isPlaceholderSymbol() {
         return StringUtils.equals(getId(), DiwataMayariGameHelper.DIWATA_MAYARI_SYMBOL_PLACEHOLDER.getId());
     }
+
     @JsonIgnore
     public DiwataMayariSymbolDo copy() {
         return DiwataMayariSymbolDo.builder()
