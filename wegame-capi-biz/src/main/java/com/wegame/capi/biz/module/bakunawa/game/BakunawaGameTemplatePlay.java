@@ -94,7 +94,7 @@ public class BakunawaGameTemplatePlay extends AbstractGame<BakunawaGameRecordDo>
         WheelDo<SymbolDo> wheel = convertWheel(configRecordDo.getWheel());
         RewardHandleDo<SymbolDo> rewardHandleDo = build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO);
         JSONObject multipleJsonObject = JSON.parseObject(JSON.toJSONString(configRecordDo.getExtInfo()));
-        MultiplePieTypeEnum multiplePieType = MultiplePieTypeEnum.valueOf(multipleJsonObject.getString("multiplePieType"));
+        MultiplePieTypeEnum multiplePieType = MultiplePieTypeEnum.valueOfCode(multipleJsonObject.getString("multiplePieType"));
         rewardHandleDo.setMultiplePieType(Objects.isNull(multiplePieType) ? null : multiplePieType);
         String multiplePie = multipleJsonObject.getString("multiplePie");
         rewardHandleDo.setCurrentMultiple(Objects.isNull(multiplePie) ? null : new BigDecimal(multiplePie));
