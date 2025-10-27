@@ -91,10 +91,6 @@ public class ContextFilter extends OncePerRequestFilter {
             }
             UserInfo user = null;
             if (StringUtils.isNotEmpty(_token_)) {
-<<<<<<< Updated upstream
-                // user = (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, _token_));
-=======
->>>>>>> Stashed changes
                 user = loginService.getUserInfoByToken(_token_);
                 log.info("get userInfo: {}", user);
             }

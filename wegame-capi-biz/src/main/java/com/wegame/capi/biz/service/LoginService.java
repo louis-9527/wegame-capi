@@ -57,13 +57,7 @@ public class LoginService {
                 .loginTime(new Date())
                 .build());
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
-<<<<<<< Updated upstream
-        redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
-=======
         redisTemplate.opsForValue().set(loginTokenKey, FastJsonUtils.toJSONString(userInfo), Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
-        // 提前加载用户数据采集缓存
-        userPlayMetricsDataService.loadCache(userInfo.getPId(), userInfo.getPlayerId(), userInfo.getChannelId(), userInfo.getGameId());
->>>>>>> Stashed changes
         return userInfo;
     }
 
@@ -79,9 +73,15 @@ public class LoginService {
 
     @Cacheable(value = CacheConstants.USER_INFO, key = "#token")
     public UserInfo getUserInfoByToken(String token) {
-        Object strObj = redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, token));
-        if (Objects.nonNull(strObj)) {
-            return FastJsonUtils.fromJSONString(strObj.toString(), UserInfo.class);
+        Object obj = redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, token));
+        if (Objects.nonNull(obj)) {
+            if (obj instanceof String) {
+                log.info("userInfo is String class");
+                return FastJsonUtils.fromJSONString(obj.toString(), UserInfo.class);
+            } else {
+                log.info("userInfo is not String class");
+                return FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(obj), UserInfo.class);
+            }
         } else {
             return null;
         }
