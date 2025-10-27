@@ -487,6 +487,14 @@ public class DiwataMayariGameNormalPlay extends AbstractGame<DiwataMayariGameRec
             if (this.canContinuePlayOnPreWheel(rewardResult, totalRewardAmount)) {
                 // 处理当前消除
                 maxTotalMultiple = loopPlayOnPreGameRecord(gamePlay, ret, totalRewardAmount, gameRecord, freeWheelList);
+            } else {
+                // 未中奖计算是否有免费轮
+                if (rewardResult.isHasRewardFreeWheel()) {
+                    // 中免费轮
+                    for (int times = 1; times <= rewardResult.getRewardFreeWheelTimes(); times++) {
+                        freeWheelList.offer(gameRecordId);
+                    }
+                }
             }
             if (CollectionUtils.isNotEmpty(ret)) {
                 totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
