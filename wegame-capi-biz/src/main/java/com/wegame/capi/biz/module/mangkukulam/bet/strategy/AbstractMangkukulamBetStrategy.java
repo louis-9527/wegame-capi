@@ -89,6 +89,10 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
     public BetResultDo<MangkukulamBetRecordDetailDo> bet(BetDo betDo) {
         if (!BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
             // 非免费轮投注流程
+            // 如果是第二步直接走betForNonFreeWheel
+            if (BetSubTypeEnum.isSecondStep(betDo.getBetSubType().getCode())) {
+                betForNonFreeWheel(betDo);
+            }
             //// 1、是否使用星卡
             if (isCanStarCardBet(betDo)) {
                 // 1.1 是，则星卡投注流程 随机选取波动率

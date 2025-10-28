@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -100,17 +101,26 @@ public abstract class AbstractContinuePlayScheduler
         BetTypeEnum betType = BetTypeEnum.valueOf(betRecordDo.getBetType());
         BetSubTypeEnum betSubType = BetTypeEnum.NORMAL_BET.getCode().equals(betType.getCode()) ?
                 BetSubTypeEnum.FREE_WHEEL_NORMAL_BET : BetSubTypeEnum.FREE_WHEEL_BUY_BET;
+        BetPromotionTypeEnum promotionType = BetPromotionTypeEnum.valueOfCode(betRecordDo.getBetPromotionType());
+        GamePlayTypeEnum gamePlayType;
+        if (Objects.equals(promotionType, BetPromotionTypeEnum.OPERATION_EVENT)) {
+            gamePlayType = GamePlayTypeEnum.EVENT_PLAY;
+        } else {
+            gamePlayType = GamePlayTypeEnum.NORMAL_PLAY;
+        }
+
 
         return BetDo.builder()
                 .betAmount(betRecordDo.getBetAmount())
                 .payAmount(0L)
-                .betPromotionType(BetPromotionTypeEnum.valueOfCode(betRecordDo.getBetPromotionType()))
+                .betPromotionType(promotionType)
                 .betType(betType)
                 .betSubType(betSubType)
                 .gameId(betRecordDo.getGameId())
                 .gameType(gameType())
                 .parentBetRecordId(betRecordDo.getId())
                 .volatility(VolatilityTypeEnum.random())
+                .gamePlayType(gamePlayType)
                 .build();
     }
 
