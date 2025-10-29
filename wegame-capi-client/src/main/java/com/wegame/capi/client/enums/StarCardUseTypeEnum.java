@@ -44,6 +44,11 @@ public enum StarCardUseTypeEnum {
             "mangkukulam_star_card_record"
     ),
 
+    SIRENA(
+            GameTypeEnum.SIRENA,
+            "sirena_star_card_record"
+    ),
+
     ;
     /**
      * 游戏类型
