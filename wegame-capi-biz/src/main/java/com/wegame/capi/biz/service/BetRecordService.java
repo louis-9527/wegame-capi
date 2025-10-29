@@ -82,7 +82,7 @@ public class BetRecordService extends AbstractService {
         return modifiedCount;
     }
 
-    public BetRecordDo get(Long id, GameTypeEnum gameType) {
+    public BetRecordDo getById(Long id, GameTypeEnum gameType, boolean primary) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
@@ -92,6 +92,11 @@ public class BetRecordService extends AbstractService {
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         return poToDo(betRecordPo);
+    }
+
+    public BetRecordDo get(Long id, GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        return getById(id, gameType, false);
     }
 
     // @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #playerId + '_'  + #id")
