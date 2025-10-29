@@ -58,7 +58,9 @@ public class BakunawaMultipleCalculateStrategy extends AbstractMultipleCalculate
     public Pair<MultiplePieTypeEnum, BigDecimal> calculateMultiplePie(RewardHandleDo<SymbolDo> rewardHandle) {
         if (Objects.equals(rewardHandle.getGamePlayType(), GamePlayTypeEnum.EVENT_PLAY)) {
             return ImmutablePair.of(rewardHandle.getMultiplePieType(), rewardHandle.getCurrentMultiple());
-        } else {
+        } else if (Objects.equals(rewardHandle.getGamePlayType(), GamePlayTypeEnum.TEMPLATE_PLAY)) {
+            return ImmutablePair.of(rewardHandle.getMultiplePieType(), rewardHandle.getCurrentMultiple());
+        }  else {
             TreeMap<String, BigDecimal> originalMultiplePieProbabilisticConfig = bakunawaConfig.getProbabilisticConfig().getMultiplePieProbabilisticConfig();
             TreeMap<String, Integer> multipleProbabilisticMap = new TreeMap<>();
             originalMultiplePieProbabilisticConfig.forEach((key, value) -> multipleProbabilisticMap.put(key, value.multiply(new BigDecimal(Constants.CONST_10000)).intValue()));
