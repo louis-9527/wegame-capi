@@ -33,8 +33,6 @@ import java.util.Objects;
 @NoArgsConstructor
 public class ContextFilter extends OncePerRequestFilter {
 
-    RedisTemplate<String, Object> redisTemplate;
-
     LoginService loginService;
 
     @Override
@@ -93,8 +91,8 @@ public class ContextFilter extends OncePerRequestFilter {
             }
             UserInfo user = null;
             if (StringUtils.isNotEmpty(_token_)) {
-                // user = (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, _token_));
                 user = loginService.getUserInfoByToken(_token_);
+                log.info("get userInfo: {}", user);
             }
             UserInfoContext.setUserInfo(user);
         } catch (Exception e) {
