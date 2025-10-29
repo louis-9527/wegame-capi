@@ -22,7 +22,7 @@ public abstract class AbstractTemplateLoadPostHandler extends AbstractPostHandle
 
     public static final List<String> enableEnvList = Lists.newArrayList(
             EnvEnum.STS.getValue(),
-            EnvEnum.PRE.getValue(),
+//            EnvEnum.PRE.getValue(),
             EnvEnum.PROD.getValue()
     );
 

@@ -4,6 +4,7 @@ import cn.hutool.crypto.SecureUtil;
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -55,7 +57,7 @@ public class LoginService {
                 .loginTime(new Date())
                 .build());
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
-        redisTemplate.opsForValue().set(loginTokenKey, userInfo, Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
+        redisTemplate.opsForValue().set(loginTokenKey, FastJsonUtils.toJSONString(userInfo), Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
         return userInfo;
     }
 
@@ -71,7 +73,18 @@ public class LoginService {
 
     @Cacheable(value = CacheConstants.USER_INFO, key = "#token")
     public UserInfo getUserInfoByToken(String token) {
-        return (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, token));
+        Object obj = redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, token));
+        if (Objects.nonNull(obj)) {
+            if (obj instanceof String) {
+                log.info("userInfo is String class");
+                return FastJsonUtils.fromJSONString(obj.toString(), UserInfo.class);
+            } else {
+                log.info("userInfo is not String class");
+                return FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(obj), UserInfo.class);
+            }
+        } else {
+            return null;
+        }
     }
 
     @CacheEvict(value = CacheConstants.USER_INFO, key = "#token")
