@@ -111,7 +111,7 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                     || parentBetRecordId.longValue() != oneBetRecordByTimeLast.getId().longValue()
                     || !BetSubTypeEnum.NORMAL_BET.getCode().equals(oneBetRecordByTimeLast.getBetSubType())
                     || gamePlay.getBetAmount().longValue() != oneBetRecordByTimeLast.getBetAmount().longValue()) {
-                throw new BusinessException(ErrorCode.ERR_INTER);
+                throw new BusinessException(ErrorCode.ERR_PARENT_BET_RECORD_ID);
             }
             // 获取游戏记录
             List gameRecordList = oneBetRecordByTimeLast.getGameRecordList();
