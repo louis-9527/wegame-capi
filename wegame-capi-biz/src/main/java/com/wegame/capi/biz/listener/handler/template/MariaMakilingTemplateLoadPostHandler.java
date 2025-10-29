@@ -52,10 +52,6 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
 
     @Override
     public void handle() {
-        if (!supportWarmUpEnv()) {
-            log.warn("not support env: {}", env);
-            return;
-        }
         if (!supportGame(GameTypeEnum.MARIA_MAKILING)) {
             log.warn("not support game MARIA_MAKILING");
             return;
@@ -109,6 +105,9 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
     }
 
     private void loadLocalCache(BetTypeEnum betType, List<Long> templateIdList) {
+        if (!supportWarmUpEnv()) {
+            return;
+        }
         if (CollectionUtil.isEmpty(templateIdList)) {
             log.warn("loadLocalCache fail, betType: {}, size is 0", betType);
             return;
@@ -132,6 +131,9 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
     }
 
     private void loadRedisCache(BetTypeEnum betType, List<Long> templateIdList) {
+        if (!supportWarmUpEnv()) {
+            return;
+        }
         if (CollectionUtil.isEmpty(templateIdList)) {
             log.warn("loadRedisCache fail, betType: {}, size is 0", betType);
             return;

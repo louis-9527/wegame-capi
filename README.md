@@ -1,38 +1,8 @@
 
+基于分支打rtag：
+1、git tag -a qat/v1.0.0 -m "qa version"
+2、git push origin qat/v1.0.0
 
-
-游戏：模版方法设计模式
-游戏结果：工厂/建造者模式
-
-
-**包结构说明**：
-com.wegame.capi
-    advice: 增强（统一异常处理）
-    cache:  缓存
-    client:  客户端
-    common:  通用
-        annotation：注解
-        builder：模型构建
-        converter：模型转换
-        domain：模型
-            context：上下文模型
-            request：req模型
-            response：res模型
-            vo：vo模型
-        enums：枚举
-        utils：工具
-        Constants.java 常量
-    config: 自动化配置类（后面会考虑挪动到wegamebase包中）
-    controller: 控制层
-    filter: 过滤器（eg：UserInfoContextFilter.java构建用户上下文）
-    interceptor: 拦截器(eg: 权限控制)
-    mapper: db操作mapper
-        auto：自动生产的mapper
-        domain：持久层domain
-        manual：手动编写的mapper
-    scheduler: 定时任务
-    service: 服务层
-    Application.java 启动类
 
 
 对象命名规则：

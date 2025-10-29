@@ -71,7 +71,7 @@ public class FilterConfig {
                                                 @Autowired LoginService loginService) {
         log.info(BUILD_BEAN_FORMAT, "contextFilter");
         ContextFilter contextFilter = new ContextFilter();
-        contextFilter.setRedisTemplate(redisTemplate);
+        //        contextFilter.setRedisTemplate(redisTemplate);
         contextFilter.setLoginService(loginService);
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<>();
         bean.setFilter(contextFilter);

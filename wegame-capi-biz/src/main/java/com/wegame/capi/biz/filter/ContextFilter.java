@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -31,8 +30,6 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 public class ContextFilter extends OncePerRequestFilter {
-
-    RedisTemplate<String, Object> redisTemplate;
 
     LoginService loginService;
 
@@ -79,7 +76,6 @@ public class ContextFilter extends OncePerRequestFilter {
                     .clientIp(clientIp)
                     .build();
             SystemInfoContext.setSysContext(systemInfo);
-            log.info("SystemInfoContextInfo: {}", systemInfo);
         } catch (Exception e) {
             log.error("buildSystemInfoContextInfo err: {}", e.getMessage(), e);
         }
@@ -93,8 +89,8 @@ public class ContextFilter extends OncePerRequestFilter {
             }
             UserInfo user = null;
             if (StringUtils.isNotEmpty(_token_)) {
-//                user = (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, _token_));
                 user = loginService.getUserInfoByToken(_token_);
+                log.info("get userInfo: {}", user);
             }
             UserInfoContext.setUserInfo(user);
         } catch (Exception e) {
