@@ -102,7 +102,6 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
 
             BetRecordQuery betRecordQuery = BetRecordQuery.builder()
                     .playerId(UserInfoContext.getUserInfo().getPlayerId())
-                    .betSubType(BetSubTypeEnum.NORMAL_BET.getCode())
                     .startCreateTime(oneMonthAgoMillis)
                     .orderByClause("createTime")
                     .limit(1).build();
