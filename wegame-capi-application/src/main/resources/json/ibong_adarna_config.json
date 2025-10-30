@@ -328,7 +328,7 @@
     "innerDosCondition": {
       "newPlayerCondition": {
         "roundsCountLimit": 70,
-        "emptyDiskLimit": 3,
+        "emptyDiskLimit": 4,
         "dosCoefficient": 0
       },
       "normalCondition": {
