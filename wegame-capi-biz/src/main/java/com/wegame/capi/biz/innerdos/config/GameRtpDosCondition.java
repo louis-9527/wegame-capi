@@ -114,7 +114,7 @@ public class GameRtpDosCondition implements Serializable {
                 AssertUtil.assertTrue(split.length == 2, ErrorCode.ERR_PARAM, "conditionValue is not between 2");
                 BigDecimal lowLimit=new BigDecimal(split[0]);
                 BigDecimal upLimit=new BigDecimal(split[1]);
-                return byValue.compareTo(lowLimit) < 0 && byValue.compareTo(upLimit) > 0;
+                return byValue.compareTo(lowLimit) < 0 || byValue.compareTo(upLimit) > 0;
             }
         };
 
