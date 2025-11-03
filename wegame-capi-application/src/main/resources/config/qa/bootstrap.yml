@@ -10,11 +10,12 @@ logging:
 #game switch
 game:
   enable:
-    MariaMakiling: false
-    Malakas: false
+    MariaMakiling: true
+    Malakas: true
     IbongAdarna: true
     Bakunawa: true
     Lamang: true
+    DiwataMayari: true
   inner:
     dos:
       enable-game-list: IBONG_ADARNA

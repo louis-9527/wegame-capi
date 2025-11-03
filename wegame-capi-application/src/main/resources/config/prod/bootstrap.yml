@@ -11,6 +11,7 @@ game:
     IbongAdarna: false
     Bakunawa: true
     Lamang: false
+    DiwataMayari: true
   inner:
     dos:
       enable-game-list: IBONG_ADARNA
