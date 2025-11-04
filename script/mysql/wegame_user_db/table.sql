@@ -1,5 +1,5 @@
 use
-    `wegame_user_db`;
+`wegame_user_db`;
 
 -- ----------------------------
 -- Table structure for user
@@ -33,6 +33,7 @@ DROP TABLE IF EXISTS `user_login_info`;
 CREATE TABLE `user_login_info`
 (
     `id`            bigint       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `p_id`          varchar(64)  NOT NULL DEFAULT '50' COMMENT '平台id',
     `channel_id`    bigint       NOT NULL COMMENT '渠道id',
     `game_id`       varchar(20)  NOT NULL COMMENT '游戏id',
     `user_id`       bigint       NOT NULL COMMENT '用户id',
