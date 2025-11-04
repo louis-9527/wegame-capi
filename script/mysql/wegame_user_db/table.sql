@@ -45,7 +45,7 @@ CREATE TABLE `user_login_info`
     `updater`       varchar(100) NOT NULL DEFAULT '' COMMENT '更新人',
     `update_time`   timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    UNIQUE KEY (`channel_id`, `game_id`, `user_id`, `player_id`)
+    UNIQUE KEY (`p_id`,`channel_id`, `game_id`, `user_id`, `player_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE utf8mb4_unicode_ci COMMENT ='用户登录信息';
