@@ -4,8 +4,8 @@ spring:
     mongodb:
       dynamic:
         diwata_mayari_mdb:
-          primary_uri: mongodb+srv://PRODmakiling_Service:gpiFR29Io1WvH2e4@prod-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/diwata_mayari?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
-          uri: mongodb+srv://PRODmakiling_Service:gpiFR29Io1WvH2e4@prod-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/diwata_mayari?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=makiling-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://PRODmayari_Service:0vvWeHj89vJ3Mk2i@prod-diwata-mayari-pri.mongodb.singapore.nosql.aliyuncs.com/diwata_mayari?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=diwata_mayari-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://PRODmayari_Service:0vvWeHj89vJ3Mk2i@prod-diwata-mayari-pri.mongodb.singapore.nosql.aliyuncs.com/diwata_mayari?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=diwata_mayari-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: diwata_mayari
 ## pulsar
 pulsar:
