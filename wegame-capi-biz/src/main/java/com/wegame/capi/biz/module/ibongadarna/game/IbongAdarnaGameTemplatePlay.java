@@ -95,8 +95,12 @@ public class IbongAdarnaGameTemplatePlay extends AbstractGame<IbongAdarnaGameRec
         WheelDo<IbongAdarnaSymbolDo> wheel = convertWheel(configRecordDo.getWheel());
         RewardResultDo<IbongAdarnaSymbolDo> firstWheelRewardResult = ibongAdarnaRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, new BigDecimal(configRecordDo.getExtInfo().toString())));
         long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
-        return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, firstWheelRewardResult, overallRewardAmount));
-
+        List<IbongAdarnaGameRecordDo> ret = Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, firstWheelRewardResult, overallRewardAmount));
+        // 结果验证数据添加
+        gamePlay.setTemplateId(betRecordId);
+        gamePlay.setOverallRewardAmount(overallRewardAmount);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
+        return ret;
     }
 
     private IbongAdarnaGameRecordDo buildGameRecord(UserInfo userInfo,
