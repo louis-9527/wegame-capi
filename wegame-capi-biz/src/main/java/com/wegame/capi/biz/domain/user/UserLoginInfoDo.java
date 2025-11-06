@@ -8,6 +8,7 @@ import java.util.Date;
 
 /**
  * user_login_info：用户登录信息
+ *
  * @author generate
  */
 @Data
@@ -21,6 +22,10 @@ public class UserLoginInfoDo implements Serializable {
      * 主键ID
      */
     private Long id;
+    /**
+     * pId
+     */
+    private String pId;
     /**
      * 渠道id
      */
