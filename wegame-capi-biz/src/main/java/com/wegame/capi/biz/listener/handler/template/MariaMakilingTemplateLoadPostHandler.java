@@ -5,11 +5,12 @@ import cn.hutool.core.collection.ListUtil;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.base.exception.LockException;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
-import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
+import com.wegame.capi.biz.domain.biz.template.mariamakiling.MariaMakilingBetRecordTemplateEsDo;
+import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -36,11 +36,13 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Component
 @ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
 public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPostHandler {
-    private static final String key = "load:template:redis:cache:MariaMakiling6";
+    private static final String key = "load:template:redis:cache:MariaMakiling7";
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    BetRecordTemplateEsService<MariaMakilingBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     protected TemplateTypeEnum getTemplateType() {
         return TemplateTypeEnum.MARIA_MAKILING;
@@ -52,10 +54,6 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
 
     @Override
     public void handle() {
-        if (!supportWarmUpEnv()) {
-            log.warn("not support env: {}", env);
-            return;
-        }
         if (!supportGame(GameTypeEnum.MARIA_MAKILING)) {
             log.warn("not support game MARIA_MAKILING");
             return;
@@ -81,7 +79,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
             if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
                 loadLocalCache(BetTypeEnum.NORMAL_BET, templateIdList);
             } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
-                loadRedisCache(BetTypeEnum.BUY_BET, templateIdList);
+//                loadRedisCache(BetTypeEnum.BUY_BET, templateIdList);
             } else {
                 return;
             }
@@ -95,7 +93,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
         TemplateTypeEnum templateType = this.getTemplateType();
         log.info("templateIdList load start, betType: {}, range: {}-{}...", betType, multipleRange.getStart(), multipleRange.getEnd());
         try {
-            List<Long> betRecordTemplateIdList = betRecordTemplateService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd());
+            List<Long> betRecordTemplateIdList = betRecordTemplateEsService.listIdByMultipleRange(templateType, betType, multipleRange.getStart(), multipleRange.getEnd(), MariaMakilingBetRecordTemplateEsDo.class);
             if (!TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MARIA_MAKILING, betType, multipleRange)) {
                 log.info("templateIdList load end, betType: {}, range: {}-{}, size: {}， no load gameRecordTemplate", betType, multipleRange.getStart(), multipleRange.getEnd(), betRecordTemplateIdList.size());
                 return null;
@@ -109,6 +107,9 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
     }
 
     private void loadLocalCache(BetTypeEnum betType, List<Long> templateIdList) {
+        if (!supportWarmUpEnv()) {
+            return;
+        }
         if (CollectionUtil.isEmpty(templateIdList)) {
             log.warn("loadLocalCache fail, betType: {}, size is 0", betType);
             return;
@@ -117,21 +118,18 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
         log.info("loadLocalCache start, betType: {}, size: {}", betType, templateIdList.size());
         List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
         multiList.forEach(idList -> {
-            List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
-            idList.forEach(betRecordId -> {
-                try {
-                    gameRecordTemplateService.putLocalCache(templateType, betRecordId, templateList.stream()
-                            .filter(template -> Objects.equals(template.getBetRecordId(), betRecordId))
-                            .collect(Collectors.toList()));
-                } catch (Exception e) {
-                    log.info("loadLocalCache error, betType: {}, betRecordId: {}", betType, betRecordId, e);
-                }
+            List<MariaMakilingBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(TemplateTypeEnum.MARIA_MAKILING, idList, MariaMakilingBetRecordTemplateEsDo.class);
+            templateList.forEach(templateItem -> {
+                betRecordTemplateEsService.putTemplateLocalCache(templateType, templateItem.getId(), templateItem);
             });
         });
         log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
     }
 
     private void loadRedisCache(BetTypeEnum betType, List<Long> templateIdList) {
+        if (!supportWarmUpEnv()) {
+            return;
+        }
         if (CollectionUtil.isEmpty(templateIdList)) {
             log.warn("loadRedisCache fail, betType: {}, size is 0", betType);
             return;
@@ -148,15 +146,9 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                 log.info("loadRedisCache start, betType: {}, size: {}", betType, templateIdList.size());
                 List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
                 multiList.forEach(idList -> {
-                    List<GameRecordTemplateDo> templateList = gameRecordTemplateService.listByBetRecordIdList(templateType, idList);
-                    idList.forEach(betRecordId -> {
-                        try {
-                            gameRecordTemplateService.putRedisCache(templateType, betRecordId, templateList.stream()
-                                    .filter(template -> Objects.equals(template.getBetRecordId(), betRecordId))
-                                    .collect(Collectors.toList()));
-                        } catch (Exception e) {
-                            log.info("loadRedisCache error, betType: {}, betRecordId: {}", betType, betRecordId, e);
-                        }
+                    List<MariaMakilingBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(templateType, idList, MariaMakilingBetRecordTemplateEsDo.class);
+                    templateList.forEach(template -> {
+                        betRecordTemplateEsService.putTemplateRedisCache(templateType, template.getId(), template);
                     });
                 });
                 redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());

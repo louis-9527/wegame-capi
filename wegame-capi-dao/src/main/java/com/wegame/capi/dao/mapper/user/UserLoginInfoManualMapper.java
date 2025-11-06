@@ -17,6 +17,7 @@ import org.apache.ibatis.annotations.Param;
 public interface UserLoginInfoManualMapper {
     @Insert({"<script>",
             "INSERT INTO `user_login_info` (",
+            "   `p_id`, ",
             "   `channel_id`, ",
             "   `game_id`, ",
             "   `user_id`, ",
@@ -29,6 +30,7 @@ public interface UserLoginInfoManualMapper {
             "   `update_time` ",
             ")",
             "VALUES (",
+            "   #{po.pId}, ",
             "   #{po.channelId}, ",
             "   #{po.gameId}, ",
             "   #{po.userId}, ",

@@ -328,7 +328,7 @@
     "innerDosCondition": {
       "newPlayerCondition": {
         "roundsCountLimit": 70,
-        "emptyDiskLimit": 3,
+        "emptyDiskLimit": 4,
         "dosCoefficient": 0
       },
       "normalCondition": {
@@ -344,8 +344,8 @@
           "formula": "LESS"
         },
         "out": {
-          "conditionValue": 96.50,
-          "formula": "THAN"
+          "conditionValue": "-1_96.50",
+          "formula": "NOT_BETWEEN"
         }
       },
       "TOO_HIGH_DOS": {
@@ -354,8 +354,8 @@
           "formula": "THAN"
         },
         "out": {
-          "conditionValue": 96.50,
-          "formula": "LESS"
+          "conditionValue": "96.50_103.0",
+          "formula": "NOT_BETWEEN"
         }
       },
       "SPECIAL_DOS": {
@@ -364,8 +364,8 @@
           "formula": "THAN"
         },
         "out": {
-          "conditionValue": 101.0,
-          "formula": "LESS"
+          "conditionValue": "101.0_1000000000",
+          "formula": "NOT_BETWEEN"
         }
       }
     }
