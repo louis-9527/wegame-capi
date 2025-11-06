@@ -7,7 +7,6 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
-import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.template.mariamakiling.MariaMakilingBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -22,8 +21,6 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
-import com.wegame.capi.biz.service.template.BetRecordTemplateService;
-import com.wegame.capi.biz.service.template.GameRecordTemplateService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
@@ -70,22 +67,22 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
 
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(TemplateTypeEnum.MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), MariaMakilingBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
-        Long betRecordId = getRandomElement(betRecordIdList);
+        Long templateBetRecordId = getRandomElement(betRecordIdList);
 
         List<GameRecordTemplateDo> configRecordList;
         MariaMakilingBetRecordTemplateEsDo template;
         if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithLocalCache(TemplateTypeEnum.MARIA_MAKILING, betRecordId, MariaMakilingBetRecordTemplateEsDo.class);
+                template = betRecordTemplateEsService.getTemplateWithLocalCache(TemplateTypeEnum.MARIA_MAKILING, templateBetRecordId, MariaMakilingBetRecordTemplateEsDo.class);
             } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithRedisCache(TemplateTypeEnum.MARIA_MAKILING, betRecordId, MariaMakilingBetRecordTemplateEsDo.class);
+                template = betRecordTemplateEsService.getTemplateWithRedisCache(TemplateTypeEnum.MARIA_MAKILING, templateBetRecordId, MariaMakilingBetRecordTemplateEsDo.class);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         } else {
             // 没有被预热的倍率，需要重新查询
-            template = betRecordTemplateEsService.findById(TemplateTypeEnum.MARIA_MAKILING, betRecordId, MariaMakilingBetRecordTemplateEsDo.class);
+            template = betRecordTemplateEsService.findById(TemplateTypeEnum.MARIA_MAKILING, templateBetRecordId, MariaMakilingBetRecordTemplateEsDo.class);
         }
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
         configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
@@ -145,6 +142,11 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         if (CollectionUtils.isNotEmpty(freeWheelGameRecordList)) {
             ret.addAll(freeWheelGameRecordList);
         }
+
+        // 结果验证数据添加
+        gamePlay.setTemplateId(templateBetRecordId);
+        gamePlay.setOverallRewardAmount(overallRewardAmount);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return ret;
     }
 
