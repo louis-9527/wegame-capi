@@ -66,21 +66,21 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
 
         List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
-        Long betRecordId = getRandomElement(betRecordIdList);
+        Long templateBetRecordId = getRandomElement(betRecordIdList);
 
         List<GameRecordTemplateDo> configRecordList;
         if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MARIA_MAKILING, betRecordId);
+                configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MARIA_MAKILING, templateBetRecordId);
             } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                configRecordList = gameRecordTemplateService.listByBetRecordIdWithRedisCache(MARIA_MAKILING, betRecordId);
+                configRecordList = gameRecordTemplateService.listByBetRecordIdWithRedisCache(MARIA_MAKILING, templateBetRecordId);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         } else {
             // 没有被预热的倍率，需要重新查询
-            configRecordList = gameRecordTemplateService.listByBetRecordId(MARIA_MAKILING, betRecordId);
+            configRecordList = gameRecordTemplateService.listByBetRecordId(MARIA_MAKILING, templateBetRecordId);
         }
         if (CollectionUtils.isEmpty(configRecordList)) {
             log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
@@ -137,6 +137,11 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         if (CollectionUtils.isNotEmpty(freeWheelGameRecordList)) {
             ret.addAll(freeWheelGameRecordList);
         }
+
+        // 结果验证数据添加
+        gamePlay.setTemplateId(templateBetRecordId);
+        gamePlay.setOverallRewardAmount(overallRewardAmount);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return ret;
     }
 
