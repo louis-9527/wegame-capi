@@ -12,6 +12,7 @@ import com.wegame.capi.dao.repository.domain.business.BetRecordPo;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -87,7 +88,13 @@ public class BetRecordService extends AbstractService {
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
-        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(
+        MongoTemplate template = null ;
+        if (primary) {
+            template = getPrimaryMongoTemplate(gameType);
+        } else {
+            template = getMongoTemplate(gameType);
+        }
+        BetRecordPo betRecordPo = template.findOne(
                 query,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
