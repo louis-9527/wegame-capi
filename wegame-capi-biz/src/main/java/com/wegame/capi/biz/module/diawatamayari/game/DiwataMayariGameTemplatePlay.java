@@ -104,6 +104,13 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
+        // 结果验证数据添加
+        //// 总中奖金额
+        long totalRewardAmount = ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+        gamePlay.setOverallRewardAmount(totalRewardAmount);
         return ret;
     }
 
@@ -141,6 +148,9 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
             log.error("template is empty, betType:{}, range start: [], end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
+        // 结果验证数据添加
+        gamePlay.setTemplateId(betRecordId);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return configRecordList;
     }
 

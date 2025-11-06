@@ -64,7 +64,7 @@ public class BakunawaGameTemplatePlay extends AbstractGame<BakunawaGameRecordDo>
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
-        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(BAKUNAWA, gamePlay.getBetType(), new BigDecimal("1"), new BigDecimal("1"), BakunawaBetRecordTemplateEsDo.class);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(BAKUNAWA, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), BakunawaBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
         log.info("betRecordId:{}", betRecordId);
@@ -94,12 +94,16 @@ public class BakunawaGameTemplatePlay extends AbstractGame<BakunawaGameRecordDo>
         WheelDo<SymbolDo> wheel = convertWheel(configRecordDo.getWheel());
         RewardHandleDo<SymbolDo> rewardHandleDo = build(GAME_INFO, gamePlay, wheel, BigDecimal.ZERO);
         JSONObject multipleJsonObject = JSON.parseObject(JSON.toJSONString(configRecordDo.getExtInfo()));
-        MultiplePieTypeEnum multiplePieType = MultiplePieTypeEnum.valueOf(multipleJsonObject.getString("multiplePieType"));
-        AssertUtil.assertNotNull(multiplePieType, ErrorCode.ERR_PARAM);
-        rewardHandleDo.setMultiplePieType(multiplePieType);
-        rewardHandleDo.setCurrentMultiple(new BigDecimal(multipleJsonObject.getString("multiplePie")));
+        MultiplePieTypeEnum multiplePieType = MultiplePieTypeEnum.valueOfCode(multipleJsonObject.getString("multiplePieType"));
+        rewardHandleDo.setMultiplePieType(Objects.isNull(multiplePieType) ? null : multiplePieType);
+        String multiplePie = multipleJsonObject.getString("multiplePie");
+        rewardHandleDo.setCurrentMultiple(Objects.isNull(multiplePie) ? null : new BigDecimal(multiplePie));
         RewardResultDo<SymbolDo> rewardResult = bakunawaRewardHandler.handle(rewardHandleDo);
         long overallRewardAmount = rewardResult.getTotalRewardAmount();
+        // 结果验证数据添加
+        gamePlay.setTemplateId(betRecordId);
+        gamePlay.setOverallRewardAmount(overallRewardAmount);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, rewardResult, overallRewardAmount));
     }
 

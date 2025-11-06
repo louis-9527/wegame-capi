@@ -192,6 +192,7 @@ public class UserLoginInfoService {
     public void asyncAddOrUpdate(UserLoginInfoDo userLoginInfoDo) {
         try {
             Long id = userLoginInfoMapper.selectId(UserLoginInfoQuery.builder()
+                    .pId(userLoginInfoDo.getPId())
                     .channelId(userLoginInfoDo.getChannelId())
                     .gameId(userLoginInfoDo.getGameId())
                     .userId(userLoginInfoDo.getUserId())

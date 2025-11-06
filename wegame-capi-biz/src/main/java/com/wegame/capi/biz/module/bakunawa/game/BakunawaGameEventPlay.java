@@ -61,6 +61,7 @@ public class BakunawaGameEventPlay extends AbstractGame<BakunawaGameRecordDo> {
         rewardHandleDo.setCurrentMultiple(new BigDecimal(multipleJsonObject.getString("multiplePie")));
         RewardResultDo<SymbolDo> rewardResult = bakunawaRewardHandler.handle(rewardHandleDo);
         long overallRewardAmount = rewardResult.getTotalRewardAmount();
+        gamePlay.setOverallRewardAmount(overallRewardAmount);
         return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, rewardResult, overallRewardAmount));
     }
 
