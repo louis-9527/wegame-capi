@@ -85,6 +85,12 @@ public class DiwataMayariGameEventPlay extends AbstractGame<DiwataMayariGameReco
             // 处理免费轮
             processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId);
         }
+        //// 总中奖金额
+        long totalRewardAmount = ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+        gamePlay.setOverallRewardAmount(totalRewardAmount);
         return ret;
     }
 
