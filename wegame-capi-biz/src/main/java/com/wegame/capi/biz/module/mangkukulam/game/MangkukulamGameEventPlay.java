@@ -92,6 +92,12 @@ public class MangkukulamGameEventPlay extends AbstractGame<MangkukulamGameRecord
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
+        //// 总中奖金额
+        long totalRewardAmount = ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+        gamePlay.setOverallRewardAmount(totalRewardAmount);
         return ret;
     }
 
