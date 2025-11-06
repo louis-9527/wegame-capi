@@ -100,6 +100,10 @@ public class BakunawaGameTemplatePlay extends AbstractGame<BakunawaGameRecordDo>
         rewardHandleDo.setCurrentMultiple(Objects.isNull(multiplePie) ? null : new BigDecimal(multiplePie));
         RewardResultDo<SymbolDo> rewardResult = bakunawaRewardHandler.handle(rewardHandleDo);
         long overallRewardAmount = rewardResult.getTotalRewardAmount();
+        // 结果验证数据添加
+        gamePlay.setTemplateId(betRecordId);
+        gamePlay.setOverallRewardAmount(overallRewardAmount);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, rewardResult, overallRewardAmount));
     }
 
