@@ -33,6 +33,10 @@ public abstract class AbstractBetRecordManager<T extends ToVoConverter> {
         return betRecordService.get(betRecordId, gameType);
     }
 
+    public BetRecordDo getBetRecordByIdFromPrimary(Long betRecordId, GameTypeEnum gameType) {
+        return betRecordService.getById(betRecordId, gameType,true);
+    }
+
     public abstract List<T> listGameRecord(GameRecordQuery query, GameTypeEnum gameType);
 
     public abstract List<T> listGameRecordWithCache(GameRecordQuery query, GameTypeEnum gameType);

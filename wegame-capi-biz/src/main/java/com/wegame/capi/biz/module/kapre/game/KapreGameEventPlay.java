@@ -71,6 +71,12 @@ public class KapreGameEventPlay extends AbstractGame<KapreGameRecordDo> {
             // 迭代替代递归处理
             this.loopHandle(taskLinkedList, ret, gamePlay, batchIdMap);
         }
+        //// 总中奖金额
+        long totalRewardAmount = ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+        gamePlay.setOverallRewardAmount(totalRewardAmount);
         return ret;
     }
 

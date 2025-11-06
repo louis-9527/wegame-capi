@@ -14,6 +14,7 @@ import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -86,16 +87,27 @@ public class BetRecordService extends AbstractService {
         return modifiedCount;
     }
 
-    public BetRecordDo get(Long id, GameTypeEnum gameType) {
+    public BetRecordDo getById(Long id, GameTypeEnum gameType, boolean primary) {
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         Criteria criteria = new Criteria();
         criteria.and("_id").is(id);
         Query query = new Query(criteria);
-        BetRecordPo betRecordPo = getMongoTemplate(gameType).findOne(
+        MongoTemplate template = null ;
+        if (primary) {
+            template = getPrimaryMongoTemplate(gameType);
+        } else {
+            template = getMongoTemplate(gameType);
+        }
+        BetRecordPo betRecordPo = template.findOne(
                 query,
                 BetRecordPo.class,
                 gameType.getBetRecordCollectionName());
         return poToDo(betRecordPo);
+    }
+
+    public BetRecordDo get(Long id, GameTypeEnum gameType) {
+        AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
+        return getById(id, gameType, false);
     }
 
     // @Cacheable(value = CacheConstants.BET_RECORD, key = "#gameType.name + '_' + #playerId + '_'  + #id")
