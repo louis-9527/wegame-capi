@@ -72,6 +72,12 @@ public class SirenaGameEventPlay extends AbstractGame<SirenaGameRecordDo> {
             this.loopHandle(taskLinkedList, ret, gamePlay, batchIdMap);
         }
         SirenaSymbolUtil.postProcessPlaceholderSymbol(ret);
+        //// 总中奖金额
+        long totalRewardAmount = ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+        gamePlay.setOverallRewardAmount(totalRewardAmount);
         return ret;
     }
 
@@ -113,10 +119,10 @@ public class SirenaGameEventPlay extends AbstractGame<SirenaGameRecordDo> {
     }
 
     private SirenaGameRecordDo buildGameRecord(Long id,
-                                              Long parentId,
-                                              Long betRecordId,
-                                              WheelDo<SirenaSymbolDo> wheel,
-                                              RewardResultDo<SirenaSymbolDo> rewardResult) {
+                                               Long parentId,
+                                               Long betRecordId,
+                                               WheelDo<SirenaSymbolDo> wheel,
+                                               RewardResultDo<SirenaSymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         return SirenaGameRecordDo.builder()
