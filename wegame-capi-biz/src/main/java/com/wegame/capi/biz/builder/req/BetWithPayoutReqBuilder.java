@@ -30,7 +30,7 @@ public class BetWithPayoutReqBuilder {
                 .pId(betRecordDo.getPId())
                 .channelId(betRecordDo.getChannelId())
                 .playerName(betRecordDo.getPlayerName())
-                .refId(betRecordDo.getBetSerialNo())
+                .refId(buildRefId(betRecordDo))
                 .ieId(Objects.nonNull(betRecordDo.getExtendInfo()) ? betRecordDo.getExtendInfo().getIeId() : null)
                 .createTime(DateUtil.toUTC(new Date(betRecordDo.getCreateTime())))
                 .betAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()))
@@ -126,7 +126,7 @@ public class BetWithPayoutReqBuilder {
                 .pId(betRecordDo.getPId())
                 .channelId(betRecordDo.getChannelId())
                 .playerName(betRecordDo.getPlayerName())
-                .refId(betRecordDo.getBetSerialNo())
+                .refId(buildRefId(betRecordDo))
                 .createTime(DateUtil.toUTC(new Date(betRecordDo.getCreateTime())))
                 .betAmount(AmountUtil.toBigDecimal(betRecordDo.getPayAmount()))
                 .payoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()))
@@ -222,7 +222,7 @@ public class BetWithPayoutReqBuilder {
                 .pId(userInfo.getPId())
                 .channelId(userInfo.getChannelId())
                 .playerName(userInfo.getPlayerName())
-                .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
+                .refId(buildRefId(betRecordDo))
                 .createTime(DateUtil.toUTC(new Date()))
                 .payoutAmount(AmountUtil.toBigDecimal(betRecordDo.getPayOutAmount()))
                 .betDetails(FreeSpinReq.BetDetails.builder()
@@ -235,5 +235,9 @@ public class BetWithPayoutReqBuilder {
                 .campaignId(betRecordDo.getExtendInfo().getCampaignId())
                 .betValue(AmountUtil.toBigDecimal(betRecordDo.getBetAmount()))
                 .build();
+    }
+
+    public static String buildRefId(BetRecordDo betRecordDo) {
+        return betRecordDo.getBetSerialNo() + betRecordDo.getGameId();
     }
 }

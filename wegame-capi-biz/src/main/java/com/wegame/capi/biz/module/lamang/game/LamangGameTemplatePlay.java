@@ -109,6 +109,13 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
         }
+        // 结果验证数据添加
+        //// 总中奖金额
+        long totalRewardAmount = ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+        gamePlay.setOverallRewardAmount(totalRewardAmount);
         return ret;
     }
 
@@ -132,7 +139,8 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
         LamangBetRecordTemplateEsDo template = loadTemplate(gamePlay, betRecordId, templateMultipleRange);
         List<GameRecordTemplateDo> configRecordList = decompressGameRecordList(template);
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
-
+        gamePlay.setTemplateId(betRecordId);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return configRecordList;
     }
 
