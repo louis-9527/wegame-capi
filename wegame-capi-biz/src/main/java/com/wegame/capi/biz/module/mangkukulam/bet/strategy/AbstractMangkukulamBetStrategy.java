@@ -91,7 +91,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
             // 非免费轮投注流程
             // 如果是第二步直接走betForNonFreeWheel
             if (BetSubTypeEnum.isSecondStep(betDo.getBetSubType().getCode())) {
-                betForNonFreeWheel(betDo);
+                return betForNonFreeWheel(betDo);
             }
             //// 1、是否使用星卡
             if (isCanStarCardBet(betDo)) {
