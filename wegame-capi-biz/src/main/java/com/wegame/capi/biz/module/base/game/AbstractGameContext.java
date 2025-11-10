@@ -61,11 +61,13 @@ public abstract class AbstractGameContext<R> {
         TemplateMultipleRange templateMultipleRange = gamePlayDo.getTemplateMultipleRange();
         // 上限和下限
         Long payAmount = gamePlayDo.getPayAmount();
+        Long betAmount = gamePlayDo.getBetAmount();
         switch (gamePlayDo.getGamePlayType()) {
             case TEMPLATE_PLAY:
                 AssertUtil.assertNotNull(overallRewardAmount, ErrorCode.ERR_INTER);
                 AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
-                BigDecimal divideValue = BigDecimal.valueOf(overallRewardAmount).divide(BigDecimal.valueOf(payAmount), 2, RoundingMode.FLOOR);
+                Long byDivideAmount = payAmount > 0 ? payAmount : betAmount;
+                BigDecimal divideValue = BigDecimal.valueOf(overallRewardAmount).divide(BigDecimal.valueOf(byDivideAmount), 2, RoundingMode.FLOOR);
                 if (divideValue.compareTo(templateMultipleRange.getEnd()) > 0) {
                     log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than multiple up limit,stop process.gameplay:{}"
                             , JSON.toJSONString(gamePlayDo));
