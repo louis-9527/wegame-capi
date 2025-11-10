@@ -57,36 +57,42 @@ public abstract class AbstractGameContext<R> {
     }
 
     private void playResultValidate(GamePlayDo gamePlayDo) {
-        Long overallRewardAmount = gamePlayDo.getOverallRewardAmount();
-        TemplateMultipleRange templateMultipleRange = gamePlayDo.getTemplateMultipleRange();
-        // 上限和下限
-        Long payAmount = gamePlayDo.getPayAmount();
-        Long betAmount = gamePlayDo.getBetAmount();
-        switch (gamePlayDo.getGamePlayType()) {
-            case TEMPLATE_PLAY:
-                AssertUtil.assertNotNull(overallRewardAmount, ErrorCode.ERR_INTER);
-                AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
-                Long byDivideAmount = payAmount > 0 ? payAmount : betAmount;
-                BigDecimal divideValue = BigDecimal.valueOf(overallRewardAmount).divide(BigDecimal.valueOf(byDivideAmount), 2, RoundingMode.FLOOR);
-                if (divideValue.compareTo(templateMultipleRange.getEnd()) > 0) {
-                    log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than multiple up limit,stop process.gameplay:{}"
-                            , JSON.toJSONString(gamePlayDo));
-                    throw new BusinessException(ErrorCode.ERR_INTER);
-                } else if (divideValue.compareTo(templateMultipleRange.getStart()) < 0) {
-                    log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than multiple low limit,stop process.gameplay:{}"
-                            , JSON.toJSONString(gamePlayDo));
+        try {
+            Long overallRewardAmount = gamePlayDo.getOverallRewardAmount();
+            TemplateMultipleRange templateMultipleRange = gamePlayDo.getTemplateMultipleRange();
+            // 上限和下限
+            Long payAmount = gamePlayDo.getPayAmount();
+            Long betAmount = gamePlayDo.getBetAmount();
+            switch (gamePlayDo.getGamePlayType()) {
+                case TEMPLATE_PLAY:
+                    AssertUtil.assertNotNull(overallRewardAmount, ErrorCode.ERR_INTER);
+                    AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
+                    Long byDivideAmount = payAmount > 0 ? payAmount : betAmount;
+                    BigDecimal divideValue = BigDecimal.valueOf(overallRewardAmount).divide(BigDecimal.valueOf(byDivideAmount), 2, RoundingMode.FLOOR);
+                    if (divideValue.compareTo(templateMultipleRange.getEnd()) > 0) {
+                        log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than multiple up limit,stop process.gameplay:{}"
+                                , JSON.toJSONString(gamePlayDo));
+                        throw new BusinessException(ErrorCode.ERR_INTER);
+                    } else if (divideValue.compareTo(templateMultipleRange.getStart()) < 0) {
+                        log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than multiple low limit,stop process.gameplay:{}"
+                                , JSON.toJSONString(gamePlayDo));
+                        return;
+                    }
                     return;
-                }
-                return;
-            case EVENT_PLAY:
-                AssertUtil.assertNotNull(overallRewardAmount, ErrorCode.ERR_INTER);
-                // 上限和下限
-                Long availableBonus = gamePlayDo.getAvailableBonus();
-                if (overallRewardAmount - payAmount > availableBonus) {
-                    log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than event up limit,stop process.gameplay:{}"
-                            , JSON.toJSONString(gamePlayDo));
-                    throw new BusinessException(ErrorCode.ERR_INTER);
-                }
+                case EVENT_PLAY:
+                    AssertUtil.assertNotNull(overallRewardAmount, ErrorCode.ERR_INTER);
+                    // 上限和下限
+                    Long availableBonus = gamePlayDo.getAvailableBonus();
+                    if (overallRewardAmount - payAmount > availableBonus) {
+                        log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than event up limit,stop process.gameplay:{}"
+                                , JSON.toJSONString(gamePlayDo));
+                        throw new BusinessException(ErrorCode.ERR_INTER);
+                    }
+            }
+        } catch (BusinessException be) {
+            throw be;
+        } catch (Exception e) {
+            log.error("AbstractGameContext#playResultValidate error,gamePlay:{}", JSON.toJSONString(gamePlayDo), e);
         }
 
 
