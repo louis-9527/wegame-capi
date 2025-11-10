@@ -74,7 +74,7 @@ public abstract class AbstractGameContext<R> {
                                 , JSON.toJSONString(gamePlayDo));
                         throw new BusinessException(ErrorCode.ERR_INTER);
                     } else if (divideValue.compareTo(templateMultipleRange.getStart()) < 0) {
-                        log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than multiple low limit,stop process.gameplay:{}"
+                        log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than multiple low limit,continue process.gameplay:{}"
                                 , JSON.toJSONString(gamePlayDo));
                         return;
                     }
