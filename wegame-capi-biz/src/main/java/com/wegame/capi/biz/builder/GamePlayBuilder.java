@@ -26,6 +26,7 @@ public class GamePlayBuilder {
                 .continuePlayContext(Objects.nonNull(betDo.getParentBetRecordId()) ? GamePlayDo.ContinuePlayContext.builder()
                         .parentBetRecordId(betDo.getParentBetRecordId())
                         .build() : null)
+                .betPromotionType(betDo.getBetPromotionType())
                 .build();
     }
 }

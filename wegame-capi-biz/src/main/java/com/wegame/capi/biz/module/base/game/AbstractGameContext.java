@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 抽象游戏上下文
@@ -58,6 +60,11 @@ public abstract class AbstractGameContext<R> {
 
     private void playResultValidate(GamePlayDo gamePlayDo) {
         try {
+            if (Objects.isNull(gamePlayDo.getBetPromotionType()) || Objects.equals(gamePlayDo.getBetPromotionType(), BetPromotionTypeEnum.STAR_CARD)) {
+                log.info("AbstractGameContext#playResultValidate,promotionType is null or start card continue process, gamePlay:{}", JSON.toJSONString(gamePlayDo));
+                return;
+            }
+
             Long overallRewardAmount = gamePlayDo.getOverallRewardAmount();
             TemplateMultipleRange templateMultipleRange = gamePlayDo.getTemplateMultipleRange();
             // 上限和下限

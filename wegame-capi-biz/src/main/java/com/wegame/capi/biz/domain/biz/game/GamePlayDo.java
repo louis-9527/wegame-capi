@@ -2,6 +2,7 @@ package com.wegame.capi.biz.domain.biz.game;
 
 import com.wegame.capi.client.enums.*;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -87,6 +88,10 @@ public class GamePlayDo implements Serializable {
          */
         private int freeWheelTimes;
     }
+    /**
+     * 投注营销类型：默认无
+     */
+    BetPromotionTypeEnum betPromotionType;
     /**
      * 对play 结果的验证数据源
      */
