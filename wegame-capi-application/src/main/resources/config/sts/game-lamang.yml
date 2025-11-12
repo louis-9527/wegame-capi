@@ -4,8 +4,8 @@ spring:
     mongodb:
       dynamic:
         lamang_mdb:
-          primary_uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/lamang?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
-          uri: mongodb+srv://yongkang:test123@makiling-qat-pri.anolx.mongodb.net/lamang?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          primary_uri: mongodb+srv://STmakiling_Service:m4FW0rFup5HsL7mY65@stress-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/lamang?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://STmakiling_Service:m4FW0rFup5HsL7mY65@stress-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/lamang?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
           db: lamang
 ## pulsar
 pulsar:
