@@ -4,8 +4,8 @@ spring:
     mongodb:
       dynamic:
         bakunawa_mdb:
-          primary_uri: mongodb+srv://QATmakiling_Service:t1FHb30UjHsBU0BX0T@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bakunawa?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false
-          uri: mongodb+srv://QATmakiling_Service:t1FHb30UjHsBU0BX0T@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bakunawa?maxPoolSize=10000&minPoolSize=500&maxIdleTimeMS=60000&waitQueueTimeoutMS=1000&connectTimeoutMS=10000&socketTimeoutMS=30000&heartbeatFrequencyMS=10000&minHeartbeatFrequencyMS=5000&compressors=zlib&retryWrites=false
+          primary_uri: mongodb+srv://QATmakiling_Service:t1FHb30UjHsBU0BX0T@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bakunawa?maxPoolSize=10&minPoolSize=2&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&readPreference=primary&ssl=false
+          uri: mongodb+srv://QATmakiling_Service:t1FHb30UjHsBU0BX0T@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/bakunawa?maxPoolSize=10&minPoolSize=2&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&ssl=false
           db: bakunawa
 ## pulsar
 pulsar:

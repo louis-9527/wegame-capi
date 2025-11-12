@@ -1,0 +1,17 @@
+#内部干预数据采集配置
+##大盘数据采集刷盘任务时间区间
+game:
+  metrics:
+    flush:
+      timer:
+        interval:
+          min: 120
+          max: 180
+##用户数据采集刷盘任务时间区间
+user:
+  metrics:
+    flush:
+      timer:
+        interval:
+          min: 130
+          max: 190

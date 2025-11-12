@@ -22,6 +22,10 @@ public class UserLoginInfoPo implements Serializable {
      */
     private Long id;
     /**
+     * pId
+     */
+    private String pId;
+    /**
      * 渠道id
      */
     private Long channelId;
