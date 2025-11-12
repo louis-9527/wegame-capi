@@ -23,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.ibongadarna.IbongAdarnaGameHelper.IBONG_ADARNA_GAME_INFO;
@@ -52,7 +54,9 @@ public class IbongAdarnaGameEventPlay extends AbstractGame<IbongAdarnaGameRecord
         WheelDo<IbongAdarnaSymbolDo> wheel = convertWheel(configRecordDo.getWheel());
         RewardResultDo<IbongAdarnaSymbolDo> firstWheelRewardResult = ibongAdarnaRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, new BigDecimal(configRecordDo.getExtInfo().toString())));
         long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
-        return Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, firstWheelRewardResult, overallRewardAmount));
+        List<IbongAdarnaGameRecordDo> ret = Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, firstWheelRewardResult, overallRewardAmount));
+        gamePlay.setOverallRewardAmount(overallRewardAmount);
+        return ret;
     }
 
     private IbongAdarnaGameRecordDo buildGameRecord(UserInfo userInfo,

@@ -132,6 +132,15 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
             // 处理免费轮
             processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId, maxBatchId);
         }
+        // 结果验证数据添加
+        //// 总中奖金额
+        long totalRewardAmount = ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+        gamePlay.setTemplateId(betRecordId);
+        gamePlay.setOverallRewardAmount(totalRewardAmount);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return ret;
     }
 
@@ -161,10 +170,10 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
                 if (record.getIndex() == 0) {
                     gameRecordIds.add(gameRecordId);
                     boolean lastGameFlag = batchId == maxBatchId;
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record,totalMultipleAmount, lastGameFlag);
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record, totalMultipleAmount, lastGameFlag);
                     ret.add(gameRecord);
                 } else {
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record,totalMultipleAmount, false);
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record, totalMultipleAmount, false);
                     ret.add(gameRecord);
                 }
                 preGameRecord = gameRecord;
@@ -177,7 +186,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         for (Map.Entry<GameRecordTemplateDo, MalakasGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
             GameRecordTemplateDo key = entry.getKey();
             MalakasGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key,value, groupedByBatchId, maxBatchId);
+            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId, maxBatchId);
         }
     }
 

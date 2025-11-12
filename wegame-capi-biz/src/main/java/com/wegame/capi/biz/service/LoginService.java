@@ -53,6 +53,7 @@ public class LoginService {
         }
         UserInfo userInfo = UserInfoBuilder.buildUserInfo(userLoginDo, Long.valueOf(userId), token);
         userLoginInfoService.asyncAddOrUpdate(UserLoginInfoDo.builder()
+                .pId(userLoginDo.getPId())
                 .channelId(Long.parseLong(userLoginDo.getChannelId()))
                 .gameId(userLoginDo.getGameId())
                 .userId(Long.valueOf(userId))

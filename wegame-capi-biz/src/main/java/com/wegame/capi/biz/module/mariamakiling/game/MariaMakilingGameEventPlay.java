@@ -100,6 +100,7 @@ public class MariaMakilingGameEventPlay extends AbstractGame<MariaMakilingGameRe
         if (CollectionUtils.isNotEmpty(freeWheelGameRecordList)) {
             ret.addAll(freeWheelGameRecordList);
         }
+        gamePlay.setOverallRewardAmount(overallRewardAmount);
         return ret;
     }
 
