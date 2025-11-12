@@ -16,14 +16,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.wegame.capi.common.Constants.BUILD_BEAN_FORMAT;
-import static com.wegame.capi.common.Constants.MALAKAS_PROP;
+import static com.wegame.capi.common.Constants.*;
 
 @Slf4j
 @Configuration
 @ConditionalOnExpression(value = "${" +
        // + XXX_PROP + "} || ${"   // 新增游戏加该配置
-        MALAKAS_PROP
+        MARIA_MAKILING_PROP
         + "}")
 public class EsRestClientConfig {
     @Value("${spring.elasticsearch.rest.uris}")
