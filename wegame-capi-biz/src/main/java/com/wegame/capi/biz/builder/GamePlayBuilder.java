@@ -23,6 +23,7 @@ public class GamePlayBuilder {
                 .operationEventConfigBetRecordId(Objects.nonNull(betDo.getGameOperationEvent()) ? betDo.getGameOperationEvent().getConfigId() : null)
                 .gameEventDo(betDo.getGameOperationEvent())
                 .volatility(betDo.getVolatility())
+                .betPromotionType(betDo.getBetPromotionType())
                 .build();
     }
 }
