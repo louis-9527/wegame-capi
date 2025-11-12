@@ -93,7 +93,7 @@ public interface UserLoginInfoMapper {
     @Update({"<script>",
         " update `user_login_info` ",
         " <trim prefix=\"set\" suffixOverrides=\",\"> ",
-            " <if test=\"pId != null\">and `p_id` = #{pId},</if> ",
+        "     <if test=\"pId != null\"> `p_id` = #{pId},</if> ",
         "     <if test=\"channelId != null\">`channel_id` = #{channelId},</if> ",
         "     <if test=\"gameId != null\">`game_id` = #{gameId},</if> ",
         "     <if test=\"userId != null\">`user_id` = #{userId},</if> ",
