@@ -5,7 +5,7 @@ spring:
     timeout: 500
     cluster:
       nodes:
-        - prod-makiling-pri.redis.singapore.rds.aliyuncs.com:6379
+        - prod-malakas-pri.redis.singapore.rds.aliyuncs.com:6379
       max-redirects: 3
     redisson:
       minIdlePoolSize: 50
