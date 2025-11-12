@@ -30,6 +30,7 @@ import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -38,10 +39,12 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
-import static com.wegame.capi.common.enums.TemplateTypeEnum.MARIA_MAKILING;
+import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 @Slf4j
 @Component("mariaMakilingGameTemplatePlay")
+@ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
 public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGameRecordDo> {
 
     private static final Long GAME_RECORD_DEFAULT_PARENT_ID = 0L;
