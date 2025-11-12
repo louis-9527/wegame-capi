@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        ibong_adarna_mdb:
+          primary_uri: mongodb+srv://UATmakiling_Service:4ZyEc42NCg6DfRMl@uat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/ibong?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&ssl=false&readPreference=primary
+          uri: mongodb+srv://UATmakiling_Service:4ZyEc42NCg6DfRMl@uat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/ibong?compressors=zlib&retryWrites=true&w=majority&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&ssl=false&readPreference=secondaryPreferred
+          db: ibong
+## pulsar
+pulsar:
+  dynamic:
+    ibong_adarna:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_IbongAdarna
+      namespace: ${spring.application.env}
+      bet_topic: IbongAdarna_topic
+      bet_deadLetter_topic: IbongAdarna_deadLetter_topic

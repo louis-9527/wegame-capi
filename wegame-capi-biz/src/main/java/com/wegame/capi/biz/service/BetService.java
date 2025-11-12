@@ -12,7 +12,6 @@ import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +30,8 @@ public class BetService {
 
     private static final Map<GameTypeEnum, String> contextNameMap = new ImmutableMap.Builder<GameTypeEnum, String>()
             .put(GameTypeEnum.MARIA_MAKILING, "mariaMakilingBetContext")
+            .put(GameTypeEnum.MALAKAS, "malakasBetContext")
+            .put(GameTypeEnum.IBONG_ADARNA, "ibongAdarnaBetContext")
             .build();
 
     @Autowired
@@ -50,7 +51,8 @@ public class BetService {
 
     public void buildGamePlayType(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        if (Objects.equals(betDo.getGameType(), GameTypeEnum.MARIA_MAKILING)) {
+        if (Objects.equals(betDo.getGameType(), GameTypeEnum.MARIA_MAKILING) ||
+                Objects.equals(betDo.getGameType(), GameTypeEnum.MALAKAS)) {
             if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
                 betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
             } else {

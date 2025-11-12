@@ -17,6 +17,15 @@ public enum StarCardUseTypeEnum {
             "mariamakiling_star_card_record"
     ),
 
+    MALAKAS(
+            GameTypeEnum.MALAKAS,
+            "malakas_star_card_record"
+    ),
+    IBONG_ADARNA(
+            GameTypeEnum.IBONG_ADARNA,
+            "ibongadarna_star_card_record"
+    ),
+
     ;
     /**
      * 游戏类型

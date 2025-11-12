@@ -24,14 +24,21 @@ public class Constants {
             "    redis.call('LTRIM', key, -maxSize, -1)\n" +
             "end";
     public static final Integer MARIA_MARKILING_REWARD_NOTIFY_SIZE = 10;
-    // 推送大奖tips内容
+    public static final Integer MALAKAS_REWARD_NOTIFY_SIZE = 10;
+    public static final Integer IBONG_ADARNA_REWARD_NOTIFY_SIZE = 10;
+    // maria推送大奖tips内容
     public static final String MARIA_MARKILING_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+    // malakas推送大奖tips内容
+    public static final String MALAKAS_REWARD_NOTIFY_CONTENT_FORMAT = "%s %s Won ₱%s in %s free spins";
+    // ibong推送大奖tips内容 XXXX won 20x rewards ，₱ 99999
+    public static final String IBONG_ADARNA_REWARD_NOTIFY_CONTENT_FORMAT = "%s won %sx rewards ，₱ %s ";
 
     // go sec header
     public static final String WE_GAME_GO_SEC_HEADER = "we-game-go-sec";
 
 
     public static final int CONST_1 = 1;
+    public static final int CONST_100 = 100;
     public static final int CONST_10000 = 10000;
     public static final int CONST_100000 = 100000;
     public static final int CONST_1000000 = 1000000;
@@ -57,6 +64,8 @@ public class Constants {
     // property
     public static final String TRUE_VAL = "true";
     public static final String MARIA_MAKILING_PROP = "game.enable.MariaMakiling";
+    public static final String MALAKAS_PROP = "game.enable.Malakas";
+    public static final String IBONG_ADARNA_PROP = "game.enable.IbongAdarna";
 
 
     public static final long FIVE_MINUTES_AGO = 5 * 60 * 1000;

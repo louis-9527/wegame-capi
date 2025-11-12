@@ -29,8 +29,11 @@ spring:
     import:
       - application-datasource.yml
       - application-redis.yml
+      - application-elasticsearch.yml
       - game-common.yml
       - game-maria_makiling.yml
+      - game-malakas.yml
+      - game-ibong.yml
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true

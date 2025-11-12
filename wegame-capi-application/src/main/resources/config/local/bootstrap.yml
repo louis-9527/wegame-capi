@@ -4,7 +4,7 @@ logging:
     #    org.apache.pulsar: DEBUG
     #    org.springframework.web: trace
     #    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-    com.wegame: INFO
+    com.wegame: DEBUG
     com.wegame.base.config: ERROR
     org.apache.pulsar: ERROR
     #    org.apache.ibatis: trace
@@ -15,4 +15,6 @@ logging:
 #game switch
 game:
   enable:
-    MariaMakiling: true
+    MariaMakiling: false
+    Malakas: true
+    IbongAdarna: false

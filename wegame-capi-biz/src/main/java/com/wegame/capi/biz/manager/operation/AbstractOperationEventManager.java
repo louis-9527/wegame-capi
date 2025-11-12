@@ -269,21 +269,20 @@ public abstract class AbstractOperationEventManager {
         }
 
         // 如果投注金额小于系统最小的投注金额,需要判断是否可以赠送出去
-        if (eventAmount < Constants.MIN_BET_AMOUNT_M * betAmount) {
-            // 系统最小赔率为1.1倍。 需判断最小投注金额*最小赔率是否大于干预金额， 则不可干预
-            // 上报
-            log.info("event getInterventionAmount finish amount error eventId:{}", eventDo.getEventId());
-            // 修改事件状态是进行中。
-            this.updateOperationUseStatus(eventDo.getId(), OperationEventStatusEnum.ING); // 该行代码可干掉： todo
-            if (finishBonus > 0L) {
-                // 该干预事件被干预过
-                asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_FIND_DETAIL);
-            } else {
-                // 该干预事件未被干预过
-                asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_NOT_DETAIL);
+            if (eventAmount < operationEventType().getGameType().getMinBetMultiple() * betAmount) {
+                // 上报
+                log.info("event getInterventionAmount finish amount err eventId:{}", eventDo.getEventId());
+                // 修改事件状态是进行中
+                this.updateOperationUseStatus(eventDo.getId(), OperationEventStatusEnum.ING);
+                if (finishBonus > 0L) {
+                    // 该干预事件被干预过
+                    asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_FIND_DETAIL);
+                } else {
+                    // 该干预事件未被干预过
+                    asyncUpdateFinishEvent(eventDo.getId(), playName, OperationEventSubStatusEnum.FINISH_AMOUNT_ERROR_NOT_DETAIL);
+                }
+                return null;
             }
-            return null;
-        }
         return eventAmount;
     }
 

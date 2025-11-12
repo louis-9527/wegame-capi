@@ -5,7 +5,10 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
+import com.wegame.capi.biz.domain.biz.template.mariamakiling.MariaMakilingBetRecordTemplateEsDo;
+import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
@@ -18,15 +21,16 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.base.reward.RewardHandler;
 import com.wegame.capi.biz.service.RandomService;
-import com.wegame.capi.biz.service.template.BetRecordTemplateService;
-import com.wegame.capi.biz.service.template.GameRecordTemplateService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
+import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -35,10 +39,12 @@ import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.mariamakiling.MariaMakilingGameHelper.MARIA_MAKILING_GAME_INFO;
-import static com.wegame.capi.common.enums.TemplateTypeEnum.MARIA_MAKILING;
+import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 
 @Slf4j
 @Component("mariaMakilingGameTemplatePlay")
+@ConditionalOnProperty(name = MARIA_MAKILING_PROP, havingValue = TRUE_VAL)
 public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGameRecordDo> {
 
     private static final Long GAME_RECORD_DEFAULT_PARENT_ID = 0L;
@@ -47,13 +53,11 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
     @Autowired
     RewardHandler<SymbolDo> mariaMakilingRewardHandler;
     @Autowired
-    GameRecordTemplateService gameRecordTemplateService;
-    @Autowired
-    BetRecordTemplateService betRecordTemplateService;
-    @Autowired
     MariaMakilingConfig mariaMakilingConfig;
     @Autowired
     RandomService randomService;
+    @Autowired
+    BetRecordTemplateEsService<MariaMakilingBetRecordTemplateEsDo> betRecordTemplateEsService;
 
     @Override
     public List<MariaMakilingGameRecordDo> play(GamePlayDo gamePlay) {
@@ -64,24 +68,28 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
 
-        List<Long> betRecordIdList = betRecordTemplateService.listIdByMultipleRange(MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByMultipleRange(TemplateTypeEnum.MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd(), MariaMakilingBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
-        Long betRecordId = getRandomElement(betRecordIdList);
+        Long templateBetRecordId = getRandomElement(betRecordIdList);
 
         List<GameRecordTemplateDo> configRecordList;
+        MariaMakilingBetRecordTemplateEsDo template;
         if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MARIA_MAKILING, gamePlay.getBetType(), templateMultipleRange)) {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
-                configRecordList = gameRecordTemplateService.listByBetRecordIdWithLocalCache(MARIA_MAKILING, betRecordId);
+                template = betRecordTemplateEsService.getTemplateWithLocalCache(TemplateTypeEnum.MARIA_MAKILING, templateBetRecordId, MariaMakilingBetRecordTemplateEsDo.class);
             } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                configRecordList = gameRecordTemplateService.listByBetRecordIdWithRedisCache(MARIA_MAKILING, betRecordId);
+                template = betRecordTemplateEsService.getTemplateWithRedisCache(TemplateTypeEnum.MARIA_MAKILING, templateBetRecordId, MariaMakilingBetRecordTemplateEsDo.class);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
         } else {
             // 没有被预热的倍率，需要重新查询
-            configRecordList = gameRecordTemplateService.listByBetRecordId(MARIA_MAKILING, betRecordId);
+            template = betRecordTemplateEsService.findById(TemplateTypeEnum.MARIA_MAKILING, templateBetRecordId, MariaMakilingBetRecordTemplateEsDo.class);
         }
+        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
+        configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
+        });
         if (CollectionUtils.isEmpty(configRecordList)) {
             log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         }
@@ -137,6 +145,11 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
         if (CollectionUtils.isNotEmpty(freeWheelGameRecordList)) {
             ret.addAll(freeWheelGameRecordList);
         }
+
+        // 结果验证数据添加
+        gamePlay.setTemplateId(templateBetRecordId);
+        gamePlay.setOverallRewardAmount(overallRewardAmount);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return ret;
     }
 

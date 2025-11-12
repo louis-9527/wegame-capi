@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        malakas_mdb:
+          primary_uri: mongodb+srv://QATmakiling_Service:t1FHb30UjHsBU0BX0T@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/malakas?maxPoolSize=10&minPoolSize=2&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&readPreference=primary&ssl=false
+          uri: mongodb+srv://QATmakiling_Service:t1FHb30UjHsBU0BX0T@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/malakas?maxPoolSize=10&minPoolSize=2&maxIdleTimeMS=300000&waitQueueTimeoutMS=1000&connectTimeoutMS=1000&socketTimeoutMS=30000&heartbeatFrequencyMS=15000&minHeartbeatFrequencyMS=10000&compressors=zlib&retryWrites=false&ssl=false
+          db: malakas
+## pulsar
+pulsar:
+  dynamic:
+    malakas:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_Malakas
+      namespace: ${spring.application.env}
+      bet_topic: Malakas_topic
+      bet_deadLetter_topic: Malakas_deadLetter_topic

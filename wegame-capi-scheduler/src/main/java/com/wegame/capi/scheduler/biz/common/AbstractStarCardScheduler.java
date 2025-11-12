@@ -7,7 +7,9 @@ import com.wegame.capi.biz.domain.biz.promotion.StarCardUseRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
 import com.wegame.capi.biz.service.promotion.StarCardUseRecordService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.*;
+import com.wegame.capi.common.enums.BetStatusEnum;
+import com.wegame.capi.common.enums.StarCardReportStatusEnum;
+import com.wegame.capi.common.enums.StarCardUseStatusEnum;
 import com.wegame.capi.dao.repository.domain.star.StarCardUseRecordQuery;
 import com.wegame.capi.scheduler.AbstractScheduler;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +80,7 @@ public abstract class AbstractStarCardScheduler
     private void execUseStatusIngHandle(StarCardUseRecordDo useRecordDo) {
         try {
             Long betRecordId = useRecordDo.getBetRecordId();
-            if(Objects.isNull(betRecordId)){
+            if (Objects.isNull(betRecordId)) {
                 return;
             }
             // 查询原始订单的状态
@@ -89,7 +91,7 @@ public abstract class AbstractStarCardScheduler
                 // 未找到投注记录,
                 if (StarCardUseStatusEnum.ING == useRecordDo.getUseStatus()) {
                     // todo 使用状态为使用中,需要查询星卡真实使用状态
-                     starCardUseStatus = StarCardUseStatusEnum.FAIL;
+                    starCardUseStatus = StarCardUseStatusEnum.FAIL;
                 } else if (StarCardUseStatusEnum.SUCCESS == useRecordDo.getUseStatus()) {
                     //todo 上报
                     starCardReportStatus = StarCardReportStatusEnum.ING;
@@ -120,7 +122,7 @@ public abstract class AbstractStarCardScheduler
                     .failCode(-1)
                     .failMsg("bet error")
                     .build();
-            starCardUseRecordService.update(useUpdate,gameTypeEnum());
+            starCardUseRecordService.update(useUpdate, gameTypeEnum());
         } catch (Exception e) {
             log.error("eventDetailFailHandle exception", e);
         }

@@ -32,6 +32,12 @@ public class RewardLineDo<T extends SymbolDo> implements Serializable {
      * 中奖线子类型
      */
     private RewardLineSubTypeEnum rewardLineSubType;
+
+    /**
+     * 中奖线号
+     */
+    private Integer rewardLineNo;
+
     /**
      * 中奖线数量
      */

@@ -1,0 +1,58 @@
+package com.wegame.capi.biz.listener.betRecord;
+
+import com.alibaba.fastjson.TypeReference;
+import com.wegame.base.mq.MQMessage;
+import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.game.IbongAdarnaGameRecordDo;
+import com.wegame.capi.biz.manager.AbstractBetRecordManager;
+import com.wegame.capi.biz.manager.IbongAdarnaBetRecordManager;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.pulsar.client.api.Consumer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
+
+import static com.wegame.capi.common.Constants.*;
+
+@Slf4j
+@Component
+@ConditionalOnProperty(name = IBONG_ADARNA_PROP, havingValue = TRUE_VAL)
+public class IbongAdarnaPulsarListener extends AbstractPulsarListener<IbongAdarnaGameRecordDo> {
+    @Autowired
+    IbongAdarnaBetRecordManager ibongAdarnaBetRecordManager;
+    @Autowired
+    Consumer<byte[]> ibongadarnaConsumer;
+
+    @Override
+    public Consumer<byte[]> getConsumer() {
+        return ibongadarnaConsumer;
+    }
+
+    @Override
+    public GameTypeEnum getGameType() {
+        return GameTypeEnum.IBONG_ADARNA;
+    }
+
+    @Override
+    public TypeReference<MQMessage<BetRecordDo<IbongAdarnaGameRecordDo>>> getTypeReference() {
+        log.info("IbongAdarnaPulsarListener getTypeReference。。。 ");
+        return new TypeReference<MQMessage<BetRecordDo<IbongAdarnaGameRecordDo>>>() {
+        };
+    }
+
+    @Override
+    public AbstractBetRecordManager<IbongAdarnaGameRecordDo> betRecordManager() {
+        return ibongAdarnaBetRecordManager;
+    }
+
+    @Override
+    public int getCorePoolSize() {
+        return 1;
+    }
+
+    @Override
+    public int getMaximumPoolSize() {
+        return 1;
+    }
+}

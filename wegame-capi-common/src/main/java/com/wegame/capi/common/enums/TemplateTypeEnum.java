@@ -21,6 +21,12 @@ public enum TemplateTypeEnum {
             TemplateConstants.MARIAMAKILING_BET_RECORD_TEMPLATE,
             TemplateConstants.MARIAMAKILING_GAME_RECORD_TEMPLATE
     ),
+
+    MALAKAS(
+            GameTypeEnum.MALAKAS,
+            TemplateConstants.MALAKAS_BET_RECORD_TEMPLATE,
+            ""
+    ),
     ;
 
 
@@ -31,11 +37,11 @@ public enum TemplateTypeEnum {
     /**
      * 投注记录
      */
-    private final String betRecordTemplateCollectionName;
+    private final String betRecordTemplateName;
     /**
      * 游戏记录
      */
-    private final String gameRecordTemplateCollectionName;
+    private final String gameRecordTemplateName;
 
     public static TemplateTypeEnum valueOfGameType(GameTypeEnum gameType) {
         if (gameType == null) {

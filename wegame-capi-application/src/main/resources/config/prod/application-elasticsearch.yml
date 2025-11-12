@@ -1,0 +1,15 @@
+### spring:elasticsearch
+spring:
+  elasticsearch:
+    rest:
+      uris: es-sg-toy4fht4h0003kiyj.elasticsearch.aliyuncs.com:9200
+      connection-timeout: 5
+      username: elastic
+      password: Innovatech@2025
+      read-timeout: 1
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
+      # 启动时自动建索引
+#      auto-index-creation: true

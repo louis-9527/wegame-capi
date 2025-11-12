@@ -6,6 +6,7 @@ import com.wegame.base.context.SystemInfo;
 import com.wegame.base.context.SystemInfoContext;
 import com.wegame.capi.biz.service.LoginService;
 import com.wegame.capi.biz.service.UserService;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -32,8 +33,6 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 public class ContextFilter extends OncePerRequestFilter {
-
-    RedisTemplate<String, Object> redisTemplate;
 
     LoginService loginService;
 
@@ -93,8 +92,8 @@ public class ContextFilter extends OncePerRequestFilter {
             }
             UserInfo user = null;
             if (StringUtils.isNotEmpty(_token_)) {
-                // user = (UserInfo) redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, _token_));
                 user = loginService.getUserInfoByToken(_token_);
+                log.info("get userInfo: {}", user);
             }
             UserInfoContext.setUserInfo(user);
         } catch (Exception e) {

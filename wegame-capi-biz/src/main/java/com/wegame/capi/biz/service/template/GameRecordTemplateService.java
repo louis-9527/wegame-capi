@@ -28,28 +28,28 @@ public class GameRecordTemplateService<T> extends AbstractService {
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateTypeEnum, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(tClass, ErrorCode.ERR_INTER);
-        BulkOperations bulkOps = getMongoTemplate(templateTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass, templateTypeEnum.getGameRecordTemplateCollectionName());
+        BulkOperations bulkOps = getMongoTemplate(templateTypeEnum.getGameType()).bulkOps(BulkOperations.BulkMode.UNORDERED, tClass, templateTypeEnum.getGameRecordTemplateName());
         bulkOps.insert(gameRecordList);
         bulkOps.execute();
         return true;
     }
 
     public List<GameRecordTemplateDo> listByBetRecordIdList(TemplateTypeEnum templateType, List<Long> betRecordIdList) {
-        log.info( "listByBetRecordIdList query, size: {}; typeEnum: {}", betRecordIdList.size(), templateType.getGameType());
+        log.info("listByBetRecordIdList query from mdb, size: {}; typeEnum: {}", betRecordIdList.size(), templateType.getGameType());
         Query query = Query.query(Criteria.where("betRecordId").in(betRecordIdList));
-        List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType()).find(query, GameRecordTemplatePo.class, templateType.getGameRecordTemplateCollectionName());
+        List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType()).find(query, GameRecordTemplatePo.class, templateType.getGameRecordTemplateName());
         return poToDoList(poList);
     }
 
     @CachePut(value = CacheConstants.GAME_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betRecordId")
     public List<GameRecordTemplateDo> putLocalCache(TemplateTypeEnum templateType, Long betRecordId, List<GameRecordTemplateDo> list) {
-        // log.info("putLocalCache, betRecordId: {}", betRecordId);
+        log.info("putLocalCache, betRecordId: {}", betRecordId);
         return list;
     }
 
     @CachePut(value = CacheConstants.GAME_RECORD_TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
     public List<GameRecordTemplateDo> putRedisCache(TemplateTypeEnum templateType, Long betRecordId, List<GameRecordTemplateDo> list) {
-        // log.info("putRedisCache, betRecordId: {}", betRecordId);
+        log.info("putRedisCache, betRecordId: {}", betRecordId);
         return list;
     }
 
@@ -63,16 +63,16 @@ public class GameRecordTemplateService<T> extends AbstractService {
     @Cacheable(value = CacheConstants.GAME_RECORD_TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
     public List<GameRecordTemplateDo> listByBetRecordIdWithRedisCache(TemplateTypeEnum templateType, Long betRecordId) {
         // todo delete log
-        log.info( "listByBetRecordIdWithRedisCache, betRecordId: {}; templateType: {}", betRecordId, templateType.getGameType());
+        log.info("listByBetRecordIdWithRedisCache, betRecordId: {}; templateType: {}", betRecordId, templateType.getGameType());
         return listByBetRecordId(templateType, betRecordId);
     }
 
     public List<GameRecordTemplateDo> listByBetRecordId(TemplateTypeEnum templateType, Long betRecordId) {
-        log.info( "listByBetRecordId, betRecordId: {}; templateType: {}", betRecordId, templateType.getGameType());
+        log.info("listByBetRecordId  from mdb , betRecordId: {}; templateType: {}", betRecordId, templateType.getGameType());
         List<GameRecordTemplatePo> poList = getMongoTemplate(templateType.getGameType())
                 .find(GameRecordRecordQueryBuilder.buildQuery(betRecordId),
                         GameRecordTemplatePo.class,
-                        templateType.getGameRecordTemplateCollectionName());
+                        templateType.getGameRecordTemplateName());
         return poToDoList(poList);
     }
 
