@@ -52,7 +52,7 @@ public class BetRecordTemplateService extends AbstractService {
 
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd) {
-        log.info("listIdByMultipleRange query, betTypeEnum: {}, multipleRangeStart: {}, multipleRangeEnd: {}, typeEnum: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.getGameType());
+        log.info("listIdByMultipleRange query  from mdb, betTypeEnum: {}, multipleRangeStart: {}, multipleRangeEnd: {}, typeEnum: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.getGameType());
         Query query = BetRecordTemplateQueryBuilder.buildQuery(betType, multipleRangeStart, multipleRangeEnd);
         String betRecordTemplateCollectionName = templateType.getBetRecordTemplateName();
         MongoTemplate mongoTemplate = getMongoTemplate(templateType.getGameType());

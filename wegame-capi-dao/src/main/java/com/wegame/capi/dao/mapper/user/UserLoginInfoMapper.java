@@ -17,6 +17,7 @@ import java.util.List;
 public interface UserLoginInfoMapper {
     /** 增 */
     @Insert({"insert into `user_login_info`(" +
+            " `p_id`, " +
             " `channel_id`, " +
             " `game_id`, " +
             " `user_id`, " +
@@ -28,6 +29,7 @@ public interface UserLoginInfoMapper {
             " `create_time`, " +
             " `update_time` " +
             ") values (" +
+            " #{pId}, " +
             " #{channelId}, " +
             " #{gameId}, " +
             " #{userId}, " +
@@ -44,6 +46,7 @@ public interface UserLoginInfoMapper {
 
     @Insert({"<script>",
         " insert into `user_login_info` (",
+        "   `p_id`, ",
         "   `channel_id`, ",
         "   `game_id`, ",
         "   `user_id`, ",
@@ -57,6 +60,7 @@ public interface UserLoginInfoMapper {
         ") values ",
         " <foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\" nullable=\"true\"> ",
         " (",
+        "   #{item.pId}, ",
         "   #{item.channelId}, ",
         "   #{item.gameId}, ",
         "   #{item.userId}, ",
@@ -89,6 +93,7 @@ public interface UserLoginInfoMapper {
     @Update({"<script>",
         " update `user_login_info` ",
         " <trim prefix=\"set\" suffixOverrides=\",\"> ",
+        "     <if test=\"pId != null\"> `p_id` = #{pId},</if> ",
         "     <if test=\"channelId != null\">`channel_id` = #{channelId},</if> ",
         "     <if test=\"gameId != null\">`game_id` = #{gameId},</if> ",
         "     <if test=\"userId != null\">`user_id` = #{userId},</if> ",
@@ -111,6 +116,7 @@ public interface UserLoginInfoMapper {
             " select * from `user_login_info` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
+            "     <if test=\"query.pId != null\">and `p_id` = #{query.pId}</if> ",
             "     <if test=\"query.channelId != null\">and `channel_id` = #{query.channelId}</if> ",
             "     <if test=\"query.gameId != null and query.gameId != ''\">and game_id like CONCAT('%', #{query.gameId}, '%')</if> ",
             "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
@@ -133,6 +139,7 @@ public interface UserLoginInfoMapper {
             " select id from `user_login_info` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
+            "     <if test=\"query.pId != null\">and `p_id` = #{query.pId}</if> ",
             "     <if test=\"query.channelId != null\">and `channel_id` = #{query.channelId}</if> ",
             "     <if test=\"query.gameId != null and query.gameId != ''\">and game_id like CONCAT('%', #{query.gameId}, '%')</if> ",
             "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
@@ -166,6 +173,7 @@ public interface UserLoginInfoMapper {
             " select count(1) from `user_login_info` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
+            "     <if test=\"query.pId != null\">and `p_id` = #{query.pId}</if> ",
             "     <if test=\"query.channelId != null\">and `channel_id` = #{query.channelId}</if> ",
             "     <if test=\"query.gameId != null and query.gameId != ''\">and game_id like CONCAT('%', #{query.gameId}, '%')</if> ",
             "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
@@ -186,6 +194,7 @@ public interface UserLoginInfoMapper {
             " select * from `user_login_info` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
+            "     <if test=\"query.pId != null\">and `p_id` = #{query.pId}</if> ",
             "     <if test=\"query.channelId != null\">and `channel_id` = #{query.channelId}</if> ",
             "     <if test=\"query.gameId != null and query.gameId != ''\">and game_id like CONCAT('%', #{query.gameId}, '%')</if> ",
             "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
@@ -210,6 +219,7 @@ public interface UserLoginInfoMapper {
             " select id from `user_login_info` ",
             " <where> ",
             "     <if test=\"query.id != null\"> `id` = #{query.id}</if> ",
+            "     <if test=\"query.pId != null\">and `p_id` = #{query.pId}</if> ",
             "     <if test=\"query.channelId != null\">and `channel_id` = #{query.channelId}</if> ",
             "     <if test=\"query.gameId != null and query.gameId != ''\">and game_id like CONCAT('%', #{query.gameId}, '%')</if> ",
             "     <if test=\"query.userId != null\">and `user_id` = #{query.userId}</if> ",
