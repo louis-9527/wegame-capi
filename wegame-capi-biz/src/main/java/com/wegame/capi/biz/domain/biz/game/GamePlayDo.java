@@ -5,6 +5,7 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -57,6 +58,10 @@ public class GamePlayDo implements Serializable {
      */
     private Long operationEventConfigBetRecordId;
     private GameOperationEventDo gameEventDo;
+    /**
+     * 投注营销类型：默认无
+     */
+    BetPromotionTypeEnum betPromotionType;
     /**
      * 对play 结果的验证数据源
      */
