@@ -63,6 +63,7 @@ public class UserLoginInfoConverter {
         Operator operator = OperatorUtil.getOperator();
         AssertUtil.assertNotNull(operator, ErrorCode.ERR_PARAM);
         UserLoginInfoPo po = new UserLoginInfoPo();
+        po.setPId(userLoginInfoDo.getPId());
         po.setChannelId(userLoginInfoDo.getChannelId());
         po.setGameId(userLoginInfoDo.getGameId());
         po.setUserId(userLoginInfoDo.getUserId());
