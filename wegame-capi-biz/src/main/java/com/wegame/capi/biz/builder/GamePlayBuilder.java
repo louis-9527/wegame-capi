@@ -22,6 +22,7 @@ public class GamePlayBuilder {
                 .betRecordId(betRecordId)
                 .operationEventConfigBetRecordId(Objects.nonNull(betDo.getGameOperationEvent()) ? betDo.getGameOperationEvent().getConfigId() : null)
                 .gameEventDo(betDo.getGameOperationEvent())
+                .betPromotionType(betDo.getBetPromotionType())
                 .build();
     }
 }
