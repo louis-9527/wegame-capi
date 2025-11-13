@@ -33,6 +33,7 @@ import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -42,10 +43,13 @@ import java.util.Random;
 
 import static com.wegame.capi.biz.builder.RewardHandlerBuilder.build;
 import static com.wegame.capi.biz.module.bakunawa.BakunawaGameHelper.BAKUNAWA_GAME_INFO;
+import static com.wegame.capi.common.Constants.BAKUNAWA_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 import static com.wegame.capi.common.enums.TemplateTypeEnum.BAKUNAWA;
 
 @Slf4j
 @Component("bakunawaGameTemplatePlay")
+@ConditionalOnProperty(name = BAKUNAWA_PROP, havingValue = TRUE_VAL)
 public class BakunawaGameTemplatePlay extends AbstractGame<BakunawaGameRecordDo> {
 
     private static final GameInfoDo GAME_INFO = BAKUNAWA_GAME_INFO;
