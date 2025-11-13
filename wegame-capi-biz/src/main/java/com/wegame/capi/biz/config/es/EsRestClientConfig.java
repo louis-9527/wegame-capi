@@ -21,10 +21,11 @@ import static com.wegame.capi.common.Constants.*;
 @Slf4j
 @Configuration
 @ConditionalOnExpression(value = "${" +
-        // XXX_PROP + "} || ${" +   // 新增游戏加该配置
+        // + XXX_PROP + "} || ${"   // 新增游戏加该配置
         LAMANG_PROP + "} || ${" +
         IBONG_ADARNA_PROP + "} || ${" +
-        MALAKAS_PROP
+        MALAKAS_PROP + "} || ${" +
+        MARIA_MAKILING_PROP
         + "}")
 public class EsRestClientConfig {
     @Value("${spring.elasticsearch.rest.uris}")
