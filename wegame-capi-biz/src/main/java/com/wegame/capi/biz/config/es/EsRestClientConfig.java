@@ -22,7 +22,8 @@ import static com.wegame.capi.common.Constants.*;
 @Configuration
 @ConditionalOnExpression(value = "${" +
        // + XXX_PROP + "} || ${"   // 新增游戏加该配置
-        MARIA_MAKILING_PROP
+        MALAKAS_PROP + "} || ${"
+        + MARIA_MAKILING_PROP
         + "}")
 public class EsRestClientConfig {
     @Value("${spring.elasticsearch.rest.uris}")
