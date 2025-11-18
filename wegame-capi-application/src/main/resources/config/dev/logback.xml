@@ -14,77 +14,77 @@
         </encoder>
     </appender>
 
-    <appender name="info_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.info.path}</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.info.path}.%d{yyyy-MM-dd}.zip</fileNamePattern>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level [%X{Trace-Id}] %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
+<!--    <appender name="info_file" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>${log.info.path}</file>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>${log.info.path}.%d{yyyy-MM-dd}.zip</fileNamePattern>-->
+<!--        </rollingPolicy>-->
+<!--        <encoder>-->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level [%X{Trace-Id}] %logger{36} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
 
-    <appender name="warn_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.warn.path}</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.warn.path}.%d{yyyy-MM-dd}.zip</fileNamePattern>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level [%X{Trace-Id}] %logger{36} - %msg%n</pattern>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>WARN</level>            <!-- 设置拦截的对象为ERROR级别日志 -->
-            <onMatch>ACCEPT</onMatch>       <!-- 当遇到了ERROR级别时，启用改段配置 -->
-            <onMismatch>DENY</onMismatch>   <!-- 没有遇到ERROR级别日志时，屏蔽改段配置 -->
-        </filter>
-    </appender>
+<!--    <appender name="warn_file" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>${log.warn.path}</file>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>${log.warn.path}.%d{yyyy-MM-dd}.zip</fileNamePattern>-->
+<!--        </rollingPolicy>-->
+<!--        <encoder>-->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level [%X{Trace-Id}] %logger{36} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--        <filter class="ch.qos.logback.classic.filter.LevelFilter">-->
+<!--            <level>WARN</level>            &lt;!&ndash; 设置拦截的对象为ERROR级别日志 &ndash;&gt;-->
+<!--            <onMatch>ACCEPT</onMatch>       &lt;!&ndash; 当遇到了ERROR级别时，启用改段配置 &ndash;&gt;-->
+<!--            <onMismatch>DENY</onMismatch>   &lt;!&ndash; 没有遇到ERROR级别日志时，屏蔽改段配置 &ndash;&gt;-->
+<!--        </filter>-->
+<!--    </appender>-->
 
-    <appender name="error_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.error.path}</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.error.path}.%d{yyyy-MM-dd}.zip</fileNamePattern>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level [%X{Trace-Id}] %logger{36} - %msg%n</pattern>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>ERROR</level>            <!-- 设置拦截的对象为ERROR级别日志 -->
-            <onMatch>ACCEPT</onMatch>       <!-- 当遇到了ERROR级别时，启用改段配置 -->
-            <onMismatch>DENY</onMismatch>   <!-- 没有遇到ERROR级别日志时，屏蔽改段配置 -->
-        </filter>
-    </appender>
+<!--    <appender name="error_file" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>${log.error.path}</file>-->
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>${log.error.path}.%d{yyyy-MM-dd}.zip</fileNamePattern>-->
+<!--        </rollingPolicy>-->
+<!--        <encoder>-->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level [%X{Trace-Id}] %logger{36} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--        <filter class="ch.qos.logback.classic.filter.LevelFilter">-->
+<!--            <level>ERROR</level>            &lt;!&ndash; 设置拦截的对象为ERROR级别日志 &ndash;&gt;-->
+<!--            <onMatch>ACCEPT</onMatch>       &lt;!&ndash; 当遇到了ERROR级别时，启用改段配置 &ndash;&gt;-->
+<!--            <onMismatch>DENY</onMismatch>   &lt;!&ndash; 没有遇到ERROR级别日志时，屏蔽改段配置 &ndash;&gt;-->
+<!--        </filter>-->
+<!--    </appender>-->
 
-    <appender name="async_info" class="ch.qos.logback.classic.AsyncAppender">
-        <!-- 设置是否在启动时触发之前丢弃的事件 0不丢弃 -->
-        <discardingThreshold>0</discardingThreshold>
-        <!-- 设置这个appender的neveQueueSize -->
-        <queueSize>512</queueSize>
-        <!-- 添加真实的appender -->
-        <appender-ref ref="info_file"/>
-    </appender>
+<!--    <appender name="async_info" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--        &lt;!&ndash; 设置是否在启动时触发之前丢弃的事件 0不丢弃 &ndash;&gt;-->
+<!--        <discardingThreshold>0</discardingThreshold>-->
+<!--        &lt;!&ndash; 设置这个appender的neveQueueSize &ndash;&gt;-->
+<!--        <queueSize>512</queueSize>-->
+<!--        &lt;!&ndash; 添加真实的appender &ndash;&gt;-->
+<!--        <appender-ref ref="info_file"/>-->
+<!--    </appender>-->
 
-    <appender name="async_warn" class="ch.qos.logback.classic.AsyncAppender">
-        <!-- 设置是否在启动时触发之前丢弃的事件 0不丢弃 -->
-        <discardingThreshold>0</discardingThreshold>
-        <!-- 设置这个appender的neveQueueSize -->
-        <queueSize>512</queueSize>
-        <!-- 添加真实的appender -->
-        <appender-ref ref="warn_file"/>
-    </appender>
-    <appender name="async_error" class="ch.qos.logback.classic.AsyncAppender">
-        <!-- 设置是否在启动时触发之前丢弃的事件 0不丢弃 -->
-        <discardingThreshold>0</discardingThreshold>
-        <!-- 设置这个appender的neveQueueSize -->
-        <queueSize>512</queueSize>
-        <!-- 添加真实的appender -->
-        <appender-ref ref="error_file"/>
-    </appender>
+<!--    <appender name="async_warn" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--        &lt;!&ndash; 设置是否在启动时触发之前丢弃的事件 0不丢弃 &ndash;&gt;-->
+<!--        <discardingThreshold>0</discardingThreshold>-->
+<!--        &lt;!&ndash; 设置这个appender的neveQueueSize &ndash;&gt;-->
+<!--        <queueSize>512</queueSize>-->
+<!--        &lt;!&ndash; 添加真实的appender &ndash;&gt;-->
+<!--        <appender-ref ref="warn_file"/>-->
+<!--    </appender>-->
+<!--    <appender name="async_error" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--        &lt;!&ndash; 设置是否在启动时触发之前丢弃的事件 0不丢弃 &ndash;&gt;-->
+<!--        <discardingThreshold>0</discardingThreshold>-->
+<!--        &lt;!&ndash; 设置这个appender的neveQueueSize &ndash;&gt;-->
+<!--        <queueSize>512</queueSize>-->
+<!--        &lt;!&ndash; 添加真实的appender &ndash;&gt;-->
+<!--        <appender-ref ref="error_file"/>-->
+<!--    </appender>-->
 
     <root level="info">
         <appender-ref ref="console"/>
-        <appender-ref ref="async_info"/>
-        <appender-ref ref="async_warn"/>
-        <appender-ref ref="async_error"/>
+<!--        <appender-ref ref="async_info"/>-->
+<!--        <appender-ref ref="async_warn"/>-->
+<!--        <appender-ref ref="async_error"/>-->
     </root>
 
 </configuration>
