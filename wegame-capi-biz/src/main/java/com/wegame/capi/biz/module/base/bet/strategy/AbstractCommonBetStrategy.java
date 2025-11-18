@@ -183,6 +183,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         Long startCardUseRecordId = startCardUseRecordService.add(StarCardUseRecordDo.builder()
                 .id(generateId())
                 .gameId(gameContext().gameInfo().getGameType().getId())
+                .pId(userInfo.getPId())
                 .channelId(userInfo.getChannelId())
                 .betAmount(betDo.getBetAmount())
                 .playerId(userInfo.getPlayerId())
