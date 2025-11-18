@@ -29,6 +29,11 @@ public class StarCardUseRecordDo implements Serializable {
     private String rewardConfigId;
 
     /**
+     * 平台ID
+     */
+    private String pId;
+
+    /**
      * 渠道ID
      */
     private String channelId;
