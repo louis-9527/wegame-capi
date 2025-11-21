@@ -19,6 +19,14 @@ db.createCollection("kapre_game_record");
 db.kapre_game_record.createIndex({betRecordId: 1, batchId: 1})
 
 // ----------------------------
+//  Collection structure for diwataMayari_star_card_record
+// ----------------------------
+db.getCollection("kapre_star_card_record").drop();
+db.createCollection("kapre_star_card_record");
+db.kapre_star_card_record.createIndex({createTime:-1, channelId: 1});
+db.kapre_star_card_record.createIndex({reportStatus: 1});
+
+// ----------------------------
 //  Collection structure for kapre_operation_event
 // ----------------------------
 db.getCollection("kapre_operation_event").drop();
