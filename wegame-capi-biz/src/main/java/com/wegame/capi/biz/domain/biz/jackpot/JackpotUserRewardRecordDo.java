@@ -107,7 +107,7 @@ public class JackpotUserRewardRecordDo implements Serializable {
     }
 
     private static String buildGrantSerialNo(Long betRecordId, JackpotTypeEnum jackpotTypeEnum) {
-        return betRecordId+jackpotTypeEnum.getGameType().getId();
+        return betRecordId+jackpotTypeEnum.getGameType().getId()+"jackpot";
     }
 
 }
