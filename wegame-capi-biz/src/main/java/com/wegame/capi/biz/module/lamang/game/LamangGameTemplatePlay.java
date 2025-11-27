@@ -20,7 +20,7 @@ import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.lamang.LamangGameHelper;
 import com.wegame.capi.biz.module.lamang.LamangSymbolUtil;
 import com.wegame.capi.biz.module.lamang.reward.LamangRewardHandler;
-import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
+import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
