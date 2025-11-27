@@ -24,7 +24,7 @@ public enum TemplateTypeEnum {
 
     LAM_ANG(GameTypeEnum.LAM_ANG, TemplateConstants.LAMANG_BET_RECORD_TEMPLATE),
 
-    BAKUNAWA(GameTypeEnum.BAKUNAWA, TemplateConstants.BAKUNAWA_BET_RECORD_TEMPLATE, ),
+    BAKUNAWA(GameTypeEnum.BAKUNAWA, TemplateConstants.BAKUNAWA_BET_RECORD_TEMPLATE),
 
     ;
 
