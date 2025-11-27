@@ -27,8 +27,7 @@ public enum TemplateTypeEnum {
     ),
     IBONG_ADARNA(
             GameTypeEnum.IBONG_ADARNA,
-            TemplateConstants.IBONGADARNA_BET_RECORD_TEMPLATE,
-            ""
+            TemplateConstants.IBONGADARNA_BET_RECORD_TEMPLATE
     ),
     ;
 
