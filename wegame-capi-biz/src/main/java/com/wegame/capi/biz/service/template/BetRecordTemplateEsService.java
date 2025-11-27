@@ -66,17 +66,17 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
 
     public T findById(TemplateTypeEnum templateType, Long id, Class<T> clazz) {
         long startTime = System.currentTimeMillis();
-        log.info("findById query, id: {}, templateType: {}", id, templateType.name());
+        log.info("findById query, id: {}, templateType: {}", id, templateType);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(clazz, ErrorCode.ERR_PARAM);
-//        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
-//                        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-//                        boolQuery.filter(QueryBuilders.termQuery("id", id));
-//                        return elasticsearchRestTemplate.searchOne(new NativeSearchQueryBuilder()
-//                                .withQuery(boolQuery)
-//                                .build(), clazz)
-//                                .getContent();
-//                        restHighLevelClient.asyncSearch().get()
+        //        return elasticsearchRestTemplate.get(String.valueOf(id), clazz);
+        //                        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        //                        boolQuery.filter(QueryBuilders.termQuery("id", id));
+        //                        return elasticsearchRestTemplate.searchOne(new NativeSearchQueryBuilder()
+        //                                .withQuery(boolQuery)
+        //                                .build(), clazz)
+        //                                .getContent();
+        //                        restHighLevelClient.asyncSearch().get()
         try {
             // 1. 组装请求
             GetRequest getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
@@ -103,7 +103,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
 
     @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_' + #betType.getCode() + '_' + #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByMultipleRange(TemplateTypeEnum templateType, BetTypeEnum betType, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
-        log.info("listIdByMultipleRange query, betType: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateType: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType.name());
+        log.info("listIdByMultipleRange query, betType: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateType: {}", betType.getCode(), multipleRangeStart, multipleRangeEnd, templateType);
         // 构建ES查询
         // NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
         // 创建布尔查询构建器
@@ -190,7 +190,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
     @Cacheable(value = CacheConstants.TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
     public T getTemplateWithRedisCache(TemplateTypeEnum templateType, Long betRecordId, Class<T> clazz) {
         // todo delete log
-        log.info("getTemplateWithRedisCache, betRecordId: {}; templateType: {}", betRecordId, templateType.name());
+        log.info("getTemplateWithRedisCache, betRecordId: {}; templateType: {}", betRecordId, templateType);
         return findById(templateType, betRecordId, clazz);
     }
 
