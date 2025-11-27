@@ -18,19 +18,16 @@ public enum TemplateTypeEnum {
 
     MARIA_MAKILING(
             GameTypeEnum.MARIA_MAKILING,
-            TemplateConstants.MARIAMAKILING_BET_RECORD_TEMPLATE,
-            TemplateConstants.MARIAMAKILING_GAME_RECORD_TEMPLATE
+            TemplateConstants.MARIAMAKILING_BET_RECORD_TEMPLATE
     ),
 
     MALAKAS(
             GameTypeEnum.MALAKAS,
-            TemplateConstants.MALAKAS_BET_RECORD_TEMPLATE,
-            ""
+            TemplateConstants.MALAKAS_BET_RECORD_TEMPLATE
     ),
     IBONG_ADARNA(
             GameTypeEnum.IBONG_ADARNA,
-            TemplateConstants.IBONGADARNA_BET_RECORD_TEMPLATE,
-            ""
+            TemplateConstants.IBONGADARNA_BET_RECORD_TEMPLATE
     ),
 
     LAM_ANG(
@@ -48,10 +45,6 @@ public enum TemplateTypeEnum {
      * 投注记录
      */
     private final String betRecordTemplateName;
-    /**
-     * 游戏记录
-     */
-    private final String gameRecordTemplateName;
 
     public static TemplateTypeEnum valueOfGameType(GameTypeEnum gameType) {
         if (gameType == null) {
