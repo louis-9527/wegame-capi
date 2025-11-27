@@ -16,15 +16,10 @@ import lombok.ToString;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum TemplateTypeEnum {
 
-    MARIA_MAKILING(
-            GameTypeEnum.MARIA_MAKILING,
-            TemplateConstants.MARIAMAKILING_BET_RECORD_TEMPLATE
-    ),
+    MARIA_MAKILING(GameTypeEnum.MARIA_MAKILING, TemplateConstants.MARIAMAKILING_BET_RECORD_TEMPLATE),
 
-    MALAKAS(
-            GameTypeEnum.MALAKAS,
-            TemplateConstants.MALAKAS_BET_RECORD_TEMPLATE
-    ),
+    MALAKAS(GameTypeEnum.MALAKAS, TemplateConstants.MALAKAS_BET_RECORD_TEMPLATE),
+
     ;
 
 
