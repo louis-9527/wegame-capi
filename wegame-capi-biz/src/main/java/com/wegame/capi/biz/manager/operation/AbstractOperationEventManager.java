@@ -392,10 +392,10 @@ public abstract class AbstractOperationEventManager {
     /**
      * 同步上报,
      *
-     * @param recordId 事件ID
+     * @param operationEventId 事件ID
      */
-    public void reportEventById(Long recordId, boolean scheduler) {
-        OperationEventDo eventDo = operationEventService.getById(recordId, operationEventType());
+    public void reportEventById(Long operationEventId, boolean scheduler) {
+        OperationEventDo eventDo = operationEventService.getById(operationEventId, operationEventType());
         this.reportEvent(eventDo, scheduler);
     }
 

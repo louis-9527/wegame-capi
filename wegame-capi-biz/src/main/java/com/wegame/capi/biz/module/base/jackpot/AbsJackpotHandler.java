@@ -65,7 +65,7 @@ public abstract class AbsJackpotHandler {
             AssertUtil.assertNotNull(rewardPoolDo, ErrorCode.ERR_PARAM);
             Long rewardAmount = Math.max(guaranteed, rewardPoolDo.getAmount()); // 中奖金额默认使用保底
             // 添加使用记录并更新奖池金额
-            JackpotUserRewardRecordDo buildRecord = JackpotUserRewardRecordDo.build(drawAndAwardDo, betGameId, rewardAmount, rewardPoolDo.getId(), jackpotRewardPoolType);
+            JackpotUserRewardRecordDo buildRecord = JackpotUserRewardRecordDo.build(drawAndAwardDo, betGameId, rewardAmount, rewardPoolDo.getId(), jackpotRewardPoolType, getJackpotType());
             buildRecord.setId(generateId());
             this.jackpotManager().winReward(buildRecord);
             // 清除缓存
