@@ -1,4 +1,4 @@
-package com.wegame.capi.biz.service.template.es;
+package com.wegame.capi.biz.service.template;
 
 import com.wegame.base.CacheConstants;
 import com.wegame.base.enums.ErrorCode;
