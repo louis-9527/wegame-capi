@@ -22,7 +22,7 @@ import com.wegame.capi.biz.innerdos.decider.InnerDosDeciderManager;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.ibongadarna.IbongAdarnaGameHelper;
 import com.wegame.capi.biz.module.ibongadarna.reward.IbongAdarnaRewardHandler;
-import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
+import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
