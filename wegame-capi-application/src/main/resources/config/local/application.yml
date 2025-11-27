@@ -23,6 +23,7 @@ spring:
   application:
     name: wegame-capi
     env: local
+    version: 20251125
   profiles:
     active: local
   config:
