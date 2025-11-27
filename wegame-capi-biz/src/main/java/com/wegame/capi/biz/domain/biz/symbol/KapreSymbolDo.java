@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * Kapre游戏元素
@@ -33,7 +34,9 @@ public class KapreSymbolDo extends SymbolDo {
         return KapreSymbolDo.builder()
                 .id(getId())
                 .name(getName())
+                .symbolOdd(getSymbolOdd())
                 .symbolType(getSymbolType())
+                .nestSymbol(Optional.ofNullable(getNestSymbol()).map(KapreSymbolDo::copy).orElse(null))
                 .build();
     }
 
