@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.domain.biz.jackpot;
 
 import com.wegame.base.utils.DateUtil;
+import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.*;
@@ -87,7 +88,7 @@ public class JackpotUserRewardRecordDo implements Serializable {
 
     ///////////////  above auto generated ///////////////
 
-    public static JackpotUserRewardRecordDo build(JackpotDrawAndAwardDo drawAndAwardDo,Long betGameId,Long rewardAmount,Long rewardPoolId,JackpotRewardPoolTypeEnum poolTypeEnum){
+    public static JackpotUserRewardRecordDo build(JackpotDrawAndAwardDo drawAndAwardDo, Long betGameId, Long rewardAmount, Long rewardPoolId, JackpotRewardPoolTypeEnum poolTypeEnum, JackpotTypeEnum jackpotTypeEnum){
         return JackpotUserRewardRecordDo.builder()
                 .userId(drawAndAwardDo.getUserId())
                 .playerName(drawAndAwardDo.getPlayerName())
@@ -97,12 +98,16 @@ public class JackpotUserRewardRecordDo implements Serializable {
                 .rewardAmount(rewardAmount)
                 .rewardPoolId(rewardPoolId)
                 .rewardPoolType(poolTypeEnum)
-                .rewardGrantSerialNo(String.valueOf(drawAndAwardDo.getBetRecordId()))
+                .rewardGrantSerialNo(buildGrantSerialNo(drawAndAwardDo.getBetRecordId(), jackpotTypeEnum))
                 .rewardGrantStatus(JackpotRewardGrantStatusEnum.NONE)
                 .createTime(DateUtil.getCurrentMilli())
                 .updateTime(DateUtil.getCurrentMilli())
                 .build();
 
+    }
+
+    private static String buildGrantSerialNo(Long betRecordId, JackpotTypeEnum jackpotTypeEnum) {
+        return betRecordId+jackpotTypeEnum.getGameType().getId();
     }
 
 }
