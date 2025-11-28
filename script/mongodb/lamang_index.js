@@ -104,17 +104,18 @@ db.lamang_jackpot_user_reward_record.createIndex(
     { gameRecordId: 1,betRecordId: 1},
     { unique: true}
 );
-
 db.lamang_jackpot_user_reward_record.createIndex(
     { rewardPoolType: 1,createTime: -1}
 );
-// 中奖金额降序索引
 db.lamang_jackpot_user_reward_record.createIndex(
     {rewardAmount: -1}
 );
+db.lamang_jackpot_user_reward_record.createIndex(
+    {rewardGrantStatus: 1, createTime: 1, _id: 1}
+);
 
 // ----------------------------
-//  Collection structure for lamang_jackpot_user_reward_record
+//  Collection structure for lamang_jackpot_reward_pool_input_record
 // ----------------------------
 db.getCollection("lamang_jackpot_reward_pool_input_record").drop();
 db.createCollection("lamang_jackpot_reward_pool_input_record");
