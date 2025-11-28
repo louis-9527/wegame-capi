@@ -61,7 +61,7 @@ public abstract class AbstractGameContext<R> {
     private void playResultValidate(GamePlayDo gamePlayDo) {
         try {
             if (Objects.isNull(gamePlayDo.getBetPromotionType()) || Objects.equals(gamePlayDo.getBetPromotionType(), BetPromotionTypeEnum.STAR_CARD)) {
-                log.info("AbstractGameContext#playResultValidate,promotionType is null or start card continue process, gamePlay:{}", JSON.toJSONString(gamePlayDo));
+                // log.info("AbstractGameContext#playResultValidate,promotionType is null or start card continue process, gamePlay:{}", JSON.toJSONString(gamePlayDo));
                 return;
             }
 
