@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import static com.wegame.base.enums.CommonCacheEnvEnum.GAME_RECORD;
 
 /**
- * @author apple
  * 投注记录缓存
  */
 @Component(CacheConstants.GAME_RECORD)

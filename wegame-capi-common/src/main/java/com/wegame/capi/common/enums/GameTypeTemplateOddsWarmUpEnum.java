@@ -1,6 +1,7 @@
 package com.wegame.capi.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -8,10 +9,10 @@ import lombok.ToString;
  *
  * @author apple
  */
+@Getter
 @ToString
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeTemplateOddsWarmUpEnum {
-
     MARIA_MAKILING("zhumeng001", "1", "-1", "MARIA_MAKILING"),
     MALAKAS("zhumeng002", "3", "-1", "MALAKAS"),
     LAM_ANG("zhumeng004", "3", "-1", "LAMANG"),
@@ -23,11 +24,16 @@ public enum GameTypeTemplateOddsWarmUpEnum {
      */
     private final String id;
     /**
-     * 正常投注预热赔率
+     * 正常投注预热倍率
+     * 说明:
+     * x > 0, 预热的范围 -> 左开右闭区间 -> （0, x]
+     * x = 0, 预热范围 -> [0, 0]
+     * x < 0, 不需要预热
      */
     private  final String normalBetOdds;
     /**
-     * 购买投注预热赔率
+     * 购买投注预热倍率
+     * 同上.
      */
     private final String buyBetOdds;
     /**
@@ -56,19 +62,4 @@ public enum GameTypeTemplateOddsWarmUpEnum {
         return null;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getNormalBetOdds() {
-        return normalBetOdds;
-    }
-
-    public String getBuyBetOdds() {
-        return buyBetOdds;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
 }
