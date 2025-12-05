@@ -2,6 +2,5 @@ package com.wegame.capi.common.constants;
 
 public class TemplateConstants {
     public static final String MARIAMAKILING_BET_RECORD_TEMPLATE = "mariamakiling_bet_record_template";
-
     public static final String MALAKAS_BET_RECORD_TEMPLATE = "malakas_bet_record_template";
 }
