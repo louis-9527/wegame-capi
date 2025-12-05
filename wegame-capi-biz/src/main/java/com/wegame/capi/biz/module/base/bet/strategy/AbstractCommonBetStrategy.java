@@ -199,7 +199,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         long startTime = System.currentTimeMillis();
         Pair<RedeemRewardResultDo, BetRecordDo<R>> redeemRewardResultDoBetRecord = this.rewardResult(betRecordId, betDo);
         long costTime = System.currentTimeMillis() - startTime;
-        if (costTime > 10) {
+        if (costTime > 50) {
             log.info("check startCard cost time more than 50: {} ms", System.currentTimeMillis() - startTime);
         }
         RedeemRewardResultDo rewardResult = redeemRewardResultDoBetRecord.getKey();
