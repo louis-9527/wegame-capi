@@ -6,8 +6,7 @@ import com.wegame.base.enums.CommonCacheEnvEnum;
 import org.springframework.stereotype.Component;
 
 /**
- * @author apple
- * gameRecord Tempate 缓存
+ * gameRecord Template 缓存
  * key:betRecordTemplateId
  * value:gameRecordTemplate--List
  */

@@ -171,6 +171,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
      * <p>
      */
     public BetResultDo<RD> betForStartCard(BetDo betDo) {
+        log.info("betForStartCard, betSubType: {}", betDo.getBetSubType());
         AssertUtil.assertNotNull(betDo, ErrorCode.ERR_INTER);
         AssertUtil.assertTrue(betDo.isUseStarCard(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(betDo.getRewardDetail(), ErrorCode.ERR_INTER);
@@ -197,7 +198,10 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         // 核销星卡
         long startTime = System.currentTimeMillis();
         Pair<RedeemRewardResultDo, BetRecordDo<R>> redeemRewardResultDoBetRecord = this.rewardResult(betRecordId, betDo);
-        log.info("rewardResult cost time: {} ms", System.currentTimeMillis() - startTime);
+        long costTime = System.currentTimeMillis() - startTime;
+        if (costTime > 50) {
+            log.info("check startCard cost time more than 50: {} ms", System.currentTimeMillis() - startTime);
+        }
         RedeemRewardResultDo rewardResult = redeemRewardResultDoBetRecord.getKey();
         BetRecordDo<R> rBetRecordDo = redeemRewardResultDoBetRecord.getRight();
         if (!rewardResult.isSuccess()) {
