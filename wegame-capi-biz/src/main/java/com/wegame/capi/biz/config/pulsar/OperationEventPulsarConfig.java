@@ -169,7 +169,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = kapreOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
-    @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
+    @ConditionalOnBean(KapreOperationEventPulsarListener.class)
     public Consumer<byte[]> kapreOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
         log.debug(BUILD_BEAN_FORMAT, kapreOperationEventConsumer);
