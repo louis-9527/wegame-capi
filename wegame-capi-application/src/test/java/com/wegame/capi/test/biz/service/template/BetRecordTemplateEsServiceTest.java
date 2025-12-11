@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.template.malakas.MalakasBetRecordTemplateEsDo;
-import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
+import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;

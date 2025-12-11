@@ -138,7 +138,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = lamangOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
-    @ConditionalOnBean(BakunawaOperationEventPulsarListener.class)
+    @ConditionalOnBean(LamangOperationEventPulsarListener.class)
     public Consumer<byte[]> lamangOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                          @Autowired LamangOperationEventPulsarListener lamangOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, lamangOperationEventConsumer);

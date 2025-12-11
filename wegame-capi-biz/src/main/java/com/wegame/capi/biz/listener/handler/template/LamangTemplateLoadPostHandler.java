@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.template.lamang.LamangBetRecordTemplateEsDo;
-import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
+import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;

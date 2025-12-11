@@ -21,7 +21,7 @@ import com.wegame.capi.biz.domain.biz.template.bakunawa.BakunawaBetRecordTemplat
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.bakunawa.reward.BakunawaRewardHandler;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
-import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
+import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;

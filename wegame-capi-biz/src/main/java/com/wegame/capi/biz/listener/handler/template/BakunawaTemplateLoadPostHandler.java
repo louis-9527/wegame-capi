@@ -5,7 +5,7 @@ import cn.hutool.core.collection.ListUtil;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.capi.biz.config.domain.BakunawaConfig;
 import com.wegame.capi.biz.domain.biz.template.bakunawa.BakunawaBetRecordTemplateEsDo;
-import com.wegame.capi.biz.service.template.es.BetRecordTemplateEsService;
+import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;

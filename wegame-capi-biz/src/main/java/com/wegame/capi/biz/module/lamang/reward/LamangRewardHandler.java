@@ -53,7 +53,6 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
 
     @Override
     public RewardResultDo<LamangSymbolDo> handle(RewardHandleDo<LamangSymbolDo> rewardHandle) {
-        long current = System.currentTimeMillis();
         // 1.业务校验
         this.validate(rewardHandle);
         // 2.计算中奖线
@@ -121,7 +120,6 @@ public class LamangRewardHandler extends AbstractRewardHandler<LamangSymbolDo> {
                 .rewardFreeWheelTimes(freeWheelTimes)
                 .build();
         // 6.返回中奖信息
-        log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
         return rewardResult;
     }
 
