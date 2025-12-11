@@ -189,13 +189,13 @@ public class OperationEventPulsarConfig {
     @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
     public Consumer<byte[]> mangkukulamOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
-                                                              @Autowired MangkukulamOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
+                                                              @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
         log.debug(BUILD_BEAN_FORMAT, mangkukulamOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMangkukulam)
                 .subscriptionType(SubscriptionType.Shared)
-                .messageListener(diwataMayariOperationEventPulsarListener)
+                .messageListener(mangkukulamOperationEventPulsarListener)
                 .subscribe();
     }
 }
