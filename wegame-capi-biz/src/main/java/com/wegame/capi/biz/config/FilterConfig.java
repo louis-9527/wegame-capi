@@ -33,10 +33,10 @@ public class FilterConfig {
             "/achievement/*",
             "/bag/*",
             "/mission/*",
+            "/level/*",
             "/treasure/*",
             "/freeSpin/*",
-            "/contract/*",
-            "/level/*"
+            "/contract/*"
     };
 
     @Bean
