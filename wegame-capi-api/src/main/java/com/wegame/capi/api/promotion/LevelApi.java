@@ -61,6 +61,7 @@ public class LevelApi extends PromotionBaseApi {
         }
     }
 
+    @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public PlayerLevelRes getPlayerLevel(PlayerLevelReq req) {
         try {
             assembleSingleSignature(req);
