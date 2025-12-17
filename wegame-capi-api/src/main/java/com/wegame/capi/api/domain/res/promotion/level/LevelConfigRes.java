@@ -1,7 +1,5 @@
 package com.wegame.capi.api.domain.res.promotion.level;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -15,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(description = "等级配置响应模型")
 public class LevelConfigRes implements Serializable {
 
     private static final long serialVersionUID = -8967662891053165172L;
