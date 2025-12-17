@@ -53,10 +53,10 @@ public class LevelApi extends PromotionBaseApi {
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
-            log.error("getPlayerContract BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
+            log.error("getLevelConfig BusinessException, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw e;
         } catch (Exception e) {
-            log.error("getPlayerContract Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
+            log.error("getLevelConfig Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
@@ -77,10 +77,10 @@ public class LevelApi extends PromotionBaseApi {
             AssertUtil.assertNotNull(responseEntity.getBody().getData(), ErrorCode.ERR_MIDDLE_PLATFORM, responseEntity.getBody().getMessage());
             return responseEntity.getBody().getData();
         } catch (BusinessException e) {
-            log.error("redeemPlayerContract BusinessException, req: {}, errorCode: {}, errMsg: {}", req, e.getErrCode(), e.getMessage(), e);
+            log.error("getPlayerLevel BusinessException, req: {}, errorCode: {}, errMsg: {}", req, e.getErrCode(), e.getMessage(), e);
             throw e;
         } catch (Exception e) {
-            log.error("redeemPlayerContract Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
+            log.error("getPlayerLevel Exception, req: {}, errMsg: {}", req, e.getMessage(), e);
             throw new RetryException(ErrorCode.ERR_MIDDLE_PLATFORM, "inner error,please retry again later", e);
         }
     }
