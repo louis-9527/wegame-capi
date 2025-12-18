@@ -143,7 +143,7 @@ public abstract class AbstractOperationEventScheduler
             operationEventManager().updateEventDetail(eventDetailUpdate, eventDoUpdate);
             operationEventService.updateOperationUseStatus(eventDetailDo.getEventRecordId(), OperationEventStatusEnum.NONE, operationEventType());
             if (eventDoUpdate != null && OperationEventStatusEnum.FINISH == eventDoUpdate.getEventStatus()) {
-                operationEventManager().reportEventById(eventDetailDo.getBetRecordId(), true);
+                operationEventManager().reportEventById(eventDetailDo.getEventRecordId(), true);
             }
         } catch (Exception e) {
             log.error("eventDetailFailHandle exception", e);

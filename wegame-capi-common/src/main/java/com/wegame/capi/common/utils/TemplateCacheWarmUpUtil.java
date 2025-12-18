@@ -13,7 +13,13 @@ import java.math.BigDecimal;
 @Slf4j
 public class TemplateCacheWarmUpUtil {
 
-
+    /**
+     * 是否需要预热
+     * @param gameType 游戏类型
+     * @param betType  投注类型
+     * @param multipleRange  倍数范围
+     * @return true | false
+     */
     public static Boolean isWarmUpMultipleRange(GameTypeEnum gameType, BetTypeEnum betType, TemplateMultipleRange multipleRange) {
         AssertUtil.assertNotNull(gameType, ErrorCode.ERR_PARAM);
         AssertUtil.assertNotNull(betType, ErrorCode.ERR_PARAM);

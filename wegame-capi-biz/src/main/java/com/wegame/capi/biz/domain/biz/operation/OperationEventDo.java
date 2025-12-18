@@ -41,7 +41,7 @@ public class OperationEventDo implements Serializable {
      */
     private Long finishBonus;
     /**
-     * 干预事件ID
+     * 干预事件ID（第三方）
      */
     private String eventId;
     /**
