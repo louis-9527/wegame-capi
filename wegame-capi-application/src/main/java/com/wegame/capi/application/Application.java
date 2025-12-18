@@ -19,7 +19,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -52,6 +51,8 @@ public class Application implements CommandLineRunner {
     private String appName;
     @Value("${spring.application.env}")
     private String env;
+    @Value("${spring.application.version}")
+    private String version;
     @Value("${lark.publishRobot}")
     private String publishRobot;
     @Value("${lark.shutDownRobot}")
@@ -66,13 +67,13 @@ public class Application implements CommandLineRunner {
     public static void main(String[] args) {
         log.info("Begin Start Application 😄😄😄😄😄😄");
         SpringApplication.run(Application.class, args);
-        log.info("Started ApplicationVersion6 🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉");
+        log.info("Started Application 🎉🎉🎉🎉🎉🎉🎉🎉🎉🎉");
         log.info("see doc: http://localhost:9500/capi/game/doc.html#/home");
     }
 
     @Override
     public void run(String... args) {
-        log.info("start Application after env: {}", env);
+        log.info("start Application after env: {}, version: {}", env, version);
         sendPublishMessage();
         appLaunchPostProcessor.postProcess();
     }
@@ -126,6 +127,7 @@ public class Application implements CommandLineRunner {
             LarkUtil.sendTextMsg(publishRobot, ServicePublishMessage.builder()
                     .applicationName(appName)
                     .env(env)
+                    .version(version)
                     .gameNames(gameProperty.enabledGameNames())
                     .ip(IpUtil.getLocalIp())
                     .build().buildMessage());
@@ -142,6 +144,7 @@ public class Application implements CommandLineRunner {
             LarkUtil.sendTextMsg(shutDownRobot, ServiceShutdownMessage.builder()
                     .applicationName(appName)
                     .env(env)
+                    .version(version)
                     .gameNames(gameProperty.enabledGameNames())
                     .ip(IpUtil.getLocalIp())
                     .build().buildMessage());
