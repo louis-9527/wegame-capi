@@ -148,7 +148,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = lamangOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = LAMANG_PROP, havingValue = TRUE_VAL)
-    @ConditionalOnBean(BakunawaOperationEventPulsarListener.class)
+    @ConditionalOnBean(LamangOperationEventPulsarListener.class)
     public Consumer<byte[]> lamangOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                          @Autowired LamangOperationEventPulsarListener lamangOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, lamangOperationEventConsumer);
@@ -176,7 +176,7 @@ public class OperationEventPulsarConfig {
 
     @Bean(name = kapreOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
     @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
-    @ConditionalOnBean(MalakasOperationEventPulsarListener.class)
+    @ConditionalOnBean(KapreOperationEventPulsarListener.class)
     public Consumer<byte[]> kapreOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
                                                                @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, kapreOperationEventConsumer);
@@ -192,13 +192,13 @@ public class OperationEventPulsarConfig {
     @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
     @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
     public Consumer<byte[]> mangkukulamOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
-                                                              @Autowired MangkukulamOperationEventPulsarListener diwataMayariOperationEventPulsarListener) throws PulsarClientException {
+                                                              @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
         log.info(BUILD_BEAN_FORMAT, mangkukulamOperationEventConsumer);
         return operationEventPulsarClient.newConsumer(Schema.BYTES)
                 .topic(dynamicOperationTopic)
                 .subscriptionName(dynamicOperationGroupMangkukulam)
                 .subscriptionType(SubscriptionType.Shared)
-                .messageListener(diwataMayariOperationEventPulsarListener)
+                .messageListener(mangkukulamOperationEventPulsarListener)
                 .subscribe();
     }
 

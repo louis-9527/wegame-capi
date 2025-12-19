@@ -23,7 +23,7 @@ import static com.wegame.capi.common.Constants.TRUE_VAL;
 @Slf4j
 @Service
 @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
-public class MangkukulamContinuPlayScheduler extends AbstractContinuePlayScheduler {
+public class MangkukulamContinuePlayScheduler extends AbstractContinuePlayScheduler {
 
 
     @Qualifier("mangkukulamNormalBetStrategy")
