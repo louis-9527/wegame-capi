@@ -26,6 +26,7 @@ public class GetPlayerContractConverter {
                 .freeSpinImgUrl(res.getFreeSpinImgUrl())
                 .rewardType(res.getRewardType())
                 .isEnabled(res.getIsEnabled())
+                .rewardExpireTime(res.getRewardExpireTime())
                 .build();
     }
 
