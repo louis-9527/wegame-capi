@@ -47,4 +47,6 @@ public class GetPlayerContractVo implements Serializable {
     private Integer rewardType;
     @ApiModelProperty(value = "isEnabled", required = true)
     private Boolean isEnabled;
+    @ApiModelProperty(value = "Player redeem reward final date", required = true)
+    private String rewardExpireTime;
 }

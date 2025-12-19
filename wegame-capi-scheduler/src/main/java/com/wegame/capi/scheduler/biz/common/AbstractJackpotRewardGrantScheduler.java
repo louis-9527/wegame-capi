@@ -53,9 +53,9 @@ public abstract class AbstractJackpotRewardGrantScheduler
         do {
             recordIdList = jackpotUserRewardRecordService.listId(JackpotUserRewardRecordQuery.builder()
                     .rewardGrantStatus(JackpotRewardGrantStatusEnum.NONE.getCode())
-                    .gtLastId(gtLastId)
                     .startCreateTime(System.currentTimeMillis() - FIFTEEN_MINUTES)
                     .endCreateTime(System.currentTimeMillis() - ONE_MINUTES)
+                    .gtLastId(gtLastId)
                     .limit(DEFAULT_PAGE_SIZE)
                     .orderByClause("_id")
                     .direction(Sort.Direction.ASC)

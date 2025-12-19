@@ -38,9 +38,9 @@ public class LamangBetRecordManager extends AbstractBetRecordManager<LamangGameR
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<LamangGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            gameRecordList.forEach(item -> {
-                log.info("add GameRecord id:{}", item.getId());
-            });
+            //            gameRecordList.forEach(item -> {
+            //                log.info("add GameRecord id:{}", item.getId());
+            //            });
             boolean ret = gameRecordService.batchAdd(gameRecordList, gameType, LamangGameRecordDo.class);
             AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         }
