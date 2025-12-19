@@ -72,4 +72,8 @@ public class GetPlayerContractRes implements Serializable {
      * isEnabled
      */
     private Boolean isEnabled;
+    /**
+     * Player redeem reward final date
+     */
+    private String rewardExpireTime;
 }
