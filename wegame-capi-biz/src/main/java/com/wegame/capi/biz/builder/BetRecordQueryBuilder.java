@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.builder;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
@@ -64,6 +65,10 @@ public class BetRecordQueryBuilder {
         }
         if (Objects.nonNull(recordQuery.getFreeWheelHandleStatus())) {
             criteria.and("freeWheelHandleStatus").is(recordQuery.getFreeWheelHandleStatus());
+        }
+        // promotionType
+        if (CollectionUtil.isNotEmpty(recordQuery.getInPromotionTypeList())) {
+            criteria.and("betPromotionType").in(recordQuery.getInPromotionTypeList());
         }
         if (Objects.nonNull(recordQuery.getStartCreateTime()) && Objects.nonNull(recordQuery.getEndCreateTime())) {
             criteria.andOperator(
