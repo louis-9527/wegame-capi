@@ -68,5 +68,9 @@ public class BetRecordQuery extends BetRecordPo implements Serializable {
      * 投注子类型
      */
     private List<String> betSubTypes;
+    /**
+     * 指定查询的promotionType
+     */
+    private List<Integer> inPromotionTypeList;
 }
 
