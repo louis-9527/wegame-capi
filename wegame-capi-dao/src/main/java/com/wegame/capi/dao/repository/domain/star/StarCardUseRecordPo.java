@@ -35,6 +35,10 @@ public class StarCardUseRecordPo implements Serializable {
      */
     private String rewardConfigId;
     /**
+     * 平台ID
+     */
+    private String pId;
+    /**
      * 游戏ID
      */
     private String gameId;
