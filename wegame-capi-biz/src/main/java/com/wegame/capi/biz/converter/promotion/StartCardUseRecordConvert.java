@@ -23,6 +23,7 @@ public class StartCardUseRecordConvert {
         recordPo.setId(recordDo.getId());
         recordPo.setRewardId(recordDo.getRewardId());
         recordPo.setRewardConfigId(recordDo.getRewardConfigId());
+        recordPo.setPId(recordDo.getPId());
         recordPo.setGameId(recordDo.getGameId());
         recordPo.setChannelId(recordDo.getChannelId());
         recordPo.setPlayerId(recordDo.getPlayerId());
