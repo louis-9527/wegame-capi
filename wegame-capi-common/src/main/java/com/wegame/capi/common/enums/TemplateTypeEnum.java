@@ -28,6 +28,8 @@ public enum TemplateTypeEnum {
 
     DIWATA_MAYARI(GameTypeEnum.DIWATA_MAYARI, TemplateConstants.DIWATA_MAYARI_BET_RECORD_TEMPLATE),
 
+    MANGKUKULAM(GameTypeEnum.MANGKUKULAM, TemplateConstants.DIWATA_MAYARI_BET_RECORD_TEMPLATE),
+
     ;
 
     /**

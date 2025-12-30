@@ -28,8 +28,6 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -192,6 +190,38 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
         //                .map(T::getId)
         //                .collect(Collectors.toList());
 
+    }
+
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_'+ tag +'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
+    public List<Long> listIdByTagAndMultipleRange(TemplateTypeEnum templateType, String tag, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
+        log.info("listIdByMultipleRange query, tag: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateType: {}",
+                tag, multipleRangeStart, multipleRangeEnd, templateType);
+        // 构建ES查询
+        // NativeSearchQuery query = BetRecordTemplateQueryBuilder.buildListIdEsQuery(betType, multipleRangeStart, multipleRangeEnd);
+        // 创建布尔查询构建器
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        // 添加betType条件
+        boolQuery.filter(QueryBuilders.termQuery("tag", tag));
+        // 添加multiple范围条件
+        if (multipleRangeStart.compareTo(multipleRangeEnd) == 0) {
+            // 等于条件
+            boolQuery.filter(QueryBuilders.termQuery("multiple", multipleRangeStart.doubleValue()));
+        } else {
+            // 范围条件 (大于start，小于等于end)
+            boolQuery.filter(QueryBuilders.rangeQuery("multiple")
+                    .gt(multipleRangeStart.doubleValue())
+                    .lte(multipleRangeEnd.doubleValue()));
+        }
+        List<Long> result = new ArrayList<>();
+        // 第一次不带 search_after
+        Object[] searchAfter = null;
+        do {
+            List<Long> batch = fetchBatch(templateType, boolQuery, searchAfter, 5000);
+            if (batch.isEmpty()) break;
+            result.addAll(batch);
+            searchAfter = new Object[]{batch.get(batch.size() - 1)}; // 最后一条 id
+        } while (true);
+        return result;
     }
 
 
