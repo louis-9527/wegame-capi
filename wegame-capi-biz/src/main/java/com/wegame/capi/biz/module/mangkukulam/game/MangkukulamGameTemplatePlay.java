@@ -12,7 +12,6 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
-import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.MangkukulamSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.mangkukulam.MangkukulamBetRecordTemplateEsDo;
@@ -20,7 +19,6 @@ import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamSymbolUtil;
 import com.wegame.capi.biz.module.mangkukulam.reward.MangkukulamRewardHandler;
-import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
@@ -39,6 +37,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.MANGKUKULAM_GAME_INFO;
 import static com.wegame.capi.common.enums.TemplateTypeEnum.DIWATA_MAYARI;
@@ -56,9 +55,6 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
     MangkukulamRewardHandler mangkukulamRewardHandler;
 
     @Autowired
-    OperationEventConfigRecordService operationEventConfigRecordService;
-
-    @Autowired
     MangkukulamConfig mangkukulamConfig;
 
     @Autowired
@@ -67,11 +63,11 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
     @Override
     public List<MangkukulamGameRecordDo> play(GamePlayDo gamePlay) {
         List<MangkukulamGameRecordDo> ret = new ArrayList<>();
-        List<GameRecordTemplateDo> gameMultipleRecordDos = getGameRecordTemplate(gamePlay);
         if (BetSubTypeEnum.isFirstStep(gamePlay.getBetSubType().getCode()) && Objects.nonNull(gamePlay.getVolatility())) {
             // 执行完普通轮和免费轮
             processInitialStage(gamePlay, ret);
-            processFreeStage(gamePlay, ret);
+            Long parentGameRecordId = ret.get(ret.size()-1).getId();
+            processFreeStage(gamePlay, ret , null, parentGameRecordId);
             setLastGameFlag(ret);
         } else if (BetSubTypeEnum.isFirstStep(gamePlay.getBetSubType().getCode()) && Objects.isNull(gamePlay.getVolatility())) {
             // 执行首轮
@@ -87,19 +83,142 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
             // 执行免费轮
             GamePlayDo.ContinuePlayContext context = gamePlay.getContinuePlayContext();
             AssertUtil.assertNotNull(gamePlay.getContinuePlayContext(), ErrorCode.ERR_INTER);
-            processFreeStage(gamePlay, ret, context.getParentBetRecordId());
+            processFreeStage(gamePlay, ret, context.getParentBetRecordId(), context.getParentGameRecordId());
             setLastGameFlag(ret);
         }
         MangkukulamSymbolUtil.postProcessPlaceholderSymbol(ret);
+        // 结果验证数据添加
+        //// 总中奖金额
+        long totalRewardAmount = ret.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
+        gamePlay.setOverallRewardAmount(totalRewardAmount);
         return ret;
     }
 
+    /**
+     * 处理初始轮
+     * @param gamePlay
+     * @param ret
+     */
     private void processInitialStage(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> ret) {
-        List<GameRecordTemplateDo> gameMultipleRecordDos = getGameRecordTemplate(gamePlay);
+        List<GameRecordTemplateDo> gameMultipleRecordDos =
+                getGameRecordTemplate(gamePlay.getBetType(), gamePlay.getBetSubType(), gamePlay.getVolatility());
+
+        // 获取首轮(batchId == 0 and index == 0)
+        GameRecordTemplateDo firstRecord = gameMultipleRecordDos.stream()
+                .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
+
+        // 处理首轮
+        long firstGameRecordId = super.generateGameRecordId();
+        MangkukulamGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, null, firstRecord, BigDecimal.ZERO);
+        ret.add(firstGameRecord);
+        // 按 batchId 分组 & 记录 ID 映射
+        Map<Long, List<GameRecordTemplateDo>> groupedByBatchId = gameMultipleRecordDos.stream()
+                .collect(Collectors.groupingBy(GameRecordTemplateDo::getBatchId));
+
+        // 获取首批次并排序
+        List<GameRecordTemplateDo> recordBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
+                .stream()
+                .sorted(Comparator.comparing(GameRecordTemplateDo::getIndex))
+                .collect(Collectors.toList());
+        // 处理每个批次
+        MangkukulamGameRecordDo lastGameRecord = firstGameRecord;
+
+        for (GameRecordTemplateDo recordDo : recordBatchList) {
+            if (recordDo.getParentId() != 0L) {
+                // 处理首轮普通轮
+                long gameRecordId = generateGameRecordId();
+                MangkukulamGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(),
+                        lastGameRecord.getBatchId(), null, recordDo, lastGameRecord.getRewardResult().getTotalMultiple());
+                ret.add(gameRecord);
+                lastGameRecord = gameRecord;
+            }
+        }
     }
 
-    private void processFreeStage(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> ret, Long parentBetRecordId) {
-        List<GameRecordTemplateDo> gameMultipleRecordDos = getGameRecordTemplate(gamePlay);
+    /**
+     * 处理免费轮
+     * @param gamePlay
+     * @param ret
+     * @param parentBetRecordId
+     */
+    private void processFreeStage(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> ret, Long parentBetRecordId, Long parentGameRecordId) {
+        List<GameRecordTemplateDo> gameMultipleRecordDos =
+                getGameRecordTemplate(gamePlay.getBetType(), gamePlay.getBetSubType(), gamePlay.getVolatility());
+
+        List<Long> gameRecordIds = new ArrayList<>();
+        // 获取第一批免费轮
+        List<GameRecordTemplateDo> firstBatchFreeWheel = gameMultipleRecordDos.stream()
+                .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
+                .collect(Collectors.toList());
+
+        // 按 batchId 分组 & 记录 ID 映射
+        Map<Long, List<GameRecordTemplateDo>> groupedByBatchId = gameMultipleRecordDos.stream()
+                .collect(Collectors.groupingBy(GameRecordTemplateDo::getBatchId));
+
+        Map<GameRecordTemplateDo, MangkukulamGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
+
+        // 将第一轮免费轮的id作为第一批的id
+        for (Long batchId : firstBatchFreeWheel.stream().map(GameRecordTemplateDo::getId).collect(Collectors.toList())) {
+            processOneBatch(gamePlay, groupedByBatchId, batchId, nextLevelGameRecordMap, gameRecordIds, parentGameRecordId, parentBetRecordId, ret);
+        }
+
+    }
+
+    private void processOneBatch(GamePlayDo gamePlay,
+                                 Map<Long, List<GameRecordTemplateDo>> groupedByBatchId,
+                                 Long batchId,
+                                 Map<GameRecordTemplateDo, MangkukulamGameRecordDo> nextLevelGameRecordMap,
+                                 List<Long> gameRecordIds,
+                                 Long parentBetRecordId,
+                                 Long parentGameRecordId,
+                                 List<MangkukulamGameRecordDo> ret) {
+        List<GameRecordTemplateDo> currentLevelRecords = groupedByBatchId.get(batchId);
+        currentLevelRecords.sort(Comparator.comparing(GameRecordTemplateDo::getIndex));
+        // 处理当前层级的每个记录
+        MangkukulamGameRecordDo preGameRecord = null;
+        for (GameRecordTemplateDo record : currentLevelRecords) {
+            BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
+            long gameRecordId = generateGameRecordId();
+            MangkukulamGameRecordDo gameRecord = null;
+            if (record.getIndex() == 0) {
+                gameRecordIds.add(gameRecordId);
+                gameRecord = processGameRecord(gamePlay, gameRecordId, parentGameRecordId, gameRecordId, parentBetRecordId, record, totalMultipleAmount);
+                ret.add(gameRecord);
+            } else {
+                gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), parentBetRecordId, record, totalMultipleAmount);
+                ret.add(gameRecord);
+            }
+            preGameRecord = gameRecord;
+            if (CollectionUtils.isNotEmpty(record.getGameRecordIds())) {
+                nextLevelGameRecordMap.put(record, gameRecord);
+            }
+        }
+    }
+
+    private void processFreeRound(List<MangkukulamGameRecordDo> ret,
+                                  GamePlayDo gamePlay,
+                                  GameRecordTemplateDo recordDo,
+                                  MangkukulamGameRecordDo parent,
+                                  Map<Long, List<GameRecordTemplateDo>> groupedByBatchId,
+                                  Long parentBetRecordId) {
+
+        Map<GameRecordTemplateDo, MangkukulamGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
+
+        List<Long> gameRecordIds = new ArrayList<>();
+        for (Long batchId : recordDo.getGameRecordIds()) {
+            processOneBatch(gamePlay, groupedByBatchId, batchId, nextLevelGameRecordMap, gameRecordIds, parent.getId(),parentBetRecordId,ret);
+        }
+        parent.setGameRecordIds(gameRecordIds);
+        for (Map.Entry<GameRecordTemplateDo, MangkukulamGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
+            GameRecordTemplateDo key = entry.getKey();
+            MangkukulamGameRecordDo value = entry.getValue();
+            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId, parentBetRecordId);
+        }
     }
 
     private TemplateMultipleRange getTemplateMultipleRange(BetTypeEnum betType, BetSubTypeEnum subType, VolatilityTypeEnum volatilityType) {
@@ -160,8 +279,8 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         if (warmUp.canWarmUp(tag, templateMultipleRange.getEnd())) {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithLocalCache(DIWATA_MAYARI, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
-            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
+                template = betRecordTemplateEsService.getTemplateWithLocalCache(MANGKUKULAM, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
+            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
                 template = betRecordTemplateEsService.getTemplateWithRedisCache(DIWATA_MAYARI, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
@@ -174,12 +293,12 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
         });
         if (CollectionUtils.isEmpty(configRecordList)) {
-            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+            log.error("template is empty, betType:{}, range start: {}, end: {}", betType, templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         // 结果验证数据添加
-        gamePlay.setTemplateId(betRecordId);
-        gamePlay.setTemplateMultipleRange(templateMultipleRange);
+//        gamePlay.setTemplateId(betRecordId);
+//        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return configRecordList;
     }
 
@@ -187,32 +306,32 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
     /**
      * 递归处理免费轮，确保同层级先处理完，再进入下一层
      */
-    private void processFreeRounds(
-            List<MangkukulamGameRecordDo> ret,
-            GamePlayDo gamePlay,
-            OperationEventConfigRecordDo recordDo,
-            MangkukulamGameRecordDo parent,
-            Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId) {
-        Map<OperationEventConfigRecordDo, MangkukulamGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
+    private void processFreeRounds(List<MangkukulamGameRecordDo> ret,
+                                   GamePlayDo gamePlay,
+                                   GameRecordTemplateDo recordDo,
+                                   MangkukulamGameRecordDo parent,
+                                   Map<Long, List<GameRecordTemplateDo>> groupedByBatchId,
+                                   Long parentBetRecordId) {
+        Map<GameRecordTemplateDo, MangkukulamGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
 
         List<Long> gameRecordIds = new ArrayList<>();
         for (Long batchId : recordDo.getGameRecordIds()) {
-            List<OperationEventConfigRecordDo> currentLevelRecords = groupedByBatchId.get(batchId);
-            currentLevelRecords.sort(Comparator.comparing(OperationEventConfigRecordDo::getIndex));
+            List<GameRecordTemplateDo> currentLevelRecords = groupedByBatchId.get(batchId);
+            currentLevelRecords.sort(Comparator.comparing(GameRecordTemplateDo::getIndex));
             // 处理当前层级的每个记录
             MangkukulamGameRecordDo preGameRecord = null;
-            for (OperationEventConfigRecordDo record : currentLevelRecords) {
+            for (GameRecordTemplateDo record : currentLevelRecords) {
                 long gameRecordId = generateGameRecordId();
                 MangkukulamGameRecordDo gameRecord = null;
                 if (record.getIndex() == 0) {
                     gameRecordIds.add(gameRecordId);
                     // 首回合倍率为空
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record, null);
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, parentBetRecordId, record, null);
                     ret.add(gameRecord);
                 } else {
                     // 后续回合倍率传入前一回合的倍率
                     BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record, totalMultipleAmount);
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), parentBetRecordId, record, totalMultipleAmount);
                     ret.add(gameRecord);
                 }
                 preGameRecord = gameRecord;
@@ -222,10 +341,10 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
             }
         }
         parent.setGameRecordIds(gameRecordIds);
-        for (Map.Entry<OperationEventConfigRecordDo, MangkukulamGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
-            OperationEventConfigRecordDo key = entry.getKey();
+        for (Map.Entry<GameRecordTemplateDo, MangkukulamGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
+            GameRecordTemplateDo key = entry.getKey();
             MangkukulamGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId);
+            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId, parentBetRecordId);
         }
     }
 
@@ -234,36 +353,39 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
      */
     private MangkukulamGameRecordDo processGameRecord(
             GamePlayDo gamePlay,
-            long gameRecordId,
-            long parentId,
-            long batchId,
-            OperationEventConfigRecordDo recordDo,
+            Long currentGameRecordId,
+            Long parentGameRecordId,
+            Long batchId,
+            Long parentBetRecordId,
+            GameRecordTemplateDo templateDo,
             BigDecimal totalMultiple) {
 
         // 确定 `TotalMultiple` 参数
-        WheelDo<MangkukulamSymbolDo> lamangSymbolWheel = this.convertWheel(recordDo.getWheel());
+        WheelDo<MangkukulamSymbolDo> lamangSymbolWheel = this.convertWheel(templateDo.getWheel());
         MangkukulamSymbolDo[][] symbolArr = lamangSymbolWheel.getSymbolArr();
         // 处理空值
         lamangSymbolWheel.setSymbolArr(MangkukulamSymbolUtil.copySymbolArrWithPlaceHolder(symbolArr));
         RewardResultDo<MangkukulamSymbolDo> rewardResult = mangkukulamRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, lamangSymbolWheel, totalMultiple));
         // 构建时还原
         lamangSymbolWheel.setSymbolArr(symbolArr);
-        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, lamangSymbolWheel, rewardResult);
+        return buildGameRecord(currentGameRecordId, parentGameRecordId, gamePlay.getBetRecordId(), batchId, parentBetRecordId, lamangSymbolWheel, rewardResult);
     }
 
-    private MangkukulamGameRecordDo buildGameRecord(Long id,
-                                                    Long parentId,
+    private MangkukulamGameRecordDo buildGameRecord(Long currentGameRecordId,
+                                                    Long parentGameRecordId,
                                                     Long betRecordId,
                                                     Long batchId,
+                                                    Long parentBetRecordId,
                                                     WheelDo<MangkukulamSymbolDo> wheel,
                                                     RewardResultDo<MangkukulamSymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         return MangkukulamGameRecordDo.builder()
-                .id(id)
-                .parentId(parentId)
+                .id(currentGameRecordId)
+                .parentId(parentGameRecordId)
                 .betRecordId(betRecordId)
                 .batchId(batchId)
+                .parentBetRecordId(parentBetRecordId)
                 .playerId(userInfo.getPlayerId())
                 .playerName(userInfo.getPlayerName())
                 .index(wheel.getIndex())

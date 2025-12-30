@@ -97,6 +97,7 @@ public class MangkukulamConfig {
                 if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {
                     return normalBetMainGame;
                 } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_WHEEL_NORMAL_BET)) {
+                    AssertUtil.assertNotNull(volatilityType, ErrorCode.ERR_INTER, "Volatility type can not be null");
                     if (Objects.equals(volatilityType, VolatilityTypeEnum.LOW)) {
                         return normalBetFreeGameLow;
                     } else if (Objects.equals(volatilityType, VolatilityTypeEnum.HIGH)) {
@@ -107,6 +108,7 @@ public class MangkukulamConfig {
                 if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
                     return buyBetMainGame;
                 } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_WHEEL_BUY_BET)) {
+                    AssertUtil.assertNotNull(volatilityType, ErrorCode.ERR_INTER, "Volatility type can not be null");
                     if (Objects.equals(volatilityType, VolatilityTypeEnum.LOW)) {
                         return buyBetFreeGameLow;
                     } else if (Objects.equals(volatilityType, VolatilityTypeEnum.HIGH)) {
