@@ -44,7 +44,7 @@ import static com.wegame.capi.common.enums.TemplateTypeEnum.DIWATA_MAYARI;
 import static com.wegame.capi.common.enums.TemplateTypeEnum.MANGKUKULAM;
 
 @Slf4j
-@Component("mangkukulamGameEventPlay")
+@Component("mangkukulamGameTemplatePlay")
 public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
@@ -125,7 +125,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
                 .stream()
                 .sorted(Comparator.comparing(GameRecordTemplateDo::getIndex))
                 .collect(Collectors.toList());
-        // 处理每个批次
+        // 处理首个批次
         MangkukulamGameRecordDo lastGameRecord = firstGameRecord;
 
         for (GameRecordTemplateDo recordDo : recordBatchList) {
@@ -165,6 +165,12 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         // 将第一轮免费轮的id作为第一批的id
         for (Long batchId : firstBatchFreeWheel.stream().map(GameRecordTemplateDo::getId).collect(Collectors.toList())) {
             processOneBatch(gamePlay, groupedByBatchId, batchId, nextLevelGameRecordMap, gameRecordIds, parentGameRecordId, parentBetRecordId, ret);
+        }
+
+        for (Map.Entry<GameRecordTemplateDo, MangkukulamGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
+            GameRecordTemplateDo key = entry.getKey();
+            MangkukulamGameRecordDo value = entry.getValue();
+            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId, parentBetRecordId);
         }
 
     }
