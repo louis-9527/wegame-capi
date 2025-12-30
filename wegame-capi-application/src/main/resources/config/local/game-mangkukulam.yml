@@ -11,7 +11,7 @@ spring:
 pulsar:
   dynamic:
     mangkukulam:
-      url: pulsar://qat-pulsar-proxy.cpegame.com
+      url: pulsar://qat-pulsar-proxy.cpegame.com:6650
       tenant: ${spring.application.name}_Mangkukulam
       namespace: ${spring.application.env}
       bet_topic: Mangkukulam_topic
