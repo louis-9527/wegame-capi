@@ -1,3 +1,8 @@
+## disable mangkukulam game
+game:
+  enable:
+    Mangkukulam: false
+
 ## mongodb
 spring:
   data:
@@ -11,7 +16,7 @@ spring:
 pulsar:
   dynamic:
     mangkukulam:
-      url: pulsar://qat-pulsar.cpegame.com:6650
+      url: pulsar://qat-pulsar-proxy.cpegame.com
       tenant: ${spring.application.name}_Mangkukulam
       namespace: ${spring.application.env}
       bet_topic: Mangkukulam_topic
