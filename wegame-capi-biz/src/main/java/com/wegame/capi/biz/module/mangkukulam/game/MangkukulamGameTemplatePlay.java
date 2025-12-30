@@ -24,12 +24,14 @@ import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.*;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
+import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import com.wegame.capi.common.constants.TemplateTagConstants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateMultipleWarmUpEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
-import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.MANGKUKULAM_GAME_INFO;
 import static com.wegame.capi.common.enums.TemplateTypeEnum.DIWATA_MAYARI;
@@ -65,59 +66,40 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
 
     @Override
     public List<MangkukulamGameRecordDo> play(GamePlayDo gamePlay) {
-        TemplateMultipleWarmUpEnum templateMultipleWarmUpEnum;
         List<MangkukulamGameRecordDo> ret = new ArrayList<>();
-        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.MANGKUKULAM);
-        // 获取首轮(batchId == 0 and index == 0)
-        OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
-                .filter(record -> Objects.equals(RECORD_DEFAULT_PARENT_ID, record.getParentId()) && Objects.equals(RECORD_FIRST_INDEX, record.getIndex()))
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
-
-        // 处理首轮
-        long firstGameRecordId = super.generateGameRecordId();
-        MangkukulamGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, null);
-        ret.add(firstGameRecord);
-        // 按 batchId 分组 & 记录 ID 映射
-        Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId = gameMultipleRecordDos.stream()
-                .collect(Collectors.groupingBy(OperationEventConfigRecordDo::getBatchId));
-
-        // 获取首批次并排序
-        List<OperationEventConfigRecordDo> firstBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
-                .stream()
-                .sorted(Comparator.comparing(OperationEventConfigRecordDo::getIndex))
-                .collect(Collectors.toList());
-        // 处理每个批次
-        MangkukulamGameRecordDo lastGameRecord = firstGameRecord;
-
-        for (OperationEventConfigRecordDo recordDo : firstBatchList) {
-            // 非首回合
-            if (!Objects.equals(RECORD_DEFAULT_PARENT_ID, recordDo.getParentId())) {
-                // 处理首轮普通轮
-                long gameRecordId = generateGameRecordId();
-                // 用上一回合的倍率
-                MangkukulamGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, lastGameRecord.getRewardResult().getTotalMultiple());
-                ret.add(gameRecord);
-                lastGameRecord = gameRecord;
+        List<GameRecordTemplateDo> gameMultipleRecordDos = getGameRecordTemplate(gamePlay);
+        if (BetSubTypeEnum.isFirstStep(gamePlay.getBetSubType().getCode()) && Objects.nonNull(gamePlay.getVolatility())) {
+            // 执行完普通轮和免费轮
+            processInitialStage(gamePlay, ret);
+            processFreeStage(gamePlay, ret);
+            setLastGameFlag(ret);
+        } else if (BetSubTypeEnum.isFirstStep(gamePlay.getBetSubType().getCode()) && Objects.isNull(gamePlay.getVolatility())) {
+            // 执行首轮
+            processInitialStage(gamePlay, ret);
+            MangkukulamGameRecordDo lastGame = ret.get(ret.size() - 1);
+            //不可能达到最大倍数
+//            boolean reachMaxMultiple = AmountHelper.reachMaxMultiple(totalRewardAmount.get(), gamePlay.getBetAmount(), mangkukulamConfig.getRewardMaxMultiple());
+            boolean rewardFreeWheel = (Objects.nonNull(lastGame) && lastGame.getRewardResult().isHasRewardFreeWheel());
+            if (!rewardFreeWheel) {
+                setLastGameFlag(ret);
             }
-
-            if (CollectionUtils.isEmpty(recordDo.getGameRecordIds())) {
-                continue;
-            }
-            // 处理免费轮
-            processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId);
+        } else if (BetSubTypeEnum.isSecondStep(gamePlay.getBetSubType().getCode()) && Objects.nonNull(gamePlay.getVolatility())) {
+            // 执行免费轮
+            GamePlayDo.ContinuePlayContext context = gamePlay.getContinuePlayContext();
+            AssertUtil.assertNotNull(gamePlay.getContinuePlayContext(), ErrorCode.ERR_INTER);
+            processFreeStage(gamePlay, ret, context.getParentBetRecordId());
+            setLastGameFlag(ret);
         }
-        // 设置结束
-        if (CollectionUtils.isNotEmpty(ret)) {
-            ret.get(ret.size() - 1).setLastGameFlag(true);
-        }
-        //// 总中奖金额
-        long totalRewardAmount = ret.stream()
-                .filter(item -> Objects.nonNull(item.getRewardResult()))
-                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
-                .sum();
-        gamePlay.setOverallRewardAmount(totalRewardAmount);
+        MangkukulamSymbolUtil.postProcessPlaceholderSymbol(ret);
         return ret;
+    }
+
+    private void processInitialStage(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> ret) {
+        List<GameRecordTemplateDo> gameMultipleRecordDos = getGameRecordTemplate(gamePlay);
+    }
+
+    private void processFreeStage(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> ret, Long parentBetRecordId) {
+        List<GameRecordTemplateDo> gameMultipleRecordDos = getGameRecordTemplate(gamePlay);
     }
 
     private TemplateMultipleRange getTemplateMultipleRange(BetTypeEnum betType, BetSubTypeEnum subType, VolatilityTypeEnum volatilityType) {
@@ -140,6 +122,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
 
     /**
      * 获取模版所用标签
+     *
      * @param betType
      * @param subType
      * @return
@@ -158,14 +141,14 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         return null;
     }
 
-    private List<GameRecordTemplateDo> getGameRecordTemplate(GamePlayDo gamePlay) {
+    private List<GameRecordTemplateDo> getGameRecordTemplate(BetTypeEnum betType, BetSubTypeEnum subType, VolatilityTypeEnum volatilityType) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
-        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType(), gamePlay.getBetSubType(), gamePlay.getVolatility());
+        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(betType, subType, volatilityType);
         AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
-        String tag = getTemplateTag(gamePlay.getBetType(), gamePlay.getBetSubType());
+        String tag = getTemplateTag(betType, subType);
         AssertUtil.assertNotNull(tag, ErrorCode.ERR_INTER);
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByTagAndMultipleRange(MANGKUKULAM, tag, templateMultipleRange.getStart(), templateMultipleRange.getEnd(), MangkukulamBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
@@ -173,9 +156,10 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         log.info("betRecordId:{}", betRecordId);
         List<GameRecordTemplateDo> configRecordList;
         MangkukulamBetRecordTemplateEsDo template;
-        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.DIWATA_MAYARI, gamePlay.getBetType(), templateMultipleRange)) {
+        TemplateMultipleWarmUpEnum warmUp = TemplateMultipleWarmUpEnum.valueOfCode(GameTypeEnum.MANGKUKULAM);
+        if (warmUp.canWarmUp(tag, templateMultipleRange.getEnd())) {
             // 已经被预热的倍率，直接走缓存
-            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
+            if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
                 template = betRecordTemplateEsService.getTemplateWithLocalCache(DIWATA_MAYARI, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
             } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
                 template = betRecordTemplateEsService.getTemplateWithRedisCache(DIWATA_MAYARI, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
@@ -294,5 +278,11 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
     private WheelDo<MangkukulamSymbolDo> convertWheel(Object obj) {
         return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<MangkukulamSymbolDo>>() {
         });
+    }
+
+    private void setLastGameFlag(List<MangkukulamGameRecordDo> gameRecordResult) {
+        if (CollectionUtils.isNotEmpty(gameRecordResult)) {
+            gameRecordResult.get(gameRecordResult.size() - 1).setLastGameFlag(true);
+        }
     }
 }

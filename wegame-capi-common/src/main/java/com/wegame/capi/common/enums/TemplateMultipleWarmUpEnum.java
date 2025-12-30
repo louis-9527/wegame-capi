@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.constants.TemplateTagConstants;
 import lombok.*;
@@ -58,12 +57,12 @@ public enum TemplateMultipleWarmUpEnum {
     /**
      * 是否可预热
      *
-     * @param betSubType         betSubType
+     * @param tag         betSubType
      * @param currentEndMultiple currentEndMultiple
      * @return true/false
      */
-    public boolean canWarmUp(BetSubTypeEnum betSubType, BigDecimal currentEndMultiple) {
-        WarmUpValidator warmUpValidator = this.warmUpValidatorMap.get(betSubType);
+    public boolean canWarmUp(String tag, BigDecimal currentEndMultiple) {
+        WarmUpValidator warmUpValidator = this.warmUpValidatorMap.get(tag);
         AssertUtil.assertNotNull(warmUpValidator, ErrorCode.ERR_PARAM, "no can use warmUpValidator");
         return warmUpValidator.canWarmUp(currentEndMultiple);
     }

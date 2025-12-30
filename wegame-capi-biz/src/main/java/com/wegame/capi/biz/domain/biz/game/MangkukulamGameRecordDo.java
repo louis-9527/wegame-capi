@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * LAM_ANG游戏记录
+ * Mangkukulam游戏记录
  */
 @Data
 @SuperBuilder
