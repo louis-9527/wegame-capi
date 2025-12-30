@@ -5,21 +5,31 @@ import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
+import com.wegame.capi.biz.config.domain.MangkukulamConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MangkukulamGameRecordDo;
+import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.MangkukulamSymbolDo;
+import com.wegame.capi.biz.domain.biz.template.mangkukulam.MangkukulamBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamSymbolUtil;
 import com.wegame.capi.biz.module.mangkukulam.reward.MangkukulamRewardHandler;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
+import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.OperationEventTypeEnum;
+import com.wegame.capi.client.enums.*;
+import com.wegame.capi.common.constants.TemplateTagConstants;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateMultipleWarmUpEnum;
+import com.wegame.capi.common.utils.JsonGzipUtil;
+import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +40,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper.MANGKUKULAM_GAME_INFO;
+import static com.wegame.capi.common.enums.TemplateTypeEnum.DIWATA_MAYARI;
+import static com.wegame.capi.common.enums.TemplateTypeEnum.MANGKUKULAM;
 
 @Slf4j
 @Component("mangkukulamGameEventPlay")
@@ -45,8 +57,15 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
     @Autowired
     OperationEventConfigRecordService operationEventConfigRecordService;
 
+    @Autowired
+    MangkukulamConfig mangkukulamConfig;
+
+    @Autowired
+    BetRecordTemplateEsService<MangkukulamBetRecordTemplateEsDo> betRecordTemplateEsService;
+
     @Override
     public List<MangkukulamGameRecordDo> play(GamePlayDo gamePlay) {
+        TemplateMultipleWarmUpEnum templateMultipleWarmUpEnum;
         List<MangkukulamGameRecordDo> ret = new ArrayList<>();
         List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.MANGKUKULAM);
         // 获取首轮(batchId == 0 and index == 0)
@@ -99,6 +118,85 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
                 .sum();
         gamePlay.setOverallRewardAmount(totalRewardAmount);
         return ret;
+    }
+
+    private TemplateMultipleRange getTemplateMultipleRange(BetTypeEnum betType, BetSubTypeEnum subType, VolatilityTypeEnum volatilityType) {
+        String templateMultipleRange;
+        Map<String, Integer> configMap = mangkukulamConfig.getTemplateRangeConfig().getConfigByBetTypeAndVolatility(betType, subType, volatilityType);
+        AssertUtil.assertNotNull(configMap, ErrorCode.ERR_INTER);
+        templateMultipleRange = randomService.randomKeyByWeight(configMap);
+        AssertUtil.assertStrNotEmpty(templateMultipleRange, ErrorCode.ERR_INTER);
+        return TemplateMultipleRange.build(templateMultipleRange);
+    }
+
+    private Long getRandomElement(List<Long> list) {
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        Random random = new Random();
+        int randomIndex = random.nextInt(list.size());
+        return list.get(randomIndex);
+    }
+
+    /**
+     * 获取模版所用标签
+     * @param betType
+     * @param subType
+     * @return
+     */
+    private String getTemplateTag(BetTypeEnum betType, BetSubTypeEnum subType) {
+        if (BetSubTypeEnum.isSecondStep(subType.getCode())) {
+            return TemplateTagConstants.MANGKUKULAM_FREE_STAGE;
+        }
+        if (BetSubTypeEnum.isFirstStep(subType.getCode())) {
+            if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
+                return TemplateTagConstants.MANGKUKULAM_NORMAL_BET_INITIAL_STAGE;
+            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
+                return TemplateTagConstants.MANGKUKULAM_BUY_BET_INITIAL_STAGE;
+            }
+        }
+        return null;
+    }
+
+    private List<GameRecordTemplateDo> getGameRecordTemplate(GamePlayDo gamePlay) {
+        UserInfo userInfo = UserInfoContext.getUserInfo();
+        AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
+        TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(gamePlay.getBetType(), gamePlay.getBetSubType(), gamePlay.getVolatility());
+        AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(templateMultipleRange.getStart(), ErrorCode.ERR_INTER);
+        AssertUtil.assertNotNull(templateMultipleRange.getEnd(), ErrorCode.ERR_INTER);
+        String tag = getTemplateTag(gamePlay.getBetType(), gamePlay.getBetSubType());
+        AssertUtil.assertNotNull(tag, ErrorCode.ERR_INTER);
+        List<Long> betRecordIdList = betRecordTemplateEsService.listIdByTagAndMultipleRange(MANGKUKULAM, tag, templateMultipleRange.getStart(), templateMultipleRange.getEnd(), MangkukulamBetRecordTemplateEsDo.class);
+        AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
+        Long betRecordId = getRandomElement(betRecordIdList);
+        log.info("betRecordId:{}", betRecordId);
+        List<GameRecordTemplateDo> configRecordList;
+        MangkukulamBetRecordTemplateEsDo template;
+        if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.DIWATA_MAYARI, gamePlay.getBetType(), templateMultipleRange)) {
+            // 已经被预热的倍率，直接走缓存
+            if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
+                template = betRecordTemplateEsService.getTemplateWithLocalCache(DIWATA_MAYARI, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
+            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
+                template = betRecordTemplateEsService.getTemplateWithRedisCache(DIWATA_MAYARI, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
+            } else {
+                throw new BusinessException(ErrorCode.ERR_PARAM);
+            }
+        } else {
+            // 没有被预热的倍率，需要重新查询
+            template = betRecordTemplateEsService.findById(DIWATA_MAYARI, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
+        }
+        AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
+        configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
+        });
+        if (CollectionUtils.isEmpty(configRecordList)) {
+            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+        }
+        AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
+        // 结果验证数据添加
+        gamePlay.setTemplateId(betRecordId);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
+        return configRecordList;
     }
 
 

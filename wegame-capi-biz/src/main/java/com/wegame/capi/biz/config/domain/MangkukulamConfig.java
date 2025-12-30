@@ -6,9 +6,11 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamGameHelper;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
@@ -50,6 +52,71 @@ public class MangkukulamConfig {
      * 购买投注
      */
     private Bet buyBet;
+
+    private TemplateRangeConfig templateRangeConfig;
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = -734841249803450751L;
+        /**
+         * 普通投注主游戏模板配置
+         */
+        private Map<String, Integer> normalBetMainGame;
+        /**
+         * 购买投注主游戏模板配置
+         */
+        private Map<String, Integer> buyBetMainGame;
+
+        /**
+         * 普通投注免费游戏-高波动模板配置
+         */
+        private Map<String, Integer> normalBetFreeGameHigh;
+
+        /**
+         * 普通投注免费游戏-低波动模板配置
+         */
+        private Map<String, Integer> normalBetFreeGameLow;
+
+        /**
+         * 购买投注免费游戏-高波动模板配置
+         */
+        private Map<String, Integer> buyBetFreeGameHigh;
+
+        /**
+         * 购买投注免费游戏-低波动模板配置
+         */
+        private Map<String, Integer> buyBetFreeGameLow;
+
+        public Map<String,Integer> getConfigByBetTypeAndVolatility(BetTypeEnum betType, BetSubTypeEnum betSubType, VolatilityTypeEnum volatilityType) {
+            if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
+                if (Objects.equals(betSubType, BetSubTypeEnum.NORMAL_BET)) {
+                    return normalBetMainGame;
+                } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_WHEEL_NORMAL_BET)) {
+                    if (Objects.equals(volatilityType, VolatilityTypeEnum.LOW)) {
+                        return normalBetFreeGameLow;
+                    } else if (Objects.equals(volatilityType, VolatilityTypeEnum.HIGH)) {
+                        return normalBetFreeGameHigh;
+                    }
+                }
+            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
+                if (Objects.equals(betSubType, BetSubTypeEnum.BUY_BET)) {
+                    return buyBetMainGame;
+                } else if (Objects.equals(betSubType, BetSubTypeEnum.FREE_WHEEL_BUY_BET)) {
+                    if (Objects.equals(volatilityType, VolatilityTypeEnum.LOW)) {
+                        return buyBetFreeGameLow;
+                    } else if (Objects.equals(volatilityType, VolatilityTypeEnum.HIGH)) {
+                        return buyBetFreeGameHigh;
+                    }
+                }
+            }
+            return null;
+        }
+    }
 
     public MangkukulamConfig.MainGame getSupportMainGame(GamePlayDo gamePlay, boolean freeWheelFlag) {
         MangkukulamConfig.Bet bet = null;
