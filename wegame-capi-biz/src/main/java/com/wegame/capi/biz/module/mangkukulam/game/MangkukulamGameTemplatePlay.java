@@ -171,6 +171,10 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
             processOneBatch(gamePlay, groupedByBatchId, batchId, nextLevelGameRecordMap, gameRecordIds, parentBetRecordId,parentGameRecordId, ret);
         }
 
+        MangkukulamGameRecordDo parentGameRecord = ret.stream().filter(item -> Objects.equals(parentGameRecordId, item.getId())).findFirst().orElse(null);
+        if (Objects.nonNull(parentGameRecord)) {
+            parentGameRecord.setGameRecordIds(gameRecordIds);
+        }
         for (Map.Entry<GameRecordTemplateDo, MangkukulamGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
             GameRecordTemplateDo key = entry.getKey();
             MangkukulamGameRecordDo value = entry.getValue();
