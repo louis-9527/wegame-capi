@@ -192,7 +192,7 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
 
     }
 
-    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_'+ tag +'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
+    @Cacheable(value = CacheConstants.BET_RECORD_TEMPLATE_LOCAL, key = "#templateType.name() + '_'+ #tag +'_'+ #multipleRangeStart + '_' + #multipleRangeEnd")
     public List<Long> listIdByTagAndMultipleRange(TemplateTypeEnum templateType, String tag, BigDecimal multipleRangeStart, BigDecimal multipleRangeEnd, Class<T> clazz) {
         log.info("listIdByMultipleRange query, tag: {}, multipleRangeStart: {}, multipleRangeEnd: {}, templateType: {}",
                 tag, multipleRangeStart, multipleRangeEnd, templateType);
