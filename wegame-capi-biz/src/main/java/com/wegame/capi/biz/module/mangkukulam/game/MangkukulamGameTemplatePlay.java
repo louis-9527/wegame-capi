@@ -170,7 +170,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         for (Map.Entry<GameRecordTemplateDo, MangkukulamGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
             GameRecordTemplateDo key = entry.getKey();
             MangkukulamGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId, parentBetRecordId);
+            processFreeRound(ret, gamePlay, key, value, groupedByBatchId, parentBetRecordId);
         }
 
     }
@@ -223,7 +223,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         for (Map.Entry<GameRecordTemplateDo, MangkukulamGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
             GameRecordTemplateDo key = entry.getKey();
             MangkukulamGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId, parentBetRecordId);
+            processFreeRound(ret, gamePlay, key, value, groupedByBatchId, parentBetRecordId);
         }
     }
 
@@ -306,52 +306,6 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
 //        gamePlay.setTemplateId(betRecordId);
 //        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return configRecordList;
-    }
-
-
-    /**
-     * 递归处理免费轮，确保同层级先处理完，再进入下一层
-     */
-    private void processFreeRounds(List<MangkukulamGameRecordDo> ret,
-                                   GamePlayDo gamePlay,
-                                   GameRecordTemplateDo recordDo,
-                                   MangkukulamGameRecordDo parent,
-                                   Map<Long, List<GameRecordTemplateDo>> groupedByBatchId,
-                                   Long parentBetRecordId) {
-        Map<GameRecordTemplateDo, MangkukulamGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
-
-        List<Long> gameRecordIds = new ArrayList<>();
-        for (Long batchId : recordDo.getGameRecordIds()) {
-            List<GameRecordTemplateDo> currentLevelRecords = groupedByBatchId.get(batchId);
-            currentLevelRecords.sort(Comparator.comparing(GameRecordTemplateDo::getIndex));
-            // 处理当前层级的每个记录
-            MangkukulamGameRecordDo preGameRecord = null;
-            for (GameRecordTemplateDo record : currentLevelRecords) {
-                long gameRecordId = generateGameRecordId();
-                MangkukulamGameRecordDo gameRecord = null;
-                if (record.getIndex() == 0) {
-                    gameRecordIds.add(gameRecordId);
-                    // 首回合倍率为空
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, parentBetRecordId, record, null);
-                    ret.add(gameRecord);
-                } else {
-                    // 后续回合倍率传入前一回合的倍率
-                    BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
-                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), parentBetRecordId, record, totalMultipleAmount);
-                    ret.add(gameRecord);
-                }
-                preGameRecord = gameRecord;
-                if (CollectionUtils.isNotEmpty(record.getGameRecordIds())) {
-                    nextLevelGameRecordMap.put(record, gameRecord);
-                }
-            }
-        }
-        parent.setGameRecordIds(gameRecordIds);
-        for (Map.Entry<GameRecordTemplateDo, MangkukulamGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
-            GameRecordTemplateDo key = entry.getKey();
-            MangkukulamGameRecordDo value = entry.getValue();
-            processFreeRounds(ret, gamePlay, key, value, groupedByBatchId, parentBetRecordId);
-        }
     }
 
     /**
