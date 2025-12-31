@@ -103,8 +103,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
      * @param ret
      */
     private void processInitialStage(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> ret) {
-        List<GameRecordTemplateDo> gameMultipleRecordDos =
-                getGameRecordTemplate(gamePlay.getBetType(), gamePlay.getBetSubType(), gamePlay.getVolatility());
+        List<GameRecordTemplateDo> gameMultipleRecordDos = getGameRecordTemplate(gamePlay);
 
         // 获取首轮(batchId == 0 and index == 0)
         GameRecordTemplateDo firstRecord = gameMultipleRecordDos.stream()
@@ -147,8 +146,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
      * @param parentBetRecordId
      */
     private void processFreeStage(GamePlayDo gamePlay, List<MangkukulamGameRecordDo> ret, Long parentBetRecordId, Long parentGameRecordId) {
-        List<GameRecordTemplateDo> gameMultipleRecordDos =
-                getGameRecordTemplate(gamePlay.getBetType(), gamePlay.getBetSubType(), gamePlay.getVolatility());
+        List<GameRecordTemplateDo> gameMultipleRecordDos = getGameRecordTemplate(gamePlay);
 
         List<Long> gameRecordIds = new ArrayList<>();
         // 获取第一批免费轮
@@ -266,7 +264,10 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         return null;
     }
 
-    private List<GameRecordTemplateDo> getGameRecordTemplate(BetTypeEnum betType, BetSubTypeEnum subType, VolatilityTypeEnum volatilityType) {
+    private List<GameRecordTemplateDo> getGameRecordTemplate(GamePlayDo gamePlay) {
+        BetTypeEnum betType = gamePlay.getBetType();
+        BetSubTypeEnum subType = gamePlay.getBetSubType();
+        VolatilityTypeEnum volatilityType = gamePlay.getVolatility();
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         TemplateMultipleRange templateMultipleRange = getTemplateMultipleRange(betType, subType, volatilityType);
@@ -282,6 +283,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         List<GameRecordTemplateDo> configRecordList;
         MangkukulamBetRecordTemplateEsDo template;
         TemplateMultipleWarmUpEnum warmUp = TemplateMultipleWarmUpEnum.valueOfCode(GameTypeEnum.MANGKUKULAM);
+        AssertUtil.assertNotNull(warmUp, ErrorCode.ERR_INTER, "error warmUp");
         if (warmUp.canWarmUp(tag, templateMultipleRange.getEnd())) {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
@@ -303,8 +305,8 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         // 结果验证数据添加
-//        gamePlay.setTemplateId(betRecordId);
-//        gamePlay.setTemplateMultipleRange(templateMultipleRange);
+        gamePlay.setTemplateId(betRecordId);
+        gamePlay.setTemplateMultipleRange(templateMultipleRange);
         return configRecordList;
     }
 
