@@ -7,6 +7,7 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
+import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -74,6 +75,11 @@ public abstract class AbstractGameContext<R> {
                 case TEMPLATE_PLAY:
                     AssertUtil.assertNotNull(overallRewardAmount, ErrorCode.ERR_INTER);
                     AssertUtil.assertNotNull(templateMultipleRange, ErrorCode.ERR_INTER);
+                    if (Objects.equals(gamePlayDo.getGameType(), GameTypeEnum.MANGKUKULAM)) {
+                        //todo 添加mangkukulam的校验
+                        mangkukulamTemplatePlayValidate(gamePlayDo);
+                        return;
+                    }
                     Long byDivideAmount = payAmount > 0 ? payAmount : betAmount;
                     BigDecimal divideValue = BigDecimal.valueOf(overallRewardAmount).divide(BigDecimal.valueOf(byDivideAmount), 2, RoundingMode.FLOOR);
                     if (divideValue.compareTo(templateMultipleRange.getEnd()) > 0) {
@@ -103,5 +109,9 @@ public abstract class AbstractGameContext<R> {
         }
 
 
+    }
+
+    private void mangkukulamTemplatePlayValidate(GamePlayDo gamePlayDo) {
+        //todo 校验
     }
 }

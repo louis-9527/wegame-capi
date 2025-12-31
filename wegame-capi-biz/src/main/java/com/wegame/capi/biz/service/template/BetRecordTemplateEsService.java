@@ -82,7 +82,8 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
             // 1. 组装请求
             GetRequest getRequest = new GetRequest(templateType.getBetRecordTemplateName(), id.toString())
                     .fetchSourceContext(new FetchSourceContext(true,
-                            new String[]{"id", "bytes"},   // 包含
+//                            new String[]{"id", "bytes"},
+                            new String[]{"id", "bytes","multiple"},   // 包含
                             null));
             long start = System.currentTimeMillis();
             // 2. 执行
