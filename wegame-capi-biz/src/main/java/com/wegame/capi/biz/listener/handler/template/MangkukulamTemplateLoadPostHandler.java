@@ -60,46 +60,47 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
         }
         // 1. 普通轮首轮
         try {
-            log.info("main game template load start...");
-            List<Long> mainGameTemplateIdList = new LinkedList<>();
+            log.info("normal bet main game template load start...");
+            List<Long> normalBetMainGameTemplateIdList = new LinkedList<>();
             config.getNormalBetMainGame().keySet().forEach((String key) -> {
                 List<Long> idList = loadTemplateIdList(TemplateTagConstants.MANGKUKULAM_NORMAL_BET_INITIAL_STAGE, TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
-                    mainGameTemplateIdList.addAll(idList);
+                    normalBetMainGameTemplateIdList.addAll(idList);
                 }
             });
-            loadTemplateToLocalCache(TemplateTagConstants.MANGKUKULAM_NORMAL_BET_INITIAL_STAGE, mainGameTemplateIdList);
-            log.info("main game template load end...");
+            loadTemplateToLocalCache(TemplateTagConstants.MANGKUKULAM_NORMAL_BET_INITIAL_STAGE, normalBetMainGameTemplateIdList);
+            log.info("normal bet main game template load end...");
         } catch (Exception e) {
-            log.error("template load error", e);
+            log.error("normal bet main game template load error", e);
         }
 
         // 2. 免费轮首轮
         try {
-            log.info("main game template load start...");
-            List<Long> mainGameTemplateIdList = new LinkedList<>();
+            log.info("buy bet main game template load start...");
+            List<Long> buybetMainGameTemplateIdList = new LinkedList<>();
             config.getBuyBetMainGame().keySet().forEach((String key) -> {
                 List<Long> idList = loadTemplateIdList(TemplateTagConstants.MANGKUKULAM_BUY_BET_INITIAL_STAGE, TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
-                    mainGameTemplateIdList.addAll(idList);
+                    buybetMainGameTemplateIdList.addAll(idList);
                 }
             });
-            loadTemplateToLocalCache(TemplateTagConstants.MANGKUKULAM_BUY_BET_INITIAL_STAGE, mainGameTemplateIdList);
+            loadTemplateToLocalCache(TemplateTagConstants.MANGKUKULAM_BUY_BET_INITIAL_STAGE, buybetMainGameTemplateIdList);
+            log.info("buy bet  main game template load end...");
         } catch (Exception e) {
-            log.info("free game template load error", e);
+            log.info("buy bet main game template load error", e);
         }
 
         // 3. 加载后续轮
         try {
-            log.info("main game template load start...");
-            List<Long> mainGameTemplateIdList = new LinkedList<>();
+            log.info("free game template load start...");
+            List<Long> freeGameTemplateList = new LinkedList<>();
             mergeFreeWheelRange(config).forEach(rangeKey -> {
                 List<Long> idList = loadTemplateIdList(TemplateTagConstants.MANGKUKULAM_FREE_STAGE, TemplateMultipleRange.build(rangeKey));
                 if (CollectionUtils.isNotEmpty(idList)) {
-                    mainGameTemplateIdList.addAll(idList);
+                    freeGameTemplateList.addAll(idList);
                 }
             });
-            loadTemplateToLocalCache(TemplateTagConstants.MANGKUKULAM_FREE_STAGE, mainGameTemplateIdList);
+            loadTemplateToLocalCache(TemplateTagConstants.MANGKUKULAM_FREE_STAGE, freeGameTemplateList);
         } catch (Exception e) {
             log.info("free game template load error", e);
         }
