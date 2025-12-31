@@ -8,8 +8,8 @@ import com.wegame.capi.biz.config.domain.MangkukulamConfig;
 import com.wegame.capi.biz.domain.biz.template.mangkukulam.MangkukulamBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.constants.TemplateTagConstants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.MangkukulamTagEnum;
 import com.wegame.capi.common.enums.TemplateMultipleWarmUpEnum;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -36,11 +36,6 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
     @Autowired
     BetRecordTemplateEsService<MangkukulamBetRecordTemplateEsDo> betRecordTemplateEsService;
 
-    private static final List<String> LOADED_TAGS = Arrays.asList(
-            TemplateTagConstants.MANGKUKULAM_FREE_STAGE,
-            TemplateTagConstants.MANGKUKULAM_NORMAL_BET_INITIAL_STAGE,
-            TemplateTagConstants.MANGKUKULAM_BUY_BET_INITIAL_STAGE);
-
     protected TemplateTypeEnum getTemplateType() {
         return TemplateTypeEnum.MANGKUKULAM;
     }
@@ -63,12 +58,12 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
             log.info("normal bet main game template load start...");
             List<Long> normalBetMainGameTemplateIdList = new LinkedList<>();
             config.getNormalBetMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(TemplateTagConstants.MANGKUKULAM_NORMAL_BET_INITIAL_STAGE, TemplateMultipleRange.build(key));
+                List<Long> idList = loadTemplateIdList(MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode(), TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     normalBetMainGameTemplateIdList.addAll(idList);
                 }
             });
-            loadTemplateToLocalCache(TemplateTagConstants.MANGKUKULAM_NORMAL_BET_INITIAL_STAGE, normalBetMainGameTemplateIdList);
+            loadTemplateToLocalCache(MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode(), normalBetMainGameTemplateIdList);
             log.info("normal bet main game template load end...");
         } catch (Exception e) {
             log.error("normal bet main game template load error", e);
@@ -79,12 +74,12 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
             log.info("buy bet main game template load start...");
             List<Long> buybetMainGameTemplateIdList = new LinkedList<>();
             config.getBuyBetMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(TemplateTagConstants.MANGKUKULAM_BUY_BET_INITIAL_STAGE, TemplateMultipleRange.build(key));
+                List<Long> idList = loadTemplateIdList(MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode(), TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     buybetMainGameTemplateIdList.addAll(idList);
                 }
             });
-            loadTemplateToLocalCache(TemplateTagConstants.MANGKUKULAM_BUY_BET_INITIAL_STAGE, buybetMainGameTemplateIdList);
+            loadTemplateToLocalCache(MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode(), buybetMainGameTemplateIdList);
             log.info("buy bet  main game template load end...");
         } catch (Exception e) {
             log.info("buy bet main game template load error", e);
@@ -95,12 +90,12 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
             log.info("free game template load start...");
             List<Long> freeGameTemplateList = new LinkedList<>();
             mergeFreeWheelRange(config).forEach(rangeKey -> {
-                List<Long> idList = loadTemplateIdList(TemplateTagConstants.MANGKUKULAM_FREE_STAGE, TemplateMultipleRange.build(rangeKey));
+                List<Long> idList = loadTemplateIdList(MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), TemplateMultipleRange.build(rangeKey));
                 if (CollectionUtils.isNotEmpty(idList)) {
                     freeGameTemplateList.addAll(idList);
                 }
             });
-            loadTemplateToLocalCache(TemplateTagConstants.MANGKUKULAM_FREE_STAGE, freeGameTemplateList);
+            loadTemplateToLocalCache(MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), freeGameTemplateList);
         } catch (Exception e) {
             log.info("free game template load error", e);
         }

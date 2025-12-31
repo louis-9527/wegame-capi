@@ -21,6 +21,7 @@ public class MangkukulamGameContext<R> extends AbstractGameContext<R> {
     private static final Map<GamePlayTypeEnum, String> STRATEGY_NAME_MAP = new ImmutableMap.Builder<GamePlayTypeEnum, String>()
             .put(GamePlayTypeEnum.NORMAL_PLAY, "mangkukulamGameNormalPlay")
             .put(GamePlayTypeEnum.EVENT_PLAY, "mangkukulamGameEventPlay")
+            .put(GamePlayTypeEnum.TEMPLATE_PLAY, "mangkukulamGameTemplatePlay")
             .build();
 
     @Autowired

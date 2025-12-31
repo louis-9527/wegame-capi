@@ -38,9 +38,9 @@ public class MangkukulamBetRecordManager extends AbstractBetRecordManager<Mangku
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<MangkukulamGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            gameRecordList.forEach(item -> {
-                log.info("add GameRecord id:{}", item.getId());
-            });
+//            gameRecordList.forEach(item -> {
+//                log.info("add GameRecord id:{}", item.getId());
+//            });
             boolean ret = gameRecordService.batchAdd(gameRecordList, gameType, MangkukulamGameRecordDo.class);
             AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         }

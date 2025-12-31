@@ -26,8 +26,8 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
-import com.wegame.capi.common.constants.TemplateTagConstants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.MangkukulamTagEnum;
 import com.wegame.capi.common.enums.TemplateMultipleWarmUpEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -254,13 +254,13 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
      */
     private String getTemplateTag(BetTypeEnum betType, BetSubTypeEnum subType) {
         if (BetSubTypeEnum.isSecondStep(subType.getCode())) {
-            return TemplateTagConstants.MANGKUKULAM_FREE_STAGE;
+            return MangkukulamTagEnum.FREE_GAME_STAGE.getCode();
         }
         if (BetSubTypeEnum.isFirstStep(subType.getCode())) {
             if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
-                return TemplateTagConstants.MANGKUKULAM_NORMAL_BET_INITIAL_STAGE;
+                return MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode();
             } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
-                return TemplateTagConstants.MANGKUKULAM_BUY_BET_INITIAL_STAGE;
+                return MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode();
             }
         }
         return null;
@@ -278,7 +278,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
         List<Long> betRecordIdList = betRecordTemplateEsService.listIdByTagAndMultipleRange(MANGKUKULAM, tag, templateMultipleRange.getStart(), templateMultipleRange.getEnd(), MangkukulamBetRecordTemplateEsDo.class);
         AssertUtil.assertNotEmpty(betRecordIdList, ErrorCode.ERR_INTER);
         Long betRecordId = getRandomElement(betRecordIdList);
-        log.info("betRecordId:{}", betRecordId);
+        log.info("templatePlay: template betRecordId :{}, range:{} - {} ", betRecordId, templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         List<GameRecordTemplateDo> configRecordList;
         MangkukulamBetRecordTemplateEsDo template;
         TemplateMultipleWarmUpEnum warmUp = TemplateMultipleWarmUpEnum.valueOfCode(GameTypeEnum.MANGKUKULAM);

@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.constants.TemplateTagConstants;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -24,9 +23,9 @@ public enum TemplateMultipleWarmUpEnum {
 
     MANGKUKULAM(GameTypeEnum.MANGKUKULAM,
             new ImmutableMap.Builder<String, WarmUpValidator>()
-                    .put(TemplateTagConstants.MANGKUKULAM_NORMAL_BET_INITIAL_STAGE, new WarmUpValidator(new BigDecimal("30")))
-                    .put(TemplateTagConstants.MANGKUKULAM_BUY_BET_INITIAL_STAGE, new WarmUpValidator(new BigDecimal("30")))
-                    .put(TemplateTagConstants.MANGKUKULAM_FREE_STAGE, new WarmUpValidator(new BigDecimal("30")))
+                    .put(MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode(), new WarmUpValidator(new BigDecimal("5")))
+                    .put(MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode(), new WarmUpValidator(new BigDecimal("1")))
+                    .put(MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), new WarmUpValidator(new BigDecimal("5")))
                     .build(),
             "MANGKUKULAM"),
 
