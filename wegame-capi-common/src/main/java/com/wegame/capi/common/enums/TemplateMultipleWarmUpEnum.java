@@ -25,7 +25,7 @@ public enum TemplateMultipleWarmUpEnum {
             new ImmutableMap.Builder<String, WarmUpValidator>()
                     .put(MangkukulamTagEnum.NORMAL_BET_INITIAL_STAGE.getCode(), new WarmUpValidator(new BigDecimal("5")))
                     .put(MangkukulamTagEnum.BUY_BET_INITIAL_STAGE.getCode(), new WarmUpValidator(new BigDecimal("1")))
-                    .put(MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), new WarmUpValidator(new BigDecimal("5")))
+                    .put(MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), new WarmUpValidator(new BigDecimal("-1")))
                     .build(),
             "MANGKUKULAM"),
 

@@ -95,7 +95,7 @@ public class MangkukulamTemplateLoadPostHandler extends AbstractTemplateLoadPost
                     freeGameTemplateList.addAll(idList);
                 }
             });
-            loadTemplateToLocalCache(MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), freeGameTemplateList);
+//            loadTemplateToLocalCache(MangkukulamTagEnum.FREE_GAME_STAGE.getCode(), freeGameTemplateList);
         } catch (Exception e) {
             log.info("free game template load error", e);
         }
