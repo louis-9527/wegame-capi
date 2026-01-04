@@ -6,6 +6,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
@@ -112,16 +113,16 @@ public abstract class AbstractGameContext<R> {
     }
 
     private void mangkukulamTemplatePlayValidate(GamePlayDo gamePlayDo) {
-//        //用于计算倍率的金额
-//        Long actualCalcAmount = gamePlayDo.getBetAmount();
-//        // 第二轮 || 连续生成两轮 (因为只要生成免费轮，首轮的赔付金额都为0)都按照35倍计算倍率
-//        if (BetSubTypeEnum.isSecondStep(gamePlayDo.getBetSubType().getCode()) ||
-//                (BetSubTypeEnum.isFirstStep(gamePlayDo.getBetSubType().getCode() )&& Objects.nonNull(gamePlayDo.getVolatility()))) {
-//            actualCalcAmount = gamePlayDo.getBetAmount() * 35L;
-//        }
-//        BigDecimal divideValue = BigDecimal.valueOf(gamePlayDo.getOverallRewardAmount()).divide(BigDecimal.valueOf(actualCalcAmount), 2, RoundingMode.FLOOR);
-//        TemplateMultipleRange range = gamePlayDo.getTemplateMultipleRange();
-//        AssertUtil.assertTrue(range.getEnd().compareTo(divideValue) >= 0, ErrorCode.ERR_INTER);
-//        AssertUtil.assertTrue(range.getStart().compareTo(divideValue) <= 0, ErrorCode.ERR_INTER);
+        //用于计算倍率的金额
+        Long actualCalcAmount = gamePlayDo.getBetAmount();
+        // 第二轮 || 连续生成两轮 (因为只要生成免费轮，首轮的赔付金额都为0)都按照35倍计算倍率
+        if (BetSubTypeEnum.isSecondStep(gamePlayDo.getBetSubType().getCode()) ||
+                (BetSubTypeEnum.isFirstStep(gamePlayDo.getBetSubType().getCode() )&& Objects.nonNull(gamePlayDo.getVolatility()))) {
+            actualCalcAmount = gamePlayDo.getBetAmount() * 35L;
+        }
+        BigDecimal divideValue = BigDecimal.valueOf(gamePlayDo.getOverallRewardAmount()).divide(BigDecimal.valueOf(actualCalcAmount), 2, RoundingMode.FLOOR);
+        TemplateMultipleRange range = gamePlayDo.getTemplateMultipleRange();
+        AssertUtil.assertTrue(range.getEnd().compareTo(divideValue) >= 0, ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(range.getStart().compareTo(divideValue) <= 0, ErrorCode.ERR_INTER);
     }
 }
