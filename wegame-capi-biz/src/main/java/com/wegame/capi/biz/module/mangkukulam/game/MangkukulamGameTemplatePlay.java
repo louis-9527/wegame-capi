@@ -304,7 +304,7 @@ public class MangkukulamGameTemplatePlay extends AbstractGame<MangkukulamGameRec
             template = betRecordTemplateEsService.findById(MANGKUKULAM, betRecordId, MangkukulamBetRecordTemplateEsDo.class);
         }
         AssertUtil.assertNotNull(template, ErrorCode.ERR_INTER);
-        log.info("templatePlay: template betRecordId :{}, range:{} - {}, actual multi:{} ", betRecordId, templateMultipleRange.getStart(), templateMultipleRange.getEnd(), template.getMultiple());
+//        log.info("templatePlay: template betRecordId :{}, range:{} - {}, actual multi:{} ", betRecordId, templateMultipleRange.getStart(), templateMultipleRange.getEnd(), template.getMultiple());
         configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
         });
         if (CollectionUtils.isEmpty(configRecordList)) {

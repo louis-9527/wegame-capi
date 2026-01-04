@@ -185,17 +185,17 @@ public class OperationEventPulsarConfig {
                 .subscribe();
     }
 
-//    @Bean(name = mangkukulamOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
-//    @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
-//    @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
-//    public Consumer<byte[]> mangkukulamOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
-//                                                              @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
-//        log.debug(BUILD_BEAN_FORMAT, mangkukulamOperationEventConsumer);
-//        return operationEventPulsarClient.newConsumer(Schema.BYTES)
-//                .topic(dynamicOperationTopic)
-//                .subscriptionName(dynamicOperationGroupMangkukulam)
-//                .subscriptionType(SubscriptionType.Shared)
-//                .messageListener(mangkukulamOperationEventPulsarListener)
-//                .subscribe();
-//    }
+    @Bean(name = mangkukulamOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
+    public Consumer<byte[]> mangkukulamOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                              @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, mangkukulamOperationEventConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupMangkukulam)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(mangkukulamOperationEventPulsarListener)
+                .subscribe();
+    }
 }
