@@ -30,7 +30,6 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.FreeWheelHandleStatusEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.client.enums.VolatilityTypeEnum;
-import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -44,7 +43,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
  * Mangkukulam游戏投注抽象接口
@@ -152,6 +150,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
 //            AssertUtil.assertTrue(Objects.equals(preBetRecord.getStatus(), BetStatusEnum.SUCCESS.getCode()), ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(Objects.equals(preBetRecord.getFreeWheelHandleStatus(), FreeWheelHandleStatusEnum.PENDING.getCode()), ErrorCode.ERR_PARAM);
             AssertUtil.assertTrue(StringUtils.equals(preBetRecord.getPlayerId(), UserInfoContext.getUserInfo().getPlayerId()), ErrorCode.ERR_PARAM);
+            AssertUtil.assertTrue(Objects.equals(gamePlayDo.getBetAmount(), preBetRecord.getBetAmount()),ErrorCode.ERR_INTER, "betAmount is not equals to parentBetRecord");
             // 1、继续玩（完成波动选择后续部分）
             gamePlayDo.setContinuePlayContext(buildContinuePlayContext(preBetRecord, betDo));
             List<MangkukulamGameRecordDo> list = gameContext().play(gamePlayDo);// freeWheelHandleStatus 无需处理 待处理 已处理
