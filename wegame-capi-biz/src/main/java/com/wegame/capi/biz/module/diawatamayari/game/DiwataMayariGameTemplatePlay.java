@@ -25,7 +25,6 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.OperationEventTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.utils.JsonGzipUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
@@ -39,8 +38,9 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
+import static com.wegame.capi.common.Constants.TRUE_VAL;
 import static com.wegame.capi.common.enums.TemplateTypeEnum.DIWATA_MAYARI;
-import static com.wegame.capi.common.Constants.*;
 
 
 @Slf4j
@@ -145,7 +145,7 @@ public class DiwataMayariGameTemplatePlay extends AbstractGame<DiwataMayariGameR
         configRecordList = FastJsonUtils.fromJSONString(JsonGzipUtil.decompress(template.getBytes()), new TypeReference<List<GameRecordTemplateDo>>() {
         });
         if (CollectionUtils.isEmpty(configRecordList)) {
-            log.error("template is empty, betType:{}, range start: [], end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
+            log.error("template is empty, betType:{}, range start: {}, end: {}", gamePlay.getBetType(), templateMultipleRange.getStart(), templateMultipleRange.getEnd());
         }
         AssertUtil.assertNotEmpty(configRecordList, ErrorCode.ERR_INTER);
         // 结果验证数据添加
