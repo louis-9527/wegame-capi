@@ -7,16 +7,16 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.RewardHandlerBuilder;
+import com.wegame.capi.biz.domain.biz.game.AtlantisGameRecordDo;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
-import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.symbol.KapreSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.AtlantisSymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.module.atlantis.KapreGameHelper;
-import com.wegame.capi.biz.module.atlantis.KapreSymbolUtil;
-import com.wegame.capi.biz.module.atlantis.reward.KapreRewardHandler;
+import com.wegame.capi.biz.module.atlantis.AtlantisGameHelper;
+import com.wegame.capi.biz.module.atlantis.AtlantisSymbolUtil;
+import com.wegame.capi.biz.module.atlantis.reward.AtlantisRewardHandler;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
@@ -33,40 +33,40 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component("kapreGameEventPlay")
-public class KapreGameEventPlay extends AbstractGame<KapreGameRecordDo> {
+@Component("atlantisGameEventPlay")
+public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
 
     private static final Long RECORD_DEFAULT_PARENT_ID = 0L;
-    private static final GameInfoDo gameInfo = KapreGameHelper.KAPRE_GAME_INFO;
+    private static final GameInfoDo gameInfo = AtlantisGameHelper.ATLANTIS_GAME_INFO;
 
     @Autowired
-    KapreRewardHandler kapreRewardHandler;
+    AtlantisRewardHandler atlantisRewardHandler;
 
     @Autowired
     OperationEventConfigRecordService operationEventConfigRecordService;
 
     @Override
-    public List<KapreGameRecordDo> play(GamePlayDo gamePlay) {
-        List<KapreGameRecordDo> ret = new ArrayList<>();
-        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.KAPRE);
+    public List<AtlantisGameRecordDo> play(GamePlayDo gamePlay) {
+        List<AtlantisGameRecordDo> ret = new ArrayList<>();
+        List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.ATLANTIS);
         AssertUtil.assertNotEmpty(gameMultipleRecordDos, ErrorCode.ERR_INTER, "gameMultipleRecordDos is empty");
-        // 获取首轮(parentId == 0 and index == 0（kapre 所有index都是0）)
+        // 获取首轮(parentId == 0 and index == 0（atlantis 所有index都是0）)
         OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
 
-        // 按 batchId 分组,batchId和gameRecordId是同一个值。kapre没有消除轮，一个batchId只对应一条记录
+        // 按 batchId 分组,batchId和gameRecordId是同一个值。atlantis没有消除轮，一个batchId只对应一条记录
         Map<Long, OperationEventConfigRecordDo> batchIdMap = gameMultipleRecordDos.stream()
                 .collect(Collectors.toMap(OperationEventConfigRecordDo::getBatchId, recordDo -> recordDo, (recordDo1, recordDo2) -> recordDo1));
 
         // 处理首轮
-        KapreGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, super.generateGameRecordId(), RECORD_DEFAULT_PARENT_ID, firstRecord);
+        AtlantisGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, super.generateGameRecordId(), RECORD_DEFAULT_PARENT_ID, firstRecord);
         ret.add(firstGameRecord);
         if (CollectionUtil.isNotEmpty(firstRecord.getGameRecordIds())) {
             // 首轮有免费轮
-            LinkedList<KapreEventFreeWheelHandleDo> taskLinkedList = new LinkedList<>();
-            taskLinkedList.addLast(new KapreEventFreeWheelHandleDo(firstGameRecord, firstRecord.getGameRecordIds()));
+            LinkedList<AtlantisEventFreeWheelHandleDo> taskLinkedList = new LinkedList<>();
+            taskLinkedList.addLast(new AtlantisEventFreeWheelHandleDo(firstGameRecord, firstRecord.getGameRecordIds()));
             // 迭代替代递归处理
             this.loopHandle(taskLinkedList, ret, gamePlay, batchIdMap);
         }
@@ -79,22 +79,22 @@ public class KapreGameEventPlay extends AbstractGame<KapreGameRecordDo> {
         return ret;
     }
 
-    private void loopHandle(LinkedList<KapreEventFreeWheelHandleDo> taskLinkedList, List<KapreGameRecordDo> ret, GamePlayDo gamePlay, Map<Long, OperationEventConfigRecordDo> batchIdMap) {
+    private void loopHandle(LinkedList<AtlantisEventFreeWheelHandleDo> taskLinkedList, List<AtlantisGameRecordDo> ret, GamePlayDo gamePlay, Map<Long, OperationEventConfigRecordDo> batchIdMap) {
         // 迭代替代递归
         while (!taskLinkedList.isEmpty()) {
             // 逐个处理
-            KapreEventFreeWheelHandleDo task = taskLinkedList.pollFirst();
-            KapreGameRecordDo parentGameRecord = task.getParentGameRecord();
+            AtlantisEventFreeWheelHandleDo task = taskLinkedList.pollFirst();
+            AtlantisGameRecordDo parentGameRecord = task.getParentGameRecord();
             for (Long oldSubGameRecordId : task.getOldSubGameRecordIds()) {
                 OperationEventConfigRecordDo configRecordDo = batchIdMap.get(oldSubGameRecordId);
                 AssertUtil.assertNotNull(configRecordDo, ErrorCode.ERR_INTER, "configRecordDo is null of batchId " + oldSubGameRecordId);
-                KapreGameRecordDo gameRecordDo = this.processGameRecord(gamePlay, super.generateGameRecordId(), parentGameRecord.getId(), configRecordDo);
+                AtlantisGameRecordDo gameRecordDo = this.processGameRecord(gamePlay, super.generateGameRecordId(), parentGameRecord.getId(), configRecordDo);
                 // 添加新的gameRecordId
                 parentGameRecord.addGameRecordId(gameRecordDo.getId());
                 ret.add(gameRecordDo);
                 // 如果还有免费轮，则加入任务
                 if (CollectionUtil.isNotEmpty(configRecordDo.getGameRecordIds())) {
-                    taskLinkedList.addLast(new KapreEventFreeWheelHandleDo(gameRecordDo, configRecordDo.getGameRecordIds()));
+                    taskLinkedList.addLast(new AtlantisEventFreeWheelHandleDo(gameRecordDo, configRecordDo.getGameRecordIds()));
                 }
             }
         }
@@ -103,31 +103,31 @@ public class KapreGameEventPlay extends AbstractGame<KapreGameRecordDo> {
     /**
      * 构建并处理投注记录
      */
-    private KapreGameRecordDo processGameRecord(
+    private AtlantisGameRecordDo processGameRecord(
             GamePlayDo gamePlay,
             long gameRecordId,
             long parentId,
             OperationEventConfigRecordDo recordDo) {
 
         // 确定 `TotalMultiple` 参数
-        WheelDo<KapreSymbolDo> kapreSymbolWheel = this.convertWheel(recordDo.getWheel());
-        KapreSymbolDo[][] symbolArr = kapreSymbolWheel.getSymbolArr();
+        WheelDo<AtlantisSymbolDo> atlantisSymbolWheel = this.convertWheel(recordDo.getWheel());
+        AtlantisSymbolDo[][] symbolArr = atlantisSymbolWheel.getSymbolArr();
         // 填充wild的嵌套元素:如果wild嵌套元素为空，则填充一个倍率为0的现金元素
-        kapreSymbolWheel.setSymbolArr(KapreSymbolUtil.handleWildSymbolArrNest(symbolArr));
-        RewardResultDo<KapreSymbolDo> rewardResult = kapreRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, kapreSymbolWheel, BigDecimal.ZERO));
+        atlantisSymbolWheel.setSymbolArr(AtlantisSymbolUtil.handleWildSymbolArrNest(symbolArr));
+        RewardResultDo<AtlantisSymbolDo> rewardResult = atlantisRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, atlantisSymbolWheel, BigDecimal.ZERO));
         // 构建时还原
-        kapreSymbolWheel.setSymbolArr(symbolArr);
-        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), kapreSymbolWheel, rewardResult);
+        atlantisSymbolWheel.setSymbolArr(symbolArr);
+        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), atlantisSymbolWheel, rewardResult);
     }
 
-    private KapreGameRecordDo buildGameRecord(Long id,
+    private AtlantisGameRecordDo buildGameRecord(Long id,
                                               Long parentId,
                                               Long betRecordId,
-                                              WheelDo<KapreSymbolDo> wheel,
-                                              RewardResultDo<KapreSymbolDo> rewardResult) {
+                                              WheelDo<AtlantisSymbolDo> wheel,
+                                              RewardResultDo<AtlantisSymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
-        return KapreGameRecordDo.builder()
+        return AtlantisGameRecordDo.builder()
                 .id(id)
                 .parentId(parentId)
                 .betRecordId(betRecordId)
@@ -146,9 +146,9 @@ public class KapreGameEventPlay extends AbstractGame<KapreGameRecordDo> {
 
     @Data
     @SuperBuilder
-    private static class KapreEventFreeWheelHandleDo {
+    private static class AtlantisEventFreeWheelHandleDo {
 
-        public KapreEventFreeWheelHandleDo(KapreGameRecordDo parentGameRecord, List<Long> oldSubGameRecordIds) {
+        public AtlantisEventFreeWheelHandleDo(AtlantisGameRecordDo parentGameRecord, List<Long> oldSubGameRecordIds) {
             AssertUtil.assertNotNull(parentGameRecord, ErrorCode.ERR_INTER, "parentGameRecord is null");
             AssertUtil.assertTrue(CollectionUtil.isNotEmpty(oldSubGameRecordIds), ErrorCode.ERR_INTER, "oldSubGameRecordIds is empty");
             this.parentGameRecord = parentGameRecord;
@@ -156,13 +156,13 @@ public class KapreGameEventPlay extends AbstractGame<KapreGameRecordDo> {
         }
 
         // parentRecord
-        private KapreGameRecordDo parentGameRecord;
+        private AtlantisGameRecordDo parentGameRecord;
         // 时间配置中的子gameRecordId列表
         private List<Long> oldSubGameRecordIds;
     }
 
-    private WheelDo<KapreSymbolDo> convertWheel(Object obj) {
-        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<KapreSymbolDo>>() {
+    private WheelDo<AtlantisSymbolDo> convertWheel(Object obj) {
+        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<AtlantisSymbolDo>>() {
         });
     }
 }

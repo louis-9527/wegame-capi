@@ -4,15 +4,15 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.config.domain.KapreConfig;
+import com.wegame.capi.biz.config.domain.AtlantisConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
+import com.wegame.capi.biz.domain.biz.symbol.AtlantisSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
-import com.wegame.capi.biz.domain.biz.symbol.KapreSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
@@ -38,28 +38,28 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 
 
 @Slf4j
-@Component("kapreRewardHandler")
-public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
+@Component("atlantisRewardHandler")
+public class AtlantisRewardHandler extends AbstractRewardHandler<AtlantisSymbolDo> {
     private static final Integer SCATTER_COUNT_FOR_FREE_SPIN = 3;
 
     @Autowired
-    OddsCalculateStrategy<KapreSymbolDo> kapreOddsCalculateStrategy;
+    OddsCalculateStrategy<AtlantisSymbolDo> kapreOddsCalculateStrategy;
 
     @Autowired
-    KapreConfig kapreConfig;
+    AtlantisConfig atlantisConfig;
 
     @Override
-    public RewardResultDo<KapreSymbolDo> handle(RewardHandleDo<KapreSymbolDo> rewardHandle) {
+    public RewardResultDo<AtlantisSymbolDo> handle(RewardHandleDo<AtlantisSymbolDo> rewardHandle) {
         // 1、业务校验
         validate(rewardHandle);
         // 2、计算中奖线
-        List<RewardLineDo<KapreSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
+        List<RewardLineDo<AtlantisSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         int scatterCount = scatterCount(rewardHandle);
-        Integer freeWheelTimes = kapreConfig.getFreeWheelTimes();
+        Integer freeWheelTimes = atlantisConfig.getFreeWheelTimes();
         boolean rewardFreeWheel = scatterCount >= SCATTER_COUNT_FOR_FREE_SPIN;
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖
-            return RewardResultDo.<KapreSymbolDo>builder()
+            return RewardResultDo.<AtlantisSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardType(RewardTypeEnum.NONE)
                     .rewardSubType(RewardSubTypeEnum.NONE)
@@ -76,8 +76,8 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         // 当前回合中奖总金额
         long totalRewardAmount = 0L;
         // 中奖坐标列表
-        List<RewardLineDetailDo<KapreSymbolDo>> rewardLineDetailList = Lists.newArrayList();
-        for (RewardLineDo<KapreSymbolDo> rewardLine : rewardLineList) {
+        List<RewardLineDetailDo<AtlantisSymbolDo>> rewardLineDetailList = Lists.newArrayList();
+        for (RewardLineDo<AtlantisSymbolDo> rewardLine : rewardLineList) {
             // 计算赔率
             BigDecimal odds = kapreOddsCalculateStrategy.calculateOddsOfRewardLine(rewardHandle, rewardLine);
             // 计算（中奖线）中奖金额：
@@ -87,7 +87,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
             // 累加中奖总金额
             totalRewardAmount = totalRewardAmount + lineRewardAmount.longValue();
             // 中奖线明细列表
-            rewardLineDetailList.add(RewardLineDetailDo.<KapreSymbolDo>builder()
+            rewardLineDetailList.add(RewardLineDetailDo.<AtlantisSymbolDo>builder()
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardAmount(lineRewardAmount.longValue())
                     .odds(odds)
@@ -105,8 +105,8 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
                 rewardHandle.getGamePlayType(),
                 Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount : rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount,
                 rewardHandle.getBetAmount(),
-                kapreConfig.getRewardMaxMultiple());
-        RewardResultDo<KapreSymbolDo> rewardResult = RewardResultDo.<KapreSymbolDo>builder()
+                atlantisConfig.getRewardMaxMultiple());
+        RewardResultDo<AtlantisSymbolDo> rewardResult = RewardResultDo.<AtlantisSymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
@@ -121,15 +121,15 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
     }
 
 
-    private List<RewardLineDo<KapreSymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<KapreSymbolDo> wheel) {
-        KapreSymbolDo[][] symbolArr = wheel.getSymbolArr();
+    private List<RewardLineDo<AtlantisSymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<AtlantisSymbolDo> wheel) {
+        AtlantisSymbolDo[][] symbolArr = wheel.getSymbolArr();
         // Map<第一列元素, TreeMap<列序号，满足规则的元素列表>
-        Map<KapreSymbolDo, TreeMap<Integer, List<RewardSymbolDo<KapreSymbolDo>>>> map = new HashMap<>();
+        Map<AtlantisSymbolDo, TreeMap<Integer, List<RewardSymbolDo<AtlantisSymbolDo>>>> map = new HashMap<>();
         // 目标元素集合targetSymbolSet
-        Set<KapreSymbolDo> targetSymbolSet = new HashSet<>();
+        Set<AtlantisSymbolDo> targetSymbolSet = new HashSet<>();
         // 1、处理第一列
         for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
-            KapreSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
+            AtlantisSymbolDo targetSymbol = symbolArr[row][ONE_COLUM_INDEX];
             // 首列 wild & scatter 在首列不参与中奖
             if (targetSymbol.isWildSymbol() || targetSymbol.isScatterSymbol()) {
                 continue;
@@ -145,19 +145,19 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
             Integer currentColum = column;
             for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
                 int currentRow = row;
-                KapreSymbolDo currentSymbol = symbolArr[row][currentColum];
-                for (KapreSymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
+                AtlantisSymbolDo currentSymbol = symbolArr[row][currentColum];
+                for (AtlantisSymbolDo targetSymbol : CollectionUtils.emptyIfNull(targetSymbolSet)) {
                     if (!isMatchTargetSymbol(currentSymbol, targetSymbol)) {
                         continue;
                     }
-                    TreeMap<Integer, List<RewardSymbolDo<KapreSymbolDo>>> treeMap = map.get(targetSymbol);
+                    TreeMap<Integer, List<RewardSymbolDo<AtlantisSymbolDo>>> treeMap = map.get(targetSymbol);
                     if (canPutIn(treeMap, currentColum)) {
-                        RewardSymbolDo<KapreSymbolDo> rewardSymbol = RewardSymbolDo.<KapreSymbolDo>builder()
+                        RewardSymbolDo<AtlantisSymbolDo> rewardSymbol = RewardSymbolDo.<AtlantisSymbolDo>builder()
                                 .symbol(currentSymbol)
                                 .index(IndexFactory.buildDo(currentRow, currentColum))
                                 .build();
                         if (Objects.isNull(treeMap.get(currentColum))) {
-                            List<RewardSymbolDo<KapreSymbolDo>> list = new ArrayList<>();
+                            List<RewardSymbolDo<AtlantisSymbolDo>> list = new ArrayList<>();
                             list.add(rewardSymbol);
                             treeMap.put(currentColum, list);
                         } else {
@@ -171,7 +171,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         return buildRewardLineList(map);
     }
 
-    private boolean canPutIn(TreeMap<Integer, List<RewardSymbolDo<KapreSymbolDo>>> treeMap, Integer currentColum) {
+    private boolean canPutIn(TreeMap<Integer, List<RewardSymbolDo<AtlantisSymbolDo>>> treeMap, Integer currentColum) {
         // 第一列必处理
         if (Objects.equals(currentColum, ONE_COLUM_INDEX)) {
             return true;
@@ -180,13 +180,13 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         return CollectionUtils.isNotEmpty(treeMap.get(currentColum - 1));
     }
 
-    private List<RewardLineDo<KapreSymbolDo>> buildRewardLineList(Map<KapreSymbolDo, TreeMap<Integer, List<RewardSymbolDo<KapreSymbolDo>>>> map) {
-        List<RewardLineDo<KapreSymbolDo>> list = new ArrayList<>();
-        for (Map.Entry<KapreSymbolDo, TreeMap<Integer, List<RewardSymbolDo<KapreSymbolDo>>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
+    private List<RewardLineDo<AtlantisSymbolDo>> buildRewardLineList(Map<AtlantisSymbolDo, TreeMap<Integer, List<RewardSymbolDo<AtlantisSymbolDo>>>> map) {
+        List<RewardLineDo<AtlantisSymbolDo>> list = new ArrayList<>();
+        for (Map.Entry<AtlantisSymbolDo, TreeMap<Integer, List<RewardSymbolDo<AtlantisSymbolDo>>>> entry : CollectionUtils.emptyIfNull(map.entrySet())) {
             if (MapUtils.isEmpty(entry.getValue())) {
                 continue;
             }
-            TreeMap<Integer, List<RewardSymbolDo<KapreSymbolDo>>> columMap = entry.getValue();
+            TreeMap<Integer, List<RewardSymbolDo<AtlantisSymbolDo>>> columMap = entry.getValue();
             if (columMap.size() < RewardLineTypeEnum.THREE.getNo()) {
                 continue;
             }
@@ -194,7 +194,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
                     .stream()
                     .map(List::size)
                     .reduce(1, (a, b) -> a * b);
-            list.add(RewardLineDo.<KapreSymbolDo>builder()
+            list.add(RewardLineDo.<AtlantisSymbolDo>builder()
                     .rewardSymbol(entry.getKey())
                     .rewardLineType(RewardLineTypeEnum.valueOfNo(columMap.size()))
                     .rewardLineSubType(getRewardLineSubType(entry.getKey()))
@@ -210,7 +210,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
         return list;
     }
 
-    private RewardLineSubTypeEnum getRewardLineSubType(KapreSymbolDo rewardSymbol) {
+    private RewardLineSubTypeEnum getRewardLineSubType(AtlantisSymbolDo rewardSymbol) {
         if (rewardSymbol.isCashSymbol()) {
             return RewardLineSubTypeEnum.CASH;
         } else {
@@ -224,7 +224,7 @@ public class KapreRewardHandler extends AbstractRewardHandler<KapreSymbolDo> {
                 || Objects.equals(targetSymbol.getSymbolType(), SymbolTypeEnum.WILD);
     }
 
-    private void validate(RewardHandleDo<KapreSymbolDo> rewardHandle) {
+    private void validate(RewardHandleDo<AtlantisSymbolDo> rewardHandle) {
         AssertUtil.assertNotNull(rewardHandle, ErrorCode.ERR_PARAM, "rewardHandle is null");
         AssertUtil.assertNotNull(rewardHandle.getGameType(), ErrorCode.ERR_INTER, "not support gameType");
         AssertUtil.assertNotNull(rewardHandle.getBetType(), ErrorCode.ERR_PARAM, "not support betType");

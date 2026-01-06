@@ -2,18 +2,18 @@ package com.wegame.capi.biz.module.atlantis.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.domain.biz.AtlantisBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.KapreBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
-import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
+import com.wegame.capi.biz.domain.biz.game.AtlantisGameRecordDo;
 import com.wegame.capi.biz.manager.AbstractBetRecordManager;
-import com.wegame.capi.biz.manager.KapreBetRecordManager;
+import com.wegame.capi.biz.manager.AtlantisBetRecordManager;
 import com.wegame.capi.biz.manager.operation.AbstractOperationEventManager;
-import com.wegame.capi.biz.manager.operation.KapreOperationEventManager;
-import com.wegame.capi.biz.module.atlantis.bet.KapreBetHelper;
-import com.wegame.capi.biz.module.atlantis.game.KapreGameContext;
+import com.wegame.capi.biz.manager.operation.AtlantisOperationEventManager;
+import com.wegame.capi.biz.module.atlantis.bet.AtlantisBetHelper;
+import com.wegame.capi.biz.module.atlantis.game.AtlantisGameContext;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.biz.module.base.bet.strategy.AbstractCommonBetStrategy;
@@ -35,50 +35,50 @@ import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
 
 
 /**
- * Kapre游戏投注抽象接口
+ * Atlantis游戏投注抽象接口
  */
 @Slf4j
-public abstract class AbstractKapreBetStrategy
-        extends AbstractCommonBetStrategy<KapreGameRecordDo, KapreBetRecordDetailDo>
-        implements KapreBetStrategy<KapreBetRecordDetailDo> {
+public abstract class AbstractAtlantisBetStrategy
+        extends AbstractCommonBetStrategy<AtlantisGameRecordDo, AtlantisBetRecordDetailDo>
+        implements AtlantisBetStrategy<AtlantisBetRecordDetailDo> {
 
     @Autowired
-    @Qualifier("kapreGameContext")
-    KapreGameContext<KapreGameRecordDo> kapreGameContext;
+    @Qualifier("atlantisGameContext")
+    AtlantisGameContext<AtlantisGameRecordDo> atlantisGameContext;
     @Autowired
-    @Qualifier("kapreBetRecordManager")
-    KapreBetRecordManager kapreBetRecordManager;
+    @Qualifier("atlantisBetRecordManager")
+    AtlantisBetRecordManager atlantisBetRecordManager;
 
     @Autowired
-    @Qualifier("kapreOperationEventManager")
-    private KapreOperationEventManager kapreOperationEventManager;
+    @Qualifier("atlantisOperationEventManager")
+    private AtlantisOperationEventManager atlantisOperationEventManager;
     @Autowired
-    private KapreBetHelper kapreBetHelper;
+    private AtlantisBetHelper atlantisBetHelper;
 
     @Override
-    public AbstractGameContext<KapreGameRecordDo> gameContext() {
-        return kapreGameContext;
+    public AbstractGameContext<AtlantisGameRecordDo> gameContext() {
+        return atlantisGameContext;
     }
 
 
     @Override
-    public AbstractBetRecordManager<KapreGameRecordDo> betRecordManager() {
-        return kapreBetRecordManager;
+    public AbstractBetRecordManager<AtlantisGameRecordDo> betRecordManager() {
+        return atlantisBetRecordManager;
     }
 
 
     @Override
     public AbstractOperationEventManager operationEventManager() {
-        return kapreOperationEventManager;
+        return atlantisOperationEventManager;
     }
 
     @Override
-    public BetHelper<KapreBetRecordDetailDo, KapreGameRecordDo> betHelper() {
-        return kapreBetHelper;
+    public BetHelper<AtlantisBetRecordDetailDo, AtlantisGameRecordDo> betHelper() {
+        return atlantisBetHelper;
     }
 
     @Override
-    public BetResultDo<KapreBetRecordDetailDo> bet(BetDo betDo) {
+    public BetResultDo<AtlantisBetRecordDetailDo> bet(BetDo betDo) {
         if (!BetSubTypeEnum.isFreeWheelQuery(betDo.getBetSubType().getCode())) {
             // 非免费轮投注流程
             //// 1、是否使用星卡
@@ -115,25 +115,25 @@ public abstract class AbstractKapreBetStrategy
     /**
      * 非免费轮投注(正常投注、购买投注)
      */
-    private BetResultDo<KapreBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
+    private BetResultDo<AtlantisBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<KapreGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
+        List<AtlantisGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
-        List<KapreGameRecordDo> firstBatchList = kapreBetHelper.getFirstBatchGameRecordList(list);
+        List<AtlantisGameRecordDo> firstBatchList = atlantisBetHelper.getFirstBatchGameRecordList(list);
         // 2、构建投注记录
-        BetRecordDo<KapreGameRecordDo> betRecord = kapreBetHelper.buildBetRecord(betRecordId, betDo, list);
-        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, kapreBetHelper.hasRewardFreeWheel(firstBatchList));
+        BetRecordDo<AtlantisGameRecordDo> betRecord = atlantisBetHelper.buildBetRecord(betRecordId, betDo, list);
+        SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, atlantisBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
-        return kapreBetHelper.handleBetResult(betRecord, resultDo);
+        return atlantisBetHelper.handleBetResult(betRecord, resultDo);
     }
 
     /**
      * 免费轮投注
      */
-    private BetResultDo<KapreBetRecordDetailDo> betForFreeWheelQuery(BetDo betDo) {
+    private BetResultDo<AtlantisBetRecordDetailDo> betForFreeWheelQuery(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        List<KapreGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
+        List<AtlantisGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
                 GameRecordQuery.builder()
                         .betRecordId(betDo.getBetRecordId())
                         .playerId(userInfo.getPlayerId())
@@ -143,7 +143,7 @@ public abstract class AbstractKapreBetStrategy
         // 按照index升序排列
         gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparingInt(KapreGameRecordDo::getIndex))
+                .sorted(Comparator.comparingInt(AtlantisGameRecordDo::getIndex))
                 .collect(Collectors.toList());
         //// 合计中奖总金额
         long overallRewardAmount = gameRecordList.stream()
@@ -151,20 +151,20 @@ public abstract class AbstractKapreBetStrategy
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            KapreGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
+            AtlantisGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
             if (Objects.nonNull(lastGameRecord)) {
                 // 后处理-免费轮
                 freeWheelAfterHandle(lastGameRecord.getBetRecordId());
             }
         }
-        return BetResultDo.<KapreBetRecordDetailDo>builder()
+        return BetResultDo.<AtlantisBetRecordDetailDo>builder()
                 .betRecordId(betDo.getBetRecordId())
                 .gameId(betDo.getGameId())
                 .betType(betDo.getBetType())
                 .betSubType(betDo.getBetSubType())
                 .overallRewardAmount(overallRewardAmount)
                 .totalPayoutAmount(0L)
-                .resultDetail(KapreBetRecordDetailDo.builder()
+                .resultDetail(AtlantisBetRecordDetailDo.builder()
                         .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetAmount(), overallRewardAmount))
                         .gameRecordList(gameRecordList)
                         .build())

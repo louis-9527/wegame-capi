@@ -4,13 +4,13 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.BetRecordBuilder;
-import com.wegame.capi.biz.config.domain.KapreConfig;
+import com.wegame.capi.biz.config.domain.AtlantisConfig;
+import com.wegame.capi.biz.domain.biz.AtlantisBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
-import com.wegame.capi.biz.domain.biz.KapreBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
-import com.wegame.capi.biz.domain.biz.game.KapreGameRecordDo;
+import com.wegame.capi.biz.domain.biz.game.AtlantisGameRecordDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -27,13 +27,13 @@ import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 
 @Component
-public class KapreBetHelper implements BetHelper<KapreBetRecordDetailDo, KapreGameRecordDo> {
+public class AtlantisBetHelper implements BetHelper<AtlantisBetRecordDetailDo, AtlantisGameRecordDo> {
 
     @Autowired
-    KapreConfig kapreConfig;
+    AtlantisConfig atlantisConfig;
 
     @Override
-    public BetRecordDo<KapreGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<KapreGameRecordDo> gameRecordList) {
+    public BetRecordDo<AtlantisGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<AtlantisGameRecordDo> gameRecordList) {
         //// 总中奖金额
         long totalRewardAmount = gameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
@@ -41,18 +41,18 @@ public class KapreBetHelper implements BetHelper<KapreBetRecordDetailDo, KapreGa
                 .sum();
         return BetRecordBuilder.build(betRecordId,
                 betDo,
-                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), kapreConfig.getRewardMaxMultiple()),
-                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), kapreConfig.getRewardMaxMultiple()),
+                maxAmountControl(totalRewardAmount, betDo.getBetAmount(), atlantisConfig.getRewardMaxMultiple()),
+                reachMaxMultiple(totalRewardAmount, betDo.getBetAmount(), atlantisConfig.getRewardMaxMultiple()),
                 null,
                 gameRecordList);
     }
 
     @Override
-    public BetResultDo<KapreBetRecordDetailDo> handleBetResult(BetRecordDo<KapreGameRecordDo> betRecord, SingleWalletBetResultDo result) {
+    public BetResultDo<AtlantisBetRecordDetailDo> handleBetResult(BetRecordDo<AtlantisGameRecordDo> betRecord, SingleWalletBetResultDo result) {
         AssertUtil.assertNotNull(result, ErrorCode.ERR_INTER);
 
         if (Objects.equals(result.getBetStatus(), BetStatusEnum.SUCCESS)) {
-            List<KapreGameRecordDo> firstBatchList = getFirstBatchGameRecordList(betRecord.getGameRecordList());
+            List<AtlantisGameRecordDo> firstBatchList = getFirstBatchGameRecordList(betRecord.getGameRecordList());
 
             // 4、组装返回结果
             //// 合计中奖总金额
@@ -60,15 +60,15 @@ public class KapreBetHelper implements BetHelper<KapreBetRecordDetailDo, KapreGa
                     .filter(item -> Objects.nonNull(item.getRewardResult()))
                     .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                     .sum();
-            return BetResultDo.<KapreBetRecordDetailDo>builder()
+            return BetResultDo.<AtlantisBetRecordDetailDo>builder()
                     .betRecordId(betRecord.getId())
                     .gameId(betRecord.getGameId())
                     .betType(BetTypeEnum.valueOfCode(betRecord.getBetType()))
                     .betSubType(BetSubTypeEnum.valueOfCode(betRecord.getBetSubType()))
                     .credit(result.getCredit())
-                    .overallRewardAmount(maxAmountControl(overallRewardAmount, betRecord.getBetAmount(), kapreConfig.getRewardMaxMultiple()))
+                    .overallRewardAmount(maxAmountControl(overallRewardAmount, betRecord.getBetAmount(), atlantisConfig.getRewardMaxMultiple()))
                     .totalPayoutAmount(betRecord.getPayOutAmount())
-                    .resultDetail(KapreBetRecordDetailDo.builder()
+                    .resultDetail(AtlantisBetRecordDetailDo.builder()
                             .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betRecord.getBetAmount(), overallRewardAmount))
                             .gameRecordList(firstBatchList)
                             .build())
@@ -85,7 +85,7 @@ public class KapreBetHelper implements BetHelper<KapreBetRecordDetailDo, KapreGa
         }
     }
 
-    public List<KapreGameRecordDo> getFirstBatchGameRecordList(List<KapreGameRecordDo> list) {
+    public List<AtlantisGameRecordDo> getFirstBatchGameRecordList(List<AtlantisGameRecordDo> list) {
         Long batchId = list.get(0).getBatchId();
         return list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
@@ -93,8 +93,8 @@ public class KapreBetHelper implements BetHelper<KapreBetRecordDetailDo, KapreGa
     }
 
     @Override
-    public boolean hasRewardFreeWheel(List<KapreGameRecordDo> gameRecordList) {
-        KapreGameRecordDo gameRecord = gameRecordList.stream()
+    public boolean hasRewardFreeWheel(List<AtlantisGameRecordDo> gameRecordList) {
+        AtlantisGameRecordDo gameRecord = gameRecordList.stream()
                 .filter(item -> item.getRewardResult() != null && item.getRewardResult().isHasRewardFreeWheel())
                 .findFirst()
                 .orElse(null);

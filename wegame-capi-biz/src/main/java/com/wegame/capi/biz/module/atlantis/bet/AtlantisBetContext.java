@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * kapre投注上下文
+ * atlantis投注上下文
  */
 @Component("atlantisBetContext")
 public class AtlantisBetContext extends AbstractBetContext {
 
     private static final Map<BetTypeEnum, String> BET_STRATEGY_NAME_MAP = new ImmutableMap.Builder<BetTypeEnum, String>()
-            .put(BetTypeEnum.NORMAL_BET, "kapreNormalBetStrategy")
-            .put(BetTypeEnum.BUY_BET, "kapreBuyBetStrategy")
+            .put(BetTypeEnum.NORMAL_BET, "atlantisNormalBetStrategy")
+            .put(BetTypeEnum.BUY_BET, "atlantisBuyBetStrategy")
             .build();
 
     @Autowired

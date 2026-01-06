@@ -25,8 +25,8 @@ import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
-@Component("kapreNormalBetStrategy")
-public class KapreNormalBetStrategy extends AbstractKapreBetStrategy {
+@Component("atlantisNormalBetStrategy")
+public class AtlantisNormalBetStrategy extends  AbstractAtlantisBetStrategy{
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
@@ -41,10 +41,10 @@ public class KapreNormalBetStrategy extends AbstractKapreBetStrategy {
         log.info("freeWheelAfterHandle start... betRecordId: {}", betRecordId);
         defaultThreadPoolExecutor.execute(() -> {
             try {
-                BetRecordDo betRecord = kapreBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.KAPRE);
+                BetRecordDo betRecord = atlantisBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.ATLANTIS);
                 AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
                 GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
-                Long freeWheelCount = kapreBetRecordManager.countGameRecord(query, GameTypeEnum.KAPRE);
+                Long freeWheelCount = atlantisBetRecordManager.countGameRecord(query, GameTypeEnum.ATLANTIS);
                 if (Objects.isNull(freeWheelCount)) {
                     log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
                     return;
@@ -61,24 +61,24 @@ public class KapreNormalBetStrategy extends AbstractKapreBetStrategy {
             log.info("freeWheelAfterHandle updateRewardNotifyInfo freeWheelCount: {}, totalRewardAmount: {}, userInfo: {}", freeWheelCount, totalRewardAmount, userInfo);
             AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
             RewardNotifyInfoDo notifyInfo = RewardNotifyInfoDo.builder()
-                    .gameId(GameTypeEnum.KAPRE.getId())
-                    .gameName(GameTypeEnum.KAPRE.getName())
+                    .gameId(GameTypeEnum.ATLANTIS.getId())
+                    .gameName(GameTypeEnum.ATLANTIS.getName())
                     .userId(Long.valueOf(userInfo.getId()))
                     .userName(userInfo.getUserName())
                     .notifyRewardType(NotifyRewardTypeEnum.NORMAL_FREE_WHEEL.name())
                     .rewardTime(DateUtil.getCurrentMilli())
-                    .rewardContent(String.format(Constants.KAPRE_REWARD_NOTIFY_CONTENT_FORMAT,
+                    .rewardContent(String.format(Constants.ATLANTIS_REWARD_NOTIFY_CONTENT_FORMAT,
                             DateUtil.format(new Date(), "yyyy/MM/dd HH:mm:ss"),
                             userInfo.getUserName(),
                             AmountUtil.decimalFormat("#,##0.###", AmountUtil.toBigDecimal(totalRewardAmount)),
                             freeWheelCount))
                     .build();
-            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.KAPRE.getId(), userInfo.getPId(), userInfo.getChannelId());
+            String key = String.format(Constants.WEGAME_REWARD_NOTIFY_KEY_FORMAT, GameTypeEnum.ATLANTIS.getId(), userInfo.getPId(), userInfo.getChannelId());
             DefaultRedisScript<Long> script = new DefaultRedisScript<>(Constants.WEGAME_REWARD_NOTIFY_LUA_SCRIPT, Long.class);
             log.info("freeWheelAfterHandle updateRewardNotifyInfo add cache notifyInfo: {}, key: {}", notifyInfo, key);
-            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.KAPRE_REWARD_NOTIFY_SIZE);
-            rewardService.evict(GameTypeEnum.KAPRE, userInfo.getPId(), userInfo.getChannelId());
-            rewardService.getWithCache(GameTypeEnum.KAPRE, userInfo.getPId(), userInfo.getChannelId());
+            redisTemplate.execute(script, Collections.singletonList(key), notifyInfo, Constants.ATLANTIS_REWARD_NOTIFY_SIZE);
+            rewardService.evict(GameTypeEnum.ATLANTIS, userInfo.getPId(), userInfo.getChannelId());
+            rewardService.getWithCache(GameTypeEnum.ATLANTIS, userInfo.getPId(), userInfo.getChannelId());
         } catch (Exception e) {
             log.error("notifyRewardHandle error, errMsg: {}", e.getMessage(), e);
         }
