@@ -23,7 +23,8 @@ game:
     DiwataMayari: false
     Kapre: false
     Mangkukulam: false
-    Sirena: true
+    Sirena: false
+    Atlantis: true
   inner:
     dos:
       enable-game-list:

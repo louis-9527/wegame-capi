@@ -35,6 +35,7 @@ public class OperationEventPulsarConfig {
 
     private static final String mangkukulamOperationEventConsumer = "mangkukulamOperationEventConsumer";
     private static final String sirenaOperationEventConsumer = "sirenaOperationEventConsumer";
+    private static final String atlantisOperationEventConsumer = "atlantisOperationEventConsumer";
 
     // todo fix
     @Value("${dynamic.operation.pulsar_url}")
@@ -60,6 +61,8 @@ public class OperationEventPulsarConfig {
     String dynamicOperationGroupMangkukulam;
     @Value("${dynamic.operation.pulsar_group.sirena:cd_Sirena}")
     String dynamicOperationGroupSirena;
+    @Value("${dynamic.operation.pulsar_group.atlantis:cd_Atlantis}")
+    String dynamicOperationGroupAtlantis;
     @Value("${dynamic.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.operation.pulsar.auth.credentials_file_path}")
@@ -215,4 +218,19 @@ public class OperationEventPulsarConfig {
                 .messageListener(sirenaOperationEventPulsarListener)
                 .subscribe();
     }
+
+    @Bean(name = atlantisOperationEventConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = ATLANTIS_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(AtlantisOperationEventPulsarListener.class)
+    public Consumer<byte[]> atlantisOperationEventConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                         @Autowired AtlantisOperationEventPulsarListener  atlantisOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, atlantisOperationEventConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupAtlantis)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(atlantisOperationEventPulsarListener)
+                .subscribe();
+    }
+
 }

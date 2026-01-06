@@ -53,7 +53,10 @@ public enum GameTypeEnum {
             "Sirena",
             "sirena_bet_record",
             "sirena_game_record", 300L, 1.2),
-
+    ATLANTIS("zhumeng010",
+            "Atlantis",
+            "atlantis_bet_record",
+            "atlantis_game_record", 300L, 1.2),
 
     ;
 

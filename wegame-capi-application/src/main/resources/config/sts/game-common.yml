@@ -14,6 +14,7 @@ dynamic:
       kapre: cd_Kapre
       mangkukulam: cd_Mangkukulam
       sirena: cd_Sirena
+      atlantis: cd_Atlantis
     pulsar:
       auth:
         issuer_url: https://auth.streamnative.cloud/

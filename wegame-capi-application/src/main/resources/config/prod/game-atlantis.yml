@@ -1,0 +1,18 @@
+## mongodb
+spring:
+  data:
+    mongodb:
+      dynamic:
+        atlantis_mdb:
+          primary_uri: mongodb+srv://PRODkapre_Service:1t6uIUaY19Q9ANM2@prod-kapre-pri.mongodb.singapore.nosql.aliyuncs.com/atlantis?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=kapre-prod&maxPoolSize=40&minPoolSize=20&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=primary
+          uri: mongodb+srv://PRODkapre_Service:1t6uIUaY19Q9ANM2@prod-kapre-pri.mongodb.singapore.nosql.aliyuncs.com/atlantis?ssl=false&compressors=zlib&retryWrites=true&w=majority&appName=kapre-prod&maxPoolSize=160&minPoolSize=100&maxIdleTimeMS=600000&waitQueueTimeoutMS=5000&connectTimeoutMS=1000&socketTimeoutMS=60000&heartbeatFrequencyMS=200000&minHeartbeatFrequencyMS=50000&readPreference=secondaryPreferred
+          db: atlantis
+## pulsar
+pulsar:
+  dynamic:
+    atlantis:
+      url: pulsar://pulsar-proxy.pulsar.svc.cluster.local:6650
+      tenant: ${spring.application.name}_Atlantis
+      namespace: ${spring.application.env}
+      bet_topic: Atlantis_topic
+      bet_deadLetter_topic: Atlantis_deadLetter_topic

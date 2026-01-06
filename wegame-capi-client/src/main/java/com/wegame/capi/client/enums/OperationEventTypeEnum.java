@@ -71,7 +71,12 @@ public enum OperationEventTypeEnum {
             "sirena_operation_event",
                     "sirena_operation_event_detail",
                     "sirena_operation_event_config",
-                    "sirena_operation_event_config_record")
+                    "sirena_operation_event_config_record"),
+    ATLANTIS(GameTypeEnum.ATLANTIS,
+            "atlantis_operation_event",
+            "atlantis_operation_event_detail",
+            "atlantis_operation_event_config",
+            "atlantis_operation_event_config_record")
     ;
 
 

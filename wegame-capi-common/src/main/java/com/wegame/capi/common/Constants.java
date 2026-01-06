@@ -95,6 +95,7 @@ public class Constants {
     public static final String KAPRE_PROP = "game.enable.Kapre";
     public static final String MANGKUKULAM_PROP = "game.enable.Mangkukulam";
     public static final String SIRENA_PROP = "game.enable.Sirena";
+    public static final String ATLANTIS_PROP = "game.enable.Atlantis";
 
 
 

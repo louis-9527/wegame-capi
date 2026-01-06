@@ -29,9 +29,10 @@ public class GameProperty {
     private boolean enableKapre;
     @Value("${game.enable.Mangkukulam: false}")
     private boolean enableMangkukulam;
-
     @Value("${game.enable.Sirena: false}")
     private boolean enableSirena;
+    @Value("${game.enable.Atlantis: false}")
+    private boolean enableAtlantis;
 
     public List<GameTypeEnum> enabledGameTypes() {
         List<GameTypeEnum> gameTypeList = new ArrayList<>();
@@ -61,6 +62,9 @@ public class GameProperty {
         }
         if (enableSirena) {
             gameTypeList.add(GameTypeEnum.SIRENA);
+        }
+        if (enableAtlantis) {
+            gameTypeList.add(GameTypeEnum.ATLANTIS);
         }
         return gameTypeList;
     }

@@ -132,4 +132,17 @@ public class GameConfig {
             return config;
         }
     }
+
+    @Bean
+    AtlantisConfig atlantisConfig() throws IOException {
+        String path = "/atlantis_config.json";
+        InputStream inputStream = getClass().getResourceAsStream(path);
+        if (inputStream == null) {
+            throw new RuntimeException("read atlantis_config.json file err！！！");
+        } else {
+            AtlantisConfig config = new ObjectMapper().readValue(inputStream, AtlantisConfig.class);
+            config.validate();
+            return config;
+        }
+    }
 }
