@@ -55,7 +55,7 @@ public class AtlantisGameHelper {
             .name(Symbol1009.getName())
             .symbolType(SymbolTypeEnum.COMMON)
             .build();
-    public static final SymbolDo ATLANTIS_CASH_SYMBOL = SymbolDo.builder()
+    private static final SymbolDo ATLANTIS_Symbol1010 = SymbolDo.builder()
             .id(Symbol1010.getId())
             .name(Symbol1010.getName())
             .symbolType(SymbolTypeEnum.COMMON)
@@ -70,16 +70,11 @@ public class AtlantisGameHelper {
             .name(Wild.getName())
             .symbolType(SymbolTypeEnum.WILD)
             .build();
-    public static final SymbolDo ATLANTIS_Dynamic_Wild = SymbolDo.builder()
-            .id(DynamicWild.getId())
-            .name(DynamicWild.getName())
-            .symbolType(SymbolTypeEnum.WILD)
-            .build();
     public static final GameInfoDo ATLANTIS_GAME_INFO = GameInfoDo.builder()
             .id(GameTypeEnum.ATLANTIS.getId())
             .gameType(GameTypeEnum.ATLANTIS)
             .name(GameTypeEnum.ATLANTIS.getName())
-            .row(4)
+            .row(6)
             .column(5)
             .symbolMap(new ImmutableMap.Builder<String, SymbolDo>()
                     .put(ATLANTIS_Symbol1001.getId(), ATLANTIS_Symbol1001)
@@ -91,10 +86,9 @@ public class AtlantisGameHelper {
                     .put(ATLANTIS_Symbol1007.getId(), ATLANTIS_Symbol1007)
                     .put(ATLANTIS_Symbol1008.getId(), ATLANTIS_Symbol1008)
                     .put(ATLANTIS_Symbol1009.getId(), ATLANTIS_Symbol1009)
-                    .put(ATLANTIS_CASH_SYMBOL.getId(), ATLANTIS_CASH_SYMBOL)
+                    .put(ATLANTIS_Symbol1010.getId(), ATLANTIS_Symbol1010)
                     .put(ATLANTIS_SCATTER.getId(), ATLANTIS_SCATTER)
                     .put(ATLANTIS_Wild.getId(), ATLANTIS_Wild)
-                    .put(ATLANTIS_Dynamic_Wild.getId(), ATLANTIS_Dynamic_Wild)
                     .build())
             .build();
 }

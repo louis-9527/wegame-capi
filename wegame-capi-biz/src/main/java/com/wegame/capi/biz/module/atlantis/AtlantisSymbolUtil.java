@@ -17,7 +17,7 @@ public class AtlantisSymbolUtil {
             for (int j = 0; j < col; j++) {
                 if (symbolArr[i][j].isWildSymbol() && symbolArr[i][j].getNestSymbol() == null) {
                     // wild 元素，给一个嵌套的现金symbol 现金symbol的倍率给0
-                    AtlantisSymbolDo cashSymbol = AtlantisSymbolDo.buildFromSymbol(AtlantisGameHelper.ATLANTIS_CASH_SYMBOL, BigDecimal.ZERO, null);
+                    AtlantisSymbolDo cashSymbol = AtlantisSymbolDo.buildFromSymbol(AtlantisGameHelper.ATLANTIS_Symbol1001, BigDecimal.ZERO, null);
                     newSymbolArr[i][j] = AtlantisSymbolDo.buildFromSymbol(symbolArr[i][j], BigDecimal.ZERO, cashSymbol);
                 } else {
                     newSymbolArr[i][j] = symbolArr[i][j].copy();

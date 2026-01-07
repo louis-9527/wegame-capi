@@ -55,7 +55,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<AtlantisSymbolD
         // 2、计算中奖线
         List<RewardLineDo<AtlantisSymbolDo>> rewardLineList = calcRewardLineList(rewardHandle.getGameInfo(), rewardHandle.getWheel());
         int scatterCount = scatterCount(rewardHandle);
-        Integer freeWheelTimes = atlantisConfig.getFreeWheelTimes();
+        Integer freeWheelTimes = 5;
         boolean rewardFreeWheel = scatterCount >= SCATTER_COUNT_FOR_FREE_SPIN;
         if (CollectionUtil.isEmpty(rewardLineList)) {
             // 未中奖

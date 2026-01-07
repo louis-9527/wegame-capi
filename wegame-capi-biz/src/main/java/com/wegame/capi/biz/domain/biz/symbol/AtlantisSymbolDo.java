@@ -41,7 +41,7 @@ public class AtlantisSymbolDo extends SymbolDo {
     }
 
     public boolean isCashSymbol() {
-        return StringUtils.equals(this.getId(), AtlantisGameHelper.ATLANTIS_CASH_SYMBOL.getId());
+        return true;
     }
 
     public static AtlantisSymbolDo buildFromSymbol(SymbolDo symbol, BigDecimal symbolMultiple, AtlantisSymbolDo nestSymbol) {

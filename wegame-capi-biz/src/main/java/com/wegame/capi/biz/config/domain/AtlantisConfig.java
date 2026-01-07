@@ -1,19 +1,21 @@
 package com.wegame.capi.biz.config.domain;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.NumberUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.module.atlantis.AtlantisGameHelper;
+import com.wegame.capi.common.enums.BizEventEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
+
+import static com.wegame.capi.common.Constants.CONST_10000;
+import static com.wegame.capi.common.Constants.CONST_1000000;
 
 @Data
 @SuperBuilder
@@ -26,9 +28,10 @@ public class AtlantisConfig implements Serializable {
      */
     private Integer rewardMaxMultiple;
     /**
-     * 免费次数
+     * 免费轮次数配置
      */
-    private Integer freeWheelTimes;
+    private FreeWheelTimesConfig freeWheelTimesConfig;
+
     /**
      * 赔率配置
      */
@@ -37,10 +40,29 @@ public class AtlantisConfig implements Serializable {
      * 概率配置
      */
     private ProbabilisticConfig probabilisticConfig;
-    /**
-     * 轮带表配置
-     */
-    private AtlantisConfig.WheelChart wheelChart;
+
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class FreeWheelTimesConfig implements Serializable {
+        private static final long serialVersionUID = 86882342392389675L;
+        /**
+         * 基础免费次数:8
+         * 4个scatter中8
+         */
+        private Integer baseFreeWheelTimes;
+        /**
+         * 步长:1
+         * 在基础之上，每增加一个scatter 增加一次免费次数
+         */
+        private Integer step;
+
+    }
+
 
     @Data
     @ToString
@@ -62,78 +84,82 @@ public class AtlantisConfig implements Serializable {
     @AllArgsConstructor
     public static class ProbabilisticConfig implements Serializable {
         private static final long serialVersionUID = -3127327864121298415L;
-        /**
-         * 轮带表概率配置
-         */
-        private WheelChartProbabilisticConfig wheelChartProbabilisticConfig;
-        /**
-         * 倍率概率配置
-         */
-        private MultipleProbabilisticConfig multipleProbabilisticConfig;
-    }
+        private static final String SYMBOL_KEY_SEPARATOR = "_";
 
-    @Data
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class WheelChartProbabilisticConfig implements Serializable {
-        private static final long serialVersionUID = -1979032185209671306L;
         /**
-         * 免费轮轮带表概率
+         * 滚轮生成概率配置
+         * TreeMap<元素配置，<列坐标，概率列表>>
+         * 在json 文件中 key的配置格式eg："1001_3"
          */
-        private TreeMap<String, BigDecimal> freeProbabilisticConfig;
-        /**
-         * 付费轮轮带表概率
-         */
-        private TreeMap<String, BigDecimal> normalBetPayProbabilisticConfig;
-        /**
-         * 付费轮轮带表概率
-         */
-        private TreeMap<String, BigDecimal> buyBetPayProbabilisticConfig;
-    }
+        private TreeMap<SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig;
 
-    @Data
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MultipleProbabilisticConfig implements Serializable {
-        private static final long serialVersionUID = -1979032185209671306L;
         /**
-         * 免费轮轮带表倍率概率
+         * 业务概率配置
+         * TreeMap<事件类型，<步数格子index，概率列表>>
+         * 在json 文件中 key的配置格式eg："1001_3"
          */
-        private TreeMap<BigDecimal, BigDecimal> freeProbabilisticConfig;
-        /**
-         * 付费轮轮带表倍率概率
-         */
-        private TreeMap<BigDecimal, BigDecimal> payProbabilisticConfig;
-    }
+        private TreeMap<BizEventEnum, List<BigDecimal>> bizEventProbabilisticConfig;
 
-    @Data
-    @SuperBuilder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class WheelChart implements Serializable {
-        private static final long serialVersionUID = -4274036157496212845L;
-        private TreeMap<String, List<List<String>>> normal;
-        private TreeMap<String, List<List<String>>> buy;
+        public void setWheelProbabilisticConfig(LinkedHashMap<String, List<BigDecimal>> wheelProbabilisticConfigOrigin) {
+            TreeMap<SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig = new TreeMap<>(Comparator.comparing(SymbolKeyConfig::getSymbolId).thenComparing(SymbolKeyConfig::getCount));
+            if (wheelProbabilisticConfigOrigin != null) {
+                wheelProbabilisticConfigOrigin.forEach((key, value) -> {
+                    String[] symbolKeyArr = key.split(SYMBOL_KEY_SEPARATOR);
+                    AssertUtil.assertNotEmpty(symbolKeyArr, ErrorCode.ERR_PARAM, "wheelProbabilisticConfig key is empty");
+                    AssertUtil.assertTrue(symbolKeyArr.length == 2, ErrorCode.ERR_PARAM, "wheelProbabilisticConfig key length is not eqauls 2");
+                    AssertUtil.assertTrue(NumberUtil.isInteger(symbolKeyArr[1]), ErrorCode.ERR_PARAM, "symbol count must be int  " + key);
+                    wheelProbabilisticConfig.put(new SymbolKeyConfig(symbolKeyArr[0], Integer.valueOf(symbolKeyArr[1])), value);
+                });
+            }
+            this.wheelProbabilisticConfig = wheelProbabilisticConfig;
+        }
+
+        @Data
+        @SuperBuilder
+        @EqualsAndHashCode(of = {"symbolId", "count"})
+        public static class SymbolKeyConfig implements Serializable {
+            private static final long serialVersionUID = -312756782432415L;
+
+            public SymbolKeyConfig(String symbolId, Integer count) {
+                AssertUtil.assertStrNotEmpty(symbolId, ErrorCode.ERR_INTER, "symbolId is empty");
+                AssertUtil.assertTrue(Objects.nonNull(AtlantisGameHelper.ATLANTIS_GAME_INFO.getSymbolById(symbolId)), ErrorCode.ERR_PARAM, "symbol is not exist of " + symbolId);
+                AssertUtil.assertNotNull(count, ErrorCode.ERR_INTER, "count is null");
+                AssertUtil.assertTrue(count > 0, ErrorCode.ERR_INTER, "count is must great than 0");
+                this.symbolId = symbolId;
+                this.count = count;
+            }
+
+            /**
+             * 元素id
+             */
+            private String symbolId;
+            /**
+             * 元素个数
+             */
+            private Integer count;
+        }
     }
 
     public void validate() {
         rewardMaxMultipleValidate();
-        freeWheelTimesValidate();
+        freeWheelTimesConfigValidate();
         oddsConfigValidate();
         probabilisticConfigValidate();
-        wheelChartValidate();
     }
 
     private void rewardMaxMultipleValidate() {
         AssertUtil.assertNotNull(this.rewardMaxMultiple, ErrorCode.ERR_INTER, "rewardMaxMultiple is null");
         AssertUtil.assertTrue(this.rewardMaxMultiple > 0, ErrorCode.ERR_INTER, "rewardMaxMultiple is must great than 0");
     }
-    private void freeWheelTimesValidate() {
-        AssertUtil.assertNotNull(freeWheelTimes, ErrorCode.ERR_INTER, "freeWheelTimes is null");
-        AssertUtil.assertTrue(freeWheelTimes > 0, ErrorCode.ERR_INTER, "freeWheelTimes must great than 0");
+
+    private void freeWheelTimesConfigValidate() {
+        AssertUtil.assertNotNull(this.freeWheelTimesConfig, ErrorCode.ERR_INTER, "freeWheelTimesConfig is null");
+        AssertUtil.assertNotNull(this.freeWheelTimesConfig.getBaseFreeWheelTimes(), ErrorCode.ERR_INTER, "freeWheelTimesConfig.baseFreeWheelTimes is null");
+        AssertUtil.assertTrue(this.freeWheelTimesConfig.getBaseFreeWheelTimes()>0, ErrorCode.ERR_INTER, "freeWheelTimesConfig.baseFreeWheelTimes is must great than 0");
+        AssertUtil.assertNotNull(this.freeWheelTimesConfig.getStep(), ErrorCode.ERR_INTER, "freeWheelTimesConfig.step is null");
+        AssertUtil.assertTrue(this.freeWheelTimesConfig.getStep()>0, ErrorCode.ERR_INTER, "freeWheelTimesConfig.step is must great than 0");
     }
+
     private void oddsConfigValidate() {
         Assert.notNull(oddsConfig, "oddsConfig is null");
         Assert.notNull(oddsConfig.commonOddsConfig, "oddsConfig.commonOddsConfig is null");
@@ -143,56 +169,62 @@ public class AtlantisConfig implements Serializable {
             AssertUtil.assertTrue(MapUtils.isNotEmpty(map), ErrorCode.ERR_INTER, "Odds Config Err");
         });
     }
+
     private void probabilisticConfigValidate() {
         // probabilisticConfig校验
-        Assert.notNull(probabilisticConfig, "probabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig is null");
-        // probabilisticConfig.wheelChartProbabilisticConfig校验极其子属性校验
-        Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.freeProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#freeProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.normalBetPayProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#normalBetPayProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.wheelChartProbabilisticConfig.buyBetPayProbabilisticConfig, "probabilisticConfig#wheelChartProbabilisticConfig#buyBetPayProbabilisticConfig is null");
-        BigDecimal freeProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.freeProbabilisticConfig.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal normalBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.normalBetPayProbabilisticConfig.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal buyBetPayProbabilisticConfigSum = probabilisticConfig.wheelChartProbabilisticConfig.buyBetPayProbabilisticConfig.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        AssertUtil.assertTrue(freeProbabilisticConfigSum.compareTo(new BigDecimal("100")) == 0, ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#freeProbabilisticConfig ERR");
-        AssertUtil.assertTrue(normalBetPayProbabilisticConfigSum.compareTo(new BigDecimal("100")) == 0, ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#normalBetPayProbabilisticConfig ERR");
-        AssertUtil.assertTrue(buyBetPayProbabilisticConfigSum.compareTo(new BigDecimal("100")) == 0, ErrorCode.ERR_INTER, "probabilisticConfig#wheelChartProbabilisticConfig#buyBetPayProbabilisticConfig ERR");
-
-        // probabilisticConfig.multipleProbabilisticConfig校验极其子属性校验
-        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.freeProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#freeProbabilisticConfig is null");
-        Assert.notNull(probabilisticConfig.multipleProbabilisticConfig.payProbabilisticConfig, "probabilisticConfig#multipleProbabilisticConfig#payProbabilisticConfig is null");
-        BigDecimal freeProbabilisticConfigSum2 = probabilisticConfig.multipleProbabilisticConfig.freeProbabilisticConfig.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal payProbabilisticConfigSum = probabilisticConfig.multipleProbabilisticConfig.payProbabilisticConfig.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        AssertUtil.assertTrue(freeProbabilisticConfigSum2.compareTo(new BigDecimal("100")) == 0, ErrorCode.ERR_INTER, "probabilisticConfig#multipleProbabilisticConfig#freeProbabilisticConfig ERR");
-        AssertUtil.assertTrue(payProbabilisticConfigSum.compareTo(new BigDecimal("100")) == 0, ErrorCode.ERR_INTER, "probabilisticConfig#multipleProbabilisticConfig#payProbabilisticConfig ERR");
+        Assert.notNull(this.probabilisticConfig, "probabilisticConfig is null");
+        this.wheelProbabilisticConfigValidate(this.probabilisticConfig.getWheelProbabilisticConfig());
+        this.bizEventProbabilisticConfigValidate(this.probabilisticConfig.getBizEventProbabilisticConfig());
 
     }
 
-    private void wheelChartValidate() {
-        // wheelChart校验
-        Assert.notNull(wheelChart, "wheelChart is null");
-        Assert.notNull(wheelChart.normal, "wheelChart#normal is null");
-        Assert.notNull(wheelChart.buy, "wheelChart#buy is null");
-        // wheelChart.normal校验
+    private void bizEventProbabilisticConfigValidate(TreeMap<BizEventEnum, List<BigDecimal>> bizEventProbabilisticConfig) {
+        AssertUtil.assertNotNull(bizEventProbabilisticConfig, ErrorCode.ERR_INTER, "probabilisticConfig.bizEventProbabilisticConfig is null");
+        int colum = 24;
+        bizEventProbabilisticConfig.forEach((key, value) -> {
+            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "bizEventProbabilisticConfig key: " + key + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "bizEventProbabilisticConfig: " + key + " ERR");
+        });
+        for (int columIndex = 0; columIndex < colum; columIndex++) {
+            int columNo = columIndex;
+            Map<BizEventEnum, Integer> map = new HashMap<>();
+            bizEventProbabilisticConfig.forEach((key, value) -> {
+                int val = (value.get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                if (val > 0) {
+                    map.put(key, val);
+                }
+            });
+            Integer sumProbabilistic = map.values()
+                    .stream()
+                    .reduce(0, Integer::sum);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+        }
+    }
 
-        GameInfoDo atlantisGameInfo = AtlantisGameHelper.ATLANTIS_GAME_INFO;
-        Set<String> symbolIdSet = atlantisGameInfo.getSymbolMap().keySet();
-        wheelChart.normal.forEach((key, value) -> {
-            value.forEach(list -> {
-                list.forEach(symbolId -> {
-                    AssertUtil.assertTrue(symbolIdSet.contains(symbolId), ErrorCode.ERR_INTER, "wheelChart#normal ERR");
-                });
-            });
+    private void wheelProbabilisticConfigValidate(TreeMap<ProbabilisticConfig.SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig) {
+        AssertUtil.assertNotNull(wheelProbabilisticConfig, ErrorCode.ERR_INTER, "wheelProbabilisticConfig is null");
+
+        int colum = 5;
+        wheelProbabilisticConfig.forEach((key, value) -> {
+            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "wheelProbabilisticConfig key: " + key + " ERR");
+            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "wheelProbabilisticConfig: " + key + " ERR");
         });
-        // wheelChart.buy校验
-        wheelChart.buy.forEach((key, value) -> {
-            value.forEach(list -> {
-                list.forEach(symbolId -> {
-                    AssertUtil.assertTrue(symbolIdSet.contains(symbolId), ErrorCode.ERR_INTER, "wheelChart#buy ERR");
-                });
+        for (int columIndex = 0; columIndex < colum; columIndex++) {
+            int columNo = columIndex;
+            Map<ProbabilisticConfig.SymbolKeyConfig, Integer> map = new HashMap<>();
+            wheelProbabilisticConfig.forEach((key, value) -> {
+                int val = (value.get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+                if (val > 0) {
+                    map.put(key, val);
+                }
             });
-        });
+            Integer sumProbabilistic = map.values()
+                    .stream()
+                    .reduce(0, Integer::sum);
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
+        }
+
+
+
     }
 }
