@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.SingleWalletSignatureUtil;
 import com.wegame.capi.api.domain.req.BaseReq;
+import com.wegame.capi.common.enums.DomainTypeEnum;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class CommonBaseApi extends BaseApi {
 
     public void assembleSingleSignature(BaseReq req) {
         GameApiProperty.PrivateInfo privateInfo = gameApiProperty.getPrivateInfo(req.getPId(), req.getChannelId());
+        AssertUtil.assertNotNull(privateInfo, ErrorCode.ERR_INTER);
         String hash = hash(req.getChannelId(), req.getPlayerName(), req.getCreateTime(), req.getRefId(), privateInfo.getPrivateKey(), privateInfo.getPrivateIv());
         req.setHash(hash);
     }
@@ -32,5 +34,21 @@ public class CommonBaseApi extends BaseApi {
         String hash = SingleWalletSignatureUtil.encrypt(preSignature, key, iv);
         AssertUtil.assertNotNull(hash, ErrorCode.ERR_PARAM);
         return hash;
+    }
+
+    public String singleDomain(String pid) {
+        return gameApiProperty.getDomain(pid, DomainTypeEnum.SINGLE_DOMAIN);
+    }
+
+    public String freeSpinDomain(String pid) {
+        return gameApiProperty.getDomain(pid, DomainTypeEnum.FREE_SPIN_DOMAIN);
+    }
+
+    public String promotionDomain(String pid) {
+        return gameApiProperty.getDomain(pid, DomainTypeEnum.PROMOTION_DOMAIN);
+    }
+
+    public String operationDomain(String pid) {
+        return gameApiProperty.getDomain(pid, DomainTypeEnum.OPERATION_DOMAIN);
     }
 }

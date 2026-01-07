@@ -28,6 +28,7 @@ spring:
     active: local
   config:
     import:
+      - application-api.yml
       - application-datasource.yml
       - application-redis.yml
       - application-elasticsearch.yml
