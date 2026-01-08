@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -44,80 +43,25 @@ public class GameApiProperty implements InitializingBean, Serializable {
      */
     private External external;
     /**
-     * privateInfoList
-     */
-    private List<PrivateInfo> privateInfoList;
-    /**
      * key: pid_channelId
      * value: PrivateInfo
      */
     private Map<String, PrivateInfo> privateInfoMap;
     /**
+     * key: channelId (supportDos)
+     * value: PrivateInfo
+     */
+    private Map<String, PrivateInfo> dosPrivateInfoMap;
+    /**
      * pid -> domainType -> domain
      */
     private Map<String, Map<DomainTypeEnum, String>> domainInfoMap;
 
-
     @Override
     public void afterPropertiesSet() throws Exception {
-        // fill privateInfoList
-        privateInfoList = new LinkedList<>();
-        if (Objects.nonNull(internal)) {
-            if (CollectionUtils.isNotEmpty(internal.getCp())) {
-                privateInfoList.addAll(internal.getCp());
-            }
-            if (CollectionUtils.isNotEmpty(internal.getIgo())) {
-                privateInfoList.addAll(internal.getIgo());
-            }
-        }
-        if (Objects.nonNull(external)) {
-            if (CollectionUtils.isNotEmpty(external.getBp())) {
-                privateInfoList.addAll(external.getBp());
-            }
-        }
-        // fill privateInfoMap
-        privateInfoMap = new HashMap<>();
-        if (Objects.nonNull(internal)) {
-            if (CollectionUtils.isNotEmpty(internal.getCp())) {
-                privateInfoMap.putAll(internal.getCp()
-                        .stream()
-                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
-            }
-            if (CollectionUtils.isNotEmpty(internal.getIgo())) {
-                privateInfoMap.putAll(internal.getIgo()
-                        .stream()
-                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
-            }
-        }
-        if (Objects.nonNull(external)) {
-            if (CollectionUtils.isNotEmpty(external.getBp())) {
-                privateInfoMap.putAll(external.getBp()
-                        .stream()
-                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
-            }
-        }
-        // fill domainInfoMap
-        domainInfoMap = new HashMap<>();
-        if (Objects.nonNull(internal)) {
-            Map<DomainTypeEnum, String> internalMap = new HashMap<>();
-            internalMap.putIfAbsent(DomainTypeEnum.SINGLE_DOMAIN, internal.getSingleDomain());
-            internalMap.putIfAbsent(DomainTypeEnum.FREE_SPIN_DOMAIN, internal.getFreeSpinDomain());
-            internalMap.putIfAbsent(DomainTypeEnum.PROMOTION_DOMAIN, internal.getPromotionDomain());
-            internalMap.putIfAbsent(DomainTypeEnum.OPERATION_DOMAIN, internal.getOperationDomain());
-            internal.getPlatformIdList().forEach(item -> {
-                domainInfoMap.putIfAbsent(item, internalMap);
-            });
-        }
-        if (Objects.nonNull(external)) {
-            Map<DomainTypeEnum, String> externalMap = new HashMap<>();
-            externalMap.putIfAbsent(DomainTypeEnum.SINGLE_DOMAIN, external.getSingleDomain());
-            externalMap.putIfAbsent(DomainTypeEnum.FREE_SPIN_DOMAIN, external.getFreeSpinDomain());
-            externalMap.putIfAbsent(DomainTypeEnum.PROMOTION_DOMAIN, external.getPromotionDomain());
-            externalMap.putIfAbsent(DomainTypeEnum.OPERATION_DOMAIN, external.getOperationDomain());
-            external.getPlatformIdList().forEach(item -> {
-                domainInfoMap.putIfAbsent(item, externalMap);
-            });
-        }
+        fillPrivateInfoMap();
+        fillDosPrivateInfoMap();
+        fillDomainInfoMap();
     }
 
     public boolean isInvokeSingle(String platformId) {
@@ -143,31 +87,87 @@ public class GameApiProperty implements InitializingBean, Serializable {
 
     public PrivateInfo getPrivateInfo(String platformId, String channelId) {
         return privateInfoMap.get(String.format(unique_key_format, platformId, channelId));
-        //        return privateInfoList.stream()
-        //                .filter(privateInfo -> StringUtils.equals(privateInfo.getPlatformId(), platformId) && StringUtils.equals(privateInfo.getChannelId(), channelId))
-        //                .findFirst()
-        //                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_PARAM));
     }
 
-    /**
-     * todo 确认dos逻辑
-     * @return
-     */
-    public PrivateInfo getPrivateInfo(String channelId) {
-        return privateInfoList.stream()
-                .filter(privateInfo -> StringUtils.equals(privateInfo.getChannelId(), channelId))
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(ErrorCode.ERR_PARAM));
+    public PrivateInfo getDosPrivateInfo(String channelId) {
+        return dosPrivateInfoMap.get(channelId);
     }
 
-    /**
-     * todo 确认dos逻辑
-     * @return
-     */
-    public Set<String> getChannelIdAll() {
-        return privateInfoList.stream()
-                .map(PrivateInfo::getChannelId)
-                .collect(Collectors.toSet());
+    public Set<String> supportDosChannelIdSet() {
+        return dosPrivateInfoMap.keySet();
+    }
+
+    private void fillPrivateInfoMap() {
+        privateInfoMap = new HashMap<>();
+        if (Objects.nonNull(internal)) {
+            if (CollectionUtils.isNotEmpty(internal.getCp())) {
+                privateInfoMap.putAll(internal.getCp()
+                        .stream()
+                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
+            }
+            if (CollectionUtils.isNotEmpty(internal.getIgo())) {
+                privateInfoMap.putAll(internal.getIgo()
+                        .stream()
+                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
+            }
+        }
+        if (Objects.nonNull(external)) {
+            if (CollectionUtils.isNotEmpty(external.getBp())) {
+                privateInfoMap.putAll(external.getBp()
+                        .stream()
+                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
+            }
+        }
+    }
+
+    private void fillDosPrivateInfoMap() {
+        dosPrivateInfoMap = new HashMap<>();
+        if (Objects.nonNull(internal)) {
+            if (CollectionUtils.isNotEmpty(internal.getCp())) {
+                privateInfoMap.putAll(internal.getCp()
+                        .stream()
+                        .filter(PrivateInfo::isDosSupport)
+                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
+            }
+            if (CollectionUtils.isNotEmpty(internal.getIgo())) {
+                privateInfoMap.putAll(internal.getIgo()
+                        .stream()
+                        .filter(PrivateInfo::isDosSupport)
+                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
+            }
+        }
+        if (Objects.nonNull(external)) {
+            if (CollectionUtils.isNotEmpty(external.getBp())) {
+                privateInfoMap.putAll(external.getBp()
+                        .stream()
+                        .filter(PrivateInfo::isDosSupport)
+                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
+            }
+        }
+    }
+
+    private void fillDomainInfoMap() {
+        domainInfoMap = new HashMap<>();
+        if (Objects.nonNull(internal)) {
+            Map<DomainTypeEnum, String> internalMap = new HashMap<>();
+            internalMap.putIfAbsent(DomainTypeEnum.SINGLE_DOMAIN, internal.getSingleDomain());
+            internalMap.putIfAbsent(DomainTypeEnum.FREE_SPIN_DOMAIN, internal.getFreeSpinDomain());
+            internalMap.putIfAbsent(DomainTypeEnum.PROMOTION_DOMAIN, internal.getPromotionDomain());
+            internalMap.putIfAbsent(DomainTypeEnum.OPERATION_DOMAIN, internal.getOperationDomain());
+            internal.getPlatformIdList().forEach(item -> {
+                domainInfoMap.putIfAbsent(item, internalMap);
+            });
+        }
+        if (Objects.nonNull(external)) {
+            Map<DomainTypeEnum, String> externalMap = new HashMap<>();
+            externalMap.putIfAbsent(DomainTypeEnum.SINGLE_DOMAIN, external.getSingleDomain());
+            externalMap.putIfAbsent(DomainTypeEnum.FREE_SPIN_DOMAIN, external.getFreeSpinDomain());
+            externalMap.putIfAbsent(DomainTypeEnum.PROMOTION_DOMAIN, external.getPromotionDomain());
+            externalMap.putIfAbsent(DomainTypeEnum.OPERATION_DOMAIN, external.getOperationDomain());
+            external.getPlatformIdList().forEach(item -> {
+                domainInfoMap.putIfAbsent(item, externalMap);
+            });
+        }
     }
 
     @Data
@@ -212,13 +212,17 @@ public class GameApiProperty implements InitializingBean, Serializable {
          */
         private String channelId;
         /**
-         * 用于上报干预结果
+         * privateKey
          */
         private String privateKey;
         /**
-         * 用于上报干预结果
+         * privateIv
          */
         private String privateIv;
+        /**
+         * 是否支持干预事件
+         */
+        private boolean dosSupport;
         /**
          * 用于上报干预结果
          */

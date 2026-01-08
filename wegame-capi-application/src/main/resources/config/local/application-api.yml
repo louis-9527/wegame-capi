@@ -15,6 +15,7 @@ api:
           channelId: 1050
           privateKey: 739cf125387017046c02d5610a122859844502203284d3509ff897dc54f7bc09
           privateIv: 32f8e4c142810c8d9a75bce4666198ea
+          dos-support: true
           dosPublicKey: |
             -----BEGIN PUBLIC KEY-----
             MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA01K7gQy46Qkku4ErtvnP
@@ -61,6 +62,7 @@ api:
           channelId: 1087
           privateKey: dfa0f2088e0aed71a2d98303433bb81f530b44df4f876847d90af19f04dff8ec
           privateIv: 3393de5f81b786a5d112a687fb488157
+          dos-support: true
           dosPublicKey: |
             -----BEGIN PUBLIC KEY-----
             MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAo8d7PbFEe77cwf7o3cjf
@@ -108,6 +110,7 @@ api:
           channelId: 1051
           privateKey: 42a495b8c0e9416bd91ff6a7b65043c970acd88f3665e20cb6a12ddeb8e7e47d
           privateIv: 3f599a87c6ac7389a5e7d90e1060f3dc
+          dos-support: false
     external:
       platformIdList:
         - 777
@@ -121,3 +124,4 @@ api:
           channelId: 9004
           privateKey: 6b2f96e579ace6cdcd9eb174c7fba61b49aa7ca738e6d9de9b577363432cebce
           privateIv: dcd76c24c18cb4b4f7fd9326734801da
+          dos-support: false
