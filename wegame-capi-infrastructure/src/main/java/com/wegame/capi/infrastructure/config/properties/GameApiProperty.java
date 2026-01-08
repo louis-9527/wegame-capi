@@ -92,6 +92,10 @@ public class GameApiProperty implements InitializingBean, Serializable {
         return dosPrivateInfoMap.keySet();
     }
 
+    public List<PrivateInfo> supportDosPrivateInfoList() {
+        return dosPrivateInfoMap.values().stream().collect(Collectors.toList());
+    }
+
     private void fillPrivateInfoMap() {
         privateInfoMap = new HashMap<>();
         if (Objects.nonNull(internal)) {
