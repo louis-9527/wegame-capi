@@ -220,9 +220,9 @@ public class GameApiProperty implements InitializingBean, Serializable {
          */
         private String privateIv;
         /**
-         * 是否支持干预事件
+         * 是否支持干预事件: 默认不支持
          */
-        private boolean dosSupport;
+        private boolean dosSupport = false;
         /**
          * 用于上报干预结果
          */
