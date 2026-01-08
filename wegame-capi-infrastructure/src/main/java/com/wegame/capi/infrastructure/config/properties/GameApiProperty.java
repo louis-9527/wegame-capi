@@ -114,7 +114,7 @@ public class GameApiProperty implements InitializingBean, Serializable {
             externalMap.putIfAbsent(DomainTypeEnum.FREE_SPIN_DOMAIN, external.getFreeSpinDomain());
             externalMap.putIfAbsent(DomainTypeEnum.PROMOTION_DOMAIN, external.getPromotionDomain());
             externalMap.putIfAbsent(DomainTypeEnum.OPERATION_DOMAIN, external.getOperationDomain());
-            internal.getPlatformIdList().forEach(item -> {
+            external.getPlatformIdList().forEach(item -> {
                 domainInfoMap.putIfAbsent(item, externalMap);
             });
         }
