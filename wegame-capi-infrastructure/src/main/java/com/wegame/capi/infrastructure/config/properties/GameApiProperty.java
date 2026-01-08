@@ -26,14 +26,6 @@ import java.util.stream.Collectors;
 public class GameApiProperty implements InitializingBean, Serializable {
 
     private static final String unique_key_format = "%s_%s";
-    //    private String singleDomain;
-    //    private boolean invokeSingle;
-    //    private String freeSpinDomain;
-    //    private String promotionDomain;
-    //    private String operationDomain;
-    //    private List<PrivateInfo> cp;
-    //    private List<PrivateInfo> igo;
-
     /**
      * 内部平台
      */
@@ -42,6 +34,9 @@ public class GameApiProperty implements InitializingBean, Serializable {
      * 外部平台
      */
     private External external;
+
+    /// 分割线 /////////////////////////////
+
     /**
      * key: pid_channelId
      * value: PrivateInfo
@@ -124,24 +119,24 @@ public class GameApiProperty implements InitializingBean, Serializable {
         dosPrivateInfoMap = new HashMap<>();
         if (Objects.nonNull(internal)) {
             if (CollectionUtils.isNotEmpty(internal.getCp())) {
-                privateInfoMap.putAll(internal.getCp()
+                dosPrivateInfoMap.putAll(internal.getCp()
                         .stream()
                         .filter(PrivateInfo::isDosSupport)
-                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
+                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
             }
             if (CollectionUtils.isNotEmpty(internal.getIgo())) {
-                privateInfoMap.putAll(internal.getIgo()
+                dosPrivateInfoMap.putAll(internal.getIgo()
                         .stream()
                         .filter(PrivateInfo::isDosSupport)
-                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
+                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
             }
         }
         if (Objects.nonNull(external)) {
             if (CollectionUtils.isNotEmpty(external.getBp())) {
-                privateInfoMap.putAll(external.getBp()
+                dosPrivateInfoMap.putAll(external.getBp()
                         .stream()
                         .filter(PrivateInfo::isDosSupport)
-                        .collect(Collectors.toMap(PrivateInfo::getUniqueKey, u -> u)));
+                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
             }
         }
     }
