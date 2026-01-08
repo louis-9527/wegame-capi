@@ -118,6 +118,6 @@ api:
       operationDomain: https://dos-egame.dos88.me
       bp:
         - platformId: 777
-          channelId: 7001
+          channelId: 9004
           privateKey: 6b2f96e579ace6cdcd9eb174c7fba61b49aa7ca738e6d9de9b577363432cebce
           privateIv: dcd76c24c18cb4b4f7fd9326734801da
