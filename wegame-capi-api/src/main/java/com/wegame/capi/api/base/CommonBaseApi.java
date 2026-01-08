@@ -48,7 +48,7 @@ public class CommonBaseApi extends BaseApi {
         return gameApiProperty.getDomain(pid, DomainTypeEnum.PROMOTION_DOMAIN);
     }
 
-    public String operationDomain(String pid) {
-        return gameApiProperty.getDomain(pid, DomainTypeEnum.OPERATION_DOMAIN);
+    public String operationDomain(String channelId) {
+        return gameApiProperty.getDosDomain(channelId);
     }
 }

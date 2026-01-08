@@ -13,7 +13,6 @@ import com.wegame.capi.api.helper.DynamicOperationEncryptionHelper;
 import com.wegame.capi.infrastructure.config.properties.GameApiProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -34,8 +33,6 @@ public class OperationEventApi extends SingleWalletBaseApi {
     private static final String UPDATE_EVENTS_STATUS_URL_FORMAT = "%s/updateEventsStatus";
     @Autowired
     DynamicOperationEncryptionHelper dynamicOperationEncryptionHelper;
-    @Value("${api.game.internal.operationDomain}")
-    String operationDomain;
     @Autowired
     GameApiProperty gameApiProperty;
 
@@ -66,7 +63,7 @@ public class OperationEventApi extends SingleWalletBaseApi {
             RequestEntity<UpdateEventsStatusReq.OperationReq> requestEntity = new RequestEntity<>(operationReq,
                     headers,
                     HttpMethod.POST,
-                    URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, operationDomain))); // todo fix @bruce 干预事件如何获取domain
+                    URI.create(String.format(UPDATE_EVENTS_STATUS_URL_FORMAT, operationDomain(channelId)))); // todo fix @bruce 干预事件如何获取domain
             ResponseEntity<UpdateEventsStatusRes> responseEntity = walletRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<UpdateEventsStatusRes>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);

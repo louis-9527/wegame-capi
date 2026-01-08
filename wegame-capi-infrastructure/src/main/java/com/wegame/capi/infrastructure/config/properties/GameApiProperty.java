@@ -43,19 +43,24 @@ public class GameApiProperty implements InitializingBean, Serializable {
      */
     private Map<String, PrivateInfo> privateInfoMap;
     /**
+     * pid -> domainType -> domain
+     */
+    private Map<String, Map<DomainTypeEnum, String>> domainInfoMap;
+    /**
      * key: channelId (supportDos)
      * value: PrivateInfo
      */
     private Map<String, PrivateInfo> dosPrivateInfoMap;
     /**
-     * pid -> domainType -> domain
+     * key: channelId (supportDos)
+     * value: Domain
      */
-    private Map<String, Map<DomainTypeEnum, String>> domainInfoMap;
+    private Map<String, String> dosDomainInfoMap;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         fillPrivateInfoMap();
-        fillDosPrivateInfoMap();
+        fillDosInfo();
         fillDomainInfoMap();
     }
 
@@ -73,9 +78,17 @@ public class GameApiProperty implements InitializingBean, Serializable {
     public String getDomain(String platformId, DomainTypeEnum domainType) {
         AssertUtil.assertStrNotEmpty(platformId, ErrorCode.ERR_INTER);
         AssertUtil.assertNotNull(domainType, ErrorCode.ERR_INTER);
+        AssertUtil.assertTrue(domainType != DomainTypeEnum.OPERATION_DOMAIN, ErrorCode.ERR_INTER);
         Map<DomainTypeEnum, String> domainMap = domainInfoMap.get(platformId);
         AssertUtil.assertNotNull(domainMap, ErrorCode.ERR_INTER);
         String domain = domainMap.get(domainType);
+        AssertUtil.assertStrNotEmpty(domain, ErrorCode.ERR_INTER);
+        return domain;
+    }
+
+    public String getDosDomain(String channeId) {
+        AssertUtil.assertStrNotEmpty(channeId, ErrorCode.ERR_INTER);
+        String domain = dosDomainInfoMap.get(channeId);
         AssertUtil.assertStrNotEmpty(domain, ErrorCode.ERR_INTER);
         return domain;
     }
@@ -119,32 +132,6 @@ public class GameApiProperty implements InitializingBean, Serializable {
         }
     }
 
-    private void fillDosPrivateInfoMap() {
-        dosPrivateInfoMap = new HashMap<>();
-        if (Objects.nonNull(internal)) {
-            if (CollectionUtils.isNotEmpty(internal.getCp())) {
-                dosPrivateInfoMap.putAll(internal.getCp()
-                        .stream()
-                        .filter(PrivateInfo::isDosSupport)
-                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
-            }
-            if (CollectionUtils.isNotEmpty(internal.getIgo())) {
-                dosPrivateInfoMap.putAll(internal.getIgo()
-                        .stream()
-                        .filter(PrivateInfo::isDosSupport)
-                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
-            }
-        }
-        if (Objects.nonNull(external)) {
-            if (CollectionUtils.isNotEmpty(external.getBp())) {
-                dosPrivateInfoMap.putAll(external.getBp()
-                        .stream()
-                        .filter(PrivateInfo::isDosSupport)
-                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
-            }
-        }
-    }
-
     private void fillDomainInfoMap() {
         domainInfoMap = new HashMap<>();
         if (Objects.nonNull(internal)) {
@@ -166,6 +153,45 @@ public class GameApiProperty implements InitializingBean, Serializable {
             external.getPlatformIdList().forEach(item -> {
                 domainInfoMap.putIfAbsent(item, externalMap);
             });
+        }
+    }
+
+    private void fillDosInfo() {
+        dosPrivateInfoMap = new HashMap<>();
+        dosDomainInfoMap = new HashMap<>();
+        if (Objects.nonNull(internal)) {
+            if (CollectionUtils.isNotEmpty(internal.getCp())) {
+                dosPrivateInfoMap.putAll(internal.getCp()
+                        .stream()
+                        .filter(PrivateInfo::isDosSupport)
+                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
+                dosDomainInfoMap.putAll(internal.getCp()
+                        .stream()
+                        .filter(PrivateInfo::isDosSupport)
+                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> internal.getOperationDomain())));
+            }
+            if (CollectionUtils.isNotEmpty(internal.getIgo())) {
+                dosPrivateInfoMap.putAll(internal.getIgo()
+                        .stream()
+                        .filter(PrivateInfo::isDosSupport)
+                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
+                dosDomainInfoMap.putAll(internal.getIgo()
+                        .stream()
+                        .filter(PrivateInfo::isDosSupport)
+                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> internal.getOperationDomain())));
+            }
+        }
+        if (Objects.nonNull(external)) {
+            if (CollectionUtils.isNotEmpty(external.getBp())) {
+                dosPrivateInfoMap.putAll(external.getBp()
+                        .stream()
+                        .filter(PrivateInfo::isDosSupport)
+                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> u)));
+                dosDomainInfoMap.putAll(external.getBp()
+                        .stream()
+                        .filter(PrivateInfo::isDosSupport)
+                        .collect(Collectors.toMap(PrivateInfo::getChannelId, u -> internal.getOperationDomain())));
+            }
         }
     }
 
