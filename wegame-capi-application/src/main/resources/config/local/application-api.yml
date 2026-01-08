@@ -114,7 +114,7 @@ api:
       invokeSingle: true
       singleDomain: http://sw-external-platform-http-main.igo10.me
       freeSpinDomain: http://sw-inhouse-http-freespin.igo10.me
-      promotionDomain: http://reward-http.igo8.me
+      promotionDomain: http://reward-http-ep.igo10.me
       operationDomain: https://dos-egame.dos88.me
       bp:
         - platformId: 777
