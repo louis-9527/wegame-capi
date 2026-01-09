@@ -8,7 +8,7 @@ CREATE TEMPORARY TABLE mongo_operation_event_config_source (
   'connector' = 'mongodb',
   'uri' = 'mongodb+srv://QATmakiling_Doris_Service:D180HNf5aXMuhIvt@qat-makiling-pri.mongodb.singapore.nosql.aliyuncs.com/ibong?ssl=false&readPreference=secondary',
   'database' = 'ibong',
-  'collection' = 'ibong_operation_event_config',
+  'collection' = 'ibongadarna_operation_event_config',
   'scan.startup.mode' = 'initial'
 );
 
@@ -22,7 +22,7 @@ CREATE TEMPORARY TABLE doris_operation_event_config_sink (
 ) WITH (
   'connector' = 'doris',
   'fenodes' = 'selectdb-sg-l0z4l7mu701.selectdbfe.singapore.rds.aliyuncs.com:8080',
-  'table.identifier' = 'ibong.ibong_operation_event_config',
+  'table.identifier' = 'ibong.ibongadarna_operation_event_config',
   'username' = 'QATmakiling_Doris_Service',
   'password' = 'D180HNf5aXMuhIvt',
   'sink.label-prefix' = 'doris_operation_event_config_label',

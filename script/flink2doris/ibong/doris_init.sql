@@ -2,17 +2,17 @@
 
 -- ============================================
 -- Doris 数据库建表脚本
--- 数据库: ibong
+-- 数据库: ibongadarna
 -- 包含所有表的创建语句
 -- ============================================
 
 -- 使用数据库
-USE ibong;
+USE ibongadarna;
 
 -- ============================================
--- 表1: ibong_bet_record (投注记录表)
+-- 表1: ibongadarna_bet_record (投注记录表)
 -- ============================================
-CREATE TABLE IF NOT EXISTS ibong_bet_record (
+CREATE TABLE IF NOT EXISTS ibongadarna_bet_record (
   `_id` VARCHAR(255) NOT NULL COMMENT '主键ID',
   pId VARCHAR(255) COMMENT '平台id',
   channelId VARCHAR(255) COMMENT '渠道id',
@@ -62,9 +62,9 @@ PROPERTIES (
 );
 
 -- ============================================
--- 表2: ibong_game_record (游戏记录表)
+-- 表2: ibongadarna_game_record (游戏记录表)
 -- ============================================
-CREATE TABLE IF NOT EXISTS ibong_game_record (
+CREATE TABLE IF NOT EXISTS ibongadarna_game_record (
   `_id` VARCHAR(255) NOT NULL COMMENT 'id',
   betRecordId BIGINT COMMENT '投注记录id',
   playerId VARCHAR(255) COMMENT '玩家id',
@@ -92,9 +92,9 @@ PROPERTIES (
 );
 
 -- ============================================
--- 表3: ibong_operation_event (干预事件表)
+-- 表3: ibongadarna_operation_event (干预事件表)
 -- ============================================
-CREATE TABLE IF NOT EXISTS ibong_operation_event (
+CREATE TABLE IF NOT EXISTS ibongadarna_operation_event (
   `_id` VARCHAR(255) NOT NULL COMMENT '主键ID',
   eventId VARCHAR(255) COMMENT '干预事件ID',
   playerName VARCHAR(255) COMMENT '玩家名称',
@@ -139,9 +139,9 @@ PROPERTIES (
 );
 
 -- ============================================
--- 表4: ibong_operation_event_config (干预事件配置表)
+-- 表4: ibongadarna_operation_event_config (干预事件配置表)
 -- ============================================
-CREATE TABLE IF NOT EXISTS ibong_operation_event_config (
+CREATE TABLE IF NOT EXISTS ibongadarna_operation_event_config (
   `_id` VARCHAR(255) NOT NULL COMMENT '主键ID',
   gameId VARCHAR(255) COMMENT '游戏ID',
   betType VARCHAR(255) COMMENT '投注类型',
@@ -170,9 +170,9 @@ PROPERTIES (
 );
 
 -- ============================================
--- 表5: ibong_operation_event_config_record (干预事件配置记录表)
+-- 表5: ibongadarna_operation_event_config_record (干预事件配置记录表)
 -- ============================================
-CREATE TABLE IF NOT EXISTS ibong_operation_event_config_record (
+CREATE TABLE IF NOT EXISTS ibongadarna_operation_event_config_record (
   `_id` VARCHAR(255) NOT NULL COMMENT '主键ID',
   parentId BIGINT COMMENT 'parentId',
   batchId BIGINT COMMENT 'batchId',
@@ -205,9 +205,9 @@ PROPERTIES (
 );
 
 -- ============================================
--- 表7: ibong_star_card_record (星卡使用记录表)
+-- 表7: ibongadarna_star_card_record (星卡使用记录表)
 -- ============================================
-CREATE TABLE IF NOT EXISTS ibong_star_card_record (
+CREATE TABLE IF NOT EXISTS ibongadarna_star_card_record (
   `_id` VARCHAR(255) NOT NULL COMMENT '主键ID',
   rewardId VARCHAR(255) COMMENT '奖励ID',
   rewardConfigId VARCHAR(255) COMMENT '奖励配置id',
@@ -248,9 +248,9 @@ PROPERTIES (
 );
 
 -- ============================================
--- 表6: ibong_operation_event_detail (干预事件明细表)
+-- 表6: ibongadarna_operation_event_detail (干预事件明细表)
 -- ============================================
-CREATE TABLE IF NOT EXISTS ibong_operation_event_detail (
+CREATE TABLE IF NOT EXISTS ibongadarna_operation_event_detail (
   `_id` VARCHAR(255) NOT NULL COMMENT '主键ID',
   operatorRecordId BIGINT COMMENT '干预事件ID(系统)',
   eventId VARCHAR(255) COMMENT '干预事件ID',
@@ -295,25 +295,106 @@ PROPERTIES (
 );
 
 -- ============================================
--- ibong_bet_record 表索引
+-- 表7: ibongadarna_user_play_metrics (用户游戏指标表)
+-- ============================================
+CREATE TABLE IF NOT EXISTS ibongadarna_user_play_metrics (
+  `_id` VARCHAR(255) NOT NULL COMMENT '主键ID',
+  pId VARCHAR(255) COMMENT '平台id',
+  channelId VARCHAR(255) COMMENT '渠道id',
+  gameId VARCHAR(255) COMMENT '游戏id',
+  playerId VARCHAR(255) COMMENT '玩家id',
+  playerName VARCHAR(255) COMMENT '玩家名称',
+  totalBetAmount BIGINT COMMENT '总投注金额',
+  totalPayoutAmount BIGINT COMMENT '总派奖金额',
+  totalGameCount BIGINT COMMENT '总游戏次数',
+  continuousLostCount INT COMMENT '连续失败次数',
+  continuousNoFreeSpinCount BIGINT COMMENT '连续无免费旋转次数',
+  lastBetTime DATETIME COMMENT '最后投注时间',
+  version BIGINT COMMENT '版本',
+  extend TEXT COMMENT '扩展字段（JSON格式）',
+  createTime DATETIME COMMENT '创建时间',
+  creator VARCHAR(255) COMMENT '创建人',
+  updateTime DATETIME COMMENT '更新时间',
+  updater VARCHAR(255) COMMENT '更新人',
+  syncCreateTime DATETIME COMMENT '数据同步写入时间'
+) ENGINE=OLAP
+    UNIQUE KEY(`_id`)
+DISTRIBUTED BY HASH(`_id`) BUCKETS 10
+PROPERTIES (
+  -- 副本配置（生产环境建议改为 3）
+  "replication_allocation" = "tag.location.default: 1",
+
+  -- Schema 变更优化（推荐启用）
+  "light_schema_change" = "true",
+
+  -- Compaction 配置（推荐启用自动 Compaction）
+  "disable_auto_compaction" = "false",
+
+  -- 存储配置
+  "in_memory" = "false",
+  "storage_format" = "V2",
+  "enable_unique_key_merge_on_write" = "true"
+
+  -- 压缩配置（可选）
+  -- "compression" = "LZ4",
+);
+
+-- ============================================
+-- 表8: ibongadarna_game_metrics (游戏指标表)
+-- 注意：此表为 ibongadarna 数据库特有，makiling 中不存在对应表
+-- ============================================
+CREATE TABLE IF NOT EXISTS ibongadarna_game_metrics (
+  `_id` VARCHAR(255) NOT NULL COMMENT '主键ID',
+  pId VARCHAR(255) COMMENT '平台id',
+  channelId VARCHAR(255) COMMENT '渠道id',
+  gameId VARCHAR(255) COMMENT '游戏id',
+  currentRtp VARCHAR(255) COMMENT '当前RTP',
+  totalBetAmount BIGINT COMMENT '总投注金额',
+  totalPayoutAmount BIGINT COMMENT '总派奖金额',
+  updateTime DATETIME COMMENT '更新时间',
+  syncCreateTime DATETIME COMMENT '数据同步写入时间'
+) ENGINE=OLAP
+    UNIQUE KEY(`_id`)
+DISTRIBUTED BY HASH(`_id`) BUCKETS 10
+PROPERTIES (
+  -- 副本配置（生产环境建议改为 3）
+  "replication_allocation" = "tag.location.default: 1",
+
+  -- Schema 变更优化（推荐启用）
+  "light_schema_change" = "true",
+
+  -- Compaction 配置（推荐启用自动 Compaction）
+  "disable_auto_compaction" = "false",
+
+  -- 存储配置
+  "in_memory" = "false",
+  "storage_format" = "V2",
+  "enable_unique_key_merge_on_write" = "true"
+
+  -- 压缩配置（可选）
+  -- "compression" = "LZ4",
+);
+
+-- ============================================
+-- ibongadarna_bet_record 表索引
 -- 参考 MongoDB 索引：
 -- 1. {playerId: 1, channelId: 1, status: 1, createTime: -1} - C端查询
 -- 2. {createTime: -1, status: 1, _id: 1} - 通用查询
 -- 3. {createTime: -1, channelId: 1, status:1, payAmount:1, payOutAmount:1 ,userId:1, betPromotionType:1} - B端查询覆盖索引
 -- ============================================
-ALTER TABLE ibong_bet_record ADD INDEX idx_player_channel_status_createtime (playerId, channelId, status, createTime);
-ALTER TABLE ibong_bet_record ADD INDEX idx_createtime_status_id (createTime, status, `_id`);
-ALTER TABLE ibong_bet_record ADD INDEX idx_createtime_channel_status_pay_user_promotion (createTime, channelId, status, payAmount, payOutAmount, userId, betPromotionType);
+ALTER TABLE ibongadarna_bet_record ADD INDEX idx_player_channel_status_createtime (playerId, channelId, status, createTime);
+ALTER TABLE ibongadarna_bet_record ADD INDEX idx_createtime_status_id (createTime, status, `_id`);
+ALTER TABLE ibongadarna_bet_record ADD INDEX idx_createtime_channel_status_pay_user_promotion (createTime, channelId, status, payAmount, payOutAmount, userId, betPromotionType);
 
 -- ============================================
--- ibong_game_record 表索引
+-- ibongadarna_game_record 表索引
 -- 参考 MongoDB 索引：
 -- 1. {betRecordId: 1, batchId: 1} - C端查询
 -- ============================================
-ALTER TABLE ibong_game_record ADD INDEX idx_bet_record_batch (betRecordId, batchId);
+ALTER TABLE ibongadarna_game_record ADD INDEX idx_bet_record_batch (betRecordId, batchId);
 
 -- ============================================
--- ibong_operation_event 表索引
+-- ibongadarna_operation_event 表索引
 -- 参考 MongoDB 索引：
 -- 1. {createTime: -1, channelId: 1}
 -- 2. {updateTime: 1, reportStatus: 1}
@@ -323,59 +404,77 @@ ALTER TABLE ibong_game_record ADD INDEX idx_bet_record_batch (betRecordId, batch
 -- 6. {expiredTime: 1, reportStatus: 1}
 -- 7. {eventStatus:1, reportStatus:1, _id:1 , updateTime : -1}
 -- ============================================
-ALTER TABLE ibong_operation_event ADD INDEX idx_createtime_channel (createTime, channelId);
-ALTER TABLE ibong_operation_event ADD INDEX idx_updatetime_report_status (updateTime, reportStatus);
-ALTER TABLE ibong_operation_event ADD INDEX idx_updatetime_event_status (updateTime, eventStatus);
-ALTER TABLE ibong_operation_event ADD INDEX idx_player_effected_expired_status (playerName, effectedTime, expiredTime, eventStatus);
-ALTER TABLE ibong_operation_event ADD INDEX idx_event_id (eventId);
-ALTER TABLE ibong_operation_event ADD INDEX idx_expired_report_status (expiredTime, reportStatus);
-ALTER TABLE ibong_operation_event ADD INDEX idx_status_report_id_updatetime (eventStatus, reportStatus, `_id`, updateTime);
+ALTER TABLE ibongadarna_operation_event ADD INDEX idx_createtime_channel (createTime, channelId);
+ALTER TABLE ibongadarna_operation_event ADD INDEX idx_updatetime_report_status (updateTime, reportStatus);
+ALTER TABLE ibongadarna_operation_event ADD INDEX idx_updatetime_event_status (updateTime, eventStatus);
+ALTER TABLE ibongadarna_operation_event ADD INDEX idx_player_effected_expired_status (playerName, effectedTime, expiredTime, eventStatus);
+ALTER TABLE ibongadarna_operation_event ADD INDEX idx_event_id (eventId);
+ALTER TABLE ibongadarna_operation_event ADD INDEX idx_expired_report_status (expiredTime, reportStatus);
+ALTER TABLE ibongadarna_operation_event ADD INDEX idx_status_report_id_updatetime (eventStatus, reportStatus, `_id`, updateTime);
 
 -- ============================================
--- ibong_operation_event_config 表索引
+-- ibongadarna_operation_event_config 表索引
 -- 参考 MongoDB 索引：
 -- 1. {multiple: 1}
 -- ============================================
-ALTER TABLE ibong_operation_event_config ADD INDEX idx_multiple (multiple);
+ALTER TABLE ibongadarna_operation_event_config ADD INDEX idx_multiple (multiple);
 
 -- ============================================
--- ibong_operation_event_config_record 表索引
+-- ibongadarna_operation_event_config_record 表索引
 -- 参考 MongoDB 索引：
 -- 1. {betRecordId: 1}
 -- ============================================
-ALTER TABLE ibong_operation_event_config_record ADD INDEX idx_bet_record_id (betRecordId);
+ALTER TABLE ibongadarna_operation_event_config_record ADD INDEX idx_bet_record_id (betRecordId);
 
 -- ============================================
--- ibong_operation_event_detail 表索引
+-- ibongadarna_operation_event_detail 表索引
 -- 参考 MongoDB 索引：
 -- 1. {createTime: 1}
 -- 2. {operatorRecordId: 1}
 -- 3. {betStatus: 1, _id: 1, createTime: -1}
 -- ============================================
-ALTER TABLE ibong_operation_event_detail ADD INDEX idx_create_time (createTime);
-ALTER TABLE ibong_operation_event_detail ADD INDEX idx_operator_record_id (operatorRecordId);
-ALTER TABLE ibong_operation_event_detail ADD INDEX idx_bet_status_id_createtime (betStatus, `_id`, createTime);
+ALTER TABLE ibongadarna_operation_event_detail ADD INDEX idx_create_time (createTime);
+ALTER TABLE ibongadarna_operation_event_detail ADD INDEX idx_operator_record_id (operatorRecordId);
+ALTER TABLE ibongadarna_operation_event_detail ADD INDEX idx_bet_status_id_createtime (betStatus, `_id`, createTime);
 
 -- ============================================
--- ibong_star_card_record 表索引
+-- ibongadarna_star_card_record 表索引
 -- 参考 MongoDB 索引：
 -- 1. {createTime:-1, channelId: 1}
 -- 2. {reportStatus: 1}
 -- ============================================
-ALTER TABLE ibong_star_card_record ADD INDEX idx_createtime_channel (createTime, channelId);
-ALTER TABLE ibong_star_card_record ADD INDEX idx_report_status (reportStatus);
+ALTER TABLE ibongadarna_star_card_record ADD INDEX idx_createtime_channel (createTime, channelId);
+ALTER TABLE ibongadarna_star_card_record ADD INDEX idx_report_status (reportStatus);
+
+-- ============================================
+-- ibongadarnaadarna_user_play_metrics 表索引
+-- 参考 MongoDB 索引：
+-- 1. {_id: 1} - 唯一索引（主键，Doris自动创建）
+-- 2. {pId: 1, channelId: 1, gameId: 1, playerId: 1} - 复合唯一索引
+-- ============================================
+ALTER TABLE ibongadarnaadarna_user_play_metrics ADD INDEX idx_pid_channel_game_player (pId, channelId, gameId, playerId);
+
+-- ============================================
+-- ibongadarnaadarna_game_metrics 表索引
+-- 参考 MongoDB 索引：
+-- 1. {_id: 1} - 唯一索引（主键，Doris自动创建）
+-- 2. {pId: 1, channelId: 1, gameId: 1} - 复合索引
+-- ============================================
+ALTER TABLE ibongadarnaadarna_game_metrics ADD INDEX idx_pid_channel_game (pId, channelId, gameId);
 
 -- ============================================
 -- 说明：
--- 1. 本脚本包含 ibong 数据库下所有表的建表语句
+-- 1. 本脚本包含 ibongadarna 数据库下所有表的建表语句
 -- 2. 当前包含的表：
---    - ibong_bet_record (投注记录表)
---    - ibong_game_record (游戏记录表)
---    - ibong_operation_event (干预事件表)
---    - ibong_operation_event_config (干预事件配置表)
---    - ibong_operation_event_config_record (干预事件配置记录表)
---    - ibong_operation_event_detail (干预事件明细表)
---    - ibong_star_card_record (星卡使用记录表)
+--    - ibongadarna_bet_record (投注记录表)
+--    - ibongadarna_game_record (游戏记录表)
+--    - ibongadarna_operation_event (干预事件表)
+--    - ibongadarna_operation_event_config (干预事件配置表)
+--    - ibongadarna_operation_event_config_record (干预事件配置记录表)
+--    - ibongadarna_operation_event_detail (干预事件明细表)
+--    - ibongadarna_star_card_record (星卡使用记录表)
+--    - ibongadarna_user_play_metrics (用户游戏指标表)
+--    - ibongadarna_game_metrics (游戏指标表)
 -- 3. 所有表使用相同的 PROPERTIES 配置
 -- 4. 根据实际数据量和查询需求调整 BUCKETS 数量
 -- 5. 根据业务查询需求创建相应的索引

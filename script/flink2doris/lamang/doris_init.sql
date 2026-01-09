@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS lamang_game_record (
   playerId VARCHAR(255) COMMENT '玩家id',
   playerName VARCHAR(255) COMMENT '玩家名称',
   `index` INT COMMENT '序号',
-  `jackpotDrawTimes` INT COMMENT '序号',
+  jackpotDrawTimes INT COMMENT 'jackpot抽奖次数',
   freeWheelFlag BOOLEAN COMMENT '免费轮标识 false否 true是',
   wheel TEXT COMMENT '滚轮（JSON格式）',
   rewardResult TEXT COMMENT '中奖结果（JSON格式）',
