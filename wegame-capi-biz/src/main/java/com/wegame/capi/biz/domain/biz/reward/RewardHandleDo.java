@@ -63,4 +63,9 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
      */
     private MultiplePieTypeEnum multiplePieType;
 
+    /**
+     * 累计中奖次数
+     */
+    private Integer totalRewardCount;
+
 }

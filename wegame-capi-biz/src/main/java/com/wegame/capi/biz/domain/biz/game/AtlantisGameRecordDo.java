@@ -1,11 +1,14 @@
 package com.wegame.capi.biz.domain.biz.game;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Lists;
 import com.wegame.base.enums.BooleanEnum;
 import com.wegame.capi.biz.builder.SymbolBuilder;
 import com.wegame.capi.biz.converter.ToVoConverter;
+import com.wegame.capi.biz.domain.biz.game.bizevent.GameBizEventDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.symbol.AtlantisSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.domain.vo.IndexVo;
@@ -71,11 +74,11 @@ public class AtlantisGameRecordDo implements Serializable, ToVoConverter<Atlanti
     /**
      * 滚轮
      */
-    private WheelDo<AtlantisSymbolDo> wheel;
+    private WheelDo<SymbolDo> wheel;
     /**
      * 中奖结果
      */
-    private RewardResultDo<AtlantisSymbolDo> rewardResult;
+    private RewardResultDo<SymbolDo> rewardResult;
     /**
      * 免费轮游戏记录id列表
      */
@@ -84,12 +87,23 @@ public class AtlantisGameRecordDo implements Serializable, ToVoConverter<Atlanti
      * 最后一轮标识
      */
     private boolean lastGameFlag;
+    /**
+     * 中事件列表
+     */
+    private List<GameBizEventDo> bizEventList;
 
     public void addGameRecordId(Long gameRecordId) {
         if (Objects.isNull(this.gameRecordIds)) {
             this.gameRecordIds = new ArrayList<>();
         }
         this.gameRecordIds.add(gameRecordId);
+    }
+
+    public void addGameBizEvent(GameBizEventDo gameBizEvent) {
+        if (CollectionUtil.isEmpty(this.bizEventList)) {
+            this.bizEventList = Lists.newArrayList();
+        }
+        this.bizEventList.add(gameBizEvent);
     }
 
     @Transient

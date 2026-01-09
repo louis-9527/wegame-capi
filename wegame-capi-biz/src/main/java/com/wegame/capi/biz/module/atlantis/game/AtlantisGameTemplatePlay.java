@@ -13,7 +13,7 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.operation.GameRecordTemplateDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.symbol.AtlantisSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.template.atlantis.AtlantisBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.atlantis.AtlantisGameHelper;
@@ -87,8 +87,8 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
         GameRecordTemplateDo configRecordDo = configRecordList.get(0);
         AssertUtil.assertNotNull(configRecordDo.getExtInfo(), ErrorCode.ERR_INTER, "extInfo is null");
         AssertUtil.assertTrue(NumberUtil.isNumber(configRecordDo.getExtInfo().toString()), ErrorCode.ERR_INTER, "extInfo is not number");
-        WheelDo<AtlantisSymbolDo> wheel = convertWheel(configRecordDo.getWheel());
-        RewardResultDo<AtlantisSymbolDo> firstWheelRewardResult = atlantisRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, new BigDecimal(configRecordDo.getExtInfo().toString())));
+        WheelDo<SymbolDo> wheel = convertWheel(configRecordDo.getWheel());
+        RewardResultDo<SymbolDo> firstWheelRewardResult = atlantisRewardHandler.handle(build(GAME_INFO, gamePlay, wheel, new BigDecimal(configRecordDo.getExtInfo().toString())));
         long overallRewardAmount = firstWheelRewardResult.getTotalRewardAmount();
         List<AtlantisGameRecordDo> ret = Lists.newArrayList(this.buildGameRecord(userInfo, generateGameRecordId(), gamePlay.getBetRecordId(), wheel, firstWheelRewardResult, overallRewardAmount));
         // 结果验证数据添加
@@ -101,8 +101,8 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
     private AtlantisGameRecordDo buildGameRecord(UserInfo userInfo,
                                                     Long gameRecordId,
                                                     Long betRecordId,
-                                                    WheelDo<AtlantisSymbolDo> wheel,
-                                                    RewardResultDo<AtlantisSymbolDo> rewardResult,
+                                                    WheelDo<SymbolDo> wheel,
+                                                    RewardResultDo<SymbolDo> rewardResult,
                                                     Long TotalRewardAmount) {
         return AtlantisGameRecordDo.builder()
                 .id(gameRecordId)
@@ -144,8 +144,8 @@ public class AtlantisGameTemplatePlay extends AbstractGame<AtlantisGameRecordDo>
         return list.get(randomIndex);
     }
 
-    private WheelDo<AtlantisSymbolDo> convertWheel(Object obj) {
-        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<AtlantisSymbolDo>>() {
+    private WheelDo<SymbolDo> convertWheel(Object obj) {
+        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<SymbolDo>>() {
         });
     }
 }

@@ -12,7 +12,7 @@ import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.operation.OperationEventConfigRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
-import com.wegame.capi.biz.domain.biz.symbol.AtlantisSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.atlantis.AtlantisGameHelper;
 import com.wegame.capi.biz.module.atlantis.AtlantisSymbolUtil;
@@ -110,11 +110,11 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
             OperationEventConfigRecordDo recordDo) {
 
         // 确定 `TotalMultiple` 参数
-        WheelDo<AtlantisSymbolDo> atlantisSymbolWheel = this.convertWheel(recordDo.getWheel());
-        AtlantisSymbolDo[][] symbolArr = atlantisSymbolWheel.getSymbolArr();
+        WheelDo<SymbolDo> atlantisSymbolWheel = this.convertWheel(recordDo.getWheel());
+        SymbolDo[][] symbolArr = atlantisSymbolWheel.getSymbolArr();
         // 填充wild的嵌套元素:如果wild嵌套元素为空，则填充一个倍率为0的现金元素
         atlantisSymbolWheel.setSymbolArr(AtlantisSymbolUtil.handleWildSymbolArrNest(symbolArr));
-        RewardResultDo<AtlantisSymbolDo> rewardResult = atlantisRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, atlantisSymbolWheel, BigDecimal.ZERO));
+        RewardResultDo<SymbolDo> rewardResult = atlantisRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, atlantisSymbolWheel, BigDecimal.ZERO));
         // 构建时还原
         atlantisSymbolWheel.setSymbolArr(symbolArr);
         return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), atlantisSymbolWheel, rewardResult);
@@ -123,8 +123,8 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
     private AtlantisGameRecordDo buildGameRecord(Long id,
                                               Long parentId,
                                               Long betRecordId,
-                                              WheelDo<AtlantisSymbolDo> wheel,
-                                              RewardResultDo<AtlantisSymbolDo> rewardResult) {
+                                              WheelDo<SymbolDo> wheel,
+                                              RewardResultDo<SymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         return AtlantisGameRecordDo.builder()
@@ -161,8 +161,8 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
         private List<Long> oldSubGameRecordIds;
     }
 
-    private WheelDo<AtlantisSymbolDo> convertWheel(Object obj) {
-        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<AtlantisSymbolDo>>() {
+    private WheelDo<SymbolDo> convertWheel(Object obj) {
+        return JSON.parseObject(JSON.toJSONString(obj), new TypeReference<WheelDo<SymbolDo>>() {
         });
     }
 }

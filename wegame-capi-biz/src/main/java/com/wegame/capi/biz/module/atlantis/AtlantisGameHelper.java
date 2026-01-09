@@ -65,7 +65,7 @@ public class AtlantisGameHelper {
             .name(Scatter.getName())
             .symbolType(SymbolTypeEnum.SCATTER)
             .build();
-    private static final SymbolDo ATLANTIS_Wild = SymbolDo.builder()
+    public static final SymbolDo ATLANTIS_Wild = SymbolDo.builder()
             .id(Wild.getId())
             .name(Wild.getName())
             .symbolType(SymbolTypeEnum.WILD)

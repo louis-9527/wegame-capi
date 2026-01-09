@@ -171,13 +171,13 @@ public class SymbolBuilder {
         return integerArray;
     }
 
-    public static AtlantisSymbolVo[][] build(AtlantisSymbolDo[][] symbolArr) {
+    public static AtlantisSymbolVo[][] build(SymbolDo[][] symbolArr) {
         int rows = symbolArr.length;
         int cols = symbolArr[0].length;
         AtlantisSymbolVo[][] integerArray = new AtlantisSymbolVo[rows][cols];
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
-                AtlantisSymbolDo kapreSymbol = symbolArr[row][col];
+                SymbolDo kapreSymbol = symbolArr[row][col];
                 integerArray[row][col] = Objects.isNull(kapreSymbol) ? null : AtlantisSymbolVo.builder()
                         .symbolId(kapreSymbol.getId())
                         .symbolOdd(kapreSymbol.getSymbolOdd())

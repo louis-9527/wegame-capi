@@ -2,8 +2,11 @@ package com.wegame.capi.biz.domain.biz.reward;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.wegame.base.enums.BizTypeEnum;
+import com.wegame.capi.biz.domain.biz.game.bizevent.GameBizEventDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
+import com.wegame.capi.common.enums.BizEventEnum;
 import com.wegame.capi.common.enums.RewardSubTypeEnum;
 import com.wegame.capi.common.enums.RewardTypeEnum;
 import lombok.*;
@@ -64,6 +67,15 @@ public class RewardResultDo<T extends SymbolDo> implements Serializable {
      * 累计达到最大中奖倍数：true是，false否
      */
     private Boolean accumulateReachMaxMultiple;
+    /**
+     * 中奖事件列表
+     */
+    private List<BizEventEnum> bizEventList;
+
+    /**
+     * 影响的事件列表。来源于中奖事件列表的具体表现
+     */
+    private List<GameBizEventDo> effectBizEventList;
 
     @JsonIgnore
     public void print() {

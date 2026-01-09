@@ -17,7 +17,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum BizEventEnum {
-
+    EVENT_NONE(0, "EVENT_NONE", "无"),
     EVENT_SCATTER(1, "EVENT_SCATTER", "scatter替换"),
     EVENT_WILD(2, "EVENT_WILD", "wild替换"),
     EVENT_BOM(3, "EVENT_BOM", "爆炸"),

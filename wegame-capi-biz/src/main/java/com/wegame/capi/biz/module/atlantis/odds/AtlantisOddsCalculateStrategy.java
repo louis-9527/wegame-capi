@@ -8,7 +8,7 @@ import com.wegame.capi.biz.domain.biz.odds.OddsCalculateDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.symbol.AtlantisSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.module.base.odds.AbstractOddsCalculateStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.TreeMap;
 
 @Slf4j
 @Component("atlantisOddsCalculateStrategy")
-public class AtlantisOddsCalculateStrategy extends AbstractOddsCalculateStrategy<AtlantisSymbolDo> {
+public class AtlantisOddsCalculateStrategy extends AbstractOddsCalculateStrategy<SymbolDo> {
 
     @Autowired
     AtlantisConfig atlantisConfig;
@@ -31,7 +31,7 @@ public class AtlantisOddsCalculateStrategy extends AbstractOddsCalculateStrategy
     }
 
     @Override
-    public BigDecimal calculateOddsOfRewardLine(RewardHandleDo<AtlantisSymbolDo> rewardHandle, RewardLineDo<AtlantisSymbolDo> rewardLine) {
+    public BigDecimal calculateOddsOfRewardLine(RewardHandleDo<SymbolDo> rewardHandle, RewardLineDo<SymbolDo> rewardLine) {
         AssertUtil.assertNotNull(rewardLine, ErrorCode.ERR_INTER, "rewardLine is null");
         if (rewardLine.isCashReward()) {
             return getOddsOfCashReward(rewardLine);
@@ -40,11 +40,11 @@ public class AtlantisOddsCalculateStrategy extends AbstractOddsCalculateStrategy
         }
     }
 
-    private BigDecimal getOddsOfCashReward(RewardLineDo<AtlantisSymbolDo> rewardLine) {
+    private BigDecimal getOddsOfCashReward(RewardLineDo<SymbolDo> rewardLine) {
         AssertUtil.assertNotEmpty(rewardLine.getRewardSymbolList(), ErrorCode.ERR_INTER, "rewardSymbolList is null");
         BigDecimal totalOdds = BigDecimal.ZERO;
-        for (RewardSymbolDo<AtlantisSymbolDo> rewardSymbolDo : rewardLine.getRewardSymbolList()) {
-            AtlantisSymbolDo symbolDo = rewardSymbolDo.getSymbol();
+        for (RewardSymbolDo<SymbolDo> rewardSymbolDo : rewardLine.getRewardSymbolList()) {
+            SymbolDo symbolDo = rewardSymbolDo.getSymbol();
             if (Objects.isNull(symbolDo)) {
                 continue;
             }
@@ -53,7 +53,7 @@ public class AtlantisOddsCalculateStrategy extends AbstractOddsCalculateStrategy
                     totalOdds = totalOdds.add(symbolDo.getSymbolOdd());
                 }
             } else if (symbolDo.isWildSymbol()) {
-                AtlantisSymbolDo nestSymbol = symbolDo.getNestSymbol();
+                SymbolDo nestSymbol = symbolDo.getNestSymbol();
                 AssertUtil.assertNotNull(nestSymbol, ErrorCode.ERR_INTER, "nestSymbol in wildSymbol can not be null");
                 if (!Objects.isNull(nestSymbol.getSymbolOdd())) {
                     totalOdds = totalOdds.add(nestSymbol.getSymbolOdd());

@@ -96,9 +96,14 @@ public class AtlantisConfig implements Serializable {
         /**
          * 业务概率配置
          * TreeMap<事件类型，<步数格子index，概率列表>>
-         * 在json 文件中 key的配置格式eg："1001_3"
          */
         private TreeMap<BizEventEnum, List<BigDecimal>> bizEventProbabilisticConfig;
+
+        /**
+         * 业务概率配置
+         * TreeMap<格子,TreeMap<事件类型，概率>>
+         */
+        private TreeMap<Integer, TreeMap<BizEventEnum,BigDecimal>> bizEventProbabilisticConfigV2;
 
         public void setWheelProbabilisticConfig(LinkedHashMap<String, List<BigDecimal>> wheelProbabilisticConfigOrigin) {
             TreeMap<SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig = new TreeMap<>(Comparator.comparing(SymbolKeyConfig::getSymbolId).thenComparing(SymbolKeyConfig::getCount));
