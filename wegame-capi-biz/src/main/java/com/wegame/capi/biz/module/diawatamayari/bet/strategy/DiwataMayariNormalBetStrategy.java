@@ -35,14 +35,13 @@ public class DiwataMayariNormalBetStrategy extends AbstractDiwataMayariBetStrate
     ThreadPoolExecutor defaultThreadPoolExecutor;
 
     @Override
-    public void freeWheelAfterHandle(Long betRecordId, List<DiwataMayariGameRecordDo> list) {
+    public void freeWheelAfterHandle(Long betRecordId, Long overallRewardAmount,  List<DiwataMayariGameRecordDo> list) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         log.info("freeWheelAfterHandle start... betRecordId: {}", betRecordId);
         defaultThreadPoolExecutor.execute(() -> {
             try {
-                // todo 优化， 获取派彩金额
-                BetRecordDo betRecord = diwataMayariBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.DIWATA_MAYARI);
-                AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
+                //                BetRecordDo betRecord = diwataMayariBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.DIWATA_MAYARI);
+                //                AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
                 //                GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
                 //                Long freeWheelCount = diwataMayariBetRecordManager.countGameRecord(query, GameTypeEnum.DIWATA_MAYARI);
                 Long freeWheelCount = Optional.ofNullable(list).orElse(Lists.newArrayList())
@@ -53,7 +52,7 @@ public class DiwataMayariNormalBetStrategy extends AbstractDiwataMayariBetStrate
                     log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
                     return;
                 }
-                updateRewardNotifyInfo(freeWheelCount, betRecord.getPayOutAmount(), userInfo);
+                updateRewardNotifyInfo(freeWheelCount, overallRewardAmount, userInfo);
             } catch (Exception e) {
                 log.error("freeWheelAfterHandle Exception, errMsg: {}", e.getMessage(), e);
             }

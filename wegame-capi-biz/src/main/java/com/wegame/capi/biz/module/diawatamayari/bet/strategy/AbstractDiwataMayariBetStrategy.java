@@ -157,7 +157,7 @@ public abstract class AbstractDiwataMayariBetStrategy
             DiwataMayariGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
             if (Objects.nonNull(lastGameRecord)) {
                 // 后处理-免费轮
-                freeWheelAfterHandle(lastGameRecord.getBetRecordId(), gameRecordList);
+                freeWheelAfterHandle(lastGameRecord.getBetRecordId(), overallRewardAmount, gameRecordList);
                 betRecordManager().asyncEvictGameRecordCache(query, gameContext().gameInfo().getGameType());
             }
         }
@@ -182,7 +182,7 @@ public abstract class AbstractDiwataMayariBetStrategy
                 .collect(Collectors.toList());
     }
 
-    public void freeWheelAfterHandle(Long betRecordId, List<DiwataMayariGameRecordDo> list) {
+    public void freeWheelAfterHandle(Long betRecordId, Long overallRewardAmount, List<DiwataMayariGameRecordDo> list) {
         // do nothing
     }
 
