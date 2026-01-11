@@ -29,12 +29,12 @@ public class RedisTemplateAspect {
             long endTime = System.currentTimeMillis();
             long costTime = endTime - startTime;
             if ( costTime > 20) {
-                log.info("{}#{}，redis call cost time more than 20：{} ms",
+                log.info("{}-{} redis call cost time more than 20：{} ms",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime);
             } else {
-                log.info("{}#{}，redis call cost time：{} ms",
+                log.info("{}-{} redis call cost time：{} ms",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime);

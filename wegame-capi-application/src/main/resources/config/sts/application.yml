@@ -28,7 +28,7 @@ spring:
   application:
     name: wegame-capi
     env: sts
-    version: 20251125
+    version: 20260110006
   profiles:
     active: sts
   config:

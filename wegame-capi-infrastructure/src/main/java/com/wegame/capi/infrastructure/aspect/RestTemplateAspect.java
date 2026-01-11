@@ -7,6 +7,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Slf4j
 @Aspect
 @Component
@@ -43,6 +45,7 @@ public class RestTemplateAspect {
             }
         }
         long start = System.currentTimeMillis();
+        log.info("before invoke third, time: {}", new Date());
         Object response = null;
         try {
             response = joinPoint.proceed();

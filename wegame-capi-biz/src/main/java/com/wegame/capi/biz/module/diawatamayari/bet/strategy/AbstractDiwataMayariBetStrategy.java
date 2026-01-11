@@ -20,10 +20,8 @@ import com.wegame.capi.biz.module.diawatamayari.bet.DiwataMayariBetHelper;
 import com.wegame.capi.biz.module.diawatamayari.game.DiwataMayariGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -35,7 +33,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 
 /**
  * DiwataMayari游戏投注抽象接口
@@ -132,12 +129,19 @@ public abstract class AbstractDiwataMayariBetStrategy
      */
     private BetResultDo<DiwataMayariBetRecordDetailDo> betForFreeWheelQuery(BetDo betDo) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
-        List<DiwataMayariGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
-                GameRecordQuery.builder()
-                        .betRecordId(betDo.getBetRecordId())
-                        .playerId(userInfo.getPlayerId())
-                        .batchId(betDo.getGameRecordId())
-                        .build(), gameContext().gameInfo().getGameType());
+        //        List<DiwataMayariGameRecordDo> gameRecordList = betRecordManager().listGameRecord(
+        //                GameRecordQuery.builder()
+        //                        .betRecordId(betDo.getBetRecordId())
+        //                        .playerId(userInfo.getPlayerId())
+        //                        .batchId(betDo.getGameRecordId())
+        //                        .build(), gameContext().gameInfo().getGameType());
+        GameRecordQuery query = GameRecordQuery.builder()
+                .betRecordId(betDo.getBetRecordId())
+                .cacheKey(String.format("%s_%s", betDo.getBetRecordId(), userInfo.getPlayerId()))
+                .fromPrimary(true)
+                .build();
+        List<DiwataMayariGameRecordDo> gameRecordList = betRecordManager().listGameRecordWithCache(query,
+                gameContext().gameInfo().getGameType());
         AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
         // 按照index升序排列
         gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()
@@ -154,6 +158,7 @@ public abstract class AbstractDiwataMayariBetStrategy
             if (Objects.nonNull(lastGameRecord)) {
                 // 后处理-免费轮
                 freeWheelAfterHandle(lastGameRecord.getBetRecordId());
+                betRecordManager().asyncEvictGameRecordCache(query, gameContext().gameInfo().getGameType());
             }
         }
         return BetResultDo.<DiwataMayariBetRecordDetailDo>builder()
