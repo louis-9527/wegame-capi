@@ -101,6 +101,6 @@ public class DiwataMayariBetRecordManager extends AbstractBetRecordManager<Diwat
     @Override
     public void putGameRecordCache(List<DiwataMayariGameRecordDo> gameRecordList, GameTypeEnum gameType, String cacheKey) {
         // 异步设置游戏记录缓存
-        gameRecordService.asyncPutCache(gameRecordList, gameType, cacheKey);
+        gameRecordService.syncPutCache(gameRecordList, gameType, cacheKey);
     }
 }
