@@ -35,7 +35,7 @@ public class DiwataMayariNormalBetStrategy extends AbstractDiwataMayariBetStrate
     ThreadPoolExecutor defaultThreadPoolExecutor;
 
     @Override
-    public void freeWheelAfterHandle(Long betRecordId, Long payOutAmount,  List<DiwataMayariGameRecordDo> list) {
+    public void freeWheelAfterHandle(Long betRecordId, Long payOutAmount, List<DiwataMayariGameRecordDo> list) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         log.info("freeWheelAfterHandle start... betRecordId: {}", betRecordId);
         defaultThreadPoolExecutor.execute(() -> {
@@ -44,12 +44,12 @@ public class DiwataMayariNormalBetStrategy extends AbstractDiwataMayariBetStrate
                 //                AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
                 //                GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
                 //                Long freeWheelCount = diwataMayariBetRecordManager.countGameRecord(query, GameTypeEnum.DIWATA_MAYARI);
-                Long freeWheelCount = Optional.ofNullable(list).orElse(Lists.newArrayList())
+                long freeWheelCount = Optional.ofNullable(list).orElse(Lists.newArrayList())
                         .stream()
                         .filter(item -> item.getIndex() == 0 && item.getFreeWheelFlag())
                         .count();
-                if (Objects.isNull(freeWheelCount)) {
-                    log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
+                if (freeWheelCount <= 0) {
+                    log.info("freeWheelAfterHandle no free count.. betRecordId: {}", betRecordId);
                     return;
                 }
                 updateRewardNotifyInfo(freeWheelCount, payOutAmount, userInfo);
