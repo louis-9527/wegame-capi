@@ -56,24 +56,21 @@ public class ControllerAspect {
             if (!StringUtils.equals(signature.getName(), "ping")) {
                 GlobalInstance.warmConnectionSwitch = false;
             }
-            UserInfo userInfo = UserInfoContext.getUserInfo();
             long costTime = System.currentTimeMillis() - startTime;
             if (costTime > 150L) {
-                log.info("{}#{}, cost times more than 150: {} ms, req={}, res={}",
+                log.info("{}-{}, controller cost time more than 150: {} ms, req={}, res={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
                         req,
-                        result,
-                        Objects.nonNull(userInfo) ? userInfo.getPlayerId() : "");
+                        result);
             } else {
-                log.info("{}#{}, cost times: {} ms, req={}, res={},playerId={}",
+                log.info("{}-{}, controller cost time: {} ms, req={}, res={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
                         req,
-                        result,
-                        Objects.nonNull(userInfo) ? userInfo.getPlayerId() : "");
+                        result);
             }
         } catch (Throwable e) {
             log.error("ControllerAspect.statistic error: {}", e.getMessage(), e);
