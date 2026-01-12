@@ -37,6 +37,16 @@ public class JackpotRewardPoolDo implements Serializable {
      * 预留奖池金额.单位：厘， 可以为负
      */
     private Long reservedAmount;
+
+    /**
+     * 奖池派奖保底金额
+     */
+    private Long guaranteedAmount;
+
+    /**
+     * 预留奖池派奖保底金额
+     */
+    private Long reservedPoolGuaranteedAmount;
     /**
      * 创建人
      */
@@ -60,5 +70,14 @@ public class JackpotRewardPoolDo implements Serializable {
      * 初始金额
      */
     private Long initAmount;
+
+    /**
+     * 预留池初始金额
+     */
+    private Long reservedPoolInitAmount;
+
+    public boolean needContributeToJackpot() {
+        return reservedAmount >= reservedPoolGuaranteedAmount;
+    }
 }
 

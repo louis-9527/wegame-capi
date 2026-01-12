@@ -3,7 +3,6 @@ package com.wegame.capi.biz.builder.req;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
-import com.wegame.base.utils.ThreadMdcUtil;
 import com.wegame.capi.api.domain.req.freespin.FreeSpinReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetStarSpinReq;
 import com.wegame.capi.api.domain.req.singlewallet.BetWithPayoutReq;
@@ -13,7 +12,6 @@ import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import org.slf4j.MDC;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -81,27 +79,47 @@ public class BetWithPayoutReqBuilder {
                         (existing, replacement) -> existing // 处理 key 冲突
                 ));
         JackpotRewardPoolDo grand = rewardPoolMap.get(JackpotRewardPoolTypeEnum.grand);
+        BetWithPayoutReq.BetDetails.SupplementaryPool grandSupplementaryPool = BetWithPayoutReq.BetDetails.SupplementaryPool.builder()
+                .initAmount(AmountUtil.toBigDecimal(grand.getReservedPoolInitAmount()))
+                .amount(AmountUtil.toBigDecimal(grand.getReservedAmount()))
+                .build();
         BetWithPayoutReq.BetDetails.GrandPool grandPool = BetWithPayoutReq.BetDetails.GrandPool.builder()
                 .amount(AmountUtil.toBigDecimal(grand.getAmount()))
                 .initAmount(AmountUtil.toBigDecimal(grand.getInitAmount()))
+                .supplementaryPool(grandSupplementaryPool)
                 .build();
 
         JackpotRewardPoolDo major = rewardPoolMap.get(JackpotRewardPoolTypeEnum.major);
+        BetWithPayoutReq.BetDetails.SupplementaryPool majorSupplementaryPool = BetWithPayoutReq.BetDetails.SupplementaryPool.builder()
+                .initAmount(AmountUtil.toBigDecimal(major.getReservedPoolInitAmount()))
+                .amount(AmountUtil.toBigDecimal(major.getReservedAmount()))
+                .build();
         BetWithPayoutReq.BetDetails.MajorPool majorPool = BetWithPayoutReq.BetDetails.MajorPool.builder()
                 .amount(AmountUtil.toBigDecimal(major.getAmount()))
                 .initAmount(AmountUtil.toBigDecimal(major.getInitAmount()))
+                .supplementaryPool(majorSupplementaryPool)
                 .build();
 
         JackpotRewardPoolDo minor = rewardPoolMap.get(JackpotRewardPoolTypeEnum.minor);
+        BetWithPayoutReq.BetDetails.SupplementaryPool minorSupplementaryPool = BetWithPayoutReq.BetDetails.SupplementaryPool.builder()
+                .initAmount(AmountUtil.toBigDecimal(minor.getReservedPoolInitAmount()))
+                .amount(AmountUtil.toBigDecimal(minor.getReservedAmount()))
+                .build();
         BetWithPayoutReq.BetDetails.MinorPool minorPool = BetWithPayoutReq.BetDetails.MinorPool.builder()
                 .amount(AmountUtil.toBigDecimal(minor.getAmount()))
                 .initAmount(AmountUtil.toBigDecimal(minor.getInitAmount()))
+                .supplementaryPool(minorSupplementaryPool)
                 .build();
 
         JackpotRewardPoolDo mini = rewardPoolMap.get(JackpotRewardPoolTypeEnum.mini);
+        BetWithPayoutReq.BetDetails.SupplementaryPool miniSupplementaryPool = BetWithPayoutReq.BetDetails.SupplementaryPool.builder()
+                .initAmount(AmountUtil.toBigDecimal(mini.getReservedPoolInitAmount()))
+                .amount(AmountUtil.toBigDecimal(mini.getReservedAmount()))
+                .build();
         BetWithPayoutReq.BetDetails.MiniPool miniPool = BetWithPayoutReq.BetDetails.MiniPool.builder()
                 .amount(AmountUtil.toBigDecimal(mini.getAmount()))
                 .initAmount(AmountUtil.toBigDecimal(mini.getInitAmount()))
+                .supplementaryPool(miniSupplementaryPool)
                 .build();
 
         BetWithPayoutReq.BetDetails.BetBonusPool betBonusPool = BetWithPayoutReq.BetDetails.BetBonusPool.builder()

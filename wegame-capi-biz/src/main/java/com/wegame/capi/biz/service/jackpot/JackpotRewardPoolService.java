@@ -85,9 +85,13 @@ public class JackpotRewardPoolService extends AbstractService {
         List<JackpotRewardPoolDo> doList = poToDoList(poList);
         // 修改初始化金额
         TreeMap<String, Long> guaranteedAmount = lamangConfig.getJackPotConfig().getGuaranteedAmount();
+        TreeMap<String, Long> reservedPoolGuaranteedAmount = lamangConfig.getJackPotConfig().getReservedPoolGuaranteedAmount();
         doList.forEach(poolDo -> {
-            poolDo.setAmount(Math.max(guaranteedAmount.get(poolDo.getType().getName()), poolDo.getAmount()));
-            poolDo.setInitAmount(guaranteedAmount.get(poolDo.getType().getName()));
+            poolDo.setGuaranteedAmount(guaranteedAmount.get(poolDo.getType().getName()));
+            poolDo.setReservedPoolGuaranteedAmount(reservedPoolGuaranteedAmount.get(poolDo.getType().getName()));
+            //todo 初始金额默认值确认
+            poolDo.setInitAmount(0L);
+            poolDo.setReservedPoolInitAmount(0L);
         });
         return doList;
     }
