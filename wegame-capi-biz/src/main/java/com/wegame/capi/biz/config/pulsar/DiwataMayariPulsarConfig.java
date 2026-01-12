@@ -85,7 +85,7 @@ public class DiwataMayariPulsarConfig {
                 .negativeAckRedeliveryDelay(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
                         .maxNumMessages(3000)  // 批量最多100条
-                        .timeout(100, TimeUnit.MILLISECONDS)
+                        .timeout(1000, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**
