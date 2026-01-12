@@ -88,7 +88,7 @@ public class LamangJackpotManager extends AbstractJackpotManager {
                 .majorAmount(majorAmount)
                 .majorReservedAmount(majorReservedAmount)
                 .minorAmount(minorAmount)
-                .minorReservedAmount(miniReservedAmount)
+                .minorReservedAmount(minorReservedAmount)
                 .miniAmount(miniAmount)
                 .miniReservedAmount(miniReservedAmount)
                 .build();

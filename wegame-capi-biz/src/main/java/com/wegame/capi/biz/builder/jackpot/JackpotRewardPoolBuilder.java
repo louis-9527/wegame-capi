@@ -30,25 +30,25 @@ public class JackpotRewardPoolBuilder {
         list.add(JackpotRewardPoolDo.builder()
                 .type(JackpotRewardPoolTypeEnum.grand)
                 .amount(context.getGrandAmount())
-                        .reservedAmount(context.getGrandReservedAmount() )
+                .reservedAmount(context.getGrandReservedAmount())
                 .updateTime(currentMilli)
                 .build());
         list.add(JackpotRewardPoolDo.builder()
                 .type(JackpotRewardPoolTypeEnum.major)
                 .amount(context.getMajorAmount())
-                        .reservedAmount(context.getMajorReservedAmount() )
+                .reservedAmount(context.getMajorReservedAmount() )
                 .updateTime(currentMilli)
                 .build());
         list.add(JackpotRewardPoolDo.builder()
                 .type(JackpotRewardPoolTypeEnum.minor)
                 .amount(context.getMinorAmount())
-                        .reservedAmount(context.getMinorReservedAmount())
+                .reservedAmount(context.getMinorReservedAmount())
                 .updateTime(currentMilli)
                 .build());
         list.add(JackpotRewardPoolDo.builder()
                 .type(JackpotRewardPoolTypeEnum.mini)
-                .amount(context.getMinorAmount())
-                        .reservedAmount(context.getMiniReservedAmount())
+                .amount(context.getMiniAmount())
+                .reservedAmount(context.getMiniReservedAmount())
                 .updateTime(currentMilli)
                 .build());
         return list;
