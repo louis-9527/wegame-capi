@@ -2,6 +2,7 @@ package com.wegame.capi.biz.manager.jackpot;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.builder.jackpot.JackpotRewardPoolBuilder;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
@@ -66,14 +67,32 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         long majorAmount = 0;
         long minorAmount = 0;
         long miniAmount = 0;
+        long grandReservedAmount = 0;
+        long majorReservedAmount = 0;
+        long minorReservedAmount = 0;
+        long miniReservedAmount = 0;
         // 遍历列表并累加各个金额字段
         for (JackpotRewardPoolInputRecordDo record : recordList) {
             grandAmount += record.getGrandAmount() == null ? 0 : record.getGrandAmount();
             majorAmount += record.getMajorAmount() == null ? 0 : record.getMajorAmount();
             minorAmount += record.getMinorAmount() == null ? 0 : record.getMinorAmount();
             miniAmount += record.getMiniAmount() == null ? 0 : record.getMiniAmount();
+            grandReservedAmount += record.getGrandReservedAmount() == null ? 0 : record.getGrandReservedAmount();
+            majorReservedAmount += record.getMajorReservedAmount() == null ? 0 : record.getMajorReservedAmount();
+            minorReservedAmount += record.getMinorReservedAmount() == null ? 0 : record.getMinorReservedAmount();
+            miniReservedAmount += record.getMiniReservedAmount() == null ? 0 : record.getMiniReservedAmount();
         }
-        jackpotRewardPoolService.batchUpdate(buildList(grandAmount, majorAmount, minorAmount, miniAmount), jackpotGameType());
+        JackpotRewardPoolBuilder.BuildContext context = JackpotRewardPoolBuilder.BuildContext.builder()
+                .grandAmount(grandAmount)
+                .grandReservedAmount(grandReservedAmount)
+                .majorAmount(majorAmount)
+                .majorReservedAmount(majorReservedAmount)
+                .minorAmount(minorAmount)
+                .minorReservedAmount(miniReservedAmount)
+                .miniAmount(miniAmount)
+                .miniReservedAmount(miniReservedAmount)
+                .build();
+        jackpotRewardPoolService.batchUpdate(buildList(context), jackpotGameType());
     }
 
     @Override

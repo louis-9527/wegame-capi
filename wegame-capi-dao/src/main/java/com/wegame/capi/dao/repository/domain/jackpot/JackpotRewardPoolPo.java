@@ -1,12 +1,14 @@
 package com.wegame.capi.dao.repository.domain.jackpot;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * jackpot_reward_pool：jackpot奖池
@@ -30,9 +32,14 @@ public class JackpotRewardPoolPo implements Serializable {
      */
     private Integer type;
     /**
-     * 奖池金额.单位：厘， 可以为负
+     * 奖池金额.单位：厘， 不可以为负
      */
     private Long amount;
+
+    /**
+     * 预留奖池金额.单位：厘， 可以为负
+     */
+    private Long reservedAmount;
     /**
      * 创建人
      */
