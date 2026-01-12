@@ -153,6 +153,10 @@ public abstract class AbstractDiwataMayariBetStrategy
                 .filter(item -> item.getBatchId() == betDo.getGameRecordId())
                 .sorted(Comparator.comparingInt(DiwataMayariGameRecordDo::getIndex))
                 .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(currentWheelGameRecordList)) {
+            log.warn("currentWheelGameRecordList is null. cacheKey: {}, betDo: {}, allGameRecordList: {}", query.getCacheKey(), betDo, allGameRecordList);
+        }
+        AssertUtil.assertNotEmpty(currentWheelGameRecordList, ErrorCode.ERR_PARAM);
         //// 合计中奖总金额
         long overallRewardAmount = currentWheelGameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
