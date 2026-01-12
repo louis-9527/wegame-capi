@@ -38,9 +38,9 @@ public class DiwataMayariBetRecordManager extends AbstractBetRecordManager<Diwat
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
         List<DiwataMayariGameRecordDo> gameRecordList = betRecord.getGameRecordList();
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            gameRecordList.forEach(item -> {
-                log.info("add GameRecord id:{}", item.getId());
-            });
+            //            gameRecordList.forEach(item -> {
+            //                log.info("add GameRecord id:{}", item.getId());
+            //            });
             boolean ret = gameRecordService.batchAdd(gameRecordList, gameType, DiwataMayariGameRecordDo.class);
             AssertUtil.assertTrue(ret, ErrorCode.ERR_INTER);
         }
@@ -59,10 +59,10 @@ public class DiwataMayariBetRecordManager extends AbstractBetRecordManager<Diwat
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            // todo delete log
-            gameRecordList.forEach(item -> {
-                log.info("batchAdd GameRecord id:{}", item.getId());
-            });
+            //            // todo delete log
+            //            gameRecordList.forEach(item -> {
+            //                log.info("batchAdd GameRecord id:{}", item.getId());
+            //            });
             boolean batchAddRet = gameRecordService.batchAdd(gameRecordList, gameType, DiwataMayariGameRecordDo.class);
             AssertUtil.assertTrue(batchAddRet, ErrorCode.ERR_INTER);
         }
