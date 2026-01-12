@@ -59,13 +59,17 @@ public abstract class AbsJackpotHandler {
     protected Long getRewardAmountAndSingleAward(JackpotDrawAndAwardDo drawAndAwardDo, JackpotRewardPoolTypeEnum jackpotRewardPoolType, Long guaranteed, Long betGameId) {
         String lockKey = LockNameUtil.getJackpotRewardLock(getJackpotType().getGameType());
 
-        return distributeLock.lockThenCall(lockKey, () -> {
+        //todo 分布式锁等待
+        return distributeLock.tryLockThenCall(lockKey, 5, 10, () -> {
             // 获取奖池金额
             JackpotRewardPoolDo rewardPoolDo = jackpotRewardPoolService.selectOneByType(jackpotRewardPoolType, getJackpotType());
             AssertUtil.assertNotNull(rewardPoolDo, ErrorCode.ERR_PARAM);
+            //如果当前jackpot金额小于最小派奖金额，则预留池扣除最小派奖金额，否则当前jackpot扣除所有金额
+            boolean useReservedPool = guaranteed > rewardPoolDo.getAmount();
             Long rewardAmount = Math.max(guaranteed, rewardPoolDo.getAmount()); // 中奖金额默认使用保底
             // 添加使用记录并更新奖池金额
-            JackpotUserRewardRecordDo buildRecord = JackpotUserRewardRecordDo.build(drawAndAwardDo, betGameId, rewardAmount, rewardPoolDo.getId(), jackpotRewardPoolType, getJackpotType());
+            JackpotUserRewardRecordDo buildRecord = JackpotUserRewardRecordDo.build(drawAndAwardDo, betGameId, rewardAmount,
+                    rewardPoolDo.getId(), jackpotRewardPoolType, getJackpotType(), useReservedPool);
             buildRecord.setId(generateId());
             this.jackpotManager().winReward(buildRecord);
             // 清除缓存

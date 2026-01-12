@@ -23,6 +23,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import static com.wegame.capi.biz.converter.jackpot.JackpotRewardPoolConverter.poToDoList;
@@ -77,9 +78,15 @@ public class JackpotRewardPoolService extends AbstractService {
         return listAll(jackpotTypeEnum);
     }
 
+    /**
+     * 获取数据，从主库查询
+     * @param jackpotTypeEnum
+     * @return
+     */
     public List<JackpotRewardPoolDo> listAll(JackpotTypeEnum jackpotTypeEnum) {
         AssertUtil.assertNotNull(jackpotTypeEnum, ErrorCode.ERR_PARAM);
-        List<JackpotRewardPoolPo> poList = getMongoTemplate(jackpotTypeEnum.getGameType()).find(JackpotRewardPoolQueryBuilder.buildListAllQuery(),
+        // 必须从主库查
+        List<JackpotRewardPoolPo> poList = getPrimaryMongoTemplate(jackpotTypeEnum.getGameType()).find(JackpotRewardPoolQueryBuilder.buildListAllQuery(),
                 JackpotRewardPoolPo.class,
                 jackpotTypeEnum.getJackpotRewardPoolCollectionName());
         List<JackpotRewardPoolDo> doList = poToDoList(poList);
@@ -87,11 +94,7 @@ public class JackpotRewardPoolService extends AbstractService {
         TreeMap<String, Long> guaranteedAmount = lamangConfig.getJackPotConfig().getGuaranteedAmount();
         TreeMap<String, Long> reservedPoolGuaranteedAmount = lamangConfig.getJackPotConfig().getReservedPoolGuaranteedAmount();
         doList.forEach(poolDo -> {
-            poolDo.setGuaranteedAmount(guaranteedAmount.get(poolDo.getType().getName()));
-            poolDo.setReservedPoolGuaranteedAmount(reservedPoolGuaranteedAmount.get(poolDo.getType().getName()));
-            //todo 初始金额默认值确认
-            poolDo.setInitAmount(0L);
-            poolDo.setReservedPoolInitAmount(0L);
+            fillJackpotRewardPoolDo(poolDo, guaranteedAmount, reservedPoolGuaranteedAmount);
         });
         return doList;
     }
@@ -106,9 +109,23 @@ public class JackpotRewardPoolService extends AbstractService {
         JackpotRewardPoolQuery buildQuery = JackpotRewardPoolQuery.builder()
                 .type(rewardPoolTypeEnum.getCode())
                 .build();
-        JackpotRewardPoolPo po = getMongoTemplate(jackpotTypeEnum.getGameType()).findOne(JackpotRewardPoolQueryBuilder.buildMongodbQuery(buildQuery),
+        // 必须从主库查询
+        JackpotRewardPoolPo po = getPrimaryMongoTemplate(jackpotTypeEnum.getGameType()).findOne(JackpotRewardPoolQueryBuilder.buildMongodbQuery(buildQuery),
                 JackpotRewardPoolPo.class,
                 jackpotTypeEnum.getJackpotRewardPoolCollectionName());
-        return JackpotRewardPoolConverter.poToDo(po);
+        JackpotRewardPoolDo poolDo = JackpotRewardPoolConverter.poToDo(po);
+        if (Objects.nonNull(poolDo)) {
+            TreeMap<String, Long> guaranteedAmount = lamangConfig.getJackPotConfig().getGuaranteedAmount();
+            TreeMap<String, Long> reservedPoolGuaranteedAmount = lamangConfig.getJackPotConfig().getReservedPoolGuaranteedAmount();
+
+            fillJackpotRewardPoolDo(poolDo, guaranteedAmount, reservedPoolGuaranteedAmount);
+        }
+        return poolDo;
+    }
+
+    private void fillJackpotRewardPoolDo(JackpotRewardPoolDo poolDo, TreeMap<String, Long> guaranteedAmount, TreeMap<String, Long> reservedPoolGuaranteedAmount) {
+        //todo 初始金额默认值确认
+        poolDo.setInitAmount(guaranteedAmount.get(poolDo.getType().getName()));
+        poolDo.setReservedPoolInitAmount(reservedPoolGuaranteedAmount.get(poolDo.getType().getName()));
     }
 }

@@ -39,15 +39,6 @@ public class JackpotRewardPoolDo implements Serializable {
     private Long reservedAmount;
 
     /**
-     * 奖池派奖保底金额
-     */
-    private Long guaranteedAmount;
-
-    /**
-     * 预留奖池派奖保底金额
-     */
-    private Long reservedPoolGuaranteedAmount;
-    /**
      * 创建人
      */
     private String creator;
@@ -67,17 +58,17 @@ public class JackpotRewardPoolDo implements Serializable {
     ///////////////  above auto generated ///////////////
 
     /**
-     * 初始金额
+     * 奖池派奖保底金额
      */
     private Long initAmount;
 
     /**
-     * 预留池初始金额
+     * 预留奖池派奖保底金额
      */
     private Long reservedPoolInitAmount;
 
     public boolean needContributeToJackpot() {
-        return reservedAmount >= reservedPoolGuaranteedAmount;
+        return reservedAmount >= reservedPoolInitAmount;
     }
 }
 

@@ -102,10 +102,15 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         Long recordId = jackpotUserRewardRecordService.add(jackpotUserRewardRecord, jackpotGameType());
         AssertUtil.assertNotNull(recordId, ErrorCode.ERR_INTER);
         // 扣减对应奖池金额
-        boolean update = jackpotRewardPoolService.updateAmountByType(JackpotRewardPoolDo.builder()
+        JackpotRewardPoolDo poolUpdate = JackpotRewardPoolDo.builder()
                 .type(jackpotUserRewardRecord.getRewardPoolType())
-                .amount(-jackpotUserRewardRecord.getRewardAmount())
-                .build(), jackpotGameType());
+                .build();
+        if (jackpotUserRewardRecord.isUseReversedPool()) {
+            poolUpdate.setReservedAmount(-jackpotUserRewardRecord.getRewardAmount());
+        } else {
+            poolUpdate.setAmount(-jackpotUserRewardRecord.getRewardAmount());
+        }
+        boolean update = jackpotRewardPoolService.updateAmountByType(poolUpdate, jackpotGameType());
         AssertUtil.assertTrue(update, ErrorCode.ERR_INTER);
         return recordId;
     }
