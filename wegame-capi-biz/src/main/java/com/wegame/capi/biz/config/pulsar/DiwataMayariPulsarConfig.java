@@ -44,7 +44,7 @@ public class DiwataMayariPulsarConfig {
         log.debug(BUILD_BEAN_FORMAT, diwatamayariPulsarClient);
         return PulsarClient.builder()
                 .serviceUrl(url)
-                .keepAliveInterval(30, TimeUnit.SECONDS)
+                .keepAliveInterval(60, TimeUnit.SECONDS)
                 .build();
     }
 
@@ -57,12 +57,12 @@ public class DiwataMayariPulsarConfig {
                 // 开启批量发送
                 .enableBatching(true)
                 .batcherBuilder(BatcherBuilder.KEY_BASED)
-                .batchingMaxMessages(200) // 每批最大 200 条消息
+                .batchingMaxMessages(500) // 每批最大 200 条消息
                 // .batchingMaxBytes(4 * 1024) // 每个批次最大 4 KB
                 // 10ms 内合并批量消息
                 // 最大延迟 10 毫秒
-                .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)
-                .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
+                .batchingMaxPublishDelay(30, TimeUnit.MILLISECONDS)
+                .sendTimeout(10, TimeUnit.SECONDS) // 5 秒超时
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
                 .autoUpdatePartitionsInterval(60, TimeUnit.SECONDS)
@@ -84,7 +84,7 @@ public class DiwataMayariPulsarConfig {
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .negativeAckRedeliveryDelay(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(1500)  // 批量最多100条
+                        .maxNumMessages(1000)  // 批量最多100条
                         .timeout(100, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
