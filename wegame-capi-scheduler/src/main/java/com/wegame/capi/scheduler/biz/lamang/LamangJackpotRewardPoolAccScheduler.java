@@ -31,7 +31,7 @@ public class LamangJackpotRewardPoolAccScheduler
     /**
      * 每分钟执行
      */
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0/30 * * * * ?")
     public void schedule() {
         log.info("schedule start");
         try {
