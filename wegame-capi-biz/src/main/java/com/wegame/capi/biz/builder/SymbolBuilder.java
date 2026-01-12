@@ -1,7 +1,6 @@
 package com.wegame.capi.biz.builder;
 
 import com.wegame.capi.biz.domain.biz.symbol.*;
-import com.wegame.capi.client.domain.vo.atlantis.AtlantisSymbolVo;
 import com.wegame.capi.client.domain.vo.diwatamayari.DiwataMayariSymbolVo;
 import com.wegame.capi.client.domain.vo.ibongadarna.IbongAdarnaSymbolVo;
 import com.wegame.capi.client.domain.vo.kapre.KapreSymbolVo;
@@ -170,27 +169,4 @@ public class SymbolBuilder {
         }
         return integerArray;
     }
-
-    public static AtlantisSymbolVo[][] build(SymbolDo[][] symbolArr) {
-        int rows = symbolArr.length;
-        int cols = symbolArr[0].length;
-        AtlantisSymbolVo[][] integerArray = new AtlantisSymbolVo[rows][cols];
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                SymbolDo kapreSymbol = symbolArr[row][col];
-                integerArray[row][col] = Objects.isNull(kapreSymbol) ? null : AtlantisSymbolVo.builder()
-                        .symbolId(kapreSymbol.getId())
-                        .symbolOdd(kapreSymbol.getSymbolOdd())
-                        .nestSymbol(Objects.isNull(kapreSymbol.getNestSymbol()) ? null :
-                                AtlantisSymbolVo.builder()
-                                        .symbolId(kapreSymbol.getNestSymbol().getId())
-                                        .symbolOdd(kapreSymbol.getNestSymbol().getSymbolOdd())
-                                        .nestSymbol(null)
-                                        .build())
-                        .build();
-            }
-        }
-        return integerArray;
-    }
-
 }

@@ -99,13 +99,6 @@ public class AtlantisGameRecordDo implements Serializable, ToVoConverter<Atlanti
         this.gameRecordIds.add(gameRecordId);
     }
 
-    public void addGameBizEvent(GameBizEventDo gameBizEvent) {
-        if (CollectionUtil.isEmpty(this.bizEventList)) {
-            this.bizEventList = Lists.newArrayList();
-        }
-        this.bizEventList.add(gameBizEvent);
-    }
-
     @Transient
     @JsonIgnore
     @Override
@@ -137,6 +130,8 @@ public class AtlantisGameRecordDo implements Serializable, ToVoConverter<Atlanti
                     .freeWheelFlag(rewardResult.isHasRewardFreeWheel() ? BooleanEnum.TRUE.getCode() : BooleanEnum.FALSE.getCode())
                     .gameRecordIds(Optional.ofNullable(gameRecordIds).orElse(Collections.emptyList()).stream().map(String::valueOf).collect(Collectors.toList()))
                     .accumulateReachMaxMultiple(rewardResult.getAccumulateReachMaxMultiple())
+                    .bizEventList(CollectionUtil.isEmpty(bizEventList) ? null :
+                            bizEventList.stream().map(GameBizEventDo::toResultVo).collect(Collectors.toList()))
                     .build();
         }
     }
@@ -154,6 +149,8 @@ public class AtlantisGameRecordDo implements Serializable, ToVoConverter<Atlanti
                 .multiple(Objects.nonNull(rewardResult) ? rewardResult.getTotalMultiple() : null)
                 .rewardLineList(buildRewardLineList())
                 .freeWheelFlag(wheel.isFreeFlag())
+                .bizEventList(CollectionUtil.isEmpty(bizEventList) ? null :
+                        bizEventList.stream().map(GameBizEventDo::toRecordVo).collect(Collectors.toList()))
                 .build();
     }
 

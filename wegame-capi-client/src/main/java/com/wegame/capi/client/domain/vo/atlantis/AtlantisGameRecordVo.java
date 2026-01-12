@@ -1,6 +1,7 @@
 package com.wegame.capi.client.domain.vo.atlantis;
 
 import com.wegame.base.Validate;
+import com.wegame.capi.client.domain.vo.GameBizEventVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -30,11 +31,13 @@ public class AtlantisGameRecordVo implements Validate, Serializable {
     @ApiModelProperty("中奖金额")
     private Long rewardAmount;
     @ApiModelProperty("滚轮结果")
-    private AtlantisSymbolVo[][] wheel;
+    private String[][] wheel;
     @ApiModelProperty("倍率")
     private BigDecimal multiple;
     @ApiModelProperty("中奖线列表")
     private List<AtlantisRewardLineVo> rewardLineList;
     @ApiModelProperty("免费轮标识 false否 true是")
     private Boolean freeWheelFlag;
+    @ApiModelProperty("业务事件列表")
+    private List<GameBizEventVo> bizEventList;
 }

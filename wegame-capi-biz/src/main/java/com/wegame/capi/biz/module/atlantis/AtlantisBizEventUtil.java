@@ -43,7 +43,7 @@ public class AtlantisBizEventUtil {
             case EVENT_GOLDEN_TANK:
                 return handleEventGoldenTank(nextSymbolArr, sort);
             case EVENT_GOLDEN_COW:
-                return handleEventGoldenCow(nextSymbolArr, sort);
+                return handleEventGoldenCow(sort);
             default:
                 throw new BusinessException(ErrorCode.ERR_INTER, "no support biz event");
         }
@@ -52,12 +52,11 @@ public class AtlantisBizEventUtil {
     /**
      * 黄金奶牛，当前收益乘以 2-5倍。
      *
-     * @param nextSymbolArr nextSymbolArr
-     * @param sort          排序
+     * @param sort 排序
      * @return GameBizEventDo
      * @see BizEventEnum#EVENT_GOLDEN_COW
      */
-    private static GameBizEventDo handleEventGoldenCow(SymbolDo[][] nextSymbolArr, int sort) {
+    public static GameBizEventDo handleEventGoldenCow(int sort) {
         return GameBizEventDo.builder()
                 .sort(sort)
                 .bizEventType(BizEventEnum.EVENT_GOLDEN_COW)

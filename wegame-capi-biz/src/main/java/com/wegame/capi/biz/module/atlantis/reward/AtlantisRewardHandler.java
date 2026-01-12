@@ -7,16 +7,16 @@ import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
 import com.wegame.capi.biz.config.domain.AtlantisConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.game.bizevent.GameBizEventDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.symbol.KapreSymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
-import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
+import com.wegame.capi.biz.module.atlantis.AtlantisBizEventUtil;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
@@ -28,14 +28,11 @@ import com.wegame.capi.common.enums.*;
 import com.wegame.capi.common.utils.GameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.base.AmountHelper.reachMaxMultiple;
 import static com.wegame.capi.common.constants.GameConstants.ONE_COLUM_INDEX;
@@ -46,6 +43,7 @@ import static com.wegame.capi.common.constants.GameConstants.ONE_ROW_INDEX;
 @Component("atlantisRewardHandler")
 public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
     private static final Integer SCATTER_COUNT_FOR_FREE_SPIN = 4;
+    private static final Integer BIZ_EVENT_TOTAL_STEP_COUNT = 24;
 
     @Autowired
     OddsCalculateStrategy<SymbolDo> atlantisOddsCalculateStrategy;
@@ -107,6 +105,13 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
 
         // 中奖事件
         List<BizEventEnum> bizEventList = this.rewardBizEventHandler(rewardLineList, rewardHandle.getTotalRewardCount());
+        // 黄金奶牛处理
+        List<GameBizEventDo> effectBizEventList = Lists.newArrayList();
+        if (CollectionUtils.isNotEmpty(bizEventList) && bizEventList.contains(BizEventEnum.EVENT_GOLDEN_COW)) {
+            GameBizEventDo gameBizEventDo = this.goldCowEventEffectHandler(bizEventList.indexOf(BizEventEnum.EVENT_GOLDEN_COW), totalRewardAmount);
+            effectBizEventList.add(gameBizEventDo);
+            totalRewardAmount = this.reBuildTotalRewardAmount(gameBizEventDo, totalRewardAmount);
+        }
 
         // 5.构建中奖结果
         boolean reachMaxMultiple = reachMaxMultiple(
@@ -114,7 +119,8 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 Objects.isNull(rewardHandle.getCurrentTotalRewardAmount()) ? totalRewardAmount : rewardHandle.getCurrentTotalRewardAmount() + totalRewardAmount,
                 rewardHandle.getBetAmount(),
                 atlantisConfig.getRewardMaxMultiple());
-        RewardResultDo<SymbolDo> rewardResult = RewardResultDo.<SymbolDo>builder()
+        // 6.返回中奖信息
+        return RewardResultDo.<SymbolDo>builder()
                 .betAmount(rewardHandle.getBetAmount())
                 .rewardType(RewardTypeEnum.valueOfRewardLineCont(rewardLineList.size()))
                 .rewardSubType(RewardHelper.calculateRewardSubType(rewardHandle.getBetAmount(), totalRewardAmount))
@@ -123,31 +129,53 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
                 .hasRewardFreeWheel(false)
                 .rewardFreeWheelTimes(0)
                 .bizEventList(bizEventList)
+                .effectBizEventList(effectBizEventList)
                 .accumulateReachMaxMultiple(reachMaxMultiple)
                 .build();
-        // 6.返回中奖信息
-        return rewardResult;
+    }
+
+    private long reBuildTotalRewardAmount(GameBizEventDo gameBizEventDo, long totalRewardAmount) {
+        long extRewardAmount = (long) gameBizEventDo.getExtInfo();
+        return extRewardAmount + totalRewardAmount;
+    }
+
+    private GameBizEventDo goldCowEventEffectHandler(int goldCowIndex, long totalRewardAmount) {
+        GameBizEventDo gameBizEventDo = AtlantisBizEventUtil.handleEventGoldenCow(goldCowIndex);
+        BigDecimal eventMultiple = gameBizEventDo.getEventMultiple();
+        if (eventMultiple.compareTo(BigDecimal.ONE) >= 0) {
+            BigDecimal extMultiple = eventMultiple.subtract(BigDecimal.ONE);
+            // 额外增加的中奖金额
+            gameBizEventDo.setExtInfo(extMultiple.multiply(new BigDecimal(totalRewardAmount)).longValue());
+        }
+        return gameBizEventDo;
     }
 
     /**
      * 产生中奖事件
      * 上一轮总的中奖次数
+     *
      * @param rewardLineList 中奖线列表
      * @return 中奖事件列表
      */
     private List<BizEventEnum> rewardBizEventHandler(List<RewardLineDo<SymbolDo>> rewardLineList, Integer totalRewardCount) {
         List<BizEventEnum> bizEventList = Lists.newArrayList();
-        TreeMap<BizEventEnum, List<BigDecimal>> bizEventProbabilisticConfig = atlantisConfig.getProbabilisticConfig().getBizEventProbabilisticConfig();
+        Integer biEventBaseNumber = totalRewardCount;
+
         for (int i = 0; i < rewardLineList.size(); i++) {
+            TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> bizEventProbabilisticConfig = atlantisConfig.getProbabilisticConfig().getBizEventProbabilisticConfig();
+            TreeMap<BizEventEnum, BigDecimal> bizEventEnumBigDecimalTreeMap = bizEventProbabilisticConfig.get(this.getBizEventStepIndex(biEventBaseNumber));
             int randomInt = randomService.randomInt(Constants.CONST_1, Constants.CONST_1000000);
-            GameUtil.randomKey(bizEventProbabilisticConfig, Constants.CONST_10000, randomInt);
-
-
+            BizEventEnum bizEventEnum = GameUtil.randomKey(bizEventEnumBigDecimalTreeMap, Constants.CONST_10000, randomInt);
+            if (Objects.nonNull(bizEventEnum) && !Objects.equals(bizEventEnum, BizEventEnum.EVENT_NONE)) {
+                bizEventList.add(bizEventEnum);
+            }
+            biEventBaseNumber++;
         }
-
-
         return bizEventList;
+    }
 
+    private Integer getBizEventStepIndex(Integer biEventBaseNumber) {
+        return biEventBaseNumber % BIZ_EVENT_TOTAL_STEP_COUNT;
     }
 
     private List<RewardLineDo<SymbolDo>> calcRewardLineList(GameInfoDo gameInfo, WheelDo<SymbolDo> wheel) {

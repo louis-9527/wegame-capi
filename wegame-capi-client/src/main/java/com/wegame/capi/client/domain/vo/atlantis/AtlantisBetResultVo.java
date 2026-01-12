@@ -1,5 +1,6 @@
 package com.wegame.capi.client.domain.vo.atlantis;
 
+import com.wegame.capi.client.domain.vo.GameBizEventVo;
 import com.wegame.capi.client.domain.vo.IndexVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -31,7 +32,7 @@ public class AtlantisBetResultVo implements Serializable {
     @ApiModelProperty("中奖总倍率")
     private BigDecimal totalRewardMultiple;
     @ApiModelProperty("滚轮")
-    private AtlantisSymbolVo[][] wheel;
+    private String[][] wheel;
     @ApiModelProperty("中奖元素坐标集合")
     private Set<IndexVo> rewardSymbolIndexSet;
     @ApiModelProperty("中奖线列表")
@@ -42,4 +43,6 @@ public class AtlantisBetResultVo implements Serializable {
     private List<String> gameRecordIds;
     @ApiModelProperty("累计达到最大中奖倍数：true是，false否")
     private Boolean accumulateReachMaxMultiple;
+    @ApiModelProperty("业务事件列表")
+    private List<GameBizEventVo> bizEventList;
 }

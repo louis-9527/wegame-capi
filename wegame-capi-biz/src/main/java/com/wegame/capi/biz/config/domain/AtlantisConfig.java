@@ -178,25 +178,22 @@ public class AtlantisConfig implements Serializable {
 
     private void bizEventProbabilisticConfigValidate(TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> bizEventProbabilisticConfig) {
         AssertUtil.assertNotNull(bizEventProbabilisticConfig, ErrorCode.ERR_INTER, "probabilisticConfig.bizEventProbabilisticConfig is null");
-        int colum = 24;
         bizEventProbabilisticConfig.forEach((key, value) -> {
-            AssertUtil.assertNotEmpty(value, ErrorCode.ERR_INTER, "bizEventProbabilisticConfig key: " + key + " ERR");
-            AssertUtil.assertTrue(Objects.equals(value.size(), colum), ErrorCode.ERR_INTER, "bizEventProbabilisticConfig: " + key + " ERR");
-        });
-        for (int columIndex = 0; columIndex < colum; columIndex++) {
-            int columNo = columIndex;
+            TreeMap<BizEventEnum, BigDecimal> indexMap = bizEventProbabilisticConfig.get(key);
             Map<BizEventEnum, Integer> map = new HashMap<>();
-            bizEventProbabilisticConfig.forEach((key, value) -> {
-                int val = (value.get(columNo).multiply(new BigDecimal(CONST_10000))).intValue();
+            indexMap.forEach((indexMapKey, indexMapKValue) -> {
+                int val = (indexMapKValue.multiply(new BigDecimal(CONST_10000))).intValue();
                 if (val > 0) {
-                    map.put(key, val);
+                    map.put(indexMapKey, val);
                 }
             });
+
             Integer sumProbabilistic = map.values()
                     .stream()
                     .reduce(0, Integer::sum);
-            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
-        }
+            AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + key);
+
+        });
     }
 
     private void wheelProbabilisticConfigValidate(TreeMap<ProbabilisticConfig.SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig) {

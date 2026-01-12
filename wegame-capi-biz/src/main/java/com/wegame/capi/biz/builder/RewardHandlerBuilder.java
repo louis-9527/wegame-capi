@@ -46,4 +46,13 @@ public class RewardHandlerBuilder {
                 .build();
     }
 
+    /**
+     * atlantis add
+     */
+    public static <T extends SymbolDo> RewardHandleDo<T> build(GameInfoDo gameInfo, GamePlayDo gamePlay, WheelDo<T> wheel, BigDecimal currentMultiple, Long currentTotalRewardAmount, Integer totalRewardCount) {
+        RewardHandleDo<T> rewardHandleDo = build(gameInfo, gamePlay, wheel, currentMultiple, currentTotalRewardAmount);
+        rewardHandleDo.setTotalRewardCount(totalRewardCount);
+        return rewardHandleDo;
+    }
+
 }

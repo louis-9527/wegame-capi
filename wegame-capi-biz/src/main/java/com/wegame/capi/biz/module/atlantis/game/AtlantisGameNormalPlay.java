@@ -37,6 +37,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -55,8 +56,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
             , BizEventEnum.EVENT_WILD
             , BizEventEnum.EVENT_BOM
             , BizEventEnum.EVENT_TRIDENT
-            , BizEventEnum.EVENT_GOLDEN_TANK
-            , BizEventEnum.EVENT_GOLDEN_COW);
+            , BizEventEnum.EVENT_GOLDEN_TANK);
 
     @Autowired
     AtlantisConfig atlantisConfig;
@@ -68,14 +68,13 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
 
         List<AtlantisGameRecordDo> ret = new ArrayList<>();
         AtomicLong totalRewardAmount = new AtomicLong(0L);
-        AtomicLong totalRewardCount = new AtomicLong(0L);
         // 首轮游戏处理,返回是否产生免费轮结果
-        AtlantisGameRecordDo lastRoundGameRecord = this.oneWheelPlay(gamePlay, RECORD_DEFAULT_PARENT_ID, totalRewardAmount, totalRewardCount, ret, BigDecimal.ZERO, false);
+        AtlantisGameRecordDo lastRoundGameRecord = this.oneWheelPlay(gamePlay, RECORD_DEFAULT_PARENT_ID, totalRewardAmount, new AtomicInteger(0), ret, BigDecimal.ZERO, false);
         // 如果有免费轮，加入免费轮处理
         if (lastRoundGameRecord.getRewardResult().isHasRewardFreeWheel()
                 && lastRoundGameRecord.getRewardResult().getRewardFreeWheelTimes() > 0) {
             // 处理免费轮-迭代替代递归
-            this.freeWheelHandler(totalRewardAmount, ret, gamePlay, lastRoundGameRecord, totalRewardCount);
+            this.freeWheelHandler(totalRewardAmount, ret, gamePlay, lastRoundGameRecord);
         }
         if (CollectionUtils.isNotEmpty(ret)) {
             ret.get(ret.size() - 1).setLastGameFlag(true);
@@ -91,7 +90,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
      * @param ret               存储结果
      * @return 最后一回合的gameRecord
      */
-    private AtlantisGameRecordDo oneWheelPlay(GamePlayDo gamePlay, Long parentId, AtomicLong totalRewardAmount, AtomicLong totalRewardCount, List<AtlantisGameRecordDo> ret, BigDecimal currentMultiple, boolean isFreeFlag) {
+    private AtlantisGameRecordDo oneWheelPlay(GamePlayDo gamePlay, Long parentId, AtomicLong totalRewardAmount, AtomicInteger totalRewardCount, List<AtlantisGameRecordDo> ret, BigDecimal currentMultiple, boolean isFreeFlag) {
         // 1.生成滚轮
         WheelDo<SymbolDo> wheelDo = this.generateCommonWheel(isFreeFlag);
         // 2.中奖处理
@@ -145,7 +144,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
      * @param totalRewardAmount      总的中奖金额统计
      * @return 产生的免费轮元数据 最后一回合的gameRecord
      */
-    private AtlantisGameRecordDo roundHandler(GamePlayDo gamePlay, AtlantisGameRecordDo firstRoundGameRecordDo, List<AtlantisGameRecordDo> ret, AtomicLong totalRewardAmount, AtomicLong totalRewardCount) {
+    private AtlantisGameRecordDo roundHandler(GamePlayDo gamePlay, AtlantisGameRecordDo firstRoundGameRecordDo, List<AtlantisGameRecordDo> ret, AtomicLong totalRewardAmount, AtomicInteger totalRewardCount) {
         LinkedList<AtlantisGameRecordDo> roundHandlerQueue = Lists.newLinkedList();
         roundHandlerQueue.addLast(firstRoundGameRecordDo);
 
@@ -157,7 +156,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
             // copy 
             SymbolDo[][] nextSymbolArr = AtlantisSymbolUtil.copySymbolArr(preWheel.getSymbolArr());
             // 重新构建nextSymbolArr
-            this.rebuildSymbolArr(nextSymbolArr, preAtlantisGameRecordDo, totalRewardAmount, totalRewardCount);
+            this.rebuildSymbolArr(nextSymbolArr, preAtlantisGameRecordDo, totalRewardCount);
             // 构建新滚轮
             WheelDo<SymbolDo> nextWheel = WheelDo.<SymbolDo>builder()
                     .index(preWheel.getIndex() + 1)
@@ -189,15 +188,14 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
      *
      * @param nextSymbolArr           nextSymbolArr
      * @param preAtlantisGameRecordDo preAtlantisGameRecordDo
-     * @param totalRewardAmount       总中奖金额
      */
-    private void rebuildSymbolArr(SymbolDo[][] nextSymbolArr, AtlantisGameRecordDo preAtlantisGameRecordDo, AtomicLong totalRewardAmount, AtomicLong totalRewardCount) {
+    private void rebuildSymbolArr(SymbolDo[][] nextSymbolArr, AtlantisGameRecordDo preAtlantisGameRecordDo, AtomicInteger totalRewardCount) {
         // 中奖消除
         this.rewardClearUp(nextSymbolArr, preAtlantisGameRecordDo.getRewardResult());
         // 中奖下落
         this.symbolFall(nextSymbolArr);
         // 事件处理:事件影响+事件记录到preAtlantisGameRecordDo
-        this.bizEventHandler(nextSymbolArr, preAtlantisGameRecordDo, totalRewardAmount, totalRewardCount);
+        this.bizEventHandler(nextSymbolArr, preAtlantisGameRecordDo);
         // 新滚轮填充空位
         this.injectEmptyIndex(nextSymbolArr);
     }
@@ -247,18 +245,30 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
      *
      * @param nextSymbolArr           nextSymbolArr
      * @param preAtlantisGameRecordDo 前一个gameRecordDo
-     * @param totalRewardAmount       总中奖金额
      */
-    private void bizEventHandler(SymbolDo[][] nextSymbolArr, AtlantisGameRecordDo preAtlantisGameRecordDo, AtomicLong totalRewardAmount, AtomicLong totalRewardCount) {
+    private void bizEventHandler(SymbolDo[][] nextSymbolArr, AtlantisGameRecordDo preAtlantisGameRecordDo) {
         // 获取上一轮中奖产生的事件
-        List<BizEventEnum> bizEventList = preAtlantisGameRecordDo.getRewardResult().getBizEventList();
-        if (CollectionUtils.isEmpty(bizEventList)) {
+        List<BizEventEnum> rewardBizEventTypeList = preAtlantisGameRecordDo.getRewardResult().getBizEventList();
+        List<GameBizEventDo> rewardEffectBizEventList = preAtlantisGameRecordDo.getRewardResult().getEffectBizEventList();
+        Map<BizEventEnum, GameBizEventDo> rewardBizEventEffectMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(rewardEffectBizEventList)) {
+            rewardBizEventEffectMap = rewardEffectBizEventList.stream().collect(Collectors.toMap(GameBizEventDo::getBizEventType, e -> e, (e1, e2) -> e1));
+        }
+        if (CollectionUtils.isEmpty(rewardBizEventTypeList)) {
             return;
         }
 
+        List<GameBizEventDo> gameBizEventDoList = Lists.newArrayList();
         // 支持的事件单个处理
-        for (int i = 0; i < bizEventList.size(); i++) {
-            BizEventEnum bizEvent = bizEventList.get(i);
+        for (int i = 0; i < rewardBizEventTypeList.size(); i++) {
+            BizEventEnum bizEvent = rewardBizEventTypeList.get(i);
+            // game和reward 聚合
+            GameBizEventDo rewardEventDo = rewardBizEventEffectMap.get(bizEvent);
+            if (Objects.nonNull(rewardEventDo)) {
+                gameBizEventDoList.add(rewardEventDo);
+                continue;
+            }
+
             if (!SUPPORT_BIZ_EVENT_LIST.contains(bizEvent)) {
                 continue;
             }
@@ -269,18 +279,13 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
                 SymbolDo changeToSymbol = gameBizEventDo.getChangeToSymbol();
                 gameBizEventDo.getIndexDoList().forEach(indexDo -> nextSymbolArr[indexDo.getRowIndex()][indexDo.getColumnIndex()] = changeToSymbol);
             }
-            // 处理影响-金额变动
-            if (Objects.nonNull(gameBizEventDo) && gameBizEventDo.hasMultipleChange()) {
-                // 总金额乘以倍数
-                int intMultiple = gameBizEventDo.getEventMultiple().intValue();
-                long newTotalRewardAmount = totalRewardAmount.get() * intMultiple;
-                totalRewardAmount.set(newTotalRewardAmount);
-            }
             // 事件下落-单个事件执行完成下落再执行下一个事件
             this.symbolFall(nextSymbolArr);
             // 添加事件处理到上一个gameRecordDo
-            preAtlantisGameRecordDo.addGameBizEvent(gameBizEventDo);
+            gameBizEventDoList.add(gameBizEventDo);
         }
+        gameBizEventDoList.sort(Comparator.comparingInt(GameBizEventDo::getSort));
+        preAtlantisGameRecordDo.setBizEventList(gameBizEventDoList);
     }
 
     /**
@@ -341,12 +346,14 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
     }
 
 
-    private void freeWheelHandler(AtomicLong totalRewardAmount, List<AtlantisGameRecordDo> ret, GamePlayDo gamePlay, AtlantisGameRecordDo preGameRecord, AtomicLong totalRewardCount) {
+    private void freeWheelHandler(AtomicLong totalRewardAmount, List<AtlantisGameRecordDo> ret, GamePlayDo gamePlay, AtlantisGameRecordDo preGameRecord) {
         // 如果达到最大倍数，则结束-在gameRecord中添加判断方法
         if (Objects.equals(preGameRecord.getRewardResult().getAccumulateReachMaxMultiple(), Boolean.TRUE)) {
             log.info("atlantis freeWheelHandler AccumulateReachMaxMultiple,betRecordId:{}", gamePlay.getBetRecordId());
             return;
         }
+        // 免费轮独立计算
+        AtomicInteger totalRewardCount = new AtomicInteger(0);
         LinkedList<FreeWheelHandleDo> freeWheelQueue = Lists.newLinkedList();
         freeWheelQueue.addLast(FreeWheelHandleDo.builder().parentGameRecord(preGameRecord).taskTimes(preGameRecord.getRewardResult().getRewardFreeWheelTimes()).build());
         // 初始队列
@@ -374,12 +381,14 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
         }
     }
 
-    private RewardResultDo<SymbolDo> rewardHandler(GamePlayDo gamePlay, WheelDo<SymbolDo> wheel, BigDecimal currentMultiple, Long currentTotalRewardAmount, AtomicLong totalRewardCount) {
+    private RewardResultDo<SymbolDo> rewardHandler(GamePlayDo gamePlay, WheelDo<SymbolDo> wheel, BigDecimal currentMultiple, Long currentTotalRewardAmount, AtomicInteger totalRewardCount) {
         // 中奖处理
-        RewardHandleDo<SymbolDo> rewardHandle = RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, currentMultiple, currentTotalRewardAmount);
-
+        RewardHandleDo<SymbolDo> rewardHandle = RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, currentMultiple, currentTotalRewardAmount, totalRewardCount.get());
         RewardResultDo<SymbolDo> rewardResult = atlantisRewardHandler.handle(rewardHandle);
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
+        if (CollectionUtil.isNotEmpty(rewardResult.getRewardLineDetailList())) {
+            totalRewardCount.addAndGet(rewardResult.getRewardLineDetailList().size());
+        }
         return rewardResult;
     }
 
