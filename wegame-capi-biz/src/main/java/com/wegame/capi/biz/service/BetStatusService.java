@@ -62,12 +62,12 @@ public class BetStatusService {
         log.info("convertBetStatus betRecordDo: {}", betRecordDo);
         if (!Objects.equals(BetStatusEnum.ING.getCode(), betRecordDo.getStatus())) {
             // 只处理投注中的投注记录
-            log.error("betRecordDo status is int, betRecordId: {}", betRecordDo.getId());
+            log.warn("betRecordDo status is ing, betRecordId: {}", betRecordDo.getId());
             return;
         }
         if (System.currentTimeMillis() - betRecordDo.getCreateTime() >= THREE_MINUTES) {
             // 只处理3分钟以内的投注记录
-            log.error("betRecordDo createTime is expired, betRecordId: {}", betRecordDo.getId());
+            log.warn("betRecordDo createTime is expired, betRecordId: {}", betRecordDo.getId());
             return;
         }
         // 控制20s不超过1个请求
