@@ -30,9 +30,15 @@ public enum BetSubTypeEnum {
     EX_BET("EX_BET",
             "正常投注EX投注",
             BetTypeEnum.NORMAL_BET),
+    EX_BET_ENHANCE("EX_BET_ENHANCE",
+            "正常投注EX增强投注",
+            BetTypeEnum.NORMAL_BET),
     // 免费轮投注
     BUY_BET("BUY_BET",
             "购买投注",
+            BetTypeEnum.BUY_BET),
+    BUY_BET_ENHANCE("BUY_BET_ENHANCE",
+            "购买投注增强投注",
             BetTypeEnum.BUY_BET),
     FREE_SPINS_BUY_BET("FREE_SPINS_BUY_BET",
             "免费轮查询-购买投注", // 用于查询投注记录

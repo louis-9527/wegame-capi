@@ -127,7 +127,11 @@ public class BetRequest extends BaseRequest implements Validate, Serializable {
                 SirenaValidator.validateParam(betType, betSubType, this);
                // SirenaValidator.validateStarCardBet(betType, betSubType, this);
                // SirenaValidator.validateFreeSpinBet(betType, betSubType, this);
-            } else {
+            }  else if (Objects.equals(gameType, GameTypeEnum.ATLANTIS)) {
+                SirenaValidator.validateParam(betType, betSubType, this);
+                // SirenaValidator.validateStarCardBet(betType, betSubType, this);
+                // SirenaValidator.validateFreeSpinBet(betType, betSubType, this);
+            }   else {
                 throw new BusinessException(ErrorCode.ERR_PARAM, "NOT SUPPORT");
             }
         }
