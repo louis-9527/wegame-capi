@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.domain.biz;
 
+import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -202,6 +203,50 @@ public class BetRecordDo<T> implements Serializable {
          * mini预留奖池贡献金额
          */
         private Long miniSupContributionAmount;
+
+        /**
+         * 根据奖池类型和是否进入jackpot池设置贡献金额
+         * @param type 奖池类型
+         * @param amount 贡献金额
+         * @param toJackpot true: 进入jackpot池, false: 进入reserved池
+         */
+        public void setContribution(JackpotRewardPoolTypeEnum type, Long amount, boolean toJackpot) {
+            if (type == null || amount == null) {
+                return;
+            }
+            switch (type) {
+                case grand:
+                    if (toJackpot) {
+                        this.grandContributionAmount = amount;
+                    } else {
+                        this.grandSupContributionAmount = amount;
+                    }
+                    break;
+                case major:
+                    if (toJackpot) {
+                        this.majorContributionAmount = amount;
+                    } else {
+                        this.majorSupContributionAmount = amount;
+                    }
+                    break;
+                case minor:
+                    if (toJackpot) {
+                        this.minorContributionAmount = amount;
+                    } else {
+                        this.minorSupContributionAmount = amount;
+                    }
+                    break;
+                case mini:
+                    if (toJackpot) {
+                        this.miniContributionAmount = amount;
+                    } else {
+                        this.miniSupContributionAmount = amount;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 }
