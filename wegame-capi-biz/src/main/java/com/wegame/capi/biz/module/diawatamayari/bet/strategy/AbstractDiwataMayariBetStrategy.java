@@ -149,8 +149,7 @@ public abstract class AbstractDiwataMayariBetStrategy
         AssertUtil.assertNotEmpty(allGameRecordList, ErrorCode.ERR_PARAM);
         // 按照index升序排列
         List<DiwataMayariGameRecordDo> currentWheelGameRecordList = Optional.ofNullable(allGameRecordList).orElse(Collections.emptyList()).stream()
-                .filter(Objects::nonNull)
-                .filter(item -> item.getBatchId() == betDo.getGameRecordId())
+                .filter(item -> Objects.nonNull(item) && Objects.equals(item.getBatchId(), betDo.getGameRecordId()))
                 .sorted(Comparator.comparingInt(DiwataMayariGameRecordDo::getIndex))
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(currentWheelGameRecordList)) {
