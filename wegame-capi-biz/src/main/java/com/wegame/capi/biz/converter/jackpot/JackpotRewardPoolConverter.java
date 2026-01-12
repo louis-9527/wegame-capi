@@ -32,6 +32,7 @@ public class JackpotRewardPoolConverter {
         jackpotRewardPoolDo.setId(po.getId());
         jackpotRewardPoolDo.setType(JackpotRewardPoolTypeEnum.valueOfCode(po.getType()));
         jackpotRewardPoolDo.setAmount(po.getAmount());
+        jackpotRewardPoolDo.setReservedAmount(po.getReservedAmount());
         jackpotRewardPoolDo.setCreator(po.getCreator());
         jackpotRewardPoolDo.setCreateTime(po.getCreateTime());
         jackpotRewardPoolDo.setUpdater(po.getUpdater());
