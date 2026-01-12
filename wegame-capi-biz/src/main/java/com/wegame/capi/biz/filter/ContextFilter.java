@@ -90,7 +90,7 @@ public class ContextFilter extends OncePerRequestFilter {
             UserInfo user = null;
             if (StringUtils.isNotEmpty(_token_)) {
                 user = loginService.getUserInfoByToken(_token_);
-                log.info("get userInfo: {}", user);
+                log.info("_token_: {}, get userInfo: {}", _token_, user);
             }
             UserInfoContext.setUserInfo(user);
         } catch (Exception e) {
