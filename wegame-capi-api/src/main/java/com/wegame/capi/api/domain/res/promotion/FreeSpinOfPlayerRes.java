@@ -54,5 +54,7 @@ public class FreeSpinOfPlayerRes implements Serializable {
         private BigDecimal totalWin;
         /** freeBet */
         private BigDecimal freeBet;
+        /** deviceType */
+        private List<Integer> deviceType;
     }
 }
