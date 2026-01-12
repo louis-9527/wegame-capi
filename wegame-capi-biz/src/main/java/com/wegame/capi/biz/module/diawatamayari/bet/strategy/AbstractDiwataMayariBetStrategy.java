@@ -140,24 +140,33 @@ public abstract class AbstractDiwataMayariBetStrategy
                 .cacheKey(String.format("%s_%s", betDo.getBetRecordId(), userInfo.getPlayerId()))
                 .fromPrimary(true)
                 .build();
-        List<DiwataMayariGameRecordDo> gameRecordList = betRecordManager().listGameRecordWithCache(query,
+        List<DiwataMayariGameRecordDo> allGameRecordList = betRecordManager().listGameRecordWithCache(query,
                 gameContext().gameInfo().getGameType());
-        AssertUtil.assertNotEmpty(gameRecordList, ErrorCode.ERR_PARAM);
+        // todo delete
+        if (CollectionUtils.isEmpty(allGameRecordList)) {
+            log.warn("allGameRecordList is null. cacheKey: {}", query.getCacheKey());
+        }
+        AssertUtil.assertNotEmpty(allGameRecordList, ErrorCode.ERR_PARAM);
         // 按照index升序排列
-        gameRecordList = Optional.ofNullable(gameRecordList).orElse(Collections.emptyList()).stream()
+        List<DiwataMayariGameRecordDo> currentWheelGameRecordList = Optional.ofNullable(allGameRecordList).orElse(Collections.emptyList()).stream()
                 .filter(Objects::nonNull)
+                .filter(item -> item.getBatchId() == betDo.getGameRecordId())
                 .sorted(Comparator.comparingInt(DiwataMayariGameRecordDo::getIndex))
                 .collect(Collectors.toList());
         //// 合计中奖总金额
-        long overallRewardAmount = gameRecordList.stream()
+        long overallRewardAmount = currentWheelGameRecordList.stream()
                 .filter(item -> Objects.nonNull(item.getRewardResult()))
                 .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
                 .sum();
-        if (CollectionUtils.isNotEmpty(gameRecordList)) {
-            DiwataMayariGameRecordDo lastGameRecord = gameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
+        if (CollectionUtils.isNotEmpty(currentWheelGameRecordList)) {
+            DiwataMayariGameRecordDo lastGameRecord = currentWheelGameRecordList.stream().filter(item -> BooleanUtils.isTrue(item.isLastGameFlag())).findFirst().orElse(null);
             if (Objects.nonNull(lastGameRecord)) {
+                long payOutAmount = allGameRecordList.stream()
+                        .filter(item -> Objects.nonNull(item.getRewardResult()))
+                        .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                        .sum();
                 // 后处理-免费轮
-                freeWheelAfterHandle(lastGameRecord.getBetRecordId(), overallRewardAmount, gameRecordList);
+                freeWheelAfterHandle(lastGameRecord.getBetRecordId(), payOutAmount, allGameRecordList);
                 //betRecordManager().asyncEvictGameRecordCache(query, gameContext().gameInfo().getGameType());
             }
         }
@@ -170,7 +179,7 @@ public abstract class AbstractDiwataMayariBetStrategy
                 .totalPayoutAmount(0L)
                 .resultDetail(DiwataMayariBetRecordDetailDo.builder()
                         .allWheelRewardSubType(RewardHelper.calculateRewardSubType(betDo.getBetAmount(), overallRewardAmount))
-                        .gameRecordList(gameRecordList)
+                        .gameRecordList(currentWheelGameRecordList)
                         .build())
                 .build();
     }
@@ -182,7 +191,7 @@ public abstract class AbstractDiwataMayariBetStrategy
                 .collect(Collectors.toList());
     }
 
-    public void freeWheelAfterHandle(Long betRecordId, Long overallRewardAmount, List<DiwataMayariGameRecordDo> list) {
+    public void freeWheelAfterHandle(Long betRecordId, Long payOutAmount, List<DiwataMayariGameRecordDo> list) {
         // do nothing
     }
 

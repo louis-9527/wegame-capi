@@ -35,7 +35,7 @@ public class DiwataMayariNormalBetStrategy extends AbstractDiwataMayariBetStrate
     ThreadPoolExecutor defaultThreadPoolExecutor;
 
     @Override
-    public void freeWheelAfterHandle(Long betRecordId, Long overallRewardAmount,  List<DiwataMayariGameRecordDo> list) {
+    public void freeWheelAfterHandle(Long betRecordId, Long payOutAmount,  List<DiwataMayariGameRecordDo> list) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         log.info("freeWheelAfterHandle start... betRecordId: {}", betRecordId);
         defaultThreadPoolExecutor.execute(() -> {
@@ -52,7 +52,7 @@ public class DiwataMayariNormalBetStrategy extends AbstractDiwataMayariBetStrate
                     log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
                     return;
                 }
-                updateRewardNotifyInfo(freeWheelCount, overallRewardAmount, userInfo);
+                updateRewardNotifyInfo(freeWheelCount, payOutAmount, userInfo);
             } catch (Exception e) {
                 log.error("freeWheelAfterHandle Exception, errMsg: {}", e.getMessage(), e);
             }
