@@ -158,7 +158,7 @@ public abstract class AbstractDiwataMayariBetStrategy
             if (Objects.nonNull(lastGameRecord)) {
                 // 后处理-免费轮
                 freeWheelAfterHandle(lastGameRecord.getBetRecordId(), overallRewardAmount, gameRecordList);
-                betRecordManager().asyncEvictGameRecordCache(query, gameContext().gameInfo().getGameType());
+                //betRecordManager().asyncEvictGameRecordCache(query, gameContext().gameInfo().getGameType());
             }
         }
         return BetResultDo.<DiwataMayariBetRecordDetailDo>builder()
