@@ -2,12 +2,12 @@
 
 -- ============================================
 -- Doris 数据库建表脚本
--- 数据库: ibongadarna
+-- 数据库: ibong
 -- 包含所有表的创建语句
 -- ============================================
 
 -- 使用数据库
-USE ibongadarna;
+USE ibong;
 
 -- ============================================
 -- 表1: ibongadarna_bet_record (投注记录表)
@@ -447,20 +447,20 @@ ALTER TABLE ibongadarna_star_card_record ADD INDEX idx_createtime_channel (creat
 ALTER TABLE ibongadarna_star_card_record ADD INDEX idx_report_status (reportStatus);
 
 -- ============================================
--- ibongadarnaadarna_user_play_metrics 表索引
+-- ibongadarna_user_play_metrics 表索引
 -- 参考 MongoDB 索引：
 -- 1. {_id: 1} - 唯一索引（主键，Doris自动创建）
 -- 2. {pId: 1, channelId: 1, gameId: 1, playerId: 1} - 复合唯一索引
 -- ============================================
-ALTER TABLE ibongadarnaadarna_user_play_metrics ADD INDEX idx_pid_channel_game_player (pId, channelId, gameId, playerId);
+ALTER TABLE ibongadarna_user_play_metrics ADD INDEX idx_pid_channel_game_player (pId, channelId, gameId, playerId);
 
 -- ============================================
--- ibongadarnaadarna_game_metrics 表索引
+-- ibongadarna_game_metrics 表索引
 -- 参考 MongoDB 索引：
 -- 1. {_id: 1} - 唯一索引（主键，Doris自动创建）
 -- 2. {pId: 1, channelId: 1, gameId: 1} - 复合索引
 -- ============================================
-ALTER TABLE ibongadarnaadarna_game_metrics ADD INDEX idx_pid_channel_game (pId, channelId, gameId);
+ALTER TABLE ibongadarna_game_metrics ADD INDEX idx_pid_channel_game (pId, channelId, gameId);
 
 -- ============================================
 -- 说明：
