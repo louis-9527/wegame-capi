@@ -92,18 +92,11 @@ public class AtlantisConfig implements Serializable {
          * 在json 文件中 key的配置格式eg："1001_3"
          */
         private TreeMap<SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig;
-
-        /**
-         * 业务概率配置
-         * TreeMap<事件类型，<步数格子index，概率列表>>
-         */
-        private TreeMap<BizEventEnum, List<BigDecimal>> bizEventProbabilisticConfig;
-
         /**
          * 业务概率配置
          * TreeMap<格子,TreeMap<事件类型，概率>>
          */
-        private TreeMap<Integer, TreeMap<BizEventEnum,BigDecimal>> bizEventProbabilisticConfigV2;
+        private TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> bizEventProbabilisticConfig;
 
         public void setWheelProbabilisticConfig(LinkedHashMap<String, List<BigDecimal>> wheelProbabilisticConfigOrigin) {
             TreeMap<SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig = new TreeMap<>(Comparator.comparing(SymbolKeyConfig::getSymbolId).thenComparing(SymbolKeyConfig::getCount));
@@ -160,9 +153,9 @@ public class AtlantisConfig implements Serializable {
     private void freeWheelTimesConfigValidate() {
         AssertUtil.assertNotNull(this.freeWheelTimesConfig, ErrorCode.ERR_INTER, "freeWheelTimesConfig is null");
         AssertUtil.assertNotNull(this.freeWheelTimesConfig.getBaseFreeWheelTimes(), ErrorCode.ERR_INTER, "freeWheelTimesConfig.baseFreeWheelTimes is null");
-        AssertUtil.assertTrue(this.freeWheelTimesConfig.getBaseFreeWheelTimes()>0, ErrorCode.ERR_INTER, "freeWheelTimesConfig.baseFreeWheelTimes is must great than 0");
+        AssertUtil.assertTrue(this.freeWheelTimesConfig.getBaseFreeWheelTimes() > 0, ErrorCode.ERR_INTER, "freeWheelTimesConfig.baseFreeWheelTimes is must great than 0");
         AssertUtil.assertNotNull(this.freeWheelTimesConfig.getStep(), ErrorCode.ERR_INTER, "freeWheelTimesConfig.step is null");
-        AssertUtil.assertTrue(this.freeWheelTimesConfig.getStep()>0, ErrorCode.ERR_INTER, "freeWheelTimesConfig.step is must great than 0");
+        AssertUtil.assertTrue(this.freeWheelTimesConfig.getStep() > 0, ErrorCode.ERR_INTER, "freeWheelTimesConfig.step is must great than 0");
     }
 
     private void oddsConfigValidate() {
@@ -183,7 +176,7 @@ public class AtlantisConfig implements Serializable {
 
     }
 
-    private void bizEventProbabilisticConfigValidate(TreeMap<BizEventEnum, List<BigDecimal>> bizEventProbabilisticConfig) {
+    private void bizEventProbabilisticConfigValidate(TreeMap<Integer, TreeMap<BizEventEnum, BigDecimal>> bizEventProbabilisticConfig) {
         AssertUtil.assertNotNull(bizEventProbabilisticConfig, ErrorCode.ERR_INTER, "probabilisticConfig.bizEventProbabilisticConfig is null");
         int colum = 24;
         bizEventProbabilisticConfig.forEach((key, value) -> {
@@ -228,7 +221,6 @@ public class AtlantisConfig implements Serializable {
                     .reduce(0, Integer::sum);
             AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.commonPlayWheelProbabilisticConfig ERR, columNo:" + columNo);
         }
-
 
 
     }

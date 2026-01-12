@@ -65,6 +65,9 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
 
     /**
      * 累计中奖次数
+     * 用于计算对应业务事件的index
+     *
+     * @since {@link GameTypeEnum#ATLANTIS}
      */
     private Integer totalRewardCount;
 

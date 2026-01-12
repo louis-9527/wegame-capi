@@ -106,7 +106,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
         }
 
         // 中奖事件
-        List<BizEventEnum> bizEventList = this.rewardBizEventHandler(rewardLineList);
+        List<BizEventEnum> bizEventList = this.rewardBizEventHandler(rewardLineList, rewardHandle.getTotalRewardCount());
 
         // 5.构建中奖结果
         boolean reachMaxMultiple = reachMaxMultiple(
@@ -131,16 +131,16 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
 
     /**
      * 产生中奖事件
-     *
+     * 上一轮总的中奖次数
      * @param rewardLineList 中奖线列表
      * @return 中奖事件列表
      */
-    private List<BizEventEnum> rewardBizEventHandler(List<RewardLineDo<SymbolDo>> rewardLineList) {
+    private List<BizEventEnum> rewardBizEventHandler(List<RewardLineDo<SymbolDo>> rewardLineList, Integer totalRewardCount) {
         List<BizEventEnum> bizEventList = Lists.newArrayList();
         TreeMap<BizEventEnum, List<BigDecimal>> bizEventProbabilisticConfig = atlantisConfig.getProbabilisticConfig().getBizEventProbabilisticConfig();
         for (int i = 0; i < rewardLineList.size(); i++) {
             int randomInt = randomService.randomInt(Constants.CONST_1, Constants.CONST_1000000);
-            GameUtil.randomKey(bizEventProbabilisticConfig, Constants.CONST_10000,randomInt);
+            GameUtil.randomKey(bizEventProbabilisticConfig, Constants.CONST_10000, randomInt);
 
 
         }
