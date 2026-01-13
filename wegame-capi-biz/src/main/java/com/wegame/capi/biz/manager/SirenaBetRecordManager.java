@@ -43,6 +43,7 @@ public class SirenaBetRecordManager extends AbstractBetRecordManager<SirenaGameR
     GameRecordService<SirenaGameRecordDo> gameRecordService;
 
     @Transactional(transactionManager = SirenaMongoConfig.sirenaTransactionManager)
+    @Override
     public Long add(BetRecordDo<SirenaGameRecordDo> betRecord, GameTypeEnum gameType) {
         Long id = betRecordService.add(betRecord, gameType);
         AssertUtil.assertNotNull(id, ErrorCode.ERR_INTER);
@@ -105,10 +106,6 @@ public class SirenaBetRecordManager extends AbstractBetRecordManager<SirenaGameR
     }
 
     @Override
-    public SirenaGameRecordDo findOneGameRecord(GameRecordQuery query, GameTypeEnum gameType) {
-        return gameRecordService.findOne(query, gameType, SirenaGameRecordDo.class);
-    }
-
     public BetRecordDo findLastOneGameRecord(BetRecordQuery query, GameTypeEnum gameType) {
         BetRecordDo oneLastByTime = betRecordService.getOneLastByTime(query, gameType);
         if (oneLastByTime == null) {
