@@ -57,11 +57,11 @@ public class DiwataMayariPulsarConfig {
                 // 开启批量发送
                 .enableBatching(true)
                 .batcherBuilder(BatcherBuilder.KEY_BASED)
-                .batchingMaxMessages(500) // 每批最大 200 条消息
+                .batchingMaxMessages(600) // 每批最大 200 条消息
                 // .batchingMaxBytes(4 * 1024) // 每个批次最大 4 KB
                 // 10ms 内合并批量消息
                 // 最大延迟 10 毫秒
-                .batchingMaxPublishDelay(30, TimeUnit.MILLISECONDS)
+                .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)
                 .sendTimeout(10, TimeUnit.SECONDS) // 5 秒超时
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
@@ -80,12 +80,12 @@ public class DiwataMayariPulsarConfig {
                 // 关键点：使用 Key_Shared 模式, 集群消费
                 .subscriptionType(SubscriptionType.Key_Shared)
                 // 增加内部缓存，提高吞吐量
-                .receiverQueueSize(300000)
+                .receiverQueueSize(10000)
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .negativeAckRedeliveryDelay(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(3000)  // 批量最多100条
-                        .timeout(1000, TimeUnit.MILLISECONDS)
+                        .maxNumMessages(2000)  // 批量最多100条
+                        .timeout(100, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**
