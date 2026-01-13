@@ -2,6 +2,7 @@ package com.wegame.capi.biz.domain.biz.jackpot;
 
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
+import com.wegame.capi.common.enums.JackpotRewardAmountTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import lombok.AllArgsConstructor;
@@ -58,9 +59,9 @@ public class JackpotUserRewardRecordDo implements Serializable {
     private JackpotRewardPoolTypeEnum rewardPoolType;
 
     /**
-     * 是否使用预留池
+     * 扣除金额的类型: 1:jackpot金额 2：reserved pool 金额
      */
-    private boolean useReversedPool;
+    private JackpotRewardAmountTypeEnum rewardAmountType;
     /**
      * 中奖金额.单位：厘
      */
@@ -96,7 +97,10 @@ public class JackpotUserRewardRecordDo implements Serializable {
 
     ///////////////  above auto generated ///////////////
 
-    public static JackpotUserRewardRecordDo build(JackpotDrawAndAwardDo drawAndAwardDo, Long betGameId, Long rewardAmount, Long rewardPoolId, JackpotRewardPoolTypeEnum poolTypeEnum, JackpotTypeEnum jackpotTypeEnum, boolean useReversedPool) {
+    public static JackpotUserRewardRecordDo build(JackpotDrawAndAwardDo drawAndAwardDo, Long betGameId, Long rewardAmount, Long rewardPoolId,
+                                                  JackpotRewardPoolTypeEnum poolTypeEnum,
+                                                  JackpotRewardAmountTypeEnum rewardAmountType,
+                                                  JackpotTypeEnum jackpotTypeEnum) {
         return JackpotUserRewardRecordDo.builder()
                 .userId(drawAndAwardDo.getUserId())
                 .playerName(drawAndAwardDo.getPlayerName())
@@ -104,7 +108,7 @@ public class JackpotUserRewardRecordDo implements Serializable {
                 .betId(drawAndAwardDo.getBetId())
                 .gameRecordId(betGameId)
                 .rewardAmount(rewardAmount)
-                .useReversedPool(useReversedPool)
+                .rewardAmountType(rewardAmountType)
                 .rewardPoolId(rewardPoolId)
                 .rewardPoolType(poolTypeEnum)
                 .rewardGrantSerialNo(buildGrantSerialNo(drawAndAwardDo.getBetRecordId(), jackpotTypeEnum))

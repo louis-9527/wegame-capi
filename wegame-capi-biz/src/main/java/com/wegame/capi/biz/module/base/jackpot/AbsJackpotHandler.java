@@ -14,6 +14,7 @@ import com.wegame.capi.biz.service.jackpot.JackpotUserRewardRecordService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.BetPromotionTypeEnum;
+import com.wegame.capi.common.enums.JackpotRewardAmountTypeEnum;
 import com.wegame.capi.common.enums.JackpotRewardGrantStatusEnum;
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
 import com.wegame.capi.common.utils.LockNameUtil;
@@ -64,12 +65,14 @@ public abstract class AbsJackpotHandler {
             // 获取奖池金额
             JackpotRewardPoolDo rewardPoolDo = jackpotRewardPoolService.selectOneByType(jackpotRewardPoolType, getJackpotType());
             AssertUtil.assertNotNull(rewardPoolDo, ErrorCode.ERR_PARAM);
-            //如果当前jackpot金额小于最小派奖金额，则预留池扣除最小派奖金额，否则当前jackpot扣除所有金额
-            boolean useReservedPool = guaranteed > rewardPoolDo.getAmount();
+            // 保底金额 > 当前jackpot金额，使用预留池，否则使用jackpot奖池
+            JackpotRewardAmountTypeEnum rewardAmountTypeEnum = guaranteed > rewardPoolDo.getAmount() ?
+                    JackpotRewardAmountTypeEnum.RESERVED_POOL_AMOUNT : JackpotRewardAmountTypeEnum.JACKPOT_POOL_AMOUNT;
+            // 派奖金额： 当前jackpot金额大于保底金额，使用
             Long rewardAmount = Math.max(guaranteed, rewardPoolDo.getAmount()); // 中奖金额默认使用保底
             // 添加使用记录并更新奖池金额
             JackpotUserRewardRecordDo buildRecord = JackpotUserRewardRecordDo.build(drawAndAwardDo, betGameId, rewardAmount,
-                    rewardPoolDo.getId(), jackpotRewardPoolType, getJackpotType(), useReservedPool);
+                    rewardPoolDo.getId(), jackpotRewardPoolType, rewardAmountTypeEnum, getJackpotType());
             buildRecord.setId(generateId());
             this.jackpotManager().winReward(buildRecord);
             // 清除缓存

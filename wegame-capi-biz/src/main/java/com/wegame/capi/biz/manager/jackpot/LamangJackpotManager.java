@@ -8,6 +8,7 @@ import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolInputRecordDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotUserRewardRecordDo;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
 import com.wegame.capi.common.enums.JackpotAccFlagEnum;
+import com.wegame.capi.common.enums.JackpotRewardAmountTypeEnum;
 import com.wegame.capi.dao.repository.domain.jackpot.JackpotUserRewardRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -105,9 +106,9 @@ public class LamangJackpotManager extends AbstractJackpotManager {
         JackpotRewardPoolDo poolUpdate = JackpotRewardPoolDo.builder()
                 .type(jackpotUserRewardRecord.getRewardPoolType())
                 .build();
-        if (jackpotUserRewardRecord.isUseReversedPool()) {
+        if (Objects.equals(jackpotUserRewardRecord.getRewardAmountType(), JackpotRewardAmountTypeEnum.RESERVED_POOL_AMOUNT)) {
             poolUpdate.setReservedAmount(-jackpotUserRewardRecord.getRewardAmount());
-        } else {
+        } else if (Objects.equals(jackpotUserRewardRecord.getRewardAmountType(), JackpotRewardAmountTypeEnum.JACKPOT_POOL_AMOUNT)){
             poolUpdate.setAmount(-jackpotUserRewardRecord.getRewardAmount());
         }
         boolean update = jackpotRewardPoolService.updateAmountByType(poolUpdate, jackpotGameType());
