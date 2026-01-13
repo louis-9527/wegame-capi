@@ -209,7 +209,6 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
     private void injectEmptyIndex(SymbolDo[][] nextSymbolArr) {
         // 根据配置获取
         TreeMap<AtlantisConfig.ProbabilisticConfig.SymbolKeyConfig, List<BigDecimal>> wheelProbabilisticConfig = atlantisConfig.getProbabilisticConfig().getWheelProbabilisticConfig();
-        SymbolDo[][] symbolArr = new SymbolDo[GAME_INFO.getRow()][GAME_INFO.getColumn()];
         // 按列填充盘面
         for (int columnNum = 0; columnNum < GAME_INFO.getColumn(); columnNum++) {
             // 1.统计-当前列null元素坐标
