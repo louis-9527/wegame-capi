@@ -1,6 +1,5 @@
 package com.wegame.capi.biz.module.atlantis.game;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.wegame.base.enums.ErrorCode;
@@ -15,16 +14,14 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.atlantis.AtlantisGameHelper;
-import com.wegame.capi.biz.module.atlantis.AtlantisSymbolUtil;
 import com.wegame.capi.biz.module.atlantis.reward.AtlantisRewardHandler;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.service.operation.OperationEventConfigRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.OperationEventTypeEnum;
-import lombok.Data;
-import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +29,9 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * todo 完善事件相关逻辑
+ */
 @Slf4j
 @Component("atlantisGameEventPlay")
 public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
@@ -49,26 +49,42 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
     public List<AtlantisGameRecordDo> play(GamePlayDo gamePlay) {
         List<AtlantisGameRecordDo> ret = new ArrayList<>();
         List<OperationEventConfigRecordDo> gameMultipleRecordDos = operationEventConfigRecordService.listByBetRecordId(gamePlay.getGameEventDo().getConfigId(), OperationEventTypeEnum.ATLANTIS);
-        AssertUtil.assertNotEmpty(gameMultipleRecordDos, ErrorCode.ERR_INTER, "gameMultipleRecordDos is empty");
-        // 获取首轮(parentId == 0 and index == 0（atlantis 所有index都是0）)
+        // 获取首轮(batchId == 0 and index == 0)
         OperationEventConfigRecordDo firstRecord = gameMultipleRecordDos.stream()
                 .filter(record -> record.getParentId() == 0L && record.getIndex() == 0L)
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.ERR_INTER));
 
-        // 按 batchId 分组,batchId和gameRecordId是同一个值。atlantis没有消除轮，一个batchId只对应一条记录
-        Map<Long, OperationEventConfigRecordDo> batchIdMap = gameMultipleRecordDos.stream()
-                .collect(Collectors.toMap(OperationEventConfigRecordDo::getBatchId, recordDo -> recordDo, (recordDo1, recordDo2) -> recordDo1));
-
         // 处理首轮
-        AtlantisGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, super.generateGameRecordId(), RECORD_DEFAULT_PARENT_ID, firstRecord);
+        long firstGameRecordId = super.generateGameRecordId();
+        AtlantisGameRecordDo firstGameRecord = this.processGameRecord(gamePlay, firstGameRecordId, RECORD_DEFAULT_PARENT_ID, firstGameRecordId, firstRecord, BigDecimal.ZERO);
         ret.add(firstGameRecord);
-        if (CollectionUtil.isNotEmpty(firstRecord.getGameRecordIds())) {
-            // 首轮有免费轮
-            LinkedList<AtlantisEventFreeWheelHandleDo> taskLinkedList = new LinkedList<>();
-            taskLinkedList.addLast(new AtlantisEventFreeWheelHandleDo(firstGameRecord, firstRecord.getGameRecordIds()));
-            // 迭代替代递归处理
-            this.loopHandle(taskLinkedList, ret, gamePlay, batchIdMap);
+        // 按 batchId 分组 & 记录 ID 映射
+        Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId = gameMultipleRecordDos.stream()
+                .collect(Collectors.groupingBy(OperationEventConfigRecordDo::getBatchId));
+
+        // 获取首批次并排序
+        List<OperationEventConfigRecordDo> recordBatchList = groupedByBatchId.getOrDefault(firstRecord.getBatchId(), Collections.emptyList())
+                .stream()
+                .sorted(Comparator.comparing(OperationEventConfigRecordDo::getIndex))
+                .collect(Collectors.toList());
+        // 处理每个批次
+        AtlantisGameRecordDo lastGameRecord = firstGameRecord;
+
+        for (OperationEventConfigRecordDo recordDo : recordBatchList) {
+            if (recordDo.getParentId() != 0L) {
+                // 处理首轮普通轮
+                long gameRecordId = generateGameRecordId();
+                AtlantisGameRecordDo gameRecord = processGameRecord(gamePlay, gameRecordId, firstGameRecord.getId(), lastGameRecord.getBatchId(), recordDo, BigDecimal.ZERO);
+                ret.add(gameRecord);
+                lastGameRecord = gameRecord;
+            }
+
+            if (CollectionUtils.isEmpty(recordDo.getGameRecordIds())) {
+                continue;
+            }
+            // 处理免费轮
+            processFreeRounds(ret, gamePlay, recordDo, lastGameRecord, groupedByBatchId);
         }
         //// 总中奖金额
         long totalRewardAmount = ret.stream()
@@ -79,24 +95,47 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
         return ret;
     }
 
-    private void loopHandle(LinkedList<AtlantisEventFreeWheelHandleDo> taskLinkedList, List<AtlantisGameRecordDo> ret, GamePlayDo gamePlay, Map<Long, OperationEventConfigRecordDo> batchIdMap) {
-        // 迭代替代递归
-        while (!taskLinkedList.isEmpty()) {
-            // 逐个处理
-            AtlantisEventFreeWheelHandleDo task = taskLinkedList.pollFirst();
-            AtlantisGameRecordDo parentGameRecord = task.getParentGameRecord();
-            for (Long oldSubGameRecordId : task.getOldSubGameRecordIds()) {
-                OperationEventConfigRecordDo configRecordDo = batchIdMap.get(oldSubGameRecordId);
-                AssertUtil.assertNotNull(configRecordDo, ErrorCode.ERR_INTER, "configRecordDo is null of batchId " + oldSubGameRecordId);
-                AtlantisGameRecordDo gameRecordDo = this.processGameRecord(gamePlay, super.generateGameRecordId(), parentGameRecord.getId(), configRecordDo);
-                // 添加新的gameRecordId
-                parentGameRecord.addGameRecordId(gameRecordDo.getId());
-                ret.add(gameRecordDo);
-                // 如果还有免费轮，则加入任务
-                if (CollectionUtil.isNotEmpty(configRecordDo.getGameRecordIds())) {
-                    taskLinkedList.addLast(new AtlantisEventFreeWheelHandleDo(gameRecordDo, configRecordDo.getGameRecordIds()));
+
+    /**
+     * 递归处理免费轮，确保同层级先处理完，再进入下一层
+     */
+    private void processFreeRounds(
+            List<AtlantisGameRecordDo> ret,
+            GamePlayDo gamePlay,
+            OperationEventConfigRecordDo recordDo,
+            AtlantisGameRecordDo parent,
+            Map<Long, List<OperationEventConfigRecordDo>> groupedByBatchId) {
+        Map<OperationEventConfigRecordDo, AtlantisGameRecordDo> nextLevelGameRecordMap = new HashMap<>();
+
+        List<Long> gameRecordIds = new ArrayList<>();
+        for (Long batchId : recordDo.getGameRecordIds()) {
+            List<OperationEventConfigRecordDo> currentLevelRecords = groupedByBatchId.get(batchId);
+            currentLevelRecords.sort(Comparator.comparing(OperationEventConfigRecordDo::getIndex));
+            // 处理当前层级的每个记录
+            AtlantisGameRecordDo preGameRecord = null;
+            for (OperationEventConfigRecordDo record : currentLevelRecords) {
+                BigDecimal totalMultipleAmount = ret.get(ret.size() - 1).getRewardResult().getTotalMultiple();
+                long gameRecordId = generateGameRecordId();
+                AtlantisGameRecordDo gameRecord = null;
+                if (record.getIndex() == 0) {
+                    gameRecordIds.add(gameRecordId);
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, parent.getId(), gameRecordId, record,totalMultipleAmount);
+                    ret.add(gameRecord);
+                } else {
+                    gameRecord = processGameRecord(gamePlay, gameRecordId, preGameRecord.getId(), preGameRecord.getBatchId(), record,totalMultipleAmount);
+                    ret.add(gameRecord);
+                }
+                preGameRecord = gameRecord;
+                if (CollectionUtils.isNotEmpty(record.getGameRecordIds())) {
+                    nextLevelGameRecordMap.put(record, gameRecord);
                 }
             }
+        }
+        parent.setGameRecordIds(gameRecordIds);
+        for (Map.Entry<OperationEventConfigRecordDo, AtlantisGameRecordDo> entry : nextLevelGameRecordMap.entrySet()) {
+            OperationEventConfigRecordDo key = entry.getKey();
+            AtlantisGameRecordDo value = entry.getValue();
+            processFreeRounds(ret, gamePlay, key,value, groupedByBatchId);
         }
     }
 
@@ -107,31 +146,31 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
             GamePlayDo gamePlay,
             long gameRecordId,
             long parentId,
-            OperationEventConfigRecordDo recordDo) {
+            long batchId,
+            OperationEventConfigRecordDo recordDo,
+            BigDecimal totalMultiple) {
 
         // 确定 `TotalMultiple` 参数
-        WheelDo<SymbolDo> atlantisSymbolWheel = this.convertWheel(recordDo.getWheel());
-        SymbolDo[][] symbolArr = atlantisSymbolWheel.getSymbolArr();
-        // 填充wild的嵌套元素:如果wild嵌套元素为空，则填充一个倍率为0的现金元素
-        atlantisSymbolWheel.setSymbolArr(AtlantisSymbolUtil.handleWildSymbolArrNest(symbolArr));
-        RewardResultDo<SymbolDo> rewardResult = atlantisRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, atlantisSymbolWheel, BigDecimal.ZERO));
+        WheelDo<SymbolDo> symbolWheel = this.convertWheel(recordDo.getWheel());
+        // 处理空值
+        RewardResultDo<SymbolDo> rewardResult = atlantisRewardHandler.handle(RewardHandlerBuilder.build(gameInfo, gamePlay, symbolWheel, totalMultiple));
         // 构建时还原
-        atlantisSymbolWheel.setSymbolArr(symbolArr);
-        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), atlantisSymbolWheel, rewardResult);
+        return buildGameRecord(gameRecordId, parentId, gamePlay.getBetRecordId(), batchId, symbolWheel, rewardResult);
     }
 
     private AtlantisGameRecordDo buildGameRecord(Long id,
-                                              Long parentId,
-                                              Long betRecordId,
-                                              WheelDo<SymbolDo> wheel,
-                                              RewardResultDo<SymbolDo> rewardResult) {
+                                                Long parentId,
+                                                Long betRecordId,
+                                                Long batchId,
+                                                WheelDo<SymbolDo> wheel,
+                                                RewardResultDo<SymbolDo> rewardResult) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_INTER);
         return AtlantisGameRecordDo.builder()
                 .id(id)
                 .parentId(parentId)
                 .betRecordId(betRecordId)
-                .batchId(id)
+                .batchId(batchId)
                 .playerId(userInfo.getPlayerId())
                 .playerName(userInfo.getPlayerName())
                 .index(wheel.getIndex())
@@ -141,24 +180,6 @@ public class AtlantisGameEventPlay extends AbstractGame<AtlantisGameRecordDo> {
                 .gameRecordIds(null)
                 .lastGameFlag(false)
                 .build();
-    }
-
-
-    @Data
-    @SuperBuilder
-    private static class AtlantisEventFreeWheelHandleDo {
-
-        public AtlantisEventFreeWheelHandleDo(AtlantisGameRecordDo parentGameRecord, List<Long> oldSubGameRecordIds) {
-            AssertUtil.assertNotNull(parentGameRecord, ErrorCode.ERR_INTER, "parentGameRecord is null");
-            AssertUtil.assertTrue(CollectionUtil.isNotEmpty(oldSubGameRecordIds), ErrorCode.ERR_INTER, "oldSubGameRecordIds is empty");
-            this.parentGameRecord = parentGameRecord;
-            this.oldSubGameRecordIds = oldSubGameRecordIds;
-        }
-
-        // parentRecord
-        private AtlantisGameRecordDo parentGameRecord;
-        // 时间配置中的子gameRecordId列表
-        private List<Long> oldSubGameRecordIds;
     }
 
     private WheelDo<SymbolDo> convertWheel(Object obj) {
