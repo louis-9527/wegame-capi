@@ -382,7 +382,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
 
     private RewardResultDo<SymbolDo> rewardHandler(GamePlayDo gamePlay, WheelDo<SymbolDo> wheel, BigDecimal currentMultiple, Long currentTotalRewardAmount, AtomicInteger totalRewardCount) {
         // 中奖处理
-        RewardHandleDo<SymbolDo> rewardHandle = RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, currentMultiple, currentTotalRewardAmount, totalRewardCount.get());
+        RewardHandleDo<SymbolDo> rewardHandle = RewardHandlerBuilder.build(GAME_INFO, gamePlay, wheel, currentMultiple, currentTotalRewardAmount, totalRewardCount.get(), null);
         RewardResultDo<SymbolDo> rewardResult = atlantisRewardHandler.handle(rewardHandle);
         AssertUtil.assertNotNull(rewardResult, ErrorCode.ERR_INTER);
         if (CollectionUtil.isNotEmpty(rewardResult.getRewardLineDetailList())) {

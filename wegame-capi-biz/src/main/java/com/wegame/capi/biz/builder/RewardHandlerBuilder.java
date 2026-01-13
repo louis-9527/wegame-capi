@@ -5,11 +5,13 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
+import com.wegame.capi.biz.domain.biz.game.bizevent.GameBizEventDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class RewardHandlerBuilder {
 
@@ -49,9 +51,17 @@ public class RewardHandlerBuilder {
     /**
      * atlantis add
      */
-    public static <T extends SymbolDo> RewardHandleDo<T> build(GameInfoDo gameInfo, GamePlayDo gamePlay, WheelDo<T> wheel, BigDecimal currentMultiple, Long currentTotalRewardAmount, Integer totalRewardCount) {
+    public static <T extends SymbolDo> RewardHandleDo<T> build(GameInfoDo gameInfo,
+                                                               GamePlayDo gamePlay,
+                                                               WheelDo<T> wheel,
+                                                               BigDecimal currentMultiple,
+                                                               Long currentTotalRewardAmount,
+                                                               Integer totalRewardCount,
+                                                               List<GameBizEventDo> fixedBizEventList) {
+
         RewardHandleDo<T> rewardHandleDo = build(gameInfo, gamePlay, wheel, currentMultiple, currentTotalRewardAmount);
         rewardHandleDo.setTotalRewardCount(totalRewardCount);
+        rewardHandleDo.setFixedBizEventList(fixedBizEventList);
         return rewardHandleDo;
     }
 

@@ -1,6 +1,7 @@
 package com.wegame.capi.biz.domain.biz.reward;
 
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
+import com.wegame.capi.biz.domain.biz.game.bizevent.GameBizEventDo;
 import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -13,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @ToString
@@ -70,5 +72,11 @@ public class RewardHandleDo<T extends SymbolDo> implements Serializable {
      * @since {@link GameTypeEnum#ATLANTIS}
      */
     private Integer totalRewardCount;
+    /**
+     * 固定中业务事件
+     *
+     * @since {@link GameTypeEnum#ATLANTIS}
+     */
+    private List<GameBizEventDo> fixedBizEventList;
 
 }
