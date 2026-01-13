@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class FreeSpinOfPlayerReqBuilder {
 
-    public static FreeSpinOfPlayerReq buildReq() {
+    public static FreeSpinOfPlayerReq buildReq(Boolean checkCurrent) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         AssertUtil.assertNotNull(userInfo, ErrorCode.ERR_NOT_LOGIN);
         return FreeSpinOfPlayerReq.builder()
@@ -23,6 +23,7 @@ public class FreeSpinOfPlayerReqBuilder {
                 .refId(MDC.get(ThreadMdcUtil.TRACE_ID))
                 .createTime(DateUtil.toUTC(new Date()))
                 .gameId(userInfo.getGameId())
+                .checkCurrent(checkCurrent)
                 .build();
     }
 }
