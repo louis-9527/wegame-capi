@@ -57,7 +57,7 @@ public class EsRestClientConfig {
                 .setMaxConnPerRoute(200)
                 // 保持长活（默认就是 keep-alive，这里再写一次）
                 .setDefaultRequestConfig(RequestConfig.custom()
-                        .setConnectionRequestTimeout(readTimeOut * 1000)
+                        .setConnectionRequestTimeout(readTimeOut * 1200)
                         .setConnectTimeout(connectTimeOut * 1000)
                         .setSocketTimeout(10_000)
                         .setContentCompressionEnabled(true) // gzip
