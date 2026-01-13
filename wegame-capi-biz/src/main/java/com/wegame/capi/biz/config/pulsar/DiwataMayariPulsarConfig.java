@@ -42,10 +42,20 @@ public class DiwataMayariPulsarConfig {
     @Bean(name = diwatamayariPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient diwataMayariPulsarClient() throws Exception {
         log.debug(BUILD_BEAN_FORMAT, diwatamayariPulsarClient);
-        return PulsarClient.builder()
+        PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(url)
-                .keepAliveInterval(60, TimeUnit.SECONDS)
+                .keepAliveInterval(30, TimeUnit.SECONDS)
+                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
+                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
+                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
+                .listenerThreads(Runtime.getRuntime().availableProcessors())
+                .connectionsPerBroker(60)
+                .connectionMaxIdleSeconds(3000)
+                .enableTcpNoDelay(true)
+                // 10分钟打印一次统计信息
+                .statsInterval(600, TimeUnit.SECONDS)
                 .build();
+        return pulsarClient;
     }
 
     @Bean(name = diwatamayariProducer, destroyMethod = COMMON_CLOSE_METHOD)
@@ -61,8 +71,8 @@ public class DiwataMayariPulsarConfig {
                 // .batchingMaxBytes(4 * 1024) // 每个批次最大 4 KB
                 // 10ms 内合并批量消息
                 // 最大延迟 10 毫秒
-                .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)
-                .sendTimeout(10, TimeUnit.SECONDS) // 5 秒超时
+                .batchingMaxPublishDelay(20, TimeUnit.MILLISECONDS)
+                .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
                 .autoUpdatePartitionsInterval(60, TimeUnit.SECONDS)
@@ -80,12 +90,12 @@ public class DiwataMayariPulsarConfig {
                 // 关键点：使用 Key_Shared 模式, 集群消费
                 .subscriptionType(SubscriptionType.Key_Shared)
                 // 增加内部缓存，提高吞吐量
-                .receiverQueueSize(10000)
+                .receiverQueueSize(3000)
                 .ackTimeout(60, TimeUnit.SECONDS)
-                .negativeAckRedeliveryDelay(60, TimeUnit.SECONDS)
+                .negativeAckRedeliveryDelay(600, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(2000)  // 批量最多100条
-                        .timeout(100, TimeUnit.MILLISECONDS)
+                        .maxNumMessages(500)  // 批量最多100条
+                        .timeout(2000, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**
