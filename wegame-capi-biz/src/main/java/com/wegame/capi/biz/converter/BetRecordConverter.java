@@ -185,8 +185,8 @@ public class BetRecordConverter {
         query.setPlayerId(userInfo.getPlayerId());
         query.setChannelId(userInfo.getChannelId());
         query.setStatus(BetStatusEnum.SUCCESS.getCode());
-        query.setStartCreateTime(request.getStartCreateTime());
-        query.setEndCreateTime(request.getEndCreateTime());
+        query.setStartCreateTime(Objects.nonNull(request.getStartCreateTime()) && request.getStartCreateTime() > 0 ? request.getStartCreateTime() : null);
+        query.setEndCreateTime(Objects.nonNull(request.getEndCreateTime()) && request.getEndCreateTime() > 0 ? request.getEndCreateTime() : null);
         query.setOrderByClause(orderClause);
         query.setLimit(request.getPageSize());
         query.setLtLastId(Optional.ofNullable(request.getLastId()).map(Long::valueOf).orElse(null));
