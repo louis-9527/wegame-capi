@@ -40,6 +40,10 @@ public class AtlantisConfig implements Serializable {
      * 概率配置
      */
     private ProbabilisticConfig probabilisticConfig;
+    /**
+     * 模版范围配置
+     */
+    private TemplateRangeConfig templateRangeConfig;
 
 
     @Data
@@ -76,6 +80,21 @@ public class AtlantisConfig implements Serializable {
          * TreeMap<元素ID，<赔率类型，具体赔率>>
          */
         private TreeMap<String, TreeMap<String, BigDecimal>> commonOddsConfig;
+    }
+
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = -734841249803450751L;
+        /**
+         * 模板配置
+         * LinkedHashMap<BetSubType, LinkedHashMap<模版范围, 权重>>
+         */
+        private LinkedHashMap<String, LinkedHashMap<String, Integer>> templateRangeMap;
     }
 
     @Data

@@ -23,7 +23,6 @@ import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.utils.JsonGzipUtil;

@@ -29,6 +29,15 @@ public enum GameTypeTemplateMultipleWarmUpEnum {
                     .put(BetSubTypeEnum.EX_BET, new WarmUpValidator(new BigDecimal("30")))
                     .build(),
             "IBONG_ADARNA"),
+    ATLANTIS(GameTypeEnum.ATLANTIS,
+            new ImmutableMap.Builder<BetSubTypeEnum, WarmUpValidator>()
+                    .put(BetSubTypeEnum.NORMAL_BET, new WarmUpValidator(new BigDecimal("1")))
+                    .put(BetSubTypeEnum.EX_BET, new WarmUpValidator(new BigDecimal("1")))
+                    .put(BetSubTypeEnum.EX_BET_ENHANCE, new WarmUpValidator(new BigDecimal("1")))
+                    .put(BetSubTypeEnum.BUY_BET, new WarmUpValidator(new BigDecimal("1")))
+                    .put(BetSubTypeEnum.BUY_BET_ENHANCE, new WarmUpValidator(new BigDecimal("1")))
+                    .build(),
+            "ATLANTIS"),
 
     ;
 
