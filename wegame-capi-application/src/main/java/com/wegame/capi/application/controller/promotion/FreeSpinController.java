@@ -4,6 +4,7 @@ import com.wegame.base.annotation.LoginRequired;
 import com.wegame.base.domain.CommonResponse;
 import com.wegame.capi.biz.service.freespin.FreeSpinService;
 import com.wegame.capi.client.domain.request.promotion.FreeSpinHistoryOfPlayerRequest;
+import com.wegame.capi.client.domain.request.promotion.FreeSpinOfPlayerRequest;
 import com.wegame.capi.client.domain.vo.promotion.FreeSpinHistoryOfPlayerVo;
 import com.wegame.capi.client.domain.vo.promotion.FreeSpinOfPlayerVo;
 import io.swagger.annotations.Api;
@@ -31,8 +32,9 @@ public class FreeSpinController {
     @LoginRequired
     @ApiOperation(value = "freeSpinOfPlayer", httpMethod = "POST")
     @PostMapping("/freeSpinOfPlayer")
-    public CommonResponse<FreeSpinOfPlayerVo> freeSpinOfPlayer() {
-        return build(doToVo(freeSpinService.freeSpinOfPlayer()));
+    public CommonResponse<FreeSpinOfPlayerVo> freeSpinOfPlayer(@RequestBody FreeSpinOfPlayerRequest request) {
+        request.validate();
+        return build(doToVo(freeSpinService.freeSpinOfPlayer(request.getCheckCurrent())));
     }
     @LoginRequired
     @ApiOperation(value = "freeSpinHistoryOfPlayer", httpMethod = "POST")

@@ -10,9 +10,9 @@ CREATE TEMPORARY TABLE mongo_game_record_source (
   accumulateReachMaxMultiple BOOLEAN,
   freeWheelFlag BOOLEAN,
   lastGameFlag BOOLEAN,
-  gameRecordIds ARRAY<BIGINT>,
-  rewardResult ROW<amount BIGINT, type STRING, description STRING>,
-  wheel ROW<id BIGINT, name STRING, `value` BIGINT>,
+  gameRecordIds STRING,
+  rewardResult STRING,
+  wheel STRING,
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -68,8 +68,8 @@ SELECT
   accumulateReachMaxMultiple,
   freeWheelFlag,
   lastGameFlag,
-  CAST(gameRecordIds AS STRING) AS gameRecordIds,
-  CAST(rewardResult AS STRING) AS rewardResult,
-  CAST(wheel AS STRING) AS wheel,
+  gameRecordIds,
+  rewardResult,
+  wheel,
   LOCALTIMESTAMP AS syncCreateTime
 FROM mongo_game_record_source;
