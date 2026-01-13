@@ -436,7 +436,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
             int randomInt = randomService.randomInt(Constants.CONST_1, Constants.CONST_1000000);
             AtlantisConfig.ProbabilisticConfig.SymbolKeyConfig symbolKeyConfig = GameUtil.randomKey(columProbabilisticMap, randomInt);
             // 生成单个元素列表
-            for (int i = 0; i < symbolCount; i++) {
+            for (int i = 0; i < symbolKeyConfig.getCount(); i++) {
                 SymbolDo symbolDo = GAME_INFO.getSymbolById(symbolKeyConfig.getSymbolId());
                 symbolDoList.add(symbolDo);
                 // 如果满足个数了，则返回
