@@ -20,8 +20,8 @@ import java.io.Serializable;
 @ApiModel(description = "FreeSpin请求模型")
 public class FreeSpinOfPlayerRequest extends BaseRequest implements Validate, Serializable {
     private static final long serialVersionUID = -3133207779105163762L;
-    @ApiModelProperty(value = "checkCurrent", required = false)
-    private Boolean checkCurrent = true;
+    @ApiModelProperty(value = "checkCurrent true-过滤；false-不过滤", required = false)
+    private Boolean checkCurrent = false;
 
     @Override
     public void validateParam() {
