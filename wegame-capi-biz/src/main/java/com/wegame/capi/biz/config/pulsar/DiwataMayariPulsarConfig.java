@@ -94,7 +94,7 @@ public class DiwataMayariPulsarConfig {
                 .subscriptionType(SubscriptionType.Key_Shared)
                 // 增加内部缓存，提高吞吐量
                 .receiverQueueSize(5000)
-                .poolMessages(true)
+                .poolMessages(false)
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .negativeAckRedeliveryDelay(600, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
