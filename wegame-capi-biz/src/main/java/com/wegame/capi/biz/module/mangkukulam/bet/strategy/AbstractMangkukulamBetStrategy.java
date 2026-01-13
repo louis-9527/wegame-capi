@@ -24,6 +24,7 @@ import com.wegame.capi.biz.module.base.game.AbstractGameContext;
 import com.wegame.capi.biz.module.mangkukulam.MangkukulamCalcUtil;
 import com.wegame.capi.biz.module.mangkukulam.bet.MangkukulamBetHelper;
 import com.wegame.capi.biz.module.mangkukulam.game.MangkukulamGameContext;
+import com.wegame.capi.biz.service.GameRecordService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
@@ -55,7 +56,8 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
     MangkukulamGameContext<MangkukulamGameRecordDo> mangkukulamGameContext;
     @Autowired
     MangkukulamBetRecordManager mangkukulamBetRecordManager;
-
+    @Autowired
+    GameRecordService<MangkukulamGameRecordDo> gameRecordService;
     @Autowired
     @Qualifier("mangkukulamOperationEventManager")
     private MangkukulamOperationEventManager mangkukulamOperationEventManager;
@@ -198,7 +200,7 @@ public abstract class AbstractMangkukulamBetStrategy extends AbstractCommonBetSt
         // 2.1、查询中免费轮的投注游戏记录
         Sort sort = Sort.by(Sort.Direction.DESC, "index");
         GameRecordQuery gameRecordQuery = GameRecordQuery.builder().betRecordId(betDo.getParentBetRecordId()).sort(sort).build();
-        MangkukulamGameRecordDo lastGameRecord = mangkukulamBetRecordManager.findOneGameRecord(gameRecordQuery, GameTypeEnum.MANGKUKULAM);
+        MangkukulamGameRecordDo lastGameRecord = gameRecordService.findOne(gameRecordQuery, GameTypeEnum.MANGKUKULAM, MangkukulamGameRecordDo.class);
         AssertUtil.assertNotNull(lastGameRecord, ErrorCode.ERR_INTER);
         // 3、构建返回结果
         int rewardFreeWheelTimes = lastGameRecord.getRewardResult().getRewardFreeWheelTimes();
