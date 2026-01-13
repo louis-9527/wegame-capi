@@ -53,9 +53,9 @@ public class RestTemplateAspect {
         } finally {
             long costTime = System.currentTimeMillis() - start;
             if (costTime > 50L) {
-                log.info("invoke third, cost time more than 50: {}ms, Request: {}; Response: {}", costTime, argEntity, response);
+                log.info("invoke third, cost time more than 50: {}ms, request: {}; response: {}", costTime, argEntity, response);
             } else {
-                log.info("invoke third, cost time: {}ms, Request: {}; Response: {}", costTime, argEntity, response);
+                log.info("invoke third, cost time: {}ms, request: {}; response: {}", costTime, argEntity, response);
             }
         }
     }

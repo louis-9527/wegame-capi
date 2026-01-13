@@ -55,13 +55,13 @@ public class ControllerAspect {
             }
             long costTime = System.currentTimeMillis() - startTime;
             if (costTime > 150L) {
-                log.info("{}-{}, controller cost time more than 150: {} ms, req={}, res={}",
+                log.info("{}-{} controller cost time more than 150: {}ms, req={}, res={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
                         req);
             } else {
-                log.info("{}-{}, controller cost time: {} ms, req={}, res={}",
+                log.info("{}-{} controller cost time: {}ms, req={}, res={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
