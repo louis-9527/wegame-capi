@@ -203,8 +203,8 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
         // 统计wild 个数
         List<RewardSymbolDo<SymbolDo>> wildSymbolDoList = Lists.newArrayList();
         SymbolDo[][] symbolArr = wheel.getSymbolArr();
-        for (int row = ONE_ROW_INDEX; row <= gameInfo.getRow(); row++) {
-            for (int column = ONE_COLUM_INDEX; column <= gameInfo.getColumn(); column++) {
+        for (int row = ONE_ROW_INDEX; row < gameInfo.getRow(); row++) {
+            for (int column = ONE_COLUM_INDEX; column < gameInfo.getColumn(); column++) {
                 SymbolDo symbolDo = symbolArr[row][column];
                 // scatter 不统计
                 if (symbolDo.isScatterSymbol()) {
@@ -284,7 +284,7 @@ public class AtlantisRewardHandler extends AbstractRewardHandler<SymbolDo> {
         if (Objects.equals(GamePlayTypeEnum.NORMAL_PLAY, rewardHandle.getGamePlayType())) {
             AssertUtil.assertNotNull(rewardHandle.getCurrentTotalRewardAmount(), ErrorCode.ERR_PARAM, "currentTotalRewardAmount is null");
         }
-        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.KAPRE), ErrorCode.ERR_PARAM, "just support game type of kapre");
+        AssertUtil.assertTrue(Objects.equals(rewardHandle.getGameType(), GameTypeEnum.ATLANTIS), ErrorCode.ERR_PARAM, "just support game type of atlantis");
         AssertUtil.assertTrue(rewardHandle.getBetAmount() > 0, ErrorCode.ERR_PARAM, "bet amount must greater than 0");
         SymbolDo[][] symbolArr = rewardHandle.getWheel().getSymbolArr();
         // 校验：滚轮行数

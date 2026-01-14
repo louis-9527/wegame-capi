@@ -120,7 +120,8 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
      */
     public TreeMap<AtlantisConfig.ProbabilisticConfig.SymbolKeyConfig, Integer> buildAtlantisColumProbabilisticMap(int cellNo, TreeMap<AtlantisConfig.ProbabilisticConfig.SymbolKeyConfig, List<BigDecimal>> probabilisticConfigMap) {
         AssertUtil.assertTrue(MapUtils.isNotEmpty(probabilisticConfigMap), ErrorCode.ERR_INTER);
-        TreeMap<AtlantisConfig.ProbabilisticConfig.SymbolKeyConfig, Integer> map = new TreeMap<>();
+        TreeMap<AtlantisConfig.ProbabilisticConfig.SymbolKeyConfig, Integer> map =
+                new TreeMap<>(Comparator.comparing(AtlantisConfig.ProbabilisticConfig.SymbolKeyConfig::getSymbolId).thenComparing(AtlantisConfig.ProbabilisticConfig.SymbolKeyConfig::getCount));
         probabilisticConfigMap.forEach((key, value) -> {
             int val = (value.get(cellNo).multiply(new BigDecimal(Constants.CONST_10000))).intValue();
             if (val > 0) {
@@ -295,7 +296,7 @@ public class AtlantisGameNormalPlay extends AbstractGame<AtlantisGameRecordDo> {
     private void symbolFall(SymbolDo[][] nextSymbolArr) {
         for (int column = ONE_COLUM_INDEX; column < GAME_INFO.getColumn(); column++) {
             int currentRow = GAME_INFO.getRow() - 1;
-            for (int row = GAME_INFO.getRow() - 1; row > ONE_ROW_INDEX; row--) {
+            for (int row = GAME_INFO.getRow() - 1; row >= ONE_ROW_INDEX; row--) {
                 if (Objects.nonNull(nextSymbolArr[row][column])) {
                     if (!Objects.equals(currentRow, row)) {
                         // 移动

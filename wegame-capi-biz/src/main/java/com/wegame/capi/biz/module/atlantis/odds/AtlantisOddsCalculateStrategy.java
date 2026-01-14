@@ -20,6 +20,6 @@ public class AtlantisOddsCalculateStrategy extends AbstractOddsCalculateStrategy
 
     @Override
     public TreeMap<String, TreeMap<String, BigDecimal>> getOddsConfig(OddsCalculateDo oddsCalculateDo) {
-        return null;
+        return atlantisConfig.getOddsConfig().getCommonOddsConfig();
     }
 }
