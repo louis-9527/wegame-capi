@@ -51,6 +51,7 @@ public class BetRecordController {
             .put(GameTypeEnum.KAPRE, "kapreBetRecordManager")
             .put(GameTypeEnum.MANGKUKULAM, "mangkukulamBetRecordManager")
             .put(GameTypeEnum.SIRENA, "sirenaBetRecordManager")
+            .put(GameTypeEnum.ATLANTIS, "atlantisBetRecordManager")
             .build();
 
     @Autowired
