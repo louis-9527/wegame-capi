@@ -21,7 +21,7 @@ import java.util.TreeMap;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MariaMakilingConfig implements Serializable {
+public class MariaMakilingConfig extends GameBizConfig implements Serializable {
 
     private static final long serialVersionUID = -7867808743045979621L;
 
@@ -56,11 +56,6 @@ public class MariaMakilingConfig implements Serializable {
      * 模板配置
      */
     private TemplateRangeConfig templateRangeConfig;
-
-    /**
-     * 派彩金额限制配置
-     */
-    private PayoutAmountLimitConfig payoutAmountLimitConfig;
 
     @Data
     @ToString
@@ -186,18 +181,12 @@ public class MariaMakilingConfig implements Serializable {
         private Map<String, Integer> freeGame;
     }
 
-    public void validate() {
+    public void bizValidate() {
         rewardMaxMultipleValidate();
         oddsConfigValidate();
         validateMainGame();
         validateFreeGame();
         templateRangeConfigValidate();
-        payoutAmountLimitConfig();
-    }
-
-    private void payoutAmountLimitConfig() {
-        AssertUtil.assertNotNull(this.payoutAmountLimitConfig, ErrorCode.ERR_PARAM, "payoutAmountLimitConfig is null");
-        this.payoutAmountLimitConfig.validate();
     }
 
     private void validateMainGame() {
