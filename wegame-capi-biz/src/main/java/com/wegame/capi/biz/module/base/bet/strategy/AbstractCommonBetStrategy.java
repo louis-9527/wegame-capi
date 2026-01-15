@@ -73,7 +73,9 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
 
     public abstract BetHelper<RD, R> betHelper();
 
-    protected abstract long getTotalRewardAmount(List<R> list, Object extParam);
+    protected  long getTotalRewardAmount(List<R> list, Object extParam){
+        throw new BusinessException(ErrorCode.ERR_INTER, "getTotalRewardAmount error");
+    }
 
     public boolean isCanOperationEventBet(BetDo betDo) {
         if (!operationSwitch) {
