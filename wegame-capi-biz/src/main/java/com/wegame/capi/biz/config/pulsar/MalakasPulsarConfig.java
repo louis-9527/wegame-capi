@@ -70,7 +70,9 @@ public class MalakasPulsarConfig {
                  .batchingMaxBytes(128 * 1024) // 每个批次最大 4 KB
                 // 10ms 内合并批量消息
                 // 最大延迟 10 毫秒
-                .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)
+                .batchingMaxPublishDelay(5, TimeUnit.MILLISECONDS)
+                .blockIfQueueFull(true)                  // 防止本地队列打爆丢消息
+                .maxPendingMessages(50000)
                 .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
@@ -90,21 +92,22 @@ public class MalakasPulsarConfig {
                 .subscriptionType(SubscriptionType.Key_Shared)
                 // 增加内部缓存，提高吞吐量
                 .receiverQueueSize(5000)
+                .poolMessages(false)
                 .ackTimeout(60, TimeUnit.SECONDS)
-                .negativeAckRedeliveryDelay(60, TimeUnit.SECONDS)
+                .negativeAckRedeliveryDelay(600, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
                         .maxNumMessages(1000)  // 批量最多100条
                         .timeout(2000, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**
-                        .maxRedeliverCount(10)
+                        .maxRedeliverCount(15)
                         // **死信队列**
                         .deadLetterTopic(deadLetterTopic)
                         .build())
                 // .keySharedPolicy(KeySharedPolicy.stickyHashRange())
-                .autoUpdatePartitions(true)
-                .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
+//                .autoUpdatePartitions(true)
+//                .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
                 .subscribe();
     }
 
