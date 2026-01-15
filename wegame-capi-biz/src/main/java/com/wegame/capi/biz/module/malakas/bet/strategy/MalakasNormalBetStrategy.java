@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.game.MalakasGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.context.UserInfo;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -36,7 +38,7 @@ public class MalakasNormalBetStrategy extends AbstractMalakasBetStrategy {
     ThreadPoolExecutor defaultThreadPoolExecutor;
 
     @Override
-    public void freeWheelAfterHandle(Long betRecordId) {
+    public void freeWheelAfterHandle(Long betRecordId,long payOutAmount, List<MalakasGameRecordDo> gameRecordList) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         log.info("freeWheelAfterHandle start... betRecordId: {}", betRecordId);
         defaultThreadPoolExecutor.execute(() -> {
