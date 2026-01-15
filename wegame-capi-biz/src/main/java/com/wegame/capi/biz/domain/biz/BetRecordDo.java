@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * bet_record：投注记录
@@ -211,7 +212,7 @@ public class BetRecordDo<T> implements Serializable {
          * @param toJackpot true: 进入jackpot池, false: 进入reserved池
          */
         public void setContribution(JackpotRewardPoolTypeEnum type, Long amount, boolean toJackpot) {
-            if (type == null || amount == null) {
+            if (Objects.isNull(type) || Objects.isNull(amount) ) {
                 return;
             }
             switch (type) {
