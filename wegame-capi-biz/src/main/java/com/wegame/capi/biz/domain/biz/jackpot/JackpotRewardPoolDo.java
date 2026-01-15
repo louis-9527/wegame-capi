@@ -70,5 +70,9 @@ public class JackpotRewardPoolDo implements Serializable {
     public boolean needContributeToJackpot() {
         return reservedAmount >= reservedPoolInitAmount;
     }
+
+    public Long getJackpotAmount() {
+        return Math.max(initAmount, amount);
+    }
 }
 
