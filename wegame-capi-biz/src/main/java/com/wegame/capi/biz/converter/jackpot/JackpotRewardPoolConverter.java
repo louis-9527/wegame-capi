@@ -71,7 +71,7 @@ public class JackpotRewardPoolConverter {
         vo.setId(Objects.nonNull(jackpotRewardPoolDo.getId()) ? String.valueOf(jackpotRewardPoolDo.getId()) : null);
         vo.setType(jackpotRewardPoolDo.getType().getCode());
         // 金额取保底和jackpot金额的大值
-        vo.setAmount(Math.max(jackpotRewardPoolDo.getAmount(), jackpotRewardPoolDo.getInitAmount()));
+        vo.setAmount(jackpotRewardPoolDo.getJackpotAmount());
         return vo;
     }
 
