@@ -14,7 +14,9 @@ import com.wegame.capi.biz.domain.biz.game.SirenaGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
-import com.wegame.capi.biz.domain.biz.symbol.*;
+import com.wegame.capi.biz.domain.biz.symbol.IndexDo;
+import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.manager.SirenaBetRecordManager;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
@@ -27,10 +29,8 @@ import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
-import com.wegame.capi.common.enums.BetStatusEnum;
 import com.wegame.capi.common.utils.GameUtil;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
-import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component("sirenaGameNormalPlay")
@@ -340,7 +339,12 @@ public class SirenaGameNormalPlay extends AbstractGame<SirenaGameRecordDo> {
                         BigDecimal pearlMultiple = GameUtil.randomKey(bigPearlMultipleWeightConfig, Constants.CONST_10000, randomService.randomInt(1, Constants.CONST_1000000));
                         // 将左上角位置替换为大珍珠，并设置总和的symbolOdd
                         SirenaSymbolDo temp = symbolArr[row][col];
-                        SirenaSymbolDo sirenaSymbolDo = SirenaSymbolDo.buildPearlWildSymbol(sirenaBigPearlWild, totalSymbolOdd.multiply(pearlMultiple));
+                        BigDecimal symbolMultiple = totalSymbolOdd.multiply(pearlMultiple);
+                        // 如果bigPearl元素倍率小于2，修改为2倍
+                        if (sirenaConfig.getMinBigPearlMultiple().compareTo(pearlMultiple) > 0) {
+                            symbolMultiple = sirenaConfig.getMinBigPearlMultiple();
+                        }
+                        SirenaSymbolDo sirenaSymbolDo = SirenaSymbolDo.buildPearlWildSymbol(sirenaBigPearlWild, symbolMultiple);
                         sirenaSymbolDo.setNestSymbol( temp);
                         symbolArr[row][col] =sirenaSymbolDo;
                         // 将其他3个位置替换为占位符

@@ -52,6 +52,10 @@ public class SirenaConfig implements Serializable {
      * 中奖通知最小倍数
      */
     private Integer rewardNotifyMinMultiple;
+    /**
+     * 大珍珠最小倍率
+     */
+    private BigDecimal minBigPearlMultiple;
 
 
     @Data
