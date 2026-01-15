@@ -66,8 +66,8 @@ public class MalakasPulsarConfig {
                 // 开启批量发送
                 .enableBatching(true)
                 .batcherBuilder(BatcherBuilder.KEY_BASED)
-                .batchingMaxMessages(200) // 每批最大 200 条消息
-                // .batchingMaxBytes(4 * 1024) // 每个批次最大 4 KB
+                .batchingMaxMessages(1000) // 每批最大 200 条消息
+                 .batchingMaxBytes(128 * 1024) // 每个批次最大 4 KB
                 // 10ms 内合并批量消息
                 // 最大延迟 10 毫秒
                 .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)
@@ -89,12 +89,12 @@ public class MalakasPulsarConfig {
                 // 关键点：使用 Key_Shared 模式, 集群消费
                 .subscriptionType(SubscriptionType.Key_Shared)
                 // 增加内部缓存，提高吞吐量
-                .receiverQueueSize(2000)
+                .receiverQueueSize(5000)
                 .ackTimeout(60, TimeUnit.SECONDS)
                 .negativeAckRedeliveryDelay(60, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(500)  // 批量最多100条
-                        .timeout(100, TimeUnit.MILLISECONDS)
+                        .maxNumMessages(1000)  // 批量最多100条
+                        .timeout(2000, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**
