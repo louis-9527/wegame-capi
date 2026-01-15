@@ -128,8 +128,8 @@ public class MalakasPulsarConfig {
                         log.error("Message moved acknowledge error:", e);
                     }
                 })
-                .autoUpdatePartitions(true)
-                .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
+//                .autoUpdatePartitions(true)
+//                .autoUpdatePartitionsInterval(600, TimeUnit.SECONDS)
                 .subscribe();
     }
 }
