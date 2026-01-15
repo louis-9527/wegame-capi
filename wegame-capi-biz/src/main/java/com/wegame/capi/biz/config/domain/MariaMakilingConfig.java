@@ -57,6 +57,11 @@ public class MariaMakilingConfig implements Serializable {
      */
     private TemplateRangeConfig templateRangeConfig;
 
+    /**
+     * 派彩金额限制配置
+     */
+    private PayoutAmountLimitConfig payoutAmountLimitConfig;
+
     @Data
     @ToString
     @SuperBuilder
@@ -187,6 +192,12 @@ public class MariaMakilingConfig implements Serializable {
         validateMainGame();
         validateFreeGame();
         templateRangeConfigValidate();
+        payoutAmountLimitConfig();
+    }
+
+    private void payoutAmountLimitConfig() {
+        AssertUtil.assertNotNull(this.payoutAmountLimitConfig, ErrorCode.ERR_PARAM, "payoutAmountLimitConfig is null");
+        this.payoutAmountLimitConfig.validate();
     }
 
     private void validateMainGame() {
