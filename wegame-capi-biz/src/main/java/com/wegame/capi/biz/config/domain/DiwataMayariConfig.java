@@ -5,6 +5,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -160,15 +161,12 @@ public class DiwataMayariConfig {
          * Map<TemplateTypeEnum, Map<BetType, Map<oddsRange, weight>>
          */
         private Map<TemplateTypeEnum, Map<BetTypeEnum, Map<String, Integer>>> templateRangeMap;
-        /// ///// todo delete
-        /**
-         * 主游戏模板配置
-         */
-        private Map<String, Integer> mainGame;
-        /**
-         * 免费游戏模板配置
-         */
-        private Map<String, Integer> freeGame;
+
+        public boolean supportWarmUp(BetTypeEnum betType, TemplateMultipleRange multipleRange) {
+            BigDecimal endOdds = templateWarmUpEndOddsMap.get(betType);
+            AssertUtil.assertNotNull(endOdds, ErrorCode.ERR_INTER);
+            return multipleRange.getEnd().compareTo(endOdds) <= 0;
+        }
     }
 
     public void validate() {
