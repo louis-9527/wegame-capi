@@ -328,7 +328,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             List<R> gameRecordList = gameContext().play(this.buildGamePlayDo(betDo, betRecordId, extParam));
             long totalRewardAmount = this.getTotalRewardAmount(gameRecordList, extParam);
             if (totalRewardAmount > limitAmount) {
-                log.info("payoutAmountLimitPLay,amount limit,totalRewardAmount:{},limitAmount:{},recordList:{}", totalRewardAmount, limitAmount, JSON.toJSONString(gameRecordList));
+                log.info("payoutAmountLimitPLay,amount limit,totalRewardAmount:{},limitAmount:{},betDo:{},recordList:{}", totalRewardAmount, limitAmount, JSON.toJSONString(betDo), JSON.toJSONString(gameRecordList));
                 throw new RetryException(ErrorCode.ERR_INTER, "amount limit");
             }
             return gameRecordList;
