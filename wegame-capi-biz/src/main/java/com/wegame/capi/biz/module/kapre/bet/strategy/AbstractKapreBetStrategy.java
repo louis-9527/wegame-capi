@@ -1,7 +1,9 @@
 package com.wegame.capi.biz.module.kapre.bet.strategy;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.KapreConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.KapreBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -54,6 +56,8 @@ public abstract class AbstractKapreBetStrategy
     private KapreOperationEventManager kapreOperationEventManager;
     @Autowired
     private KapreBetHelper kapreBetHelper;
+    @Autowired
+    private KapreConfig kapreConfig;
 
     @Override
     public AbstractGameContext<KapreGameRecordDo> gameContext() {
@@ -88,7 +92,7 @@ public abstract class AbstractKapreBetStrategy
             } else if (isCanFreeSpinBet(betDo)) {
                 // 1.1 是，则预定投注流程
                 return betForFreeSpin(betDo);
-            }  else {
+            } else {
                 // 1.2 否，则走其他投注流程
                 // 1.2.1、判断能否走干预事件投注
                 if (isCanOperationEventBet(betDo)) {
@@ -118,7 +122,7 @@ public abstract class AbstractKapreBetStrategy
     private BetResultDo<KapreBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<KapreGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
+        List<KapreGameRecordDo> list = super.play(betDo, betRecordId, this.kapreConfig.getPayoutAmountLimitConfig(), null);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<KapreGameRecordDo> firstBatchList = kapreBetHelper.getFirstBatchGameRecordList(list);
         // 2、构建投注记录
@@ -126,6 +130,18 @@ public abstract class AbstractKapreBetStrategy
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, kapreBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return kapreBetHelper.handleBetResult(betRecord, resultDo);
+    }
+
+    @Override
+    protected long getTotalRewardAmount(List<KapreGameRecordDo> gameRecordList, Object extParam) {
+        if (CollectionUtil.isEmpty(gameRecordList)) {
+            return 0L;
+        } else {
+            return gameRecordList.stream()
+                    .filter(item -> Objects.nonNull(item.getRewardResult()))
+                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                    .sum();
+        }
     }
 
     /**
