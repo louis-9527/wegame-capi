@@ -12,6 +12,3 @@ game:
     Bakunawa: false
     Lamang: false
     DiwataMayari: true
-  inner:
-    dos:
-      enable-game-list:

@@ -180,6 +180,13 @@ public class LamangConfig {
         @Setter
         private TreeMap<String, Long> guaranteedAmount;
 
+        /**
+         * 预留池保底金额配置
+         */
+        @Getter
+        @Setter
+        private TreeMap<String, Long> reservedPoolGuaranteedAmount;
+
         public void setJackpotTriggerBetAmountConfig(LinkedHashMap<Long, TreeMap<String, BigDecimal>> jackpotTriggerBetAmountConfig) {
             // 对数据进行排序
             if (jackpotTriggerBetAmountConfig != null) {

@@ -47,6 +47,7 @@ public class JackpotReq extends BaseReq {
     @AllArgsConstructor
     public static class JackpotPool {
         private BigDecimal totalJackpotAmount = zero;
+        private BigDecimal totalSupJackpotAmount = zero;
         private GrandPool grandPool;
         private MajorPool majorPool;
         private MinorPool minorPool;
@@ -60,6 +61,7 @@ public class JackpotReq extends BaseReq {
         public static class GrandPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
+            private SupplementaryPool supplementaryPool;
         }
 
         @Data
@@ -69,6 +71,7 @@ public class JackpotReq extends BaseReq {
         public static class MajorPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
+            private SupplementaryPool supplementaryPool;
         }
 
         @Data
@@ -78,6 +81,7 @@ public class JackpotReq extends BaseReq {
         public static class MinorPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
+            private SupplementaryPool supplementaryPool;
         }
 
         @Data
@@ -87,6 +91,7 @@ public class JackpotReq extends BaseReq {
         public static class MiniPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
+            private SupplementaryPool supplementaryPool;
         }
 
         @Data
@@ -94,6 +99,15 @@ public class JackpotReq extends BaseReq {
         @NoArgsConstructor
         @AllArgsConstructor
         public static class BetBonusPool {
+            private BigDecimal initAmount = zero;
+            private BigDecimal amount = zero;
+        }
+
+        @Data
+        @SuperBuilder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class SupplementaryPool {
             private BigDecimal initAmount = zero;
             private BigDecimal amount = zero;
         }

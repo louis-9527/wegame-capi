@@ -61,9 +61,13 @@ public class BetRecordConverter {
         if (Objects.nonNull(po.getJackpot())) {
             betRecordDo.setJackpot(BetRecordDo.Jackpot.builder()
                     .grandContributionAmount(po.getJackpot().getGrandContributionAmount())
+                    .grandSupContributionAmount(po.getJackpot().getGrandSupContributionAmount())
                     .majorContributionAmount(po.getJackpot().getMajorContributionAmount())
+                    .majorSupContributionAmount(po.getJackpot().getMajorSupContributionAmount())
                     .minorContributionAmount(po.getJackpot().getMinorContributionAmount())
+                    .minorSupContributionAmount(po.getJackpot().getMinorSupContributionAmount())
                     .miniContributionAmount(po.getJackpot().getMiniContributionAmount())
+                    .miniSupContributionAmount(po.getJackpot().getMiniSupContributionAmount())
                     .build());
         }
         betRecordDo.setCreator(po.getCreator());
@@ -106,9 +110,13 @@ public class BetRecordConverter {
         if (Objects.nonNull(betRecordDo.getJackpot())) {
             po.setJackpot(BetRecordPo.Jackpot.builder()
                     .grandContributionAmount(betRecordDo.getJackpot().getGrandContributionAmount())
+                    .grandSupContributionAmount(betRecordDo.getJackpot().getGrandSupContributionAmount())
                     .majorContributionAmount(betRecordDo.getJackpot().getMajorContributionAmount())
+                    .majorSupContributionAmount(betRecordDo.getJackpot().getMajorSupContributionAmount())
                     .minorContributionAmount(betRecordDo.getJackpot().getMinorContributionAmount())
+                    .minorSupContributionAmount(betRecordDo.getJackpot().getMinorSupContributionAmount())
                     .miniContributionAmount(betRecordDo.getJackpot().getMiniContributionAmount())
+                    .miniSupContributionAmount(betRecordDo.getJackpot().getMiniSupContributionAmount())
                     .build());
         }
         if (OptEnum.ADD.equals(optEnum)) {

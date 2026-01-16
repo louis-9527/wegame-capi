@@ -33,6 +33,12 @@ public class JackpotRewardPoolInputRecordConverter {
         jackpotRewardPoolInputRecordDo.setMajorAmount(po.getMajorAmount());
         jackpotRewardPoolInputRecordDo.setMinorAmount(po.getMinorAmount());
         jackpotRewardPoolInputRecordDo.setMiniAmount(po.getMiniAmount());
+
+        jackpotRewardPoolInputRecordDo.setGrandReservedAmount(po.getGrandReservedAmount());
+        jackpotRewardPoolInputRecordDo.setMajorReservedAmount(po.getMajorReservedAmount());
+        jackpotRewardPoolInputRecordDo.setMinorReservedAmount(po.getMinorReservedAmount());
+        jackpotRewardPoolInputRecordDo.setMiniReservedAmount(po.getMiniReservedAmount());
+
         jackpotRewardPoolInputRecordDo.setAccFlag(JackpotAccFlagEnum.valueOfCode(po.getAccFlag()));
         jackpotRewardPoolInputRecordDo.setCreator(po.getCreator());
         jackpotRewardPoolInputRecordDo.setCreateTime(po.getCreateTime());
@@ -54,6 +60,12 @@ public class JackpotRewardPoolInputRecordConverter {
         po.setMajorAmount(jackpotRewardPoolInputRecordDo.getMajorAmount());
         po.setMinorAmount(jackpotRewardPoolInputRecordDo.getMinorAmount());
         po.setMiniAmount(jackpotRewardPoolInputRecordDo.getMiniAmount());
+
+        po.setGrandReservedAmount(jackpotRewardPoolInputRecordDo.getGrandReservedAmount());
+        po.setMajorReservedAmount(jackpotRewardPoolInputRecordDo.getMajorReservedAmount());
+        po.setMinorReservedAmount(jackpotRewardPoolInputRecordDo.getMinorReservedAmount());
+        po.setMiniReservedAmount(jackpotRewardPoolInputRecordDo.getMiniReservedAmount());
+
         po.setAccFlag(jackpotRewardPoolInputRecordDo.getAccFlag().getCode());
         if (OptEnum.ADD.equals(optEnum)) {
             long currentMilli = DateUtil.getCurrentMilli();

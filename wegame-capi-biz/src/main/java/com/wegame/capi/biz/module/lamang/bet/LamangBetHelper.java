@@ -11,6 +11,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.LamangGameRecordDo;
+import com.wegame.capi.biz.domain.biz.jackpot.JackpotRewardPoolDo;
 import com.wegame.capi.biz.domain.biz.jackpot.JackpotWinPrizeDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.bet.BetHelper;
@@ -18,6 +19,7 @@ import com.wegame.capi.biz.module.base.jackpot.AbsJackpotHandler;
 import com.wegame.capi.biz.module.base.jackpot.JackpotHandlerContext;
 import com.wegame.capi.biz.module.lamang.LamangCalcUtil;
 import com.wegame.capi.biz.module.lamang.LamangJackpotHelper;
+import com.wegame.capi.biz.service.jackpot.JackpotRewardPoolService;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.JackpotTypeEnum;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.module.base.AmountHelper.maxAmountControl;
@@ -44,6 +47,9 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
 
     @Autowired
     JackpotHandlerContext jackpotHandlerContext;
+
+    @Autowired
+    JackpotRewardPoolService jackpotRewardPoolService;
 
     @Override
     public BetRecordDo<LamangGameRecordDo> buildBetRecord(long betRecordId, BetDo betDo, List<LamangGameRecordDo> gameRecordList) {
@@ -120,13 +126,21 @@ public class LamangBetHelper implements BetHelper<LamangBetRecordDetailDo, Laman
     private BetRecordDo.Jackpot buildBetCommission(BetDo betDo) {
         AbsJackpotHandler handler = jackpotHandlerContext.getHandler(JackpotTypeEnum.LAM_ANG);
         if (Objects.nonNull(handler)) {
-            Map<JackpotRewardPoolTypeEnum, Long> commissiontMap = handler.calculateRewardPoolCommission(betDo.getBetPromotionType(), betDo.getBetType(), betDo.getBetAmount());
-            return BetRecordDo.Jackpot.builder()
-                    .grandContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.grand))
-                    .majorContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.major))
-                    .minorContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.minor))
-                    .miniContributionAmount(commissiontMap.get(JackpotRewardPoolTypeEnum.mini))
-                    .build();
+            Map<JackpotRewardPoolTypeEnum, Long> commissionMap = handler.calculateRewardPoolCommission(betDo.getBetPromotionType(), betDo.getBetType(), betDo.getBetAmount());
+
+            List<JackpotRewardPoolDo> jackpotRewardPoolDos = jackpotRewardPoolService.listAllWithCache(JackpotTypeEnum.LAM_ANG);
+            Map<JackpotRewardPoolTypeEnum, JackpotRewardPoolDo> poolMap = jackpotRewardPoolDos.stream()
+                    .collect(Collectors.toMap(JackpotRewardPoolDo::getType, Function.identity()));
+
+            BetRecordDo.Jackpot jackpot = new BetRecordDo.Jackpot();
+            // 遍历所有奖池类型，根据 needContributeToJackpot 判断进入哪个池子
+            for (JackpotRewardPoolTypeEnum type : commissionMap.keySet()) {
+                JackpotRewardPoolDo pool = poolMap.get(type);
+                Long commission = commissionMap.get(type);
+                AssertUtil.assertNotNull(pool, ErrorCode.ERR_INTER);
+                jackpot.setContribution(type, commission, pool.needContributeToJackpot());
+            }
+            return jackpot;
         }
         return null;
     }

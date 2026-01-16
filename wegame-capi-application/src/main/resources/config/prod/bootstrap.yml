@@ -11,6 +11,3 @@ game:
     IbongAdarna: false
     Bakunawa: true
     Lamang: false
-  inner:
-    dos:
-      enable-game-list:
