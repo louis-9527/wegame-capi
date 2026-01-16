@@ -77,4 +77,5 @@ public class IbongAdarnaNormalBetStrategy extends AbstractIbongAdarnaBetStrategy
             log.error("updateRewardNotifyInfo error", e);
         }
     }
+
 }
