@@ -62,10 +62,10 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
         log.info(BUILD_BEAN_FORMAT, "BetRecordTemplateEsService");
     }
 
-    public boolean add(TemplateTypeEnum templateType, T t) {
-        T saveT = elasticsearchRestTemplate.save(t);
-        return Objects.nonNull(saveT);
-    }
+    //public boolean add(TemplateTypeEnum templateType, T t) {
+    //    T saveT = elasticsearchRestTemplate.save(t);
+    //    return Objects.nonNull(saveT);
+    //}
 
     public T findById(TemplateTypeEnum templateType, Long id, Class<T> clazz) {
         long startTime = System.currentTimeMillis();
@@ -234,13 +234,6 @@ public class BetRecordTemplateEsService<T extends BetRecordTemplateEsDo> impleme
     public T getTemplateWithLocalCache(TemplateTypeEnum templateType, Long betRecordId, Class<T> clazz) {
         // todo delete log
         log.info("getTemplateWithLocalCache, betRecordId: {}; templateType: {}", betRecordId, templateType);
-        return findById(templateType, betRecordId, clazz);
-    }
-
-    @Cacheable(value = CacheConstants.TEMPLATE_REDIS, key = "#templateType.name() + '_' + #betRecordId")
-    public T getTemplateWithRedisCache(TemplateTypeEnum templateType, Long betRecordId, Class<T> clazz) {
-        // todo delete log
-        log.info("getTemplateWithRedisCache, betRecordId: {}; templateType: {}", betRecordId, templateType);
         return findById(templateType, betRecordId, clazz);
     }
 
