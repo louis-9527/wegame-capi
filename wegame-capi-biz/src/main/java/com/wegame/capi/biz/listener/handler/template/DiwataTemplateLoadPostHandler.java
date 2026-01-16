@@ -7,8 +7,8 @@ import com.wegame.capi.biz.domain.biz.template.malakas.DiwataBetRecordTemplateEs
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,9 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 import static com.wegame.capi.common.Constants.DIWATA_MAYARI_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -40,46 +41,34 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
         return TemplateTypeEnum.DIWATA_MAYARI;
     }
 
-    protected DiwataMayariConfig.TemplateRangeConfig getTemplateRangeConfig() {
-        return diwataMayariConfig.getTemplateRangeConfig();
-    }
-
     @Override
     public void handle() {
         if (!supportGame(GameTypeEnum.DIWATA_MAYARI)) {
             return;
         }
-        DiwataMayariConfig.TemplateRangeConfig config = this.getTemplateRangeConfig();
-        if (Objects.isNull(config)) {
-            return;
-        }
-        try {
-            log.info("main game template load start...");
-            List<Long> mainGameTemplateIdList = new LinkedList<>();
-            config.getMainGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.NORMAL_BET, TemplateMultipleRange.build(key));
-                if (CollectionUtils.isNotEmpty(idList)) {
-                    mainGameTemplateIdList.addAll(idList);
-                }
-            });
-            loadLocalCache(BetTypeEnum.NORMAL_BET, mainGameTemplateIdList);
-            log.info("main game template load end...");
-        } catch (Exception e) {
-            log.error("template load error", e);
-        }
+        List<TemplateTypeEnum> templateTypeList = TemplateTypeEnum.listByGameType(GameTypeEnum.DIWATA_MAYARI);
+        Optional.ofNullable(templateTypeList).orElse(Collections.emptyList())
+                .forEach(item -> {
+                    loadTemplate(BetTypeEnum.NORMAL_BET, item);
+                    loadTemplate(BetTypeEnum.BUY_BET, item);
 
+                });
+    }
+
+
+    private void loadTemplate(BetTypeEnum betType, TemplateTypeEnum templateType) {
         try {
-            log.info("free game template load start...");
-            List<Long> freeGameTemplateIdList = new LinkedList<>();
-            config.getFreeGame().keySet().forEach((String key) -> {
-                List<Long> idList = loadTemplateIdList(BetTypeEnum.BUY_BET, TemplateMultipleRange.build(key));
+            log.info("{} game template load start... {}", betType, templateType);
+            List<Long> templateIdList = new LinkedList<>();
+            diwataMayariConfig.getTemplateRangeConfig().getTemplateRangeMap().get(templateType).get(betType).keySet().forEach((String key) -> {
+                List<Long> idList = loadTemplateIdList(betType, TemplateMultipleRange.build(key));
                 if (CollectionUtils.isNotEmpty(idList)) {
-                    freeGameTemplateIdList.addAll(idList);
+                    templateIdList.addAll(idList);
                 }
             });
-            log.info("free game template load end...");
+            log.info("{} game template load end... {}", betType, templateType);
         } catch (Exception e) {
-            log.info("free game template load error", e);
+            log.info("{} game template load error {} ", betType, templateType, e);
         }
     }
 

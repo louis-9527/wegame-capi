@@ -3,6 +3,9 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.client.enums.AbTypeEnum;
+import com.wegame.capi.client.enums.BetTypeEnum;
+import com.wegame.capi.common.enums.TemplateTypeEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.MapUtils;
@@ -145,6 +148,20 @@ public class DiwataMayariConfig {
     public static class TemplateRangeConfig implements Serializable {
         private static final long serialVersionUID = -734841249803450751L;
         /**
+         * 预热Map
+         */
+        private Map<BetTypeEnum, BigDecimal> templateWarmUpEndOddsMap;
+        /**
+         * 映射关系
+         * AbTypeEnum -> TemplateTypeEnum
+         */
+        private Map<AbTypeEnum, TemplateTypeEnum> templateMapping;
+        /**
+         * Map<TemplateTypeEnum, Map<BetType, Map<oddsRange, weight>>
+         */
+        private Map<TemplateTypeEnum, Map<BetTypeEnum, Map<String, Integer>>> templateRangeMap;
+        /// ///// todo delete
+        /**
          * 主游戏模板配置
          */
         private Map<String, Integer> mainGame;
@@ -160,6 +177,7 @@ public class DiwataMayariConfig {
         this.multiplePieRuleConfigValidate();
         this.freeWheelTimesRuleConfigValidate();
         this.rewardMaxMultipleValidate();
+        this.templateRangeConfigValidate();
     }
 
     private void freeWheelTimesRuleConfigValidate() {
@@ -185,7 +203,6 @@ public class DiwataMayariConfig {
         AssertUtil.assertNotNull(this.multiplePieRuleConfig.maxMultiple, ErrorCode.ERR_INTER, "multiplePieRuleConfig.maxMultiple is null");
         AssertUtil.assertTrue(this.multiplePieRuleConfig.maxMultiple.compareTo(BigDecimal.ZERO) > 0, ErrorCode.ERR_INTER,
                 "multiplePieRuleConfig.maxMultiple is must be than 0");
-
     }
 
     private void rewardMaxMultipleValidate() {
@@ -232,6 +249,10 @@ public class DiwataMayariConfig {
             Integer sumProbabilistic = map.values().stream().reduce(0, Integer::sum);
             AssertUtil.assertTrue(Objects.equals(sumProbabilistic, CONST_1000000), ErrorCode.ERR_INTER, "probabilisticConfig.wheelProbabilisticConfig ERR, columnNo:" + columnNo);
         }
+    }
+
+    private void templateRangeConfigValidate() {
+        // todo
     }
 
 }
