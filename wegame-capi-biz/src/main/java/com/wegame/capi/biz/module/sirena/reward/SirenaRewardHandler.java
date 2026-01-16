@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.builder.OddsCalculateBuilder;
-import com.wegame.capi.biz.config.domain.KapreConfig;
 import com.wegame.capi.biz.config.domain.SirenaConfig;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardHandleDo;
@@ -13,12 +12,13 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardSymbolDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDetailDo;
 import com.wegame.capi.biz.domain.biz.reward.line.RewardLineDo;
-import com.wegame.capi.biz.domain.biz.symbol.*;
+import com.wegame.capi.biz.domain.biz.symbol.IndexFactory;
+import com.wegame.capi.biz.domain.biz.symbol.SirenaSymbolDo;
+import com.wegame.capi.biz.domain.biz.symbol.SymbolDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
 import com.wegame.capi.biz.module.base.RewardHelper;
 import com.wegame.capi.biz.module.base.odds.OddsCalculateStrategy;
 import com.wegame.capi.biz.module.base.reward.AbstractRewardHandler;
-import com.wegame.capi.biz.module.lamang.LamangGameHelper;
 import com.wegame.capi.biz.module.sirena.multiple.SirenaMultipleCalculateStrategy;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
@@ -95,7 +95,7 @@ public class SirenaRewardHandler extends AbstractRewardHandler<SirenaSymbolDo> {
                     .betAmount(rewardHandle.getBetAmount())
                     .rewardAmount(lineRewardAmount.longValue())
                     .odds(odds)
-                    .multiple(null)
+                    .multiple(rewardLineMultiple)
                     .rewardLineType(rewardLine.getRewardLineType())
                     .rewardLineSubType(rewardLine.getRewardLineSubType())
                     .rewardLineCount(rewardLine.getRewardLineCount())

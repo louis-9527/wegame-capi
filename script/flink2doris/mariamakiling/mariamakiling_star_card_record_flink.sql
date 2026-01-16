@@ -1,9 +1,10 @@
 CREATE TEMPORARY TABLE mongo_star_card_record_source (
   `_id` STRING,
+  pId STRING,
+  channelId STRING,
+  gameId STRING,
   rewardId STRING,
   rewardConfigId STRING,
-  gameId STRING,
-  channelId STRING,
   betRecordId BIGINT,
   playerId STRING,
   playName STRING,
@@ -26,10 +27,11 @@ CREATE TEMPORARY TABLE mongo_star_card_record_source (
 
 CREATE TEMPORARY TABLE doris_star_card_record_sink (
   `_id` STRING,
+  pId STRING,
+  channelId STRING,
+  gameId STRING,
   rewardId STRING,
   rewardConfigId STRING,
-  gameId STRING,
-  channelId STRING,
   betRecordId BIGINT,
   playerId STRING,
   playName STRING,
@@ -62,10 +64,11 @@ CREATE TEMPORARY TABLE doris_star_card_record_sink (
 INSERT INTO doris_star_card_record_sink
 SELECT
   `_id`,
+  pId,
+  channelId,
+  gameId,
   rewardId,
   rewardConfigId,
-  gameId,
-  channelId,
   betRecordId,
   playerId,
   playName,

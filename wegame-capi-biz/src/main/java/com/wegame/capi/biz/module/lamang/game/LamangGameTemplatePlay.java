@@ -155,8 +155,6 @@ public class LamangGameTemplatePlay extends AbstractGame<LamangGameRecordDo> {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
                 template = betRecordTemplateEsService.getTemplateWithLocalCache(LAM_ANG, betRecordId, LamangBetRecordTemplateEsDo.class);
-            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithRedisCache(LAM_ANG, betRecordId, LamangBetRecordTemplateEsDo.class);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }

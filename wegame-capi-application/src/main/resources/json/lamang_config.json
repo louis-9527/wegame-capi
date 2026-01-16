@@ -228,6 +228,12 @@
 			"major": "5000000",
 			"minor": "1000000",
 			"mini": "100000"
+		},
+		"reservedPoolGuaranteedAmount": {
+			"grand": "20000000",
+			"major": "5000000",
+			"minor": "1000000",
+			"mini": "100000"
 		}
 	},
 	"rewardMaxMultiple": "10250",

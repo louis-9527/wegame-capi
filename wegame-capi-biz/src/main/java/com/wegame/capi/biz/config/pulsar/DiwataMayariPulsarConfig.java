@@ -41,11 +41,21 @@ public class DiwataMayariPulsarConfig {
 
     @Bean(name = diwatamayariPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
     public PulsarClient diwataMayariPulsarClient() throws Exception {
-        log.info(BUILD_BEAN_FORMAT, diwatamayariPulsarClient);
-        return PulsarClient.builder()
+        log.debug(BUILD_BEAN_FORMAT, diwatamayariPulsarClient);
+        PulsarClient pulsarClient = PulsarClient.builder()
                 .serviceUrl(url)
                 .keepAliveInterval(30, TimeUnit.SECONDS)
+                //                .operationTimeout(100, TimeUnit.MILLISECONDS)
+                .connectionTimeout(2000, TimeUnit.MILLISECONDS)
+                .ioThreads(Runtime.getRuntime().availableProcessors() * 2)
+                .listenerThreads(Runtime.getRuntime().availableProcessors())
+                .connectionsPerBroker(6)
+                .connectionMaxIdleSeconds(3000)
+                .enableTcpNoDelay(true)
+                // 10分钟打印一次统计信息
+                .statsInterval(600, TimeUnit.SECONDS)
                 .build();
+        return pulsarClient;
     }
 
     @Bean(name = diwatamayariProducer, destroyMethod = COMMON_CLOSE_METHOD)
@@ -57,15 +67,18 @@ public class DiwataMayariPulsarConfig {
                 // 开启批量发送
                 .enableBatching(true)
                 .batcherBuilder(BatcherBuilder.KEY_BASED)
-                .batchingMaxMessages(200) // 每批最大 200 条消息
-                // .batchingMaxBytes(4 * 1024) // 每个批次最大 4 KB
+                .batchingMaxMessages(1000)               // 默认 1000，可再涨到 5000
+                .batchingMaxBytes(128 * 1024)            // 128 KB 一包，网卡 1 G 下最优
                 // 10ms 内合并批量消息
                 // 最大延迟 10 毫秒
-                .batchingMaxPublishDelay(10, TimeUnit.MILLISECONDS)
+                .batchingMaxPublishDelay(5, TimeUnit.MILLISECONDS)
+                .blockIfQueueFull(true)                  // 防止本地队列打爆丢消息
+                .maxPendingMessages(50000)
                 .sendTimeout(5, TimeUnit.SECONDS) // 5 秒超时
                 // 使用 LZ4 压缩，减少带宽占用
                 .compressionType(CompressionType.LZ4)
                 .autoUpdatePartitionsInterval(60, TimeUnit.SECONDS)
+
                 .create();
     }
 
@@ -80,12 +93,13 @@ public class DiwataMayariPulsarConfig {
                 // 关键点：使用 Key_Shared 模式, 集群消费
                 .subscriptionType(SubscriptionType.Key_Shared)
                 // 增加内部缓存，提高吞吐量
-                .receiverQueueSize(2000)
+                .receiverQueueSize(5000)
+                .poolMessages(false)
                 .ackTimeout(60, TimeUnit.SECONDS)
-                .negativeAckRedeliveryDelay(60, TimeUnit.SECONDS)
+                .negativeAckRedeliveryDelay(600, TimeUnit.SECONDS)
                 .batchReceivePolicy(BatchReceivePolicy.builder()
-                        .maxNumMessages(200)  // 批量最多100条
-                        .timeout(100, TimeUnit.MILLISECONDS)
+                        .maxNumMessages(1000)  // 批量最多100条
+                        .timeout(2000, TimeUnit.MILLISECONDS)
                         .build())
                 .deadLetterPolicy(DeadLetterPolicy.builder()
                         // **最多重试 10 次**

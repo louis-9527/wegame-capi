@@ -6,6 +6,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.capi.biz.domain.biz.game.GameInfoDo;
 import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
+import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
@@ -112,8 +113,19 @@ public abstract class AbstractGameContext<R> {
     }
 
     private void mangkukulamTemplatePlayValidate(GamePlayDo gamePlayDo) {
+        if (!Objects.equals(gamePlayDo.getBetPromotionType(), BetPromotionTypeEnum.NONE)) {
+            return;
+        }
         //用于计算倍率的金额
-        Long actualCalcAmount = gamePlayDo.getBetAmount();
+        Long actualCalcAmount = null;
+        if (BetSubTypeEnum.isFirstStep(gamePlayDo.getBetSubType().getCode())) {
+            // 首轮用支付金额计算
+            actualCalcAmount = gamePlayDo.getPayAmount();
+        } else if (BetSubTypeEnum.isSecondStep(gamePlayDo.getBetSubType().getCode())){
+            // 第二轮生成用投注金额计算
+            actualCalcAmount = gamePlayDo.getBetAmount();
+        }
+        AssertUtil.assertNotNull(actualCalcAmount, ErrorCode.ERR_INTER);
         // 第二轮 || 连续生成两轮 (因为只要生成免费轮，首轮的赔付金额都为0)都按照投注金额计算倍率
         BigDecimal divideValue = BigDecimal.valueOf(gamePlayDo.getOverallRewardAmount()).divide(BigDecimal.valueOf(actualCalcAmount), 2, RoundingMode.FLOOR);
         TemplateMultipleRange range = gamePlayDo.getTemplateMultipleRange();

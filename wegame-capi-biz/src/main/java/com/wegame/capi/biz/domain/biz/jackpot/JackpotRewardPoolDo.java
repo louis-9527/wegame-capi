@@ -1,7 +1,10 @@
 package com.wegame.capi.biz.domain.biz.jackpot;
 
 import com.wegame.capi.common.enums.JackpotRewardPoolTypeEnum;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -26,9 +29,15 @@ public class JackpotRewardPoolDo implements Serializable {
      */
     private JackpotRewardPoolTypeEnum type;
     /**
-     * 奖池金额.单位：厘， 可以为负
+     * 奖池金额.单位：厘， 不能为负
      */
     private Long amount;
+
+    /**
+     * 预留奖池金额.单位：厘， 可以为负
+     */
+    private Long reservedAmount;
+
     /**
      * 创建人
      */
@@ -49,8 +58,21 @@ public class JackpotRewardPoolDo implements Serializable {
     ///////////////  above auto generated ///////////////
 
     /**
-     * 初始金额
+     * 奖池派奖保底金额
      */
     private Long initAmount;
+
+    /**
+     * 预留奖池派奖保底金额
+     */
+    private Long reservedPoolInitAmount;
+
+    public boolean needContributeToJackpot() {
+        return reservedAmount >= reservedPoolInitAmount;
+    }
+
+    public Long getJackpotAmount() {
+        return Math.max(initAmount, amount);
+    }
 }
 

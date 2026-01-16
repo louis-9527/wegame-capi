@@ -25,6 +25,3 @@ game:
     Mangkukulam: false
     Sirena: false
     Atlantis: true
-  inner:
-    dos:
-      enable-game-list:

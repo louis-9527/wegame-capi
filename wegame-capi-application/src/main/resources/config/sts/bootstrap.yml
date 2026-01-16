@@ -13,8 +13,5 @@ game:
     Lamang: false
     DiwataMayari: false
     Kapre: false
-    Mangkukulam: true
-    Atlantis: false
-  inner:
-    dos:
-      enable-game-list:
+    Mangkukulam: false
+    Atlantis: true

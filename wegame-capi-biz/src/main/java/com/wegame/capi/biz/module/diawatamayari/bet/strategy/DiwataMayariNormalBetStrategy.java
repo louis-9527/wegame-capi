@@ -4,6 +4,7 @@ import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.DateUtil;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
+import com.wegame.capi.biz.domain.biz.game.DiwataMayariGameRecordDo;
 import com.wegame.capi.biz.domain.biz.reward.RewardNotifyInfoDo;
 import com.wegame.capi.biz.service.RewardService;
 import com.wegame.capi.client.context.UserInfo;
@@ -12,16 +13,14 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.enums.NotifyRewardTypeEnum;
 import com.wegame.capi.common.utils.AmountUtil;
-import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
@@ -36,20 +35,24 @@ public class DiwataMayariNormalBetStrategy extends AbstractDiwataMayariBetStrate
     ThreadPoolExecutor defaultThreadPoolExecutor;
 
     @Override
-    public void freeWheelAfterHandle(Long betRecordId) {
+    public void freeWheelAfterHandle(Long betRecordId, Long payOutAmount, List<DiwataMayariGameRecordDo> list) {
         UserInfo userInfo = UserInfoContext.getUserInfo();
         log.info("freeWheelAfterHandle start... betRecordId: {}", betRecordId);
         defaultThreadPoolExecutor.execute(() -> {
             try {
-                BetRecordDo betRecord = diwataMayariBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.DIWATA_MAYARI);
-                AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
-                GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
-                Long freeWheelCount = diwataMayariBetRecordManager.countGameRecord(query, GameTypeEnum.DIWATA_MAYARI);
-                if (Objects.isNull(freeWheelCount)) {
-                    log.info("freeWheelAfterHandle null return... betRecordId: {}", betRecordId);
+                //                BetRecordDo betRecord = diwataMayariBetRecordManager.getBetRecord(betRecordId, GameTypeEnum.DIWATA_MAYARI);
+                //                AssertUtil.assertNotNull(betRecord, ErrorCode.ERR_INTER);
+                //                GameRecordQuery query = GameRecordQuery.builder().betRecordId(betRecordId).index(0).freeWheelFlag(true).build();
+                //                Long freeWheelCount = diwataMayariBetRecordManager.countGameRecord(query, GameTypeEnum.DIWATA_MAYARI);
+                long freeWheelCount = Optional.ofNullable(list).orElse(Lists.newArrayList())
+                        .stream()
+                        .filter(item -> item.getIndex() == 0 && item.getFreeWheelFlag())
+                        .count();
+                if (freeWheelCount <= 0) {
+                    log.info("freeWheelAfterHandle no free count.. betRecordId: {}", betRecordId);
                     return;
                 }
-                updateRewardNotifyInfo(freeWheelCount, betRecord.getPayOutAmount(), userInfo);
+                updateRewardNotifyInfo(freeWheelCount, payOutAmount, userInfo);
             } catch (Exception e) {
                 log.error("freeWheelAfterHandle Exception, errMsg: {}", e.getMessage(), e);
             }
