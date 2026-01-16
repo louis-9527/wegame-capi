@@ -177,6 +177,10 @@ public abstract class AbstractJackpotPulsarListener<T extends ToVoConverter> imp
                             .majorAmount(record.getJackpot().getMajorContributionAmount())
                             .minorAmount(record.getJackpot().getMinorContributionAmount())
                             .miniAmount(record.getJackpot().getMiniContributionAmount())
+                                    .grandReservedAmount(record.getJackpot().getGrandSupContributionAmount())
+                                    .majorReservedAmount(record.getJackpot().getMajorSupContributionAmount())
+                                    .minorReservedAmount(record.getJackpot().getMinorSupContributionAmount())
+                                    .miniReservedAmount(record.getJackpot().getMiniSupContributionAmount())
                             .accFlag(JackpotAccFlagEnum.NO)
                             .build());
                 } else {
