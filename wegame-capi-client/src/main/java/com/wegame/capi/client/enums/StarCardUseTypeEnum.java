@@ -48,6 +48,10 @@ public enum StarCardUseTypeEnum {
             GameTypeEnum.SIRENA,
             "sirena_star_card_record"
     ),
+    ATLANTIS(
+            GameTypeEnum.ATLANTIS,
+            "atlantis_star_card_record"
+    ),
 
     ;
     /**
