@@ -22,10 +22,11 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LamangConfig {
+public class LamangConfig extends GameBizConfig {
+
+    private static final long serialVersionUID = 5582097906043304355L;
 
     private final static int REEL_NUMBERS = 5;
-
     /**
      * 赔率配置
      */
@@ -217,7 +218,7 @@ public class LamangConfig {
         private TreeMap<String, BigDecimal> proportionCommissionConfig;
     }
 
-    public void validate() {
+    public void bizValidate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
         multiPleConfigValidate();
