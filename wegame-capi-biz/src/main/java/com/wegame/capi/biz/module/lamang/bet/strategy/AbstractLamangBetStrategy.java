@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.lamang.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.LamangConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.LamangBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -33,7 +34,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
 import static com.wegame.capi.client.enums.GamePlayTypeEnum.TEMPLATE_PLAY;
 
 /**
@@ -55,6 +55,9 @@ public abstract class AbstractLamangBetStrategy
 
     @Autowired
     private LamangBetHelper lamangBetHelper;
+
+    @Autowired
+    private LamangConfig lamangConfig;
 
     @Override
     public AbstractGameContext<LamangGameRecordDo> gameContext() {
@@ -111,7 +114,7 @@ public abstract class AbstractLamangBetStrategy
     private BetResultDo<LamangBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<LamangGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
+        List<LamangGameRecordDo> list = play(betDo, betRecordId, lamangConfig.getPayoutAmountLimitConfig(), null);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<LamangGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
