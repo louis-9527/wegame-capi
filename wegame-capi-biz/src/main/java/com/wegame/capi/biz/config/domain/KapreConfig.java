@@ -19,7 +19,7 @@ import java.util.TreeMap;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KapreConfig implements Serializable {
+public class KapreConfig extends GameBizConfig implements Serializable {
     private static final long serialVersionUID = 5550628498801680050L;
     /**
      * 中奖最大倍数
@@ -118,7 +118,7 @@ public class KapreConfig implements Serializable {
         private TreeMap<String, List<List<String>>> buy;
     }
 
-    public void validate() {
+    public void bizValidate() {
         rewardMaxMultipleValidate();
         freeWheelTimesValidate();
         oddsConfigValidate();
