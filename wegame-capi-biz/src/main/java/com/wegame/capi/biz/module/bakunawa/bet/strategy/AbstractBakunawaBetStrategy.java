@@ -1,7 +1,9 @@
 package com.wegame.capi.biz.module.bakunawa.bet.strategy;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.BakunawaConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
 import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
@@ -42,6 +45,8 @@ public abstract class AbstractBakunawaBetStrategy
     @Autowired
     @Qualifier("bakunawaOperationEventManager")
     BakunawaOperationEventManager bakunawaOperationEventManager;
+    @Autowired
+    BakunawaConfig bakunawaConfig;
 
     @Override
     public AbstractGameContext<BakunawaGameRecordDo> gameContext() {
@@ -83,9 +88,21 @@ public abstract class AbstractBakunawaBetStrategy
         }
     }
 
+    @Override
+    protected long getTotalRewardAmount(List<BakunawaGameRecordDo> gameRecordList, Object extParam) {
+        if (CollectionUtil.isEmpty(gameRecordList)) {
+            return 0L;
+        } else {
+            return gameRecordList.stream()
+                    .filter(item -> Objects.nonNull(item.getRewardResult()))
+                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                    .sum();
+        }
+    }
+
     private BetResultDo<BakunawaGameRecordDo> normalBet(BetDo betDo) {
         long betRecordId = generateBetRecordId();
-        List<BakunawaGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
+        List<BakunawaGameRecordDo> list = super.play(betDo, betRecordId, this.bakunawaConfig.getPayoutAmountLimitConfig(), null);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         BakunawaGameRecordDo gameRecord = list.get(0);
         // 构建投注记录
