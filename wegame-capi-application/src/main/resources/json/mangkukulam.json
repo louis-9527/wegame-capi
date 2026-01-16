@@ -13,6 +13,10 @@
     "L2": {"3": 0.05, "4": 0.1, "5": 0.25},
     "L1": {"3": 0.05, "4": 0.1, "5": 0.25}
   },
+  "payoutAmountLimitConfig": {
+    "retryCount": 1,
+    "limitAmount": 1000000000
+  },
   "templateRangeConfig": {
     "normalBetMainGame": {
       "0_0": 650000,
