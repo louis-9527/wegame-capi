@@ -77,12 +77,10 @@ public abstract class AbstractGameContext<R> {
                     Long byDivideAmount = payAmount > 0 ? payAmount : betAmount;
                     BigDecimal divideValue = BigDecimal.valueOf(overallRewardAmount).divide(BigDecimal.valueOf(byDivideAmount), 2, RoundingMode.FLOOR);
                     if (divideValue.compareTo(templateMultipleRange.getEnd()) > 0) {
-                        log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than multiple up limit,stop process.gameplay:{}"
-                                , JSON.toJSONString(gamePlayDo));
+                        log.error("playResultValidate,overallRewardAmount more than multiple up limit,stop process.gameplay:{}", gamePlayDo);
                         throw new BusinessException(ErrorCode.ERR_INTER);
                     } else if (divideValue.compareTo(templateMultipleRange.getStart()) < 0) {
-                        log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than multiple low limit,continue process.gameplay:{}"
-                                , JSON.toJSONString(gamePlayDo));
+                        log.error("playResultValidate,overallRewardAmount more than multiple low limit,continue process.gameplay:{}", gamePlayDo);
                         return;
                     }
                     return;
@@ -91,17 +89,14 @@ public abstract class AbstractGameContext<R> {
                     // 上限和下限
                     Long availableBonus = gamePlayDo.getAvailableBonus();
                     if (overallRewardAmount - payAmount > availableBonus) {
-                        log.error("AbstractGameContext#playResultValidate,overallRewardAmount more than event up limit,stop process.gameplay:{}"
-                                , JSON.toJSONString(gamePlayDo));
+                        log.error("playResultValidate,overallRewardAmount more than event up limit,stop process.gameplay:{}", gamePlayDo);
                         throw new BusinessException(ErrorCode.ERR_INTER);
                     }
             }
         } catch (BusinessException be) {
             throw be;
         } catch (Exception e) {
-            log.error("AbstractGameContext#playResultValidate error,gamePlay:{}", JSON.toJSONString(gamePlayDo), e);
+            log.error("playResultValidate error,gamePlay:{}", gamePlayDo, e);
         }
-
-
     }
 }

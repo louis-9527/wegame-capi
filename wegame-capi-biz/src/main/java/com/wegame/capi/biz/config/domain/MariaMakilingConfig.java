@@ -21,7 +21,7 @@ import java.util.TreeMap;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class MariaMakilingConfig implements Serializable {
+public class MariaMakilingConfig extends GameBizConfig implements Serializable {
 
     private static final long serialVersionUID = -7867808743045979621L;
 
@@ -181,7 +181,7 @@ public class MariaMakilingConfig implements Serializable {
         private Map<String, Integer> freeGame;
     }
 
-    public void validate() {
+    public void bizValidate() {
         rewardMaxMultipleValidate();
         oddsConfigValidate();
         validateMainGame();
