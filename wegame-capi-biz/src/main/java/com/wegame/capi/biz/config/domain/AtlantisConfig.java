@@ -21,7 +21,7 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AtlantisConfig implements Serializable {
+public class AtlantisConfig extends GameBizConfig implements Serializable {
     private static final long serialVersionUID = 5550628498801680050L;
     /**
      * 中奖最大倍数
@@ -157,7 +157,7 @@ public class AtlantisConfig implements Serializable {
         }
     }
 
-    public void validate() {
+    public void bizValidate() {
         rewardMaxMultipleValidate();
         freeWheelTimesConfigValidate();
         oddsConfigValidate();

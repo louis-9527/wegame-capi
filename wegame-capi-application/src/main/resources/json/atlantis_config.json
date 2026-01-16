@@ -549,8 +549,9 @@
 				"3-5": 20999
 			}
 		}
-
-
-
+	},
+	"payoutAmountLimitConfig": {
+		"retryCount": 1,
+		"limitAmount": 1000000000
 	}
 }

@@ -1,7 +1,9 @@
 package com.wegame.capi.biz.module.atlantis.bet.strategy;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.AtlantisConfig;
 import com.wegame.capi.biz.domain.biz.AtlantisBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -54,6 +56,8 @@ public abstract class AbstractAtlantisBetStrategy
     private AtlantisOperationEventManager atlantisOperationEventManager;
     @Autowired
     private AtlantisBetHelper atlantisBetHelper;
+    @Autowired
+    private AtlantisConfig atlantisConfig;
 
     @Override
     public AbstractGameContext<AtlantisGameRecordDo> gameContext() {
@@ -88,7 +92,7 @@ public abstract class AbstractAtlantisBetStrategy
             } else if (isCanFreeSpinBet(betDo)) {
                 // 1.1 是，则预定投注流程
                 return betForFreeSpin(betDo);
-            }  else {
+            } else {
                 // 1.2 否，则走其他投注流程
                 // 1.2.1、判断能否走干预事件投注
                 if (isCanOperationEventBet(betDo)) {
@@ -112,13 +116,25 @@ public abstract class AbstractAtlantisBetStrategy
 //        }
     }
 
+    @Override
+    protected long getTotalRewardAmount(List<AtlantisGameRecordDo> gameRecordList, Object extParam) {
+        if (CollectionUtil.isEmpty(gameRecordList)) {
+            return 0L;
+        } else {
+            return gameRecordList.stream()
+                    .filter(item -> Objects.nonNull(item.getRewardResult()))
+                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                    .sum();
+        }
+    }
+
     /**
      * 非免费轮投注(正常投注、购买投注)
      */
     private BetResultDo<AtlantisBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<AtlantisGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
+        List<AtlantisGameRecordDo> list = super.play(betDo, betRecordId, atlantisConfig.getPayoutAmountLimitConfig(), null);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<AtlantisGameRecordDo> firstBatchList = atlantisBetHelper.getFirstBatchGameRecordList(list);
         // 2、构建投注记录
