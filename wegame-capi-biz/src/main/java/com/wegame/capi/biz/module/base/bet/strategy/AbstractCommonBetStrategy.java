@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.module.base.bet.strategy;
 
+import com.alibaba.fastjson.JSON;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
@@ -327,6 +328,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
             List<R> gameRecordList = gameContext().play(this.buildGamePlayDo(betDo, betRecordId, extParam));
             long totalRewardAmount = this.getTotalRewardAmount(gameRecordList, extParam);
             if (totalRewardAmount > limitAmount) {
+                log.info("payoutAmountLimitPLay,amount limit,totalRewardAmount:{},limitAmount:{},recordList:{}", totalRewardAmount, limitAmount, JSON.toJSONString(gameRecordList));
                 throw new RetryException(ErrorCode.ERR_INTER, "amount limit");
             }
             return gameRecordList;
