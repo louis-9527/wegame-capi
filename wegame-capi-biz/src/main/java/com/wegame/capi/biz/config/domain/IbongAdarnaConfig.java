@@ -19,7 +19,7 @@ import static com.wegame.capi.common.Constants.*;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class IbongAdarnaConfig {
+public class IbongAdarnaConfig extends GameBizConfig{
 
     /**
      * 赔率配置
@@ -103,7 +103,7 @@ public class IbongAdarnaConfig {
         private LinkedHashMap<String, LinkedHashMap<String, Integer>> templateRangeConfigMap;
     }
 
-    public void validate() {
+    public void bizValidate() {
         oddsConfigValidate();
         probabilisticConfigValidate();
         rewardFixedLinesConfigValidate();

@@ -21,10 +21,8 @@ import com.wegame.capi.biz.module.lamang.bet.LamangBetHelper;
 import com.wegame.capi.biz.module.lamang.game.LamangGameContext;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
-import com.wegame.capi.client.enums.AbTypeEnum;
 import com.wegame.capi.client.enums.BetSubTypeEnum;
 import com.wegame.capi.client.enums.GamePlayTypeEnum;
-import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -36,7 +34,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-import static com.wegame.capi.client.enums.GamePlayTypeEnum.NORMAL_PLAY;
 import static com.wegame.capi.client.enums.GamePlayTypeEnum.TEMPLATE_PLAY;
 
 /**
@@ -122,6 +119,14 @@ public abstract class AbstractLamangBetStrategy
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, betHelper().hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return lamangBetHelper.handleBetResult(betRecord, resultDo);
+    }
+
+    @Override
+    protected long getTotalRewardAmount(List<LamangGameRecordDo> list, Object extParam) {
+        return list.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
     }
 
     /**

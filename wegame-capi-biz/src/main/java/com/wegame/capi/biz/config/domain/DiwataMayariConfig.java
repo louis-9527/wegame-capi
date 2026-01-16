@@ -33,7 +33,7 @@ import static com.wegame.capi.common.Constants.CONST_1000000;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DiwataMayariConfig {
+public class DiwataMayariConfig extends GameBizConfig{
 
     private final static int REEL_NUMBERS = 6;
 
@@ -154,7 +154,7 @@ public class DiwataMayariConfig {
         private Map<String, Integer> freeGame;
     }
 
-    public void validate() {
+    public void bizValidate() {
         this.oddsConfigValidate();
         this.probabilisticConfigValidate();
         this.multiplePieRuleConfigValidate();
