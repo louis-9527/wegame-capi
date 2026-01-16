@@ -16,6 +16,4 @@ game:
     Bakunawa: true
     Lamang: true
     Kapre: true
-  inner:
-    dos:
-      enable-game-list:
+    DiwataMayari: true

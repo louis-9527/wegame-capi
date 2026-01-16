@@ -22,6 +22,3 @@ game:
     Bakunawa: false
     DiwataMayari: false
     Kapre: true
-  inner:
-    dos:
-      enable-game-list:

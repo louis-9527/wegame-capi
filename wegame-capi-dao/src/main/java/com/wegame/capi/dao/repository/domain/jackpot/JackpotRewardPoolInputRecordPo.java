@@ -1,6 +1,9 @@
 package com.wegame.capi.dao.repository.domain.jackpot;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -46,6 +49,24 @@ public class JackpotRewardPoolInputRecordPo implements Serializable {
      * mini金额
      */
     private Long miniAmount;
+
+    /**
+     * grand预留金额
+     */
+    private Long grandReservedAmount;
+    /**
+     * major预留金额
+     */
+    private Long majorReservedAmount;
+    /**
+     * minor预留金额
+     */
+    private Long minorReservedAmount;
+    /**
+     * mini预留金额
+     */
+    private Long miniReservedAmount;
+
     /**
      * 累计flag：0未累计， 1已累计
      */

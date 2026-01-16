@@ -52,7 +52,7 @@ public class DiwataMayariRewardHandler extends AbstractRewardHandler<DiwataMayar
 
     @Override
     public RewardResultDo<DiwataMayariSymbolDo> handle(RewardHandleDo<DiwataMayariSymbolDo> rewardHandle) {
-        long current = System.currentTimeMillis();
+        // long current = System.currentTimeMillis();
         // 1、业务校验
         this.validate(rewardHandle);
         // 2、计算中奖线
@@ -120,7 +120,7 @@ public class DiwataMayariRewardHandler extends AbstractRewardHandler<DiwataMayar
                 .accumulateReachMaxMultiple(reachMaxMultiple)
                 .build();
         // 6.返回中奖信息
-        log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
+        // log.info("reward cost time: {} ms", System.currentTimeMillis() - current);
         return rewardResult;
     }
 
