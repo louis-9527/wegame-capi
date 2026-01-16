@@ -27,6 +27,7 @@ public enum TemplateTypeEnum {
     BAKUNAWA(GameTypeEnum.BAKUNAWA, TemplateConstants.BAKUNAWA_BET_RECORD_TEMPLATE),
 
     DIWATA_MAYARI(GameTypeEnum.DIWATA_MAYARI, TemplateConstants.DIWATA_MAYARI_BET_RECORD_TEMPLATE),
+    DIWATA_MAYARI_2(GameTypeEnum.DIWATA_MAYARI, TemplateConstants.DIWATA_MAYARI_BET_RECORD_TEMPLATE_2),
 
     ;
 
