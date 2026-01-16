@@ -24,10 +24,11 @@ import java.util.stream.Collectors;
  * <a href="https://casinoplus.sg.larksuite.com/docx/HEnhdEWwioZpMFxRF4MlX7Azgig"/>
  */
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MangkukulamConfig {
+public class MangkukulamConfig extends GameBizConfig{
+    private static final long serialVersionUID = 1838987094825913716L;
     /**
      * 中奖最大倍数
      */
@@ -140,7 +141,7 @@ public class MangkukulamConfig {
         return mainGame;
     }
 
-    public void validate() {
+    public void bizValidate() {
         rewardMaxMultipleValidate();
         mgToFgScValidate();
         fgToFgScValidate();
