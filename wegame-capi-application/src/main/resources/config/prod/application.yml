@@ -28,7 +28,7 @@ spring:
   application:
     name: wegame-capi
     env: prod
-    version: 20251226
+    version: 2026011401
   profiles:
     active: prod
   config:
@@ -40,7 +40,6 @@ spring:
       - game-maria_makiling.yml
       - game-malakas.yml
       - game-ibong.yml
-      - metrics.yml
       - game-lamang.yml
       - game-bakunawa.yml
       - game-diwata_mayari.yml

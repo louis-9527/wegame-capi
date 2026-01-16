@@ -36,6 +36,11 @@ public class GameRecordService<T> extends AbstractService {
         return true;
     }
 
+    @CachePut(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #cacheKey")
+    public List<T> syncPutCache(List<T> gameRecordList, GameTypeEnum gameType, String cacheKey) {
+        return gameRecordList;
+    }
+
     @Async(gameRecordPutCacheThreadPoolExecutor)
     @CachePut(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #cacheKey")
     public List<T> asyncPutCache(List<T> gameRecordList, GameTypeEnum gameType, String cacheKey) {

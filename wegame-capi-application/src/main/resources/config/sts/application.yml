@@ -28,7 +28,7 @@ spring:
   application:
     name: wegame-capi
     env: sts
-    version: 20251125
+    version: 20260110006
   profiles:
     active: sts
   config:
@@ -40,7 +40,6 @@ spring:
       - game-maria_makiling.yml
       - game-malakas.yml
       - game-ibong.yml
-      - metrics.yml
       - game-lamang.yml
       - game-bakunawa.yml
       - game-diwata_mayari.yml
