@@ -18,6 +18,3 @@ game:
     MariaMakiling: false
     Malakas: false
     IbongAdarna: true
-  inner:
-    dos:
-      enable-game-list:
