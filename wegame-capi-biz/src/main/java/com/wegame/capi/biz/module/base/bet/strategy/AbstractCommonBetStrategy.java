@@ -5,6 +5,7 @@ import com.wegame.base.exception.BusinessException;
 import com.wegame.base.exception.RetryException;
 import com.wegame.base.utils.AssertUtil;
 import com.wegame.base.utils.RetryUtil;
+import com.wegame.capi.biz.builder.GamePlayBuilder;
 import com.wegame.capi.biz.builder.operation.OperationEventDetailBuilder;
 import com.wegame.capi.biz.config.domain.PayoutAmountLimitConfig;
 import com.wegame.capi.biz.converter.ToVoConverter;
@@ -13,6 +14,7 @@ import com.wegame.capi.biz.domain.biz.bet.BetDo;
 import com.wegame.capi.biz.domain.biz.bet.BetResultDo;
 import com.wegame.capi.biz.domain.biz.bet.SingleWalletBetResultDo;
 import com.wegame.capi.biz.domain.biz.game.GameOperationEventDo;
+import com.wegame.capi.biz.domain.biz.game.GamePlayDo;
 import com.wegame.capi.biz.domain.biz.game.MariaMakilingGameRecordDo;
 import com.wegame.capi.biz.domain.biz.promotion.RedeemRewardResultDo;
 import com.wegame.capi.biz.domain.biz.promotion.RewardDetailDo;
@@ -73,7 +75,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
 
     public abstract BetHelper<RD, R> betHelper();
 
-    protected  long getTotalRewardAmount(List<R> list, Object extParam){
+    protected long getTotalRewardAmount(List<R> list, Object extParam) {
         throw new BusinessException(ErrorCode.ERR_INTER, "getTotalRewardAmount error");
     }
 
@@ -314,7 +316,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         if (this.needPayoutAmountLimit(betDo, payoutAmountLimitConfig)) {
             return this.payoutAmountLimitPLay(betDo, betRecordId, payoutAmountLimitConfig, extParam);
         } else {
-            return gameContext().play(build(betDo, betRecordId));
+            return gameContext().play(this.buildGamePlayDo(betDo, betRecordId, extParam));
         }
     }
 
@@ -322,12 +324,16 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
         int retryCount = payoutAmountLimitConfig.getRetryCount();
         long limitAmount = payoutAmountLimitConfig.getLimitAmount();
         return RetryUtil.execute(() -> {
-            List<R> gameRecordList = gameContext().play(build(betDo, betRecordId));
+            List<R> gameRecordList = gameContext().play(this.buildGamePlayDo(betDo, betRecordId, extParam));
             long totalRewardAmount = this.getTotalRewardAmount(gameRecordList, extParam);
             if (totalRewardAmount > limitAmount) {
                 throw new RetryException(ErrorCode.ERR_INTER, "amount limit");
             }
             return gameRecordList;
         }, retryCount, RetryException.class, "payoutAmountLimitPLay");
+    }
+
+    protected GamePlayDo buildGamePlayDo(BetDo betDo, long betRecordId, Object extParam) {
+        return GamePlayBuilder.build(betDo, betRecordId);
     }
 }
