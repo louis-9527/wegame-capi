@@ -1,5 +1,6 @@
 package com.wegame.capi.biz.manager;
 
+import com.wegame.base.CacheConstants;
 import com.wegame.capi.biz.converter.ToVoConverter;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.service.BetRecordService;
@@ -7,12 +8,14 @@ import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.dao.repository.domain.business.BetRecordQuery;
 import com.wegame.capi.dao.repository.domain.business.GameRecordQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.betRecordThreadPoolExecutor;
+import static com.wegame.capi.infrastructure.config.ThreadPoolConfig.gameRecordPutCacheThreadPoolExecutor;
 
 @Component
 public abstract class AbstractBetRecordManager<T extends ToVoConverter> {
@@ -49,7 +52,10 @@ public abstract class AbstractBetRecordManager<T extends ToVoConverter> {
 
     public BetRecordDo findLastOneGameRecord(BetRecordQuery query, GameTypeEnum gameType) {
         return null;
-    };
+    }
 
-
+    @Async(gameRecordPutCacheThreadPoolExecutor)
+    @CacheEvict(value = CacheConstants.GAME_RECORD, key = "#gameType.name + '_' + #query.getCacheKey()")
+    public void asyncEvictGameRecordCache(GameRecordQuery query, GameTypeEnum gameType) {
+    }
 }

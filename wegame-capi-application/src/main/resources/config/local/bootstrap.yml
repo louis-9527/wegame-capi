@@ -24,6 +24,3 @@ game:
     Kapre: false
     Mangkukulam: false
     Sirena: true
-  inner:
-    dos:
-      enable-game-list:

@@ -14,6 +14,3 @@ game:
     DiwataMayari: false
     Kapre: false
     Mangkukulam: true
-  inner:
-    dos:
-      enable-game-list:

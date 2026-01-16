@@ -4,9 +4,10 @@ CREATE TEMPORARY TABLE mongo_operation_event_config_record_source (
   batchId BIGINT,
   betRecordId BIGINT,
   index INT,
-  gameRecordIds ARRAY<BIGINT>,
-  wheel ROW<id BIGINT, name STRING, `value` BIGINT>,
-  extInfo ROW<key STRING, `value` STRING>,
+  gameRecordIds STRING,
+  wheel STRING,
+  extInfo STRING,
+
   PRIMARY KEY(_id) NOT ENFORCED
 ) WITH (
   'connector' = 'mongodb',
@@ -50,8 +51,8 @@ SELECT
   batchId,
   betRecordId,
   index,
-  CAST(gameRecordIds AS STRING) AS gameRecordIds,
-  CAST(wheel AS STRING) AS wheel,
-  CAST(extInfo AS STRING) AS extInfo,
+  gameRecordIds,
+  wheel,
+  extInfo,
   LOCALTIMESTAMP AS syncCreateTime
 FROM mongo_operation_event_config_record_source;

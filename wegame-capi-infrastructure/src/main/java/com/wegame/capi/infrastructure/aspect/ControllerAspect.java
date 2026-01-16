@@ -1,7 +1,5 @@
 package com.wegame.capi.infrastructure.aspect;
 
-import com.wegame.capi.client.context.UserInfo;
-import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.infrastructure.GlobalInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +17,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -56,24 +53,19 @@ public class ControllerAspect {
             if (!StringUtils.equals(signature.getName(), "ping")) {
                 GlobalInstance.warmConnectionSwitch = false;
             }
-            UserInfo userInfo = UserInfoContext.getUserInfo();
             long costTime = System.currentTimeMillis() - startTime;
             if (costTime > 150L) {
-                log.info("{}#{}, cost times more than 150: {} ms, req={}, res={}",
+                log.info("{}-{} controller cost time more than 150: {}ms, req={}, res={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
-                        req,
-                        result,
-                        Objects.nonNull(userInfo) ? userInfo.getPlayerId() : "");
+                        req);
             } else {
-                log.info("{}#{}, cost times: {} ms, req={}, res={},playerId={}",
+                log.info("{}-{} controller cost time: {}ms, req={}, res={}",
                         signature.getDeclaringTypeName(),
                         signature.getName(),
                         costTime,
-                        req,
-                        result,
-                        Objects.nonNull(userInfo) ? userInfo.getPlayerId() : "");
+                        req);
             }
         } catch (Throwable e) {
             log.error("ControllerAspect.statistic error: {}", e.getMessage(), e);

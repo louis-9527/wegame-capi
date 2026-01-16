@@ -15,7 +15,7 @@ import static com.wegame.base.enums.CommonCacheEnvEnum.USER_INFO;
 public class UserInfoCache extends AbstractLocalCache {
 
     public UserInfoCache() {
-        super(CommonCacheEnvEnum.USER_INFO.cacheKeyPrefixName(), 60, 6000000);
+        super(CommonCacheEnvEnum.USER_INFO.cacheKeyPrefixName(), 600 * 2, 300000);
     }
 
     @Override

@@ -8,7 +8,6 @@ import com.wegame.base.utils.FastJsonUtils;
 import com.wegame.capi.biz.builder.UserInfoBuilder;
 import com.wegame.capi.biz.domain.user.UserLoginDo;
 import com.wegame.capi.biz.domain.user.UserLoginInfoDo;
-import com.wegame.capi.biz.service.metrics.UserPlayMetricsDataService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.Constants;
@@ -40,8 +39,6 @@ public class LoginService {
     @Autowired
     GameApiProperty gameApiProperty;
     @Autowired
-    private UserPlayMetricsDataService userPlayMetricsDataService;
-    @Autowired
     FailedBetPostProcessService failedBetPostProcessService;
 
     public UserInfo login(HttpServletResponse response, UserLoginDo userLoginDo) {
@@ -66,8 +63,6 @@ public class LoginService {
         failedBetPostProcessService.processFailedBetAfterLogin(GameTypeEnum.valueOfId(userInfo.getGameId()), Long.valueOf(userId));
         String loginTokenKey = String.format(Constants.CUSER_LOGIN_TOKEN, token);
         redisTemplate.opsForValue().set(loginTokenKey, FastJsonUtils.toJSONString(userInfo), Constants.TOKEN_EXPIRED, TimeUnit.HOURS);
-        // 提前加载用户数据采集缓存
-        userPlayMetricsDataService.loadCache(userInfo.getPId(), userInfo.getPlayerId(), userInfo.getChannelId(), userInfo.getGameId());
         return userInfo;
     }
 
@@ -86,10 +81,10 @@ public class LoginService {
         Object obj = redisTemplate.opsForValue().get(String.format(Constants.CUSER_LOGIN_TOKEN, token));
         if (Objects.nonNull(obj)) {
             if (obj instanceof String) {
-                log.info("userInfo is String class");
+                //log.info("userInfo is String class");
                 return FastJsonUtils.fromJSONString(obj.toString(), UserInfo.class);
             } else {
-                log.info("userInfo is not String class");
+                //log.info("userInfo is not String class");
                 return FastJsonUtils.fromJSONString(FastJsonUtils.toJSONString(obj), UserInfo.class);
             }
         } else {

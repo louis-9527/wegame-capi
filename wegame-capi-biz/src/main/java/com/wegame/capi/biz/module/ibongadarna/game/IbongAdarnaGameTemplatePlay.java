@@ -16,7 +16,6 @@ import com.wegame.capi.biz.domain.biz.reward.RewardResultDo;
 import com.wegame.capi.biz.domain.biz.symbol.IbongAdarnaSymbolDo;
 import com.wegame.capi.biz.domain.biz.template.ibong.IbongAdarnaBetRecordTemplateEsDo;
 import com.wegame.capi.biz.domain.biz.wheel.WheelDo;
-import com.wegame.capi.biz.innerdos.decider.InnerDosDeciderManager;
 import com.wegame.capi.biz.module.base.game.AbstractGame;
 import com.wegame.capi.biz.module.ibongadarna.IbongAdarnaGameHelper;
 import com.wegame.capi.biz.module.ibongadarna.reward.IbongAdarnaRewardHandler;
@@ -24,8 +23,6 @@ import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
 import com.wegame.capi.client.context.UserInfo;
 import com.wegame.capi.client.context.UserInfoContext;
 import com.wegame.capi.client.enums.GameTypeEnum;
-import com.wegame.capi.client.enums.innerdos.GameInnerDosTypeEnum;
-import com.wegame.capi.common.Constants;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
 import com.wegame.capi.common.utils.JsonGzipUtil;
@@ -58,8 +55,6 @@ public class IbongAdarnaGameTemplatePlay extends AbstractGame<IbongAdarnaGameRec
     IbongAdarnaConfig ibongAdarnaConfig;
     @Autowired
     BetRecordTemplateEsService<IbongAdarnaBetRecordTemplateEsDo> betRecordTemplateEsService;
-    @Autowired
-    private InnerDosDeciderManager innerDosDeciderManager;
 
     @Override
     public List<IbongAdarnaGameRecordDo> play(GamePlayDo gamePlay) {
@@ -121,23 +116,10 @@ public class IbongAdarnaGameTemplatePlay extends AbstractGame<IbongAdarnaGameRec
     }
 
     private TemplateMultipleRange getTemplateMultipleRange(GamePlayDo gamePlay) {
-        Map<String, LinkedHashMap<String, BigDecimal>> templateRangeMap = ibongAdarnaConfig.getInnerDosConfig().getTemplateRangeConfig().getTemplateRangeMap(GameInnerDosTypeEnum.NORMAL_DOS);
-        LinkedHashMap<String, BigDecimal> decimalMultipleRangeMap = templateRangeMap.get(gamePlay.getBetSubType().getCode());
-
-        LinkedHashMap<String, Integer> integerMultipleRangeMap = this.buildIntegerMultipleRangeMap(decimalMultipleRangeMap);
-        String templateIdRange = randomService.randomKeyByWeight(integerMultipleRangeMap);
-        // inner dos 决策
-//        InnerDosDecideResult decideResult = innerDosDeciderManager.decide(gamePlay.getGameType(), gamePlay);
-//        AssertUtil.assertNotNull(decideResult, ErrorCode.ERR_INTER, "inner dos decide result is null");
-//        String templateIdRange = decideResult.getTemplateIdRange();
+        LinkedHashMap<String, LinkedHashMap<String, Integer>> templateRangeConfigMap = ibongAdarnaConfig.getTemplateRangeConfig().getTemplateRangeConfigMap();
+        String templateIdRange = randomService.randomKeyByWeight(templateRangeConfigMap.get(gamePlay.getBetType().getCode()));
         AssertUtil.assertStrNotEmpty(templateIdRange, ErrorCode.ERR_INTER);
         return TemplateMultipleRange.build(templateIdRange);
-    }
-
-    private LinkedHashMap<String, Integer> buildIntegerMultipleRangeMap(LinkedHashMap<String, BigDecimal> decimalMultipleRangeMap) {
-        LinkedHashMap<String, Integer> integerLinkedHashMap = new LinkedHashMap<>();
-        decimalMultipleRangeMap.forEach((key, value) -> integerLinkedHashMap.put(key, value.multiply(new BigDecimal(Constants.CONST_100)).intValue()));
-        return integerLinkedHashMap;
     }
 
     private Long getRandomElement(List<Long> list) {
