@@ -40,7 +40,6 @@ spring:
       - game-maria_makiling.yml
       - game-malakas.yml
       - game-ibong.yml
-      - metrics.yml
       - game-lamang.yml
       - game-bakunawa.yml
   main:
