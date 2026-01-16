@@ -76,8 +76,6 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
                 template = betRecordTemplateEsService.getTemplateWithLocalCache(TemplateTypeEnum.MALAKAS, betRecordId, MalakasBetRecordTemplateEsDo.class);
-            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithRedisCache(TemplateTypeEnum.MALAKAS, betRecordId, MalakasBetRecordTemplateEsDo.class);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
