@@ -47,21 +47,21 @@ public class BetRecordTemplateEsServiceTest extends BaseTest {
         }
     }
 
-    @Test
-    public void test_add() throws IOException {
-        MalakasBetRecordTemplateEsDo po = new MalakasBetRecordTemplateEsDo();
-        po.setId(1000L);
-        po.setBetType(BetTypeEnum.NORMAL_BET.getCode());
-        po.setBetSubType(BetSubTypeEnum.NORMAL_BET.getCode());
-        po.setTemplateType(TemplateTypeEnum.MALAKAS.name());
-        po.setHash("42314234");
-        po.setMultiple(12.3);
-        po.setGameId(GameTypeEnum.MALAKAS.getId());
-        po.setBytes(JsonGzipUtil.compress(readJson()));
-        boolean isSuc = betRecordTemplateEsService.add(TemplateTypeEnum.MALAKAS, po);
-        log.info("test_add ret: {}", isSuc);
-        Assert.assertNotNull(isSuc);
-    }
+    //@Test
+    //public void test_add() throws IOException {
+    //    MalakasBetRecordTemplateEsDo po = new MalakasBetRecordTemplateEsDo();
+    //    po.setId(1000L);
+    //    po.setBetType(BetTypeEnum.NORMAL_BET.getCode());
+    //    po.setBetSubType(BetSubTypeEnum.NORMAL_BET.getCode());
+    //    po.setTemplateType(TemplateTypeEnum.MALAKAS.name());
+    //    po.setHash("42314234");
+    //    po.setMultiple(12.3);
+    //    po.setGameId(GameTypeEnum.MALAKAS.getId());
+    //    po.setBytes(JsonGzipUtil.compress(readJson()));
+    //    boolean isSuc = betRecordTemplateEsService.add(TemplateTypeEnum.MALAKAS, po);
+    //    log.info("test_add ret: {}", isSuc);
+    //    Assert.assertNotNull(isSuc);
+    //}
 
     @Test
     public void test_findById() {

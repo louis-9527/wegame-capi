@@ -78,8 +78,6 @@ public class MariaMakilingGameTemplatePlay extends AbstractGame<MariaMakilingGam
             // 已经被预热的倍率，直接走缓存
             if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.NORMAL_BET)) {
                 template = betRecordTemplateEsService.getTemplateWithLocalCache(TemplateTypeEnum.MARIA_MAKILING, templateBetRecordId, MariaMakilingBetRecordTemplateEsDo.class);
-            } else if (Objects.equals(gamePlay.getBetType(), BetTypeEnum.BUY_BET)) {
-                template = betRecordTemplateEsService.getTemplateWithRedisCache(TemplateTypeEnum.MARIA_MAKILING, templateBetRecordId, MariaMakilingBetRecordTemplateEsDo.class);
             } else {
                 throw new BusinessException(ErrorCode.ERR_PARAM);
             }
