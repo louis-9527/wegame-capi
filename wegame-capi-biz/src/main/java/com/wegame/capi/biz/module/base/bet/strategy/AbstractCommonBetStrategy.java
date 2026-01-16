@@ -310,7 +310,7 @@ public abstract class AbstractCommonBetStrategy<R extends ToVoConverter, RD exte
     protected boolean needPayoutAmountLimit(BetDo betDo, PayoutAmountLimitConfig payoutAmountLimitConfig) {
         List<BetTypeEnum> limitBetTypeList = payoutAmountLimitConfig.getLimitBetTypeList();
         long limitAmount = payoutAmountLimitConfig.getLimitAmount();
-        return limitBetTypeList.contains(betDo.getBetType()) || limitAmount < 0;
+        return limitBetTypeList.contains(betDo.getBetType()) && limitAmount > 0;
     }
 
     protected List<R> play(BetDo betDo, long betRecordId, PayoutAmountLimitConfig payoutAmountLimitConfig, Object extParam) {
