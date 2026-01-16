@@ -168,6 +168,12 @@ public abstract class AbstractMalakasBetStrategy
                 .collect(Collectors.toList());
     }
 
+    @Override
+    protected long getTotalRewardAmount(List<MalakasGameRecordDo> list, Object extParam) {
+        // todo
+        return 0;
+    }
+
     public void freeWheelAfterHandle(Long betRecordId) {
         // do nothing
     }
