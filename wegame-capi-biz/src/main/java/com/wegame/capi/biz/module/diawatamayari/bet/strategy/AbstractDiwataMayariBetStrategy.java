@@ -1,7 +1,9 @@
 package com.wegame.capi.biz.module.diawatamayari.bet.strategy;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.DiwataMayariConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.DiwataMayariBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -52,6 +54,8 @@ public abstract class AbstractDiwataMayariBetStrategy
     private DiwataMayariOperationEventManager diwataMayariOperationEventManager;
     @Autowired
     private DiwataMayariBetHelper diwataMayariBetHelper;
+    @Autowired
+    private DiwataMayariConfig diwataMayariConfig;
 
     @Override
     public AbstractGameContext<DiwataMayariGameRecordDo> gameContext() {
@@ -107,13 +111,25 @@ public abstract class AbstractDiwataMayariBetStrategy
         return GamePlayTypeEnum.TEMPLATE_PLAY;
     }
 
+    @Override
+    protected long getTotalRewardAmount(List<DiwataMayariGameRecordDo> gameRecordList, Object extParam) {
+        if (CollectionUtil.isEmpty(gameRecordList)) {
+            return 0L;
+        } else {
+            return gameRecordList.stream()
+                    .filter(item -> Objects.nonNull(item.getRewardResult()))
+                    .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                    .sum();
+        }
+    }
+
     /**
      * 非免费轮投注(正常投注、购买投注)
      */
     private BetResultDo<DiwataMayariBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<DiwataMayariGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
+        List<DiwataMayariGameRecordDo> list = super.play(betDo, betRecordId, diwataMayariConfig.getPayoutAmountLimitConfig(), null);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<DiwataMayariGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
