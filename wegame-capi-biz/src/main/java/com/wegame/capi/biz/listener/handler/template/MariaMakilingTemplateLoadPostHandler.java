@@ -2,8 +2,6 @@ package com.wegame.capi.biz.listener.handler.template;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
-import com.wegame.base.enums.BooleanEnum;
-import com.wegame.base.exception.LockException;
 import com.wegame.capi.biz.config.domain.MariaMakilingConfig;
 import com.wegame.capi.biz.domain.biz.template.mariamakiling.MariaMakilingBetRecordTemplateEsDo;
 import com.wegame.capi.biz.service.template.BetRecordTemplateEsService;
@@ -11,20 +9,16 @@ import com.wegame.capi.client.enums.BetTypeEnum;
 import com.wegame.capi.client.enums.GameTypeEnum;
 import com.wegame.capi.common.domain.TemplateMultipleRange;
 import com.wegame.capi.common.enums.TemplateTypeEnum;
-import com.wegame.capi.common.utils.LockNameUtil;
 import com.wegame.capi.common.utils.TemplateCacheWarmUpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import static com.wegame.capi.common.Constants.MARIA_MAKILING_PROP;
 import static com.wegame.capi.common.Constants.TRUE_VAL;
@@ -39,8 +33,6 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
     private static final String key = "load:template:redis:cache:MariaMakiling7";
     @Autowired
     MariaMakilingConfig mariaMakilingConfig;
-    @Autowired
-    RedisTemplate<String, Object> redisTemplate;
     @Autowired
     BetRecordTemplateEsService<MariaMakilingBetRecordTemplateEsDo> betRecordTemplateEsService;
 
@@ -76,13 +68,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                     templateIdList.addAll(idList);
                 }
             });
-            if (Objects.equals(betType, BetTypeEnum.NORMAL_BET)) {
-                loadLocalCache(BetTypeEnum.NORMAL_BET, templateIdList);
-            } else if (Objects.equals(betType, BetTypeEnum.BUY_BET)) {
-//                loadRedisCache(BetTypeEnum.BUY_BET, templateIdList);
-            } else {
-                return;
-            }
+            loadLocalCache(BetTypeEnum.NORMAL_BET, templateIdList);
             log.info("{} game template load end...", betType);
         } catch (Exception e) {
             log.info("{} game template load error", betType, e);
@@ -124,40 +110,5 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
             });
         });
         log.info("loadLocalCache success, betType: {}, size: {}", betType, templateIdList.size());
-    }
-
-    private void loadRedisCache(BetTypeEnum betType, List<Long> templateIdList) {
-        if (!supportWarmUpEnv()) {
-            return;
-        }
-        if (CollectionUtil.isEmpty(templateIdList)) {
-            log.warn("loadRedisCache fail, betType: {}, size is 0", betType);
-            return;
-        }
-        Object hasLoad = redisTemplate.opsForValue().get(key);
-        log.info("loadRedisCache redis, hasLoad: {},. betType: {}", hasLoad, betType);
-        if (Objects.equals(hasLoad, BooleanEnum.TRUE.getCode())) {
-            log.info("loadRedisCache fail, hasLoad. betType: {}, size: {}", betType, templateIdList.size());
-            return;
-        }
-        TemplateTypeEnum templateType = this.getTemplateType();
-        try {
-            distributeLock.lockThenRun(LockNameUtil.getBetRecordTemplatePreLoadLockName(this.getTemplateType()), 10, TimeUnit.SECONDS, () -> {
-                log.info("loadRedisCache start, betType: {}, size: {}", betType, templateIdList.size());
-                List<List<Long>> multiList = ListUtil.partition(templateIdList, 1000);
-                multiList.forEach(idList -> {
-                    List<MariaMakilingBetRecordTemplateEsDo> templateList = betRecordTemplateEsService.listByIdList(templateType, idList, MariaMakilingBetRecordTemplateEsDo.class);
-                    templateList.forEach(template -> {
-                        betRecordTemplateEsService.putTemplateRedisCache(templateType, template.getId(), template);
-                    });
-                });
-                redisTemplate.opsForValue().set(key, BooleanEnum.TRUE.getCode());
-                log.info("loadRedisCache success, betType: {}, size: {}", betType, templateIdList.size());
-            }, "lock fail");
-        } catch (LockException e) {
-            log.info("loadRedisCache fail, can not get lock  betType: {}", betType);
-        } catch (Exception e) {
-            log.info("loadRedisCache error, betType: {}", betType, e);
-        }
     }
 }
