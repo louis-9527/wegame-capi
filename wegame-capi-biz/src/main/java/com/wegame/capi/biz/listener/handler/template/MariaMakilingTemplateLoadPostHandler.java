@@ -67,7 +67,7 @@ public class MariaMakilingTemplateLoadPostHandler extends AbstractTemplateLoadPo
                     templateIdList.addAll(idList);
                 }
             });
-            loadLocalCache(BetTypeEnum.NORMAL_BET, templateIdList);
+            loadLocalCache(betType, templateIdList);
             log.info("{} game template load end...", betType);
         } catch (Exception e) {
             log.info("{} game template load error", betType, e);
