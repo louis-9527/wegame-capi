@@ -37,34 +37,34 @@ public class OperationEventPulsarConfig {
     private static final String sirenaOperationEventConsumer = "sirenaOperationEventConsumer";
 
     // todo fix
-    @Value("${dynamic.operation.pulsar_url}")
+    @Value("${dynamic.internal.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
-    @Value("${dynamic.operation.pulsar_topic}")
+    @Value("${dynamic.internal.operation.pulsar_topic}")
     String dynamicOperationTopic;
     // 增加默认值 ！！！ 增加默认值 ！！！ 增加默认值 ！！！
-    @Value("${dynamic.operation.pulsar_group.maria_makiling:cd_MariaMakiling}")
+    @Value("${dynamic.internal.operation.pulsar_group.maria_makiling:cd_MariaMakiling}")
     String dynamicOperationGroupMariaMakiling;
-    @Value("${dynamic.operation.pulsar_group.malakas:cd_Malakas}")
+    @Value("${dynamic.internal.operation.pulsar_group.malakas:cd_Malakas}")
     String dynamicOperationGroupMalakas;
-    @Value("${dynamic.operation.pulsar_group.ibong:cd_Ibong}")
+    @Value("${dynamic.internal.operation.pulsar_group.ibong:cd_Ibong}")
     String dynamicOperationGroupIbong;
-    @Value("${dynamic.operation.pulsar_group.bakunawa:cd_Bakunawa}")
+    @Value("${dynamic.internal.operation.pulsar_group.bakunawa:cd_Bakunawa}")
     String dynamicOperationGroupBakunawa;
-    @Value("${dynamic.operation.pulsar_group.lamang:cd_Lamang}")
+    @Value("${dynamic.internal.operation.pulsar_group.lamang:cd_Lamang}")
     String dynamicOperationGroupLamang;
-    @Value("${dynamic.operation.pulsar_group.diwata_mayari:cd_DiwataMayari}")
+    @Value("${dynamic.internal.operation.pulsar_group.lamang:cd_DiwataMayari}")
     String dynamicOperationGroupDiwataMayari;
-    @Value("${dynamic.operation.pulsar_group.kapre:cd_Kapre}")
+    @Value("${dynamic.internal.operation.pulsar_group.kapre:cd_Kapre}")
     String dynamicOperationGroupKapre;
-    @Value("${dynamic.operation.pulsar_group.mangkukulam:cd_Mangkukulam}")
+    @Value("${dynamic.internal.operation.pulsar_group.mangkukulam:cd_Mangkukulam}")
     String dynamicOperationGroupMangkukulam;
     @Value("${dynamic.operation.pulsar_group.sirena:cd_Sirena}")
     String dynamicOperationGroupSirena;
-    @Value("${dynamic.operation.pulsar.auth.issuer_url}")
+    @Value("${dynamic.internal.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
-    @Value("${dynamic.operation.pulsar.auth.credentials_file_path}")
+    @Value("${dynamic.internal.operation.pulsar.auth.credentials_file_path}")
     String dynamicOperationAuthCredentialsFilePath;
-    @Value("${dynamic.operation.pulsar.auth.audience}")
+    @Value("${dynamic.internal.operation.pulsar.auth.audience}")
     String dynamicOperationAuthAudience;
 
     @Bean(name = operationEventPulsarClient, destroyMethod = COMMON_CLOSE_METHOD)
