@@ -2,6 +2,7 @@ package com.wegame.capi.biz.module.malakas.bet.strategy;
 
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
+import com.wegame.capi.biz.config.domain.MalakasConfig;
 import com.wegame.capi.biz.domain.biz.BetRecordDo;
 import com.wegame.capi.biz.domain.biz.MalakasBetRecordDetailDo;
 import com.wegame.capi.biz.domain.biz.bet.BetDo;
@@ -31,8 +32,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.wegame.capi.biz.builder.GamePlayBuilder.build;
-
 /**
  * Malakas游戏投注抽象接口
  */
@@ -51,6 +50,8 @@ public abstract class AbstractMalakasBetStrategy
     private MalakasOperationEventManager malakasOperationEventManager;
     @Autowired
     private MalakasBetHelper malakasBetHelper;
+    @Autowired
+    private MalakasConfig malakasConfig;
 
     @Override
     public AbstractGameContext<MalakasGameRecordDo> gameContext() {
@@ -107,7 +108,7 @@ public abstract class AbstractMalakasBetStrategy
     private BetResultDo<MalakasBetRecordDetailDo> betForNonFreeWheel(BetDo betDo) {
         // 1、生成游戏记录
         long betRecordId = generateBetRecordId();
-        List<MalakasGameRecordDo> list = gameContext().play(build(betDo, betRecordId));
+        List<MalakasGameRecordDo> list = super.play(betDo, betRecordId, this.malakasConfig.getPayoutAmountLimitConfig(), null);
         AssertUtil.assertNotEmpty(list, ErrorCode.ERR_INTER);
         List<MalakasGameRecordDo> firstBatchList = getFirstBatchGameRecordList(list);
         // 2、构建投注记录
@@ -115,7 +116,14 @@ public abstract class AbstractMalakasBetStrategy
         SingleWalletBetResultDo resultDo = saveBetRecordAndBetWithPayout(betDo, betRecord, malakasBetHelper.hasRewardFreeWheel(firstBatchList));
         AssertUtil.assertNotNull(resultDo, ErrorCode.ERR_INTER);
         return malakasBetHelper.handleBetResult(betRecord, resultDo);
+    }
 
+    @Override
+    protected long getTotalRewardAmount(List<MalakasGameRecordDo> list, Object extParam) {
+        return list.stream()
+                .filter(item -> Objects.nonNull(item.getRewardResult()))
+                .mapToLong(item -> item.getRewardResult().getTotalRewardAmount())
+                .sum();
     }
 
     /**
@@ -166,12 +174,6 @@ public abstract class AbstractMalakasBetStrategy
         return list.stream()
                 .filter(item -> Objects.equals(batchId, item.getBatchId()))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    protected long getTotalRewardAmount(List<MalakasGameRecordDo> list, Object extParam) {
-        // todo
-        return 0;
     }
 
     public void freeWheelAfterHandle(Long betRecordId) {
