@@ -37,7 +37,7 @@ public class RedirectApi extends PromotionBaseApi {
         try {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
-            RequestEntity<GetRedirectGameUrlReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REDIRECT_GAME_URL_FORMAT, promotionDomain)));
+            RequestEntity<GetRedirectGameUrlReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(GET_REDIRECT_GAME_URL_FORMAT, promotionDomain(req.getPId()))));
             ResponseEntity<CommonRes<GetRedirectGameUrlRes>> responseEntity = promotionRestTemplate.exchange(requestEntity, new ParameterizedTypeReference<CommonRes<GetRedirectGameUrlRes>>() {
             });
             AssertUtil.assertNotNull(responseEntity, ErrorCode.ERR_MIDDLE_PLATFORM);
