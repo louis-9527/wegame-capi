@@ -14,7 +14,7 @@ import lombok.ToString;
 @JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum GameTypeTemplateOddsWarmUpEnum {
     MARIA_MAKILING("zhumeng001", "1", "-1", "MARIA_MAKILING"),
-    MALAKAS("zhumeng002", "100", "100", "MALAKAS"),
+    MALAKAS("zhumeng002", "3", "-1", "MALAKAS"),
     LAM_ANG("zhumeng004", "3", "-1", "LAMANG"),
     BAKUNAWA("zhumeng005", "5", "-1", "BAKUNAWA"),
     DIWATA_MAYARI("zhumeng006", "20", "8", "DIWATA_MAYARI")

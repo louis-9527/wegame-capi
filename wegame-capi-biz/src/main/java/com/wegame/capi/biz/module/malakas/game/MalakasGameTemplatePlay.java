@@ -73,6 +73,7 @@ public class MalakasGameTemplatePlay extends AbstractGame<MalakasGameRecordDo> {
         List<GameRecordTemplateDo> configRecordList;
         MalakasBetRecordTemplateEsDo template;
         if (TemplateCacheWarmUpUtil.isWarmUpMultipleRange(GameTypeEnum.MALAKAS, gamePlay.getBetType(), templateMultipleRange)) {
+            // 已经被预热的倍率，直接走缓存
             template = betRecordTemplateEsService.getTemplateWithLocalCache(TemplateTypeEnum.MALAKAS, betRecordId, MalakasBetRecordTemplateEsDo.class);
         } else {
             // 没有被预热的倍率，需要重新查询
