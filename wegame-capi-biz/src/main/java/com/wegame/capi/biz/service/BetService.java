@@ -55,7 +55,8 @@ public class BetService {
         if (Objects.equals(betDo.getGameType(), GameTypeEnum.MARIA_MAKILING) ||
                 Objects.equals(betDo.getGameType(), GameTypeEnum.MALAKAS) ||
                 Objects.equals(betDo.getGameType(), GameTypeEnum.IBONG_ADARNA)||
-                Objects.equals(betDo.getGameType(), GameTypeEnum.LAM_ANG)) {
+                Objects.equals(betDo.getGameType(), GameTypeEnum.LAM_ANG) ||
+                Objects.equals(betDo.getGameType(), GameTypeEnum.BAKUNAWA)) {
             if (Objects.equals(userInfo.getUt(), AbTypeEnum.A.getId())) {
                 betDo.setGamePlayType(GamePlayTypeEnum.NORMAL_PLAY);
             } else {

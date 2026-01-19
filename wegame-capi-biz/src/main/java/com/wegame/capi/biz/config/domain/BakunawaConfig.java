@@ -3,23 +3,22 @@ package com.wegame.capi.biz.config.domain;
 import cn.hutool.core.lang.Assert;
 import com.wegame.base.enums.ErrorCode;
 import com.wegame.base.utils.AssertUtil;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.wegame.capi.common.Constants.*;
+import static com.wegame.capi.common.Constants.CONST_10000;
+import static com.wegame.capi.common.Constants.CONST_1000000;
 
 @Data
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BakunawaConfig {
-
+public class BakunawaConfig extends GameBizConfig implements Serializable {
+    private static final long serialVersionUID = -4811887935435114L;
     /**
      * 元素概率配置
      */
@@ -32,12 +31,17 @@ public class BakunawaConfig {
      * 中奖最大倍数
      */
     private Integer rewardMaxMultiple;
+    /**
+     * 模板配置
+     */
+    private BakunawaConfig.TemplateRangeConfig templateRangeConfig;
 
     @Data
     @SuperBuilder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ProbabilisticConfig implements Serializable {
+        private static final long serialVersionUID = 3091229516351949275L;
         /**
          * 元素出现概率配置
          * Map<元素ID，<列坐标，概率列表>>
@@ -55,7 +59,25 @@ public class BakunawaConfig {
         private TreeMap<String, BigDecimal> superMultiplePieProbabilisticConfig;
     }
 
-    public void validate() {
+    @Data
+    @ToString
+    @SuperBuilder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = false)
+    public static class TemplateRangeConfig implements Serializable {
+        private static final long serialVersionUID = -734841249803450751L;
+        /**
+         * 主游戏模板配置
+         */
+        private Map<String, Integer> mainGame;
+        /**
+         * 免费游戏模板配置
+         */
+        private Map<String, Integer> freeGame;
+    }
+
+    public void bizValidate() {
         probabilisticConfigValidate();
         rewardNotifyMinMultipleValidate();
     }
