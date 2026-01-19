@@ -259,7 +259,7 @@ public class SingleWalletApi extends SingleWalletBaseApi {
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders();
             RequestEntity<JackpotReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST,
-                    URI.create(String.format(JACKPOT_FORMAT, singleDomain)));
+                    URI.create(String.format(JACKPOT_FORMAT, singleDomain(req.getPId()))));
             ResponseEntity<CommonRes<JackpotRes>> responseEntity = walletRestTemplate.exchange(requestEntity,
                     new ParameterizedTypeReference<CommonRes<JackpotRes>>() {
                     });
