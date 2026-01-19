@@ -33,6 +33,8 @@ public class OperationEventExternalPulsarConfig {
     private static final String diwataMayariOperationEventExternalConsumer = "diwataMayariOperationEventExternalConsumer";
     private static final String kapreOperationEventExternalConsumer = "kapreOperationEventExternalConsumer";
     private static final String mangkukulamOperationEventExternalConsumer = "mangkukulamOperationEventExternalConsumer";
+    private static final String sirenaOperationEventExternalConsumer = "sirenaOperationEventExternalConsumer";
+
 
 
     @Value("${dynamic.external.operation.pulsar_url}")
@@ -56,6 +58,8 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupKapre;
     @Value("${dynamic.external.operation.pulsar_group.mangkukulam:_Mangkukulam}")
     String dynamicOperationGroupMangkukulam;
+    @Value("${dynamic.external.operation.pulsar_group.sirena:cd_Sirena}")
+    String dynamicOperationGroupSirena;
     @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.external.operation.pulsar.auth.credentials_file_path}")
@@ -199,6 +203,20 @@ public class OperationEventExternalPulsarConfig {
                 .subscriptionName(dynamicOperationGroupMangkukulam)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(mangkukulamOperationEventPulsarListener)
+                .subscribe();
+    }
+
+    @Bean(name = sirenaOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = SIRENA_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(SirenaOperationEventPulsarListener.class)
+    public Consumer<byte[]> sirenaOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                         @Autowired SirenaOperationEventPulsarListener  sirenaOperationEventPulsarListener) throws PulsarClientException {
+        log.info(BUILD_BEAN_FORMAT, sirenaOperationEventExternalConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupSirena)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(sirenaOperationEventPulsarListener)
                 .subscribe();
     }
 }
