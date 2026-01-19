@@ -31,6 +31,8 @@ public class OperationEventExternalPulsarConfig {
     private static final String lamangOperationEventExternalConsumer = "lamangOperationEventExternalConsumer";
     private static final String bakunawaOperationEventExternalConsumer = "bakunawaOperationEventExternalConsumer";
     private static final String diwataMayariOperationEventExternalConsumer = "diwataMayariOperationEventExternalConsumer";
+    private static final String kapreOperationEventExternalConsumer = "kapreOperationEventExternalConsumer";
+
     @Value("${dynamic.external.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
     @Value("${dynamic.external.operation.pulsar_topic}")
@@ -48,6 +50,8 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupBakunawa;
     @Value("${dynamic.external.operation.pulsar_group.lamang:cd_DiwataMayari}")
     String dynamicOperationGroupDiwataMayari;
+    @Value("${dynamic.external.operation.pulsar_group.kapre:cd_Kapre}")
+    String dynamicOperationGroupKapre;
     @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.external.operation.pulsar.auth.credentials_file_path}")
@@ -161,6 +165,21 @@ public class OperationEventExternalPulsarConfig {
                 .subscriptionName(dynamicOperationGroupDiwataMayari)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(diwataMayariOperationEventPulsarListener)
+                .subscribe();
+    }
+
+
+    @Bean(name = kapreOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = KAPRE_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(KapreOperationEventPulsarListener.class)
+    public Consumer<byte[]> kapreOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                        @Autowired KapreOperationEventPulsarListener kapreOperationEventPulsarListener) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, kapreOperationEventExternalConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupKapre)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(kapreOperationEventPulsarListener)
                 .subscribe();
     }
 }
