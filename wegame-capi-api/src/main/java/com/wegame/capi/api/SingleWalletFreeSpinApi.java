@@ -109,7 +109,6 @@ public class SingleWalletFreeSpinApi extends FreeSpinBaseApi {
     @Retryable(value = RetryException.class, maxAttempts = 2, exclude = BusinessException.class)
     public FreeSpinOfPlayerRes freeSpinOfPlayer(FreeSpinOfPlayerReq req) {
         try {
-            log.info("freeSpinOfPlayer req: {}", FastJsonUtils.toJSONString(req));
             assembleSingleSignature(req);
             MultiValueMap<String, String> headers = buildHeaders(req.getPlayerName());
             RequestEntity<FreeSpinOfPlayerReq> requestEntity = new RequestEntity<>(req, headers, HttpMethod.POST, URI.create(String.format(FREE_SPIN_OF_PLAYER, freeSpinDomain(req.getPId()))));
