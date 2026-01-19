@@ -14,7 +14,6 @@ import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.MessageListener;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -62,7 +61,7 @@ public abstract class AbstractOperationEventPulsarListener implements MessageLis
     public boolean handleMessage(OperationEventMessageDo messageDo) {
         try {
             // 只处理本渠道的消息
-            if (!gameApiProperty.getChannelIdAll().contains(messageDo.getChannelId())) {
+            if (!gameApiProperty.supportDosChannelIdSet().contains(messageDo.getChannelId())) {
                 return true;
             }
             GameTypeEnum gameType = GameTypeEnum.valueOfId(messageDo.getGameId());
