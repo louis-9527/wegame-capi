@@ -19,7 +19,7 @@ public class GameBizConfig implements Serializable {
     /**
      * 派彩金额限制配置
      */
-    private PayoutAmountLimitConfig payoutAmountLimitConfig;
+    private PayoutAmountLimitConfig payoutAmountLimitConfig = new PayoutAmountLimitConfig();
 
     public void bizValidate() {
         throw new BusinessException(ErrorCode.ERR_INTER, "no support");
