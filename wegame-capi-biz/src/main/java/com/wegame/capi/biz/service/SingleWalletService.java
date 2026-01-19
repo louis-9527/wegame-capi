@@ -52,7 +52,7 @@ public class SingleWalletService {
     FreeSpinService freeSpinService;
 
     public boolean authLoginToken(UserLoginDo userLoginDo) {
-        if (!gameApiProperty.isInvokeSingle()) {
+        if (!gameApiProperty.isInvokeSingle(userLoginDo.getPId())) {
             return true;
         } else {
             AuthLoginTokenRes res = singleWalletApi.authLoginToken(GetAuthLoginTokenReqBuilder.buildReq(userLoginDo));
@@ -69,7 +69,7 @@ public class SingleWalletService {
     }
 
     public SingleWalletBetResultDo betWithPayout(BetRecordDo betRecordDo) {
-        if (!gameApiProperty.isInvokeSingle()) {
+        if (!gameApiProperty.isInvokeSingle(betRecordDo.getPId())) {
             return SingleWalletBetResultDo.builder()
                     .betId(RandomUtil.randomNumbers(8))
                     .refId(RandomUtil.randomString(10))
