@@ -77,6 +77,7 @@ public class DiwataTemplateLoadPostHandler extends AbstractTemplateLoadPostHandl
                     freeGameTemplateIdList.addAll(idList);
                 }
             });
+            loadLocalCache(BetTypeEnum.BUY_BET, freeGameTemplateIdList);
             log.info("free game template load end...");
         } catch (Exception e) {
             log.info("free game template load error", e);
