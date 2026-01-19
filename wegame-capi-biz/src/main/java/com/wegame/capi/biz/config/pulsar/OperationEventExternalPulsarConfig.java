@@ -32,6 +32,8 @@ public class OperationEventExternalPulsarConfig {
     private static final String bakunawaOperationEventExternalConsumer = "bakunawaOperationEventExternalConsumer";
     private static final String diwataMayariOperationEventExternalConsumer = "diwataMayariOperationEventExternalConsumer";
     private static final String kapreOperationEventExternalConsumer = "kapreOperationEventExternalConsumer";
+    private static final String mangkukulamOperationEventExternalConsumer = "mangkukulamOperationEventExternalConsumer";
+
 
     @Value("${dynamic.external.operation.pulsar_url}")
     String dynamicOperationTopicUrl;
@@ -52,6 +54,8 @@ public class OperationEventExternalPulsarConfig {
     String dynamicOperationGroupDiwataMayari;
     @Value("${dynamic.external.operation.pulsar_group.kapre:cd_Kapre}")
     String dynamicOperationGroupKapre;
+    @Value("${dynamic.external.operation.pulsar_group.mangkukulam:_Mangkukulam}")
+    String dynamicOperationGroupMangkukulam;
     @Value("${dynamic.external.operation.pulsar.auth.issuer_url}")
     String dynamicOperationAuthIssuerUrl;
     @Value("${dynamic.external.operation.pulsar.auth.credentials_file_path}")
@@ -180,6 +184,21 @@ public class OperationEventExternalPulsarConfig {
                 .subscriptionName(dynamicOperationGroupKapre)
                 .subscriptionType(SubscriptionType.Shared)
                 .messageListener(kapreOperationEventPulsarListener)
+                .subscribe();
+    }
+
+
+    @Bean(name = mangkukulamOperationEventExternalConsumer, destroyMethod = COMMON_CLOSE_METHOD)
+    @ConditionalOnProperty(name = MANGKUKULAM_PROP, havingValue = TRUE_VAL)
+    @ConditionalOnBean(MangkukulamOperationEventPulsarListener.class)
+    public Consumer<byte[]> mangkukulamOperationEventExternalConsumer(@Autowired PulsarClient operationEventPulsarClient,
+                                                              @Autowired MangkukulamOperationEventPulsarListener mangkukulamOperationEventPulsarListener) throws PulsarClientException {
+        log.debug(BUILD_BEAN_FORMAT, mangkukulamOperationEventExternalConsumer);
+        return operationEventPulsarClient.newConsumer(Schema.BYTES)
+                .topic(dynamicOperationTopic)
+                .subscriptionName(dynamicOperationGroupMangkukulam)
+                .subscriptionType(SubscriptionType.Shared)
+                .messageListener(mangkukulamOperationEventPulsarListener)
                 .subscribe();
     }
 }
